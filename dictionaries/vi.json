@@ -1,0 +1,282 @@
+{
+  "metadata": {
+    "title": "Saily - Gói dữ liệu eSIM cho du lịch quốc tế",
+    "description": "Kết nối toàn cầu với gói dữ liệu eSIM giá rẻ. Không cần SIM vật lý. Kích hoạt ngay tại 150+ quốc gia."
+  },
+  "nav": {
+    "product": "Sản phẩm",
+    "resources": "Tài nguyên",
+    "offers": "Ưu đãi",
+    "help": "Trợ giúp",
+    "login": "Đăng nhập",
+    "downloadApp": "Tải ứng dụng",
+    "getStarted": "Dùng Saily",
+    "searchPlaceholder": "Tìm kiếm quốc gia hoặc khu vực",
+    "announcement": "Giảm 10% cho gói dữ liệu 10GB+!",
+    "announcementCta": "Nhận ưu đãi",
+    "topDestinations": "Top 10",
+    "country": "Quốc gia",
+    "region": "Khu vực",
+    "ultraPlan": "Ultra Plan",
+    "new": "Mới",
+    "language": "Ngôn ngữ"
+  },
+  "hero": {
+    "badge": "Bởi nhà sáng tạo NordVPN",
+    "title": "Dữ liệu eSIM giá rẻ cho du lịch quốc tế",
+    "subtitle": "Chọn từ các gói dữ liệu tại 150+ quốc gia. Cài đặt dễ dàng, kết nối tức thì.",
+    "ctaPrimary": "Tìm điểm đến của bạn",
+    "promoBadge": "Giảm 10% cho gói dữ liệu 10GB+!",
+    "promoLink": "Nhận ưu đãi"
+  },
+  "partnerBar": {
+    "title": "Họ nói về chúng tôi"
+  },
+  "whatIsEsim": {
+    "title": "eSIM là gì?",
+    "description": "eSIM (SIM nhúng) là SIM kỹ thuật số cho phép bạn kích hoạt gói cước di động mà không cần sử dụng SIM vật lý. Với Saily, bạn có thể tải gói dữ liệu eSIM cho điểm đến du lịch và kết nối internet ngay lập tức.",
+    "imageAlt": "Minh họa eSIM"
+  },
+  "destinations": {
+    "title": "Chọn điểm đến du lịch của bạn",
+    "tabs": {
+      "country": "Quốc gia",
+      "region": "Khu vực",
+      "ultraPlan": "Ultra Plan"
+    },
+    "from": "Từ",
+    "seeAllPlans": "Xem tất cả gói",
+    "new": "Mới"
+  },
+  "whyChoose": {
+    "badge": "Tại sao chọn Saily",
+    "title": "Kết nối mọi nơi với Saily",
+    "subtitle": "Tận hưởng kết nối liền mạch mọi nơi bạn đến với dịch vụ eSIM đáng tin cậy.",
+    "features": [
+      {
+        "icon": "globe",
+        "title": "Gói dữ liệu quốc tế",
+        "description": "Chọn từ các gói dữ liệu tại 150+ quốc gia và khu vực trên toàn thế giới."
+      },
+      {
+        "icon": "smartphone",
+        "title": "Dễ sử dụng",
+        "description": "Cài đặt eSIM trong vài phút. Không cần SIM vật lý."
+      },
+      {
+        "icon": "ban",
+        "title": "Tránh phí chuyển vùng",
+        "description": "Tiết kiệm chi phí chuyển vùng quốc tế với gói dữ liệu địa phương giá rẻ."
+      },
+      {
+        "icon": "sim",
+        "title": "Một eSIM cho mọi chuyến đi",
+        "description": "Sử dụng một eSIM duy nhất cho tất cả chuyến đi. Chỉ cần chuyển gói dữ liệu."
+      },
+      {
+        "icon": "bell",
+        "title": "Cảnh báo sử dụng dữ liệu",
+        "description": "Luôn cập nhật về việc sử dụng dữ liệu với thông báo thời gian thực."
+      },
+      {
+        "icon": "map",
+        "title": "Gói toàn cầu và khu vực",
+        "description": "Chọn gói theo quốc gia hoặc gói khu vực bao phủ nhiều điểm đến."
+      }
+    ]
+  },
+  "security": {
+    "title": "Kết nối tức thì và duyệt web an toàn hơn",
+    "cta": "Dùng Saily",
+    "features": [
+      {
+        "title": "Kết nối ngay lập tức",
+        "description": "Kích hoạt eSIM và kết nối internet trong vài giây. Không cần chờ đợi tại sân bay."
+      },
+      {
+        "title": "Không cần xếp hàng",
+        "description": "Bỏ qua phiền phức mua SIM vật lý tại điểm đến."
+      },
+      {
+        "title": "Bảo vệ trực tuyến",
+        "description": "Duyệt web an toàn với tính năng bảo mật tích hợp bảo vệ dữ liệu khi du lịch."
+      }
+    ]
+  },
+  "howItWorks": {
+    "title": "Cách Saily hoạt động",
+    "steps": [
+      {
+        "number": "1",
+        "title": "Chọn điểm đến",
+        "description": "Chọn gói dữ liệu cho quốc gia hoặc khu vực bạn sẽ đến."
+      },
+      {
+        "number": "2",
+        "title": "Cài đặt eSIM",
+        "description": "Tải và cài đặt hồ sơ eSIM trên thiết bị tương thích."
+      },
+      {
+        "number": "3",
+        "title": "Kết nối và tận hưởng",
+        "description": "Kích hoạt gói khi bạn đến nơi và tận hưởng kết nối tức thì."
+      }
+    ]
+  },
+  "downloadApp": {
+    "title": "Tải ứng dụng Saily",
+    "subtitle": "Bắt đầu với Saily ngay hôm nay. Có sẵn trên iOS và Android.",
+    "trustpilot": {
+      "rating": "4.7",
+      "total": "5",
+      "label": "Trustpilot"
+    },
+    "appStore": {
+      "rating": "4.8",
+      "label": "App Store"
+    },
+    "googlePlay": {
+      "rating": "4.6",
+      "label": "Google Play"
+    },
+    "qrLabel": "Quét để tải"
+  },
+  "testimonials": {
+    "title": "Đánh giá Saily từ du khách",
+    "reviews": [
+      {
+        "name": "Jorge A.",
+        "source": "Trustpilot",
+        "rating": 5,
+        "text": "Saily là bước ngoặt cho du lịch quốc tế. Cài đặt dễ dàng, phủ sóng tốt và giá cả phải chăng. Tôi đã dùng ở 5 quốc gia và luôn hoạt động hoàn hảo."
+      },
+      {
+        "name": "PewDiePie",
+        "source": "YouTube",
+        "text": "Tôi đã dùng Saily cho các chuyến đi và thật tuyệt vời. Không cần tìm SIM địa phương tại sân bay nữa."
+      },
+      {
+        "name": "DutchPilotGirl",
+        "source": "YouTube",
+        "text": "Là phi công, tôi đi du lịch liên tục. Saily giúp việc kết nối dễ dàng hơn nhiều. Chỉ cần tải gói trước khi hạ cánh."
+      },
+      {
+        "name": "Domas R.",
+        "source": "Trustpilot",
+        "rating": 5,
+        "text": "Cài đặt và sử dụng cực kỳ dễ dàng. Giá rất cạnh tranh so với các nhà cung cấp eSIM khác. Rất khuyến khích cho mọi du khách."
+      },
+      {
+        "name": "Lonely Planet",
+        "source": "Featured",
+        "text": "Saily cung cấp trải nghiệm eSIM thân thiện nhất mà chúng tôi đã thử nghiệm, với giá cạnh tranh và phủ sóng đáng tin cậy tại 150+ quốc gia."
+      },
+      {
+        "name": "CyberNews",
+        "source": "Review",
+        "text": "Saily nổi bật với giao diện sạch sẽ, giá minh bạch và sự hỗ trợ từ cơ sở hạ tầng Nord Security."
+      },
+      {
+        "name": "TechRadar",
+        "source": "Review",
+        "text": "Lựa chọn eSIM vững chắc cho du khách muốn kết nối dễ dàng ở nước ngoài với gói dữ liệu cạnh tranh."
+      }
+    ]
+  },
+  "faq": {
+    "title": "Câu hỏi thường gặp",
+    "items": [
+      {
+        "question": "eSIM là gì?",
+        "answer": "eSIM (SIM nhúng) là SIM kỹ thuật số cho phép bạn kích hoạt gói cước di động mà không cần SIM vật lý. Nó được tích hợp sẵn trong thiết bị và có thể lập trình với các hồ sơ nhà mạng khác nhau."
+      },
+      {
+        "question": "Làm sao biết thiết bị có hỗ trợ eSIM?",
+        "answer": "Hầu hết smartphone hiện đại đều hỗ trợ eSIM, bao gồm iPhone XS trở lên, Samsung Galaxy S20 trở lên và Google Pixel 3 trở lên. Bạn có thể kiểm tra cài đặt thiết bị hoặc xem trang tương thích."
+      },
+      {
+        "question": "Cài đặt eSIM như thế nào?",
+        "answer": "Sau khi mua gói, bạn sẽ nhận được mã QR. Chỉ cần quét bằng camera thiết bị, làm theo hướng dẫn trên màn hình và eSIM sẽ được cài đặt trong vài phút."
+      },
+      {
+        "question": "Có thể dùng SIM thường và eSIM cùng lúc không?",
+        "answer": "Có! Hầu hết thiết bị tương thích eSIM hỗ trợ dual SIM, cho phép bạn dùng SIM thường cho cuộc gọi và tin nhắn trong khi dùng eSIM cho dữ liệu."
+      },
+      {
+        "question": "Khi hết dữ liệu thì sao?",
+        "answer": "Bạn có thể dễ dàng nạp thêm dữ liệu qua ứng dụng Saily. Bạn cũng sẽ nhận thông báo khi dữ liệu sắp hết."
+      },
+      {
+        "question": "Có thể chia sẻ dữ liệu với thiết bị khác không?",
+        "answer": "Có, bạn có thể dùng tính năng phát sóng của điện thoại để chia sẻ kết nối dữ liệu eSIM với các thiết bị khác như laptop và máy tính bảng."
+      },
+      {
+        "question": "Cần kết nối Wi-Fi để cài eSIM không?",
+        "answer": "Có, bạn cần kết nối Wi-Fi hoặc dữ liệu để tải và cài đặt hồ sơ eSIM. Chúng tôi khuyên bạn nên cài đặt trước khi đi du lịch."
+      },
+      {
+        "question": "Kích hoạt eSIM mất bao lâu?",
+        "answer": "Kích hoạt eSIM gần như tức thì. Sau khi cài đặt, eSIM sẽ sẵn sàng sử dụng trong vài phút."
+      },
+      {
+        "question": "Có thể dùng Saily ở nhiều quốc gia không?",
+        "answer": "Có! Saily cung cấp gói cho 150+ quốc gia. Bạn có thể mua gói theo quốc gia hoặc gói khu vực bao phủ nhiều điểm đến."
+      },
+      {
+        "question": "Nếu gặp vấn đề với eSIM thì sao?",
+        "answer": "Đội ngũ hỗ trợ khách hàng của chúng tôi hoạt động 24/7. Bạn có thể liên hệ qua ứng dụng, email hoặc chat trực tiếp."
+      },
+      {
+        "question": "Saily có an toàn không?",
+        "answer": "Hoàn toàn. Saily được xây dựng bởi Nord Security, đội ngũ đứng sau NordVPN. Dữ liệu và quyền riêng tư của bạn được bảo vệ với các biện pháp bảo mật hàng đầu."
+      },
+      {
+        "question": "Có thể hoàn tiền không?",
+        "answer": "Có, chúng tôi cung cấp hoàn tiền cho các gói dữ liệu chưa sử dụng. Vui lòng xem chính sách hoàn tiền hoặc liên hệ đội ngũ hỗ trợ."
+      }
+    ]
+  },
+  "referFriend": {
+    "title": "Giới thiệu bạn bè, cả hai cùng nhận US$5!",
+    "cta": "Giới thiệu bạn bè",
+    "imageAlt": "Minh họa giới thiệu bạn bè"
+  },
+  "footer": {
+    "popularDestinations": {
+      "title": "Điểm đến phổ biến",
+      "links": [
+        "eSIM Nhật Bản",
+        "eSIM Hoa Kỳ",
+        "eSIM Thổ Nhĩ Kỳ",
+        "eSIM Vương quốc Anh",
+        "eSIM Châu Âu",
+        "eSIM Thái Lan",
+        "eSIM Hàn Quốc",
+        "eSIM Tây Ban Nha",
+        "eSIM Ý",
+        "eSIM Pháp"
+      ]
+    },
+    "saily": {
+      "title": "Saily",
+      "links": ["Về chúng tôi", "Blog", "Bộ truyền thông", "Đối tác"]
+    },
+    "esim": {
+      "title": "eSIM",
+      "links": ["Thiết bị tương thích eSIM", "eSIM là gì?", "Cách cài đặt eSIM", "eSIM vs SIM"]
+    },
+    "helpLinks": {
+      "title": "Trợ giúp",
+      "links": ["Trung tâm trợ giúp", "Liên hệ", "Cách cài đặt Saily"]
+    },
+    "followUs": {
+      "title": "Theo dõi",
+      "links": ["YouTube", "Instagram", "X (Twitter)", "Facebook", "TikTok"]
+    },
+    "legal": {
+      "copyright": "© 2024 Saily. Bảo lưu mọi quyền.",
+      "links": ["Chính sách bảo mật", "Điều khoản dịch vụ", "Chính sách hoàn tiền"]
+    },
+    "paymentMethods": ["Apple Pay", "Google Pay", "Visa", "Mastercard", "Amex", "Discover", "UnionPay", "JCB"]
+  }
+}

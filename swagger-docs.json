@@ -1,0 +1,5670 @@
+{
+    "openapi": "3.0.0",
+    "paths": {
+        "/api/v1/blogs": {
+            "post": {
+                "operationId": "BlogsController_create_v1",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateBlogDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Blog"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Blogs"
+                ]
+            },
+            "get": {
+                "operationId": "BlogsController_findAll_v1",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InfinityPaginationBlogResponseDto"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Blogs"
+                ]
+            }
+        },
+        "/api/v1/blogs/{id}": {
+            "get": {
+                "operationId": "BlogsController_findById_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Blog"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Blogs"
+                ]
+            },
+            "patch": {
+                "operationId": "BlogsController_update_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateBlogDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Blog"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Blogs"
+                ]
+            },
+            "delete": {
+                "operationId": "BlogsController_remove_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Blogs"
+                ]
+            }
+        },
+        "/api/v1/why-choose-us": {
+            "post": {
+                "operationId": "WhyChooseUsController_create_v1",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateWhyChooseUsDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WhyChooseUs"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Whychooseus"
+                ]
+            },
+            "get": {
+                "operationId": "WhyChooseUsController_findAll_v1",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InfinityPaginationWhyChooseUsResponseDto"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Whychooseus"
+                ]
+            }
+        },
+        "/api/v1/why-choose-us/{id}": {
+            "get": {
+                "operationId": "WhyChooseUsController_findById_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WhyChooseUs"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Whychooseus"
+                ]
+            },
+            "patch": {
+                "operationId": "WhyChooseUsController_update_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateWhyChooseUsDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WhyChooseUs"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Whychooseus"
+                ]
+            },
+            "delete": {
+                "operationId": "WhyChooseUsController_remove_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Whychooseus"
+                ]
+            }
+        },
+        "/api/v1/faqs": {
+            "post": {
+                "operationId": "FaqsController_create_v1",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateFaqDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Faq"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Faqs"
+                ]
+            },
+            "get": {
+                "operationId": "FaqsController_findAll_v1",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InfinityPaginationFaqResponseDto"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Faqs"
+                ]
+            }
+        },
+        "/api/v1/faqs/{id}": {
+            "get": {
+                "operationId": "FaqsController_findById_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Faq"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Faqs"
+                ]
+            },
+            "patch": {
+                "operationId": "FaqsController_update_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateFaqDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Faq"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Faqs"
+                ]
+            },
+            "delete": {
+                "operationId": "FaqsController_remove_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Faqs"
+                ]
+            }
+        },
+        "/api/v1/users": {
+            "post": {
+                "operationId": "UsersController_create_v1",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateUserDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Users"
+                ]
+            },
+            "get": {
+                "operationId": "UsersController_findAll_v1",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "filters",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InfinityPaginationUserResponseDto"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Users"
+                ]
+            }
+        },
+        "/api/v1/users/{id}": {
+            "get": {
+                "operationId": "UsersController_findOne_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Users"
+                ]
+            },
+            "patch": {
+                "operationId": "UsersController_update_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateUserDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Users"
+                ]
+            },
+            "delete": {
+                "operationId": "UsersController_remove_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Users"
+                ]
+            }
+        },
+        "/api/v1/files/upload": {
+            "post": {
+                "operationId": "FilesLocalController_uploadFile_v1",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "file": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FileResponseDto"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Files"
+                ]
+            }
+        },
+        "/api/v1/auth/email/login": {
+            "post": {
+                "operationId": "AuthController_login_v1",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthEmailLoginDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LoginResponseDto"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "Auth"
+                ]
+            }
+        },
+        "/api/v1/auth/email/register": {
+            "post": {
+                "operationId": "AuthController_register_v1",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthRegisterLoginDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "Auth"
+                ]
+            }
+        },
+        "/api/v1/auth/email/confirm": {
+            "post": {
+                "operationId": "AuthController_confirmEmail_v1",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthConfirmEmailDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "Auth"
+                ]
+            }
+        },
+        "/api/v1/auth/email/confirm/new": {
+            "post": {
+                "operationId": "AuthController_confirmNewEmail_v1",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthConfirmEmailDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "Auth"
+                ]
+            }
+        },
+        "/api/v1/auth/forgot/password": {
+            "post": {
+                "operationId": "AuthController_forgotPassword_v1",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthForgotPasswordDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "Auth"
+                ]
+            }
+        },
+        "/api/v1/auth/reset/password": {
+            "post": {
+                "operationId": "AuthController_resetPassword_v1",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthResetPasswordDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "Auth"
+                ]
+            }
+        },
+        "/api/v1/auth/me": {
+            "get": {
+                "operationId": "AuthController_me_v1",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Auth"
+                ]
+            },
+            "patch": {
+                "operationId": "AuthController_update_v1",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthUpdateDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Auth"
+                ]
+            },
+            "delete": {
+                "operationId": "AuthController_delete_v1",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Auth"
+                ]
+            }
+        },
+        "/api/v1/auth/refresh": {
+            "post": {
+                "operationId": "AuthController_refresh_v1",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RefreshResponseDto"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Auth"
+                ]
+            }
+        },
+        "/api/v1/auth/logout": {
+            "post": {
+                "operationId": "AuthController_logout_v1",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Auth"
+                ]
+            }
+        },
+        "/api/v1/auth/google/login": {
+            "post": {
+                "operationId": "AuthGoogleController_login_v1",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthGoogleLoginDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LoginResponseDto"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "Auth"
+                ]
+            }
+        },
+        "/": {
+            "get": {
+                "operationId": "HomeController_appInfo",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "Home"
+                ]
+            }
+        },
+        "/api/v1/destinations": {
+            "post": {
+                "operationId": "DestinationsController_create_v1",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateDestinationDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Destination"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Destinations"
+                ]
+            },
+            "get": {
+                "operationId": "DestinationsController_findAll_v1",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "filters",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InfinityPaginationDestinationResponseDto"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "Destinations"
+                ]
+            }
+        },
+        "/api/v1/destinations/{id}": {
+            "get": {
+                "operationId": "DestinationsController_findOne_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Destination"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "Destinations"
+                ]
+            },
+            "patch": {
+                "operationId": "DestinationsController_update_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateDestinationDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Destination"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Destinations"
+                ]
+            },
+            "delete": {
+                "operationId": "DestinationsController_remove_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Destinations"
+                ]
+            }
+        },
+        "/api/v1/regions": {
+            "post": {
+                "operationId": "RegionsController_create_v1",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateRegionDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Region"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Regions"
+                ]
+            },
+            "get": {
+                "operationId": "RegionsController_findAll_v1",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "filters",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InfinityPaginationRegionResponseDto"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "Regions"
+                ]
+            }
+        },
+        "/api/v1/regions/{id}": {
+            "get": {
+                "operationId": "RegionsController_findOne_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Region"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "Regions"
+                ]
+            },
+            "patch": {
+                "operationId": "RegionsController_update_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateRegionDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Region"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Regions"
+                ]
+            },
+            "delete": {
+                "operationId": "RegionsController_remove_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Regions"
+                ]
+            }
+        },
+        "/api/v1/plans": {
+            "post": {
+                "operationId": "PlansController_create_v1",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreatePlanDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Plan"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Plans"
+                ]
+            },
+            "get": {
+                "operationId": "PlansController_findAll_v1",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "filters",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InfinityPaginationPlanResponseDto"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "Plans"
+                ]
+            }
+        },
+        "/api/v1/plans/{id}": {
+            "get": {
+                "operationId": "PlansController_findOne_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Plan"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "Plans"
+                ]
+            },
+            "patch": {
+                "operationId": "PlansController_update_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdatePlanDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Plan"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Plans"
+                ]
+            },
+            "delete": {
+                "operationId": "PlansController_remove_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Plans"
+                ]
+            }
+        },
+        "/api/v1/plan-prices": {
+            "post": {
+                "operationId": "PlanPricesController_create_v1",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreatePlanPriceDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PlanPrice"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "PlanPrices"
+                ]
+            },
+            "get": {
+                "operationId": "PlanPricesController_findAll_v1",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "filters",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InfinityPaginationPlanPriceResponseDto"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "PlanPrices"
+                ]
+            }
+        },
+        "/api/v1/plan-prices/{id}": {
+            "get": {
+                "operationId": "PlanPricesController_findOne_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PlanPrice"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "PlanPrices"
+                ]
+            },
+            "patch": {
+                "operationId": "PlanPricesController_update_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdatePlanPriceDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PlanPrice"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "PlanPrices"
+                ]
+            },
+            "delete": {
+                "operationId": "PlanPricesController_remove_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "PlanPrices"
+                ]
+            }
+        },
+        "/api/v1/orders": {
+            "post": {
+                "operationId": "OrdersController_create_v1",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateOrderDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Order"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Orders"
+                ]
+            },
+            "get": {
+                "operationId": "OrdersController_findAll_v1",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "filters",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InfinityPaginationOrderResponseDto"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Orders"
+                ]
+            }
+        },
+        "/api/v1/orders/{id}": {
+            "get": {
+                "operationId": "OrdersController_findOne_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Order"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Orders"
+                ]
+            },
+            "patch": {
+                "operationId": "OrdersController_update_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateOrderDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Order"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Orders"
+                ]
+            },
+            "delete": {
+                "operationId": "OrdersController_remove_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Orders"
+                ]
+            }
+        },
+        "/api/v1/order-items": {
+            "post": {
+                "operationId": "OrderItemsController_create_v1",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateOrderItemDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrderItem"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "OrderItems"
+                ]
+            },
+            "get": {
+                "operationId": "OrderItemsController_findAll_v1",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "filters",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InfinityPaginationOrderItemResponseDto"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "OrderItems"
+                ]
+            }
+        },
+        "/api/v1/order-items/{id}": {
+            "get": {
+                "operationId": "OrderItemsController_findOne_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrderItem"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "OrderItems"
+                ]
+            },
+            "patch": {
+                "operationId": "OrderItemsController_update_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateOrderItemDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrderItem"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "OrderItems"
+                ]
+            },
+            "delete": {
+                "operationId": "OrderItemsController_remove_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "OrderItems"
+                ]
+            }
+        },
+        "/api/v1/esims": {
+            "post": {
+                "operationId": "EsimsController_create_v1",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateEsimDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Esim"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Esims"
+                ]
+            },
+            "get": {
+                "operationId": "EsimsController_findAll_v1",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "filters",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InfinityPaginationEsimResponseDto"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Esims"
+                ]
+            }
+        },
+        "/api/v1/esims/{id}": {
+            "get": {
+                "operationId": "EsimsController_findOne_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Esim"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Esims"
+                ]
+            },
+            "patch": {
+                "operationId": "EsimsController_update_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateEsimDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Esim"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Esims"
+                ]
+            },
+            "delete": {
+                "operationId": "EsimsController_remove_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Esims"
+                ]
+            }
+        },
+        "/api/v1/provider-sync-logs": {
+            "post": {
+                "operationId": "ProviderSyncLogsController_create_v1",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateProviderSyncLogDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProviderSyncLog"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "ProviderSyncLogs"
+                ]
+            },
+            "get": {
+                "operationId": "ProviderSyncLogsController_findAll_v1",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "filters",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InfinityPaginationProviderSyncLogResponseDto"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "ProviderSyncLogs"
+                ]
+            }
+        },
+        "/api/v1/provider-sync-logs/{id}": {
+            "get": {
+                "operationId": "ProviderSyncLogsController_findOne_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProviderSyncLog"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "ProviderSyncLogs"
+                ]
+            },
+            "patch": {
+                "operationId": "ProviderSyncLogsController_update_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateProviderSyncLogDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProviderSyncLog"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "ProviderSyncLogs"
+                ]
+            }
+        },
+        "/api/v1/profit-margins": {
+            "post": {
+                "operationId": "ProfitMarginsController_create_v1",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateProfitMarginDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProfitMargin"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "ProfitMargins"
+                ]
+            },
+            "get": {
+                "operationId": "ProfitMarginsController_findAll_v1",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "filters",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "required": false,
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InfinityPaginationProfitMarginResponseDto"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "ProfitMargins"
+                ]
+            }
+        },
+        "/api/v1/profit-margins/{id}": {
+            "get": {
+                "operationId": "ProfitMarginsController_findOne_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProfitMargin"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "ProfitMargins"
+                ]
+            },
+            "patch": {
+                "operationId": "ProfitMarginsController_update_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateProfitMarginDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProfitMargin"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "ProfitMargins"
+                ]
+            },
+            "delete": {
+                "operationId": "ProfitMarginsController_remove_v1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "required": false,
+                        "name": "x-custom-lang",
+                        "schema": {
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "ProfitMargins"
+                ]
+            }
+        }
+    },
+    "info": {
+        "title": "API",
+        "description": "API docs",
+        "version": "1.0",
+        "contact": {}
+    },
+    "tags": [],
+    "servers": [],
+    "components": {
+        "securitySchemes": {
+            "bearer": {
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+                "type": "http"
+            }
+        },
+        "schemas": {
+            "CreateBlogDto": {
+                "type": "object",
+                "properties": {
+                    "language": {
+                        "type": "string"
+                    },
+                    "publishedAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    },
+                    "isPublished": {
+                        "type": "boolean"
+                    },
+                    "author": {
+                        "type": "string"
+                    },
+                    "tags": {
+                        "type": "string"
+                    },
+                    "coverImage": {
+                        "type": "string"
+                    },
+                    "excerpt": {
+                        "type": "string"
+                    },
+                    "content": {
+                        "type": "string"
+                    },
+                    "slug": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "language",
+                    "content",
+                    "slug",
+                    "title"
+                ]
+            },
+            "Blog": {
+                "type": "object",
+                "properties": {
+                    "language": {
+                        "type": "string",
+                        "nullable": false
+                    },
+                    "publishedAt": {
+                        "format": "date-time",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "isPublished": {
+                        "type": "boolean",
+                        "nullable": false
+                    },
+                    "author": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "tags": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "coverImage": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "excerpt": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "content": {
+                        "type": "string",
+                        "nullable": false
+                    },
+                    "slug": {
+                        "type": "string",
+                        "nullable": false
+                    },
+                    "title": {
+                        "type": "string",
+                        "nullable": false
+                    },
+                    "id": {
+                        "type": "string"
+                    },
+                    "createdAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    },
+                    "updatedAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "language",
+                    "publishedAt",
+                    "isPublished",
+                    "author",
+                    "tags",
+                    "coverImage",
+                    "excerpt",
+                    "content",
+                    "slug",
+                    "title",
+                    "id",
+                    "createdAt",
+                    "updatedAt"
+                ]
+            },
+            "InfinityPaginationBlogResponseDto": {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Blog"
+                        }
+                    },
+                    "hasNextPage": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "required": [
+                    "data",
+                    "hasNextPage"
+                ]
+            },
+            "UpdateBlogDto": {
+                "type": "object",
+                "properties": {
+                    "language": {
+                        "type": "string"
+                    },
+                    "publishedAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    },
+                    "isPublished": {
+                        "type": "boolean"
+                    },
+                    "author": {
+                        "type": "string"
+                    },
+                    "tags": {
+                        "type": "string"
+                    },
+                    "coverImage": {
+                        "type": "string"
+                    },
+                    "excerpt": {
+                        "type": "string"
+                    },
+                    "content": {
+                        "type": "string"
+                    },
+                    "slug": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    }
+                }
+            },
+            "CreateWhyChooseUsDto": {
+                "type": "object",
+                "properties": {
+                    "language": {
+                        "type": "string"
+                    },
+                    "isActive": {
+                        "type": "boolean"
+                    },
+                    "sortOrder": {
+                        "type": "number"
+                    },
+                    "icon": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "language",
+                    "sortOrder",
+                    "description",
+                    "title"
+                ]
+            },
+            "WhyChooseUs": {
+                "type": "object",
+                "properties": {
+                    "language": {
+                        "type": "string",
+                        "nullable": false
+                    },
+                    "isActive": {
+                        "type": "boolean",
+                        "nullable": false
+                    },
+                    "sortOrder": {
+                        "type": "number",
+                        "nullable": false
+                    },
+                    "icon": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "description": {
+                        "type": "string",
+                        "nullable": false
+                    },
+                    "title": {
+                        "type": "string",
+                        "nullable": false
+                    },
+                    "id": {
+                        "type": "string"
+                    },
+                    "createdAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    },
+                    "updatedAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "language",
+                    "isActive",
+                    "sortOrder",
+                    "icon",
+                    "description",
+                    "title",
+                    "id",
+                    "createdAt",
+                    "updatedAt"
+                ]
+            },
+            "InfinityPaginationWhyChooseUsResponseDto": {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/WhyChooseUs"
+                        }
+                    },
+                    "hasNextPage": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "required": [
+                    "data",
+                    "hasNextPage"
+                ]
+            },
+            "UpdateWhyChooseUsDto": {
+                "type": "object",
+                "properties": {
+                    "language": {
+                        "type": "string"
+                    },
+                    "isActive": {
+                        "type": "boolean"
+                    },
+                    "sortOrder": {
+                        "type": "number"
+                    },
+                    "icon": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    }
+                }
+            },
+            "CreateFaqDto": {
+                "type": "object",
+                "properties": {
+                    "language": {
+                        "type": "string"
+                    },
+                    "isActive": {
+                        "type": "boolean"
+                    },
+                    "sortOrder": {
+                        "type": "number"
+                    },
+                    "answer": {
+                        "type": "string"
+                    },
+                    "question": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "language",
+                    "sortOrder",
+                    "answer",
+                    "question"
+                ]
+            },
+            "Faq": {
+                "type": "object",
+                "properties": {
+                    "language": {
+                        "type": "string",
+                        "nullable": false
+                    },
+                    "isActive": {
+                        "type": "boolean",
+                        "nullable": false
+                    },
+                    "sortOrder": {
+                        "type": "number",
+                        "nullable": false
+                    },
+                    "answer": {
+                        "type": "string",
+                        "nullable": false
+                    },
+                    "question": {
+                        "type": "string",
+                        "nullable": false
+                    },
+                    "id": {
+                        "type": "string"
+                    },
+                    "createdAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    },
+                    "updatedAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "language",
+                    "isActive",
+                    "sortOrder",
+                    "answer",
+                    "question",
+                    "id",
+                    "createdAt",
+                    "updatedAt"
+                ]
+            },
+            "InfinityPaginationFaqResponseDto": {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Faq"
+                        }
+                    },
+                    "hasNextPage": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "required": [
+                    "data",
+                    "hasNextPage"
+                ]
+            },
+            "UpdateFaqDto": {
+                "type": "object",
+                "properties": {
+                    "language": {
+                        "type": "string"
+                    },
+                    "isActive": {
+                        "type": "boolean"
+                    },
+                    "sortOrder": {
+                        "type": "number"
+                    },
+                    "answer": {
+                        "type": "string"
+                    },
+                    "question": {
+                        "type": "string"
+                    }
+                }
+            },
+            "FileDto": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "id"
+                ]
+            },
+            "RoleDto": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "object"
+                    }
+                },
+                "required": [
+                    "id"
+                ]
+            },
+            "StatusDto": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "object"
+                    }
+                },
+                "required": [
+                    "id"
+                ]
+            },
+            "CreateUserDto": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "example": "test1@example.com"
+                    },
+                    "password": {
+                        "type": "string"
+                    },
+                    "firstName": {
+                        "type": "string",
+                        "example": "John"
+                    },
+                    "lastName": {
+                        "type": "string",
+                        "example": "Doe"
+                    },
+                    "photo": {
+                        "$ref": "#/components/schemas/FileDto"
+                    },
+                    "role": {
+                        "$ref": "#/components/schemas/RoleDto"
+                    },
+                    "status": {
+                        "$ref": "#/components/schemas/StatusDto"
+                    }
+                },
+                "required": [
+                    "email",
+                    "password",
+                    "firstName",
+                    "lastName"
+                ]
+            },
+            "FileType": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "cbcfa8b8-3a25-4adb-a9c6-e325f0d0f3ae"
+                    },
+                    "path": {
+                        "type": "string",
+                        "example": "https://example.com/path/to/file.jpg"
+                    }
+                },
+                "required": [
+                    "id",
+                    "path"
+                ]
+            },
+            "Role": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "admin"
+                    }
+                },
+                "required": [
+                    "id",
+                    "name"
+                ]
+            },
+            "Status": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "active"
+                    }
+                },
+                "required": [
+                    "id",
+                    "name"
+                ]
+            },
+            "User": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "john.doe@example.com"
+                    },
+                    "provider": {
+                        "type": "string",
+                        "example": "email"
+                    },
+                    "socialId": {
+                        "type": "string",
+                        "example": "1234567890"
+                    },
+                    "firstName": {
+                        "type": "string",
+                        "example": "John"
+                    },
+                    "lastName": {
+                        "type": "string",
+                        "example": "Doe"
+                    },
+                    "photo": {
+                        "$ref": "#/components/schemas/FileType"
+                    },
+                    "role": {
+                        "$ref": "#/components/schemas/Role"
+                    },
+                    "status": {
+                        "$ref": "#/components/schemas/Status"
+                    },
+                    "createdAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    },
+                    "updatedAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    },
+                    "deletedAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "id",
+                    "email",
+                    "provider",
+                    "socialId",
+                    "firstName",
+                    "lastName",
+                    "photo",
+                    "role",
+                    "status",
+                    "createdAt",
+                    "updatedAt",
+                    "deletedAt"
+                ]
+            },
+            "InfinityPaginationUserResponseDto": {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/User"
+                        }
+                    },
+                    "hasNextPage": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "required": [
+                    "data",
+                    "hasNextPage"
+                ]
+            },
+            "UpdateUserDto": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "example": "test1@example.com"
+                    },
+                    "password": {
+                        "type": "string"
+                    },
+                    "firstName": {
+                        "type": "string",
+                        "example": "John"
+                    },
+                    "lastName": {
+                        "type": "string",
+                        "example": "Doe"
+                    },
+                    "photo": {
+                        "$ref": "#/components/schemas/FileDto"
+                    },
+                    "role": {
+                        "$ref": "#/components/schemas/RoleDto"
+                    },
+                    "status": {
+                        "$ref": "#/components/schemas/StatusDto"
+                    }
+                }
+            },
+            "FileResponseDto": {
+                "type": "object",
+                "properties": {
+                    "file": {
+                        "$ref": "#/components/schemas/FileType"
+                    }
+                },
+                "required": [
+                    "file"
+                ]
+            },
+            "AuthEmailLoginDto": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "example": "test1@example.com"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "email",
+                    "password"
+                ]
+            },
+            "LoginResponseDto": {
+                "type": "object",
+                "properties": {
+                    "token": {
+                        "type": "string"
+                    },
+                    "refreshToken": {
+                        "type": "string"
+                    },
+                    "tokenExpires": {
+                        "type": "number"
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/User"
+                    }
+                },
+                "required": [
+                    "token",
+                    "refreshToken",
+                    "tokenExpires",
+                    "user"
+                ]
+            },
+            "AuthRegisterLoginDto": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "example": "test1@example.com"
+                    },
+                    "password": {
+                        "type": "string"
+                    },
+                    "firstName": {
+                        "type": "string",
+                        "example": "John"
+                    },
+                    "lastName": {
+                        "type": "string",
+                        "example": "Doe"
+                    }
+                },
+                "required": [
+                    "email",
+                    "password",
+                    "firstName",
+                    "lastName"
+                ]
+            },
+            "AuthConfirmEmailDto": {
+                "type": "object",
+                "properties": {
+                    "hash": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "hash"
+                ]
+            },
+            "AuthForgotPasswordDto": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "example": "test1@example.com"
+                    }
+                },
+                "required": [
+                    "email"
+                ]
+            },
+            "AuthResetPasswordDto": {
+                "type": "object",
+                "properties": {
+                    "password": {
+                        "type": "string"
+                    },
+                    "hash": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "password",
+                    "hash"
+                ]
+            },
+            "RefreshResponseDto": {
+                "type": "object",
+                "properties": {
+                    "token": {
+                        "type": "string"
+                    },
+                    "refreshToken": {
+                        "type": "string"
+                    },
+                    "tokenExpires": {
+                        "type": "number"
+                    }
+                },
+                "required": [
+                    "token",
+                    "refreshToken",
+                    "tokenExpires"
+                ]
+            },
+            "AuthUpdateDto": {
+                "type": "object",
+                "properties": {
+                    "photo": {
+                        "$ref": "#/components/schemas/FileDto"
+                    },
+                    "firstName": {
+                        "type": "string",
+                        "example": "John"
+                    },
+                    "lastName": {
+                        "type": "string",
+                        "example": "Doe"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "new.email@example.com"
+                    },
+                    "password": {
+                        "type": "string"
+                    },
+                    "oldPassword": {
+                        "type": "string"
+                    }
+                }
+            },
+            "AuthGoogleLoginDto": {
+                "type": "object",
+                "properties": {
+                    "idToken": {
+                        "type": "string",
+                        "example": "abc"
+                    }
+                },
+                "required": [
+                    "idToken"
+                ]
+            },
+            "CreateDestinationDto": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Japan"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "japan"
+                    },
+                    "countryCode": {
+                        "type": "string",
+                        "example": "JP"
+                    },
+                    "parentId": {
+                        "type": "number",
+                        "example": 1
+                    },
+                    "flagUrl": {
+                        "type": "string",
+                        "example": "https://example.com/flags/jp.png"
+                    },
+                    "avatarUrl": {
+                        "type": "string",
+                        "example": "https://example.com/avatars/japan.png"
+                    },
+                    "keySearch": {
+                        "type": "string",
+                        "example": "japan nippon tokyo"
+                    },
+                    "isPopular": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "isActive": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "High-speed 4G/5G coverage across Japan"
+                    }
+                },
+                "required": [
+                    "name",
+                    "slug",
+                    "countryCode"
+                ]
+            },
+            "Destination": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Japan"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "japan"
+                    },
+                    "countryCode": {
+                        "type": "string",
+                        "example": "JP"
+                    },
+                    "parentId": {
+                        "type": "number",
+                        "example": 1
+                    },
+                    "flagUrl": {
+                        "type": "string",
+                        "example": "https://example.com/flags/jp.png"
+                    },
+                    "avatarUrl": {
+                        "type": "string",
+                        "example": "https://example.com/avatars/japan.png"
+                    },
+                    "keySearch": {
+                        "type": "string",
+                        "example": "japan nippon tokyo"
+                    },
+                    "isPopular": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "isActive": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "High-speed 4G/5G coverage across Japan"
+                    },
+                    "createdAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    },
+                    "updatedAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    },
+                    "deletedAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "id",
+                    "name",
+                    "slug",
+                    "countryCode",
+                    "isPopular",
+                    "isActive",
+                    "createdAt",
+                    "updatedAt",
+                    "deletedAt"
+                ]
+            },
+            "InfinityPaginationDestinationResponseDto": {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Destination"
+                        }
+                    },
+                    "hasNextPage": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "required": [
+                    "data",
+                    "hasNextPage"
+                ]
+            },
+            "UpdateDestinationDto": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Japan"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "japan"
+                    },
+                    "countryCode": {
+                        "type": "string",
+                        "example": "JP"
+                    },
+                    "parentId": {
+                        "type": "number",
+                        "example": 1
+                    },
+                    "flagUrl": {
+                        "type": "string",
+                        "example": "https://example.com/flags/jp.png"
+                    },
+                    "avatarUrl": {
+                        "type": "string",
+                        "example": "https://example.com/avatars/japan.png"
+                    },
+                    "keySearch": {
+                        "type": "string",
+                        "example": "japan nippon tokyo"
+                    },
+                    "isPopular": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "isActive": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "High-speed 4G/5G coverage across Japan"
+                    }
+                }
+            },
+            "CreateRegionDto": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Europe"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "europe"
+                    },
+                    "avatarUrl": {
+                        "type": "string"
+                    },
+                    "isActive": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "required": [
+                    "name",
+                    "slug"
+                ]
+            },
+            "Region": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Europe"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "europe"
+                    },
+                    "destinations": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Destination"
+                        }
+                    },
+                    "destinationCount": {
+                        "type": "number",
+                        "example": 42
+                    },
+                    "avatarUrl": {
+                        "type": "string"
+                    },
+                    "isActive": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "createdAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    },
+                    "updatedAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    },
+                    "deletedAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "id",
+                    "name",
+                    "slug",
+                    "isActive",
+                    "createdAt",
+                    "updatedAt",
+                    "deletedAt"
+                ]
+            },
+            "InfinityPaginationRegionResponseDto": {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Region"
+                        }
+                    },
+                    "hasNextPage": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "required": [
+                    "data",
+                    "hasNextPage"
+                ]
+            },
+            "UpdateRegionDto": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Asia"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "asia"
+                    },
+                    "avatarUrl": {
+                        "type": "string"
+                    },
+                    "isActive": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                }
+            },
+            "CreatePlanDto": {
+                "type": "object",
+                "properties": {
+                    "provider": {
+                        "type": "string",
+                        "example": "esimaccess"
+                    },
+                    "providerPlanId": {
+                        "type": "string",
+                        "example": "CKH002"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Spain 3GB 30Days"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "esimaccess-CKH002"
+                    },
+                    "countryCode": {
+                        "type": "string",
+                        "example": "ES"
+                    },
+                    "destinationId": {
+                        "type": "number",
+                        "example": 1
+                    },
+                    "regionId": {
+                        "type": "number",
+                        "example": 1
+                    },
+                    "durationDays": {
+                        "type": "number",
+                        "example": 30
+                    },
+                    "dataGb": {
+                        "type": "number",
+                        "example": 3
+                    },
+                    "costPrice": {
+                        "type": "number",
+                        "example": 1.1
+                    },
+                    "price": {
+                        "type": "number",
+                        "example": 1.43
+                    },
+                    "retailPrice": {
+                        "type": "number",
+                        "example": 4.5
+                    },
+                    "currency": {
+                        "type": "string",
+                        "example": "USD"
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "data-in-total"
+                    },
+                    "topUp": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "isActive": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "required": [
+                    "provider",
+                    "providerPlanId",
+                    "name",
+                    "slug",
+                    "durationDays",
+                    "dataGb",
+                    "costPrice",
+                    "price",
+                    "retailPrice",
+                    "currency"
+                ]
+            },
+            "Plan": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number"
+                    },
+                    "provider": {
+                        "type": "string",
+                        "example": "esimaccess"
+                    },
+                    "providerPlanId": {
+                        "type": "string",
+                        "example": "CKH002"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Spain 3GB 30Days"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "esimaccess-CKH002"
+                    },
+                    "countryCode": {
+                        "type": "string",
+                        "example": "ES"
+                    },
+                    "destinationId": {
+                        "type": "number",
+                        "example": 1
+                    },
+                    "destination": {
+                        "$ref": "#/components/schemas/Destination"
+                    },
+                    "regionId": {
+                        "type": "number",
+                        "example": 1
+                    },
+                    "region": {
+                        "$ref": "#/components/schemas/Region"
+                    },
+                    "durationDays": {
+                        "type": "number",
+                        "example": 30
+                    },
+                    "dataGb": {
+                        "type": "number",
+                        "example": 3
+                    },
+                    "costPrice": {
+                        "type": "number",
+                        "example": 1.1
+                    },
+                    "price": {
+                        "type": "number",
+                        "example": 1.43
+                    },
+                    "retailPrice": {
+                        "type": "number",
+                        "example": 4.5
+                    },
+                    "currency": {
+                        "type": "string",
+                        "example": "USD"
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "data-in-total"
+                    },
+                    "topUp": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "isCheapest": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "isActive": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "createdAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    },
+                    "updatedAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    },
+                    "deletedAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "id",
+                    "provider",
+                    "providerPlanId",
+                    "name",
+                    "slug",
+                    "durationDays",
+                    "dataGb",
+                    "costPrice",
+                    "price",
+                    "retailPrice",
+                    "currency",
+                    "type",
+                    "topUp",
+                    "isCheapest",
+                    "isActive",
+                    "createdAt",
+                    "updatedAt",
+                    "deletedAt"
+                ]
+            },
+            "InfinityPaginationPlanResponseDto": {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Plan"
+                        }
+                    },
+                    "hasNextPage": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "required": [
+                    "data",
+                    "hasNextPage"
+                ]
+            },
+            "UpdatePlanDto": {
+                "type": "object",
+                "properties": {
+                    "provider": {
+                        "type": "string",
+                        "example": "esimaccess"
+                    },
+                    "providerPlanId": {
+                        "type": "string",
+                        "example": "CKH002"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Spain 3GB 30Days"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "esimaccess-CKH002"
+                    },
+                    "countryCode": {
+                        "type": "string",
+                        "example": "ES"
+                    },
+                    "destinationId": {
+                        "type": "number",
+                        "example": 1
+                    },
+                    "regionId": {
+                        "type": "number",
+                        "example": 1
+                    },
+                    "durationDays": {
+                        "type": "number",
+                        "example": 30
+                    },
+                    "dataGb": {
+                        "type": "number",
+                        "example": 3
+                    },
+                    "costPrice": {
+                        "type": "number",
+                        "example": 1.1
+                    },
+                    "price": {
+                        "type": "number",
+                        "example": 1.43
+                    },
+                    "retailPrice": {
+                        "type": "number",
+                        "example": 4.5
+                    },
+                    "currency": {
+                        "type": "string",
+                        "example": "USD"
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "data-in-total"
+                    },
+                    "topUp": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "isActive": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                }
+            },
+            "CreatePlanPriceDto": {
+                "type": "object",
+                "properties": {
+                    "planId": {
+                        "type": "number",
+                        "example": 1
+                    },
+                    "currency": {
+                        "type": "string",
+                        "example": "USD"
+                    },
+                    "price": {
+                        "type": "number",
+                        "example": 9.99
+                    },
+                    "originalPrice": {
+                        "type": "number",
+                        "example": 14.99
+                    },
+                    "isActive": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "required": [
+                    "planId",
+                    "currency",
+                    "price"
+                ]
+            },
+            "PlanPrice": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number"
+                    },
+                    "planId": {
+                        "type": "number",
+                        "example": 1
+                    },
+                    "plan": {
+                        "$ref": "#/components/schemas/Plan"
+                    },
+                    "currency": {
+                        "type": "string",
+                        "example": "USD"
+                    },
+                    "price": {
+                        "type": "number",
+                        "example": 9.99
+                    },
+                    "originalPrice": {
+                        "type": "number",
+                        "example": 14.99
+                    },
+                    "isActive": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "createdAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    },
+                    "updatedAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    },
+                    "deletedAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "id",
+                    "planId",
+                    "currency",
+                    "price",
+                    "isActive",
+                    "createdAt",
+                    "updatedAt",
+                    "deletedAt"
+                ]
+            },
+            "InfinityPaginationPlanPriceResponseDto": {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PlanPrice"
+                        }
+                    },
+                    "hasNextPage": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "required": [
+                    "data",
+                    "hasNextPage"
+                ]
+            },
+            "UpdatePlanPriceDto": {
+                "type": "object",
+                "properties": {
+                    "planId": {
+                        "type": "number",
+                        "example": 1
+                    },
+                    "currency": {
+                        "type": "string",
+                        "example": "USD"
+                    },
+                    "price": {
+                        "type": "number",
+                        "example": 9.99
+                    },
+                    "originalPrice": {
+                        "type": "number",
+                        "example": 14.99
+                    },
+                    "isActive": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                }
+            },
+            "CreateOrderDto": {
+                "type": "object",
+                "properties": {
+                    "userId": {
+                        "type": "number",
+                        "example": 1
+                    },
+                    "orderNumber": {
+                        "type": "string",
+                        "example": "ORD-20260403-001"
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "pending"
+                    },
+                    "totalAmount": {
+                        "type": "number",
+                        "example": 99.99
+                    },
+                    "currency": {
+                        "type": "string",
+                        "example": "USD"
+                    },
+                    "paymentMethod": {
+                        "type": "string",
+                        "example": "credit_card"
+                    },
+                    "paymentId": {
+                        "type": "string",
+                        "example": "pi_3abc123"
+                    }
+                },
+                "required": [
+                    "userId",
+                    "orderNumber",
+                    "totalAmount",
+                    "currency"
+                ]
+            },
+            "Order": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number"
+                    },
+                    "userId": {
+                        "type": "number"
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/User"
+                    },
+                    "orderNumber": {
+                        "type": "string",
+                        "example": "ORD-20260403-001"
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "pending"
+                    },
+                    "totalAmount": {
+                        "type": "number",
+                        "example": 99.99
+                    },
+                    "currency": {
+                        "type": "string",
+                        "example": "USD"
+                    },
+                    "paymentMethod": {
+                        "type": "string",
+                        "example": "credit_card"
+                    },
+                    "paymentId": {
+                        "type": "string",
+                        "example": "pi_3abc123"
+                    },
+                    "createdAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    },
+                    "updatedAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    },
+                    "deletedAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "id",
+                    "userId",
+                    "user",
+                    "orderNumber",
+                    "status",
+                    "totalAmount",
+                    "currency",
+                    "createdAt",
+                    "updatedAt",
+                    "deletedAt"
+                ]
+            },
+            "InfinityPaginationOrderResponseDto": {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Order"
+                        }
+                    },
+                    "hasNextPage": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "required": [
+                    "data",
+                    "hasNextPage"
+                ]
+            },
+            "UpdateOrderDto": {
+                "type": "object",
+                "properties": {
+                    "userId": {
+                        "type": "number",
+                        "example": 1
+                    },
+                    "orderNumber": {
+                        "type": "string",
+                        "example": "ORD-20260403-001"
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "pending"
+                    },
+                    "totalAmount": {
+                        "type": "number",
+                        "example": 99.99
+                    },
+                    "currency": {
+                        "type": "string",
+                        "example": "USD"
+                    },
+                    "paymentMethod": {
+                        "type": "string",
+                        "example": "credit_card"
+                    },
+                    "paymentId": {
+                        "type": "string",
+                        "example": "pi_3abc123"
+                    }
+                }
+            },
+            "CreateOrderItemDto": {
+                "type": "object",
+                "properties": {
+                    "orderId": {
+                        "type": "number"
+                    },
+                    "planId": {
+                        "type": "number"
+                    },
+                    "planPriceId": {
+                        "type": "number"
+                    },
+                    "price": {
+                        "type": "number",
+                        "example": 9.99
+                    },
+                    "currency": {
+                        "type": "string",
+                        "example": "USD"
+                    },
+                    "quantity": {
+                        "type": "number",
+                        "example": 1
+                    }
+                },
+                "required": [
+                    "orderId",
+                    "planId",
+                    "planPriceId",
+                    "price",
+                    "currency"
+                ]
+            },
+            "OrderItem": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number"
+                    },
+                    "orderId": {
+                        "type": "number"
+                    },
+                    "planId": {
+                        "type": "number"
+                    },
+                    "plan": {
+                        "$ref": "#/components/schemas/Plan"
+                    },
+                    "planPriceId": {
+                        "type": "number"
+                    },
+                    "planPrice": {
+                        "$ref": "#/components/schemas/PlanPrice"
+                    },
+                    "price": {
+                        "type": "number",
+                        "example": 9.99
+                    },
+                    "currency": {
+                        "type": "string",
+                        "example": "USD"
+                    },
+                    "quantity": {
+                        "type": "number",
+                        "example": 1
+                    },
+                    "createdAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    },
+                    "updatedAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "id",
+                    "orderId",
+                    "planId",
+                    "planPriceId",
+                    "price",
+                    "currency",
+                    "quantity",
+                    "createdAt",
+                    "updatedAt"
+                ]
+            },
+            "InfinityPaginationOrderItemResponseDto": {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/OrderItem"
+                        }
+                    },
+                    "hasNextPage": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "required": [
+                    "data",
+                    "hasNextPage"
+                ]
+            },
+            "UpdateOrderItemDto": {
+                "type": "object",
+                "properties": {
+                    "orderId": {
+                        "type": "number"
+                    },
+                    "planId": {
+                        "type": "number"
+                    },
+                    "planPriceId": {
+                        "type": "number"
+                    },
+                    "price": {
+                        "type": "number",
+                        "example": 9.99
+                    },
+                    "currency": {
+                        "type": "string",
+                        "example": "USD"
+                    },
+                    "quantity": {
+                        "type": "number",
+                        "example": 1
+                    }
+                }
+            },
+            "CreateEsimDto": {
+                "type": "object",
+                "properties": {
+                    "orderItemId": {
+                        "type": "number"
+                    },
+                    "userId": {
+                        "type": "number"
+                    },
+                    "iccid": {
+                        "type": "string",
+                        "example": "8901234567890123456"
+                    },
+                    "smdpAddress": {
+                        "type": "string"
+                    },
+                    "activationCode": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "available"
+                    },
+                    "dataUsed": {
+                        "type": "string",
+                        "example": "500MB"
+                    },
+                    "dataTotal": {
+                        "type": "string",
+                        "example": "1GB"
+                    },
+                    "expiresAt": {
+                        "type": "object"
+                    },
+                    "activatedAt": {
+                        "type": "object"
+                    }
+                },
+                "required": [
+                    "iccid"
+                ]
+            },
+            "Esim": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number"
+                    },
+                    "orderItemId": {
+                        "type": "number"
+                    },
+                    "userId": {
+                        "type": "number"
+                    },
+                    "iccid": {
+                        "type": "string",
+                        "example": "8901234567890123456"
+                    },
+                    "smdpAddress": {
+                        "type": "string"
+                    },
+                    "activationCode": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "available"
+                    },
+                    "dataUsed": {
+                        "type": "string",
+                        "example": "500MB"
+                    },
+                    "dataTotal": {
+                        "type": "string",
+                        "example": "1GB"
+                    },
+                    "expiresAt": {
+                        "type": "object"
+                    },
+                    "activatedAt": {
+                        "type": "object"
+                    },
+                    "createdAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    },
+                    "updatedAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    },
+                    "deletedAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "id",
+                    "iccid",
+                    "status",
+                    "createdAt",
+                    "updatedAt",
+                    "deletedAt"
+                ]
+            },
+            "InfinityPaginationEsimResponseDto": {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Esim"
+                        }
+                    },
+                    "hasNextPage": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "required": [
+                    "data",
+                    "hasNextPage"
+                ]
+            },
+            "UpdateEsimDto": {
+                "type": "object",
+                "properties": {
+                    "orderItemId": {
+                        "type": "number"
+                    },
+                    "userId": {
+                        "type": "number"
+                    },
+                    "iccid": {
+                        "type": "string",
+                        "example": "8901234567890123456"
+                    },
+                    "smdpAddress": {
+                        "type": "string"
+                    },
+                    "activationCode": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "available"
+                    },
+                    "dataUsed": {
+                        "type": "string",
+                        "example": "500MB"
+                    },
+                    "dataTotal": {
+                        "type": "string",
+                        "example": "1GB"
+                    },
+                    "expiresAt": {
+                        "type": "object"
+                    },
+                    "activatedAt": {
+                        "type": "object"
+                    }
+                }
+            },
+            "CreateProviderSyncLogDto": {
+                "type": "object",
+                "properties": {
+                    "provider": {
+                        "type": "string",
+                        "example": "airalo"
+                    },
+                    "syncType": {
+                        "type": "string",
+                        "example": "plans"
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "started"
+                    },
+                    "itemsSynced": {
+                        "type": "number"
+                    },
+                    "errorMessage": {
+                        "type": "string"
+                    },
+                    "startedAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    },
+                    "completedAt": {
+                        "type": "object"
+                    }
+                },
+                "required": [
+                    "provider",
+                    "syncType",
+                    "startedAt"
+                ]
+            },
+            "ProviderSyncLog": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number"
+                    },
+                    "provider": {
+                        "type": "string",
+                        "example": "airalo"
+                    },
+                    "syncType": {
+                        "type": "string",
+                        "example": "plans"
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "started"
+                    },
+                    "itemsSynced": {
+                        "type": "number",
+                        "example": 150
+                    },
+                    "errorMessage": {
+                        "type": "string"
+                    },
+                    "startedAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    },
+                    "completedAt": {
+                        "type": "object"
+                    },
+                    "createdAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "id",
+                    "provider",
+                    "syncType",
+                    "status",
+                    "startedAt",
+                    "createdAt"
+                ]
+            },
+            "InfinityPaginationProviderSyncLogResponseDto": {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ProviderSyncLog"
+                        }
+                    },
+                    "hasNextPage": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "required": [
+                    "data",
+                    "hasNextPage"
+                ]
+            },
+            "UpdateProviderSyncLogDto": {
+                "type": "object",
+                "properties": {
+                    "provider": {
+                        "type": "string",
+                        "example": "airalo"
+                    },
+                    "syncType": {
+                        "type": "string",
+                        "example": "plans"
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "started"
+                    },
+                    "itemsSynced": {
+                        "type": "number"
+                    },
+                    "errorMessage": {
+                        "type": "string"
+                    },
+                    "startedAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    },
+                    "completedAt": {
+                        "type": "object"
+                    }
+                }
+            },
+            "CreateProfitMarginDto": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Default Margin"
+                    },
+                    "percentage": {
+                        "type": "number",
+                        "example": 30
+                    },
+                    "isActive": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "required": [
+                    "name",
+                    "percentage"
+                ]
+            },
+            "ProfitMargin": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Default Margin"
+                    },
+                    "percentage": {
+                        "type": "number",
+                        "example": 30
+                    },
+                    "isActive": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "createdAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    },
+                    "updatedAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    },
+                    "deletedAt": {
+                        "format": "date-time",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "id",
+                    "name",
+                    "percentage",
+                    "isActive",
+                    "createdAt",
+                    "updatedAt",
+                    "deletedAt"
+                ]
+            },
+            "InfinityPaginationProfitMarginResponseDto": {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ProfitMargin"
+                        }
+                    },
+                    "hasNextPage": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "required": [
+                    "data",
+                    "hasNextPage"
+                ]
+            },
+            "UpdateProfitMarginDto": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Default Margin"
+                    },
+                    "percentage": {
+                        "type": "number",
+                        "example": 30
+                    },
+                    "isActive": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                }
+            }
+        }
+    }
+}
