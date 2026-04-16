@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useMemo } from "react";
 import { CheckCircle, XCircle, Clock, AlertTriangle, ArrowLeft, Home } from "lucide-react";
@@ -42,8 +43,15 @@ export default function PaymentResultPage({
 }: {
   params: { lang: "en" | "vi" };
 }) {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-spin w-8 h-8 border-2 border-white/20 border-t-white rounded-full" /></div>}>
+      <PaymentResultContent lang={params.lang} />
+    </Suspense>
+  );
+}
+
+function PaymentResultContent({ lang }: { lang: "en" | "vi" }) {
   const searchParams = useSearchParams();
-  const lang = params.lang;
 
   const result = useMemo(() => {
     const queryParams: Record<string, string> = {};
