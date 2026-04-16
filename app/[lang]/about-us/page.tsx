@@ -27,8 +27,10 @@ export default async function AboutUsPage({
       <PartnerBar dict={dict.partnerBar} />
       <AboutValues dict={about.values} />
       <AboutTimeline dict={about.timeline} />
-      <AboutCrew dict={about.crew} />
-      <AboutLife dict={about.life} />
+      <div className="bg-black">
+        <AboutCrew dict={about.crew} />
+        <AboutLife dict={about.life} />
+      </div>
       <AboutBanner dict={about.banner} />
       <FooterSection dict={dict.footer} />
     </main>

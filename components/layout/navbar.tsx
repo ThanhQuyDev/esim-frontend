@@ -551,7 +551,7 @@ export function Navbar({ lang, dict }: NavbarProps) {
 
       {/* ===== Main Header ===== */}
       <header
-        className="z-40 top-0 sticky bg-[rgba(255,255,255,0.85)] backdrop-blur-[98px] [-webkit-backdrop-filter:blur(98px)]"
+        className="z-40 top-0 sticky bg-[rgba(255,255,255,0.1)] backdrop-blur-[98px] [-webkit-backdrop-filter:blur(98px)]"
         id="header"
         ref={dropdownRef}
       >

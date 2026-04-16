@@ -24,7 +24,7 @@ export default async function Home({
     <main role="main">
       <HeroSection dict={dict.hero} />
       <PartnerBar dict={dict.partnerBar} />
-      <WhatIsEsim dict={dict.whatIsEsim} />
+      <WhatIsEsim dict={dict.whatIsEsim} lang={params.lang} />
       <DestinationsSection dict={dict.destinations} lang={params.lang} />
       <FeaturesSection dict={dict.whyChoose} lang={params.lang} />
       <SecurityFeatures dict={dict.security} />

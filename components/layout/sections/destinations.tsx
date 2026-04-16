@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { ChevronRight, MapPin, Loader2 } from "lucide-react";
-import { Section } from "@/components/ui/section";
+import { useState, useRef } from "react";
+import { MapPin, Loader2 } from "lucide-react";
 import { useDestinations } from "@/lib/hooks";
 import type { Locale } from "@/lib/i18n-config";
 
@@ -11,8 +10,29 @@ interface DestinationsSectionProps {
   lang: Locale;
 }
 
+function ChevronDownIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      role="img"
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      className={className}
+    >
+      <title>Chevron right</title>
+      <path
+        fill="currentColor"
+        fillRule="evenodd"
+        d="M13.2151 6.8326L8.43758 11.4101C8.27758 11.5451 8.12758 11.6001 8.00008 11.6001C7.87258 11.6001 7.70083 11.5446 7.58533 11.4329L2.78533 6.8326C2.54543 6.6051 2.53763 6.2026 2.76733 5.9851C2.99546 5.74447 3.37683 5.73665 3.61508 5.96713L8.00008 10.1701L12.3851 5.9701C12.6226 5.73962 13.0046 5.74745 13.2328 5.98807C13.4626 6.2026 13.4551 6.6051 13.2151 6.8326Z"
+      />
+    </svg>
+  );
+}
+
 export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
   const [activeTab, setActiveTab] = useState<"country" | "region" | "ultra">("country");
+  const tabIndicatorRef = useRef<HTMLDivElement>(null);
 
   const { data: destinations = [], isLoading } = useDestinations(
     undefined,
@@ -21,94 +41,182 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
   );
 
   const tabs = [
-    { key: "country" as const, label: dict.tabs.country },
-    { key: "region" as const, label: dict.tabs.region },
-    { key: "ultra" as const, label: dict.tabs.ultraPlan, badge: dict.new },
+    { key: "country" as const, label: dict.tabs.country, testId: "country-list-tab-chip-country" },
+    { key: "region" as const, label: dict.tabs.region, testId: "country-list-tab-chip-region" },
+    { key: "ultra" as const, label: dict.tabs.ultraPlan, badge: dict.new, testId: "country-list-tab-chip-ultra" },
   ];
 
+  // Calculate tab indicator position based on active tab index
+  const activeIndex = tabs.findIndex((t) => t.key === activeTab);
+
   return (
-    <Section id="destinations" background="secondary">
-      <div className="text-center mb-10">
-        <h2 className="heading-xl text-text-primary">{dict.title}</h2>
-      </div>
-
-      {/* Tab Pills */}
-      <div className="flex justify-center mb-8">
-        <div className="inline-flex bg-bg-primary rounded-full p-1 border border-border-primary">
-          {tabs.map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
-              className={`relative body-sm-medium md:body-md-medium whitespace-nowrap px-4 py-2 rounded-full min-w-[60px] transition-colors ${
-                activeTab === tab.key
-                  ? "bg-bg-accent text-text-primary-on-color"
-                  : "text-text-secondary hover:text-text-primary"
-              }`}
+    <div
+      data-section="CountryList"
+      data-testid="section-CountryList"
+      className="relative scroll-mt-20 xl:scroll-mt-24"
+    >
+      <div className="py-16">
+        {/* Header */}
+        <div className="mx-4 sm:mx-auto">
+          <div className="container grid sm:gap-x-8 grid-cols-12 mb-10 mx-auto">
+            <div className="col-span-12 md:col-span-8">
+              <p className="body-md-medium text-text-disabled mb-4">
+                {dict.subtitle}
+              </p>
+              <div className="grid grid-cols-1 gap-y-6">
+                <h2 className="heading-xl">{dict.title}</h2>
+                <p className="body-md text-text-secondary">{dict.description}</p>
+              </div>
+            </div>
+            {/* Desktop CTA */}
+            <div
+              className="hidden lg:flex items-end justify-end col-span-4"
+              data-testid="section-button-desktop"
             >
-              <span className="flex items-center gap-1.5">
-                {tab.label}
-                {tab.badge && (
-                  <span className="inline-flex px-1.5 py-0.5 bg-bg-brand-yellow text-text-primary body-2xs-medium rounded-full">
-                    {tab.badge}
-                  </span>
-                )}
-              </span>
-            </button>
-          ))}
+              <a
+                role="button"
+                className="max-md:w-full text-center inline-block text-text-primary bg-bg-accent hover:bg-bg-accent-hover border border-bg-accent hover:border-bg-accent-hover active:bg-bg-accent-active active:border-bg-accent-active box-border !border-[#d1b700] touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7 w-full sm:w-auto"
+                data-testid="view-all-destinations-cta"
+                href="#"
+              >
+                {dict.viewAllDestinations}
+              </a>
+            </div>
+          </div>
         </div>
-      </div>
 
-      {/* Destination Grid */}
-      {isLoading ? (
-        <div className="flex items-center justify-center py-16">
-          <Loader2 className="w-8 h-8 text-text-tertiary animate-spin" />
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {destinations.map((dest: any) => (
-            <a
-              key={dest.id}
-              href="#"
-              className="flex items-center gap-3 p-4 bg-bg-primary rounded-sm border border-border-primary hover:border-border-focus transition-colors group"
-            >
-              <div className="w-10 h-7 rounded overflow-hidden flex-shrink-0 bg-bg-secondary">
-                {dest.flagUrl ? (
-                  <img
-                    src={dest.flagUrl}
-                    alt={`${dest.name} flag`}
-                    loading="lazy"
-                    className="w-full h-full object-cover"
+        {/* Tabs + Grid */}
+        <div className="mx-4 sm:mx-auto">
+          <div className="container mx-auto">
+            <div>
+              {/* Tab Pills */}
+              <div className="mb-10 overflow-x-auto scrollbar-none">
+                <div className="relative flex gap-1 w-fit p-1 border border-border-secondary rounded-full">
+                  {/* Animated indicator */}
+                  <div
+                    ref={tabIndicatorRef}
+                    className="absolute inset-0 pointer-events-none z-[1] bg-bg-dark rounded-full transition-all duration-300 ease-in-out"
+                    style={{
+                      width: activeIndex === 2 ? "130px" : "97px",
+                      height: "32px",
+                      top: "4px",
+                      transform: `translateX(${4 + activeIndex * (97 + 4)}px)`,
+                    }}
                   />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <MapPin className="w-4 h-4 text-text-tertiary" />
-                  </div>
-                )}
+                  {tabs.map((tab) => (
+                    <button
+                      key={tab.key}
+                      data-testid={tab.testId}
+                      data-is-active={activeTab === tab.key}
+                      onClick={() => setActiveTab(tab.key)}
+                      className={`relative z-[1] body-sm-medium whitespace-nowrap md:body-md-medium px-4 py-1 hover:text-text-primary focus-visible:outline-hidden focus-visible:shadow-focus rounded-full transition-[color] bg-transparent ${activeTab === tab.key
+                          ? "text-white"
+                          : "text-text-primary"
+                        }`}
+                    >
+                      {tab.badge ? (
+                        <span className="flex items-center gap-2">
+                          {tab.label}
+                          <span className="text-center whitespace-nowrap rounded-full inline-block bg-bg-accent text-text-primary py-0.5 px-2 body-2xs-medium">
+                            {tab.badge}
+                          </span>
+                        </span>
+                      ) : (
+                        tab.label
+                      )}
+                    </button>
+                  ))}
+                </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="body-md-medium text-text-primary truncate">
-                  {dest.name}
-                </p>
-                <p className="body-sm text-text-tertiary">
-                  {dict.from} US$3.99
-                </p>
-              </div>
-              <ChevronRight className="w-4 h-4 text-text-disabled group-hover:text-text-primary transition-colors flex-shrink-0" />
-            </a>
-          ))}
-        </div>
-      )}
 
-      {/* See All Plans */}
-      <div className="text-center mt-8">
-        <a
-          href="#"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-bg-accent text-text-primary-on-color body-md-medium rounded-full hover:bg-bg-accent-hover transition-colors"
-        >
-          {dict.seeAllPlans}
-          <ChevronRight className="w-4 h-4" />
-        </a>
+              {/* Destination Grid */}
+              {isLoading ? (
+                <div className="flex items-center justify-center py-16">
+                  <Loader2 className="w-8 h-8 text-text-tertiary animate-spin" />
+                </div>
+              ) : (
+                <div
+                  id="country-list-items"
+                  className="grid md:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-6 w-full"
+                >
+                  {destinations.map((dest: any, index: number) => (
+                    <div
+                      key={dest.id}
+                      id={dest.code || dest.id}
+                      className={index >= 5 ? "hidden md:block" : undefined}
+                    >
+                      <a
+                        className="align-bottom focus-visible:outline-hidden focus-visible:shadow-focus text-text-primary active:text-text-primary block group ease-out h-full rounded-sm transition-colors hover:text-text-primary hover:bg-bg-tertiary bg-bg-primary"
+                        href="#"
+                        data-testid={dest.code || dest.id}
+                      >
+                        <div
+                          className="flex flex-col items-start text-left gap-4 relative border-none p-4 h-full rounded-sm transition-colors hover:text-text-primary hover:bg-bg-tertiary bg-bg-primary"
+                          data-testid={`destination-card-${dest.code || dest.id}`}
+                        >
+                          <div className="w-full h-full flex gap-4 items-center">
+                            {/* Flag */}
+                            <div className="w-[36px] h-[36px] relative overflow-hidden shrink-0 rounded-full">
+                              {dest.flagUrl ? (
+                                <>
+                                  <img
+                                    alt={`${dest.code || dest.name} flag`}
+                                    loading="lazy"
+                                    decoding="async"
+                                    className="w-full h-full object-cover absolute inset-0"
+                                    src={dest.flagUrl}
+                                  />
+                                  <div className="absolute inset-0 rounded-full pointer-events-none border border-[rgba(0,0,0,0.1)]" />
+                                </>
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-bg-secondary">
+                                  <MapPin className="w-4 h-4 text-text-tertiary" />
+                                </div>
+                              )}
+                            </div>
+                            {/* Name + Price */}
+                            <div className="flex flex-col gap-0.5">
+                              <p className="body-lg-medium">{dest.name}</p>
+                              <p className="body-md text-text-tertiary">
+                                <span className="whitespace-nowrap">
+                                  {dict.from} US$3.99
+                                </span>
+                              </p>
+                            </div>
+                            {/* Chevron */}
+                            <div className="ml-auto">
+                              <ChevronDownIcon className="mt-1 -rotate-90 pointer-events-none text-text-tertiary" />
+                            </div>
+                          </div>
+                        </div>
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile CTA */}
+        <div className="mx-4 sm:mx-auto">
+          <div className="container mx-auto">
+            <div
+              className="flex justify-center lg:hidden mt-10"
+              data-testid="section-button-mobile"
+            >
+              <a
+                role="button"
+                className="max-md:w-full text-center inline-block  text-text-primary-on-color bg-bg-accent hover:bg-bg-accent-hover border border-bg-accent hover:border-bg-accent-hover active:bg-bg-accent-active active:border-bg-accent-active box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7 w-full sm:w-auto"
+                data-testid="view-all-destinations-cta"
+                href="#"
+              >
+                {dict.viewAllDestinations}
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
-    </Section>
+    </div>
   );
 }

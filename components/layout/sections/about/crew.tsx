@@ -38,7 +38,7 @@ export function AboutCrew({ dict }: AboutCrewProps) {
                     <h2 className="heading-xl text-text-primary-on-color">
                       {dict.title}
                     </h2>
-                    <p className="body-md text-text-secondary-on-color">
+                    <p className="body-md text-secondary-on-color">
                       {dict.subtitle}
                     </p>
                   </div>
@@ -88,7 +88,7 @@ export function AboutCrew({ dict }: AboutCrewProps) {
                           </div>
                           <footer className="flex flex-col gap-1">
                             <p className="body-md-medium not-italic">{member.name}</p>
-                            <p className="body-sm text-text-secondary-on-color">
+                            <p className="body-sm text-secondary-on-color">
                               {member.role}
                             </p>
                           </footer>

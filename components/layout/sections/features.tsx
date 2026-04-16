@@ -1,8 +1,12 @@
-"use client";
-
-import { Globe, Smartphone, Ban, CreditCard, Bell, Map } from "lucide-react";
-import { Section } from "@/components/ui/section";
-import { useWhyChooseUs } from "@/lib/hooks";
+import {
+  Layers,
+  CheckCircle,
+  ClipboardCheck,
+  CreditCard,
+  BellRing,
+  Globe,
+} from "lucide-react";
+import Link from "next/link";
 import type { Locale } from "@/lib/i18n-config";
 
 interface FeaturesSectionProps {
@@ -11,55 +15,148 @@ interface FeaturesSectionProps {
 }
 
 const iconMap: Record<string, React.ElementType> = {
+  layers: Layers,
+  "circle-check": CheckCircle,
+  "ballot-check": ClipboardCheck,
+  "sim-card": CreditCard,
+  "bell-ring": BellRing,
+  earth: Globe,
+  // legacy fallbacks
   globe: Globe,
-  smartphone: Smartphone,
-  ban: Ban,
+  smartphone: CheckCircle,
+  ban: ClipboardCheck,
   sim: CreditCard,
-  bell: Bell,
-  map: Map,
+  bell: BellRing,
+  map: Globe,
 };
 
-export function FeaturesSection({ dict, lang }: FeaturesSectionProps) {
-  const { data: apiFeatures } = useWhyChooseUs(lang);
+// Helper to render description with links
+function DescriptionWithLinks({ text }: { text: string }) {
+  // Parse text for markdown-style links: [text](url)
+  const parts = text.split(/(\[.*?\]\(.*?\))/g);
+  
+  return (
+    <>
+      {parts.map((part, idx) => {
+        const linkMatch = part.match(/\[(.*?)\]\((.*?)\)/);
+        if (linkMatch) {
+          const [, linkText, url] = linkMatch;
+          return (
+            <Link
+              key={idx}
+              href={url}
+              className="underline transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus"
+            >
+              {linkText}
+            </Link>
+          );
+        }
+        return <span key={idx}>{part}</span>;
+      })}
+    </>
+  );
+}
 
-  const features = apiFeatures && apiFeatures.length > 0
-    ? apiFeatures.map((f: any) => ({
-        icon: f.icon || "globe",
-        title: f.title,
-        description: f.description,
-      }))
-    : dict.features;
+export function FeaturesSection({ dict, lang }: FeaturesSectionProps) {
+  const features = dict.features ?? [];
 
   return (
-    <Section background="primary">
-      <div className="text-center mb-12">
-        <h2 className="heading-xl text-text-primary mb-4">{dict.title}</h2>
-        <p className="body-lg text-text-secondary max-w-2xl mx-auto">
-          {dict.subtitle}
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {features.map((feature: any, i: number) => {
-          const Icon = iconMap[feature.icon] || Globe;
-          return (
-            <div
-              key={i}
-              className="p-6 bg-bg-secondary rounded-md border border-border-primary hover:border-border-focus transition-colors group"
-            >
-              <div className="w-12 h-12 rounded-lg bg-bg-blue-100 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-                <Icon className="w-6 h-6 text-text-primary" />
-              </div>
-              <h3 className="heading-sm text-text-primary mb-2">
-                {feature.title}
-              </h3>
-              <p className="body-md text-text-secondary">
-                {feature.description}
+    <div
+      data-section="StayConnected"
+      data-testid="section-StayConnected"
+      className="relative scroll-mt-20 xl:scroll-mt-24"
+    >
+      <div className="py-16">
+        {/* Header */}
+        <div className="mx-4 sm:mx-auto">
+          <div className="container grid sm:gap-x-8 grid-cols-12 mb-10 mx-auto">
+            <div className="col-span-12 md:col-span-8">
+              <p className="body-md-medium text-disabled mb-4">
+                {dict.badge}
               </p>
+              <div className="grid grid-cols-1 gap-y-6">
+                <h2 className="heading-xl text-primary">
+                  {dict.title}
+                </h2>
+              </div>
             </div>
-          );
-        })}
+          </div>
+        </div>
+
+        {/* Feature cards */}
+        <div className="mx-4 sm:mx-auto">
+          <div className="container mx-auto">
+            {/* Desktop grid (md+) */}
+            <div className="sm:gap-x-8 md:grid-cols-3 grid-cols-1 gap-y-8 hidden md:grid">
+              {features.map((feature: any, i: number) => {
+                const Icon = iconMap[feature.icon] || Globe;
+                return (
+                  <div key={i}>
+                    <div className="h-full w-full flex flex-col justify-start gap-y-4">
+                      <div>
+                        <div className="h-full w-full flex flex-col text-start items-start justify-start gap-y-6">
+                          <div>
+                            <Icon className="lg:text-[32px] text-[24px] w-6 h-6 lg:w-8 lg:h-8 text-primary" />
+                          </div>
+                          <div>
+                            <h3 className="body-lg-medium text-primary">
+                              {feature.title}
+                            </h3>
+                          </div>
+                        </div>
+                      </div>
+                      <div>
+                        <p className="body-md" style={{ color: '#4d4e56' }}>
+                          <DescriptionWithLinks text={feature.description} />
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Mobile carousel (below md) */}
+            <div className="md:hidden max-sm:-mx-4 max-sm:px-4 overflow-hidden">
+              <div className="flex gap-4 overflow-x-auto scrollbar-none snap-x snap-mandatory pb-4">
+                {features.map((feature: any, i: number) => {
+                  const Icon = iconMap[feature.icon] || Globe;
+                  return (
+                    <div
+                      key={i}
+                      className="snap-start shrink-0 max-w-[87%] min-[480px]:max-w-[71%] sm:max-w-[62%]"
+                    >
+                      <div className="h-full w-full flex flex-col justify-start gap-y-4">
+                        <div>
+                          <div className="h-full w-full flex flex-col text-start items-start justify-start gap-y-6">
+                            <div>
+                              <Icon className="text-[24px] w-6 h-6 text-primary" />
+                            </div>
+                            <div>
+                              <p
+                                className="body-lg-medium text-primary"
+                                role="heading"
+                                aria-level={3}
+                              >
+                                {feature.title}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        <div>
+                          <p className="body-md" style={{ color: '#4d4e56' }}>
+                            <DescriptionWithLinks text={feature.description} />
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </Section>
+    </div>
   );
 }

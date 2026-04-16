@@ -19,7 +19,7 @@ export function AboutValues({ dict }: AboutValuesProps) {
       <div className="absolute top-0 group-first/section:-top-24 bottom-0 w-full">
         <div className="w-full h-full bg-bg-dark" />
       </div>
-      <div className="relative">
+      <div className="relative bg-black">
         <div className="py-16">
           {/* Header */}
           <div className="mx-4 sm:mx-auto">
@@ -29,7 +29,7 @@ export function AboutValues({ dict }: AboutValuesProps) {
                   <h2 className="heading-xl text-text-primary-on-color">
                     {dict.title}
                   </h2>
-                  <p className="body-md text-text-secondary-on-color">
+                  <p className="body-md text-secondary-on-color">
                     {dict.subtitle}
                   </p>
                 </div>
@@ -47,12 +47,12 @@ export function AboutValues({ dict }: AboutValuesProps) {
                     <div key={i}>
                       <div className="h-full w-full flex flex-col justify-start gap-y-4">
                         <div className="flex flex-col text-start items-start justify-start gap-y-6">
-                          <Icon className="lg:w-8 lg:h-8 w-6 h-6 text-accent" />
+                          <Icon className="lg:w-8 lg:h-8 w-6 h-6 text-[#fff500]" />
                           <p className="body-lg-medium text-text-primary-on-color">
                             {item.title}
                           </p>
                         </div>
-                        <p className="body-md text-text-secondary-on-color">
+                        <p className="body-md text-secondary-on-color">
                           {item.description}
                         </p>
                       </div>
@@ -78,12 +78,12 @@ export function AboutValues({ dict }: AboutValuesProps) {
                       >
                         <div className="h-full w-full flex flex-col justify-start gap-y-4">
                           <div className="flex flex-col text-start items-start justify-start gap-y-6">
-                            <Icon className="lg:w-8 lg:h-8 w-6 h-6 text-accent" />
+                            <Icon className="lg:w-8 lg:h-8 w-6 h-6 text-[#fff500]" />
                             <p className="body-lg-medium text-text-primary-on-color">
                               {item.title}
                             </p>
                           </div>
-                          <p className="body-md text-text-secondary-on-color">
+                          <p className="body-md text-secondary-on-color">
                             {item.description}
                           </p>
                         </div>

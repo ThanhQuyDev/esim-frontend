@@ -75,10 +75,10 @@ export function EsimSetup({ dict }: EsimSetupProps) {
                     const imgKey = activeTab === 0 ? "iphone" : "android";
                     const images = stepImages[imgKey] || stepImages.iphone;
                     return (
-                      <div key={i} className="flex flex-col items-start text-left relative h-full overflow-hidden rounded-sm bg-blue-50">
+                      <div key={i} className="flex flex-col items-start text-left relative h-full overflow-hidden rounded-sm bg-blue-100">
                         <div className="p-6 lg:pb-3">
                           <div className="pb-4 lg:pb-6">
-                            <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-bg-secondary">
+                            <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-white">
                               <p className="body-md-medium text-text-primary">{i + 1}</p>
                             </div>
                           </div>

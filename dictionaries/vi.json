@@ -34,152 +34,168 @@
   },
   "whatIsEsim": {
     "title": "eSIM là gì?",
-    "description": "eSIM (SIM nhúng) là SIM kỹ thuật số cho phép bạn kích hoạt gói cước di động mà không cần sử dụng SIM vật lý. Với Saily, bạn có thể tải gói dữ liệu eSIM cho điểm đến du lịch và kết nối internet ngay lập tức.",
-    "imageAlt": "Minh họa eSIM"
+    "descriptionBefore": "",
+    "linkText": "eSIM",
+    "descriptionAfter": " là SIM kỹ thuật số cho phép bạn chuyển đổi nhà mạng và sử dụng nhiều gói cước di động mà không cần đổi thẻ. Hầu hết điện thoại mới đều hỗ trợ eSIM, và việc cài đặt chỉ mất vài thao tác.",
+    "imageAlt": "Thẻ eSIM với gói dữ liệu đang hoạt động."
   },
   "destinations": {
+    "subtitle": "Bạn đang đi du lịch đâu?",
     "title": "Chọn điểm đến du lịch của bạn",
+    "description": "Chọn gói dữ liệu di động cho chuyến đi của bạn.",
     "tabs": {
       "country": "Quốc gia",
       "region": "Khu vực",
       "ultraPlan": "Ultra Plan"
     },
     "from": "Từ",
-    "seeAllPlans": "Xem tất cả gói",
+    "viewAllDestinations": "Xem tất cả điểm đến",
     "new": "Mới"
   },
   "whyChoose": {
-    "badge": "Tại sao chọn Saily",
-    "title": "Kết nối mọi nơi với Saily",
-    "subtitle": "Tận hưởng kết nối liền mạch mọi nơi bạn đến với dịch vụ eSIM đáng tin cậy.",
+    "badge": "Tại sao chọn Saily?",
+    "title": "Luôn kết nối khi đi du lịch",
     "features": [
       {
-        "icon": "globe",
+        "icon": "layers",
         "title": "Gói dữ liệu quốc tế",
-        "description": "Chọn từ các gói dữ liệu tại 150+ quốc gia và khu vực trên toàn thế giới."
+        "description": "Nhận dữ liệu di động phù hợp với ngân sách và lịch trình của bạn. Từ 1 GB đến gói không giới hạn, Saily lo hết!"
       },
       {
-        "icon": "smartphone",
+        "icon": "circle-check",
         "title": "Dễ sử dụng",
-        "description": "Cài đặt eSIM trong vài phút. Không cần SIM vật lý."
+        "description": "Chỉ cần [tải ứng dụng Saily eSIM](/vi/what-is-esim), cài đặt eSIM và mua gói dữ liệu — nó sẽ tự động kích hoạt khi bạn đến điểm đến."
       },
       {
-        "icon": "ban",
+        "icon": "ballot-check",
         "title": "Tránh phí chuyển vùng",
-        "description": "Tiết kiệm chi phí chuyển vùng quốc tế với gói dữ liệu địa phương giá rẻ."
+        "description": "Nếu bạn muốn tránh phí chuyển vùng đắt đỏ, công nghệ eSIM là một lựa chọn tốt. Biết trước chi phí kết nối internet trước khi khởi hành!"
       },
       {
-        "icon": "sim",
+        "icon": "sim-card",
         "title": "Một eSIM cho mọi chuyến đi",
-        "description": "Sử dụng một eSIM duy nhất cho tất cả chuyến đi. Chỉ cần chuyển gói dữ liệu."
+        "description": "Thêm điểm đến mới vào eSIM Saily hiện có — không cần cài đặt eSIM mới mỗi lần. Chỉ cần nạp thêm và kết nối!"
       },
       {
-        "icon": "bell",
-        "title": "Cảnh báo sử dụng dữ liệu",
-        "description": "Luôn cập nhật về việc sử dụng dữ liệu với thông báo thời gian thực."
+        "icon": "bell-ring",
+        "title": "Nhận cảnh báo sử dụng dữ liệu",
+        "description": "Đừng mạo hiểm hết dữ liệu eSIM vào lúc tệ nhất — chúng tôi sẽ thông báo khi bạn đã sử dụng 80% gói của mình."
       },
       {
-        "icon": "map",
+        "icon": "earth",
         "title": "Gói toàn cầu và khu vực",
-        "description": "Chọn gói theo quốc gia hoặc gói khu vực bao phủ nhiều điểm đến."
+        "description": "Luôn trực tuyến mọi nơi bạn đến — nhận [gói dữ liệu eSIM Toàn cầu](https://saily.com/esim-global/) hoặc [gói dữ liệu eSIM cho Châu Âu](https://saily.com/esim-europe/) để khám phá toàn bộ khu vực."
       }
     ]
   },
   "security": {
-    "title": "Kết nối tức thì và duyệt web an toàn hơn",
-    "cta": "Dùng Saily",
+    "title": "Kết nối tức thì và duyệt web an toàn hơn với Saily",
+    "subtitle": "Bạn thường xuyên đi du lịch, sống ở nước ngoài, hay đơn giản cần dữ liệu di động đáng tin cậy khi di chuyển? Saily giúp bạn dễ dàng kết nối, dù bạn ở bất cứ đâu.",
+    "cta": "Xem tất cả điểm đến",
+    "learnMore": "Tìm hiểu thêm",
     "features": [
       {
         "title": "Kết nối ngay lập tức",
-        "description": "Kích hoạt eSIM và kết nối internet trong vài giây. Không cần chờ đợi tại sân bay."
+        "description": "Saily là giải pháp không rắc rối — chỉ cần chọn gói dữ liệu và sẵn sàng du lịch! Khi bạn đến điểm đến, bạn có thể lên mạng ngay lập tức.",
+        "imageAlt": "eSIM đã cài đặt, kích hoạt gói dữ liệu ngay tại điểm đến."
       },
       {
         "title": "Không cần xếp hàng",
-        "description": "Bỏ qua phiền phức mua SIM vật lý tại điểm đến."
+        "description": "Mua SIM tại sân bay hay ga tàu có thể rất phiền phức. Với eSIM, bạn không cần xếp hàng hay giao dịch với những người bán SIM không đáng tin cậy.",
+        "imageAlt": "Một phụ nữ chọn gói eSIM."
       },
       {
         "title": "Bảo vệ trực tuyến",
-        "description": "Duyệt web an toàn với tính năng bảo mật tích hợp bảo vệ dữ liệu khi du lịch."
+        "description": "Khi ở nước ngoài, đôi khi lựa chọn internet duy nhất là mạng Wi-Fi chậm ở quán cà phê. Với gói dữ liệu eSIM, bạn luôn có kết nối an toàn và đáng tin cậy.",
+        "imageAlt": "Tính năng bảo mật của Saily bao gồm chặn quảng cáo, vị trí ảo và bảo vệ web."
       }
     ]
   },
   "howItWorks": {
-    "title": "Cách Saily hoạt động",
+    "subtitle": "Cách sử dụng dịch vụ eSIM Saily",
+    "title": "Saily hoạt động như thế nào?",
+    "description": "Bạn chưa có ứng dụng Saily eSIM? Tải từ App Store hoặc Google Play.",
     "steps": [
       {
         "number": "1",
-        "title": "Chọn điểm đến",
-        "description": "Chọn gói dữ liệu cho quốc gia hoặc khu vực bạn sẽ đến."
+        "title": "Chọn gói dữ liệu Saily cho chuyến đi",
+        "description": "Chọn điểm đến và chọn gói dữ liệu eSIM du lịch của bạn.",
+        "imageAlt": "Bước 1 cài đặt eSIM: Chọn gói dữ liệu."
       },
       {
         "number": "2",
-        "title": "Cài đặt eSIM",
-        "description": "Tải và cài đặt hồ sơ eSIM trên thiết bị tương thích."
+        "title": "Tải Saily và cài đặt eSIM",
+        "description": "Cài đặt eSIM trên thiết bị của bạn bằng cách làm theo hướng dẫn trong ứng dụng.",
+        "imageAlt": "Bước 2 cài đặt eSIM: Làm theo hướng dẫn cho đến khi cài đặt xong eSIM."
       },
       {
         "number": "3",
-        "title": "Kết nối và tận hưởng",
-        "description": "Kích hoạt gói khi bạn đến nơi và tận hưởng kết nối tức thì."
+        "title": "Tận hưởng kết nối liên tục!",
+        "description": "Gói của bạn sẽ kích hoạt khi bạn đến điểm đến hoặc 30 ngày sau khi mua.",
+        "imageAlt": "Bước 3 cài đặt eSIM: Gói của bạn sẽ tự động kích hoạt tại điểm đến."
       }
     ]
   },
   "downloadApp": {
-    "title": "Tải ứng dụng Saily",
-    "subtitle": "Bắt đầu với Saily ngay hôm nay. Có sẵn trên iOS và Android.",
+    "title": "Tải ứng dụng Saily eSIM",
+    "subtitle": "Bạn có thể tải Saily trên Google Play và App Store hoặc quét mã QR.",
     "trustpilot": {
       "rating": "4.7",
       "total": "5",
-      "label": "Trustpilot"
+      "label": "Xuất sắc"
     },
     "appStore": {
-      "rating": "4.8",
-      "label": "App Store"
+      "rating": "4.7 đánh giá",
+      "reviews": "(35.487+) đánh giá"
     },
     "googlePlay": {
-      "rating": "4.6",
-      "label": "Google Play"
+      "rating": "4.7 đánh giá",
+      "reviews": "(61.942+) đánh giá"
     },
     "qrLabel": "Quét để tải"
   },
   "testimonials": {
     "title": "Đánh giá Saily từ du khách",
+    "subtitle": "Xem những du khách khác nói gì về Saily!",
     "reviews": [
+      {
+        "source": "Lonely Planet",
+        "type": "featured",
+        "text": "Saily là dịch vụ eSIM giá cả phải chăng, dễ sử dụng và bền vững, mang lại kết nối di động và internet đáng tin cậy từ bất kỳ đâu trên thế giới. Đó là lý do chúng tôi giới thiệu Saily là đối tác eSIM của mình."
+      },
       {
         "name": "Jorge A.",
         "source": "Trustpilot",
         "rating": 5,
-        "text": "Saily là bước ngoặt cho du lịch quốc tế. Cài đặt dễ dàng, phủ sóng tốt và giá cả phải chăng. Tôi đã dùng ở 5 quốc gia và luôn hoạt động hoàn hảo."
+        "text": "Dễ dàng, rẻ và nhanh. Cài đặt từng bước dễ dàng và xử lý sự cố, tốc độ siêu nhanh (khoảng 100 mbps). Rẻ, phủ sóng tốt và hỗ trợ chat hữu ích. Tiếp tục phát huy."
       },
       {
         "name": "PewDiePie",
         "source": "YouTube",
-        "text": "Tôi đã dùng Saily cho các chuyến đi và thật tuyệt vời. Không cần tìm SIM địa phương tại sân bay nữa."
+        "avatar": true,
+        "text": "Tôi có thể cài đặt ngay tại nhà, kích hoạt khi sẵn sàng (chỉ mất vài phút, tôi đã thử rồi), và bùm! Tôi có internet trên điện thoại khi đi du lịch, đúng như nó phải vậy… Vì vậy tôi khuyên bạn nên thử Saily lần tới khi đi du lịch — không thể thiếu!"
       },
       {
         "name": "DutchPilotGirl",
         "source": "YouTube",
-        "text": "Là phi công, tôi đi du lịch liên tục. Saily giúp việc kết nối dễ dàng hơn nhiều. Chỉ cần tải gói trước khi hạ cánh."
+        "avatar": true,
+        "text": "Có rất nhiều thứ bạn không thể làm ở nước ngoài mà không có kết nối internet tốt. Saily lo liệu mọi thứ. Đơn giản để mua và dễ cài đặt. Tôi yêu nó."
       },
       {
         "name": "Domas R.",
         "source": "Trustpilot",
         "rating": 5,
-        "text": "Cài đặt và sử dụng cực kỳ dễ dàng. Giá rất cạnh tranh so với các nhà cung cấp eSIM khác. Rất khuyến khích cho mọi du khách."
+        "text": "Tuyệt vời — đã dùng Saily ở 3 quốc gia rồi (Anh, Hà Lan và Bỉ). Chỉ mất khoảng 1 phút để mua esim và kích hoạt. Internet của tôi tốt hơn nhiều so với bạn bè vẫn kết nối với nhà mạng địa phương và dùng gói roaming."
       },
       {
-        "name": "Lonely Planet",
-        "source": "Featured",
-        "text": "Saily cung cấp trải nghiệm eSIM thân thiện nhất mà chúng tôi đã thử nghiệm, với giá cạnh tranh và phủ sóng đáng tin cậy tại 150+ quốc gia."
+        "source": "CyberNews",
+        "type": "press",
+        "text": "Với phủ sóng toàn diện và giá cả phải chăng, Saily là eSIM tốt nhất cho châu Âu. Kích hoạt Saily rất đơn giản. Tải ứng dụng, chọn gói và lướt internet. Bạn có thể liên hệ đội hỗ trợ khách hàng Saily qua chat trực tiếp hoặc email nếu gặp vấn đề."
       },
       {
-        "name": "CyberNews",
-        "source": "Review",
-        "text": "Saily nổi bật với giao diện sạch sẽ, giá minh bạch và sự hỗ trợ từ cơ sở hạ tầng Nord Security."
-      },
-      {
-        "name": "TechRadar",
-        "source": "Review",
-        "text": "Lựa chọn eSIM vững chắc cho du khách muốn kết nối dễ dàng ở nước ngoài với gói dữ liệu cạnh tranh."
+        "source": "TechRadar",
+        "type": "press",
+        "text": "Là sản phẩm được hỗ trợ bởi thương hiệu NordVPN uy tín, Saily được hưởng lợi từ sự tập trung của công ty vào bảo mật và quyền riêng tư. Người dùng khen ngợi quy trình cài đặt dễ dàng, giá cả phải chăng và phủ sóng đáng tin cậy trên toàn thế giới."
       }
     ]
   },
@@ -187,59 +203,60 @@
     "title": "Câu hỏi thường gặp",
     "items": [
       {
-        "question": "eSIM là gì?",
-        "answer": "eSIM (SIM nhúng) là SIM kỹ thuật số cho phép bạn kích hoạt gói cước di động mà không cần SIM vật lý. Nó được tích hợp sẵn trong thiết bị và có thể lập trình với các hồ sơ nhà mạng khác nhau."
+        "question": "Sau khi nhận eSIM, tôi có cần bật gì không?",
+        "answer": "Bạn không cần bật gì cả, nhưng nếu đây là gói dữ liệu đầu tiên bạn nhận từ Saily, bạn sẽ cần thiết lập eSIM. Đừng lo — rất nhanh và dễ dàng! Hãy truy cập trang hỗ trợ để xem hướng dẫn cài đặt eSIM."
       },
       {
-        "question": "Làm sao biết thiết bị có hỗ trợ eSIM?",
-        "answer": "Hầu hết smartphone hiện đại đều hỗ trợ eSIM, bao gồm iPhone XS trở lên, Samsung Galaxy S20 trở lên và Google Pixel 3 trở lên. Bạn có thể kiểm tra cài đặt thiết bị hoặc xem trang tương thích."
+        "question": "Saily có phát hiện khi tôi đến điểm đến không?",
+        "answer": "Có! Saily phát hiện điểm đến của bạn và tự động kích hoạt gói dữ liệu eSIM."
       },
       {
-        "question": "Cài đặt eSIM như thế nào?",
-        "answer": "Sau khi mua gói, bạn sẽ nhận được mã QR. Chỉ cần quét bằng camera thiết bị, làm theo hướng dẫn trên màn hình và eSIM sẽ được cài đặt trong vài phút."
+        "question": "Tôi có giữ được số điện thoại khi dùng gói eSIM Saily không?",
+        "answer": "Có — các gói trên ứng dụng Saily chỉ cung cấp dữ liệu internet. Điều đó có nghĩa bạn giữ nguyên số hiện tại cho cuộc gọi và tin nhắn trong khi dùng eSIM làm nguồn dữ liệu di động chính. Dùng eSIM chỉ cho dữ liệu là cách tuyệt vời để giữ kết nối ở nước ngoài mà không phải lo lấy số mới! Bạn vẫn có thể gọi qua các ứng dụng VoIP như Facebook Messenger, WhatsApp và Signal."
       },
       {
-        "question": "Có thể dùng SIM thường và eSIM cùng lúc không?",
-        "answer": "Có! Hầu hết thiết bị tương thích eSIM hỗ trợ dual SIM, cho phép bạn dùng SIM thường cho cuộc gọi và tin nhắn trong khi dùng eSIM cho dữ liệu."
+        "question": "eSIM nào tốt nhất cho du lịch quốc tế?",
+        "answer": "Chọn eSIM tốt nhất cho du lịch quốc tế có thể khó, nhưng chúng tôi nghĩ Saily là lựa chọn tuyệt vời! Giá cả phải chăng, phủ sóng toàn cầu rộng và ứng dụng thân thiện, dễ sử dụng. Bạn sẽ có dữ liệu 4G/5G nhanh và ổn định tại hơn 200 điểm đến, cùng gói dữ liệu không giới hạn! Bạn cũng có thể mua gói cho cả khu vực, như gói Châu Âu với 35 quốc gia, và gói Toàn cầu phủ sóng 110+ điểm đến!"
       },
       {
-        "question": "Khi hết dữ liệu thì sao?",
-        "answer": "Bạn có thể dễ dàng nạp thêm dữ liệu qua ứng dụng Saily. Bạn cũng sẽ nhận thông báo khi dữ liệu sắp hết."
+        "question": "eSIM du lịch là gì?",
+        "answer": "eSIM du lịch là tên gọi khác của eSIM dành cho du lịch — một SIM kỹ thuật số cho phép bạn kết nối mạng di động ở các quốc gia khác mà không cần SIM vật lý. Để bắt đầu sử dụng eSIM, bạn cần một gói eSIM, có thể chỉ dữ liệu hoặc dữ liệu kèm cuộc gọi và tin nhắn. Bạn có thể thiết lập eSIM với hầu hết smartphone mới bằng vài thay đổi nhỏ trong cài đặt thiết bị."
       },
       {
-        "question": "Có thể chia sẻ dữ liệu với thiết bị khác không?",
-        "answer": "Có, bạn có thể dùng tính năng phát sóng của điện thoại để chia sẻ kết nối dữ liệu eSIM với các thiết bị khác như laptop và máy tính bảng."
+        "question": "Ứng dụng eSIM Saily có đáng tin không?",
+        "answer": "Có, ứng dụng Saily hoàn toàn đáng tin! Được xây dựng bởi công ty đứng sau NordVPN (Nord Security), cung cấp mọi thứ bạn cần trong một ứng dụng — bảo mật vững chắc, kích hoạt dễ dàng và giao diện trực quan. Với gói dữ liệu tại 200+ điểm đến, Saily là lựa chọn tuyệt vời cho du khách!"
       },
       {
-        "question": "Cần kết nối Wi-Fi để cài eSIM không?",
-        "answer": "Có, bạn cần kết nối Wi-Fi hoặc dữ liệu để tải và cài đặt hồ sơ eSIM. Chúng tôi khuyên bạn nên cài đặt trước khi đi du lịch."
+        "question": "Ứng dụng Saily có gói eSIM giá rẻ không?",
+        "answer": "Có, ứng dụng eSIM Saily cung cấp gói giá phải chăng, đặc biệt so với các nhà cung cấp lớn! Tuy nhiên, nếu bạn chỉ tìm eSIM rẻ nhất, có thể tìm được giá thấp hơn ở nơi khác. Với Saily, bạn còn được chất lượng vượt trội: hỗ trợ khách hàng 24/7, thiết lập nhanh chóng, ứng dụng dễ dùng và phủ sóng toàn cầu đáng tin cậy. Bạn còn có thêm tính năng bảo mật như chặn trang web độc hại và quảng cáo!"
       },
       {
-        "question": "Kích hoạt eSIM mất bao lâu?",
-        "answer": "Kích hoạt eSIM gần như tức thì. Sau khi cài đặt, eSIM sẽ sẵn sàng sử dụng trong vài phút."
+        "question": "Saily có hoạt động ở Mỹ không?",
+        "answer": "Có, Saily hoạt động tại Hoa Kỳ. Dù bạn đang tìm eSIM cho Mỹ hay Châu Âu, bạn đã đến đúng nơi!"
       },
       {
-        "question": "Có thể dùng Saily ở nhiều quốc gia không?",
-        "answer": "Có! Saily cung cấp gói cho 150+ quốc gia. Bạn có thể mua gói theo quốc gia hoặc gói khu vực bao phủ nhiều điểm đến."
+        "question": "Saily có tốt hơn Airalo không?",
+        "answer": "Saily và Airalo đều là lựa chọn tốt về tốc độ và hiệu suất. Tuy nhiên, nếu bạn muốn chia sẻ dữ liệu với các thiết bị khác, Saily tiện lợi hơn một chút. Hãy xem bài so sánh Saily vs. Airalo để tìm hiểu thêm!"
       },
       {
-        "question": "Nếu gặp vấn đề với eSIM thì sao?",
-        "answer": "Đội ngũ hỗ trợ khách hàng của chúng tôi hoạt động 24/7. Bạn có thể liên hệ qua ứng dụng, email hoặc chat trực tiếp."
+        "question": "Tôi có thể mua eSIM để du lịch không?",
+        "answer": "Có, bạn hoàn toàn có thể mua eSIM để du lịch! Cách dễ nhất là tải ứng dụng eSIM từ App Store hoặc Google Play rồi mua gói dữ liệu eSIM qua ứng dụng. Chọn gói chỉ dữ liệu nếu bạn muốn giữ số điện thoại thường hoạt động khi đi xa."
       },
       {
-        "question": "Saily có an toàn không?",
-        "answer": "Hoàn toàn. Saily được xây dựng bởi Nord Security, đội ngũ đứng sau NordVPN. Dữ liệu và quyền riêng tư của bạn được bảo vệ với các biện pháp bảo mật hàng đầu."
+        "question": "Câu chuyện đằng sau cái tên Saily là gì?",
+        "answer": "Saily bắt nguồn từ từ \"sail\" (căng buồm) — chúng tôi muốn một cái tên gợi lên sự chuyển động, tự do và khám phá thế giới! Saily tò mò, năng động, dũng cảm, hòa nhập, vui vẻ và luôn sẵn sàng cho điều mới. Nếu là một người, Saily sẽ luôn di chuyển, gặp gỡ mọi người, theo đuổi phiêu lưu và giữ kết nối!"
       },
       {
-        "question": "Có thể hoàn tiền không?",
-        "answer": "Có, chúng tôi cung cấp hoàn tiền cho các gói dữ liệu chưa sử dụng. Vui lòng xem chính sách hoàn tiền hoặc liên hệ đội ngũ hỗ trợ."
+        "question": "Ai sở hữu dịch vụ eSIM Saily?",
+        "answer": "Nord Security, thương hiệu bảo mật và quyền riêng tư kỹ thuật số toàn cầu, sở hữu dịch vụ eSIM Saily. Đây cũng là công ty đứng sau các công cụ như NordVPN và NordPass, được hàng triệu người trên thế giới tin dùng."
       }
     ]
   },
   "referFriend": {
     "title": "Giới thiệu bạn bè, cả hai cùng nhận US$5!",
-    "cta": "Giới thiệu bạn bè",
-    "imageAlt": "Minh họa giới thiệu bạn bè"
+    "description": "Mời bạn bè sử dụng Saily và nhận US$5 tín dụng Saily trong khi họ được giảm giá US$5!",
+    "cta": "Tìm hiểu thêm",
+    "imageAlt": "Một nhóm người vui vẻ nhận tín dụng US$5 từ Saily sau khi giới thiệu bạn bè."
   },
   "blog": {
     "badge": "Blog",

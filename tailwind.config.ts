@@ -12,11 +12,6 @@ module.exports = {
   theme: {
     container: {
       center: true,
-      padding: {
-        DEFAULT: "1rem",
-        sm: "1.5rem",
-        lg: "2rem",
-      },
       screens: {
         sm: "640px",
         md: "768px",
@@ -26,7 +21,30 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        sans: ["var(--font-inter)", "system-ui", "sans-serif"],
+        sans: ["var(--font-poppins)", "Poppins Fallback", "system-ui", "sans-serif"],
+      },
+      textColor: {
+        primary: "var(--color-primary)",
+        secondary: "var(--color-secondary)",
+        tertiary: "var(--color-tertiary)",
+        disabled: "var(--color-disabled)",
+        "primary-on-color": "var(--color-primary-on-color)",
+        "secondary-on-color": "var(--color-secondary-on-color)",
+      },
+      backgroundColor: {
+        primary: "var(--bg-primary)",
+        secondary: "var(--bg-secondary)",
+        accent: "var(--bg-accent)",
+        "accent-hover": "var(--bg-accent-hover)",
+        "blue-100": "var(--bg-blue-100)",
+        "brand-yellow": "var(--bg-brand-yellow)",
+        "brand-black": "var(--bg-brand-black)",
+        dark: "var(--bg-dark)",
+      },
+      borderColor: {
+        primary: "var(--border-primary)",
+        secondary: "var(--border-secondary)",
+        focus: "var(--border-focus)",
       },
       colors: {
         /* Saily semantic text colors */
@@ -61,7 +79,7 @@ module.exports = {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
         },
-        secondary: {
+        "shadcn-secondary": {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
         },

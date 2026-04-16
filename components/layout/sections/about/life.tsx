@@ -53,12 +53,12 @@ export function AboutLife({ dict }: AboutLifeProps) {
                   <div className="flex items-center flex-1 p-6 border border-[rgba(255,255,255,0.32)] rounded-lg">
                     <div className="h-full w-full flex flex-col justify-center gap-y-4">
                       <div className="flex flex-row gap-x-3">
-                        <GraduationCap className="w-6 h-6 text-accent shrink-0" />
+                        <GraduationCap className="w-6 h-6 text-[#fff500] shrink-0" />
                         <p className="body-lg-medium text-text-primary-on-color">
                           {dict.perks[0].title}
                         </p>
                       </div>
-                      <p className="body-md text-text-secondary-on-color">
+                      <p className="body-md text-secondary-on-color">
                         {dict.perks[0].description}
                       </p>
                     </div>
@@ -89,12 +89,12 @@ export function AboutLife({ dict }: AboutLifeProps) {
                       <div className={`flex items-center flex-1 p-6 border border-[rgba(255,255,255,0.32)] rounded-lg ${isEven ? "order-last" : ""}`}>
                         <div className="h-full w-full flex flex-col justify-center gap-y-4">
                           <div className="flex flex-row gap-x-3">
-                            <Icon className="w-6 h-6 text-accent shrink-0" />
+                            <Icon className="w-6 h-6 text-[#fff500] shrink-0" />
                             <p className="body-lg-medium text-text-primary-on-color">
                               {perk.title}
                             </p>
                           </div>
-                          <p className="body-md text-text-secondary-on-color">
+                          <p className="body-md text-secondary-on-color">
                             {perk.description}
                           </p>
                         </div>

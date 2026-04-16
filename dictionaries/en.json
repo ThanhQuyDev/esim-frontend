@@ -34,152 +34,168 @@
   },
   "whatIsEsim": {
     "title": "What is an eSIM?",
-    "description": "An eSIM (embedded SIM) is a digital SIM that allows you to activate a cellular plan without having to use a physical SIM card. With Saily, you can download an eSIM data plan for your travel destination and connect to the internet instantly.",
-    "imageAlt": "eSIM illustration"
+    "descriptionBefore": "An ",
+    "linkText": "eSIM",
+    "descriptionAfter": " is a digital SIM that lets you switch carriers and use multiple mobile plans without swapping cards. Most new phones support eSIMs, and setting them up takes just a few taps.",
+    "imageAlt": "An eSIM card with an active data plan."
   },
   "destinations": {
+    "subtitle": "Where are you traveling to?",
     "title": "Choose your travel destination",
+    "description": "Pick a mobile data plan for your trip.",
     "tabs": {
       "country": "Country",
       "region": "Region",
       "ultraPlan": "Ultra Plan"
     },
     "from": "From",
-    "seeAllPlans": "See all plans",
+    "viewAllDestinations": "View All Destinations",
     "new": "New"
   },
   "whyChoose": {
-    "badge": "Why choose Saily",
-    "title": "Stay connected with Saily",
-    "subtitle": "Enjoy seamless connectivity wherever you travel with our reliable eSIM service.",
+    "badge": "Why choose Saily?",
+    "title": "Stay connected while traveling",
     "features": [
       {
-        "icon": "globe",
+        "icon": "layers",
         "title": "International data plans",
-        "description": "Choose from data plans in 150+ countries and regions worldwide."
+        "description": "Get cellular data that works for your budget and itinerary. From 1 GB to unlimited plans, Saily's got you covered!"
       },
       {
-        "icon": "smartphone",
+        "icon": "circle-check",
         "title": "Easy to use",
-        "description": "Set up your eSIM in minutes. No physical SIM card needed."
+        "description": "Just [download the Saily eSIM app](/en/what-is-esim), install the eSIM, and buy an eSIM data plan — it will activate automatically the moment you reach your destination."
       },
       {
-        "icon": "ban",
+        "icon": "ballot-check",
         "title": "Avoid roaming charges",
-        "description": "Save money on international roaming with affordable local data plans."
+        "description": "If you want to avoid costly roaming, eSIM technology offers a good alternative. Know how much your internet connection will cost before you take off!"
       },
       {
-        "icon": "sim",
-        "title": "One eSIM for all travels",
-        "description": "Use a single eSIM for all your trips. Just switch data plans as needed."
+        "icon": "sim-card",
+        "title": "One eSIM for all your travels",
+        "description": "Add new destinations to your existing Saily eSIM — no need to install new eSIMs every time. Just top up and connect!"
       },
       {
-        "icon": "bell",
-        "title": "Data usage alerts",
-        "description": "Stay informed about your data usage with real-time notifications."
+        "icon": "bell-ring",
+        "title": "Get mobile data usage alerts",
+        "description": "Don't risk running out of eSIM data at the worst possible moment — we'll notify you when you've used up 80% of your plan."
       },
       {
-        "icon": "map",
+        "icon": "earth",
         "title": "Global and regional plans",
-        "description": "Choose country-specific or regional plans that cover multiple destinations."
+        "description": "Stay online wherever you go — get a [Global eSIM data](https://saily.com/esim-global/) plan or an [eSIM data plan for Europe](https://saily.com/esim-europe/) to explore entire regions and beyond."
       }
     ]
   },
   "security": {
-    "title": "Instant connection and safer browsing",
-    "cta": "Get Saily",
+    "title": "Instant connection and safer browsing with Saily",
+    "subtitle": "Do you travel often, live abroad, or simply need reliable mobile data on the go? Saily makes it simple to stay connected, wherever life takes you.",
+    "cta": "View All Destinations",
+    "learnMore": "Learn More",
     "features": [
       {
         "title": "Connect instantly",
-        "description": "Activate your eSIM and connect to the internet in seconds. No waiting in line at the airport."
+        "description": "Saily is a hassle-free solution — just choose your data plan and get ready to travel! When you arrive at your destination, you can go online right away.",
+        "imageAlt": "An installed eSIM, which instantly activates your plan at your destination."
       },
       {
         "title": "Avoid waiting in line",
-        "description": "Skip the hassle of buying a physical SIM card at your destination."
+        "description": "Getting a local SIM at the airport or train station can be a hassle. With an eSIM, you won't have to wait in line or deal with sketchy sellers offering SIM cards that might not even work.",
+        "imageAlt": "A woman selects an eSIM plan."
       },
       {
         "title": "Stay protected online",
-        "description": "Browse safely with built-in security features that protect your data while traveling."
+        "description": "When abroad, sometimes your only internet option is a slow Wi-Fi network in a shady coffee shop. With an eSIM data plan, you'll always have a secure and reliable connection.",
+        "imageAlt": "Saily's security features include ad blocker, virtual location, and web protection."
       }
     ]
   },
   "howItWorks": {
-    "title": "How Saily works",
+    "subtitle": "How to use the Saily eSIM service",
+    "title": "How does Saily work?",
+    "description": "Don't have the Saily eSIM app yet? Download it from the App Store or Google Play.",
     "steps": [
       {
         "number": "1",
-        "title": "Choose your destination",
-        "description": "Select a data plan for the country or region you're traveling to."
+        "title": "Choose a Saily data plan for your trip",
+        "description": "Select your destination and pick your travel eSIM data plan.",
+        "imageAlt": "Step 1 of eSIM set up: Choose a data plan."
       },
       {
         "number": "2",
-        "title": "Install your eSIM",
-        "description": "Download and install your eSIM profile on your compatible device."
+        "title": "Download Saily and set up your eSIM",
+        "description": "Set up the eSIM on your device by following the instructions in the app.",
+        "imageAlt": "Step 2 of eSIM set up: Follow instructions until you've installed your eSIM."
       },
       {
         "number": "3",
-        "title": "Connect and enjoy",
-        "description": "Activate your plan when you arrive and enjoy instant connectivity."
+        "title": "Enjoy staying connected!",
+        "description": "Your plan will activate when you reach your destination or 30 days after purchase.",
+        "imageAlt": "Step 3 of eSIM set up: Your plan will activate automatically at your destination."
       }
     ]
   },
   "downloadApp": {
-    "title": "Download the Saily app",
-    "subtitle": "Get started with Saily today. Available on iOS and Android.",
+    "title": "Download the Saily eSIM app",
+    "subtitle": "You can get Saily on Google Play and the App Store or by scanning the QR code.",
     "trustpilot": {
       "rating": "4.7",
       "total": "5",
-      "label": "Trustpilot"
+      "label": "Excellent"
     },
     "appStore": {
-      "rating": "4.8",
-      "label": "App Store"
+      "rating": "4.7 rating",
+      "reviews": "(35,487+) reviews"
     },
     "googlePlay": {
-      "rating": "4.6",
-      "label": "Google Play"
+      "rating": "4.7 rating",
+      "reviews": "(61,942+) reviews"
     },
     "qrLabel": "Scan to download"
   },
   "testimonials": {
     "title": "Saily reviews from travelers",
+    "subtitle": "Check out what fellow travelers are saying about Saily!",
     "reviews": [
+      {
+        "source": "Lonely Planet",
+        "type": "featured",
+        "text": "Saily is an affordable, easy-to-use, and sustainable eSIM service that gives reliable mobile and internet connections from anywhere in the world. That's why we recommend Saily as our eSIM partner."
+      },
       {
         "name": "Jorge A.",
         "source": "Trustpilot",
         "rating": 5,
-        "text": "Saily is a game-changer for international travel. Easy setup, great coverage, and affordable prices. I've used it in 5 countries so far and it works flawlessly every time."
+        "text": "Easy, cheap and fast. Easy step to step setup and troubleshooting, super fast speed (around 100 mbps). Cheap, great coverage and helpful chat/assistance. Keep up the good work."
       },
       {
         "name": "PewDiePie",
         "source": "YouTube",
-        "text": "I've been using Saily for my travels and it's been amazing. No more hunting for local SIM cards at the airport."
+        "avatar": true,
+        "text": "I can set it up at home right now, activate it when I'm ready (it takes literally just a couple of minutes, I've tried it myself), and boom! I have internet on my phone when traveling, as it should be… So I recommend checking out Saily next time you're traveling — it's a must!"
       },
       {
         "name": "DutchPilotGirl",
         "source": "YouTube",
-        "text": "As a pilot, I travel constantly. Saily makes staying connected so much easier. I just download a plan before I land and I'm good to go."
+        "avatar": true,
+        "text": "There's so much you can't do abroad without a proper internet connection. Saily takes care of everything. It's simple to buy and easy to install. I love it."
       },
       {
         "name": "Domas R.",
         "source": "Trustpilot",
         "rating": 5,
-        "text": "Super easy to set up and use. The prices are very competitive compared to other eSIM providers. Highly recommend for any traveler."
+        "text": "Awesome — used Saily across 3 countries already (UK, Netherlands and Belgium). Took me like 1min to buy esim and activate it. My internet was way better than my friends' who remained connected to their local providers and used roaming plans instead."
       },
       {
-        "name": "Lonely Planet",
-        "source": "Featured",
-        "text": "Saily offers one of the most user-friendly eSIM experiences we've tested, with competitive pricing and reliable coverage across 150+ countries."
+        "source": "CyberNews",
+        "type": "press",
+        "text": "With comprehensive coverage and affordable prices, Saily is the best eSIM for Europe. Activating Saily is straightforward. Download the app, choose your plan, and surf the internet. You can contact the Saily customer support team via live chat or email if you encounter any issues."
       },
       {
-        "name": "CyberNews",
-        "source": "Review",
-        "text": "Saily stands out with its clean interface, transparent pricing, and the backing of Nord Security's infrastructure."
-      },
-      {
-        "name": "TechRadar",
-        "source": "Review",
-        "text": "A solid eSIM option for travelers who want hassle-free connectivity abroad with competitive data plans."
+        "source": "TechRadar",
+        "type": "press",
+        "text": "As a product backed by the reputable NordVPN brand, Saily benefits from the company's focus on security and privacy. Users praise its easy installation process, affordable pricing, and reliable coverage across the world."
       }
     ]
   },
@@ -187,59 +203,60 @@
     "title": "Frequently asked questions",
     "items": [
       {
-        "question": "What is an eSIM?",
-        "answer": "An eSIM (embedded SIM) is a digital SIM that allows you to activate a cellular plan without having to use a physical SIM card. It's built into your device and can be programmed with different carrier profiles."
+        "question": "After getting an eSIM, do I need to turn anything on?",
+        "answer": "You don't need to turn anything on, but if it's the first data plan you're getting from Saily, you will need to set up your eSIM. Don't worry — it's quick and easy! Head to our support page for instructions on how to install your eSIM."
       },
       {
-        "question": "How do I know if my device supports eSIM?",
-        "answer": "Most modern smartphones support eSIM, including iPhone XS and later, Samsung Galaxy S20 and later, and Google Pixel 3 and later. You can check your device settings or visit our compatibility page for a full list."
+        "question": "Does Saily detect when I arrive at my destination?",
+        "answer": "Yes, it does! It detects your destination and then automatically activates your eSIM data plan."
       },
       {
-        "question": "How do I install an eSIM?",
-        "answer": "After purchasing a plan, you'll receive a QR code. Simply scan it with your device's camera, follow the on-screen instructions, and your eSIM will be installed in minutes."
+        "question": "Do I keep my number with a Saily eSIM data plan?",
+        "answer": "Yes, you do — the plans available on the Saily app offer internet data only. That means you keep your existing number for calls and texts while using your eSIM as the main source of mobile data. Getting an eSIM for just data is a great way to stay connected abroad without the hassle of getting a local number you have to let everyone know about! And you can still make calls through VoIP apps like Facebook Messenger, WhatsApp, and Signal."
       },
       {
-        "question": "Can I use my regular SIM and eSIM at the same time?",
-        "answer": "Yes! Most eSIM-compatible devices support dual SIM functionality, allowing you to use your regular SIM for calls and texts while using the eSIM for data."
+        "question": "What's the best eSIM for international travel?",
+        "answer": "Picking the best eSIM for international travel can be tricky, but we think Saily is a great contender! It's got affordable pricing, extensive global coverage, and a user-friendly, easy-to-use app. You'll get reliable, fast 4G/5G data in over 200 destinations, and unlimited data plans! You can also buy reliable data plans for entire regions, like a Europe data plan with 35 countries, and even a Global plan covering 110+ destinations!"
       },
       {
-        "question": "What happens when my data runs out?",
-        "answer": "You can easily top up your data plan through the Saily app. You'll also receive notifications when your data is running low so you're never caught off guard."
+        "question": "What is a tourist eSIM?",
+        "answer": "A tourist eSIM is another name for a travel eSIM — a digital SIM that lets you connect to mobile networks in other countries without a physical SIM card. To start using an eSIM, you'll need an eSIM plan, which can be data only or data plus calls and texts. You can set up eSIMs with most new smartphones by making a few small changes to your device's settings."
       },
       {
-        "question": "Can I share my data with other devices?",
-        "answer": "Yes, you can use your phone's hotspot feature to share your eSIM data connection with other devices like laptops and tablets."
+        "question": "Is the Saily eSIM app legit?",
+        "answer": "Yes, the Saily app is totally legit! It's built by the company behind NordVPN (Nord Security), and offers everything you may need in one app — solid security, easy activation, and an intuitive interface. With data plans in 200+ destinations, Saily is a great pick for travelers (even if we say so ourselves!)."
       },
       {
-        "question": "Do I need to be connected to Wi-Fi to install an eSIM?",
-        "answer": "Yes, you'll need a Wi-Fi or data connection to download and install your eSIM profile. We recommend installing it before you travel."
+        "question": "Does the Saily app offer cheap eSIM options?",
+        "answer": "Yes, the Saily eSIM app offers affordable plans, especially compared to big-name providers! That said, if you're just hunting for the absolute cheapest eSIM, you might find lower prices elsewhere. With Saily, you're also getting solid quality: 24/7 customer support, quick and easy setup, easy-to-use app, and reliable global coverage. You even get extra security features like malicious site and ad blocking, so it's more about value than just price!"
       },
       {
-        "question": "How long does it take to activate an eSIM?",
-        "answer": "eSIM activation is almost instant. Once installed, your eSIM will be ready to use within minutes."
+        "question": "Does Saily work in the US?",
+        "answer": "Yes, Saily works in the United States. Whether you're looking for an eSIM for the USA or Europe, you've come to the right place!"
       },
       {
-        "question": "Can I use Saily in multiple countries?",
-        "answer": "Yes! Saily offers plans for 150+ countries. You can purchase country-specific plans or regional plans that cover multiple destinations."
+        "question": "Is Saily better than Airalo?",
+        "answer": "Saily and Airalo are both solid options when it comes to speed and performance. However, if you're planning to share your data with other devices, Saily's a bit more convenient. Check out our Saily vs. Airalo comparison to find out more!"
       },
       {
-        "question": "What if I have issues with my eSIM?",
-        "answer": "Our customer support team is available 24/7 to help you with any issues. You can reach us through the app, email, or live chat."
+        "question": "Can I buy an eSIM for travel?",
+        "answer": "Yes, you can definitely get an eSIM for travel! The easiest thing to do is download an eSIM app from the App Store or Google Play and then get your eSIM data plan through the app. Choose a data-only plan if you want to keep your regular phone number active while you're away."
       },
       {
-        "question": "Is Saily secure?",
-        "answer": "Absolutely. Saily is built by Nord Security, the team behind NordVPN. Your data and privacy are protected with industry-leading security measures."
+        "question": "What's the story behind the name Saily?",
+        "answer": "Saily comes from the word \"sail\" — we wanted a name that feels like movement, freedom, and exploring the world! Saily is curious, active, brave, inclusive, funny, and always up for something new. If it were a person, it would always be on the move, meeting people, chasing adventures, and staying connected!"
       },
       {
-        "question": "Can I get a refund?",
-        "answer": "Yes, we offer refunds for unused data plans. Please check our refund policy for more details or contact our support team."
+        "question": "Who owns the Saily eSIM service?",
+        "answer": "Nord Security, a global digital security and privacy brand, owns the Saily eSIM service. It's also the company behind tools like NordVPN and NordPass, trusted by millions worldwide."
       }
     ]
   },
   "referFriend": {
     "title": "Refer a friend, and you'll both get US$5!",
-    "cta": "Refer a friend",
-    "imageAlt": "Refer a friend illustration"
+    "description": "Invite your friends to use Saily and get US$5 in Saily credits while they get a US$5 discount!",
+    "cta": "Learn More",
+    "imageAlt": "A group of people enjoying a US$5 Saily credit after referring a friend."
   },
   "blog": {
     "badge": "Blog",

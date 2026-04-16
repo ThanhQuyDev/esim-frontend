@@ -29,7 +29,7 @@ export function EsimAdvantages({ dict }: EsimAdvantagesProps) {
                     onClick={() => setActiveTab(i)}
                     className={`relative z-[1] body-sm-medium whitespace-nowrap md:body-md-medium px-4 py-1 rounded-full transition-colors ${
                       activeTab === i
-                        ? "text-text-primary-on-color bg-bg-dark"
+                        ? "text-white bg-bg-dark"
                         : "text-text-primary hover:bg-bg-primary"
                     }`}
                   >
