@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { parsePaymentResponse } from "@/lib/onepay";
 
+export const dynamic = "force-dynamic";
+
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.saily.example.com";
 
