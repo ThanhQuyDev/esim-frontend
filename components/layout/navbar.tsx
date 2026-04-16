@@ -205,7 +205,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Tìm hiểu cách eSIM hoạt động và tại sao hữu ích."
             : "Discover how an eSIM works and why it's useful.",
-          href: "#",
+          href: `/${lang}/what-is-esim`,
         },
         {
           icon: "pen",

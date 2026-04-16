@@ -241,6 +241,19 @@
     "cta": "Refer a friend",
     "imageAlt": "Refer a friend illustration"
   },
+  "blog": {
+    "badge": "Blog",
+    "title": "Latest from ",
+    "titleHighlight": "our blog",
+    "subtitle": "Stay up to date with the latest travel tips, eSIM guides, and product updates.",
+    "viewAll": "View all posts",
+    "readMore": "Read more",
+    "fallback": [
+      { "title": "How to stay connected while traveling abroad", "slug": "stay-connected-abroad", "excerpt": "Learn the best ways to keep your phone connected when traveling internationally.", "author": "Saily Team", "tags": "Travel,eSIM" },
+      { "title": "eSIM vs physical SIM: Which is better?", "slug": "esim-vs-physical-sim", "excerpt": "A detailed comparison of eSIM and traditional SIM cards for travelers.", "author": "Saily Team", "tags": "eSIM,Guide" },
+      { "title": "Top 10 travel destinations for 2025", "slug": "top-destinations-2025", "excerpt": "Discover the most popular travel destinations and how to stay connected there.", "author": "Saily Team", "tags": "Travel,Destinations" }
+    ]
+  },
   "footer": {
     "popularDestinations": {
       "title": "Popular Destinations",

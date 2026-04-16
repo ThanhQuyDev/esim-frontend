@@ -241,6 +241,19 @@
     "cta": "Giới thiệu bạn bè",
     "imageAlt": "Minh họa giới thiệu bạn bè"
   },
+  "blog": {
+    "badge": "Blog",
+    "title": "Mới nhất từ ",
+    "titleHighlight": "blog của chúng tôi",
+    "subtitle": "Cập nhật mẹo du lịch, hướng dẫn eSIM và tin tức sản phẩm mới nhất.",
+    "viewAll": "Xem tất cả bài viết",
+    "readMore": "Đọc thêm",
+    "fallback": [
+      { "title": "Cách giữ kết nối khi du lịch nước ngoài", "slug": "stay-connected-abroad", "excerpt": "Tìm hiểu cách tốt nhất để giữ điện thoại kết nối khi du lịch quốc tế.", "author": "Đội ngũ Saily", "tags": "Du lịch,eSIM" },
+      { "title": "eSIM vs SIM vật lý: Cái nào tốt hơn?", "slug": "esim-vs-physical-sim", "excerpt": "So sánh chi tiết giữa eSIM và thẻ SIM truyền thống cho du khách.", "author": "Đội ngũ Saily", "tags": "eSIM,Hướng dẫn" },
+      { "title": "Top 10 điểm đến du lịch năm 2025", "slug": "top-destinations-2025", "excerpt": "Khám phá những điểm đến du lịch phổ biến nhất và cách giữ kết nối tại đó.", "author": "Đội ngũ Saily", "tags": "Du lịch,Điểm đến" }
+    ]
+  },
   "footer": {
     "popularDestinations": {
       "title": "Điểm đến phổ biến",
