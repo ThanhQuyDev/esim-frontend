@@ -278,5 +278,443 @@
       "links": ["Chính sách bảo mật", "Điều khoản dịch vụ", "Chính sách hoàn tiền"]
     },
     "paymentMethods": ["Apple Pay", "Google Pay", "Visa", "Mastercard", "Amex", "Discover", "UnionPay", "JCB"]
+  },
+  "dataCalculator": {
+    "metadata": {
+      "title": "Công cụ tính dữ liệu | Tìm hiểu bạn dùng bao nhiêu dữ liệu | Saily",
+      "description": "Bạn đang thắc mắc mình dùng bao nhiêu dữ liệu? Sử dụng công cụ tính dữ liệu internet để ước tính mức sử dụng cho duyệt web, xem phim và gọi video."
+    },
+    "hero": {
+      "title": "Công cụ tính dữ liệu sử dụng",
+      "subtitle": "Không chắc bạn cần bao nhiêu dữ liệu di động cho chuyến đi? Công cụ tính dữ liệu di động của chúng tôi có thể giúp bạn! Chọn các hoạt động bạn làm trên internet và thời gian sử dụng, chúng tôi sẽ ước tính cho bạn."
+    },
+    "calculator": {
+      "estimateTitle": "Ước tính mức sử dụng dữ liệu theo giờ",
+      "estimateSubtitle": "Bạn đã bao giờ tự hỏi mình lướt mất bao nhiêu dữ liệu mỗi ngày chưa? Hãy dùng công cụ tính của chúng tôi!",
+      "pickProfile": "Chọn hồ sơ phù hợp với thói quen của bạn",
+      "selectTime": "Chọn thời gian bạn dành cho mỗi hoạt động mỗi ngày",
+      "estimatedUsage": "Ước tính dữ liệu sử dụng",
+      "monthly": "Hàng tháng",
+      "resetCalculator": "Đặt lại",
+      "calculateData": "Tính dữ liệu",
+      "close": "Đóng",
+      "other": "Khác",
+      "profiles": {
+        "casual_browser": {
+          "title": "Duyệt web thông thường",
+          "description": "Duyệt web, nhắn tin, kiểm tra email"
+        },
+        "remote_worker": {
+          "title": "Làm việc từ xa",
+          "description": "Gọi điện, kiểm tra email, duyệt web"
+        },
+        "individual": {
+          "title": "Tùy chỉnh",
+          "description": "Thiết lập riêng"
+        }
+      },
+      "activities": {
+        "socialMedia": {
+          "title": "Mạng xã hội",
+          "description": "Instagram, Facebook, LinkedIn, X (Twitter)"
+        },
+        "streamingVideoQHD": {
+          "title": "Video Quad HD (1440p 60 FPS)",
+          "description": "YouTube, Netflix"
+        },
+        "streamingVideoFHD": {
+          "title": "Video Full HD (1080p 60 FPS)",
+          "description": "TikTok, Instagram reels, YouTube Shorts"
+        },
+        "streamingMusic": {
+          "title": "Nghe nhạc",
+          "description": "Spotify, Apple Music, YouTube Music"
+        },
+        "mapNavigation": {
+          "title": "Điều hướng",
+          "description": "Google Maps, Apple Maps, Waze"
+        },
+        "webBrowsing": {
+          "title": "Duyệt web",
+          "description": "Tin tức, mua sắm trực tuyến"
+        },
+        "emailsMessaging": {
+          "title": "Email và nhắn tin",
+          "description": "Gmail, WhatsApp, Messenger"
+        },
+        "videoCalls": {
+          "title": "Gọi video (VoIP)",
+          "description": "Zoom, Google Meet, Facetime"
+        },
+        "downloads": {
+          "title": "Tải và cập nhật ứng dụng",
+          "description": "Dữ liệu cập nhật ứng dụng"
+        }
+      }
+    },
+    "whatIsMobileData": {
+      "title": "Dữ liệu di động là gì?",
+      "description": "Dữ liệu di động là lượng internet bạn sử dụng khi không kết nối Wi-Fi. Đó là dữ liệu di động mà điện thoại của bạn lấy từ các trạm phát sóng thay vì router nhà bạn. Mỗi lần lướt Instagram, tìm quán cà phê gần nhất trên GPS, hay gọi video về nhà đều tiêu tốn dữ liệu di động. Đối với du khách, điều này khá quan trọng vì bạn thường phải dựa vào mạng dữ liệu di động thay vì Wi-Fi.",
+      "imageAlt": "Một phụ nữ vui vẻ kích hoạt thẻ eSIM trên điện thoại."
+    },
+    "howToCalculate": {
+      "title": "Cách tính dữ liệu sử dụng",
+      "description1": "Tính toán lượng dữ liệu bạn thực sự cần không phải là phỏng đoán. Công cụ tính dữ liệu của chúng tôi giúp bạn biết chính xác thói quen số của bạn tiêu tốn bao nhiêu dữ liệu di động.",
+      "description2": "Chọn hồ sơ có sẵn phù hợp với phong cách sử dụng hoặc chọn \"Tùy chỉnh\" để nhập chính xác thời gian bạn dành hàng ngày cho các hoạt động như mạng xã hội, xem phim hoặc điều hướng. Công cụ sẽ hiển thị ước tính dữ liệu hàng tháng và gợi ý gói phù hợp cho chuyến đi.",
+      "imageAlt": "Ghế sân bay trống với các gói dữ liệu eSIM du lịch."
+    },
+    "dataTable": {
+      "title": "Cách chúng tôi tính dữ liệu sử dụng",
+      "subtitle": "Chúng tôi tính toán lượng dữ liệu bạn cần như thế nào? Tất cả phụ thuộc vào những gì bạn làm trực tuyến!\nDưới đây là lượng dữ liệu các hoạt động internet thường dùng mỗi giờ:",
+      "activityHeader": "Hoạt động",
+      "dataPerHourHeader": "Dữ liệu mỗi giờ",
+      "rows": {
+        "socialMedia": "Sử dụng mạng xã hội",
+        "streamingVideoQHD": "Xem phim 2K (1440p 60 FPS)",
+        "streamingVideoFHD": "Xem phim Full HD (1080p 60 FPS)",
+        "streamingMusic": "Nghe nhạc trực tuyến",
+        "mapNavigation": "Điều hướng tiêu chuẩn",
+        "webBrowsing": "Duyệt web",
+        "emailsMessaging": "Nhắn tin / Email",
+        "videoCalls": "Gọi video HD",
+        "downloads": "Cập nhật ứng dụng"
+      },
+      "disclaimer": "* Xin lưu ý rằng các con số này là ước tính dựa trên kích thước tệp thông thường. Mức sử dụng dữ liệu thực tế có thể khác."
+    },
+    "faqSection": {
+      "title": "Câu hỏi thường gặp",
+      "tabs": [
+        {
+          "label": "Chung",
+          "items": [
+            {
+              "question": "Giới hạn tốc độ dữ liệu là gì và ảnh hưởng thế nào?",
+              "answer": "Giới hạn tốc độ xảy ra khi nhà mạng cố ý giảm tốc độ internet của bạn. Thường xảy ra sau khi bạn đã dùng hết dữ liệu tốc độ cao. Kết quả là duyệt web chậm hơn, tải ảnh lâu hơn và gọi video bị giật. Bạn có thể tránh bằng cách chọn gói có nhiều dữ liệu tốc độ cao hơn."
+            },
+            {
+              "question": "Tôi cần bao nhiêu dữ liệu di động?",
+              "answer": "Lượng dữ liệu cần phụ thuộc vào thói quen sử dụng — người dùng nhẹ chỉ kiểm tra email và bản đồ có thể cần 1-2 GB cho một tuần, trong khi người xem phim nhiều có thể cần 10 GB trở lên. Hãy dùng công cụ tính dữ liệu để có ước tính cá nhân."
+            },
+            {
+              "question": "Người bình thường dùng bao nhiêu GB dữ liệu mỗi tháng?",
+              "answer": "Trung bình mỗi người dùng 5-15 GB dữ liệu di động hàng tháng, nhưng con số này rất khác nhau. Xem phim HD dùng gấp ba lần so với chất lượng tiêu chuẩn, và sao lưu ảnh tự động có thể tiêu tốn dữ liệu mà bạn không nhận ra."
+            },
+            {
+              "question": "Mất bao nhiêu giờ để dùng hết 1 GB dữ liệu?",
+              "answer": "Các hoạt động cơ bản như duyệt web và nhắn tin dùng ít dữ liệu — bạn có thể thực hiện hàng chục giờ cho mỗi GB. Xem video trực tuyến, 1 GB thường đủ cho khoảng 2-4 giờ ở chất lượng tiêu chuẩn. Nghe nhạc tiết kiệm hơn — bạn có thể nghe khoảng 20-25 giờ từ 1 GB."
+            },
+            {
+              "question": "Hoạt động nào tiêu tốn nhiều dữ liệu nhất?",
+              "answer": "Xem video trực tuyến là thủ phạm lớn nhất — video HD có thể tiêu tốn 3 GB mỗi giờ. Nghe nhạc dùng khoảng 150 MB mỗi giờ. Lướt mạng xã hội tiêu tốn khoảng 100-200 MB mỗi giờ. Cập nhật ứng dụng tự động và sao lưu ảnh có thể tiêu tốn hàng GB trong vài phút."
+            },
+            {
+              "question": "Duyệt web có dùng nhiều dữ liệu hơn mạng xã hội không?",
+              "answer": "Trong hầu hết trường hợp, duyệt web dùng ít dữ liệu hơn lướt mạng xã hội. Các trang web đơn giản với chủ yếu là văn bản khá nhẹ nhàng với dữ liệu. Ứng dụng mạng xã hội chứa đầy video tự phát, ảnh độ phân giải cao và cập nhật thường xuyên."
+            }
+          ]
+        },
+        {
+          "label": "Quản lý dữ liệu",
+          "items": [
+            {
+              "question": "Tại sao tôi dùng nhiều dữ liệu vậy?",
+              "answer": "Xem phim hoặc YouTube ở chất lượng HD là nguyên nhân phổ biến. Ứng dụng chạy nền có thể âm thầm tiêu tốn dữ liệu. Tải game, cập nhật hoặc sao lưu đám mây cũng tích lũy nhanh chóng."
+            },
+            {
+              "question": "Làm sao quản lý dữ liệu khi đi du lịch quốc tế?",
+              "answer": "Kiểm tra phí chuyển vùng quốc tế trước khi đi. Tắt chuyển vùng dữ liệu và dùng Wi-Fi khi có thể. Cách dễ nhất là dùng công cụ tính dữ liệu để ước tính nhu cầu, sau đó mua gói dữ liệu eSIM."
+            },
+            {
+              "question": "Làm sao dùng dữ liệu hiệu quả khi làm việc tại nhà?",
+              "answer": "Hạn chế hoạt động tiêu tốn dữ liệu như xem phim trong giờ làm việc. Chỉ bật điểm phát sóng khi cần thiết. Chọn ứng dụng năng suất tối ưu cho dữ liệu thấp. Tắt cập nhật tự động và sao lưu đám mây khi dùng dữ liệu di động."
+            },
+            {
+              "question": "Mẹo giảm sử dụng dữ liệu di động?",
+              "answer": "Kết nối Wi-Fi khi có thể. Tải nội dung để xem ngoại tuyến. Giảm chất lượng phát trực tuyến. Bật chế độ tiết kiệm dữ liệu. Tắt cập nhật tự động. Lên lịch cập nhật ứng dụng chỉ khi có Wi-Fi."
+            },
+            {
+              "question": "Khi hết dữ liệu thì sao?",
+              "answer": "Một số gói sẽ cắt dữ liệu cho đến khi bạn mua thêm. Một số khác tính phí vượt mức. Với hầu hết dịch vụ eSIM như Saily, bạn thường chỉ mất quyền truy cập thay vì bị tính phí bất ngờ. Bạn có thể chọn nạp tự động hoặc gói Saily Ultra để có dữ liệu không giới hạn."
+            }
+          ]
+        },
+        {
+          "label": "Thiết bị",
+          "items": [
+            {
+              "question": "Làm sao theo dõi dữ liệu trên nhiều thiết bị?",
+              "answer": "Khi chia sẻ dữ liệu qua điểm phát sóng, hãy dùng ứng dụng nhà cung cấp eSIM để theo dõi tổng mức sử dụng. Cấu hình cài đặt tiết kiệm dữ liệu trên mỗi thiết bị kết nối."
+            },
+            {
+              "question": "Tôi có thể chia sẻ dữ liệu với thiết bị khác không?",
+              "answer": "Có, bạn có thể chia sẻ dữ liệu eSIM với các thiết bị khác bằng tính năng điểm phát sóng di động. Lưu ý rằng chia sẻ dữ liệu qua điểm phát sóng sẽ tiêu tốn gói dữ liệu nhanh hơn."
+            },
+            {
+              "question": "Tôi có dùng dữ liệu di động khi kết nối Wi-Fi không?",
+              "answer": "Thông thường, điện thoại sẽ dùng Wi-Fi khi đã kết nối. Nhưng hãy cẩn thận với tính năng Wi-Fi Assist (trên iPhone) hoặc kết nối thích ứng (trên Android) có thể tự động chuyển sang dữ liệu di động khi tín hiệu Wi-Fi yếu."
+            },
+            {
+              "question": "Điện thoại có dùng dữ liệu khi tôi không sử dụng không?",
+              "answer": "Có, nhiều ứng dụng chạy ngầm, đồng bộ email, làm mới bảng tin, gửi thông báo hoặc sao lưu ảnh. Bạn có thể hạn chế dữ liệu nền trong cài đặt."
+            },
+            {
+              "question": "Điện thoại có dùng ít dữ liệu hơn laptop không?",
+              "answer": "Với hầu hết hoạt động, điện thoại dùng ít dữ liệu hơn laptop vì ứng dụng di động thường nén ảnh và video. Laptop thường tải phiên bản đầy đủ của trang web và tệp lớn hơn."
+            }
+          ]
+        },
+        {
+          "label": "Ứng dụng",
+          "items": [
+            {
+              "question": "Ứng dụng nào dùng nhiều dữ liệu nhất?",
+              "answer": "YouTube, Netflix và Disney+ thường dùng nhiều dữ liệu nhất, đặc biệt khi xem Full HD. Ứng dụng mạng xã hội như Instagram, Snapchat và TikTok cũng tiêu tốn nhiều dữ liệu với video tự phát."
+            },
+            {
+              "question": "Tải một ứng dụng tốn bao nhiêu dữ liệu?",
+              "answer": "Ứng dụng đơn giản có thể chỉ vài megabyte. Ứng dụng phức tạp hơn có thể vượt 100-200 MB. Game 3D lớn có thể lên đến vài gigabyte."
+            },
+            {
+              "question": "Cập nhật ứng dụng có dùng ít dữ liệu hơn tải mới không?",
+              "answer": "Cập nhật thường dùng ít dữ liệu hơn tải đầy đủ. Sửa lỗi nhỏ có thể cần 5-50 MB, cập nhật tính năng có thể lên 50-200 MB. Cập nhật game lớn có thể dùng hàng trăm MB đến gigabyte."
+            },
+            {
+              "question": "Ứng dụng email có dùng nhiều dữ liệu không?",
+              "answer": "Ứng dụng email không dùng nhiều dữ liệu cho tin nhắn văn bản thuần (khoảng 0.07 KB mỗi email). Email có tệp đính kèm lớn có thể dùng đến 5 MB. Đồng bộ thường xuyên cũng tăng mức sử dụng."
+            },
+            {
+              "question": "Nhắn tin dùng bao nhiêu dữ liệu?",
+              "answer": "Tin nhắn văn bản dùng rất ít dữ liệu (0.001-0.005 MB mỗi tin). Gửi ảnh dùng 0.1-2 MB mỗi ảnh. Video tiêu tốn 500KB đến 10MB trở lên tùy độ dài và chất lượng."
+            }
+          ]
+        },
+        {
+          "label": "Dữ liệu eSIM",
+          "items": [
+            {
+              "question": "eSIM dùng bao nhiêu dữ liệu?",
+              "answer": "eSIM không tự dùng dữ liệu — chúng là thẻ SIM kỹ thuật số. Mức tiêu thụ dữ liệu hoạt động giống hệt SIM truyền thống, phụ thuộc hoàn toàn vào hoạt động của bạn."
+            },
+            {
+              "question": "Dùng eSIM có tiêu tốn nhiều dữ liệu hơn chuyển vùng không?",
+              "answer": "Không, mức sử dụng dữ liệu phụ thuộc vào hoạt động và điều kiện mạng, không phải SIM vật lý hay kỹ thuật số. Ưu điểm của eSIM là chuyển đổi nhà mạng dễ dàng hơn và giá dữ liệu phải chăng hơn."
+            },
+            {
+              "question": "Làm sao kiểm tra dữ liệu eSIM đã dùng?",
+              "answer": "Trên iPhone: Cài đặt > Di động. Trên Android: Cài đặt > Mạng và internet > SIM. Trong ứng dụng Saily, mức sử dụng dữ liệu hiện tại hiển thị nổi bật trên màn hình chính."
+            },
+            {
+              "question": "Làm sao kiểm tra dữ liệu điểm phát sóng eSIM?",
+              "answer": "Trên iPhone: Cài đặt > Di động > Điểm phát sóng cá nhân. Trên Android: Cài đặt > Kết nối > Sử dụng dữ liệu > Điểm phát sóng di động. Kiểm tra thường xuyên giúp quản lý giới hạn dữ liệu tổng thể."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "aboutUs": {
+    "hero": {
+      "title": "Gặp gỡ những người đứng sau Saily",
+      "subtitle": "Chúng tôi đã đi du lịch đủ nhiều để biết việc giữ kết nối ở nước ngoài khó chịu thế nào. Đó là lý do chúng tôi xây dựng Saily — ứng dụng eSIM giúp việc kết nối trở nên đơn giản cho mọi người."
+    },
+    "story": {
+      "title": "Tại sao chúng tôi xây dựng Saily",
+      "paragraphs": [
+        "Con người là những nhà thám hiểm bẩm sinh, và vượt biển luôn là cuộc phiêu lưu tuyệt vời nhất. Trong nhiều năm, đi thuyền là cách họ thực hiện điều đó. Ngày nay, bạn có thể không vượt đại dương để tìm lục địa mới, nhưng khát khao du lịch và khám phá vẫn chưa bao giờ mất đi. Và đó chính là điều chúng tôi hướng tới.",
+        "Saily mang đến cho bạn công cụ để khám phá thế giới theo cách hiện đại. Chúng tôi đang xây dựng tương lai nơi kết nối dễ dàng, tức thì và hoàn toàn số hóa. Không nhựa. Không biên giới. Chỉ cần chạm, kết nối và đi."
+      ],
+      "imageAlt": "Các nhà sáng lập Saily tham dự buổi thuyết trình tại trụ sở Saily."
+    },
+    "values": {
+      "title": "Những giá trị dẫn lối chúng tôi",
+      "subtitle": "Giá trị của chúng tôi không chỉ là những lời truyền cảm hứng treo trên tường — chúng tôi sống với chúng trong mọi thứ chúng tôi xây dựng.",
+      "items": [
+        { "title": "Tự do khám phá", "description": "Chúng tôi đang thay thế thẻ SIM nhựa bằng giải pháp dễ dàng và thân thiện với môi trường, hoạt động tại hơn 200 điểm đến." },
+        { "title": "Giữ cho đơn giản", "description": "Không thuật ngữ kỹ thuật. Không lộn xộn. Chúng tôi xây dựng ứng dụng eSIM sạch sẽ, trực quan và dễ điều hướng." },
+        { "title": "Ưu tiên con người", "description": "Chúng tôi quan tâm đến con người, không chỉ quy trình cứng nhắc. Mỗi thành viên và người dùng đều được đối xử với sự đồng cảm và tôn trọng." },
+        { "title": "Luôn cải thiện", "description": "Chúng tôi không theo đuổi sự hoàn hảo — chúng tôi theo đuổi tiến bộ. Chúng tôi tin rằng những chiến thắng nhỏ tạo nên thay đổi lớn." },
+        { "title": "Suy nghĩ như du khách", "description": "Chúng tôi luôn tò mò, linh hoạt và cởi mở với điều chưa biết, giống như những nhà thám hiểm mà chúng tôi xây dựng Saily cho họ." },
+        { "title": "Tạo ra điều có ý nghĩa", "description": "Chúng tôi ở đây để tạo ra sự khác biệt, vì vậy chúng tôi tập trung vào điều thực sự quan trọng — người dùng, đội ngũ và thế giới xung quanh." }
+      ]
+    },
+    "timeline": {
+      "title": "Câu chuyện Saily",
+      "subtitle": "Chúng tôi hình dung một cách tốt hơn để du khách giữ kết nối trực tuyến. Ngày nay, chúng tôi đang biến tầm nhìn đó thành hiện thực cho hàng nghìn người trên toàn cầu. Đây là cách Saily đến được đây.",
+      "milestones": [
+        { "date": "Tháng 11 năm 2023", "title": "Nơi tất cả bắt đầu", "description": "Ứng dụng eSIM Saily bắt đầu với một ý tưởng chung — loại bỏ thẻ SIM nhựa và đơn giản hóa kết nối di động." },
+        { "date": "Tháng 3 năm 2024", "title": "Lần ra mắt đầu tiên", "description": "Chúng tôi giới thiệu các gói eSIM đầu tiên phủ sóng hơn 160 quốc gia với truy cập di động tức thì và không rác thải nhựa." },
+        { "date": "Tháng 12 năm 2024", "title": "Ưu tiên bảo mật", "description": "Chúng tôi đã thêm tính năng bảo mật tích hợp vào ứng dụng eSIM để bạn có thể duyệt web an toàn hơn khi du lịch." },
+        { "date": "Tháng 2 năm 2025", "title": "Kết nối thế giới", "description": "Đầu năm, chúng tôi mở rộng phủ sóng đến hơn 200 điểm đến và tiếp cận nhiều người hơn bao giờ hết." },
+        { "date": "2025", "title": "Hành trình tiếp tục", "description": "Chúng tôi tập trung mở rộng phủ sóng, cải thiện trải nghiệm Saily và giữ bạn kết nối 24/7." }
+      ]
+    },
+    "crew": {
+      "title": "Tiếng nói của đội ngũ Saily",
+      "subtitle": "Tìm hiểu về những người đứng sau Saily và tầm nhìn của họ về kết nối di động dễ dàng hơn.",
+      "members": [
+        {
+          "name": "Vykintas Maknickas",
+          "role": "CEO tại Saily",
+          "quote": "Saily bắt đầu với một ý tưởng đơn giản — kết nối di động dễ dàng, giá cả phải chăng và số hóa. Chúng tôi đang xây dựng trải nghiệm tốt hơn cho thế hệ du khách tiếp theo và bỏ lại những cách cũ."
+        },
+        {
+          "name": "Matas Čenys",
+          "role": "Trưởng bộ phận sản phẩm tại Saily",
+          "quote": "Du khách là trung tâm của mọi thứ chúng tôi làm tại Saily. Đó là lý do mọi đội đều đang làm việc để kết nối du lịch thông minh và mượt mà hơn. Chúng tôi di chuyển nhanh và luôn tò mò để mang đến trải nghiệm tốt nhất có thể."
+        },
+        {
+          "name": "Neringa Kondrašovė",
+          "role": "Quản lý dự án marketing tại Saily",
+          "quote": "Điều tôi yêu thích nhất về Saily là tác động hàng ngày mà chúng tôi tạo ra. Chúng tôi đang giải quyết vấn đề thực cho người thực, và chúng tôi làm điều đó với một đội ngũ thực sự quan tâm đến trải nghiệm mà chúng tôi tạo ra."
+        }
+      ]
+    },
+    "life": {
+      "title": "Cuộc sống tại Saily",
+      "perks": [
+        { "title": "Cơ hội phát triển", "description": "Chúng tôi hỗ trợ sự phát triển của bạn với cơ hội học hỏi, trách nhiệm thực tế và cơ hội dẫn dắt (không chỉ theo sau).", "imageAlt": "Đội ngũ Saily tham gia sự kiện nội bộ công ty." },
+        { "title": "Cân bằng công việc-cuộc sống", "description": "Làm việc từ bất cứ đâu trên thế giới! Chúng tôi là đội ngũ không biên giới với nhiều quốc tịch, kết nối bằng niềm tin, không phải múi giờ.", "imageAlt": "Nhân viên Saily trò chuyện trong sự kiện tại trụ sở Saily." },
+        { "title": "Văn hóa và cộng đồng", "description": "Chúng tôi ưu tiên con người và ăn mừng chiến thắng, cột mốc và đóng góp độc đáo của mỗi thành viên.", "imageAlt": "Các thành viên đội ngũ Saily tập thể dục cùng nhau." },
+        { "title": "Tự chủ và sở hữu", "description": "Chúng tôi tin tưởng bạn dẫn dắt, thử nghiệm và biến ý tưởng thành hiện thực. Tại Saily, mọi người đều có quyền tự do đưa ra quyết định táo bạo.", "imageAlt": "Nhân viên Saily vỗ tay sau buổi thuyết trình." },
+        { "title": "Công việc dựa trên sự tò mò", "description": "Chúng tôi khuyến khích sự tò mò. Câu hỏi không chỉ được chào đón — chúng là cách chúng tôi xây dựng, học hỏi và phát triển.", "imageAlt": "Các nhà sáng lập Saily tham dự sự kiện." }
+      ]
+    },
+    "banner": {
+      "title": "Luôn kết nối. Luôn đúng hướng.",
+      "subtitle": "Tham gia đội ngũ những du khách đam mê đang định hình tương lai kết nối di động.",
+      "ctaText": "Khám phá cơ hội nghề nghiệp",
+      "ctaHref": "https://nordsecurity.com/careers?searchString=saily"
+    }
+  },
+  "whatIsEsimPage": {
+    "hero": {
+      "title": "eSIM: Nó là gì và hoạt động như thế nào?",
+      "subtitle": "eSIM là SIM kỹ thuật số được tích hợp sẵn trong hầu hết điện thoại hiện đại. Nó hoạt động như thẻ SIM vật lý, nhưng không cần lắp bất cứ thứ gì vào thiết bị. eSIM mang lại nhiều lợi ích, như giúp bạn tránh phí chuyển vùng và dễ dàng chuyển đổi giữa các nhà mạng.",
+      "cta": "Chọn điểm đến của bạn",
+      "imageAlt": "Một phụ nữ vui vẻ kích hoạt thẻ eSIM trên điện thoại."
+    },
+    "definition": {
+      "title": "eSIM là gì?",
+      "paragraphs": [
+        "eSIM là mô-đun nhận dạng thuê bao nhúng — về cơ bản là một chip tích hợp trong điện thoại của bạn. Nó làm mọi thứ mà SIM truyền thống làm, nhưng không cần lắp thẻ nhỏ vào điện thoại. Ngoài ra, eSIM cho phép bạn sử dụng nhiều nhà mạng và số điện thoại cùng lúc, rất tiện lợi.",
+        "eSIM có sẵn trên điện thoại thông minh, máy tính bảng, đồng hồ thông minh và thậm chí một số ô tô! Chúng rất tuyệt để chuyển đổi nhanh giữa các số điện thoại và lấy dữ liệu di động cho du lịch."
+      ]
+    },
+    "howWorks": {
+      "title": "eSIM hoạt động như thế nào?",
+      "imageAlt": "Một người đàn ông xem gói eSIM Mỹ của Saily trên điện thoại.",
+      "paragraphs": [
+        "eSIM sử dụng phần mềm cài đặt sẵn trên thiết bị để hoạt động giống như SIM vật lý. Sau khi kích hoạt, bạn có thể kết nối mạng di động, gọi điện và sử dụng dữ liệu. Hầu hết điện thoại hiện đại đều có eSIM tích hợp, nhưng hãy kiểm tra danh sách điện thoại tương thích eSIM để xem thiết bị của bạn có hỗ trợ không.",
+        "Để bắt đầu sử dụng eSIM, chỉ cần mua gói eSIM và hoàn tất thiết lập nhanh. Không cần tháo thẻ SIM hiện tại — nó có thể ở nguyên vị trí, dù bạn quyết định tiếp tục sử dụng hay không."
+      ]
+    },
+    "setup": {
+      "title": "Cách thiết lập eSIM",
+      "subtitle": "Làm theo các bước sau để bắt đầu sử dụng eSIM trên iPhone hoặc Android.",
+      "tabs": [
+        {
+          "label": "Trên iPhone",
+          "appTitle": "Thiết lập eSIM trên iPhone với ứng dụng Saily",
+          "steps": [
+            { "title": "Chọn gói dữ liệu eSIM cho chuyến đi", "description": "Chọn quốc gia bạn sẽ đến và chọn một gói." },
+            { "title": "Tải ứng dụng Saily eSIM", "description": "Tải ứng dụng, nhấn \"Cài đặt eSIM\" và làm theo các bước trên màn hình." },
+            { "title": "Gói của bạn sẽ tự động kích hoạt", "description": "Sẵn sàng cho chuyến đi — gói của bạn sẽ kích hoạt khi bạn đến nơi." }
+          ],
+          "manualTitle": "Thiết lập eSIM thủ công trên iPhone",
+          "manualSteps": [
+            "Vào \"Cài đặt\".",
+            "Nhấn \"Dữ liệu di động\" hoặc \"Dữ liệu mạng\".",
+            "Nhấn \"Thêm gói di động\".",
+            "Chạm \"Nhập thông tin thủ công\" ở cuối màn hình iPhone.",
+            "Dán thông tin eSIM được nhà cung cấp chia sẻ."
+          ]
+        },
+        {
+          "label": "Trên Android",
+          "appTitle": "Thiết lập eSIM trên Android với ứng dụng Saily",
+          "steps": [
+            { "title": "Chọn gói dữ liệu eSIM cho chuyến đi", "description": "Chọn quốc gia bạn sẽ đến và chọn một gói." },
+            { "title": "Tải ứng dụng Saily eSIM", "description": "Tải ứng dụng, nhấn \"Cài đặt eSIM\" và làm theo các bước trên màn hình để thiết lập." },
+            { "title": "Gói của bạn sẽ tự động kích hoạt", "description": "Sẵn sàng cho chuyến đi — gói của bạn sẽ kích hoạt khi bạn đến nơi." }
+          ],
+          "manualTitle": "Thiết lập eSIM thủ công trên Android",
+          "manualSteps": [
+            "Vào \"Cài đặt\", sau đó \"Kết nối\".",
+            "Nhấn \"Quản lý SIM\".",
+            "Chọn \"Thêm eSIM\".",
+            "Nhấn \"Quét mã QR\" hoặc chọn cách khác để thêm eSIM."
+          ]
+        },
+        {
+          "label": "Bằng mã QR",
+          "appTitle": "Thiết lập eSIM bằng mã QR",
+          "steps": [
+            { "title": "Quét mã QR để tải Saily", "description": "Dùng điện thoại quét mã QR và tải ứng dụng Saily." },
+            { "title": "Mua gói dữ liệu eSIM cho chuyến đi", "description": "Lấy gói dữ liệu di động cho quốc gia bạn sẽ đến." },
+            { "title": "Gói của bạn sẽ tự động kích hoạt", "description": "Kết nối ngay khi bạn đến điểm đến." }
+          ],
+          "manualTitle": "",
+          "manualSteps": []
+        }
+      ]
+    },
+    "whyUse": {
+      "advantagesLabel": "Ưu điểm",
+      "disadvantagesLabel": "Nhược điểm",
+      "advantages": {
+        "title": "Ưu điểm của eSIM",
+        "subtitle": "eSIM là tương lai của kết nối. Đây là những lợi ích chính của eSIM.",
+        "items": [
+          { "title": "Không phí chuyển vùng cao", "description": "Du khách có thể mua eSIM kết nối với nhà mạng địa phương và tránh phí chuyển vùng bất ngờ." },
+          { "title": "Nhiều hồ sơ", "description": "Bạn có thể có nhiều eSIM ảo trên một thiết bị, dễ dàng chuyển đổi giữa các nhà mạng và số điện thoại khác nhau." },
+          { "title": "Trả cho những gì bạn cần", "description": "Đi Nhật một tuần? Lấy gói 7 ngày thay vì hàng tháng, và tiết kiệm tiền cho một phần okonomiyaki thêm." },
+          { "title": "Tiết kiệm không gian", "description": "Việc không có khe SIM vật lý giải phóng không gian cho các nâng cấp thiết bị khác (như pin lớn hơn hoặc nhiều tính năng hơn)." },
+          { "title": "Không thể mất hoặc bị đánh cắp", "description": "Thay đổi thẻ SIM nhỏ rất khó, đặc biệt khi bạn đang di chuyển. eSIM được tích hợp sẵn, nên không thể mất hoặc bị đánh cắp." },
+          { "title": "Ít rác thải hơn", "description": "Một thẻ SIM nhựa không phá hủy hành tinh, nhưng mua thẻ SIM đóng gói mới cho mỗi chuyến đi sẽ tích lũy theo thời gian. Hãy dùng eSIM thay thế." }
+        ]
+      },
+      "disadvantages": {
+        "title": "Nhược điểm của eSIM",
+        "subtitle": "Giống như mọi thứ khác, eSIM cũng có một số hạn chế.",
+        "items": [
+          "Không phải tất cả thiết bị đều hỗ trợ eSIM. Mặc dù hầu hết điện thoại hiện đại tương thích eSIM, nếu bạn đang dùng model cũ, bạn có thể không may mắn.",
+          "Công nghệ chưa quen thuộc. Nếu bạn mới với eSIM, bạn có thể thấy quá trình kích hoạt phức tạp hơn so với việc đơn giản lắp thẻ SIM.",
+          "Không dễ chuyển đổi thiết bị. Di chuyển eSIM sang thiết bị khác cần nhiều bước hơn so với việc chỉ đổi thẻ SIM vật lý."
+        ]
+      }
+    },
+    "comparison": {
+      "title": "Sự khác biệt giữa eSIM và SIM vật lý là gì?",
+      "subtitle": "Sự khác biệt chính giữa eSIM và thẻ SIM truyền thống là eSIM là kỹ thuật số trong khi thẻ SIM là chip vật lý.",
+      "rows": [
+        { "label": "Số điện thoại", "esim": "Tối đa hai*", "sim": "Tối đa hai" },
+        { "label": "Nhà mạng", "esim": "Bao nhiêu tùy thích", "sim": "Tối đa hai" },
+        { "label": "Gỡ bỏ", "esim": "Hủy kích hoạt hồ sơ", "sim": "Tháo thẻ SIM" },
+        { "label": "Kích hoạt", "esim": "Thủ công hoặc tự động (gói kích hoạt tại điểm đến)", "sim": "Thủ công (cần lắp thẻ vào thiết bị)" },
+        { "label": "Tương thích", "esim": "Chỉ thiết bị mới", "sim": "Thiết bị cũ và hầu hết thiết bị mới" },
+        { "label": "Sử dụng ở nước ngoài", "esim": "Giá cả phải chăng — dễ dàng mua gói dữ liệu cho các quốc gia khác nhau", "sim": "Có thể đắt do chuyển vùng" }
+      ],
+      "footnote": "*Saily hiện tập trung vào dữ liệu di động, nên chúng tôi chưa hỗ trợ số điện thoại. Đừng lo — chúng tôi đang phát triển."
+    },
+    "ctaBanner": {
+      "title": "Nhận gói dữ liệu eSIM",
+      "subtitle": "Tìm gói dữ liệu di động cho chuyến đi tiếp theo — tìm kiếm trong danh sách điểm đến của chúng tôi.",
+      "cta": "Xem tất cả điểm đến"
+    },
+    "faq": {
+      "title": "Câu hỏi thường gặp về eSIM",
+      "items": [
+        { "question": "Thẻ eSIM làm gì?", "answer": "eSIM là phiên bản kỹ thuật số của thẻ SIM vật lý. Nó kết nối bạn với mạng di động, cho phép gọi điện, nhắn tin và sử dụng dữ liệu. Thay vì phải lắp vào thiết bị, bạn chỉ cần mua gói eSIM từ nhà cung cấp và kích hoạt." },
+        { "question": "Làm sao để có eSIM?", "answer": "Bạn có thể mua eSIM từ bất kỳ nhà cung cấp eSIM uy tín nào, thường bằng cách mua trực tuyến. Ví dụ, Saily cung cấp eSIM tại hơn 200 điểm đến — chỉ cần tìm quốc gia bạn muốn sử dụng dữ liệu và chọn gói." },
+        { "question": "eSIM có tốt hơn thẻ SIM không?", "answer": "Nói ngắn gọn — có. eSIM được tích hợp trong điện thoại, nên bạn không cần mở máy để lắp thẻ nhỏ. Những thẻ ảo này rất tuyệt để chuyển đổi giữa các nhà mạng và du lịch quốc tế." },
+        { "question": "Tại sao tôi nên muốn có eSIM?", "answer": "Bạn có thể muốn eSIM vì nhiều lý do, như đi nước ngoài hoặc cần thêm dữ liệu di động. Ví dụ, nếu bạn đến quốc gia không có chuyển vùng miễn phí, mua gói dữ liệu eSIM là giải pháp dễ dàng và tiết kiệm." },
+        { "question": "Tại sao eSIM chưa phổ biến?", "answer": "Công nghệ eSIM vẫn còn khá mới — điện thoại thông minh tương thích eSIM đầu tiên chỉ được phát hành năm 2016. Chưa nhiều người biết về eSIM, nhưng sự phổ biến đang tăng khi nhiều người tìm hiểu về lợi ích của eSIM." },
+        { "question": "eSIM có an toàn hơn SIM không?", "answer": "Có, ở một số khía cạnh. Thẻ SIM vật lý có thể bị hỏng, mất hoặc bị đánh cắp. eSIM là điện tử và tích hợp trong thiết bị, nên bạn không thể làm hỏng hoặc mất chúng." },
+        { "question": "eSIM có cung cấp số điện thoại không?", "answer": "Không phải lúc nào. Một số eSIM (như những gói bạn mua qua ứng dụng Saily) chỉ cung cấp dữ liệu di động mà không có số điện thoại. Tuy nhiên, một số nhà cung cấp khác cung cấp số điện thoại cùng eSIM." },
+        { "question": "eSIM có hoạt động không cần internet không?", "answer": "Có, eSIM có thể hoạt động không cần kết nối internet. Ví dụ, với một số eSIM, bạn có thể gọi điện thoại hoặc nhắn tin SMS. Những gì bạn có thể làm phụ thuộc vào gói eSIM và nhà cung cấp." },
+        { "question": "eSIM có hao pin điện thoại không?", "answer": "Hao pin không phải vấn đề với eSIM, ít nhất không nhiều hơn thẻ SIM vật lý. Nếu thiết bị gần đây dùng nhiều pin hơn, có thể do các ứng dụng khác trên điện thoại." },
+        { "question": "Có thể chuyển eSIM về SIM vật lý không?", "answer": "Có, bạn có thể chuyển eSIM về SIM vật lý — ví dụ, nếu bạn muốn dùng với model điện thoại cũ hơn. Tuy nhiên, tốt nhất nên đến cửa hàng nhà mạng để được tư vấn và lấy thẻ SIM mới." }
+      ]
+    }
   }
 }
