@@ -254,6 +254,32 @@
       { "title": "Top 10 travel destinations for 2025", "slug": "top-destinations-2025", "excerpt": "Discover the most popular travel destinations and how to stay connected there.", "author": "Saily Team", "tags": "Travel,Destinations" }
     ]
   },
+  "cta": {
+    "title": "Ready to stay ",
+    "titleHighlight": "connected",
+    "subtitle": "Download Saily and get affordable eSIM data plans for your next trip.",
+    "ctaPrimary": "Get Saily",
+    "ctaSecondary": "Download App",
+    "trustRating": "4.7/5 on Trustpilot",
+    "trustBrand": "By the creators of NordVPN"
+  },
+  "pricing": {
+    "badge": "Pricing",
+    "title": "Affordable plans for ",
+    "titleHighlight": "every trip",
+    "subtitle": "Choose from data plans in 150+ countries. No contracts, no hidden fees.",
+    "mostPopular": "Most Popular",
+    "plans": [
+      { "flag": "🇪🇺", "region": "Europe", "data": "5GB", "validity": "30 days", "price": "$8.99", "pricePerGB": "$1.80/GB", "cta": "Get plan", "features": ["5G/LTE coverage", "Instant activation", "24/7 support"] },
+      { "flag": "🇺🇸", "region": "United States", "data": "10GB", "validity": "30 days", "price": "$11.99", "pricePerGB": "$1.20/GB", "cta": "Get plan", "features": ["5G/LTE coverage", "Instant activation", "24/7 support"] },
+      { "flag": "🌏", "region": "Asia", "data": "10GB", "validity": "30 days", "price": "$9.99", "pricePerGB": "$1.00/GB", "cta": "Get plan", "features": ["5G/LTE coverage", "Instant activation", "24/7 support"] },
+      { "flag": "🇯🇵", "region": "Japan", "data": "3GB", "validity": "7 days", "price": "$4.99", "pricePerGB": "$1.66/GB", "cta": "Get plan", "features": ["5G/LTE coverage", "Instant activation", "24/7 support"] }
+    ],
+    "getPlan": "Get plan",
+    "allPlansTitle": "All plans include",
+    "allPlansSubtitle": "Every Saily plan comes with these features, no matter which destination you choose.",
+    "benefits": ["Instant activation", "5G/LTE speeds", "24/7 customer support", "No contracts", "Easy setup", "Global coverage"]
+  },
   "footer": {
     "popularDestinations": {
       "title": "Popular Destinations",

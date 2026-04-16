@@ -254,6 +254,32 @@
       { "title": "Top 10 điểm đến du lịch năm 2025", "slug": "top-destinations-2025", "excerpt": "Khám phá những điểm đến du lịch phổ biến nhất và cách giữ kết nối tại đó.", "author": "Đội ngũ Saily", "tags": "Du lịch,Điểm đến" }
     ]
   },
+  "cta": {
+    "title": "Sẵn sàng giữ ",
+    "titleHighlight": "kết nối",
+    "subtitle": "Tải Saily và nhận gói dữ liệu eSIM giá cả phải chăng cho chuyến đi tiếp theo.",
+    "ctaPrimary": "Tải Saily",
+    "ctaSecondary": "Tải ứng dụng",
+    "trustRating": "4.7/5 trên Trustpilot",
+    "trustBrand": "Bởi nhà sáng tạo NordVPN"
+  },
+  "pricing": {
+    "badge": "Bảng giá",
+    "title": "Gói giá phải chăng cho ",
+    "titleHighlight": "mọi chuyến đi",
+    "subtitle": "Chọn từ các gói dữ liệu tại hơn 150 quốc gia. Không hợp đồng, không phí ẩn.",
+    "mostPopular": "Phổ biến nhất",
+    "plans": [
+      { "flag": "🇪🇺", "region": "Châu Âu", "data": "5GB", "validity": "30 ngày", "price": "$8.99", "pricePerGB": "$1.80/GB", "cta": "Mua gói", "features": ["Phủ sóng 5G/LTE", "Kích hoạt tức thì", "Hỗ trợ 24/7"] },
+      { "flag": "🇺🇸", "region": "Hoa Kỳ", "data": "10GB", "validity": "30 ngày", "price": "$11.99", "pricePerGB": "$1.20/GB", "cta": "Mua gói", "features": ["Phủ sóng 5G/LTE", "Kích hoạt tức thì", "Hỗ trợ 24/7"] },
+      { "flag": "🌏", "region": "Châu Á", "data": "10GB", "validity": "30 ngày", "price": "$9.99", "pricePerGB": "$1.00/GB", "cta": "Mua gói", "features": ["Phủ sóng 5G/LTE", "Kích hoạt tức thì", "Hỗ trợ 24/7"] },
+      { "flag": "🇯🇵", "region": "Nhật Bản", "data": "3GB", "validity": "7 ngày", "price": "$4.99", "pricePerGB": "$1.66/GB", "cta": "Mua gói", "features": ["Phủ sóng 5G/LTE", "Kích hoạt tức thì", "Hỗ trợ 24/7"] }
+    ],
+    "getPlan": "Mua gói",
+    "allPlansTitle": "Tất cả gói bao gồm",
+    "allPlansSubtitle": "Mọi gói Saily đều đi kèm các tính năng này, bất kể bạn chọn điểm đến nào.",
+    "benefits": ["Kích hoạt tức thì", "Tốc độ 5G/LTE", "Hỗ trợ 24/7", "Không hợp đồng", "Thiết lập dễ dàng", "Phủ sóng toàn cầu"]
+  },
   "footer": {
     "popularDestinations": {
       "title": "Điểm đến phổ biến",
