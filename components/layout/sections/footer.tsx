@@ -34,7 +34,7 @@ export function FooterSection({ dict }: FooterSectionProps) {
   ];
 
   return (
-    <footer className="px-4 lg:px-16 bg-bg-secondary text-text-secondary">
+    <footer className="px-4 lg:px-16 bg-white text-text-secondary">
       <div className="max-w-[1168px] mx-auto py-12">
         {/* Logo & App Store */}
         <div className="flex flex-wrap flex-col md:flex-row gap-8 justify-between items-start pb-8">

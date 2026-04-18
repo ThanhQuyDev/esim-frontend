@@ -79,6 +79,31 @@ export interface SupportedDevicesResponse {
   data: DeviceType[];
 }
 
+export interface Plan {
+  id: number;
+  provider: string;
+  providerPlanId: string;
+  name: string;
+  slug: string;
+  countryCode?: string;
+  destinationId?: number;
+  destination?: Destination;
+  regionId?: number;
+  durationDays: number;
+  dataGb: number;
+  costPrice: number;
+  price: number;
+  retailPrice: number;
+  currency: string;
+  type: string;
+  topUp: boolean;
+  isCheapest: boolean;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string;
+}
+
 export interface PaginatedResponse<T> {
   data: T[];
   hasNextPage: boolean;
@@ -209,6 +234,44 @@ export async function getSupportedDevices(
   }
 
   return res.json();
+}
+
+// ===== Plans API =====
+
+export async function getPlans(
+  options: FetchOptions = {}
+): Promise<PaginatedResponse<Plan>> {
+  return apiFetch<PaginatedResponse<Plan>>(
+    "/api/v1/plans",
+    { limit: 50, ...options },
+    300
+  );
+}
+
+export async function getPlansByDestination(
+  destinationId: number,
+  lang?: string
+): Promise<PaginatedResponse<Plan>> {
+  return getPlans({
+    filters: JSON.stringify({ destinationId, isActive: true }),
+    lang,
+  });
+}
+
+export async function getDestinationBySlug(
+  slug: string,
+  lang?: string
+): Promise<Destination | null> {
+  try {
+    const result = await getDestinations({
+      filters: JSON.stringify({ slug }),
+      limit: 1,
+      lang,
+    });
+    return result.data[0] || null;
+  } catch {
+    return null;
+  }
 }
 
 // Client-side search for supported devices (no next.revalidate, works in browser)

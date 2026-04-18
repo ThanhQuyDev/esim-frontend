@@ -796,5 +796,68 @@
         "description": "Khá nhiều model laptop hỗ trợ eSIM. Lưu ý rằng chúng phải chạy hệ điều hành Windows 10 hoặc Windows 11."
       }
     }
+  },
+  "destinationPage": {
+    "title": "eSIM {destination} — Kết nối liền mạch",
+    "subtitle": "Mua eSIM du lịch dành cho {destination} và tận hưởng vùng phủ sóng đáng tin cậy với nhiều gói cước linh hoạt.",
+    "notFound": "Không tìm thấy điểm đến",
+    "notFoundDesc": "Điểm đến bạn tìm kiếm không tồn tại hoặc đã bị xóa.",
+    "heroTag": "Kích hoạt tự động khi hạ cánh",
+    "viewCountries": "Xem danh sách các quốc gia và nhà mạng ({count})",
+    "supportedCountries": "{count} quốc gia được hỗ trợ",
+    "carriers": {
+      "title": "Nhà mạng hỗ trợ",
+      "domestic": "Mạng nội địa"
+    },
+    "features": {
+      "title": "Tính năng",
+      "hotspot": "Điểm truy cập WiFi / Chia sẻ kết nối",
+      "calls": "Gọi & Nhắn tin",
+      "localNumber": "Số điện thoại địa phương",
+      "ekyc": "Yêu cầu giấy tờ / eKYC",
+      "topup": "Nạp thêm dữ liệu (Topup)",
+      "yes": "Có",
+      "no": "Không"
+    },
+    "delivery": {
+      "title": "Giao hàng & Kích hoạt",
+      "deliveryTime": "Thời gian giao hàng",
+      "instant": "Nhận ngay lập tức",
+      "instantDesc": "Gửi qua email ngay sau khi mua",
+      "activationPeriod": "Thời hạn kích hoạt gói",
+      "activationDesc": "180 ngày kể từ ngày mua"
+    },
+    "note": {
+      "title": "Lưu ý:",
+      "text": "eSIM không hỗ trợ gọi điện và nhắn tin thông thường. Sử dụng WhatsApp, Zalo, Messenger khi đã có kết nối data. Vui lòng kiểm tra thiết bị tương thích eSIM trước khi mua."
+    },
+    "planTabs": {
+      "data": "Data",
+      "dataCalls": "Data / Gọi / SMS"
+    },
+    "planSections": {
+      "fixed": "Gói cố định",
+      "daily": "Gói theo ngày",
+      "unlimited": "Gói không giới hạn"
+    },
+    "speed": {
+      "normal": "Tốc độ thường",
+      "high": "Tốc độ cao"
+    },
+    "unlimitedHint": "→ 1 Mbps không giới hạn",
+    "daysLabel": "Số ngày dùng",
+    "daysUnit": "Ngày",
+    "quantity": "Số lượng eSIM",
+    "esimUnit": "eSIM",
+    "buyNow": "Mua Ngay",
+    "addToCart": "Thêm vào giỏ hàng",
+    "noPlans": "Hiện không có gói nào cho điểm đến này.",
+    "trust": {
+      "rating": "4.7 (hơn 97.400 đánh giá)",
+      "secure": "Thanh toán an toàn"
+    },
+    "disclaimer": "Hãy đảm bảo thiết bị của bạn tương thích với eSIM trước khi thanh toán.",
+    "disclaimerLink": "Xem danh sách thiết bị hỗ trợ eSIM →",
+    "save": "–{percent}%"
   }
 }

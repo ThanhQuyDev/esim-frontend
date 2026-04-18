@@ -1,13 +1,31 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Check, Sparkles } from "lucide-react";
 import type { Dictionary } from "@/lib/dictionaries";
+import { useExchangeRate, convertUsdToVnd, formatVnd } from "@/lib/hooks";
 
 interface PricingSectionProps {
   dict: Dictionary["pricing"];
 }
 
+/** Parse "$8.99" or "$1.80/GB" → numeric USD value */
+function parseUsdPrice(str: string): number {
+  const match = str.match(/\$?([\d.]+)/);
+  return match ? parseFloat(match[1]) : 0;
+}
+
+/** Convert "$1.80/GB" → "45.900₫/GB" */
+function convertPriceString(str: string, rate: number): string {
+  return str.replace(/\$[\d.]+/, (m) => {
+    const usd = parseFloat(m.replace("$", ""));
+    return formatVnd(convertUsdToVnd(usd, rate));
+  });
+}
+
 export const PricingSection = ({ dict }: PricingSectionProps) => {
   const popularIndex = 2; // Asia plan
+  const { data: usdToVndRate = 25_500 } = useExchangeRate();
 
   return (
     <section id="pricing" className="relative py-24 md:py-32">
@@ -31,6 +49,9 @@ export const PricingSection = ({ dict }: PricingSectionProps) => {
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6 mb-16">
           {dict.plans.map((plan, index) => {
             const isPopular = index === popularIndex;
+            const priceVnd = convertUsdToVnd(parseUsdPrice(plan.price), usdToVndRate);
+            const pricePerGbVnd = convertPriceString(plan.pricePerGB, usdToVndRate);
+
             return (
               <div
                 key={plan.region}
@@ -48,8 +69,8 @@ export const PricingSection = ({ dict }: PricingSectionProps) => {
                 <h3 className="font-display font-semibold text-lg text-white mb-1">{plan.region}</h3>
                 <p className="text-sm text-muted-foreground mb-5">{plan.data} · {plan.validity}</p>
                 <div className="mb-6">
-                  <span className="font-display font-bold text-3xl text-white">{plan.price}</span>
-                  <span className="text-sm text-muted-foreground ml-2">{plan.pricePerGB}</span>
+                  <span className="font-display font-bold text-3xl text-white">{formatVnd(priceVnd)}</span>
+                  <span className="text-sm text-muted-foreground ml-2">{pricePerGbVnd}</span>
                 </div>
                 <Button
                   className={`w-full rounded-full font-semibold mt-auto h-11 transition-all duration-300 ${

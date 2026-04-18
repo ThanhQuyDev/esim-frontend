@@ -4,6 +4,7 @@ import type {
   Faq,
   WhyChooseUs,
   Blog,
+  Plan,
   PaginatedResponse,
 } from "./api";
 import type { Locale } from "./i18n-config";
@@ -42,6 +43,13 @@ export const queryKeys = {
   regions: {
     all: ["regions"] as const,
     list: (filters?: string) => ["regions", "list", filters] as const,
+  },
+  plans: {
+    all: ["plans"] as const,
+    byDestination: (destinationId: number) => ["plans", "destination", destinationId] as const,
+  },
+  exchangeRate: {
+    usdToVnd: ["exchangeRate", "USD", "VND"] as const,
   },
   faqs: {
     all: ["faqs"] as const,
@@ -195,6 +203,76 @@ export function useFaqs(lang: Locale = "en") {
         .filter((f) => f.isActive)
         .sort((a, b) => a.sortOrder - b.sortOrder),
   });
+}
+
+// ===== Plans Hooks =====
+
+export function usePlansByDestination(destinationId: number, lang?: string) {
+  return useQuery({
+    queryKey: queryKeys.plans.byDestination(destinationId),
+    queryFn: ({ signal }) =>
+      clientFetch<PaginatedResponse<Plan>>(
+        "/api/v1/plans",
+        {
+          limit: "50",
+          filters: JSON.stringify({ destinationId, isActive: true }),
+        },
+        lang ? { "x-custom-lang": lang } : undefined,
+        signal
+      ),
+    select: (data) => data.data.filter((p) => p.isActive),
+    enabled: destinationId > 0,
+  });
+}
+
+// ===== Exchange Rate Hook =====
+
+interface ExchangeRateResponse {
+  result: string;
+  conversion_rates: Record<string, number>;
+}
+
+const FALLBACK_USD_VND_RATE = 25_500;
+
+/**
+ * Fetches live USD → VND exchange rate from ExchangeRate-API (free, no key).
+ * Falls back to a hardcoded rate if the API is unreachable.
+ * Cached for 1 hour via staleTime.
+ */
+export function useExchangeRate() {
+  return useQuery({
+    queryKey: queryKeys.exchangeRate.usdToVnd,
+    queryFn: async ({ signal }) => {
+      try {
+        const res = await fetch(
+          "https://open.er-api.com/v6/latest/USD",
+          { signal }
+        );
+        if (!res.ok) return FALLBACK_USD_VND_RATE;
+        const data: ExchangeRateResponse = await res.json();
+        return data.conversion_rates?.VND ?? FALLBACK_USD_VND_RATE;
+      } catch {
+        return FALLBACK_USD_VND_RATE;
+      }
+    },
+    staleTime: 60 * 60 * 1000, // 1 hour
+    gcTime: 2 * 60 * 60 * 1000, // 2 hours
+    retry: 2,
+  });
+}
+
+/**
+ * Convert a USD amount to VND using the live rate, rounded to nearest 1000₫.
+ */
+export function convertUsdToVnd(usdAmount: number, rate: number): number {
+  return Math.round((usdAmount * rate) / 1000) * 1000;
+}
+
+/**
+ * Format a VND amount: "125.000₫"
+ */
+export function formatVnd(amount: number): string {
+  return amount.toLocaleString("vi-VN") + "₫";
 }
 
 // ===== Why Choose Us Hooks =====

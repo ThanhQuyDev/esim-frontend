@@ -104,8 +104,8 @@ export function SecurityFeatures({ dict }: SecurityFeaturesProps) {
                                       <Image
                                         alt={dict.features[0].imageAlt}
                                         loading="lazy"
-                                        width={570}
-                                        height={555}
+                                        width={609}
+                                        height={609}
                                         src="https://sb.nordcdn.com/m/5f5e15f2fe290a34/original/homepage-display-tile-1.png"
                                         style={{ color: "transparent" }}
                                       />

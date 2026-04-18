@@ -82,7 +82,7 @@ export function AboutLife({ dict }: AboutLifeProps) {
               {/* Remaining slides */}
               {dict.perks.slice(1).map((perk: any, i: number) => {
                 const Icon = lifeIcons[i + 1] || Compass;
-                const isEven = (i + 1) % 2 === 0;
+                const isEven = i % 2 === 0;
                 return (
                   <SwiperSlide key={i + 1} className="!h-auto !w-auto group/gallery-slide">
                     <div className="flex flex-col gap-6 w-[400px] h-full">

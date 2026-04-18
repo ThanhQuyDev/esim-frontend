@@ -796,5 +796,68 @@
         "description": "Quite a few laptop models support eSIMs. Keep in mind that they must run either Windows 10 or Windows 11 OS."
       }
     }
+  },
+  "destinationPage": {
+    "title": "eSIM {destination} — Stay connected",
+    "subtitle": "Buy a travel eSIM for {destination} and enjoy reliable coverage with flexible plans.",
+    "notFound": "Destination not found",
+    "notFoundDesc": "The destination you're looking for doesn't exist or has been removed.",
+    "heroTag": "Auto-activate on landing",
+    "viewCountries": "View supported countries & carriers ({count})",
+    "supportedCountries": "{count} supported countries",
+    "carriers": {
+      "title": "Supported carriers",
+      "domestic": "Domestic network"
+    },
+    "features": {
+      "title": "Features",
+      "hotspot": "WiFi Hotspot / Tethering",
+      "calls": "Calls & SMS",
+      "localNumber": "Local phone number",
+      "ekyc": "ID / eKYC required",
+      "topup": "Data top-up",
+      "yes": "Yes",
+      "no": "No"
+    },
+    "delivery": {
+      "title": "Delivery & Activation",
+      "deliveryTime": "Delivery time",
+      "instant": "Instant delivery",
+      "instantDesc": "Sent via email right after purchase",
+      "activationPeriod": "Activation period",
+      "activationDesc": "180 days from purchase date"
+    },
+    "note": {
+      "title": "Note:",
+      "text": "eSIM does not support regular calls and SMS. Use WhatsApp, Zalo, Messenger once connected to data. Please check your device is eSIM-compatible before purchasing."
+    },
+    "planTabs": {
+      "data": "Data",
+      "dataCalls": "Data / Calls / SMS"
+    },
+    "planSections": {
+      "fixed": "Fixed plans",
+      "daily": "Daily plans",
+      "unlimited": "Unlimited plans"
+    },
+    "speed": {
+      "normal": "Normal speed",
+      "high": "High speed"
+    },
+    "unlimitedHint": "→ 1 Mbps unlimited after",
+    "daysLabel": "Usage days",
+    "daysUnit": "Days",
+    "quantity": "eSIM quantity",
+    "esimUnit": "eSIM",
+    "buyNow": "Buy Now",
+    "addToCart": "Add to cart",
+    "noPlans": "No plans available for this destination.",
+    "trust": {
+      "rating": "4.7 (97,400+ reviews)",
+      "secure": "Secure payment"
+    },
+    "disclaimer": "Make sure your device is eSIM-compatible before purchasing.",
+    "disclaimerLink": "View eSIM-supported devices →",
+    "save": "–{percent}%"
   }
 }

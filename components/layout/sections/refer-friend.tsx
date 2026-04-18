@@ -12,7 +12,7 @@ export function ReferFriendBanner({ dict }: ReferFriendBannerProps) {
       className="relative scroll-mt-20 xl:scroll-mt-24 group/section"
     >
       <div className="absolute top-0 group-first/section:-top-24 bottom-0 w-full">
-        <div className="background w-full h-full bg-secondary"></div>
+        <div className="background w-full h-full bg-white"></div>
       </div>
       <div className="relative">
         <div className="py-16">

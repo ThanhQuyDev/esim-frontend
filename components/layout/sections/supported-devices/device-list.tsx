@@ -165,7 +165,7 @@ export function DeviceList({ initialData, dict, lang }: DeviceListProps) {
 
   // When user selects a search result, switch to the right tab and expand the manufacturer
   const handleSelectResult = useCallback(
-    (result: SearchResult) => {
+    (result: { device: string; manufacturer: string; type: string }) => {
       const tabIndex = TABS.findIndex((t) => t.apiType === result.type);
       if (tabIndex >= 0) {
         setActiveTab(tabIndex);
