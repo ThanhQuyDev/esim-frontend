@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import * as Dialog from "@radix-ui/react-dialog";
 import { cn } from "@/lib/utils";
 import { SailyLogo } from "@/components/icons/saily-logo";
 import { DestinationSearch } from "@/components/layout/destination-search";
+import { DestinationDropdown } from "@/components/layout/destination-dropdown";
 import {
   ChevronDown,
   Search,
@@ -151,7 +153,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Ước tính dữ liệu bạn cần."
             : "Estimate your data usage.",
-          href: `/${lang}/data-calculator`,
+          href: isVi ? `/${lang}/cong-cu-tinh-data` : `/${lang}/data-calculator`,
         },
       ],
       explore: [
@@ -205,7 +207,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Tìm hiểu cách eSIM hoạt động và tại sao hữu ích."
             : "Discover how an eSIM works and why it's useful.",
-          href: `/${lang}/what-is-esim`,
+          href: isVi ? `/${lang}/esim-la-gi` : `/${lang}/what-is-esim`,
         },
         {
           icon: "pen",
@@ -221,7 +223,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Tìm hiểu thêm về chúng tôi."
             : "Learn more about who we are and what we do.",
-          href: `/${lang}/about-us`,
+          href: isVi ? `/${lang}/gioi-thieu` : `/${lang}/about-us`,
         },
         {
           icon: "globe",
@@ -274,7 +276,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Tìm hiểu bạn cần bao nhiêu dữ liệu cho chuyến đi."
             : "Find out how much data you'll need on your trip.",
-          href: `/${lang}/data-calculator`,
+          href: isVi ? `/${lang}/cong-cu-tinh-data` : `/${lang}/data-calculator`,
           image:
             "https://sb.nordcdn.com/m/6c224dbf48f13441/original/mega-menu-explore-data-usage-calculator.png",
           imageAlt: "A woman uses Saily's data usage calculator.",
@@ -468,9 +470,12 @@ const NAV_ITEMS = ["product", "resources", "offers", "help"] as const;
 /* ===== Main Navbar ===== */
 
 export function Navbar({ lang, dict }: NavbarProps) {
+  const pathname = usePathname();
+  const isLandingPage = pathname === `/${lang}` || pathname === `/${lang}/`;
   const [searchOpen, setSearchOpen] = useState(false);
   const [announcementVisible, setAnnouncementVisible] = useState(true);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [destinationsOpen, setDestinationsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const menuData = getMenuData(lang);
@@ -487,18 +492,22 @@ export function Navbar({ lang, dict }: NavbarProps) {
         !dropdownRef.current.contains(e.target as Node)
       ) {
         setOpenDropdown(null);
+        setDestinationsOpen(false);
       }
     }
-    if (openDropdown) {
+    if (openDropdown || destinationsOpen) {
       document.addEventListener("mousedown", handleClick);
     }
     return () => document.removeEventListener("mousedown", handleClick);
-  }, [openDropdown]);
+  }, [openDropdown, destinationsOpen]);
 
   // Close on Escape
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
-      if (e.key === "Escape") setOpenDropdown(null);
+      if (e.key === "Escape") {
+        setOpenDropdown(null);
+        setDestinationsOpen(false);
+      }
     }
     document.addEventListener("keydown", handleKey);
     return () => document.removeEventListener("keydown", handleKey);
@@ -507,7 +516,7 @@ export function Navbar({ lang, dict }: NavbarProps) {
   return (
     <>
       {/* ===== Announcement Bar ===== */}
-      {announcementVisible && (
+      {announcementVisible && isLandingPage && (
         <div className="relative bg-bg-dark text-text-primary-on-color overflow-hidden">
           <div className="px-6 min-w-full flex justify-between items-center md:gap-3">
             <div className="flex py-3 md:justify-center items-center w-full md:gap-3">
@@ -601,10 +610,19 @@ export function Navbar({ lang, dict }: NavbarProps) {
 
               {/* Destinations Button */}
               <button
-                onClick={() => setSearchOpen(true)}
-                className="hidden lg:flex items-center gap-2 px-6 py-[5.5px] text-text-primary border-md border-text-primary rounded-full body-sm-medium cursor-pointer transition-all duration-200 hover:bg-bg-dark hover:text-text-primary-on-color hover:border-bg-dark group"
+                onClick={() => {
+                  setDestinationsOpen(!destinationsOpen);
+                  setOpenDropdown(null);
+                }}
+                className={cn(
+                  "hidden lg:flex items-center gap-2 px-6 py-[5.5px] text-text-primary border-md border-text-primary rounded-full body-sm-medium cursor-pointer transition-all duration-200 hover:bg-bg-dark hover:text-text-primary-on-color hover:border-bg-dark group",
+                  destinationsOpen && "bg-bg-dark text-text-primary-on-color border-bg-dark"
+                )}
               >
-                <Search className="w-3 h-3 transition-colors group-hover:text-text-primary-on-color" />
+                <Search className={cn(
+                  "w-3 h-3 transition-colors group-hover:text-text-primary-on-color",
+                  destinationsOpen && "text-text-primary-on-color"
+                )} />
                 {lang === "vi" ? "Điểm đến" : "Destinations"}
               </button>
 
@@ -646,6 +664,14 @@ export function Navbar({ lang, dict }: NavbarProps) {
           <MegaMenuDropdown
             data={menuData[openDropdown]}
             onClose={() => setOpenDropdown(null)}
+          />
+        )}
+
+        {/* ===== Destination Dropdown ===== */}
+        {destinationsOpen && (
+          <DestinationDropdown
+            lang={lang}
+            onClose={() => setDestinationsOpen(false)}
           />
         )}
       </header>

@@ -39,6 +39,10 @@ export const queryKeys = {
     top: ["destinations", "top"] as const,
     detail: (id: string) => ["destinations", "detail", id] as const,
   },
+  regions: {
+    all: ["regions"] as const,
+    list: (filters?: string) => ["regions", "list", filters] as const,
+  },
   faqs: {
     all: ["faqs"] as const,
     list: (lang: string) => ["faqs", "list", lang] as const,
@@ -96,7 +100,8 @@ export function useSearchDestinations(query: string, enabled = true) {
 export function useDestinations(
   filters?: string,
   orderBy?: string,
-  order?: string
+  order?: string,
+  limit?: number
 ) {
   return useQuery({
     queryKey: queryKeys.destinations.list(filters),
@@ -104,7 +109,7 @@ export function useDestinations(
       clientFetch<PaginatedResponse<Destination>>(
         "/api/v1/destinations",
         {
-          limit: "100",
+          limit: String(limit || 100),
           ...(filters && { filters }),
           ...(orderBy && { orderBy }),
           ...(order && { order }),
@@ -113,6 +118,63 @@ export function useDestinations(
         signal
       ),
     select: (data) => data.data.filter((d) => d.isActive),
+  });
+}
+
+// ===== Region Interface & Hooks =====
+
+export interface Region {
+  id: number;
+  name: string;
+  slug: string;
+  avatarUrl: string;
+  isPopular: boolean;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  destinationCount: number;
+}
+
+export function useRegions(
+  filters?: string,
+  orderBy?: string,
+  order?: string,
+  limit?: number
+) {
+  return useQuery({
+    queryKey: queryKeys.regions.list(filters),
+    queryFn: ({ signal }) =>
+      clientFetch<PaginatedResponse<Region>>(
+        "/api/v1/regions",
+        {
+          limit: String(limit || 100),
+          ...(filters && { filters }),
+          ...(orderBy && { orderBy }),
+          ...(order && { order }),
+        },
+        undefined,
+        signal
+      ),
+    select: (data) => data.data.filter((r) => r.isActive),
+  });
+}
+
+export function useSearchRegions(query: string, enabled = true) {
+  return useQuery({
+    queryKey: [...queryKeys.regions.all, "search", query],
+    queryFn: ({ signal }) =>
+      clientFetch<PaginatedResponse<Region>>(
+        "/api/v1/regions",
+        {
+          limit: "20",
+          filters: JSON.stringify({ search: query }),
+        },
+        undefined,
+        signal
+      ),
+    select: (data) => data.data.filter((r) => r.isActive),
+    enabled: enabled && query.trim().length > 0,
   });
 }
 

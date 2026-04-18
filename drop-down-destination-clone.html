@@ -1,0 +1,320 @@
+<div data-testid="destinations-dropdown"
+    class="header-dropdown hidden absolute w-full px-6 top-full left-0 rounded-b-md bg-secondary shadow-[0_8px_12px_-6px_rgba(149,157,165,0.2)] lg:block">
+    <div class="flex flex-col max-w-[1600px] mx-auto">
+        <div class="w-full border-t-md border-secondary py-6">
+            <div class="relative w-full max-lg:mb-8">
+                <div id="input-wrapper" class="relative mb-1 lg:mb-6"><input data-testid="search-input"
+                        placeholder="Where are you travelling to?" autocomplete="off"
+                        class="body-sm max-lg:body-md bg-primary outline-hidden appearance-none w-full leading-md py-[12.5px] pl-4 pr-2 text-primary placeholder-primary border-md border-[#F7F7F8] active:border-focus focus:border-focus transition-colors rounded-full focus:bg-secondary cursor-pointer"
+                        type="text" value="" name="search-input">
+                    <div
+                        class="absolute top-1/2 -translate-y-1/2 right-2 flex items-center justify-center rounded-full h-8 w-8 bg-brand-black">
+                        <i
+                            class="kitIcon text-center w-[1em] fa-magnifying-glass fa-sharp fa-regular text-[12px] text-primary-on-color"></i>
+                    </div>
+                </div>
+                <div class="hidden lg:block mb-6">
+                    <div class="relative flex gap-1 w-fit p-1 border-md border-secondary rounded-full">
+                        <div class="absolute inset-0 pointer-events-none z-1 w-0 h-0 bg-dark"
+                            style="transform: translateX(4px); width: 82px; height: 32px; top: 4px; border-radius: 1536px; transition: transform 0.3s ease-in-out, width 0.3s ease-in-out, height 0.3s ease-in-out, top 0.3s ease-in-out;">
+                        </div><button id="_r_4_" data-is-tab="true" data-is-active="true"
+                            class="relative z-1 body-sm-medium whitespace-nowrap md:body-md-medium px-4 py-1 hover:text-primary focus-visible:outline-hidden focus-visible:shadow-focus rounded-full text-primary-on-color! bg-dark hover:bg-inherit transition-[color] delay-250 duration-[0] min-w-[60px] bg-transparent">Top
+                            10</button><button id="_r_5_" data-is-tab="true" data-is-active="false"
+                            class="relative z-1 body-sm-medium whitespace-nowrap md:body-md-medium px-4 py-1 text-primary hover:text-primary hover:bg-primary focus-visible:outline-hidden focus-visible:shadow-focus rounded-full min-w-[60px] bg-transparent">Country</button><button
+                            id="_r_6_" data-is-tab="true" data-is-active="false"
+                            class="relative z-1 body-sm-medium whitespace-nowrap md:body-md-medium px-4 py-1 text-primary hover:text-primary hover:bg-primary focus-visible:outline-hidden focus-visible:shadow-focus rounded-full min-w-[60px] bg-transparent">Region</button><button
+                            id="_r_7_" data-is-tab="true" data-is-active="false"
+                            class="relative z-1 body-sm-medium whitespace-nowrap md:body-md-medium px-4 py-1 text-primary hover:text-primary hover:bg-primary focus-visible:outline-hidden focus-visible:shadow-focus rounded-full min-w-[60px] bg-transparent"><span
+                                class="flex items-center gap-2">Ultra Plan<span
+                                    class="text-center whitespace-nowrap rounded-full inline-block bg-accent text-primary py-0.5 px-2 body-2xs-medium">New</span></span></button>
+                    </div>
+                </div>
+                <div
+                    class="w-full max-lg:absolute max-lg:z-40 max-lg:border-md max-lg:border-secondary max-lg:rounded-sm max-lg:shadow-[0_4px_12px_0_rgba(0,0,0,0.2)] max-lg:bg-secondary max-lg:p-4 h-40 max-lg:hidden">
+                    <div id="country-list-items"
+                        class="grid gap-6 lg:gap-4 w-full lg:grid-cols-3 xl:grid-cols-5 max-h-44 lg:max-h-40 overflow-auto">
+                        <a class="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus rounded-sm w-full block group lg:p-3 lg:hover:bg-primary"
+                            data-ga-slug="N/A" data-testid="ES" data-next-link="true" href="/esim-spain/">
+                            <div class="flex flex-row gap-2">
+                                <div
+                                    class="flex items-center justify-center h-6 w-6 rounded-full shrink-0 text-primary">
+                                    <div class="w-[24px] h-[24px] relative overflow-hidden shrink-0 rounded-full"><img
+                                            alt="ES flag" loading="lazy" decoding="async" data-nimg="fill"
+                                            class="w-full h-full object-cover" sizes="100vw"
+                                            srcset="/_next/image/?url=%2Fflags%2Fes_flag.webp&amp;w=640&amp;q=75 640w, /_next/image/?url=%2Fflags%2Fes_flag.webp&amp;w=750&amp;q=75 750w, /_next/image/?url=%2Fflags%2Fes_flag.webp&amp;w=828&amp;q=75 828w, /_next/image/?url=%2Fflags%2Fes_flag.webp&amp;w=1080&amp;q=75 1080w, /_next/image/?url=%2Fflags%2Fes_flag.webp&amp;w=1200&amp;q=75 1200w, /_next/image/?url=%2Fflags%2Fes_flag.webp&amp;w=1920&amp;q=75 1920w, /_next/image/?url=%2Fflags%2Fes_flag.webp&amp;w=2048&amp;q=75 2048w, /_next/image/?url=%2Fflags%2Fes_flag.webp&amp;w=3840&amp;q=75 3840w"
+                                            src="/_next/image/?url=%2Fflags%2Fes_flag.webp&amp;w=3840&amp;q=75"
+                                            style="position: absolute; height: 100%; width: 100%; inset: 0px; color: transparent;">
+                                        <div
+                                            class="absolute inset-0 border-md rounded-full pointer-events-none border-[rgba(0,0,0,0.1)]">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-1">
+                                    <div class="flex flex-row items-center gap-2">
+                                        <p class="body-sm-medium text-primary text-left scroll-mt-20 xl:scroll-mt-24">
+                                            Spain</p>
+                                    </div>
+                                    <p
+                                        class="body-xs inline-block lg:inline-block text-tertiary text-left scroll-mt-20 xl:scroll-mt-24">
+                                        <span class="whitespace-nowrap">From US$3.99</span></p>
+                                </div>
+                            </div>
+                        </a><a
+                            class="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus rounded-sm w-full block group lg:p-3 lg:hover:bg-primary"
+                            data-ga-slug="N/A" data-testid="GR" data-next-link="true" href="/esim-greece/">
+                            <div class="flex flex-row gap-2">
+                                <div
+                                    class="flex items-center justify-center h-6 w-6 rounded-full shrink-0 text-primary">
+                                    <div class="w-[24px] h-[24px] relative overflow-hidden shrink-0 rounded-full"><img
+                                            alt="GR flag" loading="lazy" decoding="async" data-nimg="fill"
+                                            class="w-full h-full object-cover" sizes="100vw"
+                                            srcset="/_next/image/?url=%2Fflags%2Fgr_flag.webp&amp;w=640&amp;q=75 640w, /_next/image/?url=%2Fflags%2Fgr_flag.webp&amp;w=750&amp;q=75 750w, /_next/image/?url=%2Fflags%2Fgr_flag.webp&amp;w=828&amp;q=75 828w, /_next/image/?url=%2Fflags%2Fgr_flag.webp&amp;w=1080&amp;q=75 1080w, /_next/image/?url=%2Fflags%2Fgr_flag.webp&amp;w=1200&amp;q=75 1200w, /_next/image/?url=%2Fflags%2Fgr_flag.webp&amp;w=1920&amp;q=75 1920w, /_next/image/?url=%2Fflags%2Fgr_flag.webp&amp;w=2048&amp;q=75 2048w, /_next/image/?url=%2Fflags%2Fgr_flag.webp&amp;w=3840&amp;q=75 3840w"
+                                            src="/_next/image/?url=%2Fflags%2Fgr_flag.webp&amp;w=3840&amp;q=75"
+                                            style="position: absolute; height: 100%; width: 100%; inset: 0px; color: transparent;">
+                                        <div
+                                            class="absolute inset-0 border-md rounded-full pointer-events-none border-[rgba(0,0,0,0.1)]">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-1">
+                                    <div class="flex flex-row items-center gap-2">
+                                        <p class="body-sm-medium text-primary text-left scroll-mt-20 xl:scroll-mt-24">
+                                            Greece</p>
+                                    </div>
+                                    <p
+                                        class="body-xs inline-block lg:inline-block text-tertiary text-left scroll-mt-20 xl:scroll-mt-24">
+                                        <span class="whitespace-nowrap">From US$4.49</span></p>
+                                </div>
+                            </div>
+                        </a><a
+                            class="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus rounded-sm w-full block group lg:p-3 lg:hover:bg-primary"
+                            data-ga-slug="N/A" data-testid="IT" data-next-link="true" href="/esim-italy/">
+                            <div class="flex flex-row gap-2">
+                                <div
+                                    class="flex items-center justify-center h-6 w-6 rounded-full shrink-0 text-primary">
+                                    <div class="w-[24px] h-[24px] relative overflow-hidden shrink-0 rounded-full"><img
+                                            alt="IT flag" loading="lazy" decoding="async" data-nimg="fill"
+                                            class="w-full h-full object-cover" sizes="100vw"
+                                            srcset="/_next/image/?url=%2Fflags%2Fit_flag.webp&amp;w=640&amp;q=75 640w, /_next/image/?url=%2Fflags%2Fit_flag.webp&amp;w=750&amp;q=75 750w, /_next/image/?url=%2Fflags%2Fit_flag.webp&amp;w=828&amp;q=75 828w, /_next/image/?url=%2Fflags%2Fit_flag.webp&amp;w=1080&amp;q=75 1080w, /_next/image/?url=%2Fflags%2Fit_flag.webp&amp;w=1200&amp;q=75 1200w, /_next/image/?url=%2Fflags%2Fit_flag.webp&amp;w=1920&amp;q=75 1920w, /_next/image/?url=%2Fflags%2Fit_flag.webp&amp;w=2048&amp;q=75 2048w, /_next/image/?url=%2Fflags%2Fit_flag.webp&amp;w=3840&amp;q=75 3840w"
+                                            src="/_next/image/?url=%2Fflags%2Fit_flag.webp&amp;w=3840&amp;q=75"
+                                            style="position: absolute; height: 100%; width: 100%; inset: 0px; color: transparent;">
+                                        <div
+                                            class="absolute inset-0 border-md rounded-full pointer-events-none border-[rgba(0,0,0,0.1)]">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-1">
+                                    <div class="flex flex-row items-center gap-2">
+                                        <p class="body-sm-medium text-primary text-left scroll-mt-20 xl:scroll-mt-24">
+                                            Italy</p>
+                                    </div>
+                                    <p
+                                        class="body-xs inline-block lg:inline-block text-tertiary text-left scroll-mt-20 xl:scroll-mt-24">
+                                        <span class="whitespace-nowrap">From US$3.99</span></p>
+                                </div>
+                            </div>
+                        </a><a
+                            class="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus rounded-sm w-full block group lg:p-3 lg:hover:bg-primary"
+                            data-ga-slug="N/A" data-testid="TR" data-next-link="true" href="/esim-turkey/">
+                            <div class="flex flex-row gap-2">
+                                <div
+                                    class="flex items-center justify-center h-6 w-6 rounded-full shrink-0 text-primary">
+                                    <div class="w-[24px] h-[24px] relative overflow-hidden shrink-0 rounded-full"><img
+                                            alt="TR flag" loading="lazy" decoding="async" data-nimg="fill"
+                                            class="w-full h-full object-cover" sizes="100vw"
+                                            srcset="/_next/image/?url=%2Fflags%2Ftr_flag.webp&amp;w=640&amp;q=75 640w, /_next/image/?url=%2Fflags%2Ftr_flag.webp&amp;w=750&amp;q=75 750w, /_next/image/?url=%2Fflags%2Ftr_flag.webp&amp;w=828&amp;q=75 828w, /_next/image/?url=%2Fflags%2Ftr_flag.webp&amp;w=1080&amp;q=75 1080w, /_next/image/?url=%2Fflags%2Ftr_flag.webp&amp;w=1200&amp;q=75 1200w, /_next/image/?url=%2Fflags%2Ftr_flag.webp&amp;w=1920&amp;q=75 1920w, /_next/image/?url=%2Fflags%2Ftr_flag.webp&amp;w=2048&amp;q=75 2048w, /_next/image/?url=%2Fflags%2Ftr_flag.webp&amp;w=3840&amp;q=75 3840w"
+                                            src="/_next/image/?url=%2Fflags%2Ftr_flag.webp&amp;w=3840&amp;q=75"
+                                            style="position: absolute; height: 100%; width: 100%; inset: 0px; color: transparent;">
+                                        <div
+                                            class="absolute inset-0 border-md rounded-full pointer-events-none border-[rgba(0,0,0,0.1)]">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-1">
+                                    <div class="flex flex-row items-center gap-2">
+                                        <p class="body-sm-medium text-primary text-left scroll-mt-20 xl:scroll-mt-24">
+                                            Turkey</p>
+                                    </div>
+                                    <p
+                                        class="body-xs inline-block lg:inline-block text-tertiary text-left scroll-mt-20 xl:scroll-mt-24">
+                                        <span class="whitespace-nowrap">From US$3.99</span></p>
+                                </div>
+                            </div>
+                        </a><a
+                            class="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus rounded-sm w-full block group lg:p-3 lg:hover:bg-primary"
+                            data-ga-slug="N/A" data-testid="GB" data-next-link="true" href="/esim-united-kingdom/">
+                            <div class="flex flex-row gap-2">
+                                <div
+                                    class="flex items-center justify-center h-6 w-6 rounded-full shrink-0 text-primary">
+                                    <div class="w-[24px] h-[24px] relative overflow-hidden shrink-0 rounded-full"><img
+                                            alt="GB flag" loading="lazy" decoding="async" data-nimg="fill"
+                                            class="w-full h-full object-cover" sizes="100vw"
+                                            srcset="/_next/image/?url=%2Fflags%2Fgb_flag.webp&amp;w=640&amp;q=75 640w, /_next/image/?url=%2Fflags%2Fgb_flag.webp&amp;w=750&amp;q=75 750w, /_next/image/?url=%2Fflags%2Fgb_flag.webp&amp;w=828&amp;q=75 828w, /_next/image/?url=%2Fflags%2Fgb_flag.webp&amp;w=1080&amp;q=75 1080w, /_next/image/?url=%2Fflags%2Fgb_flag.webp&amp;w=1200&amp;q=75 1200w, /_next/image/?url=%2Fflags%2Fgb_flag.webp&amp;w=1920&amp;q=75 1920w, /_next/image/?url=%2Fflags%2Fgb_flag.webp&amp;w=2048&amp;q=75 2048w, /_next/image/?url=%2Fflags%2Fgb_flag.webp&amp;w=3840&amp;q=75 3840w"
+                                            src="/_next/image/?url=%2Fflags%2Fgb_flag.webp&amp;w=3840&amp;q=75"
+                                            style="position: absolute; height: 100%; width: 100%; inset: 0px; color: transparent;">
+                                        <div
+                                            class="absolute inset-0 border-md rounded-full pointer-events-none border-[rgba(0,0,0,0.1)]">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-1">
+                                    <div class="flex flex-row items-center gap-2">
+                                        <p class="body-sm-medium text-primary text-left scroll-mt-20 xl:scroll-mt-24">
+                                            United Kingdom</p>
+                                    </div>
+                                    <p
+                                        class="body-xs inline-block lg:inline-block text-tertiary text-left scroll-mt-20 xl:scroll-mt-24">
+                                        <span class="whitespace-nowrap">From US$4.49</span></p>
+                                </div>
+                            </div>
+                        </a><a
+                            class="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus rounded-sm w-full block group lg:p-3 lg:hover:bg-primary"
+                            data-ga-slug="N/A" data-testid="PT" data-next-link="true" href="/esim-portugal/">
+                            <div class="flex flex-row gap-2">
+                                <div
+                                    class="flex items-center justify-center h-6 w-6 rounded-full shrink-0 text-primary">
+                                    <div class="w-[24px] h-[24px] relative overflow-hidden shrink-0 rounded-full"><img
+                                            alt="PT flag" loading="lazy" decoding="async" data-nimg="fill"
+                                            class="w-full h-full object-cover" sizes="100vw"
+                                            srcset="/_next/image/?url=%2Fflags%2Fpt_flag.webp&amp;w=640&amp;q=75 640w, /_next/image/?url=%2Fflags%2Fpt_flag.webp&amp;w=750&amp;q=75 750w, /_next/image/?url=%2Fflags%2Fpt_flag.webp&amp;w=828&amp;q=75 828w, /_next/image/?url=%2Fflags%2Fpt_flag.webp&amp;w=1080&amp;q=75 1080w, /_next/image/?url=%2Fflags%2Fpt_flag.webp&amp;w=1200&amp;q=75 1200w, /_next/image/?url=%2Fflags%2Fpt_flag.webp&amp;w=1920&amp;q=75 1920w, /_next/image/?url=%2Fflags%2Fpt_flag.webp&amp;w=2048&amp;q=75 2048w, /_next/image/?url=%2Fflags%2Fpt_flag.webp&amp;w=3840&amp;q=75 3840w"
+                                            src="/_next/image/?url=%2Fflags%2Fpt_flag.webp&amp;w=3840&amp;q=75"
+                                            style="position: absolute; height: 100%; width: 100%; inset: 0px; color: transparent;">
+                                        <div
+                                            class="absolute inset-0 border-md rounded-full pointer-events-none border-[rgba(0,0,0,0.1)]">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-1">
+                                    <div class="flex flex-row items-center gap-2">
+                                        <p class="body-sm-medium text-primary text-left scroll-mt-20 xl:scroll-mt-24">
+                                            Portugal</p>
+                                    </div>
+                                    <p
+                                        class="body-xs inline-block lg:inline-block text-tertiary text-left scroll-mt-20 xl:scroll-mt-24">
+                                        <span class="whitespace-nowrap">From US$3.99</span></p>
+                                </div>
+                            </div>
+                        </a><a
+                            class="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus rounded-sm w-full block group lg:p-3 lg:hover:bg-primary"
+                            data-ga-slug="N/A" data-testid="FR" data-next-link="true" href="/esim-france/">
+                            <div class="flex flex-row gap-2">
+                                <div
+                                    class="flex items-center justify-center h-6 w-6 rounded-full shrink-0 text-primary">
+                                    <div class="w-[24px] h-[24px] relative overflow-hidden shrink-0 rounded-full"><img
+                                            alt="FR flag" loading="lazy" decoding="async" data-nimg="fill"
+                                            class="w-full h-full object-cover" sizes="100vw"
+                                            srcset="/_next/image/?url=%2Fflags%2Ffr_flag.webp&amp;w=640&amp;q=75 640w, /_next/image/?url=%2Fflags%2Ffr_flag.webp&amp;w=750&amp;q=75 750w, /_next/image/?url=%2Fflags%2Ffr_flag.webp&amp;w=828&amp;q=75 828w, /_next/image/?url=%2Fflags%2Ffr_flag.webp&amp;w=1080&amp;q=75 1080w, /_next/image/?url=%2Fflags%2Ffr_flag.webp&amp;w=1200&amp;q=75 1200w, /_next/image/?url=%2Fflags%2Ffr_flag.webp&amp;w=1920&amp;q=75 1920w, /_next/image/?url=%2Fflags%2Ffr_flag.webp&amp;w=2048&amp;q=75 2048w, /_next/image/?url=%2Fflags%2Ffr_flag.webp&amp;w=3840&amp;q=75 3840w"
+                                            src="/_next/image/?url=%2Fflags%2Ffr_flag.webp&amp;w=3840&amp;q=75"
+                                            style="position: absolute; height: 100%; width: 100%; inset: 0px; color: transparent;">
+                                        <div
+                                            class="absolute inset-0 border-md rounded-full pointer-events-none border-[rgba(0,0,0,0.1)]">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-1">
+                                    <div class="flex flex-row items-center gap-2">
+                                        <p class="body-sm-medium text-primary text-left scroll-mt-20 xl:scroll-mt-24">
+                                            France</p>
+                                    </div>
+                                    <p
+                                        class="body-xs inline-block lg:inline-block text-tertiary text-left scroll-mt-20 xl:scroll-mt-24">
+                                        <span class="whitespace-nowrap">From US$3.99</span></p>
+                                </div>
+                            </div>
+                        </a><a
+                            class="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus rounded-sm w-full block group lg:p-3 lg:hover:bg-primary"
+                            data-ga-slug="N/A" data-testid="DE" data-next-link="true" href="/esim-germany/">
+                            <div class="flex flex-row gap-2">
+                                <div
+                                    class="flex items-center justify-center h-6 w-6 rounded-full shrink-0 text-primary">
+                                    <div class="w-[24px] h-[24px] relative overflow-hidden shrink-0 rounded-full"><img
+                                            alt="DE flag" loading="lazy" decoding="async" data-nimg="fill"
+                                            class="w-full h-full object-cover" sizes="100vw"
+                                            srcset="/_next/image/?url=%2Fflags%2Fde_flag.webp&amp;w=640&amp;q=75 640w, /_next/image/?url=%2Fflags%2Fde_flag.webp&amp;w=750&amp;q=75 750w, /_next/image/?url=%2Fflags%2Fde_flag.webp&amp;w=828&amp;q=75 828w, /_next/image/?url=%2Fflags%2Fde_flag.webp&amp;w=1080&amp;q=75 1080w, /_next/image/?url=%2Fflags%2Fde_flag.webp&amp;w=1200&amp;q=75 1200w, /_next/image/?url=%2Fflags%2Fde_flag.webp&amp;w=1920&amp;q=75 1920w, /_next/image/?url=%2Fflags%2Fde_flag.webp&amp;w=2048&amp;q=75 2048w, /_next/image/?url=%2Fflags%2Fde_flag.webp&amp;w=3840&amp;q=75 3840w"
+                                            src="/_next/image/?url=%2Fflags%2Fde_flag.webp&amp;w=3840&amp;q=75"
+                                            style="position: absolute; height: 100%; width: 100%; inset: 0px; color: transparent;">
+                                        <div
+                                            class="absolute inset-0 border-md rounded-full pointer-events-none border-[rgba(0,0,0,0.1)]">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-1">
+                                    <div class="flex flex-row items-center gap-2">
+                                        <p class="body-sm-medium text-primary text-left scroll-mt-20 xl:scroll-mt-24">
+                                            Germany</p>
+                                    </div>
+                                    <p
+                                        class="body-xs inline-block lg:inline-block text-tertiary text-left scroll-mt-20 xl:scroll-mt-24">
+                                        <span class="whitespace-nowrap">From US$4.49</span></p>
+                                </div>
+                            </div>
+                        </a><a
+                            class="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus rounded-sm w-full block group lg:p-3 lg:hover:bg-primary"
+                            data-ga-slug="N/A" data-testid="NL" data-next-link="true" href="/esim-netherlands/">
+                            <div class="flex flex-row gap-2">
+                                <div
+                                    class="flex items-center justify-center h-6 w-6 rounded-full shrink-0 text-primary">
+                                    <div class="w-[24px] h-[24px] relative overflow-hidden shrink-0 rounded-full"><img
+                                            alt="NL flag" loading="lazy" decoding="async" data-nimg="fill"
+                                            class="w-full h-full object-cover" sizes="100vw"
+                                            srcset="/_next/image/?url=%2Fflags%2Fnl_flag.webp&amp;w=640&amp;q=75 640w, /_next/image/?url=%2Fflags%2Fnl_flag.webp&amp;w=750&amp;q=75 750w, /_next/image/?url=%2Fflags%2Fnl_flag.webp&amp;w=828&amp;q=75 828w, /_next/image/?url=%2Fflags%2Fnl_flag.webp&amp;w=1080&amp;q=75 1080w, /_next/image/?url=%2Fflags%2Fnl_flag.webp&amp;w=1200&amp;q=75 1200w, /_next/image/?url=%2Fflags%2Fnl_flag.webp&amp;w=1920&amp;q=75 1920w, /_next/image/?url=%2Fflags%2Fnl_flag.webp&amp;w=2048&amp;q=75 2048w, /_next/image/?url=%2Fflags%2Fnl_flag.webp&amp;w=3840&amp;q=75 3840w"
+                                            src="/_next/image/?url=%2Fflags%2Fnl_flag.webp&amp;w=3840&amp;q=75"
+                                            style="position: absolute; height: 100%; width: 100%; inset: 0px; color: transparent;">
+                                        <div
+                                            class="absolute inset-0 border-md rounded-full pointer-events-none border-[rgba(0,0,0,0.1)]">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-1">
+                                    <div class="flex flex-row items-center gap-2">
+                                        <p class="body-sm-medium text-primary text-left scroll-mt-20 xl:scroll-mt-24">
+                                            Netherlands</p>
+                                    </div>
+                                    <p
+                                        class="body-xs inline-block lg:inline-block text-tertiary text-left scroll-mt-20 xl:scroll-mt-24">
+                                        <span class="whitespace-nowrap">From US$3.99</span></p>
+                                </div>
+                            </div>
+                        </a><a
+                            class="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus rounded-sm w-full block group lg:p-3 lg:hover:bg-primary"
+                            data-ga-slug="N/A" data-testid="CA" data-next-link="true" href="/esim-canada/">
+                            <div class="flex flex-row gap-2">
+                                <div
+                                    class="flex items-center justify-center h-6 w-6 rounded-full shrink-0 text-primary">
+                                    <div class="w-[24px] h-[24px] relative overflow-hidden shrink-0 rounded-full"><img
+                                            alt="CA flag" loading="lazy" decoding="async" data-nimg="fill"
+                                            class="w-full h-full object-cover" sizes="100vw"
+                                            srcset="/_next/image/?url=%2Fflags%2Fca_flag.webp&amp;w=640&amp;q=75 640w, /_next/image/?url=%2Fflags%2Fca_flag.webp&amp;w=750&amp;q=75 750w, /_next/image/?url=%2Fflags%2Fca_flag.webp&amp;w=828&amp;q=75 828w, /_next/image/?url=%2Fflags%2Fca_flag.webp&amp;w=1080&amp;q=75 1080w, /_next/image/?url=%2Fflags%2Fca_flag.webp&amp;w=1200&amp;q=75 1200w, /_next/image/?url=%2Fflags%2Fca_flag.webp&amp;w=1920&amp;q=75 1920w, /_next/image/?url=%2Fflags%2Fca_flag.webp&amp;w=2048&amp;q=75 2048w, /_next/image/?url=%2Fflags%2Fca_flag.webp&amp;w=3840&amp;q=75 3840w"
+                                            src="/_next/image/?url=%2Fflags%2Fca_flag.webp&amp;w=3840&amp;q=75"
+                                            style="position: absolute; height: 100%; width: 100%; inset: 0px; color: transparent;">
+                                        <div
+                                            class="absolute inset-0 border-md rounded-full pointer-events-none border-[rgba(0,0,0,0.1)]">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-1">
+                                    <div class="flex flex-row items-center gap-2">
+                                        <p class="body-sm-medium text-primary text-left scroll-mt-20 xl:scroll-mt-24">
+                                            Canada</p>
+                                    </div>
+                                    <p
+                                        class="body-xs inline-block lg:inline-block text-tertiary text-left scroll-mt-20 xl:scroll-mt-24">
+                                        <span class="whitespace-nowrap">From US$5.29</span></p>
+                                </div>
+                            </div>
+                        </a></div>
+                </div>
+            </div>
+        </div>
+        <div class="flex justify-between border-t-md border-secondary py-6">
+            <div class="flex flex-row gap-2 items-center"><i
+                    class="kitIcon text-center w-[1em] fa-circle-info fa-sharp fa-regular text-[12px] text-primary"></i><a
+                    class="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus body-sm-medium text-primary hover:text-secondary"
+                    data-ga-slug="Is your device eSIM compatible?" data-testid="secondary-cta" data-next-link="true"
+                    href="/esim-supported-devices/">Is your device eSIM compatible?</a></div> <a role="button"
+                class="max-md:w-full text-center inline-block text-primary-on-color bg-dark pointer-fine:hover:bg-neutral-800 border-md border-reversed pointer-fine:hover:border-neutral-800 active:bg-dark! active:text-primary-on-color! box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[5.5px] body-sm-medium px-6"
+                data-ga-slug="View All Destinations" data-testid="primary-cta" data-next-link="true"
+                href="/all-destinations/">View All Destinations</a>
+        </div>
+    </div>
+</div>

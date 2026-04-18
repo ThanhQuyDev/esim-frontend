@@ -32,7 +32,7 @@ export default function RootLayout({
       </head>
       <body
         className={cn(
-          "min-h-screen bg-bg-secondary font-sans antialiased overflow-x-hidden",
+          "min-h-screen bg-white font-sans antialiased overflow-x-hidden",
           poppins.variable
         )}
       >

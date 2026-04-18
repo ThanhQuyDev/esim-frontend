@@ -73,7 +73,7 @@ html {
     @apply border-border;
   }
   body {
-    @apply bg-bg-secondary text-text-primary;
+    @apply bg-bg-primary text-text-primary;
     font-family: var(--font-poppins), "Poppins Fallback", system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

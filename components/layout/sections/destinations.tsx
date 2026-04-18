@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { MapPin, Loader2 } from "lucide-react";
-import { useDestinations } from "@/lib/hooks";
+import { useDestinations, useRegions } from "@/lib/hooks";
 import type { Locale } from "@/lib/i18n-config";
 
 interface DestinationsSectionProps {
@@ -32,12 +32,19 @@ function ChevronDownIcon({ className }: { className?: string }) {
 
 export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
   const [activeTab, setActiveTab] = useState<"country" | "region" | "ultra">("country");
-  const tabIndicatorRef = useRef<HTMLDivElement>(null);
 
-  const { data: destinations = [], isLoading } = useDestinations(
+  const { data: destinations = [], isLoading: isLoadingDestinations } = useDestinations(
+    JSON.stringify({ isPopular: true }),
+    "name",
+    "ASC",
+    9
+  );
+
+  const { data: regions = [], isLoading: isLoadingRegions } = useRegions(
     undefined,
     "name",
-    "ASC"
+    "ASC",
+    9
   );
 
   const tabs = [
@@ -46,8 +53,9 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
     { key: "ultra" as const, label: dict.tabs.ultraPlan, badge: dict.new, testId: "country-list-tab-chip-ultra" },
   ];
 
-  // Calculate tab indicator position based on active tab index
-  const activeIndex = tabs.findIndex((t) => t.key === activeTab);
+  const showRegions = activeTab === "region";
+  const displayItems = showRegions ? regions : destinations;
+  const isLoading = showRegions ? isLoadingRegions : isLoadingDestinations;
 
   return (
     <div
@@ -92,27 +100,17 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
               {/* Tab Pills */}
               <div className="mb-10 overflow-x-auto scrollbar-none">
                 <div className="relative flex gap-1 w-fit p-1 border border-border-secondary rounded-full">
-                  {/* Animated indicator */}
-                  <div
-                    ref={tabIndicatorRef}
-                    className="absolute inset-0 pointer-events-none z-[1] bg-bg-dark rounded-full transition-all duration-300 ease-in-out"
-                    style={{
-                      width: activeIndex === 2 ? "130px" : "97px",
-                      height: "32px",
-                      top: "4px",
-                      transform: `translateX(${4 + activeIndex * (97 + 4)}px)`,
-                    }}
-                  />
                   {tabs.map((tab) => (
                     <button
                       key={tab.key}
                       data-testid={tab.testId}
                       data-is-active={activeTab === tab.key}
                       onClick={() => setActiveTab(tab.key)}
-                      className={`relative z-[1] body-sm-medium whitespace-nowrap md:body-md-medium px-4 py-1 hover:text-text-primary focus-visible:outline-hidden focus-visible:shadow-focus rounded-full transition-[color] bg-transparent ${activeTab === tab.key
-                          ? "text-white"
-                          : "text-text-primary"
-                        }`}
+                      className={`relative body-sm-medium whitespace-nowrap md:body-md-medium px-4 py-1 focus-visible:outline-hidden focus-visible:shadow-focus rounded-full transition-all duration-200 ${
+                        activeTab === tab.key
+                          ? "bg-bg-dark text-text-primary-on-color"
+                          : "text-text-primary hover:bg-bg-primary"
+                      }`}
                     >
                       {tab.badge ? (
                         <span className="flex items-center gap-2">
@@ -129,7 +127,7 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
                 </div>
               </div>
 
-              {/* Destination Grid */}
+              {/* Destination/Region Grid */}
               {isLoading ? (
                 <div className="flex items-center justify-center py-16">
                   <Loader2 className="w-8 h-8 text-text-tertiary animate-spin" />
@@ -139,32 +137,36 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
                   id="country-list-items"
                   className="grid md:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-6 w-full"
                 >
-                  {destinations.map((dest: any, index: number) => (
+                  {displayItems.map((item: any, index: number) => (
                     <div
-                      key={dest.id}
-                      id={dest.code || dest.id}
+                      key={item.id}
+                      id={item.code || item.slug || item.id}
                       className={index >= 5 ? "hidden md:block" : undefined}
                     >
                       <a
                         className="align-bottom focus-visible:outline-hidden focus-visible:shadow-focus text-text-primary active:text-text-primary block group ease-out h-full rounded-sm transition-colors hover:text-text-primary hover:bg-bg-tertiary bg-bg-primary"
-                        href="#"
-                        data-testid={dest.code || dest.id}
+                        href={
+                          showRegions
+                            ? `/${lang}/region/${item.slug}`
+                            : `/${lang}/destination/${item.slug || item.code?.toLowerCase()}`
+                        }
+                        data-testid={item.code || item.slug || item.id}
                       >
                         <div
                           className="flex flex-col items-start text-left gap-4 relative border-none p-4 h-full rounded-sm transition-colors hover:text-text-primary hover:bg-bg-tertiary bg-bg-primary"
-                          data-testid={`destination-card-${dest.code || dest.id}`}
+                          data-testid={`${showRegions ? 'region' : 'destination'}-card-${item.code || item.slug || item.id}`}
                         >
                           <div className="w-full h-full flex gap-4 items-center">
-                            {/* Flag */}
+                            {/* Flag/Avatar */}
                             <div className="w-[36px] h-[36px] relative overflow-hidden shrink-0 rounded-full">
-                              {dest.flagUrl ? (
+                              {(item.flagUrl || item.avatarUrl) ? (
                                 <>
                                   <img
-                                    alt={`${dest.code || dest.name} flag`}
+                                    alt={`${item.name} ${showRegions ? 'avatar' : 'flag'}`}
                                     loading="lazy"
                                     decoding="async"
                                     className="w-full h-full object-cover absolute inset-0"
-                                    src={dest.flagUrl}
+                                    src={item.flagUrl || item.avatarUrl}
                                   />
                                   <div className="absolute inset-0 rounded-full pointer-events-none border border-[rgba(0,0,0,0.1)]" />
                                 </>
@@ -174,12 +176,15 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
                                 </div>
                               )}
                             </div>
-                            {/* Name + Price */}
+                            {/* Name + Info */}
                             <div className="flex flex-col gap-0.5">
-                              <p className="body-lg-medium">{dest.name}</p>
+                              <p className="body-lg-medium">{item.name}</p>
                               <p className="body-md text-text-tertiary">
                                 <span className="whitespace-nowrap">
-                                  {dict.from} US$3.99
+                                  {showRegions
+                                    ? `${item.destinationCount} ${item.destinationCount === 1 ? 'country' : 'countries'}`
+                                    : `${dict.from} US$${item.minPrice || "3.99"}`
+                                  }
                                 </span>
                               </p>
                             </div>

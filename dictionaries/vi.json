@@ -772,5 +772,29 @@
         { "question": "Có thể chuyển eSIM về SIM vật lý không?", "answer": "Có, bạn có thể chuyển eSIM về SIM vật lý — ví dụ, nếu bạn muốn dùng với model điện thoại cũ hơn. Tuy nhiên, tốt nhất nên đến cửa hàng nhà mạng để được tư vấn và lấy thẻ SIM mới." }
       ]
     }
+  },
+  "supportedDevicesPage": {
+    "title": "Thiết bị hỗ trợ eSIM",
+    "subtitle": "Chỉ những thiết bị đã mở khóa nhà mạng và hỗ trợ công nghệ eSIM mới có thể sử dụng Saily.",
+    "searchPlaceholder": "Tìm kiếm thiết bị",
+    "infoNote": "iPhone bán ở Trung Quốc đại lục không hỗ trợ eSIM, và chỉ một số model iPhone bán ở Hồng Kông và Macao hỗ trợ eSIM. Nếu bạn mua iPhone ở các quốc gia này, hãy kiểm tra xem iPhone của bạn có tương thích eSIM trước khi cài đặt ứng dụng eSIM.",
+    "tabs": {
+      "smartphones": {
+        "label": "Điện thoại",
+        "description": "Saily có sẵn trên hầu hết iPhone và nhiều điện thoại Android:"
+      },
+      "smartwatches": {
+        "label": "Đồng hồ thông minh",
+        "description": "Tìm tất cả đồng hồ thông minh tương thích eSIM từ Samsung, Google và các thương hiệu khác tại đây:"
+      },
+      "tablets": {
+        "label": "Máy tính bảng",
+        "description": "Chỉ một số ít máy tính bảng hỗ trợ eSIM. Bạn cần tìm các iPad Apple mới hơn có kết nối di động, và chỉ các model Samsung S9 mới nhất mới có tính năng này."
+      },
+      "laptops": {
+        "label": "Máy tính xách tay",
+        "description": "Khá nhiều model laptop hỗ trợ eSIM. Lưu ý rằng chúng phải chạy hệ điều hành Windows 10 hoặc Windows 11."
+      }
+    }
   }
 }

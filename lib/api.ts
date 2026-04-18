@@ -60,6 +60,25 @@ export interface Blog {
   updatedAt: string;
 }
 
+export interface Device {
+  id: string;
+  device: string;
+}
+
+export interface Manufacturer {
+  manufacturer: string;
+  devices: Device[];
+}
+
+export interface DeviceType {
+  type: string;
+  manufacturers: Manufacturer[];
+}
+
+export interface SupportedDevicesResponse {
+  data: DeviceType[];
+}
+
 export interface PaginatedResponse<T> {
   data: T[];
   hasNextPage: boolean;
@@ -163,4 +182,56 @@ export async function getBlogs(
     { limit: 10, ...options },
     120
   );
+}
+
+export async function getSupportedDevices(
+  search?: string,
+  lang?: string
+): Promise<SupportedDevicesResponse> {
+  const params = new URLSearchParams();
+  if (search) params.set("search", search);
+  
+  const queryString = params.toString();
+  const url = `${API_BASE_URL}/api/v1/supported-devices/grouped${queryString ? `?${queryString}` : ""}`;
+
+  const headers: Record<string, string> = {};
+  if (lang) {
+    headers["x-custom-lang"] = lang;
+  }
+
+  const res = await fetch(url, {
+    headers,
+    next: { revalidate: 300 }, // cache for 5 minutes
+  });
+
+  if (!res.ok) {
+    throw new Error(`API error: ${res.status} ${res.statusText}`);
+  }
+
+  return res.json();
+}
+
+// Client-side search for supported devices (no next.revalidate, works in browser)
+export async function searchSupportedDevices(
+  search: string,
+  lang?: string
+): Promise<SupportedDevicesResponse> {
+  const params = new URLSearchParams();
+  if (search) params.set("search", search);
+
+  const queryString = params.toString();
+  const url = `${API_BASE_URL}/api/v1/supported-devices/grouped${queryString ? `?${queryString}` : ""}`;
+
+  const headers: Record<string, string> = {};
+  if (lang) {
+    headers["x-custom-lang"] = lang;
+  }
+
+  const res = await fetch(url, { headers });
+
+  if (!res.ok) {
+    throw new Error(`API error: ${res.status} ${res.statusText}`);
+  }
+
+  return res.json();
 }

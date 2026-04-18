@@ -772,5 +772,29 @@
         { "question": "Can you convert an eSIM back to a physical SIM?", "answer": "Yes, you can convert an eSIM back to a physical SIM — for example, if you want to use it with an older phone model. However, it's best to pop into your network provider's store to speak to an advisor and pick up a new SIM card." }
       ]
     }
+  },
+  "supportedDevicesPage": {
+    "title": "Devices that support eSIMs",
+    "subtitle": "Only devices that are carrier-unlocked and support eSIM technology can use Saily.",
+    "searchPlaceholder": "Search for device",
+    "infoNote": "iPhones sold in mainland China don't support eSIMs, and only some iPhone models sold in Hong Kong and Macao support eSIMs. If you bought an iPhone in any of these countries, check if your iPhone is eSIM-compatible before installing an eSIM app.",
+    "tabs": {
+      "smartphones": {
+        "label": "Smartphones",
+        "description": "Saily is available on most iPhones and many Android phones:"
+      },
+      "smartwatches": {
+        "label": "Smartwatches",
+        "description": "Find all eSIM-compatible smartwatches from Samsung, Google, and other brands here:"
+      },
+      "tablets": {
+        "label": "Tablets",
+        "description": "Only a few tablets support eSIMs. You'll have to look for the newer Apple iPads that offer cellular connections, and only the latest Samsung S9 models have this functionality."
+      },
+      "laptops": {
+        "label": "Laptops",
+        "description": "Quite a few laptop models support eSIMs. Keep in mind that they must run either Windows 10 or Windows 11 OS."
+      }
+    }
   }
 }
