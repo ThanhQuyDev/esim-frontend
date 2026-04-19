@@ -2,6 +2,8 @@
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.saily.example.com";
 
+import { mockSupportedDevices } from "./mock-supported-devices";
+
 // ===== Types =====
 
 export interface Destination {
@@ -217,27 +219,32 @@ export async function getSupportedDevices(
   search?: string,
   lang?: string
 ): Promise<SupportedDevicesResponse> {
-  const params = new URLSearchParams();
-  if (search) params.set("search", search);
-  
-  const queryString = params.toString();
-  const url = `${API_BASE_URL}/api/v1/supported-devices/grouped${queryString ? `?${queryString}` : ""}`;
+  try {
+    const params = new URLSearchParams();
+    if (search) params.set("search", search);
 
-  const headers: Record<string, string> = {};
-  if (lang) {
-    headers["x-custom-lang"] = lang;
+    const queryString = params.toString();
+    const url = `${API_BASE_URL}/api/v1/supported-devices/grouped${queryString ? `?${queryString}` : ""}`;
+
+    const headers: Record<string, string> = {};
+    if (lang) {
+      headers["x-custom-lang"] = lang;
+    }
+
+    const res = await fetch(url, {
+      headers,
+      next: { revalidate: 300 }, // cache for 5 minutes
+    });
+
+    if (!res.ok) {
+      throw new Error(`API error: ${res.status} ${res.statusText}`);
+    }
+
+    return res.json();
+  } catch (error) {
+    console.warn("Failed to fetch supported devices, using mock data:", error);
+    return mockSupportedDevices;
   }
-
-  const res = await fetch(url, {
-    headers,
-    next: { revalidate: 300 }, // cache for 5 minutes
-  });
-
-  if (!res.ok) {
-    throw new Error(`API error: ${res.status} ${res.statusText}`);
-  }
-
-  return res.json();
 }
 
 // ===== Plans API =====
