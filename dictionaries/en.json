@@ -853,12 +853,28 @@
     "addToCart": "Add to cart",
     "noPlans": "No plans available for this destination.",
     "trust": {
-      "rating": "4.7 (97,400+ reviews)",
-      "secure": "Secure payment"
+      "rating": "4.7",
+      "ratingCount": "· 97,400+ reviews",
+      "trustpilot": "Trustpilot",
+      "secure": "Secure payment guaranteed",
+      "support": "24/7 technical support",
+      "refund": "100% money-back guarantee"
+    },
+    "greenBox": {
+      "line1": "<strong>{data}</strong> high speed — then auto-throttle to 1 Mbps unlimited",
+      "line2": "Built-in security — bypass firewalls, block malicious ads",
+      "line3": "Supports TikTok, Facebook, Google, YouTube, Zalo"
     },
     "disclaimer": "Make sure your device is eSIM-compatible before purchasing.",
     "disclaimerLink": "View eSIM-supported devices →",
-    "save": "–{percent}%"
+    "save": "–{percent}%",
+    "calTitle": "{month} {year}",
+    "calSelectStart": "Select start date",
+    "calSelectEnd": "Select end date",
+    "calClose": "Close",
+    "calConfirm": "Confirm",
+    "calDays": "{count} days",
+    "weekDays": ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]
   },
   "couponPage": {
     "hero": {

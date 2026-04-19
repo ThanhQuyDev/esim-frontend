@@ -50,6 +50,7 @@ export default async function DestinationPage({ params }: DestinationPageProps) 
     <main role="main">
       <DestinationPlans
         destination={destination}
+        slug={params.slug}
         dict={dict.destinationPage}
         lang={params.lang}
       />

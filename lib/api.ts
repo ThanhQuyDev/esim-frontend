@@ -95,8 +95,12 @@ export interface Plan {
   price: number;
   retailPrice: number;
   currency: string;
+  sms?: number | null;
+  call?: number | null;
   type: string;
   topUp: boolean;
+  speed?: string;
+  operatorName?: string;
   isCheapest: boolean;
   isActive: boolean;
   createdAt: string;

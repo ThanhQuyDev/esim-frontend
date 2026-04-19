@@ -296,3 +296,160 @@ html {
 .border-md {
   border-width: 1.5px;
 }
+
+/* ===== DESTINATION PAGE ===== */
+.dest-page { background: #fff; padding: 24px 0 0 }
+.dest-container { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: grid; grid-template-columns: 465px minmax(0,1fr); column-gap: 32px; align-items: start }
+
+/* Left column */
+.dest-hero-img { width: 100%; height: 210px; border-radius: 12px; overflow: hidden; margin-bottom: 20px; background: #ffd9a8; position: relative }
+.dest-hero-img img { width: 100%; height: 100%; object-fit: cover; display: block }
+.dest-hero-tag { position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,.55); color: #fff; font-size: 11px; font-weight: 600; border-radius: 20px; padding: 4px 10px; display: flex; align-items: center; gap: 4px }
+.dest-prod-title { font-size: 22px; font-weight: 700; color: #1a1a1a; letter-spacing: -.3px; margin-bottom: 8px; line-height: 1.3 }
+.dest-desc { font-size: 15px; color: #4b5563; line-height: 1.7; margin-bottom: 16px }
+.dest-country-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 10px; cursor: pointer; transition: border-color .15s }
+.dest-country-row:hover { border-color: #bbb }
+.dest-country-flags { display: flex; gap: 2px; font-size: 16px; flex-shrink: 0 }
+.dest-country-link { font-size: 14px; color: #374151; font-weight: 500; flex: 1 }
+.dest-country-arrow { font-size: 13px; color: #9ca3af; transition: transform .2s }
+.dest-countries-panel { display: none; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 10px }
+.dest-countries-panel.open { display: block }
+.dest-countries-inner { padding: 14px }
+.dest-countries-grid { display: flex; flex-wrap: wrap; gap: 6px }
+.dest-ctag { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 500; padding: 4px 10px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 20px; color: #374151 }
+.dest-info-block { border: 1px solid #e5e7eb; border-radius: 10px; overflow: hidden; margin-bottom: 12px; background: #fff }
+.dest-block-hd { padding: 8px 16px; background: #f9fafb; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; gap: 7px }
+.dest-block-hd-dot { width: 5px; height: 5px; border-radius: 50%; background: #3DDC97; flex-shrink: 0 }
+.dest-block-hd-label { font-size: 12px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: .07em }
+.dest-irow { display: flex; align-items: center; justify-content: space-between; padding: 11px 16px; border-bottom: 1px solid #f3f4f6; gap: 12px }
+.dest-irow:last-child { border-bottom: none }
+.dest-ilabel { font-size: 14px; color: #4b5563; flex-shrink: 0 }
+.dest-ival { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; justify-content: flex-end }
+.dest-tag { font-size: 13px; font-weight: 500; padding: 3px 9px; border-radius: 4px; background: #f3f4f6; color: #1a1a1a; border: 1px solid #e5e7eb; white-space: nowrap }
+.dest-v-yes { display: inline-flex; align-items: center; gap: 4px; font-size: 14px; font-weight: 600; color: #16a34a }
+.dest-v-no { display: inline-flex; align-items: center; gap: 4px; font-size: 14px; font-weight: 600; color: #dc2626 }
+.dest-v-text { font-size: 14px; font-weight: 600; color: #1a1a1a }
+.dest-v-chip { display: inline-flex; align-items: center; gap: 4px; background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; border-radius: 5px; padding: 3px 9px; font-size: 13px; font-weight: 600 }
+.dest-note-row { background: #fffbeb; border-top: 1px solid #fde68a; padding: 10px 16px; display: flex; gap: 8px; align-items: flex-start }
+.dest-note-txt { font-size: 13px; color: #78350f; line-height: 1.6 }
+.dest-note-txt strong { font-weight: 600; color: #92400e }
+
+/* Right column */
+.dest-trust-top { display: flex; align-items: center; gap: 8px; padding-bottom: 12px; margin-bottom: 14px; border-bottom: 1px solid #f0f0f0 }
+.dest-tp-stars-sm { display: flex; gap: 2px }
+.dest-tp-stars-sm svg { width: 16px; height: 16px }
+.dest-tp-score-txt { font-size: 13px; font-weight: 700; color: #1a1a1a }
+.dest-tp-count-txt { font-size: 13px; color: #6b7280 }
+.dest-tp-logo-wrap { margin-left: auto; display: flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 600; color: #1a1a1a }
+.dest-price-header { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; flex-wrap: nowrap }
+.dest-price-amt { font-size: 30px; font-weight: 800; color: #1a1a1a; letter-spacing: -.5px; flex-shrink: 0 }
+.dest-price-original { font-size: 16px; color: #9ca3af; text-decoration: line-through; font-weight: 500; flex-shrink: 0 }
+.dest-price-save { display: inline-flex; align-items: center; background: #fef9e7; color: #a16207; font-size: 11px; font-weight: 600; padding: 3px 7px; border-radius: 5px; border: 1px solid #fde68a; flex-shrink: 0 }
+.dest-price-label { font-size: 13.5px; color: #6b7280; margin-bottom: 14px; display: block; min-height: 22px }
+.dest-green-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 10px 14px; margin-bottom: 16px }
+.dest-green-row { display: flex; align-items: flex-start; gap: 7px; font-size: 14px; color: #166534; line-height: 1.5; margin-bottom: 6px }
+.dest-green-row:last-child { margin-bottom: 0 }
+.dest-green-icon { flex-shrink: 0; margin-top: 2px }
+
+/* Tabs */
+.dest-tab-bar { display: flex; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; background: #f3f4f6; padding: 3px; gap: 3px; margin-bottom: 18px }
+.dest-tab { flex: 1; text-align: center; padding: 9px 12px; font-size: 13.5px; font-weight: 500; cursor: pointer; color: #6b7280; background: transparent; border: none; border-radius: 6px; font-family: inherit; transition: all .18s; white-space: nowrap }
+.dest-tab:hover { color: #1a1a1a; background: rgba(255,255,255,.6) }
+.dest-tab.on { background: #fff; color: #1a1a1a; font-weight: 700; box-shadow: 0 1px 4px rgba(0,0,0,.1) }
+
+/* Plan sections */
+.dest-plan-section { margin-bottom: 16px }
+.dest-plan-label { font-size: 14px; font-weight: 700; color: #1a1a1a; margin-bottom: 10px; display: flex; align-items: center; gap: 7px }
+.dest-plan-label::before { content: ''; width: 3px; height: 15px; background: #f59e0b; border-radius: 2px; display: inline-block }
+
+/* Pills */
+.dest-pills { display: flex; flex-wrap: wrap; gap: 6px }
+.dest-pill { display: inline-flex; align-items: center; gap: 6px; padding: 7px 13px; border-radius: 20px; font-size: 13.5px; font-weight: 500; border: 1px solid #e5e7eb; color: #374151; cursor: pointer; background: #fff; transition: border-color .12s, background .12s; font-family: inherit; white-space: nowrap }
+.dest-pill:hover { border-color: #f5c400; background: #fffde7; color: #374151 }
+.dest-pill.on, .dest-pill.sel { background: #fff7d6; color: #854d0e; border-color: #f5c400; font-weight: 600 }
+.dest-pill-badge-inline { font-size: 9px; font-weight: 700; letter-spacing: .02em; padding: 2px 5px; border-radius: 4px; line-height: 1.3; flex-shrink: 0 }
+.dest-pill-badge-inline.popular { background: #1a1a1a; color: #fff }
+.dest-pill-badge-inline.best-val { background: #ea580c; color: #fff }
+.dest-pill-badge-inline.discount { background: #b7f2c5; color: #075f3c }
+
+/* Unlimited pills */
+.dest-speed-row { display: flex; border: 1px solid #e5e7eb; border-radius: 20px; overflow: hidden; margin-bottom: 16px; background: #f3f4f6 }
+.dest-speed-btn { flex: 1; text-align: center; padding: 7px 10px; font-size: 13px; font-weight: 500; cursor: pointer; color: #9ca3af; background: transparent; border: none; font-family: inherit; transition: all .15s }
+.dest-speed-btn.on { background: #fff; color: #111827; font-weight: 600; border-radius: 18px; margin: 2px; box-shadow: 0 1px 3px rgba(0,0,0,.08) }
+.dest-pills-unlim { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px }
+.dest-pill-u { display: inline-flex; align-items: center; gap: 10px; padding: 10px 16px; border-radius: 10px; border: 1.5px solid #e5e7eb; color: #374151; background: #fff; cursor: pointer; transition: border-color .12s, background .12s, box-shadow .12s; font-family: inherit; white-space: nowrap; min-width: 190px; position: relative }
+.dest-pill-u:hover { border-color: #f5c400; background: #fffde7; color: #374151 }
+.dest-pill-u.on { background: #fffde7; border-color: #d1b700; color: #92400e; box-shadow: 0 0 0 2px rgba(251,191,36,.2) }
+.dest-pill-u-badge { position: absolute; top: -9px; right: 10px; font-size: 9px; font-weight: 700; letter-spacing: .03em; padding: 2px 7px; border-radius: 4px; line-height: 1.4; pointer-events: none }
+.dest-pill-u-badge.popular { background: #1a1a1a; color: #fff }
+.dest-pill-u-badge.best-val { background: #ea580c; color: #fff }
+.dest-pill-u-badge.discount { background: #b7f2c5; color: #075f3c }
+.dest-pill-u-inf { flex-shrink: 0; display: flex; align-items: center }
+.dest-pill-u-inf svg path { transition: stroke .15s }
+.dest-pill-u.on .dest-pill-u-inf svg path { stroke: #d97706 }
+.dest-pill-u-body { display: flex; flex-direction: column; gap: 2px }
+.dest-pill-u-main { font-size: 13.5px; font-weight: 600; color: #374151; line-height: 1.3 }
+.dest-pill-u.on .dest-pill-u-main { color: #92400e }
+.dest-pill-u-hint { font-size: 11px; font-weight: 400; color: #9ca3af; line-height: 1.2; transition: color .15s }
+.dest-pill-u.on .dest-pill-u-hint { color: #d97706 }
+
+/* Config row */
+.dest-divider { height: 1px; background: #f3f4f6; margin: 16px 0 }
+.dest-config-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; align-items: start }
+.dest-cfg-label { font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px }
+.dest-days-ctrl { display: flex; align-items: stretch; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; height: 36px }
+.dest-days-display { flex: 1; text-align: center; font-size: 13.5px; font-weight: 600; color: #1a1a1a; display: flex; align-items: center; justify-content: center; padding: 0 8px }
+.dest-days-icon { width: 36px; display: flex; align-items: center; justify-content: center; background: #f9fafb; border-left: 1px solid #e5e7eb; cursor: pointer; transition: background .15s; flex-shrink: 0 }
+.dest-days-icon:hover { background: #f0f0f0 }
+.dest-days-quick { display: flex; gap: 5px; margin-top: 6px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; flex-wrap: nowrap; width: 100% }
+.dest-days-quick::-webkit-scrollbar { display: none }
+.dest-days-quick .dest-pill { flex-shrink: 0; padding: 4px 10px; font-size: 12px }
+.dest-qty-ctrl { display: flex; align-items: stretch; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; height: 36px }
+.dest-qty-btn { width: 36px; display: flex; align-items: center; justify-content: center; background: #f9fafb; border: none; cursor: pointer; font-size: 20px; font-weight: 500; color: #1a1a1a; font-family: inherit; flex-shrink: 0 }
+.dest-qty-btn:first-child { border-right: 1px solid #e5e7eb }
+.dest-qty-btn:last-child { border-left: 1px solid #e5e7eb }
+.dest-qty-val { flex: 1; text-align: center; font-size: 13.5px; font-weight: 600; color: #1a1a1a; display: flex; align-items: center; justify-content: center }
+
+/* CTA buttons */
+.dest-btn-wrap { display: flex; flex-direction: column; gap: 10px }
+.dest-btn-buy { width: 100%; padding: 13px; border-radius: 30px; border: 1.5px solid #d1b700; background: #fff500; font-size: 15px; font-weight: 700; cursor: pointer; color: #000; font-family: inherit; transition: all .15s }
+.dest-btn-buy:hover { background: #d1b700; border-color: #d1b700 }
+.dest-btn-cart { width: 100%; padding: 12px; border-radius: 30px; border: 1.5px solid #1a1a1a; background: #fff; font-size: 14px; font-weight: 600; cursor: pointer; color: #1a1a1a; font-family: inherit; transition: all .15s }
+.dest-btn-cart:hover { background: #1a1a1a; color: #fff }
+
+/* Trust row */
+.dest-trust-row { display: flex; align-items: center; justify-content: center; gap: 16px; padding: 10px 0; margin: 12px 0 8px; border-top: 1px solid #efefef; border-bottom: 1px solid #efefef; flex-wrap: wrap }
+.dest-trust-item { display: flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 400; color: #6b7280 }
+.dest-disc { padding: 10px 0 0; display: flex; gap: 6px; align-items: flex-start }
+.dest-disc-txt { font-size: 13px; color: #6b7280; line-height: 1.6 }
+.dest-disc-txt a { color: #3b82f6; font-weight: 500 }
+
+/* Calendar overlay */
+.dest-cal-overlay { position: fixed; inset: 0; z-index: 300; background: rgba(0,0,0,.25); display: none; align-items: center; justify-content: center }
+.dest-cal-overlay.open { display: flex }
+.dest-cal-popup { background: #fff; border-radius: 14px; padding: 20px; box-shadow: 0 20px 60px rgba(0,0,0,.15); min-width: 300px; max-width: 340px; width: 100%; font-family: inherit }
+.dest-cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px }
+.dest-cal-title { font-size: 15px; font-weight: 700; color: #1a1a1a }
+.dest-cal-nav { display: flex; gap: 4px }
+.dest-cal-nav button { width: 28px; height: 28px; border: 1px solid #e5e7eb; border-radius: 6px; background: #fff; cursor: pointer; font-size: 14px; color: #374151; display: flex; align-items: center; justify-content: center }
+.dest-cal-nav button:hover { background: #f3f4f6 }
+.dest-cal-days-hd { display: grid; grid-template-columns: repeat(7,1fr); text-align: center; margin-bottom: 4px }
+.dest-cal-days-hd span { font-size: 11px; font-weight: 600; color: #9ca3af; padding: 4px 0 }
+.dest-cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px }
+.dest-cal-day { width: 36px; height: 36px; border-radius: 50%; border: none; background: transparent; font-size: 13px; font-weight: 500; color: #374151; cursor: pointer; display: flex; align-items: center; justify-content: center; margin: 0 auto; transition: background .12s, color .12s }
+.dest-cal-day:hover { background: #f0f0f0 }
+.dest-cal-day.today { color: #d97706; font-weight: 700 }
+.dest-cal-day.selected-start, .dest-cal-day.selected-end { background: #1a1a1a; color: #fff; font-weight: 700 }
+.dest-cal-day.in-range { background: #fef08a; color: #854d0e }
+.dest-cal-day.other-month { color: #d1d5db }
+.dest-cal-day.disabled { color: #e5e7eb; pointer-events: none }
+.dest-cal-footer { display: flex; gap: 8px; margin-top: 14px; justify-content: flex-end }
+.dest-cal-footer button { padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all .15s }
+.dest-cal-cancel { background: transparent; border: 1px solid #e5e7eb; color: #6b7280 }
+.dest-cal-confirm { background: #fff500; border: 1.5px solid #d1b700; color: #000 }
+.dest-cal-range-info { font-size: 12px; color: #6b7280; margin-top: 10px; text-align: center; min-height: 16px }
+
+/* Responsive */
+@media(max-width:1100px) { .dest-container { grid-template-columns: 1fr 1fr; padding: 0 20px; column-gap: 24px } }
+@media(max-width:840px) { .dest-container { grid-template-columns: 1fr; padding: 0 16px } .dest-container > .dest-col-left { border-bottom: 1px solid #e5e7eb; padding-bottom: 24px; margin-bottom: 24px } }
+@media(max-width:540px) { .dest-price-amt { font-size: 24px } .dest-config-row { grid-template-columns: 1fr } }

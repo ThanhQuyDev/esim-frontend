@@ -225,6 +225,24 @@ export function usePlansByDestination(destinationId: number, lang?: string) {
   });
 }
 
+export function usePlansBySlug(slug: string, lang?: string) {
+  return useQuery({
+    queryKey: [...queryKeys.plans.all, "slug", slug],
+    queryFn: ({ signal }) =>
+      clientFetch<PaginatedResponse<Plan>>(
+        "/api/v1/plans",
+        {
+          limit: "50",
+          filters: JSON.stringify({ search: slug }),
+        },
+        lang ? { "x-custom-lang": lang } : undefined,
+        signal
+      ),
+    select: (data) => data.data.filter((p) => p.isActive),
+    enabled: slug.length > 0,
+  });
+}
+
 // ===== Exchange Rate Hook =====
 
 interface ExchangeRateResponse {
