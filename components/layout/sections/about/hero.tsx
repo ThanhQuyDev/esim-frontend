@@ -7,32 +7,32 @@ interface AboutHeroProps {
 const heroImages = [
   {
     src: "https://sb.nordcdn.com/m/6e538b5819aa776a/original/about-us-hero-1.png",
-    alt: "People taking photos of the cake as they celebrate Saily's birthday at the eSIM company's HQ.",
+    alt: "People taking photos of the cake as they celebrate Esim.vn's birthday at the eSIM company's HQ.",
     className: "w-[498px] lg:w-[454px] h-[300px] order-2 lg:order-1 hidden md:block",
   },
   {
     src: "https://sb.nordcdn.com/m/7ac8fe62dbb6b416/original/about-us-hero-2.png",
-    alt: "Vykintas Maknickas, Saily CEO, speaking at an event.",
+    alt: "Vykintas Maknickas, Esim.vn CEO, speaking at an event.",
     className: "w-[214px] h-[300px] order-3 hidden md:block",
   },
   {
     src: "https://sb.nordcdn.com/m/6f01957e31cad5fc/original/about-us-hero-3.png",
-    alt: "A member of the Saily team hugging a dog at the office.",
+    alt: "A member of the Esim.vn team hugging a dog at the office.",
     className: "w-[214px] h-[300px] order-4 hidden lg:block",
   },
   {
     src: "https://sb.nordcdn.com/m/6cb130e8717d215/original/about-us-hero-4.png",
-    alt: "Saily employees gathered around a phone during a business event.",
+    alt: "Esim.vn employees gathered around a phone during a business event.",
     className: "w-[454px] h-[300px] order-5 hidden lg:block",
   },
   {
     src: "https://sb.nordcdn.com/m/69280afade2466f4/original/about-us-hero-5.png",
-    alt: "Presenter giving a talk at a Saily event.",
+    alt: "Presenter giving a talk at a Esim.vn event.",
     className: "w-[214px] h-[300px] max-xl:hidden order-6 hidden xl:block",
   },
   {
     src: "https://sb.nordcdn.com/m/69f9250792426abb/original/about-us-hero-6.png",
-    alt: "A traveler wearing a backpack with a Saily sticker.",
+    alt: "A traveler wearing a backpack with a Esim.vn sticker.",
     className: "w-[214px] h-[300px] max-xl:hidden order-7 hidden xl:block",
   },
 ];

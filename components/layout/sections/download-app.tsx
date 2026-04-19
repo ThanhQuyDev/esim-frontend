@@ -181,7 +181,7 @@ export function DownloadAppSection({ dict }: DownloadAppSectionProps) {
                       <div className="block md:hidden">
                         <div>
                           <Image
-                            alt="A hand holds a phone with the Saily app open, showing options to manage eSIM plans, mobile data, and security features."
+                            alt="A hand holds a phone with the Esim.vn app open, showing options to manage eSIM plans, mobile data, and security features."
                             loading="lazy"
                             width={555}
                             height={555}
@@ -194,7 +194,7 @@ export function DownloadAppSection({ dict }: DownloadAppSectionProps) {
                       <div className="hidden md:block">
                         <div>
                           <Image
-                            alt="A QR code to download the Saily eSIM app."
+                            alt="A QR code to download the Esim.vn eSIM app."
                             loading="lazy"
                             width={555}
                             height={555}

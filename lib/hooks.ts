@@ -561,7 +561,7 @@ export function useCheckout() {
         body: JSON.stringify({
           orderId: order.id,
           amount: input.price,
-          orderInfo: `Saily eSIM - Order ${orderNumber}`,
+          orderInfo: `Esim.vn eSIM - Order ${orderNumber}`,
           locale: input.locale || "en",
         }),
       });

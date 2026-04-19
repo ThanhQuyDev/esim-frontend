@@ -21,7 +21,7 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        sans: ["var(--font-poppins)", "Poppins Fallback", "system-ui", "sans-serif"],
+        sans: ["var(--font-be-vietnam-pro)", "Be Vietnam Pro Fallback", "system-ui", "sans-serif"],
       },
       textColor: {
         primary: "var(--color-primary)",

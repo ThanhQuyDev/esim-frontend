@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import { Be_Vietnam_Pro } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { QueryProvider } from "@/lib/query-provider";
 
-const poppins = Poppins({
-  subsets: ["latin"],
+const beVietnamPro = Be_Vietnam_Pro({
+  subsets: ["latin", "vietnamese"],
   weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-poppins",
+  variable: "--font-be-vietnam-pro",
 });
 
 export const metadata: Metadata = {
-  title: "Saily - eSIM for Global Travel",
+  title: "Esim.vn - eSIM for Global Travel",
   description:
     "Stay connected worldwide with affordable eSIM data plans. No physical SIM needed.",
 };
@@ -33,7 +33,7 @@ export default function RootLayout({
       <body
         className={cn(
           "min-h-screen bg-white font-sans antialiased overflow-x-hidden",
-          poppins.variable
+          beVietnamPro.variable
         )}
       >
         <QueryProvider>{children}</QueryProvider>

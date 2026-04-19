@@ -42,8 +42,8 @@ export function FooterSection({ dict }: FooterSectionProps) {
             <Link href="/">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="https://sb.nordcdn.com/m/759b521342011244/original/saily-logo.svg"
-                alt="saily logo"
+                src="/logo.png"
+                alt="Esim.vn logo"
                 width={100}
                 height={45}
                 loading="lazy"

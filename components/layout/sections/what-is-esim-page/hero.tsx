@@ -7,7 +7,7 @@ interface EsimHeroProps {
 
 export function EsimHero({ dict, lang }: EsimHeroProps) {
   return (
-    <section data-section="What is Saily" className="relative scroll-mt-20 xl:scroll-mt-24">
+    <section data-section="What is Esim.vn" className="relative scroll-mt-20 xl:scroll-mt-24">
       <div className="py-16">
         <div className="mx-4 sm:mx-auto">
           <div className="container mx-auto">

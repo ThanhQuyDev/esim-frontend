@@ -1,6 +1,6 @@
-{
+﻿{
   "metadata": {
-    "title": "Saily - Affordable eSIM Data Plans for International Travel",
+    "title": "Esim.vn - Affordable eSIM Data Plans for International Travel",
     "description": "Stay connected worldwide with affordable eSIM data plans. No physical SIM needed. Instant activation in 150+ countries."
   },
   "nav": {
@@ -10,7 +10,7 @@
     "help": "Help",
     "login": "Log in",
     "downloadApp": "Download App",
-    "getStarted": "Get Saily",
+    "getStarted": "Get Esim.vn",
     "searchPlaceholder": "Search for a country or region",
     "announcement": "Get 10% off 10GB+ data plans!",
     "announcementCta": "Get the deal",
@@ -53,18 +53,18 @@
     "new": "New"
   },
   "whyChoose": {
-    "badge": "Why choose Saily?",
+    "badge": "Why choose Esim.vn?",
     "title": "Stay connected while traveling",
     "features": [
       {
         "icon": "layers",
         "title": "International data plans",
-        "description": "Get cellular data that works for your budget and itinerary. From 1 GB to unlimited plans, Saily's got you covered!"
+        "description": "Get cellular data that works for your budget and itinerary. From 1 GB to unlimited plans, Esim.vn's got you covered!"
       },
       {
         "icon": "circle-check",
         "title": "Easy to use",
-        "description": "Just [download the Saily eSIM app](/en/what-is-esim), install the eSIM, and buy an eSIM data plan — it will activate automatically the moment you reach your destination."
+        "description": "Just [download the Esim.vn eSIM app](/en/what-is-esim), install the eSIM, and buy an eSIM data plan — it will activate automatically the moment you reach your destination."
       },
       {
         "icon": "ballot-check",
@@ -74,7 +74,7 @@
       {
         "icon": "sim-card",
         "title": "One eSIM for all your travels",
-        "description": "Add new destinations to your existing Saily eSIM — no need to install new eSIMs every time. Just top up and connect!"
+        "description": "Add new destinations to your existing Esim.vn eSIM — no need to install new eSIMs every time. Just top up and connect!"
       },
       {
         "icon": "bell-ring",
@@ -89,14 +89,14 @@
     ]
   },
   "security": {
-    "title": "Instant connection and safer browsing with Saily",
-    "subtitle": "Do you travel often, live abroad, or simply need reliable mobile data on the go? Saily makes it simple to stay connected, wherever life takes you.",
+    "title": "Instant connection and safer browsing with Esim.vn",
+    "subtitle": "Do you travel often, live abroad, or simply need reliable mobile data on the go? Esim.vn makes it simple to stay connected, wherever life takes you.",
     "cta": "View All Destinations",
     "learnMore": "Learn More",
     "features": [
       {
         "title": "Connect instantly",
-        "description": "Saily is a hassle-free solution — just choose your data plan and get ready to travel! When you arrive at your destination, you can go online right away.",
+        "description": "Esim.vn is a hassle-free solution — just choose your data plan and get ready to travel! When you arrive at your destination, you can go online right away.",
         "imageAlt": "An installed eSIM, which instantly activates your plan at your destination."
       },
       {
@@ -107,24 +107,24 @@
       {
         "title": "Stay protected online",
         "description": "When abroad, sometimes your only internet option is a slow Wi-Fi network in a shady coffee shop. With an eSIM data plan, you'll always have a secure and reliable connection.",
-        "imageAlt": "Saily's security features include ad blocker, virtual location, and web protection."
+        "imageAlt": "Esim.vn's security features include ad blocker, virtual location, and web protection."
       }
     ]
   },
   "howItWorks": {
-    "subtitle": "How to use the Saily eSIM service",
-    "title": "How does Saily work?",
-    "description": "Don't have the Saily eSIM app yet? Download it from the App Store or Google Play.",
+    "subtitle": "How to use the Esim.vn eSIM service",
+    "title": "How does Esim.vn work?",
+    "description": "Don't have the Esim.vn eSIM app yet? Download it from the App Store or Google Play.",
     "steps": [
       {
         "number": "1",
-        "title": "Choose a Saily data plan for your trip",
+        "title": "Choose a Esim.vn data plan for your trip",
         "description": "Select your destination and pick your travel eSIM data plan.",
         "imageAlt": "Step 1 of eSIM set up: Choose a data plan."
       },
       {
         "number": "2",
-        "title": "Download Saily and set up your eSIM",
+        "title": "Download Esim.vn and set up your eSIM",
         "description": "Set up the eSIM on your device by following the instructions in the app.",
         "imageAlt": "Step 2 of eSIM set up: Follow instructions until you've installed your eSIM."
       },
@@ -137,8 +137,8 @@
     ]
   },
   "downloadApp": {
-    "title": "Download the Saily eSIM app",
-    "subtitle": "You can get Saily on Google Play and the App Store or by scanning the QR code.",
+    "title": "Download the Esim.vn eSIM app",
+    "subtitle": "You can get Esim.vn on Google Play and the App Store or by scanning the QR code.",
     "trustpilot": {
       "rating": "4.7",
       "total": "5",
@@ -155,13 +155,13 @@
     "qrLabel": "Scan to download"
   },
   "testimonials": {
-    "title": "Saily reviews from travelers",
-    "subtitle": "Check out what fellow travelers are saying about Saily!",
+    "title": "Esim.vn reviews from travelers",
+    "subtitle": "Check out what fellow travelers are saying about Esim.vn!",
     "reviews": [
       {
         "source": "Lonely Planet",
         "type": "featured",
-        "text": "Saily is an affordable, easy-to-use, and sustainable eSIM service that gives reliable mobile and internet connections from anywhere in the world. That's why we recommend Saily as our eSIM partner."
+        "text": "Esim.vn is an affordable, easy-to-use, and sustainable eSIM service that gives reliable mobile and internet connections from anywhere in the world. That's why we recommend Esim.vn as our eSIM partner."
       },
       {
         "name": "Jorge A.",
@@ -173,29 +173,29 @@
         "name": "PewDiePie",
         "source": "YouTube",
         "avatar": true,
-        "text": "I can set it up at home right now, activate it when I'm ready (it takes literally just a couple of minutes, I've tried it myself), and boom! I have internet on my phone when traveling, as it should be… So I recommend checking out Saily next time you're traveling — it's a must!"
+        "text": "I can set it up at home right now, activate it when I'm ready (it takes literally just a couple of minutes, I've tried it myself), and boom! I have internet on my phone when traveling, as it should be… So I recommend checking out Esim.vn next time you're traveling — it's a must!"
       },
       {
         "name": "DutchPilotGirl",
         "source": "YouTube",
         "avatar": true,
-        "text": "There's so much you can't do abroad without a proper internet connection. Saily takes care of everything. It's simple to buy and easy to install. I love it."
+        "text": "There's so much you can't do abroad without a proper internet connection. Esim.vn takes care of everything. It's simple to buy and easy to install. I love it."
       },
       {
         "name": "Domas R.",
         "source": "Trustpilot",
         "rating": 5,
-        "text": "Awesome — used Saily across 3 countries already (UK, Netherlands and Belgium). Took me like 1min to buy esim and activate it. My internet was way better than my friends' who remained connected to their local providers and used roaming plans instead."
+        "text": "Awesome — used Esim.vn across 3 countries already (UK, Netherlands and Belgium). Took me like 1min to buy esim and activate it. My internet was way better than my friends' who remained connected to their local providers and used roaming plans instead."
       },
       {
         "source": "CyberNews",
         "type": "press",
-        "text": "With comprehensive coverage and affordable prices, Saily is the best eSIM for Europe. Activating Saily is straightforward. Download the app, choose your plan, and surf the internet. You can contact the Saily customer support team via live chat or email if you encounter any issues."
+        "text": "With comprehensive coverage and affordable prices, Esim.vn is the best eSIM for Europe. Activating Esim.vn is straightforward. Download the app, choose your plan, and surf the internet. You can contact the Esim.vn customer support team via live chat or email if you encounter any issues."
       },
       {
         "source": "TechRadar",
         "type": "press",
-        "text": "As a product backed by the reputable NordVPN brand, Saily benefits from the company's focus on security and privacy. Users praise its easy installation process, affordable pricing, and reliable coverage across the world."
+        "text": "As a product backed by the reputable NordVPN brand, Esim.vn benefits from the company's focus on security and privacy. Users praise its easy installation process, affordable pricing, and reliable coverage across the world."
       }
     ]
   },
@@ -204,59 +204,59 @@
     "items": [
       {
         "question": "After getting an eSIM, do I need to turn anything on?",
-        "answer": "You don't need to turn anything on, but if it's the first data plan you're getting from Saily, you will need to set up your eSIM. Don't worry — it's quick and easy! Head to our support page for instructions on how to install your eSIM."
+        "answer": "You don't need to turn anything on, but if it's the first data plan you're getting from Esim.vn, you will need to set up your eSIM. Don't worry — it's quick and easy! Head to our support page for instructions on how to install your eSIM."
       },
       {
-        "question": "Does Saily detect when I arrive at my destination?",
+        "question": "Does Esim.vn detect when I arrive at my destination?",
         "answer": "Yes, it does! It detects your destination and then automatically activates your eSIM data plan."
       },
       {
-        "question": "Do I keep my number with a Saily eSIM data plan?",
-        "answer": "Yes, you do — the plans available on the Saily app offer internet data only. That means you keep your existing number for calls and texts while using your eSIM as the main source of mobile data. Getting an eSIM for just data is a great way to stay connected abroad without the hassle of getting a local number you have to let everyone know about! And you can still make calls through VoIP apps like Facebook Messenger, WhatsApp, and Signal."
+        "question": "Do I keep my number with a Esim.vn eSIM data plan?",
+        "answer": "Yes, you do — the plans available on the Esim.vn app offer internet data only. That means you keep your existing number for calls and texts while using your eSIM as the main source of mobile data. Getting an eSIM for just data is a great way to stay connected abroad without the hassle of getting a local number you have to let everyone know about! And you can still make calls through VoIP apps like Facebook Messenger, WhatsApp, and Signal."
       },
       {
         "question": "What's the best eSIM for international travel?",
-        "answer": "Picking the best eSIM for international travel can be tricky, but we think Saily is a great contender! It's got affordable pricing, extensive global coverage, and a user-friendly, easy-to-use app. You'll get reliable, fast 4G/5G data in over 200 destinations, and unlimited data plans! You can also buy reliable data plans for entire regions, like a Europe data plan with 35 countries, and even a Global plan covering 110+ destinations!"
+        "answer": "Picking the best eSIM for international travel can be tricky, but we think Esim.vn is a great contender! It's got affordable pricing, extensive global coverage, and a user-friendly, easy-to-use app. You'll get reliable, fast 4G/5G data in over 200 destinations, and unlimited data plans! You can also buy reliable data plans for entire regions, like a Europe data plan with 35 countries, and even a Global plan covering 110+ destinations!"
       },
       {
         "question": "What is a tourist eSIM?",
         "answer": "A tourist eSIM is another name for a travel eSIM — a digital SIM that lets you connect to mobile networks in other countries without a physical SIM card. To start using an eSIM, you'll need an eSIM plan, which can be data only or data plus calls and texts. You can set up eSIMs with most new smartphones by making a few small changes to your device's settings."
       },
       {
-        "question": "Is the Saily eSIM app legit?",
-        "answer": "Yes, the Saily app is totally legit! It's built by the company behind NordVPN (Nord Security), and offers everything you may need in one app — solid security, easy activation, and an intuitive interface. With data plans in 200+ destinations, Saily is a great pick for travelers (even if we say so ourselves!)."
+        "question": "Is the Esim.vn eSIM app legit?",
+        "answer": "Yes, the Esim.vn app is totally legit! It's built by the company behind NordVPN (Nord Security), and offers everything you may need in one app — solid security, easy activation, and an intuitive interface. With data plans in 200+ destinations, Esim.vn is a great pick for travelers (even if we say so ourselves!)."
       },
       {
-        "question": "Does the Saily app offer cheap eSIM options?",
-        "answer": "Yes, the Saily eSIM app offers affordable plans, especially compared to big-name providers! That said, if you're just hunting for the absolute cheapest eSIM, you might find lower prices elsewhere. With Saily, you're also getting solid quality: 24/7 customer support, quick and easy setup, easy-to-use app, and reliable global coverage. You even get extra security features like malicious site and ad blocking, so it's more about value than just price!"
+        "question": "Does the Esim.vn app offer cheap eSIM options?",
+        "answer": "Yes, the Esim.vn eSIM app offers affordable plans, especially compared to big-name providers! That said, if you're just hunting for the absolute cheapest eSIM, you might find lower prices elsewhere. With Esim.vn, you're also getting solid quality: 24/7 customer support, quick and easy setup, easy-to-use app, and reliable global coverage. You even get extra security features like malicious site and ad blocking, so it's more about value than just price!"
       },
       {
-        "question": "Does Saily work in the US?",
-        "answer": "Yes, Saily works in the United States. Whether you're looking for an eSIM for the USA or Europe, you've come to the right place!"
+        "question": "Does Esim.vn work in the US?",
+        "answer": "Yes, Esim.vn works in the United States. Whether you're looking for an eSIM for the USA or Europe, you've come to the right place!"
       },
       {
-        "question": "Is Saily better than Airalo?",
-        "answer": "Saily and Airalo are both solid options when it comes to speed and performance. However, if you're planning to share your data with other devices, Saily's a bit more convenient. Check out our Saily vs. Airalo comparison to find out more!"
+        "question": "Is Esim.vn better than Airalo?",
+        "answer": "Esim.vn and Airalo are both solid options when it comes to speed and performance. However, if you're planning to share your data with other devices, Esim.vn's a bit more convenient. Check out our Esim.vn vs. Airalo comparison to find out more!"
       },
       {
         "question": "Can I buy an eSIM for travel?",
         "answer": "Yes, you can definitely get an eSIM for travel! The easiest thing to do is download an eSIM app from the App Store or Google Play and then get your eSIM data plan through the app. Choose a data-only plan if you want to keep your regular phone number active while you're away."
       },
       {
-        "question": "What's the story behind the name Saily?",
-        "answer": "Saily comes from the word \"sail\" — we wanted a name that feels like movement, freedom, and exploring the world! Saily is curious, active, brave, inclusive, funny, and always up for something new. If it were a person, it would always be on the move, meeting people, chasing adventures, and staying connected!"
+        "question": "What's the story behind the name Esim.vn?",
+        "answer": "Esim.vn comes from the word \"sail\" — we wanted a name that feels like movement, freedom, and exploring the world! Esim.vn is curious, active, brave, inclusive, funny, and always up for something new. If it were a person, it would always be on the move, meeting people, chasing adventures, and staying connected!"
       },
       {
-        "question": "Who owns the Saily eSIM service?",
-        "answer": "Nord Security, a global digital security and privacy brand, owns the Saily eSIM service. It's also the company behind tools like NordVPN and NordPass, trusted by millions worldwide."
+        "question": "Who owns the Esim.vn eSIM service?",
+        "answer": "Nord Security, a global digital security and privacy brand, owns the Esim.vn eSIM service. It's also the company behind tools like NordVPN and NordPass, trusted by millions worldwide."
       }
     ]
   },
   "referFriend": {
     "title": "Refer a friend, and you'll both get US$5!",
-    "description": "Invite your friends to use Saily and get US$5 in Saily credits while they get a US$5 discount!",
+    "description": "Invite your friends to use Esim.vn and get US$5 in Esim.vn credits while they get a US$5 discount!",
     "cta": "Learn More",
-    "imageAlt": "A group of people enjoying a US$5 Saily credit after referring a friend."
+    "imageAlt": "A group of people enjoying a US$5 Esim.vn credit after referring a friend."
   },
   "blog": {
     "badge": "Blog",
@@ -266,16 +266,16 @@
     "viewAll": "View all posts",
     "readMore": "Read more",
     "fallback": [
-      { "title": "How to stay connected while traveling abroad", "slug": "stay-connected-abroad", "excerpt": "Learn the best ways to keep your phone connected when traveling internationally.", "author": "Saily Team", "tags": "Travel,eSIM" },
-      { "title": "eSIM vs physical SIM: Which is better?", "slug": "esim-vs-physical-sim", "excerpt": "A detailed comparison of eSIM and traditional SIM cards for travelers.", "author": "Saily Team", "tags": "eSIM,Guide" },
-      { "title": "Top 10 travel destinations for 2025", "slug": "top-destinations-2025", "excerpt": "Discover the most popular travel destinations and how to stay connected there.", "author": "Saily Team", "tags": "Travel,Destinations" }
+      { "title": "How to stay connected while traveling abroad", "slug": "stay-connected-abroad", "excerpt": "Learn the best ways to keep your phone connected when traveling internationally.", "author": "Esim.vn Team", "tags": "Travel,eSIM" },
+      { "title": "eSIM vs physical SIM: Which is better?", "slug": "esim-vs-physical-sim", "excerpt": "A detailed comparison of eSIM and traditional SIM cards for travelers.", "author": "Esim.vn Team", "tags": "eSIM,Guide" },
+      { "title": "Top 10 travel destinations for 2025", "slug": "top-destinations-2025", "excerpt": "Discover the most popular travel destinations and how to stay connected there.", "author": "Esim.vn Team", "tags": "Travel,Destinations" }
     ]
   },
   "cta": {
     "title": "Ready to stay ",
     "titleHighlight": "connected",
-    "subtitle": "Download Saily and get affordable eSIM data plans for your next trip.",
-    "ctaPrimary": "Get Saily",
+    "subtitle": "Download Esim.vn and get affordable eSIM data plans for your next trip.",
+    "ctaPrimary": "Get Esim.vn",
     "ctaSecondary": "Download App",
     "trustRating": "4.7/5 on Trustpilot",
     "trustBrand": "By the creators of NordVPN"
@@ -294,7 +294,7 @@
     ],
     "getPlan": "Get plan",
     "allPlansTitle": "All plans include",
-    "allPlansSubtitle": "Every Saily plan comes with these features, no matter which destination you choose.",
+    "allPlansSubtitle": "Every Esim.vn plan comes with these features, no matter which destination you choose.",
     "benefits": ["Instant activation", "5G/LTE speeds", "24/7 customer support", "No contracts", "Easy setup", "Global coverage"]
   },
   "footer": {
@@ -314,7 +314,7 @@
       ]
     },
     "saily": {
-      "title": "Saily",
+      "title": "Esim.vn",
       "links": ["About us", "Blog", "Media kit", "Affiliate"]
     },
     "esim": {
@@ -323,21 +323,21 @@
     },
     "helpLinks": {
       "title": "Help",
-      "links": ["Help center", "Contact us", "How to install Saily"]
+      "links": ["Help center", "Contact us", "How to install Esim.vn"]
     },
     "followUs": {
       "title": "Follow us",
       "links": ["YouTube", "Instagram", "X (Twitter)", "Facebook", "TikTok"]
     },
     "legal": {
-      "copyright": "© 2024 Saily. All rights reserved.",
+      "copyright": "© 2024 Esim.vn. All rights reserved.",
       "links": ["Privacy policy", "Terms of service", "Refund policy"]
     },
     "paymentMethods": ["Apple Pay", "Google Pay", "Visa", "Mastercard", "Amex", "Discover", "UnionPay", "JCB"]
   },
   "dataCalculator": {
     "metadata": {
-      "title": "Data Usage Calculator | Find Out How Much Data You Use | Saily",
+      "title": "Data Usage Calculator | Find Out How Much Data You Use | Esim.vn",
       "description": "Wondering how much data you use? Use our internet data calculator to estimate your usage for browsing, streaming, and video calls."
     },
     "hero": {
@@ -490,7 +490,7 @@
             },
             {
               "question": "What happens if I run out of data?",
-              "answer": "Some plans cut off your data entirely until you purchase more. Others charge overage fees. With most eSIM services like Saily, you'll typically just lose access rather than face surprise charges. You can choose an auto top-up option or get a Saily Ultra plan for unlimited data."
+              "answer": "Some plans cut off your data entirely until you purchase more. Others charge overage fees. With most eSIM services like Esim.vn, you'll typically just lose access rather than face surprise charges. You can choose an auto top-up option or get a Esim.vn Ultra plan for unlimited data."
             }
           ]
         },
@@ -557,7 +557,7 @@
             },
             {
               "question": "How can I check my current eSIM data usage?",
-              "answer": "On iPhone: Settings > Cellular. On Android: Settings > Network and internet > SIMs. In the Saily app, your current data usage displays prominently on the main screen."
+              "answer": "On iPhone: Settings > Cellular. On Android: Settings > Network and internet > SIMs. In the Esim.vn app, your current data usage displays prominently on the main screen."
             },
             {
               "question": "How can I check my eSIM hotspot data usage?",
@@ -570,16 +570,16 @@
   },
   "aboutUs": {
     "hero": {
-      "title": "Meet the people behind Saily",
-      "subtitle": "We've traveled enough to know how frustrating staying connected abroad can be. That's why we built Saily — the eSIM app that makes staying connected simple for everyone."
+      "title": "Meet the people behind Esim.vn",
+      "subtitle": "We've traveled enough to know how frustrating staying connected abroad can be. That's why we built Esim.vn — the eSIM app that makes staying connected simple for everyone."
     },
     "story": {
-      "title": "Why we built Saily",
+      "title": "Why we built Esim.vn",
       "paragraphs": [
         "People are natural explorers, and crossing the seas has always been the ultimate adventure. For many years, sailing was how they did it. Today, you may not be crossing the ocean to find a new continent, but the urge to travel and explore hasn't gone away. And that's what we're all about.",
-        "Saily gives you the tools to explore the world in a modern way. We're building a future where connectivity is effortless, instant, and entirely digital. No plastic. No borders. Just tap, connect, and go."
+        "Esim.vn gives you the tools to explore the world in a modern way. We're building a future where connectivity is effortless, instant, and entirely digital. No plastic. No borders. Just tap, connect, and go."
       ],
-      "imageAlt": "Founders of Saily attending a presentation at Saily headquarters."
+      "imageAlt": "Founders of Esim.vn attending a presentation at Esim.vn headquarters."
     },
     "values": {
       "title": "The values that guide us",
@@ -589,57 +589,57 @@
         { "title": "Keep it simple", "description": "No tech jargon. No clutter. We built an eSIM app that's clean, intuitive, and easy to navigate." },
         { "title": "Prioritize humans", "description": "We care about people, not just rigid processes. Every team member and user is treated with empathy and respect." },
         { "title": "Always improve", "description": "We don't chase perfection — we chase progress. We believe that small wins make big shifts." },
-        { "title": "Think like a traveler", "description": "We stay curious, flexible, and open to the unknown, just like the explorers we built Saily for." },
+        { "title": "Think like a traveler", "description": "We stay curious, flexible, and open to the unknown, just like the explorers we built Esim.vn for." },
         { "title": "Make it matter", "description": "We're here to make a difference, so we focus on what truly matters — our users, team, and the world around us." }
       ]
     },
     "timeline": {
-      "title": "The Saily tale",
-      "subtitle": "We envisioned a better way for travelers to stay online. Today, we're making that vision a reality for thousands around the globe. Here's how Saily got here.",
+      "title": "The Esim.vn tale",
+      "subtitle": "We envisioned a better way for travelers to stay online. Today, we're making that vision a reality for thousands around the globe. Here's how Esim.vn got here.",
       "milestones": [
-        { "date": "November 2023", "title": "Where it all began", "description": "The Saily eSIM app started with a shared idea — ditch plastic SIM cards and simplify mobile connectivity." },
+        { "date": "November 2023", "title": "Where it all began", "description": "The Esim.vn eSIM app started with a shared idea — ditch plastic SIM cards and simplify mobile connectivity." },
         { "date": "March 2024", "title": "The first launch", "description": "We introduced our first eSIM plans that covered 160+ countries with instant mobile access and zero plastic waste." },
         { "date": "December 2024", "title": "Prioritizing security", "description": "We've added built-in security features to our eSIM app so you can browse more safely while you travel." },
         { "date": "February 2025", "title": "Connecting the world", "description": "At the start of the year, we expanded our coverage to 200+ destinations and reached more people than ever before." },
-        { "date": "2025", "title": "The journey continues", "description": "We're focused on expanding our coverage, improving the Saily experience, and keeping you connected 24/7." }
+        { "date": "2025", "title": "The journey continues", "description": "We're focused on expanding our coverage, improving the Esim.vn experience, and keeping you connected 24/7." }
       ]
     },
     "crew": {
-      "title": "Voices of the Saily crew",
-      "subtitle": "Get to know the people behind Saily and their vision for easier mobile connection.",
+      "title": "Voices of the Esim.vn crew",
+      "subtitle": "Get to know the people behind Esim.vn and their vision for easier mobile connection.",
       "members": [
         {
           "name": "Vykintas Maknickas",
-          "role": "CEO at Saily",
-          "quote": "Saily started with a simple idea — effortless, affordable, and digital mobile connectivity. We're building a better experience for the next generation of travelers and leaving the old ways behind."
+          "role": "CEO at Esim.vn",
+          "quote": "Esim.vn started with a simple idea — effortless, affordable, and digital mobile connectivity. We're building a better experience for the next generation of travelers and leaving the old ways behind."
         },
         {
           "name": "Matas Čenys",
-          "role": "Head of product at Saily",
-          "quote": "Travelers are at the heart of everything we do at Saily. That's why every team is working on making travel connectivity smarter and smoother. We move fast and stay curious to deliver the best possible experience."
+          "role": "Head of product at Esim.vn",
+          "quote": "Travelers are at the heart of everything we do at Esim.vn. That's why every team is working on making travel connectivity smarter and smoother. We move fast and stay curious to deliver the best possible experience."
         },
         {
           "name": "Neringa Kondrašovė",
-          "role": "Marketing project manager at Saily",
-          "quote": "What I love most about Saily is the daily impact we have. We're solving real problems for real people, and we're doing it with a team that genuinely cares about the experience we create."
+          "role": "Marketing project manager at Esim.vn",
+          "quote": "What I love most about Esim.vn is the daily impact we have. We're solving real problems for real people, and we're doing it with a team that genuinely cares about the experience we create."
         }
       ]
     },
     "life": {
-      "title": "Life at Saily",
+      "title": "Life at Esim.vn",
       "perks": [
-        { "title": "Growth opportunities", "description": "We support your growth with learning opportunities, real responsibilities, and chances to lead (not just follow).", "imageAlt": "The Saily team participating in an internal company event." },
-        { "title": "Work-life balance", "description": "Work from anywhere in the world! We're a borderless team of many nationalities, connected by trust, not time zones.", "imageAlt": "Saily employees chatting during an event hosted at Saily headquarters." },
-        { "title": "Culture and community", "description": "We prioritize people and celebrate wins, milestones, and the unique contributions of every team member.", "imageAlt": "Saily team members working out together — part of the company's wellness initiative." },
-        { "title": "Autonomy and ownership", "description": "We trust you to lead, experiment, and bring your ideas to life. At Saily, everyone has the freedom to make bold decisions.", "imageAlt": "Saily employees clapping after a presentation." },
-        { "title": "Curiosity-driven work", "description": "We encourage curiosity. Questions aren't simply welcome — they're how we build, learn, and grow.", "imageAlt": "Saily founders attending an event." }
+        { "title": "Growth opportunities", "description": "We support your growth with learning opportunities, real responsibilities, and chances to lead (not just follow).", "imageAlt": "The Esim.vn team participating in an internal company event." },
+        { "title": "Work-life balance", "description": "Work from anywhere in the world! We're a borderless team of many nationalities, connected by trust, not time zones.", "imageAlt": "Esim.vn employees chatting during an event hosted at Esim.vn headquarters." },
+        { "title": "Culture and community", "description": "We prioritize people and celebrate wins, milestones, and the unique contributions of every team member.", "imageAlt": "Esim.vn team members working out together — part of the company's wellness initiative." },
+        { "title": "Autonomy and ownership", "description": "We trust you to lead, experiment, and bring your ideas to life. At Esim.vn, everyone has the freedom to make bold decisions.", "imageAlt": "Esim.vn employees clapping after a presentation." },
+        { "title": "Curiosity-driven work", "description": "We encourage curiosity. Questions aren't simply welcome — they're how we build, learn, and grow.", "imageAlt": "Esim.vn founders attending an event." }
       ]
     },
     "banner": {
       "title": "Always connected. Always on course.",
       "subtitle": "Join a team of passionate travelers shaping the future of mobile connectivity.",
       "ctaText": "Explore Careers",
-      "ctaHref": "https://nordsecurity.com/careers?searchString=saily"
+      "ctaHref": "https://nordsecurity.com/careers?searchString=Esim.vn"
     }
   },
   "whatIsEsimPage": {
@@ -658,7 +658,7 @@
     },
     "howWorks": {
       "title": "How does an eSIM work?",
-      "imageAlt": "A man reviewing his Saily US eSIM plan on his phone.",
+      "imageAlt": "A man reviewing his Esim.vn US eSIM plan on his phone.",
       "paragraphs": [
         "An eSIM uses preinstalled software on your device to work just like a physical SIM. Once you activate it, you can connect to a cell network, make calls, and use mobile data. Most modern phones will have built-in eSIMs, but check our list of eSIM-compatible phones to see if yours does.",
         "To start using an eSIM, just buy an eSIM plan and complete a quick setup. No need to remove your current SIM card — it can stay where it is, whether you decide to keep using it or not."
@@ -670,10 +670,10 @@
       "tabs": [
         {
           "label": "On iPhone",
-          "appTitle": "Set up an eSIM on your iPhone with the Saily app",
+          "appTitle": "Set up an eSIM on your iPhone with the Esim.vn app",
           "steps": [
             { "title": "Pick an eSIM data plan for your trip", "description": "Select the country you're heading to and choose a plan." },
-            { "title": "Download the Saily eSIM app", "description": "Get the app, tap \"Install eSIM,\" and follow the steps on the screen." },
+            { "title": "Download the Esim.vn eSIM app", "description": "Get the app, tap \"Install eSIM,\" and follow the steps on the screen." },
             { "title": "Your plan will automatically activate", "description": "Get ready for your trip — your plan will activate when you arrive." }
           ],
           "manualTitle": "Set up an eSIM manually on your iPhone",
@@ -687,10 +687,10 @@
         },
         {
           "label": "On Android",
-          "appTitle": "Set up an eSIM on your Android with the Saily app",
+          "appTitle": "Set up an eSIM on your Android with the Esim.vn app",
           "steps": [
             { "title": "Pick an eSIM data plan for your trip", "description": "Select the country you're heading to and choose a plan." },
-            { "title": "Download the Saily eSIM app", "description": "Get the app, tap \"Install eSIM,\" and follow the steps on the screen to set it up." },
+            { "title": "Download the Esim.vn eSIM app", "description": "Get the app, tap \"Install eSIM,\" and follow the steps on the screen to set it up." },
             { "title": "Your plan will automatically activate", "description": "Get ready for your trip — your plan will activate when you arrive." }
           ],
           "manualTitle": "Set up an eSIM manually on your Android",
@@ -705,7 +705,7 @@
           "label": "With a QR code",
           "appTitle": "Set up an eSIM using a QR code",
           "steps": [
-            { "title": "Scan the QR code to download Saily", "description": "Use your phone to scan the QR and download the Saily app." },
+            { "title": "Scan the QR code to download Esim.vn", "description": "Use your phone to scan the QR and download the Esim.vn app." },
             { "title": "Buy an eSIM data plan for your trip", "description": "Get a mobile data plan for the country you'll be visiting." },
             { "title": "Your plan will automatically activate", "description": "Get online the moment you arrive at your destination." }
           ],
@@ -750,7 +750,7 @@
         { "label": "Compatibility", "esim": "Newer devices only", "sim": "Old and most new devices" },
         { "label": "Using abroad", "esim": "Affordable — easy to get data plans for different countries", "sim": "May be expensive due to roaming" }
       ],
-      "footnote": "*Saily is all about mobile data right now, so we don't support phone numbers yet. Don't worry — we're working on it."
+      "footnote": "*Esim.vn is all about mobile data right now, so we don't support phone numbers yet. Don't worry — we're working on it."
     },
     "ctaBanner": {
       "title": "Get an eSIM data plan",
@@ -761,12 +761,12 @@
       "title": "Frequently asked questions about eSIMs",
       "items": [
         { "question": "What does an eSIM card do?", "answer": "An eSIM is a digital version of a physical SIM card. It connects you to a mobile network, allowing you to make calls, send texts, and use mobile data. Instead of having to insert it into your device, you just need to buy an eSIM plan from a provider and activate it." },
-        { "question": "How can I get an eSIM?", "answer": "You can get an eSIM from any reputable eSIM provider, typically by making an online purchase. For example, Saily offers eSIMs in over 200 destinations — just find the country you want to use your data in and pick a plan." },
+        { "question": "How can I get an eSIM?", "answer": "You can get an eSIM from any reputable eSIM provider, typically by making an online purchase. For example, Esim.vn offers eSIMs in over 200 destinations — just find the country you want to use your data in and pick a plan." },
         { "question": "Is eSIM better than a SIM card?", "answer": "In short — yes. eSIMs are built into your phone, so you no longer need to open it up to insert a tiny card. These virtual cards are great for switching between providers and for international travel. Without a SIM card slot, phones can be made smaller or have improved features (like a larger battery)." },
         { "question": "Why would I want an eSIM?", "answer": "You may want to get an eSIM for many reasons, like going abroad or needing extra mobile data to use in your home country. For example, if you're heading to a country where you can't get free roaming, buying an eSIM data plan can be an easy solution that won't break the bank." },
         { "question": "Why are eSIMs not popular?", "answer": "eSIM technology is still quite new — the first eSIM-compatible smartphone was only released in 2016. Not many people know about eSIMs yet, and those who do typically use them with wearable and IoT devices only. That said, their popularity is growing as more people find out about eSIM benefits." },
         { "question": "Is an eSIM safer than a SIM?", "answer": "Yes, in some ways. A physical SIM card can be damaged, lost, or stolen — especially if you're swapping out cards on your travels. eSIMs are electronic and built into your device, so you can't damage or lose them." },
-        { "question": "Does an eSIM give you a phone number?", "answer": "Not always. Some eSIMs (like the ones you can buy through the Saily app) only offer mobile data without a phone number, because you can do so much with data alone these days. However, some other providers give you a phone number with an eSIM." },
+        { "question": "Does an eSIM give you a phone number?", "answer": "Not always. Some eSIMs (like the ones you can buy through the Esim.vn app) only offer mobile data without a phone number, because you can do so much with data alone these days. However, some other providers give you a phone number with an eSIM." },
         { "question": "Does an eSIM work without an internet connection?", "answer": "Yes, an eSIM can work without an internet connection. For example, with some eSIMs, you may be able to make cellular (voice) calls or send texts (SMS). What you can do with your eSIM depends on your eSIM plan and the provider you choose." },
         { "question": "Does an eSIM drain your phone battery?", "answer": "Battery drain is not an issue with eSIMs, at least not more than with physical SIM cards. If your device has been using more battery power lately, it's likely caused by other apps on your phone." },
         { "question": "Can you convert an eSIM back to a physical SIM?", "answer": "Yes, you can convert an eSIM back to a physical SIM — for example, if you want to use it with an older phone model. However, it's best to pop into your network provider's store to speak to an advisor and pick up a new SIM card." }
@@ -775,13 +775,13 @@
   },
   "supportedDevicesPage": {
     "title": "Devices that support eSIMs",
-    "subtitle": "Only devices that are carrier-unlocked and support eSIM technology can use Saily.",
+    "subtitle": "Only devices that are carrier-unlocked and support eSIM technology can use Esim.vn.",
     "searchPlaceholder": "Search for device",
     "infoNote": "iPhones sold in mainland China don't support eSIMs, and only some iPhone models sold in Hong Kong and Macao support eSIMs. If you bought an iPhone in any of these countries, check if your iPhone is eSIM-compatible before installing an eSIM app.",
     "tabs": {
       "smartphones": {
         "label": "Smartphones",
-        "description": "Saily is available on most iPhones and many Android phones:"
+        "description": "Esim.vn is available on most iPhones and many Android phones:"
       },
       "smartwatches": {
         "label": "Smartwatches",
@@ -859,5 +859,102 @@
     "disclaimer": "Make sure your device is eSIM-compatible before purchasing.",
     "disclaimerLink": "View eSIM-supported devices →",
     "save": "–{percent}%"
+  },
+  "couponPage": {
+    "hero": {
+      "activeDate": "Active from April 2026",
+      "title": "Esim.vn coupon codes",
+      "description": "Use our coupon code at checkout to get a discount on your Esim.vn eSIM plan.",
+      "cta": "Get the code",
+      "copied": "Copied!",
+      "couponCode": "Saily5",
+      "imageAlt": "Smiling woman applies a Esim.vn coupon in the app to get a discount on her eSIM plan."
+    },
+    "howToUse": {
+      "title": "How to use the Esim.vn coupon code",
+      "description": "If you have a coupon code, you can redeem it in the app as well as on the web:",
+      "steps": [
+        { "text": "Choose a plan and click on \"Go to checkout.\"" },
+        { "text": "Click the \"Got a coupon?\" button." },
+        { "text": "Enter the coupon code and click \"Apply.\"" }
+      ]
+    },
+    "testimonials": {
+      "title": "What do customers say about Esim.vn?"
+    },
+    "comparisonTable": {
+      "title": "Esim.vn vs. other eSIM service providers"
+    },
+    "freeCredits": {
+      "title": "Earn free Esim.vn credit",
+      "description": "Invite your friends and family to try Esim.vn and earn US$5 worth of Esim.vn credits for every successful referral.",
+      "cta": "Learn more",
+      "disclaimer": "For more information, check out the",
+      "disclaimerLink": "terms and conditions",
+      "disclaimerSuffix": "page of this referral program.",
+      "imageAlt": "Young people enjoy the sun after referring a friend to Esim.vn"
+    },
+    "faq": {
+      "title": "Frequently asked questions",
+      "items": [
+        {
+          "question": "Where can I find promo codes for eSIMs?",
+          "answer": "To find promotional or discount codes for eSIMs, bookmark this page and visit it before a trip abroad. You'll always find a working discount code here. You can also find codes offered by our affiliate partners — but don't forget to check if they're still valid."
+        },
+        {
+          "question": "How do I know if the discount codes are legit?",
+          "answer": "The coupon codes you find on this page are always legit and active. But to know if other available codes work, you can select an eSIM plan, go to checkout, and enter the discount code. If the code is valid, you'll see the discount immediately."
+        },
+        {
+          "question": "Which eSIM has the cheapest plans?",
+          "answer": "It depends on a number of factors, such as your location, the current season, the eSIM provider, and the available discounts at that moment. However, at Esim.vn, we strive to provide the most affordable eSIM plans year-round and we always have coupon codes to help you save even more."
+        },
+        {
+          "question": "Can I apply the same Esim.vn eSIM coupon code more than once?",
+          "answer": "Generally, discount codes can only be used once per account. However, if you want to know for sure, check the terms and conditions page of the particular campaign."
+        },
+        {
+          "question": "Can I use Esim.vn eSIM for free?",
+          "answer": "While Esim.vn is a paid service, you can benefit from our referral program. Every person you refer will earn you a US$5 Esim.vn credit. By inviting friends and family to sign up for Esim.vn using your referral link, you can earn enough credits to never have to pay for your eSIM plans."
+        }
+      ]
+    }
+  },
+  "reviewPage": {
+    "hero": {
+      "title": "Esim.vn review and rating: Should you get it?",
+      "subtitle": "An affordable eSIM service from the creators of NordVPN",
+      "cta": "View All Plans",
+      "imageAlt": "A happy woman lies on the beach after posting a Esim.vn review.",
+      "imageUrl": "https://sb.nordcdn.com/m/7260eee2474e71e4/original/woman-stars-reviews-rating.png"
+    },
+    "features": {
+      "title": "Reasons to buy a Esim.vn eSIM card",
+      "description": "eSIMs can save you money and time when you're traveling. With a Esim.vn eSIM, it becomes even easier.",
+      "items": [
+        {
+          "title": "Affordable plans",
+          "description": "You can choose from hundreds of plans in over 200 countries — all at some of the best prices on the market. With Esim.vn eSIMs, you can save every time, wherever you travel."
+        },
+        {
+          "title": "eSIM top-ups",
+          "description": "If your eSIM expires, don't buy a new one. With Esim.vn, top up your account and use the same eSIM. If your plan hasn't expired yet, the data will be added automatically once the current plan expires."
+        },
+        {
+          "title": "One eSIM for all countries",
+          "description": "Esim.vn makes eSIM management easier and saves you more time. Instead of getting a new eSIM every time you travel, you can use the same Esim.vn eSIM for any country."
+        },
+        {
+          "title": "24/7 chat support",
+          "description": "Esim.vn's team is always ready to answer your questions. Check out the FAQ and the Help Center to find an answer, or contact Esim.vn's support via email or live chat to get help."
+        }
+      ]
+    },
+    "testimonials": {
+      "title": "What do customers say about Esim.vn?"
+    },
+    "comparisonTable": {
+      "title": "How does Esim.vn compare with other eSIM providers?"
+    }
   }
 }
