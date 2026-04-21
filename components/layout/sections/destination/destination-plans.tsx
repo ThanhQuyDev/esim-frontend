@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import type { Plan } from "@/lib/api";
-import { usePlansBySlug, useExchangeRate } from "@/lib/hooks";
+import { useState, useMemo, useEffect } from "react";
+import type { Plan, PlansByDestinationResponse } from "@/lib/api";
+import { usePlansBySlug, usePlansByRegionSlug, useExchangeRate } from "@/lib/hooks";
 import type { DestinationPlansProps } from "./types";
-import { categorizePlans } from "./types";
 import { ProductHero } from "./product-hero";
 import { ProductInfo } from "./product-info";
 import { TrustpilotBar } from "./trustpilot-bar";
@@ -13,41 +12,94 @@ import { PlanTabs } from "./plan-tabs";
 import { PlanConfig } from "./plan-config";
 import { BuyActions } from "./buy-actions";
 
-export function DestinationPlans({ destination, slug, dict, lang }: DestinationPlansProps) {
-  const { data: plans = [], isLoading } = usePlansBySlug(slug, lang);
+const EMPTY_PLANS: PlansByDestinationResponse = {
+  dataPlans: [],
+  slowUnlimited: [],
+  fastUnlimited: [],
+  dailyUnlimited: [],
+};
+
+export function DestinationPlans({ destination, slug, dict, lang, planSource = "destination" }: DestinationPlansProps) {
+  const destQuery = usePlansBySlug(planSource === "destination" ? slug : "", lang);
+  const regionQuery = usePlansByRegionSlug(planSource === "region" ? slug : "", lang);
+  const { data: plans = EMPTY_PLANS, isLoading } = planSource === "region" ? regionQuery : destQuery;
   const { data: rate = 25500 } = useExchangeRate();
 
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
-  const [isFixed, setIsFixed] = useState(false);
   const [days, setDays] = useState(7);
   const [quantity, setQuantity] = useState(1);
 
-  const categorized = useMemo(() => categorizePlans(plans), [plans]);
+  const hasAnyPlans =
+    plans.dataPlans.length > 0 ||
+    plans.slowUnlimited.length > 0 ||
+    plans.fastUnlimited.length > 0 ||
+    plans.dailyUnlimited.length > 0;
 
-  // Auto-select first daily plan when plans load
+  // Auto-select first plan when data loads
   useMemo(() => {
-    if (!selectedPlan && plans.length > 0) {
-      const cat = categorizePlans(plans);
-      if (cat.daily.length > 0) {
-        setSelectedPlan(cat.daily[0]);
-        setIsFixed(false);
-      } else if (cat.fixed.length > 0) {
-        setSelectedPlan(cat.fixed[0]);
-        setIsFixed(true);
+    if (!selectedPlan && hasAnyPlans) {
+      if (plans.dataPlans.length > 0) {
+        setSelectedPlan(plans.dataPlans[0]);
+      } else if (plans.dailyUnlimited.length > 0) {
+        setSelectedPlan(plans.dailyUnlimited[0]);
+      } else if (plans.slowUnlimited.length > 0) {
+        setSelectedPlan(plans.slowUnlimited[0]);
+      } else if (plans.fastUnlimited.length > 0) {
+        setSelectedPlan(plans.fastUnlimited[0]);
       }
     }
-  }, [plans, selectedPlan]);
+  }, [hasAnyPlans]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleSelectPlan = (plan: Plan, fixed: boolean) => {
+  const handleSelectPlan = (plan: Plan) => {
     setSelectedPlan(plan);
-    setIsFixed(fixed);
   };
+
+  // Determine if selected plan is a "fixed" type (price is total for the package)
+  // dataPlans & dailyUnlimited = fixed (price is for the whole package)
+  // slowUnlimited & fastUnlimited = per-day pricing (user picks GB + days, price/durationDays * days)
+  const isFixed = useMemo(() => {
+    if (!selectedPlan) return false;
+    const isInDataPlans = plans.dataPlans.some((p) => p.id === selectedPlan.id);
+    const isInDailyUnlimited = plans.dailyUnlimited.some((p) => p.id === selectedPlan.id);
+    return isInDataPlans || isInDailyUnlimited;
+  }, [selectedPlan, plans]);
+
+  // Determine if the current selection supports flexible days (calendar picker)
+  // or only fixed durationDays options
+  const { isFlexibleDays, availableDays } = useMemo(() => {
+    if (!selectedPlan || isFixed) {
+      return { isFlexibleDays: false, availableDays: [] as number[] };
+    }
+    // Find sibling plans (same category + same dataGb)
+    const isInSlow = plans.slowUnlimited.some((p) => p.id === selectedPlan.id);
+    const categoryPlans = isInSlow ? plans.slowUnlimited : plans.fastUnlimited;
+    const sameGb = categoryPlans.filter((p) => Number(p.dataGb) === Number(selectedPlan.dataGb));
+
+    const hasMultidate = sameGb.some((p) => p.isAbleMultidate);
+    if (hasMultidate) {
+      return { isFlexibleDays: true, availableDays: [] as number[] };
+    }
+    // Only fixed durationDays available
+    const daysSet = new Set(sameGb.map((p) => p.durationDays));
+    return { isFlexibleDays: false, availableDays: Array.from(daysSet).sort((a, b) => a - b) };
+  }, [selectedPlan, isFixed, plans]);
+
+  // Auto-correct days when switching to non-flexible plan
+  useEffect(() => {
+    if (!isFlexibleDays && availableDays.length > 0 && !availableDays.includes(days)) {
+      // Pick the closest available day
+      const closest = availableDays.reduce((prev, curr) =>
+        Math.abs(curr - days) < Math.abs(prev - days) ? curr : prev
+      );
+      setDays(closest);
+    }
+  }, [isFlexibleDays, availableDays]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Build price label
   const planLabel = useMemo(() => {
     if (!selectedPlan) return "";
-    if (isFixed) return `· ${dict.planSections.fixed}: ${selectedPlan.name}`;
-    return `· ${dict.planSections.daily}: ${selectedPlan.name} · ${days} ${dict.daysUnit.toLowerCase()}`;
+    if (isFixed) return `· ${selectedPlan.name}`;
+    return `· ${selectedPlan.name} · ${days} ${dict.daysUnit.toLowerCase()}`;
   }, [selectedPlan, isFixed, days, dict]);
 
   // Data label for green box
@@ -78,15 +130,16 @@ export function DestinationPlans({ destination, slug, dict, lang }: DestinationP
 
           {isLoading ? (
             <div className="py-8 text-center text-sm text-[#6b7280]">Loading plans...</div>
-          ) : plans.length === 0 ? (
+          ) : !hasAnyPlans ? (
             <div className="py-8 text-center text-sm text-[#6b7280]">{dict.noPlans}</div>
           ) : (
             <>
               <PlanTabs
-                plans={categorized}
+                plans={plans}
                 dict={dict}
                 selectedPlan={selectedPlan}
                 onSelectPlan={handleSelectPlan}
+                days={days}
               />
               <div className="h-px bg-[#f3f4f6] my-4" />
               <PlanConfig
@@ -96,6 +149,9 @@ export function DestinationPlans({ destination, slug, dict, lang }: DestinationP
                 onQuantityChange={setQuantity}
                 dict={dict}
                 lang={lang}
+                isFlexibleDays={isFlexibleDays}
+                availableDays={availableDays}
+                isFixed={isFixed}
               />
             </>
           )}
@@ -108,6 +164,7 @@ export function DestinationPlans({ destination, slug, dict, lang }: DestinationP
             isFixed={isFixed}
             dict={dict}
             lang={lang}
+            destination={destination?.name}
           />
         </div>
       </div>

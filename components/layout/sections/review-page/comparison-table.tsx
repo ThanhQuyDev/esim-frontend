@@ -17,7 +17,7 @@ interface CompanyLogo {
 }
 
 const companyLogos: CompanyLogo[] = [
-  { alt: "Esim.vn logo", src: "/logo.png", width: 76, height: 26 },
+  { alt: "esim.vn logo", src: "/logo.png", width: 76, height: 26 },
   { alt: "Airalo logo", src: "https://sb.nordcdn.com/m/77cc5cef50c57f8b/original/airalo-logo.svg", width: 59, height: 64 },
   { alt: "Holafly logo", src: "https://sb.nordcdn.com/m/43e603916e183a9c/original/holafly-logo.svg", width: 91, height: 28 },
   { alt: "Nomad logo", src: "https://sb.nordcdn.com/m/5c39fbbb13daf567/original/nomad-logo.svg", width: 57, height: 48 },
@@ -101,7 +101,7 @@ export function ReviewComparisonTable({ dict, lang }: ReviewComparisonTableProps
             <div className="col-span-12 md:col-span-8">
               <div className="grid grid-cols-1 gap-y-6">
                 <h2 className="heading-xl scroll-mt-20 xl:scroll-mt-24">
-                  {dict.title || "How does Esim.vn compare with other eSIM providers?"}
+                  {dict.title || "How does esim.vn compare with other eSIM providers?"}
                 </h2>
               </div>
             </div>
@@ -202,7 +202,7 @@ export function ReviewComparisonTable({ dict, lang }: ReviewComparisonTableProps
                       </div>
                       <div className="col-span-12 lg:col-span-9">
                         <p className="body-xs text-tertiary scroll-mt-20 xl:scroll-mt-24">
-                          ** Esim.vn® is unaffiliated with the goods or services to which it is being compared.
+                          ** esim.vn® is unaffiliated with the goods or services to which it is being compared.
                         </p>
                       </div>
                     </div>

@@ -39,12 +39,12 @@ export function CouponHero({ dict, lang }: CouponHeroProps) {
                         <div className="h-full w-full flex flex-col justify-start gap-y-6">
                           <div>
                             <h1 className="heading-xl text-primary scroll-mt-20 xl:scroll-mt-24">
-                              {dict.title || "Esim.vn coupon codes"}
+                              {dict.title || "esim.vn coupon codes"}
                             </h1>
                           </div>
                           <div>
                             <p className="body-lg text-primary text-start scroll-mt-20 xl:scroll-mt-24">
-                              {dict.description || "Use our coupon code at checkout to get a discount on your Esim.vn eSIM plan."}
+                              {dict.description || "Use our coupon code at checkout to get a discount on your esim.vn eSIM plan."}
                             </p>
                           </div>
                           <div>
@@ -72,7 +72,7 @@ export function CouponHero({ dict, lang }: CouponHeroProps) {
                     <div>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        alt={dict.imageAlt || "Smiling woman applies a Esim.vn coupon in the app to get a discount on her eSIM plan."}
+                        alt={dict.imageAlt || "Smiling woman applies a esim.vn coupon in the app to get a discount on her eSIM plan."}
                         loading="lazy"
                         width={555}
                         height={555}

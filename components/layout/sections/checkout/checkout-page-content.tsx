@@ -23,7 +23,6 @@ import {
 } from "@/lib/cart";
 import { useExchangeRate, convertUsdToVnd, formatVnd } from "@/lib/hooks";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 interface CheckoutPageContentProps {
   dict: Record<string, any>;
@@ -40,7 +39,6 @@ interface InvoiceInfo {
 }
 
 export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
-  const router = useRouter();
   const [items, setItems] = useState<CartItem[]>([]);
   const [coupon, setCoupon] = useState<Coupon | null>(null);
   const [email, setEmail] = useState("");
@@ -114,16 +112,53 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
     if (!validate()) return;
     setIsSubmitting(true);
 
-    // Simulate order submission (login flow will be added later)
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      const totalVnd = Math.round(convertUsdToVnd(total, usdToVndRate));
+      const orderId = `ORD-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+      const orderInfo = items.map((i) => i.name).join(", ").slice(0, 100);
 
-    // Clear checkout data
-    localStorage.removeItem("saily_checkout_items");
-    localStorage.removeItem("saily_checkout_coupon");
-    clearCart();
+      const res = await fetch("/api/payment/create-url", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          orderId,
+          amount: totalVnd,
+          orderInfo: `esim.vn - ${orderInfo}`,
+          locale: lang === "vi" ? "vi" : "en",
+        }),
+      });
 
-    setIsSubmitting(false);
-    setOrderComplete(true);
+      const data = await res.json();
+      if (data.paymentUrl) {
+        // Persist order info for the result page
+        localStorage.setItem(
+          "saily_last_order",
+          JSON.stringify({
+            orderId,
+            items,
+            totalVnd,
+            coupon,
+            email,
+            phone,
+            wantInvoice: wantInvoice ? invoiceInfo : null,
+            paymentMethod,
+          })
+        );
+        // Clear checkout staging data
+        localStorage.removeItem("saily_checkout_items");
+        localStorage.removeItem("saily_checkout_coupon");
+        clearCart();
+
+        // Redirect to OnePay gateway
+        window.location.href = data.paymentUrl;
+      } else {
+        alert(data.error || "Failed to create payment. Please try again.");
+        setIsSubmitting(false);
+      }
+    } catch {
+      alert(lang === "vi" ? "Lỗi kết nối. Vui lòng thử lại." : "Network error. Please try again.");
+      setIsSubmitting(false);
+    }
   };
 
   // Order Complete Screen

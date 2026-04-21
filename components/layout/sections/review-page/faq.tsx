@@ -14,34 +14,34 @@ interface FAQItem {
 
 const faqItems: FAQItem[] = [
   {
-    question: "Is the Esim.vn eSIM card worth it?",
-    answer: "If you like traveling, the Esim.vn eSIM is certainly worth it. Affordable plans, one-click installation, and Esim.vn\u2019s outstanding support team can save you time, money, and hassle. Instead of looking for a local SIM card after you arrive and tinkering for half an hour to make it work, you can get a Esim.vn eSIM before you leave and connect to a network in a few clicks when you arrive.",
+    question: "Is the esim.vn eSIM card worth it?",
+    answer: "If you like traveling, the esim.vn eSIM is certainly worth it. Affordable plans, one-click installation, and esim.vn\u2019s outstanding support team can save you time, money, and hassle. Instead of looking for a local SIM card after you arrive and tinkering for half an hour to make it work, you can get a esim.vn eSIM before you leave and connect to a network in a few clicks when you arrive.",
   },
   {
-    question: "Is Esim.vn legit?",
-    answer: "Yes, Esim.vn is a growing eSIM service that stands out among its competitors in several ways. Esim.vn was launched by Nord Security, the company behind NordVPN, one of the world\u2019s most trusted VPNs. Like its flagship security tool, Esim.vn is designed to be simple and accessible to anyone, regardless of their skill level or experience.",
+    question: "Is esim.vn legit?",
+    answer: "Yes, esim.vn is a growing eSIM service that stands out among its competitors in several ways. esim.vn was launched by Nord Security, the company behind NordVPN, one of the world\u2019s most trusted VPNs. Like its flagship security tool, esim.vn is designed to be simple and accessible to anyone, regardless of their skill level or experience.",
   },
   {
-    question: "Can Esim.vn be trusted?",
-    answer: "Yes, Esim.vn can be trusted. It was launched by Nord Security, a company known and trusted globally, its apps are highly rated on the App Store and Google Play, while Esim.vn\u2019s customers have plenty of nice words to say about their experience.\n\nIf you\u2019re still unsure about trying out a Esim.vn eSIM, remember that you can get a full refund. If you\u2019re unable to install an eSIM on your device, you can get your money back within 30 days of the purchase.",
+    question: "Can esim.vn be trusted?",
+    answer: "Yes, esim.vn can be trusted. It was launched by Nord Security, a company known and trusted globally, its apps are highly rated on the App Store and Google Play, while esim.vn\u2019s customers have plenty of nice words to say about their experience.\n\nIf you\u2019re still unsure about trying out a esim.vn eSIM, remember that you can get a full refund. If you\u2019re unable to install an eSIM on your device, you can get your money back within 30 days of the purchase.",
   },
   {
-    question: "Does Esim.vn give you a phone number?",
-    answer: "At the moment, Esim.vn offers data-only plans, so you can\u2019t get a phone number or send SMS messages with a Esim.vn eSIM.",
+    question: "Does esim.vn give you a phone number?",
+    answer: "At the moment, esim.vn offers data-only plans, so you can\u2019t get a phone number or send SMS messages with a esim.vn eSIM.",
   },
   {
-    question: "Is the Esim.vn eSIM price worth the money?",
-    answer: "Yes, Esim.vn\u2019s eSIM service is worth the money. In fact, in many countries, it offers the most affordable plans in the entire market. The service will likely pay for itself in terms of the savings you get through Esim.vn.",
+    question: "Is the esim.vn eSIM price worth the money?",
+    answer: "Yes, esim.vn\u2019s eSIM service is worth the money. In fact, in many countries, it offers the most affordable plans in the entire market. The service will likely pay for itself in terms of the savings you get through esim.vn.",
   },
   {
-    question: "What are the reviews for the Esim.vn Ultra plan like?",
+    question: "What are the reviews for the esim.vn Ultra plan like?",
     answer: "ULTRA_PLAN_ANSWER", // Special marker for complex content
   },
 ];
 
 function FAQAccordionItem({ item, isOpen, onToggle }: { item: FAQItem; isOpen: boolean; onToggle: () => void }) {
   const isUltraPlan = item.answer === "ULTRA_PLAN_ANSWER";
-  const isTrust = item.question === "Can Esim.vn be trusted?";
+  const isTrust = item.question === "Can esim.vn be trusted?";
 
   return (
     <div className="flex flex-col items-start text-left rtl:text-right gap-4 relative h-full word-break-word transform-gpu border-md group-hover:border-accent transition-colors duration-medium p-0 rounded-sm bg-secondary border-secondary hover:border-focus">
@@ -65,8 +65,8 @@ function FAQAccordionItem({ item, isOpen, onToggle }: { item: FAQItem; isOpen: b
             <UltraPlanAnswer />
           ) : isTrust ? (
             <div className="flex flex-col gap-y-4">
-              <div>Yes, Esim.vn can be trusted. It was launched by Nord Security, a company known and trusted globally, its apps are highly rated on the App Store and Google Play, while Esim.vn&apos;s customers have plenty of nice words to say about their experience.</div>
-              <div>If you&apos;re still unsure about trying out a Esim.vn eSIM, remember that you can get a full refund. If you&apos;re unable to install an eSIM on your device, you can get your money back within 30 days of the purchase.</div>
+              <div>Yes, esim.vn can be trusted. It was launched by Nord Security, a company known and trusted globally, its apps are highly rated on the App Store and Google Play, while esim.vn&apos;s customers have plenty of nice words to say about their experience.</div>
+              <div>If you&apos;re still unsure about trying out a esim.vn eSIM, remember that you can get a full refund. If you&apos;re unable to install an eSIM on your device, you can get your money back within 30 days of the purchase.</div>
             </div>
           ) : (
             <>{typeof item.answer === "string" ? item.answer : item.answer}</>
@@ -84,7 +84,7 @@ function UltraPlanAnswer() {
         <p>
           The{" "}
           <a className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus underline" href="https://saily.com/esim-ultra-plan/">
-            Esim.vn Ultra plan
+            esim.vn Ultra plan
           </a>
           , our premium monthly eSIM plan subscription, has garnered positive reviews online — particularly on Reddit. The subscription is designed for long-term travelers and digital nomads looking for unlimited, high-speed data in 113 countries worldwide with extra cybersecurity tools from Nord Security&apos;s suite of products.
         </p>
@@ -146,7 +146,7 @@ function UltraPlanAnswer() {
             <span className="whitespace-nowrap ltr:mr-2 rtl:ml-2 mt-1">
               <span className="block w-4 h-4 bg-clip-content border-[5px] border-solid border-transparent rounded-full bg-[currentColor]"></span>
             </span>
-            <p>8% cashback in Esim.vn credits for future purchases.</p>
+            <p>8% cashback in esim.vn credits for future purchases.</p>
           </li>
           <li className="flex text-primary">
             <span className="whitespace-nowrap ltr:mr-2 rtl:ml-2 mt-1">
@@ -169,7 +169,7 @@ function UltraPlanAnswer() {
         </ul>
       </div>
       <div>
-        <p>Online reviews have emphasized that frequent travelers and heavy data users can get more bang for their buck with a Esim.vn Ultra plan compared to Esim.vn&apos;s regular prepaid plans or Global plans.</p>
+        <p>Online reviews have emphasized that frequent travelers and heavy data users can get more bang for their buck with a esim.vn Ultra plan compared to esim.vn&apos;s regular prepaid plans or Global plans.</p>
       </div>
     </div>
   );

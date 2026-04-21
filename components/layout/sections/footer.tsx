@@ -43,7 +43,7 @@ export function FooterSection({ dict }: FooterSectionProps) {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/logo.png"
-                alt="Esim.vn logo"
+                alt="esim.vn logo"
                 width={100}
                 height={45}
                 loading="lazy"

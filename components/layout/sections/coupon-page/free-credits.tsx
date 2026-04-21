@@ -20,12 +20,12 @@ export function CouponFreeCredits({ dict, lang }: CouponFreeCreditsProps) {
                         <div className="h-full w-full flex flex-col justify-start gap-y-6">
                           <div>
                             <h2 className="heading-xl text-primary scroll-mt-20 xl:scroll-mt-24">
-                              {dict.title || "Earn free Esim.vn credit"}
+                              {dict.title || "Earn free esim.vn credit"}
                             </h2>
                           </div>
                           <div>
                             <p className="body-md text-secondary scroll-mt-20 xl:scroll-mt-24">
-                              {dict.description || "Invite your friends and family to try Esim.vn and earn US$5 worth of Esim.vn credits for every successful referral."}
+                              {dict.description || "Invite your friends and family to try esim.vn and earn US$5 worth of esim.vn credits for every successful referral."}
                             </p>
                           </div>
                           <div>
@@ -72,7 +72,7 @@ export function CouponFreeCredits({ dict, lang }: CouponFreeCreditsProps) {
                     <div>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        alt={dict.imageAlt || "Young people enjoy the sun after referring a friend to Esim.vn"}
+                        alt={dict.imageAlt || "Young people enjoy the sun after referring a friend to esim.vn"}
                         loading="lazy"
                         width={555}
                         height={555}

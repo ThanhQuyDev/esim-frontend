@@ -1,15 +1,16 @@
 "use client";
 
-import { useState } from "react";
-import * as Tabs from "@radix-ui/react-tabs";
+import { useState, useMemo, useEffect } from "react";
 import type { Plan } from "@/lib/api";
 import type { DestinationDict, CategorizedPlans } from "./types";
+import { getUniqueDataGb, findBestPlan } from "./types";
 
 interface PlanTabsProps {
   plans: CategorizedPlans;
   dict: DestinationDict;
   selectedPlan: Plan | null;
-  onSelectPlan: (plan: Plan, isFixed: boolean) => void;
+  onSelectPlan: (plan: Plan) => void;
+  days: number;
 }
 
 /* ── Pill badge ── */
@@ -26,7 +27,13 @@ function PillBadge({ type, label }: { type: "popular" | "best-val" | "discount";
   );
 }
 
-/* ── Small pill (fixed/daily) ── */
+/* ── Format dataGb: 0.49 → "500MB", otherwise "1GB" etc ── */
+function formatDataGb(gb: number): string {
+  if (gb < 1) return `${Math.round(gb * 1020)}MB`;
+  return `${Number(gb)}GB`;
+}
+
+/* ── Small pill for fixed plans — shows dataGb / days ── */
 function PlanPill({
   plan,
   isSelected,
@@ -38,211 +45,319 @@ function PlanPill({
   onSelect: () => void;
   savePercent: number;
 }) {
+  const label = `${formatDataGb(Number(plan.dataGb))} / ${plan.durationDays} days`;
+
   return (
     <button
       onClick={onSelect}
-      className={`inline-flex items-center gap-1.5 px-3 py-[7px] rounded-full text-[13.5px] font-medium border cursor-pointer transition-colors whitespace-nowrap font-inherit ${
-        isSelected
-          ? "bg-[#fff7d6] text-[#854d0e] border-[#f5c400] font-semibold"
-          : "bg-white text-[#374151] border-[#e5e7eb] hover:border-[#f5c400] hover:bg-[#fffde7]"
-      }`}
+      className={`inline-flex items-center gap-1.5 px-3 py-[7px] rounded-full text-[13.5px] font-medium border cursor-pointer transition-colors whitespace-nowrap font-inherit ${isSelected
+        ? "bg-[#fff7d6] text-[#854d0e] border-[#f5c400] font-semibold"
+        : "bg-white text-[#374151] border-[#e5e7eb] hover:border-[#f5c400] hover:bg-[#fffde7]"
+        }`}
     >
-      {plan.name}
-      {plan.isActive && plan.isCheapest && <PillBadge type="best-val" label="Rẻ nhất" />}
+      {label}
       {savePercent > 18 && <PillBadge type="discount" label={`–${savePercent}%`} />}
     </button>
   );
 }
 
-/* ── Unlimited pill (larger card) ── */
-function UnlimitedPill({
-  plan,
+/* ── GB pill ── */
+function GbPill({
+  gb,
   isSelected,
   onSelect,
-  speedLabel,
 }: {
-  plan: Plan;
+  gb: number;
   isSelected: boolean;
   onSelect: () => void;
-  speedLabel: string;
 }) {
   return (
     <button
       onClick={onSelect}
-      className={`relative inline-flex items-center gap-2.5 px-4 py-2.5 rounded-[10px] border-[1.5px] cursor-pointer transition-all whitespace-nowrap font-inherit min-w-[190px] ${
-        isSelected
-          ? "bg-[#fffde7] border-[#d1b700] text-[#92400e] shadow-[0_0_0_2px_rgba(251,191,36,0.2)]"
-          : "bg-white text-[#374151] border-[#e5e7eb] hover:border-[#f5c400] hover:bg-[#fffde7]"
-      }`}
+      className={`inline-flex items-center gap-1.5 px-3 py-[7px] rounded-full text-[13.5px] font-medium border cursor-pointer transition-colors whitespace-nowrap font-inherit ${isSelected
+        ? "bg-[#fff7d6] text-[#854d0e] border-[#f5c400] font-semibold"
+        : "bg-white text-[#374151] border-[#e5e7eb] hover:border-[#f5c400] hover:bg-[#fffde7]"
+        }`}
     >
-      {plan.isCheapest && (
-        <span className="absolute -top-2.5 right-2.5 text-[9px] font-bold tracking-wide px-[7px] py-[2px] rounded leading-snug pointer-events-none bg-[#ea580c] text-white">
-          Rẻ nhất
+      {formatDataGb(gb)}/day
+    </button>
+  );
+}
+
+/* ── Plan section label ── */
+function PlanSectionLabel({ label, isActive }: { label: string; isActive?: boolean }) {
+  return (
+    <div className="text-sm font-bold mb-2.5 flex items-center gap-[7px] text-[#1a1a1a]">
+      <span className={`w-[3px] h-[15px] rounded-sm inline-block bg-[#f59e0b]`} />
+      {label}
+    </div>
+  );
+}
+
+/* ── GB-only selector (days come from shared PlanConfig) ── */
+function GbSelector({
+  plans,
+  days,
+  onSelectPlan,
+  isActive,
+  selectedGb,
+  onGbChange,
+}: {
+  plans: Plan[];
+  days: number;
+  onSelectPlan: (plan: Plan) => void;
+  isActive: boolean;
+  selectedGb: number;
+  onGbChange: (gb: number) => void;
+}) {
+  const uniqueGbs = useMemo(() => getUniqueDataGb(plans), [plans]);
+
+  const handleGbChange = (gb: number) => {
+    onGbChange(gb);
+    const best = findBestPlan(plans, gb, days);
+    if (best) onSelectPlan(best);
+  };
+
+  if (uniqueGbs.length === 0) return null;
+
+  return (
+    <div>
+      <div className="flex flex-wrap gap-1.5">
+        {uniqueGbs.map((gb) => (
+          <GbPill
+            key={gb}
+            gb={gb}
+            isSelected={isActive && selectedGb === gb}
+            onSelect={() => handleGbChange(gb)}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ── Unlimited pill (larger card) — shows infinity icon + main/hint labels ── */
+function UnlimitedPill({
+  plan,
+  isSelected,
+  onSelect,
+  mainLabel,
+  hintLabel,
+  badge,
+}: {
+  plan: Plan;
+  isSelected: boolean;
+  onSelect: () => void;
+  mainLabel: string;
+  hintLabel: string;
+  badge?: string;
+}) {
+  return (
+    <button
+      onClick={onSelect}
+      className={`relative inline-flex items-center gap-2.5 px-4 py-2.5 rounded-[10px] border-[1.5px] cursor-pointer transition-all whitespace-nowrap font-inherit min-w-[140px] ${isSelected
+        ? "bg-[#fffde7] border-[#d1b700] text-[#92400e] shadow-[0_0_0_2px_rgba(251,191,36,0.2)]"
+        : "bg-white text-[#374151] border-[#e5e7eb] hover:border-[#f5c400] hover:bg-[#fffde7]"
+        }`}
+    >
+      {badge && (
+        <span className="absolute -top-2.5 right-2.5 text-[9px] font-bold tracking-wide px-[7px] py-[2px] rounded leading-snug pointer-events-none bg-[#1a1a1a] text-white">
+          {badge}
         </span>
       )}
+
       <span className="shrink-0 flex items-center">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
-          <path
-            stroke={isSelected ? "#d97706" : "#9ca3af"}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="1.5"
-            d="m9.996 14.263-.814.919a4.5 4.5 0 1 1 0-6.364l5.636 6.364a4.5 4.5 0 1 0 0-6.364l-.814.92"
-          />
+          <g clipPath="url(#ci1)">
+            <path
+              stroke={isSelected ? "#d97706" : "#9ca3af"}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="1.5"
+              d="m9.996 14.263-.814.919a4.5 4.5 0 1 1 0-6.364l5.636 6.364a4.5 4.5 0 1 0 0-6.364l-.814.92"
+            />
+          </g>
+          <defs><clipPath id="ci1"><path fill="#fff" d="M0 0h24v24H0z" /></clipPath></defs>
         </svg>
       </span>
       <span className="flex flex-col gap-0.5">
         <span className={`text-[13.5px] font-semibold leading-tight ${isSelected ? "text-[#92400e]" : "text-[#374151]"}`}>
-          {plan.name}
+          {mainLabel}
         </span>
         <span className={`text-[11px] leading-tight transition-colors ${isSelected ? "text-[#d97706]" : "text-[#9ca3af]"}`}>
-          → {speedLabel}
+          {hintLabel}
         </span>
       </span>
     </button>
   );
 }
 
-/* ── Plan section label ── */
-function PlanSectionLabel({ label }: { label: string }) {
-  return (
-    <div className="text-sm font-bold text-[#1a1a1a] mb-2.5 flex items-center gap-[7px]">
-      <span className="w-[3px] h-[15px] bg-[#f59e0b] rounded-sm inline-block" />
-      {label}
-    </div>
-  );
-}
+type ActiveSection = "fixed" | "daily" | "unlimited";
 
-export function PlanTabs({ plans, dict, selectedPlan, onSelectPlan }: PlanTabsProps) {
-  const [speedMode, setSpeedMode] = useState<"normal" | "high">("normal");
+export function PlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }: PlanTabsProps) {
+  const [speedTab, setSpeedTab] = useState<"normal" | "high">("normal");
+  const [activeSection, setActiveSection] = useState<ActiveSection>("fixed");
+  const [dailyGb, setDailyGb] = useState<number>(0);
+  const [normalGb, setNormalGb] = useState<number>(0);
 
   const getSavePercent = (p: Plan) =>
     p.retailPrice > 0 ? Math.round(((p.retailPrice - p.price) / p.retailPrice) * 100) : 0;
 
-  // Split unlimited by speed (mock: first half normal, second half high)
-  const unlimitedNormal = plans.unlimited.filter((_, i) => i < Math.ceil(plans.unlimited.length / 2));
-  const unlimitedHigh = plans.unlimited.filter((_, i) => i >= Math.ceil(plans.unlimited.length / 2));
-  const visibleUnlimited = speedMode === "normal" ? unlimitedNormal : unlimitedHigh;
-  const speedLabel = speedMode === "normal" ? "1 Mbps không giới hạn" : "5 Mbps không giới hạn";
+  const hasDataPlans = plans.dataPlans.length > 0;
+  const hasSlowUnlimited = plans.slowUnlimited.length > 0;
+  const hasFastUnlimited = plans.fastUnlimited.length > 0;
+  const hasDailyUnlimited = plans.dailyUnlimited.length > 0;
+  const hasUnlimited = hasFastUnlimited || hasDailyUnlimited;
+
+  const uniqueNormalGbs = useMemo(() => getUniqueDataGb(plans.fastUnlimited), [plans.fastUnlimited]);
+
+  // Initialize GB selections
+  useEffect(() => {
+    if (hasSlowUnlimited && dailyGb === 0) {
+      const gbs = getUniqueDataGb(plans.slowUnlimited);
+      if (gbs.length > 0) setDailyGb(gbs[0]);
+    }
+  }, [hasSlowUnlimited, plans.slowUnlimited, dailyGb]);
+
+  useEffect(() => {
+    if (hasFastUnlimited && normalGb === 0 && uniqueNormalGbs.length > 0) {
+      setNormalGb(uniqueNormalGbs[0]);
+    }
+  }, [hasFastUnlimited, uniqueNormalGbs, normalGb]);
+
+  // When days change externally, re-pick best plan for active section
+  useEffect(() => {
+    if (activeSection === "daily" && hasSlowUnlimited && dailyGb > 0) {
+      const best = findBestPlan(plans.slowUnlimited, dailyGb, days);
+      if (best) onSelectPlan(best);
+    } else if (activeSection === "unlimited" && speedTab === "normal" && hasFastUnlimited && normalGb > 0) {
+      const best = findBestPlan(plans.fastUnlimited, normalGb, days);
+      if (best) onSelectPlan(best);
+    }
+  }, [days]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Handle selecting a plan from a specific section
+  const handleSelectFixed = (plan: Plan) => {
+    setActiveSection("fixed");
+    onSelectPlan(plan);
+  };
+
+  const handleSelectDaily = (plan: Plan) => {
+    setActiveSection("daily");
+    onSelectPlan(plan);
+  };
+
+  const handleSelectUnlimited = (plan: Plan) => {
+    setActiveSection("unlimited");
+    onSelectPlan(plan);
+  };
 
   return (
-    <Tabs.Root defaultValue="data">
-      <Tabs.List className="flex border border-[#e5e7eb] rounded-sm overflow-hidden bg-[#f3f4f6] p-[3px] gap-[3px] mb-[18px]">
-        <Tabs.Trigger
-          value="data"
-          className="flex-1 text-center py-2 px-3 text-[13.5px] font-medium cursor-pointer text-[#6b7280] bg-transparent border-none rounded-sm transition-all whitespace-nowrap data-[state=active]:bg-white data-[state=active]:text-[#1a1a1a] data-[state=active]:font-bold data-[state=active]:shadow-sm hover:text-[#1a1a1a] hover:bg-white/60"
-        >
-          {dict.planTabs.data}
-        </Tabs.Trigger>
-        <Tabs.Trigger
-          value="calls"
-          className="flex-1 text-center py-2 px-3 text-[13.5px] font-medium cursor-pointer text-[#6b7280] bg-transparent border-none rounded-sm transition-all whitespace-nowrap data-[state=active]:bg-white data-[state=active]:text-[#1a1a1a] data-[state=active]:font-bold data-[state=active]:shadow-sm hover:text-[#1a1a1a] hover:bg-white/60"
-        >
-          {dict.planTabs.dataCalls}
-        </Tabs.Trigger>
-      </Tabs.List>
-
-      {/* Data tab */}
-      <Tabs.Content value="data">
-        {/* Fixed plans */}
-        {plans.fixed.length > 0 && (
-          <div className="mb-4">
-            <PlanSectionLabel label={dict.planSections.fixed} />
-            <div className="flex flex-wrap gap-1.5">
-              {plans.fixed.map((p) => (
-                <PlanPill
-                  key={p.id}
-                  plan={p}
-                  isSelected={selectedPlan?.id === p.id}
-                  onSelect={() => onSelectPlan(p, true)}
-                  savePercent={getSavePercent(p)}
-                />
-              ))}
-            </div>
+    <div>
+      {/* ── Fixed Plan (dataPlans) ── */}
+      {hasDataPlans && (
+        <div className="mb-4">
+          <PlanSectionLabel label={dict.planSections.fixed} isActive={activeSection === "fixed"} />
+          <div className="flex flex-wrap gap-1.5">
+            {plans.dataPlans.map((p) => (
+              <PlanPill
+                key={p.id}
+                plan={p}
+                isSelected={activeSection === "fixed" && selectedPlan?.id === p.id}
+                onSelect={() => handleSelectFixed(p)}
+                savePercent={getSavePercent(p)}
+              />
+            ))}
           </div>
-        )}
+        </div>
+      )}
 
-        {/* Daily plans */}
-        {plans.daily.length > 0 && (
-          <div className="mb-4">
-            <PlanSectionLabel label={dict.planSections.daily} />
-            <div className="flex flex-wrap gap-1.5">
-              {plans.daily.map((p) => (
-                <PlanPill
-                  key={p.id}
-                  plan={p}
-                  isSelected={selectedPlan?.id === p.id}
-                  onSelect={() => onSelectPlan(p, false)}
-                  savePercent={getSavePercent(p)}
-                />
-              ))}
-            </div>
-          </div>
-        )}
+      {/* ── Daily Plan (slowUnlimited) — only GB pills, days from PlanConfig ── */}
+      {hasSlowUnlimited && (
+        <div className="mb-4">
+          <PlanSectionLabel label={dict.planSections.daily} isActive={activeSection === "daily"} />
+          <GbSelector
+            plans={plans.slowUnlimited}
+            days={days}
+            onSelectPlan={handleSelectDaily}
+            isActive={activeSection === "daily"}
+            selectedGb={dailyGb}
+            onGbChange={setDailyGb}
+          />
+        </div>
+      )}
 
-        {/* Unlimited plans */}
-        {plans.unlimited.length > 0 && (
-          <div className="mb-4">
-            <PlanSectionLabel label={dict.planSections.unlimited} />
-            {/* Speed toggle */}
-            <div className="flex border border-[#e5e7eb] rounded-full overflow-hidden mb-4 bg-[#f3f4f6]">
+      {/* ── Unlimited (fastUnlimited + dailyUnlimited) with Normal/High Speed tabs ── */}
+      {hasUnlimited && (
+        <div className="mb-4">
+          <PlanSectionLabel label={dict.planSections.unlimited} isActive={activeSection === "unlimited"} />
+
+          {/* Speed tabs */}
+          <div className="flex border border-[#e5e7eb] rounded-full overflow-hidden mb-4 bg-[#f3f4f6]">
+            {hasFastUnlimited && (
               <button
-                onClick={() => setSpeedMode("normal")}
-                className={`flex-1 text-center py-[7px] px-2.5 text-[13px] font-medium cursor-pointer border-none transition-all ${
-                  speedMode === "normal"
-                    ? "bg-white text-[#111827] font-semibold rounded-[18px] m-0.5 shadow-sm"
-                    : "bg-transparent text-[#9ca3af]"
-                }`}
+                onClick={() => setSpeedTab("normal")}
+                className={`flex-1 text-center py-[7px] px-2.5 text-[13px] font-medium cursor-pointer border-none transition-all ${speedTab === "normal"
+                  ? "bg-white text-[#111827] font-semibold rounded-[18px] m-0.5 shadow-sm"
+                  : "bg-transparent text-[#9ca3af]"
+                  }`}
               >
                 {dict.speed.normal}
               </button>
+            )}
+            {hasDailyUnlimited && (
               <button
-                onClick={() => setSpeedMode("high")}
-                className={`flex-1 text-center py-[7px] px-2.5 text-[13px] font-medium cursor-pointer border-none transition-all ${
-                  speedMode === "high"
-                    ? "bg-white text-[#111827] font-semibold rounded-[18px] m-0.5 shadow-sm"
-                    : "bg-transparent text-[#9ca3af]"
-                }`}
+                onClick={() => setSpeedTab("high")}
+                className={`flex-1 text-center py-[7px] px-2.5 text-[13px] font-medium cursor-pointer border-none transition-all ${speedTab === "high"
+                  ? "bg-white text-[#111827] font-semibold rounded-[18px] m-0.5 shadow-sm"
+                  : "bg-transparent text-[#9ca3af]"
+                  }`}
               >
                 {dict.speed.high}
               </button>
-            </div>
+            )}
+          </div>
+
+          {/* Normal Speed: fastUnlimited — deduplicated by dataGb */}
+          {speedTab === "normal" && hasFastUnlimited && (
             <div className="flex flex-wrap gap-2.5 mt-1">
-              {visibleUnlimited.map((p) => (
+              {uniqueNormalGbs.map((gb) => {
+                const best = findBestPlan(plans.fastUnlimited, gb, days);
+                return (
+                  <UnlimitedPill
+                    key={gb}
+                    plan={best || plans.fastUnlimited[0]}
+                    isSelected={activeSection === "unlimited" && normalGb === gb}
+                    onSelect={() => {
+                      setNormalGb(gb);
+                      const p = findBestPlan(plans.fastUnlimited, gb, days);
+                      if (p) handleSelectUnlimited(p);
+                    }}
+                    mainLabel={`${formatDataGb(gb)}/day high speed`}
+                    hintLabel="1 Mbps unlimited"
+                  />
+                );
+              })}
+            </div>
+          )}
+
+          {/* High Speed: dailyUnlimited — simple plan cards */}
+          {speedTab === "high" && hasDailyUnlimited && (
+            <div className="flex flex-wrap gap-2.5 mt-1">
+              {plans.dailyUnlimited.map((p) => (
                 <UnlimitedPill
                   key={p.id}
                   plan={p}
-                  isSelected={selectedPlan?.id === p.id}
-                  onSelect={() => onSelectPlan(p, false)}
-                  speedLabel={speedLabel}
+                  isSelected={activeSection === "unlimited" && selectedPlan?.id === p.id}
+                  onSelect={() => handleSelectUnlimited(p)}
+                  mainLabel={`${p.durationDays} days highspeed`}
+                  hintLabel="5 Mbps unlimited"
                 />
               ))}
             </div>
-          </div>
-        )}
-      </Tabs.Content>
-
-      {/* Calls tab */}
-      <Tabs.Content value="calls">
-        {plans.callsFixed.length > 0 ? (
-          <div className="mb-4">
-            <PlanSectionLabel label={`${dict.planSections.fixed} (${dict.planTabs.dataCalls})`} />
-            <div className="flex flex-wrap gap-1.5">
-              {plans.callsFixed.map((p) => (
-                <PlanPill
-                  key={p.id}
-                  plan={p}
-                  isSelected={selectedPlan?.id === p.id}
-                  onSelect={() => onSelectPlan(p, true)}
-                  savePercent={getSavePercent(p)}
-                />
-              ))}
-            </div>
-          </div>
-        ) : (
-          <p className="text-sm text-[#6b7280] py-4">{dict.noPlans}</p>
-        )}
-      </Tabs.Content>
-    </Tabs.Root>
+          )}
+        </div>
+      )}
+    </div>
   );
 }

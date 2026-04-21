@@ -23,7 +23,7 @@ export function HeroSection({ dict }: HeroSectionProps) {
           {/* Mobile < md */}
           <div className="block md:hidden absolute z-10 bottom-0">
             <Image
-              alt="A person using the Esim.vn eSIM app while rushing on their travels."
+              alt="A person using the esim.vn eSIM app while rushing on their travels."
               src="https://sb.nordcdn.com/m/1ec9b98515b5f040/original/saily-dach-campaign-man-mobile-1536x1760.png"
               width={768}
               height={880}
@@ -35,7 +35,7 @@ export function HeroSection({ dict }: HeroSectionProps) {
           {/* md to lg */}
           <div className="hidden md:block lg:hidden">
             <Image
-              alt="Esim.vn dach campain man visual desktop 5120x2220"
+              alt="esim.vn dach campain man visual desktop 5120x2220"
               src="https://sb.nordcdn.com/m/70f7fbf89c133c58/original/saily_dach-campain_man_visual_desktop_5120x2220.png"
               width={1720}
               height={746}
@@ -47,7 +47,7 @@ export function HeroSection({ dict }: HeroSectionProps) {
           {/* lg to xl */}
           <div className="hidden lg:block xl:hidden absolute z-10" style={{ left: "-40px" }}>
             <Image
-              alt="Esim.vn dach campain man visual desktop 5120x2220"
+              alt="esim.vn dach campain man visual desktop 5120x2220"
               src="https://sb.nordcdn.com/m/70f7fbf89c133c58/original/saily_dach-campain_man_visual_desktop_5120x2220.png"
               width={1920}
               height={832}
@@ -59,7 +59,7 @@ export function HeroSection({ dict }: HeroSectionProps) {
           {/* xl+ */}
           <div className="hidden xl:block">
             <Image
-              alt="Esim.vn dach campain man visual desktop 5120x2220"
+              alt="esim.vn dach campain man visual desktop 5120x2220"
               src="https://sb.nordcdn.com/m/70f7fbf89c133c58/original/saily_dach-campain_man_visual_desktop_5120x2220.png"
               width={2560}
               height={1110}

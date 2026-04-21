@@ -10,39 +10,53 @@ interface PlanConfigProps {
   onQuantityChange: (q: number) => void;
   dict: DestinationDict;
   lang: string;
+  isFlexibleDays: boolean;
+  availableDays: number[];
+  isFixed: boolean;
 }
 
 const QUICK_DAYS = [3, 5, 7, 10, 15, 20, 30, 180, 365];
 
-export function PlanConfig({ days, quantity, onDaysChange, onQuantityChange, dict, lang }: PlanConfigProps) {
+export function PlanConfig({ days, quantity, onDaysChange, onQuantityChange, dict, lang, isFlexibleDays, availableDays, isFixed }: PlanConfigProps) {
+  // For fixed plans (dataPlans, dailyUnlimited), don't show days selector at all
+  const showDaysSelector = !isFixed;
+
+  // Day pills: flexible → QUICK_DAYS, fixed → only availableDays
+  const dayOptions = isFlexibleDays ? QUICK_DAYS : availableDays;
+
   return (
     <div className="grid grid-cols-2 gap-4 mb-4 items-start max-[540px]:grid-cols-1">
-      {/* Days selector */}
-      <div>
-        <div className="text-[13px] font-semibold text-[#374151] mb-1.5">{dict.daysLabel}</div>
-        <div className="flex items-stretch border border-[#e5e7eb] rounded-lg overflow-hidden h-9">
-          <div className="flex-1 text-center text-[13.5px] font-semibold text-[#1a1a1a] flex items-center justify-center px-2">
-            {days} {dict.daysUnit}
+      {/* Days selector — only for non-fixed plans */}
+      {showDaysSelector && (
+        <div>
+          <div className="text-[13px] font-semibold text-[#374151] mb-1.5">{dict.daysLabel}</div>
+          <div className="flex items-stretch border border-[#e5e7eb] rounded-lg overflow-hidden h-9">
+            <div className="flex-1 text-center text-[13.5px] font-semibold text-[#1a1a1a] flex items-center justify-center px-2">
+              {days} {dict.daysUnit}
+            </div>
+            {/* Calendar picker only for flexible (isAbleMultidate) plans */}
+            {isFlexibleDays && (
+              <CalendarPicker days={days} onDaysChange={onDaysChange} dict={dict} lang={lang} />
+            )}
           </div>
-          <CalendarPicker days={days} onDaysChange={onDaysChange} dict={dict} lang={lang} />
+          {/* Day pills */}
+          <div className="flex gap-[5px] mt-1.5 overflow-x-auto scrollbar-hide flex-nowrap w-full">
+            {dayOptions.map((d) => (
+              <button
+                key={d}
+                onClick={() => onDaysChange(d)}
+                className={`shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border cursor-pointer transition-colors whitespace-nowrap ${
+                  days === d
+                    ? "bg-[#fff7d6] text-[#854d0e] border-[#f5c400] font-semibold"
+                    : "bg-white text-[#374151] border-[#e5e7eb] hover:border-[#f5c400] hover:bg-[#fffde7]"
+                }`}
+              >
+                {d}
+              </button>
+            ))}
+          </div>
         </div>
-        {/* Quick day pills */}
-        <div className="flex gap-[5px] mt-1.5 overflow-x-auto scrollbar-hide flex-nowrap w-full">
-          {QUICK_DAYS.map((d) => (
-            <button
-              key={d}
-              onClick={() => onDaysChange(d)}
-              className={`shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border cursor-pointer transition-colors whitespace-nowrap ${
-                days === d
-                  ? "bg-[#fff7d6] text-[#854d0e] border-[#f5c400] font-semibold"
-                  : "bg-white text-[#374151] border-[#e5e7eb] hover:border-[#f5c400] hover:bg-[#fffde7]"
-              }`}
-            >
-              {d}
-            </button>
-          ))}
-        </div>
-      </div>
+      )}
 
       {/* Quantity stepper */}
       <div>

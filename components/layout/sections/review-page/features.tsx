@@ -40,19 +40,19 @@ const featureIcons = [WalletIcon, CirclePlusIcon, SimCardIcon, ChatSupportIcon];
 const defaultFeatures = [
   {
     title: "Affordable plans",
-    description: "You can choose from hundreds of plans in over 200 countries — all at some of the best prices on the market. With Esim.vn eSIMs, you can save every time, wherever you travel."
+    description: "You can choose from hundreds of plans in over 200 countries — all at some of the best prices on the market. With esim.vn eSIMs, you can save every time, wherever you travel."
   },
   {
     title: "eSIM top-ups",
-    description: "If your eSIM expires, don\u2019t buy a new one. With Esim.vn, top up your account and use the same eSIM. If your plan hasn\u2019t expired yet, the data will be added automatically once the current plan expires."
+    description: "If your eSIM expires, don\u2019t buy a new one. With esim.vn, top up your account and use the same eSIM. If your plan hasn\u2019t expired yet, the data will be added automatically once the current plan expires."
   },
   {
     title: "One eSIM for all countries",
-    description: "Esim.vn makes eSIM management easier and saves you more time. Instead of getting a new eSIM every time you travel, you can use the same Esim.vn eSIM for any country."
+    description: "esim.vn makes eSIM management easier and saves you more time. Instead of getting a new eSIM every time you travel, you can use the same esim.vn eSIM for any country."
   },
   {
     title: "24/7 chat support",
-    description: "Esim.vn\u2019s team is always ready to answer your questions. Check out the FAQ and the Help Center to find an answer, or contact Esim.vn\u2019s support via email or live chat to get help."
+    description: "esim.vn\u2019s team is always ready to answer your questions. Check out the FAQ and the Help Center to find an answer, or contact esim.vn\u2019s support via email or live chat to get help."
   }
 ];
 
@@ -67,10 +67,10 @@ export function ReviewFeatures({ dict, lang }: ReviewFeaturesProps) {
             <div className="col-span-12 md:col-span-8">
               <div className="grid grid-cols-1 gap-y-6">
                 <h2 className="heading-xl text-primary scroll-mt-20 xl:scroll-mt-24">
-                  {dict.title || "Reasons to buy a Esim.vn eSIM card"}
+                  {dict.title || "Reasons to buy a esim.vn eSIM card"}
                 </h2>
                 <p className="body-md text-secondary scroll-mt-20 xl:scroll-mt-24">
-                  {dict.description || "eSIMs can save you money and time when you\u2019re traveling. With a Esim.vn eSIM, it becomes even easier."}
+                  {dict.description || "eSIMs can save you money and time when you\u2019re traveling. With a esim.vn eSIM, it becomes even easier."}
                 </p>
               </div>
             </div>

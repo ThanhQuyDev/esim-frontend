@@ -16,7 +16,6 @@ import {
   type Cart,
   type Coupon,
 } from "@/lib/cart";
-import { seedDemoCart } from "@/lib/demo-cart";
 import { useExchangeRate, convertUsdToVnd, formatVnd } from "@/lib/hooks";
 import Link from "next/link";
 
@@ -41,8 +40,6 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
   }, []);
 
   useEffect(() => {
-    // Seed demo data for UI preview (only if cart is empty)
-    seedDemoCart();
     refreshCart();
     const handler = () => refreshCart();
     window.addEventListener("cart-updated", handler);
@@ -54,6 +51,18 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
   const discount = getDiscount(subtotal, cart.appliedCoupon);
   const total = getTotal(selectedItems, cart.appliedCoupon);
   const savedCoupons = getSavedCoupons();
+
+  const handleCheckout = () => {
+    if (selectedItems.length === 0) return;
+    // Store selected items & coupon for the checkout page
+    localStorage.setItem("saily_checkout_items", JSON.stringify(selectedItems));
+    if (cart.appliedCoupon) {
+      localStorage.setItem("saily_checkout_coupon", JSON.stringify(cart.appliedCoupon));
+    } else {
+      localStorage.removeItem("saily_checkout_coupon");
+    }
+    window.location.href = `/${lang}/checkout`;
+  };
 
   const toggleSelect = (id: string) => {
     setSelectedIds((prev) => {
@@ -301,34 +310,18 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
           </div>
 
           {/* Checkout Button */}
-          <Link
-            href={selectedItems.length > 0 ? `/${lang}/checkout` : "#"}
-            onClick={(e) => {
-              if (selectedItems.length === 0) {
-                e.preventDefault();
-              } else {
-                // Store selected items for checkout
-                if (typeof window !== "undefined") {
-                  localStorage.setItem(
-                    "saily_checkout_items",
-                    JSON.stringify(selectedItems)
-                  );
-                  localStorage.setItem(
-                    "saily_checkout_coupon",
-                    JSON.stringify(cart.appliedCoupon)
-                  );
-                }
-              }
-            }}
+          <button
+            onClick={handleCheckout}
+            disabled={selectedItems.length === 0}
             className={`flex w-full items-center justify-center gap-2 rounded-full py-3.5 text-base font-semibold transition-colors ${
               selectedItems.length > 0
                 ? "bg-bg-accent text-text-primary hover:bg-bg-accent-hover cursor-pointer"
                 : "bg-gray-200 text-gray-400 cursor-not-allowed"
             }`}
           >
-            {dict.proceedToCheckout || "Proceed to Checkout"}
+            {dict.proceedToCheckout || "Thanh toán"}
             <ArrowRight className="h-5 w-5" />
-          </Link>
+          </button>
         </div>
       </div>
     </div>

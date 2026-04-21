@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
-import { Be_Vietnam_Pro } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { QueryProvider } from "@/lib/query-provider";
 
-const beVietnamPro = Be_Vietnam_Pro({
+const montserrat = Montserrat({
   subsets: ["latin", "vietnamese"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-be-vietnam-pro",
+  weight: ["300", "400", "500", "600", "700", "800"],
+  variable: "--font-montserrat",
 });
 
 export const metadata: Metadata = {
-  title: "Esim.vn - eSIM for Global Travel",
+  title: "esim.vn - eSIM for Global Travel",
   description:
     "Stay connected worldwide with affordable eSIM data plans. No physical SIM needed.",
 };
@@ -32,8 +32,9 @@ export default function RootLayout({
       </head>
       <body
         className={cn(
-          "min-h-screen bg-white font-sans antialiased overflow-x-hidden",
-          beVietnamPro.variable
+          "min-h-screen bg-white antialiased overflow-x-hidden",
+          montserrat.variable,
+          montserrat.className
         )}
       >
         <QueryProvider>{children}</QueryProvider>

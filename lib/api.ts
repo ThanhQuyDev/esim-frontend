@@ -81,6 +81,19 @@ export interface SupportedDevicesResponse {
   data: DeviceType[];
 }
 
+export interface Region {
+  id: number;
+  name: string;
+  slug: string;
+  destinations?: Destination[];
+  destinationCount?: number;
+  avatarUrl?: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string;
+}
+
 export interface Plan {
   id: number;
   provider: string;
@@ -91,6 +104,7 @@ export interface Plan {
   destinationId?: number;
   destination?: Destination;
   regionId?: number;
+  region?: Region;
   durationDays: number;
   dataGb: number;
   costPrice: number;
@@ -103,11 +117,21 @@ export interface Plan {
   topUp: boolean;
   speed?: string;
   operatorName?: string;
+  fupSpeed?: string;
   isCheapest: boolean;
+  isAbleMultidate?: boolean;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
   deletedAt?: string;
+}
+
+/** Response shape from /api/v1/plans/by-destination/{slug} */
+export interface PlansByDestinationResponse {
+  dataPlans: Plan[];
+  slowUnlimited: Plan[];
+  fastUnlimited: Plan[];
+  dailyUnlimited: Plan[];
 }
 
 export interface PaginatedResponse<T> {
@@ -275,6 +299,34 @@ export async function getDestinationBySlug(
 ): Promise<Destination | null> {
   try {
     const result = await getDestinations({
+      filters: JSON.stringify({ slug }),
+      limit: 1,
+      lang,
+    });
+    return result.data[0] || null;
+  } catch {
+    return null;
+  }
+}
+
+// ===== Regions API =====
+
+export async function getRegions(
+  options: FetchOptions = {}
+): Promise<PaginatedResponse<Region>> {
+  return apiFetch<PaginatedResponse<Region>>(
+    "/api/v1/regions",
+    { limit: 100, ...options },
+    300
+  );
+}
+
+export async function getRegionBySlug(
+  slug: string,
+  lang?: string
+): Promise<Region | null> {
+  try {
+    const result = await getRegions({
       filters: JSON.stringify({ slug }),
       limit: 1,
       lang,

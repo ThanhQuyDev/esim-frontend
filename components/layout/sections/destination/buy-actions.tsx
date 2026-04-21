@@ -1,8 +1,11 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import type { Plan } from "@/lib/api";
 import type { DestinationDict } from "./types";
+import { calcTotalPrice } from "./types";
 import { formatVnd, convertUsdToVnd } from "@/lib/hooks";
+import { addToCart } from "@/lib/cart";
 
 interface BuyActionsProps {
   selectedPlan: Plan | null;
@@ -12,14 +15,38 @@ interface BuyActionsProps {
   isFixed: boolean;
   dict: DestinationDict;
   lang: string;
+  destination?: string;
 }
 
-export function BuyActions({ selectedPlan, days, quantity, rate, isFixed, dict, lang }: BuyActionsProps) {
-  const totalPrice = selectedPlan
-    ? isFixed
-      ? convertUsdToVnd(selectedPlan.price, rate) * quantity
-      : convertUsdToVnd(selectedPlan.price, rate) * days * quantity
-    : 0;
+export function BuyActions({ selectedPlan, days, quantity, rate, isFixed, dict, lang, destination }: BuyActionsProps) {
+  const router = useRouter();
+
+  let totalPrice = 0;
+  if (selectedPlan) {
+    if (isFixed) {
+      totalPrice = convertUsdToVnd(Number(selectedPlan.price) * quantity, rate);
+    } else {
+      totalPrice = convertUsdToVnd(calcTotalPrice(selectedPlan, days) * quantity, rate);
+    }
+  }
+
+  const handleAddToCart = () => {
+    if (!selectedPlan) return;
+    const unitPrice = isFixed ? Number(selectedPlan.price) : calcTotalPrice(selectedPlan, days);
+    addToCart(
+      {
+        id: String(selectedPlan.id),
+        name: selectedPlan.name || `eSIM ${destination || ""}`.trim(),
+        description: `${selectedPlan.dataGb} GB / ${isFixed ? selectedPlan.durationDays : days} days`,
+        price: unitPrice,
+        destination: destination,
+        dataGb: Number(selectedPlan.dataGb),
+        durationDays: isFixed ? selectedPlan.durationDays : days,
+      },
+      quantity
+    );
+    router.push(`/${lang}/cart`);
+  };
 
   const deviceLink = lang === "vi" ? "/vi/thiet-bi-ho-tro-esim" : `/${lang}/esim-supported-devices`;
 
@@ -27,10 +54,16 @@ export function BuyActions({ selectedPlan, days, quantity, rate, isFixed, dict, 
     <>
       {/* CTA buttons */}
       <div className="flex flex-col gap-2.5">
-        <button className="w-full py-3 rounded-full border-[1.5px] border-[#1a1a1a] bg-white text-sm font-semibold cursor-pointer text-[#1a1a1a] transition-all hover:bg-[#1a1a1a] hover:text-white">
+        <button
+          onClick={handleAddToCart}
+          className="w-full py-3 rounded-full border-[1.5px] border-[#1a1a1a] bg-white text-sm font-semibold cursor-pointer text-[#1a1a1a] transition-all hover:bg-[#1a1a1a] hover:text-white"
+        >
           {dict.addToCart}
         </button>
-        <button className="w-full py-[13px] rounded-full border-[1.5px] border-[#d1b700] bg-[#fff500] text-[15px] font-bold cursor-pointer text-black transition-all hover:bg-[#d1b700] hover:border-[#d1b700]">
+        <button
+          onClick={handleAddToCart}
+          className="w-full py-[13px] rounded-full border-[1.5px] border-[#d1b700] bg-[#fff500] text-[15px] font-bold cursor-pointer text-black transition-all hover:bg-[#d1b700] hover:border-[#d1b700]"
+        >
           {dict.buyNow} — {selectedPlan ? formatVnd(totalPrice) : "—"}
         </button>
       </div>

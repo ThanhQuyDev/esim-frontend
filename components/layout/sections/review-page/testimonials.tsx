@@ -34,7 +34,7 @@ const testimonials: TestimonialCard[] = [
     type: "editorial",
     platform: "lonely planet",
     platformLogo: "https://sb.nordcdn.com/m/3fe35db6f7e93a89/original/lonely-planet-logo.svg",
-    review: "Esim.vn is an affordable, easy-to-use, and sustainable eSIM service that gives reliable mobile and internet connections from anywhere in the world. That\u2019s why we recommend Esim.vn as our eSIM partner.",
+    review: "esim.vn is an affordable, easy-to-use, and sustainable eSIM service that gives reliable mobile and internet connections from anywhere in the world. That\u2019s why we recommend esim.vn as our eSIM partner.",
     isQuote: true,
   },
   {
@@ -50,7 +50,7 @@ const testimonials: TestimonialCard[] = [
     author: "PewDiePie",
     platform: "youtube",
     platformLogo: "https://sb.nordcdn.com/m/523124913b21ba80/original/youtube-logo.svg",
-    review: "I can set it up at home right now, activate it when I\u2019m ready (it takes literally just a couple of minutes, I\u2019ve tried it myself), and boom! I have internet on my phone when traveling, as it should be\u2026 So I recommend checking out Esim.vn next time you\u2019re traveling \u2014 it\u2019s a must!",
+    review: "I can set it up at home right now, activate it when I\u2019m ready (it takes literally just a couple of minutes, I\u2019ve tried it myself), and boom! I have internet on my phone when traveling, as it should be\u2026 So I recommend checking out esim.vn next time you\u2019re traveling \u2014 it\u2019s a must!",
     avatar: "https://sb.nordcdn.com/m/35591c102a63732b/original/pewdiepie.png",
     avatarBg: "#f40000",
   },
@@ -59,7 +59,7 @@ const testimonials: TestimonialCard[] = [
     author: "DutchPilotGirl",
     platform: "youtube",
     platformLogo: "https://sb.nordcdn.com/m/523124913b21ba80/original/youtube-logo.svg",
-    review: "There\u2019s so much you can\u2019t do abroad without a proper internet connection. Esim.vn takes care of everything. It\u2019s simple to buy and easy to install. I love it.",
+    review: "There\u2019s so much you can\u2019t do abroad without a proper internet connection. esim.vn takes care of everything. It\u2019s simple to buy and easy to install. I love it.",
     avatar: "https://sb.nordcdn.com/m/6a028523fe8e4546/original/dutchpilotgirl.png",
     avatarBg: "#f40000",
   },
@@ -68,20 +68,20 @@ const testimonials: TestimonialCard[] = [
     author: "Domas R.",
     platform: "trustpilot",
     platformLogo: "https://sb.nordcdn.com/m/582657296a71bcc7/original/trustpilot-logo.svg",
-    review: "Awesome \u2014 used Esim.vn across 3 countries already (UK, Netherlands and Belgium). Took me like 1min to buy esim and activate it. My internet was way better than my friends\u2019 who remained connected to their local providers and used roaming plans instead.",
+    review: "Awesome \u2014 used esim.vn across 3 countries already (UK, Netherlands and Belgium). Took me like 1min to buy esim and activate it. My internet was way better than my friends\u2019 who remained connected to their local providers and used roaming plans instead.",
     rating: 5,
   },
   {
     type: "editorial",
     platform: "cybernews",
     platformLogo: "https://sb.nordcdn.com/m/40568438e8c1f323/original/cybernews-logo.svg",
-    review: "With comprehensive coverage and affordable prices, Esim.vn is the best eSIM for Europe. Activating Esim.vn is straightforward. Download the app, choose your plan, and surf the internet. You can contact the Esim.vn customer support team via live chat or email if you encounter any issues.",
+    review: "With comprehensive coverage and affordable prices, esim.vn is the best eSIM for Europe. Activating esim.vn is straightforward. Download the app, choose your plan, and surf the internet. You can contact the esim.vn customer support team via live chat or email if you encounter any issues.",
   },
   {
     type: "editorial",
     platform: "techradar",
     platformLogo: "https://sb.nordcdn.com/m/5c98bec1f4a1a9ea/original/techradar-logo.svg",
-    review: "As a product backed by the reputable NordVPN brand, Esim.vn benefits from the company\u2019s focus on security and privacy. Users praise its easy installation process, affordable pricing, and reliable coverage across the world.",
+    review: "As a product backed by the reputable NordVPN brand, esim.vn benefits from the company\u2019s focus on security and privacy. Users praise its easy installation process, affordable pricing, and reliable coverage across the world.",
   },
 ];
 
@@ -243,7 +243,7 @@ export function ReviewTestimonials({ dict, lang }: ReviewTestimonialsProps) {
               <div className="h-full w-full flex [&>div:empty]:hidden flex-col gap-y-10">
                 <div>
                   <h2 className="heading-xl text-center scroll-mt-20 xl:scroll-mt-24">
-                    {dict.title || "What do customers say about Esim.vn?"}
+                    {dict.title || "What do customers say about esim.vn?"}
                   </h2>
                 </div>
                 <div>

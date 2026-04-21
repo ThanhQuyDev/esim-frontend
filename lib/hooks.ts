@@ -6,6 +6,7 @@ import type {
   Blog,
   Plan,
   PaginatedResponse,
+  PlansByDestinationResponse,
 } from "./api";
 import type { Locale } from "./i18n-config";
 
@@ -227,18 +228,28 @@ export function usePlansByDestination(destinationId: number, lang?: string) {
 
 export function usePlansBySlug(slug: string, lang?: string) {
   return useQuery({
-    queryKey: [...queryKeys.plans.all, "slug", slug],
+    queryKey: [...queryKeys.plans.all, "byDestination", slug],
     queryFn: ({ signal }) =>
-      clientFetch<PaginatedResponse<Plan>>(
-        "/api/v1/plans",
-        {
-          limit: "50",
-          filters: JSON.stringify({ search: slug }),
-        },
+      clientFetch<PlansByDestinationResponse>(
+        `/api/v1/plans/by-destination/${encodeURIComponent(slug)}`,
+        undefined,
         lang ? { "x-custom-lang": lang } : undefined,
         signal
       ),
-    select: (data) => data.data.filter((p) => p.isActive),
+    enabled: slug.length > 0,
+  });
+}
+
+export function usePlansByRegionSlug(slug: string, lang?: string) {
+  return useQuery({
+    queryKey: [...queryKeys.plans.all, "byRegion", slug],
+    queryFn: ({ signal }) =>
+      clientFetch<PlansByDestinationResponse>(
+        `/api/v1/plans/by-region/${encodeURIComponent(slug)}`,
+        undefined,
+        lang ? { "x-custom-lang": lang } : undefined,
+        signal
+      ),
     enabled: slug.length > 0,
   });
 }
@@ -579,7 +590,7 @@ export function useCheckout() {
         body: JSON.stringify({
           orderId: order.id,
           amount: input.price,
-          orderInfo: `Esim.vn eSIM - Order ${orderNumber}`,
+          orderInfo: `esim.vn eSIM - Order ${orderNumber}`,
           locale: input.locale || "en",
         }),
       });

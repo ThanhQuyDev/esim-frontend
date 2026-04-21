@@ -160,12 +160,12 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
         {
           title: isVi ? "Tính năng bảo mật" : "Security features",
           desc: isVi
-            ? "Khám phá tính năng bảo vệ kỹ thuật số của Esim.vn."
-            : "Discover Esim.vn's built-in digital protection.",
+            ? "Khám phá tính năng bảo vệ kỹ thuật số của esim.vn."
+            : "Discover esim.vn's built-in digital protection.",
           href: "#",
           image:
             "https://sb.nordcdn.com/m/7bf573d226cb4b2d/original/mega-menu-explore-security-features.png",
-          imageAlt: "A man uses Esim.vn's built-in digital protection.",
+          imageAlt: "A man uses esim.vn's built-in digital protection.",
         },
         {
           title: isVi ? "eSIM cho Doanh nghiệp" : "eSIM for Business",
@@ -176,7 +176,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           image:
             "https://sb.nordcdn.com/m/37ec43195ff7cbbd/original/mega-menu-explore-b2b-admin-panel.png",
           imageAlt:
-            "A smiling woman using her phone, which mirrors the Esim.vn business dashboard.",
+            "A smiling woman using her phone, which mirrors the esim.vn business dashboard.",
         },
         {
           title: "Ultra Plan",
@@ -186,7 +186,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           href: "#",
           image:
             "https://sb.nordcdn.com/m/681452996b3d756b/original/mega-menu-explore-ultra-plan.png",
-          imageAlt: "The Ultra plan tab on the Esim.vn app.",
+          imageAlt: "The Ultra plan tab on the esim.vn app.",
         },
       ],
       bottomLeft: {
@@ -245,7 +245,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
         },
         {
           icon: "message-dots",
-          title: isVi ? "Đánh giá Esim.vn" : "Esim.vn Reviews",
+          title: isVi ? "Đánh giá esim.vn" : "esim.vn Reviews",
           desc: isVi
             ? "Xem mọi người nói gì về chúng tôi!"
             : "Find out what people are saying about us!",
@@ -264,12 +264,12 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
         {
           title: isVi ? "Tính năng bảo mật" : "Security features",
           desc: isVi
-            ? "Khám phá tính năng bảo vệ kỹ thuật số của Esim.vn."
-            : "Discover Esim.vn's built-in digital protection.",
+            ? "Khám phá tính năng bảo vệ kỹ thuật số của esim.vn."
+            : "Discover esim.vn's built-in digital protection.",
           href: "#",
           image:
             "https://sb.nordcdn.com/m/7bf573d226cb4b2d/original/mega-menu-explore-security-features.png",
-          imageAlt: "A man uses Esim.vn's built-in digital protection.",
+          imageAlt: "A man uses esim.vn's built-in digital protection.",
         },
         {
           title: isVi ? "Tính dữ liệu sử dụng" : "Data usage calculator",
@@ -279,7 +279,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           href: isVi ? `/${lang}/cong-cu-tinh-data` : `/${lang}/data-calculator`,
           image:
             "https://sb.nordcdn.com/m/6c224dbf48f13441/original/mega-menu-explore-data-usage-calculator.png",
-          imageAlt: "A woman uses Esim.vn's data usage calculator.",
+          imageAlt: "A woman uses esim.vn's data usage calculator.",
         },
         {
           title: "Ultra Plan",
@@ -289,7 +289,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           href: "#",
           image:
             "https://sb.nordcdn.com/m/681452996b3d756b/original/mega-menu-explore-ultra-plan.png",
-          imageAlt: "The Ultra plan tab on the Esim.vn app.",
+          imageAlt: "The Ultra plan tab on the esim.vn app.",
         },
       ],
       bottomLeft: {
@@ -310,8 +310,8 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           icon: "thumbs-up",
           title: isVi ? "Giới thiệu bạn bè" : "Refer a Friend",
           desc: isVi
-            ? "Chia sẻ Esim.vn với bạn bè và nhận thưởng."
-            : "Share Esim.vn with friends and earn rewards.",
+            ? "Chia sẻ esim.vn với bạn bè và nhận thưởng."
+            : "Share esim.vn with friends and earn rewards.",
           href: "#",
         },
         {
@@ -324,7 +324,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
         },
         {
           icon: "tag",
-          title: isVi ? "Mã giảm giá Esim.vn" : "Esim.vn Coupons",
+          title: isVi ? "Mã giảm giá esim.vn" : "esim.vn Coupons",
           desc: isVi
             ? "Nhận ưu đãi tốt nhất và tiết kiệm dữ liệu eSIM!"
             : "Get the best deals and save on eSIM data!",
@@ -334,10 +334,10 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
       col2: [
         {
           icon: "ticket",
-          title: isVi ? "Voucher Esim.vn" : "Esim.vn vouchers",
+          title: isVi ? "Voucher esim.vn" : "esim.vn vouchers",
           desc: isVi
-            ? "Nhận voucher Esim.vn, sử dụng trong 12 tháng."
-            : "Get a Esim.vn voucher, use within 12 months.",
+            ? "Nhận voucher esim.vn, sử dụng trong 12 tháng."
+            : "Get a esim.vn voucher, use within 12 months.",
           href: "#",
         },
       ],
@@ -345,12 +345,12 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
         {
           title: isVi ? "Tính năng bảo mật" : "Security features",
           desc: isVi
-            ? "Khám phá tính năng bảo vệ kỹ thuật số của Esim.vn."
-            : "Discover Esim.vn's built-in digital protection.",
+            ? "Khám phá tính năng bảo vệ kỹ thuật số của esim.vn."
+            : "Discover esim.vn's built-in digital protection.",
           href: "#",
           image:
             "https://sb.nordcdn.com/m/7bf573d226cb4b2d/original/mega-menu-explore-security-features.png",
-          imageAlt: "A man uses Esim.vn's built-in digital protection.",
+          imageAlt: "A man uses esim.vn's built-in digital protection.",
         },
         {
           title: isVi ? "Tính dữ liệu sử dụng" : "Data usage calculator",
@@ -360,7 +360,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           href: `/${lang}/data-calculator`,
           image:
             "https://sb.nordcdn.com/m/6c224dbf48f13441/original/mega-menu-explore-data-usage-calculator.png",
-          imageAlt: "A woman uses Esim.vn's data usage calculator.",
+          imageAlt: "A woman uses esim.vn's data usage calculator.",
         },
         {
           title: "Ultra Plan",
@@ -370,7 +370,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           href: "#",
           image:
             "https://sb.nordcdn.com/m/681452996b3d756b/original/mega-menu-explore-ultra-plan.png",
-          imageAlt: "The Ultra plan tab on the Esim.vn app.",
+          imageAlt: "The Ultra plan tab on the esim.vn app.",
         },
       ],
       bottomLeft: {
@@ -389,8 +389,8 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           icon: "help-circle",
           title: isVi ? "Bắt đầu" : "Getting Started",
           desc: isVi
-            ? "Hướng dẫn nhanh sử dụng ứng dụng Esim.vn eSIM."
-            : "A quick guide to using the Esim.vn eSIM app.",
+            ? "Hướng dẫn nhanh sử dụng ứng dụng esim.vn eSIM."
+            : "A quick guide to using the esim.vn eSIM app.",
           href: "#",
         },
         {
@@ -415,8 +415,8 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           icon: "message-dots",
           title: "FAQ",
           desc: isVi
-            ? "Tìm câu trả lời cho các câu hỏi phổ biến nhất về Esim.vn."
-            : "Find answers to the most common questions about Esim.vn.",
+            ? "Tìm câu trả lời cho các câu hỏi phổ biến nhất về esim.vn."
+            : "Find answers to the most common questions about esim.vn.",
           href: "#",
         },
       ],
@@ -424,12 +424,12 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
         {
           title: isVi ? "Tính năng bảo mật" : "Security features",
           desc: isVi
-            ? "Khám phá tính năng bảo vệ kỹ thuật số của Esim.vn."
-            : "Discover Esim.vn's built-in digital protection.",
+            ? "Khám phá tính năng bảo vệ kỹ thuật số của esim.vn."
+            : "Discover esim.vn's built-in digital protection.",
           href: "#",
           image:
             "https://sb.nordcdn.com/m/7bf573d226cb4b2d/original/mega-menu-explore-security-features.png",
-          imageAlt: "A man uses Esim.vn's built-in digital protection.",
+          imageAlt: "A man uses esim.vn's built-in digital protection.",
         },
         {
           title: isVi ? "Tính dữ liệu sử dụng" : "Data usage calculator",
@@ -439,7 +439,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           href: `/${lang}/data-calculator`,
           image:
             "https://sb.nordcdn.com/m/6c224dbf48f13441/original/mega-menu-explore-data-usage-calculator.png",
-          imageAlt: "A woman uses Esim.vn's data usage calculator.",
+          imageAlt: "A woman uses esim.vn's data usage calculator.",
         },
         {
           title: "Ultra Plan",
@@ -449,7 +449,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           href: "#",
           image:
             "https://sb.nordcdn.com/m/681452996b3d756b/original/mega-menu-explore-ultra-plan.png",
-          imageAlt: "The Ultra plan tab on the Esim.vn app.",
+          imageAlt: "The Ultra plan tab on the esim.vn app.",
         },
       ],
       bottomLeft: {
@@ -573,7 +573,7 @@ export function Navbar({ lang, dict }: NavbarProps) {
             <div className="pr-12">
               <Link href={`/${lang}`} className="block">
                 <SailyLogo />
-                <span className="sr-only">Esim.vn</span>
+                <span className="sr-only">esim.vn</span>
               </Link>
             </div>
 

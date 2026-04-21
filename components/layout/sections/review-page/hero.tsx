@@ -14,7 +14,7 @@ export function ReviewHero({ dict, lang }: ReviewHeroProps) {
                 <div className="h-full flex flex-col justify-center gap-y-6">
                   <div className="list flex flex-col gap-y-4">
                     <h1 className="heading-2xl scroll-mt-20 xl:scroll-mt-24">
-                      {dict.title || "Esim.vn review and rating: Should you get it?"}
+                      {dict.title || "esim.vn review and rating: Should you get it?"}
                     </h1>
                   </div>
                   <p className="body-md text-secondary scroll-mt-20 xl:scroll-mt-24">
@@ -37,7 +37,7 @@ export function ReviewHero({ dict, lang }: ReviewHeroProps) {
                   <div>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      alt={dict.imageAlt || "A happy woman lies on the beach after posting a Esim.vn review."}
+                      alt={dict.imageAlt || "A happy woman lies on the beach after posting a esim.vn review."}
                       loading="eager"
                       width={555}
                       height={555}

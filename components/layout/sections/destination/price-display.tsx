@@ -2,6 +2,7 @@
 
 import type { Plan } from "@/lib/api";
 import type { DestinationDict } from "./types";
+import { calcTotalPrice, calcTotalRetailPrice } from "./types";
 import { formatVnd, convertUsdToVnd } from "@/lib/hooks";
 
 interface PriceDisplayProps {
@@ -34,11 +35,22 @@ export function PriceDisplay({
     );
   }
 
-  const unitPriceVnd = convertUsdToVnd(selectedPlan.price, rate);
-  const retailPriceVnd = convertUsdToVnd(selectedPlan.retailPrice, rate);
+  // Calculate total USD price based on plan type
+  let totalUsd: number;
+  let totalRetailUsd: number;
 
-  const totalPrice = isFixed ? unitPriceVnd * quantity : unitPriceVnd * days * quantity;
-  const totalRetail = isFixed ? retailPriceVnd * quantity : retailPriceVnd * days * quantity;
+  if (isFixed) {
+    // dataPlans & dailyUnlimited: price is for the whole package
+    totalUsd = Number(selectedPlan.price) * quantity;
+    totalRetailUsd = Number(selectedPlan.retailPrice) * quantity;
+  } else {
+    // slowUnlimited & fastUnlimited: use calcTotalPrice (handles isAbleMultidate)
+    totalUsd = calcTotalPrice(selectedPlan, days) * quantity;
+    totalRetailUsd = calcTotalRetailPrice(selectedPlan, days) * quantity;
+  }
+
+  const totalPrice = convertUsdToVnd(totalUsd, rate);
+  const totalRetail = convertUsdToVnd(totalRetailUsd, rate);
   const savePercent = totalRetail > 0 ? Math.round(((totalRetail - totalPrice) / totalRetail) * 100) : 0;
 
   return (

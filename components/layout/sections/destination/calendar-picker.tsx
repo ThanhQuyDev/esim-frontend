@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { DayPicker } from "react-day-picker";
-import { differenceInDays } from "date-fns";
+import { differenceInDays, addDays, eachDayOfInterval } from "date-fns";
 import { vi, enUS } from "date-fns/locale";
 import * as Popover from "@radix-ui/react-popover";
 import type { DestinationDict } from "./types";
@@ -17,29 +17,47 @@ interface CalendarPickerProps {
 
 export function CalendarPicker({ days, onDaysChange, dict, lang }: CalendarPickerProps) {
   const [open, setOpen] = useState(false);
-  const [range, setRange] = useState<{ from?: Date; to?: Date }>({});
 
   const locale = lang === "vi" ? vi : enUS;
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const today = useMemo(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }, []);
 
-  const handleSelect = (selected: { from?: Date; to?: Date } | undefined) => {
+  // Selected end date (user picks this)
+  const [endDate, setEndDate] = useState<Date>(() => addDays(today, days));
+
+  // Sync endDate when days prop changes externally (quick day pills)
+  useEffect(() => {
+    setEndDate(addDays(today, days));
+  }, [days, today]);
+
+  // Highlight range from today to endDate
+  const highlightedDays = useMemo(() => {
+    if (!endDate) return [];
+    return eachDayOfInterval({ start: addDays(today, 1), end: endDate });
+  }, [today, endDate]);
+
+  const handleSelect = (selected: Date | undefined) => {
     if (!selected) return;
-    setRange(selected);
+    const diff = differenceInDays(selected, today);
+    if (diff > 0) {
+      setEndDate(selected);
+    }
   };
 
   const handleConfirm = () => {
-    if (range.from && range.to) {
-      const diff = differenceInDays(range.to, range.from);
-      if (diff > 0) onDaysChange(diff);
+    const diff = differenceInDays(endDate, today);
+    if (diff > 0) {
+      onDaysChange(diff);
     }
     setOpen(false);
   };
 
-  const rangeText =
-    range.from && range.to
-      ? `${range.from.toLocaleDateString(lang)} → ${range.to.toLocaleDateString(lang)} (${differenceInDays(range.to, range.from)} ${dict.daysUnit.toLowerCase()})`
-      : dict.calSelectStart;
+  const selectedDays = differenceInDays(endDate, today);
+
+  const rangeText = `${today.toLocaleDateString(lang)} → ${endDate.toLocaleDateString(lang)} (${selectedDays} ${dict.daysUnit.toLowerCase()})`;
 
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
@@ -61,20 +79,40 @@ export function CalendarPicker({ days, onDaysChange, dict, lang }: CalendarPicke
           sideOffset={8}
           align="end"
         >
+          <div className="text-xs text-[#6b7280] mb-2 text-center">
+            {dict.calSelectEnd}
+          </div>
           <DayPicker
-            mode="range"
-            selected={range.from && range.to ? { from: range.from, to: range.to } : undefined}
-            onSelect={handleSelect as any}
+            mode="single"
+            selected={endDate}
+            onSelect={handleSelect}
             locale={locale}
-            disabled={{ before: today }}
+            disabled={{ before: addDays(today, 1) }}
             showOutsideDays
-            classNames={{
-              root: "text-sm",
-              day: "w-9 h-9 rounded-full text-[13px] font-medium text-[#374151] hover:bg-[#f0f0f0] flex items-center justify-center cursor-pointer",
-              today: "text-[#d97706] font-bold",
-              selected: "bg-[#1a1a1a] text-white font-bold",
-              range_middle: "bg-[#fef08a] text-[#854d0e]",
-              chevron: "text-[#374151]",
+            today={today}
+            modifiers={{ highlighted: highlightedDays }}
+            modifiersStyles={{
+              highlighted: { backgroundColor: "#fef9c3", color: "#854d0e", borderRadius: "50%" },
+              today: { color: "#d97706", fontWeight: "bold" },
+              selected: { backgroundColor: "#1a1a1a", color: "#fff", fontWeight: "bold", borderRadius: "50%" },
+            }}
+            styles={{
+              month_grid: { borderCollapse: "separate", borderSpacing: "2px", width: "100%" },
+              day: { width: "36px", height: "36px", textAlign: "center" as const, padding: 0 },
+              day_button: {
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "36px",
+                height: "36px",
+                borderRadius: "50%",
+                fontSize: "13px",
+                fontWeight: 500,
+                cursor: "pointer",
+                border: "none",
+                background: "transparent",
+              },
+              weekday: { fontSize: "12px", fontWeight: 600, color: "#6b7280", padding: "4px 0" },
             }}
           />
           <div className="text-xs text-[#6b7280] mt-2.5 text-center min-h-4">{rangeText}</div>
@@ -89,7 +127,7 @@ export function CalendarPicker({ days, onDaysChange, dict, lang }: CalendarPicke
               onClick={handleConfirm}
               className="px-4 py-2 rounded-lg text-[13px] font-semibold cursor-pointer bg-[#fff500] border-[1.5px] border-[#d1b700] text-black hover:bg-[#d1b700] transition-colors"
             >
-              {dict.calConfirm}
+              {dict.calConfirm} {selectedDays > 0 && `(${selectedDays} ${dict.daysUnit.toLowerCase()})`}
             </button>
           </div>
           <Popover.Arrow className="fill-white" />

@@ -18,7 +18,7 @@ export function CouponHowToUse({ dict, lang }: CouponHowToUseProps) {
             <div className="col-span-12 md:col-span-8">
               <div className="grid grid-cols-1 gap-y-6">
                 <h2 className="heading-xl text-start scroll-mt-20 xl:scroll-mt-24">
-                  {dict.title || "How to use the Esim.vn coupon code"}
+                  {dict.title || "How to use the esim.vn coupon code"}
                 </h2>
                 <p className="body-md text-secondary text-start scroll-mt-20 xl:scroll-mt-24">
                   {dict.description || "If you have a coupon code, you can redeem it in the app as well as on the web:"}
