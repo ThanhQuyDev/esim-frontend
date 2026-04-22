@@ -542,66 +542,83 @@ export function useCreateOrderItem() {
   });
 }
 
-/**
- * Full checkout flow:
- * 1. Create order via backend API
- * 2. Create order item(s)
- * 3. Request OnePay payment URL from our Next.js API route
- * 4. Redirect user to OnePay
- */
+// ===== Payment Types =====
+
+export interface CheckoutPayload {
+  paymentMethod: string;
+  paymentId: string;
+  currency: string;
+  items: { planId: number; quantity: number }[];
+  couponCode: string;
+}
+
+export interface CheckoutResponse {
+  paymentUrl: string;
+  orderNumber: string;
+}
+
+export interface EsimInfo {
+  iccid: string;
+  matchingId: string;
+  smdpAddress: string;
+  activationCode: string;
+  qrCodeUrl?: string;
+  planName?: string;
+  destination?: string;
+  dataGb?: number;
+  durationDays?: number;
+  status?: string;
+}
+
+export interface OrderEsimResponse {
+  orderNumber: string;
+  status: string;
+  esims: EsimInfo[];
+}
+
+// ===== Payment Checkout Mutation =====
+
 export function useCheckout() {
-  const createOrder = useCreateOrder();
-  const createOrderItem = useCreateOrderItem();
-
   return useMutation({
-    mutationFn: async (input: {
-      userId: number;
-      planId: number;
-      planPriceId: number;
-      price: number;
-      currency: string;
-      locale?: string;
-    }) => {
-      // Step 1: Create order
-      const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
-      const order = await createOrder.mutateAsync({
-        userId: input.userId,
-        orderNumber,
-        totalAmount: input.price,
-        currency: input.currency,
-        status: "pending",
-        paymentMethod: "onepay",
-      });
-
-      // Step 2: Create order item
-      await createOrderItem.mutateAsync({
-        orderId: order.id,
-        planId: input.planId,
-        planPriceId: input.planPriceId,
-        price: input.price,
-        currency: input.currency,
-        quantity: 1,
-      });
-
-      // Step 3: Get OnePay payment URL
-      const paymentRes = await fetch("/api/payment/create-url", {
+    mutationFn: async (payload: CheckoutPayload): Promise<CheckoutResponse> => {
+      const res = await fetch(`${API_BASE_URL}/api/v1/payment/plan/checkout`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          orderId: order.id,
-          amount: input.price,
-          orderInfo: `esim.vn eSIM - Order ${orderNumber}`,
-          locale: input.locale || "en",
-        }),
+        body: JSON.stringify(payload),
       });
 
-      if (!paymentRes.ok) throw new Error("Failed to create payment URL");
-      const { paymentUrl } = await paymentRes.json();
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || `Checkout failed: ${res.status}`);
+      }
 
-      // Step 4: Redirect to OnePay
-      window.location.href = paymentUrl;
-
-      return { order, paymentUrl };
+      return res.json();
     },
+  });
+}
+
+// ===== eSIM Polling Query =====
+
+export function useOrderEsims(orderNumber: string, enabled: boolean) {
+  return useQuery({
+    queryKey: ["order-esims", orderNumber],
+    queryFn: async ({ signal }): Promise<OrderEsimResponse> => {
+      const res = await fetch(
+        `${API_BASE_URL}/api/v1/orders/${orderNumber}/esims`,
+        { signal }
+      );
+      if (!res.ok) throw new Error(`Failed to fetch eSIMs: ${res.status}`);
+      return res.json();
+    },
+    enabled: enabled && !!orderNumber,
+    refetchInterval: (query) => {
+      // Stop polling once we have eSIM data
+      const data = query.state.data;
+      if (data?.esims && data.esims.length > 0) return false;
+      return 5000; // Poll every 5s
+    },
+    refetchIntervalInBackground: false,
+    retry: 3,
+    retryDelay: 2000,
   });
 }

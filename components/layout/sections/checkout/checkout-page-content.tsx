@@ -21,7 +21,7 @@ import {
   type CartItem,
   type Coupon,
 } from "@/lib/cart";
-import { useExchangeRate, convertUsdToVnd, formatVnd } from "@/lib/hooks";
+import { useExchangeRate, useCheckout, convertUsdToVnd, formatVnd } from "@/lib/hooks";
 import Link from "next/link";
 
 interface CheckoutPageContentProps {
@@ -53,10 +53,10 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
     email: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
 
   const { data: usdToVndRate = 25_500 } = useExchangeRate();
+  const checkout = useCheckout();
 
   useEffect(() => {
     try {
@@ -108,57 +108,54 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!validate()) return;
-    setIsSubmitting(true);
 
-    try {
-      const totalVnd = Math.round(convertUsdToVnd(total, usdToVndRate));
-      const orderId = `ORD-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-      const orderInfo = items.map((i) => i.name).join(", ").slice(0, 100);
+    const checkoutItems = items.map((item) => ({
+      planId: Number(item.id),
+      quantity: item.quantity,
+    }));
 
-      const res = await fetch("/api/payment/create-url", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          orderId,
-          amount: totalVnd,
-          orderInfo: `esim.vn - ${orderInfo}`,
-          locale: lang === "vi" ? "vi" : "en",
-        }),
-      });
+    checkout.mutate(
+      {
+        paymentMethod: "stripe",
+        paymentId: "",
+        currency: "USD",
+        items: checkoutItems,
+        couponCode: coupon?.code || "",
+      },
+      {
+        onSuccess: (data) => {
+          // Persist order info for the result page
+          localStorage.setItem(
+            "saily_last_order",
+            JSON.stringify({
+              orderNumber: data.orderNumber,
+              items,
+              coupon,
+              email,
+              phone,
+              wantInvoice: wantInvoice ? invoiceInfo : null,
+              paymentMethod: "onepay",
+            })
+          );
+          localStorage.removeItem("saily_checkout_items");
+          localStorage.removeItem("saily_checkout_coupon");
+          clearCart();
 
-      const data = await res.json();
-      if (data.paymentUrl) {
-        // Persist order info for the result page
-        localStorage.setItem(
-          "saily_last_order",
-          JSON.stringify({
-            orderId,
-            items,
-            totalVnd,
-            coupon,
-            email,
-            phone,
-            wantInvoice: wantInvoice ? invoiceInfo : null,
-            paymentMethod,
-          })
-        );
-        // Clear checkout staging data
-        localStorage.removeItem("saily_checkout_items");
-        localStorage.removeItem("saily_checkout_coupon");
-        clearCart();
-
-        // Redirect to OnePay gateway
-        window.location.href = data.paymentUrl;
-      } else {
-        alert(data.error || "Failed to create payment. Please try again.");
-        setIsSubmitting(false);
+          // Redirect to OnePay payment gateway
+          window.location.href = data.paymentUrl;
+        },
+        onError: (error) => {
+          alert(
+            error.message ||
+              (lang === "vi"
+                ? "Lỗi kết nối. Vui lòng thử lại."
+                : "Network error. Please try again.")
+          );
+        },
       }
-    } catch {
-      alert(lang === "vi" ? "Lỗi kết nối. Vui lòng thử lại." : "Network error. Please try again.");
-      setIsSubmitting(false);
-    }
+    );
   };
 
   // Order Complete Screen
@@ -539,10 +536,10 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
           {/* Complete Order Button */}
           <button
             onClick={handleSubmit}
-            disabled={isSubmitting}
+            disabled={checkout.isPending}
             className="flex w-full items-center justify-center gap-2 rounded-full bg-bg-accent py-3.5 text-base font-semibold text-text-primary transition-colors hover:bg-bg-accent-hover disabled:opacity-60 cursor-pointer"
           >
-            {isSubmitting ? (
+            {checkout.isPending ? (
               <span className="flex items-center gap-2">
                 <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
