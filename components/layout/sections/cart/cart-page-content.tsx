@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Minus, Plus, Trash2, Tag, ShoppingCart, ArrowRight, Ticket } from "lucide-react";
 import {
   applyCoupon,
@@ -14,6 +14,7 @@ import {
   type Coupon,
 } from "@/lib/cart";
 import { useExchangeRate, convertUsdToVnd, formatVnd, useCart } from "@/lib/hooks";
+import { useAuth } from "@/lib/auth";
 import Link from "next/link";
 
 interface CartPageContentProps {
@@ -29,6 +30,8 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
   const [couponError, setCouponError] = useState("");
   const { data: usdToVndRate = 25_500 } = useExchangeRate();
   const { isApiCart, apiCartItems, getLocalCartData, updateItem, removeItem, isLoading: cartLoading } = useCart();
+  const { user, openAuthModal } = useAuth();
+  const pendingCheckoutRef = useRef(false);
 
   // Sync cart items from API or localStorage
   useEffect(() => {
@@ -62,6 +65,14 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
 
   const handleCheckout = () => {
     if (selectedItems.length === 0) return;
+
+    // If not logged in, show auth modal and queue checkout after login
+    if (!user) {
+      pendingCheckoutRef.current = true;
+      openAuthModal();
+      return;
+    }
+
     // Store selected items & coupon for the checkout page
     localStorage.setItem("saily_checkout_items", JSON.stringify(selectedItems));
     if (cart.appliedCoupon) {
@@ -71,6 +82,28 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
     }
     window.location.href = `/${lang}/checkout`;
   };
+
+  // After login completes, if checkout was pending, proceed to checkout
+  useEffect(() => {
+    if (user && pendingCheckoutRef.current) {
+      pendingCheckoutRef.current = false;
+      // Wait briefly for API cart sync to settle, then redirect
+      const timer = setTimeout(() => {
+        // Re-read selected items from the current cart state
+        const currentItems = cart.items.filter((i) => selectedIds.has(i.id));
+        if (currentItems.length > 0) {
+          localStorage.setItem("saily_checkout_items", JSON.stringify(currentItems));
+          if (cart.appliedCoupon) {
+            localStorage.setItem("saily_checkout_coupon", JSON.stringify(cart.appliedCoupon));
+          } else {
+            localStorage.removeItem("saily_checkout_coupon");
+          }
+        }
+        window.location.href = `/${lang}/checkout`;
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [user, cart.items, selectedIds, cart.appliedCoupon, lang]);
 
   const toggleSelect = (id: string) => {
     setSelectedIds((prev) => {

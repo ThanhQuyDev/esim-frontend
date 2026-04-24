@@ -8,6 +8,7 @@ import {
   useCallback,
   type ReactNode,
 } from "react";
+import { getCart, clearCart } from "@/lib/cart";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.saily.example.com";
@@ -138,6 +139,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setToken(result.token);
     setUser(result.user);
     persistAuth(result.token, result.user);
+
+    // Sync localStorage cart → API cart after login
+    try {
+      const localCart = getCart();
+      if (localCart.items.length > 0) {
+        await Promise.all(
+          localCart.items.map((item) =>
+            fetch(`${API_BASE_URL}/api/v1/carts`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${result.token}`,
+              },
+              body: JSON.stringify({
+                planId: Number(item.id),
+                quantity: item.quantity,
+              }),
+            })
+          )
+        );
+        // Clear localStorage cart after successful sync
+        clearCart();
+      }
+    } catch {
+      // Sync failed silently — user can still use the app
+    }
   }, []);
 
   const logout = useCallback(() => {

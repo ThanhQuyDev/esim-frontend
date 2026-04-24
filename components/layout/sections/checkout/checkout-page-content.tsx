@@ -21,7 +21,7 @@ import {
   type CartItem,
   type Coupon,
 } from "@/lib/cart";
-import { useExchangeRate, useCheckout, convertUsdToVnd, formatVnd } from "@/lib/hooks";
+import { useExchangeRate, useCheckout, useCart, convertUsdToVnd, formatVnd } from "@/lib/hooks";
 import { useAuth } from "@/lib/auth";
 import Link from "next/link";
 
@@ -58,8 +58,9 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
 
   const { data: usdToVndRate = 25_500 } = useExchangeRate();
   const checkout = useCheckout();
+  const cart = useCart();
 
-  const { user, openAuthModal } = useAuth();
+  const { user, token, openAuthModal } = useAuth();
 
   useEffect(() => {
     try {
@@ -146,6 +147,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
 
     checkout.mutate(
       {
+        token: token || undefined,
         paymentMethod: "stripe",
         paymentId: "",
         currency: "USD",
@@ -169,7 +171,8 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
           );
           localStorage.removeItem("saily_checkout_items");
           localStorage.removeItem("saily_checkout_coupon");
-          clearCart();
+          // Clear cart (API + localStorage)
+          cart.clear();
 
           // Redirect to OnePay payment gateway
           window.location.href = data.paymentUrl;

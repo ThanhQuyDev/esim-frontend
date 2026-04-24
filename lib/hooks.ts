@@ -556,6 +556,7 @@ export function useCreateOrderItem() {
 // ===== Payment Types =====
 
 export interface CheckoutPayload {
+  token?: string;
   paymentMethod: string;
   paymentId: string;
   currency: string;
@@ -617,10 +618,18 @@ export interface OrderResponse {
 export function useCheckout() {
   return useMutation({
     mutationFn: async (payload: CheckoutPayload): Promise<CheckoutResponse> => {
+      const { token, ...body } = payload;
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+
       const res = await fetch(`${API_BASE_URL}/api/v1/payment/plan/checkout`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        headers,
+        body: JSON.stringify(body),
       });
 
       if (!res.ok) {
