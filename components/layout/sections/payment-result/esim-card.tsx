@@ -26,81 +26,113 @@ export function EsimCard({ esim, index, totalCount, copiedField, onCopy, t }: Es
           <h3 className="font-bold text-gray-900">
             {t.esimDetails} {totalCount > 1 ? `#${index + 1}` : ""}
           </h3>
-          {esim.planName && <p className="text-sm text-gray-500">{esim.planName}</p>}
+          {esim.status && (
+            <span className={`inline-block mt-1 text-xs font-medium px-2 py-0.5 rounded-full ${
+              esim.status === "available" ? "bg-emerald-100 text-emerald-700" :
+              esim.status === "active" ? "bg-blue-100 text-blue-700" :
+              "bg-gray-100 text-gray-600"
+            }`}>
+              {esim.status}
+            </span>
+          )}
         </div>
       </div>
 
-      {/* Plan info badges */}
-      {(esim.destination || esim.dataGb || esim.durationDays) && (
+      {/* Data usage badges */}
+      {(esim.dataTotal || esim.dataUsed) && (
         <div className="flex flex-wrap gap-2 mb-5">
-          {esim.destination && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-medium">
-              <Globe className="w-3.5 h-3.5" />
-              {esim.destination}
-            </span>
-          )}
-          {esim.dataGb && (
+          {esim.dataTotal && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple-50 text-purple-700 text-xs font-medium">
               <Wifi className="w-3.5 h-3.5" />
-              {esim.dataGb} GB
+              {esim.dataTotal}
             </span>
           )}
-          {esim.durationDays && (
+          {esim.dataUsed && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 text-amber-700 text-xs font-medium">
               <Calendar className="w-3.5 h-3.5" />
-              {esim.durationDays} {t.days}
+              {t.data}: {esim.dataUsed}
             </span>
           )}
         </div>
       )}
 
       {/* QR Code */}
-      {esim.qrCodeUrl && (
+      {esim.qrcode && (
         <div className="flex flex-col items-center py-5 mb-5 rounded-xl bg-gray-50 border border-gray-100">
           <QrCode className="w-6 h-6 text-gray-400 mb-3" />
-          <img src={esim.qrCodeUrl} alt="eSIM QR Code" className="w-48 h-48 rounded-lg" />
+          <img src={esim.qrcode} alt="eSIM QR Code" className="w-48 h-48 rounded-lg" />
           <p className="text-xs text-gray-500 mt-3">{t.scanQr}</p>
         </div>
       )}
 
       {/* Copyable fields */}
       <div className="space-y-3">
-        <CopyableField
-          label={t.activationCode}
-          value={esim.activationCode}
-          fieldKey={`activation-${index}`}
-          copiedField={copiedField}
-          onCopy={onCopy}
-          copyLabel={t.copy}
-          copiedLabel={t.copied}
-        />
-        <CopyableField
-          label={t.smdpAddress}
-          value={esim.smdpAddress}
-          fieldKey={`smdp-${index}`}
-          copiedField={copiedField}
-          onCopy={onCopy}
-          copyLabel={t.copy}
-          copiedLabel={t.copied}
-        />
-        <CopyableField
-          label={t.matchingId}
-          value={esim.matchingId}
-          fieldKey={`matching-${index}`}
-          copiedField={copiedField}
-          onCopy={onCopy}
-          copyLabel={t.copy}
-          copiedLabel={t.copied}
-        />
-        <CopyableField
-          label={t.iccid}
-          value={esim.iccid}
-          fieldKey={`iccid-${index}`}
-          copiedField={copiedField}
-          onCopy={onCopy}
-          copyLabel={t.copy}
-          copiedLabel={t.copied}
-        />
+        {esim.lpa && (
+          <CopyableField
+            label="LPA"
+            value={esim.lpa}
+            fieldKey={`lpa-${index}`}
+            copiedField={copiedField}
+            onCopy={onCopy}
+            copyLabel={t.copy}
+            copiedLabel={t.copied}
+          />
+        )}
+        {esim.activationCode && (
+          <CopyableField
+            label={t.activationCode}
+            value={esim.activationCode}
+            fieldKey={`activation-${index}`}
+            copiedField={copiedField}
+            onCopy={onCopy}
+            copyLabel={t.copy}
+            copiedLabel={t.copied}
+          />
+        )}
+        {esim.smdpAddress && (
+          <CopyableField
+            label={t.smdpAddress}
+            value={esim.smdpAddress}
+            fieldKey={`smdp-${index}`}
+            copiedField={copiedField}
+            onCopy={onCopy}
+            copyLabel={t.copy}
+            copiedLabel={t.copied}
+          />
+        )}
+        {esim.matchId && (
+          <CopyableField
+            label={t.matchingId}
+            value={esim.matchId}
+            fieldKey={`matching-${index}`}
+            copiedField={copiedField}
+            onCopy={onCopy}
+            copyLabel={t.copy}
+            copiedLabel={t.copied}
+          />
+        )}
+        {esim.iccid && (
+          <CopyableField
+            label={t.iccid}
+            value={esim.iccid}
+            fieldKey={`iccid-${index}`}
+            copiedField={copiedField}
+            onCopy={onCopy}
+            copyLabel={t.copy}
+            copiedLabel={t.copied}
+          />
+        )}
+        {esim.directAppleInstallationUrl && (
+          <CopyableField
+            label="Apple Install URL"
+            value={esim.directAppleInstallationUrl}
+            fieldKey={`apple-${index}`}
+            copiedField={copiedField}
+            onCopy={onCopy}
+            copyLabel={t.copy}
+            copiedLabel={t.copied}
+          />
+        )}
       </div>
     </div>
   );

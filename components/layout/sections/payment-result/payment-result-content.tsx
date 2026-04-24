@@ -5,8 +5,8 @@ import { useSearchParams } from "next/navigation";
 import { CheckCircle, Home, Mail, User, Clock } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { parsePaymentResponse, getResponseCodeMessage } from "@/lib/onepay";
-import { useOrderEsims } from "@/lib/hooks";
+import { getResponseCodeMessage } from "@/lib/onepay";
+import { useOrderByNumber } from "@/lib/hooks";
 import { OrderInfoCard } from "./order-info-card";
 import { EsimLoadingState } from "./esim-loading-state";
 import { EsimCard } from "./esim-card";
@@ -23,37 +23,30 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
   const t = paymentResultTranslations[lang];
 
   // Parse OnePay callback query params
-  const result = useMemo(() => {
-    const params: Record<string, string> = {};
-    searchParams.forEach((value, key) => {
-      params[key] = value;
-    });
-    return parsePaymentResponse(params);
-  }, [searchParams]);
+  const responseCode = searchParams.get("vpc_TxnResponseCode") || "";
+  const orderNumber = searchParams.get("vpc_MerchTxnRef") || "";
+  const transactionNo = searchParams.get("vpc_TransactionNo") || "";
+  const amount = parseInt(searchParams.get("vpc_Amount") || "0", 10);
+  const message = searchParams.get("vpc_Message") || "";
 
-  const responseMessage = getResponseCodeMessage(result.responseCode, lang);
+  const isSuccess = responseCode === "0";
+  const responseMessage = getResponseCodeMessage(responseCode, lang);
 
-  // Resolve order number from query or localStorage
-  const orderNumber = useMemo(() => {
-    if (result.orderId) return result.orderId;
-    try {
-      const stored = localStorage.getItem("saily_last_order");
-      if (stored) return JSON.parse(stored).orderNumber || "";
-    } catch {
-      /* ignore */
-    }
-    return "";
-  }, [result.orderId]);
-
-  // Poll for eSIM data (only when payment succeeded)
+  // Fetch order details (only when payment succeeded)
   const {
-    data: esimData,
-    isFetching: isPollingEsims,
+    data: orderData,
+    isFetching: isPolling,
     dataUpdatedAt,
-  } = useOrderEsims(orderNumber, result.status === "success");
+  } = useOrderByNumber(orderNumber, isSuccess);
 
-  const hasEsims = esimData?.esims && esimData.esims.length > 0;
-  const pollingFinished = !isPollingEsims && dataUpdatedAt > 0 && !hasEsims;
+  // Flatten all eSIMs from order items
+  const allEsims = useMemo(() => {
+    if (!orderData?.items) return [];
+    return orderData.items.flatMap((item) => item.esims || []);
+  }, [orderData]);
+
+  const hasEsims = allEsims.length > 0;
+  const pollingFinished = !isPolling && dataUpdatedAt > 0 && !hasEsims;
 
   const copyToClipboard = async (text: string, field: string) => {
     try {
@@ -66,15 +59,15 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
   };
 
   // ===== Non-success states =====
-  if (result.status !== "success") {
+  if (!isSuccess) {
     return (
       <PaymentFailedState
-        status={result.status}
+        status={responseCode === "" ? "pending" : "failed"}
         responseMessage={responseMessage}
-        orderId={result.orderId}
-        transactionNo={result.transactionNo}
-        amount={result.amount}
-        isValid={result.isValid}
+        orderId={orderNumber}
+        transactionNo={transactionNo}
+        amount={amount}
+        isValid={true}
         lang={lang}
       />
     );
@@ -101,22 +94,22 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
         {/* Order Info */}
         <OrderInfoCard
           orderNumber={orderNumber}
-          transactionNo={result.transactionNo}
-          amount={result.amount}
+          transactionNo={transactionNo}
+          amount={amount}
           t={t}
         />
 
         {/* eSIM Loading */}
-        {isPollingEsims && !hasEsims && <EsimLoadingState t={t} />}
+        {isPolling && !hasEsims && <EsimLoadingState t={t} />}
 
         {/* eSIM Cards */}
         {hasEsims &&
-          esimData!.esims.map((esim, idx) => (
+          allEsims.map((esim, idx) => (
             <EsimCard
               key={esim.iccid || idx}
               esim={esim}
               index={idx}
-              totalCount={esimData!.esims.length}
+              totalCount={allEsims.length}
               copiedField={copiedField}
               onCopy={copyToClipboard}
               t={t}
@@ -156,7 +149,7 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
             variant="outline"
             className="flex-1 h-12 rounded-full border-gray-200 text-gray-700 font-semibold hover:bg-gray-50 transition-colors cursor-pointer"
           >
-            <Link href={`/${lang}`}>
+            <Link href={`/${lang}/profile`}>
               <User className="w-4 h-4 mr-2" />
               {t.myProfile}
             </Link>

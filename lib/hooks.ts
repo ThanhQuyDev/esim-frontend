@@ -558,22 +558,47 @@ export interface CheckoutResponse {
 }
 
 export interface EsimInfo {
+  id: number;
+  orderItemId: number;
+  userId: number;
   iccid: string;
-  matchingId: string;
   smdpAddress: string;
   activationCode: string;
-  qrCodeUrl?: string;
-  planName?: string;
-  destination?: string;
-  dataGb?: number;
-  durationDays?: number;
-  status?: string;
+  lpa: string;
+  matchId: string;
+  qrcode: string;
+  directAppleInstallationUrl: string;
+  apnValue: string;
+  isRoaming: boolean;
+  status: string;
+  dataUsed: string;
+  dataTotal: string;
+  expiresAt: Record<string, unknown> | string | null;
+  activatedAt: Record<string, unknown> | string | null;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
 }
 
-export interface OrderEsimResponse {
+export interface OrderItem {
+  id: number;
+  planId: number;
+  orderRequestId: string;
+  status: string;
+  vndPrice: number;
+  quantity: number;
+  esims: EsimInfo[];
+}
+
+export interface OrderResponse {
+  id: number;
   orderNumber: string;
   status: string;
-  esims: EsimInfo[];
+  vndPrice: number;
+  paymentMethod: string;
+  couponCode: string;
+  items: OrderItem[];
+  createdAt: string;
 }
 
 // ===== Payment Checkout Mutation =====
@@ -597,24 +622,26 @@ export function useCheckout() {
   });
 }
 
-// ===== eSIM Polling Query =====
+// ===== Order by Number Query =====
 
-export function useOrderEsims(orderNumber: string, enabled: boolean) {
+export function useOrderByNumber(orderNumber: string, enabled: boolean) {
   return useQuery({
-    queryKey: ["order-esims", orderNumber],
-    queryFn: async ({ signal }): Promise<OrderEsimResponse> => {
+    queryKey: ["order-by-number", orderNumber],
+    queryFn: async ({ signal }): Promise<OrderResponse> => {
       const res = await fetch(
-        `${API_BASE_URL}/api/v1/orders/${orderNumber}/esims`,
+        `${API_BASE_URL}/api/v1/orders/my/by-number/${orderNumber}`,
         { signal }
       );
-      if (!res.ok) throw new Error(`Failed to fetch eSIMs: ${res.status}`);
+      if (!res.ok) throw new Error(`Failed to fetch order: ${res.status}`);
       return res.json();
     },
     enabled: enabled && !!orderNumber,
     refetchInterval: (query) => {
-      // Stop polling once we have eSIM data
+      // Stop polling once we have eSIM data in any item
       const data = query.state.data;
-      if (data?.esims && data.esims.length > 0) return false;
+      if (data?.items?.some((item) => item.esims && item.esims.length > 0)) {
+        return false;
+      }
       return 5000; // Poll every 5s
     },
     refetchIntervalInBackground: false,
