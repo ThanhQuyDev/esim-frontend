@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { SailyLogo } from "@/components/icons/saily-logo";
 import { DestinationSearch } from "@/components/layout/destination-search";
 import { DestinationDropdown } from "@/components/layout/destination-dropdown";
+import { useAuth } from "@/lib/auth";
 import {
   ChevronDown,
   Search,
@@ -16,6 +17,8 @@ import {
   Globe,
   UserPlus,
   Info,
+  User,
+  LogOut,
 } from "lucide-react";
 import type { Locale } from "@/lib/i18n-config";
 
@@ -477,6 +480,7 @@ export function Navbar({ lang, dict }: NavbarProps) {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [destinationsOpen, setDestinationsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { user, openAuthModal, logout } = useAuth();
 
   const menuData = getMenuData(lang);
 
@@ -644,6 +648,38 @@ export function Navbar({ lang, dict }: NavbarProps) {
                     <option value="vi">Tiếng Việt</option>
                   </select>
                 </div>
+              </div>
+
+              {/* Auth Button */}
+              <div className="hidden lg:flex">
+                {user ? (
+                  <div className="flex items-center gap-2">
+                    <Link
+                      href={`/${lang}/profile`}
+                      className="flex items-center gap-2 px-3 py-[7px] text-text-primary transition-colors rounded-lg cursor-pointer hover:bg-[rgba(0,0,0,0.06)]"
+                    >
+                      <User className="w-4 h-4" />
+                      <span className="body-sm-medium max-w-[120px] truncate">
+                        {user.firstName || user.email}
+                      </span>
+                    </Link>
+                    <button
+                      onClick={logout}
+                      className="flex items-center gap-1 px-3 py-[7px] text-text-tertiary transition-colors rounded-lg cursor-pointer hover:bg-[rgba(0,0,0,0.06)] hover:text-text-primary"
+                      aria-label={lang === "vi" ? "Đăng xuất" : "Sign out"}
+                    >
+                      <LogOut className="w-4 h-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={openAuthModal}
+                    className="flex items-center gap-2 px-5 py-[5.5px] text-text-primary-on-color bg-bg-dark hover:bg-bg-accent-hover border-md border-bg-dark rounded-full transition-colors body-sm-medium cursor-pointer"
+                  >
+                    <User className="w-3.5 h-3.5" />
+                    {lang === "vi" ? "Đăng nhập" : "Sign In"}
+                  </button>
+                )}
               </div>
             </div>
 
@@ -866,6 +902,7 @@ function MobileSidebar({
   onLangChange: (val: string) => void;
 }) {
   const [open, setOpen] = useState(false);
+  const { user, openAuthModal, logout } = useAuth();
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
@@ -955,20 +992,42 @@ function MobileSidebar({
 
             {/* Bottom CTAs */}
             <div className="p-4 space-y-3 border-t border-border-primary mt-auto">
-              <Link
-                href="#"
-                className="block w-full text-center px-5 py-3 bg-bg-accent text-text-primary-on-color body-md-medium rounded-full cursor-pointer hover:bg-bg-accent-hover transition-colors"
-                onClick={() => setOpen(false)}
-              >
-                {dict.downloadApp}
-              </Link>
-              <Link
-                href="#"
-                className="block w-full text-center px-5 py-3 border-md border-border-focus text-text-primary body-md-medium rounded-full cursor-pointer hover:bg-bg-primary transition-colors"
-                onClick={() => setOpen(false)}
-              >
-                {dict.getStarted}
-              </Link>
+              {user ? (
+                <>
+                  <Link
+                    href={`/${lang}/profile`}
+                    className="flex items-center justify-center gap-2 w-full px-5 py-3 bg-bg-accent text-text-primary-on-color body-md-medium rounded-full cursor-pointer hover:bg-bg-accent-hover transition-colors"
+                    onClick={() => setOpen(false)}
+                  >
+                    <User className="w-4 h-4" />
+                    {user.firstName || user.email}
+                  </Link>
+                  <button
+                    onClick={() => { logout(); setOpen(false); }}
+                    className="flex items-center justify-center gap-2 w-full px-5 py-3 border-md border-border-focus text-text-primary body-md-medium rounded-full cursor-pointer hover:bg-bg-primary transition-colors"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    {lang === "vi" ? "Đăng xuất" : "Sign Out"}
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => { openAuthModal(); setOpen(false); }}
+                    className="flex items-center justify-center gap-2 w-full px-5 py-3 bg-bg-accent text-text-primary-on-color body-md-medium rounded-full cursor-pointer hover:bg-bg-accent-hover transition-colors"
+                  >
+                    <User className="w-4 h-4" />
+                    {lang === "vi" ? "Đăng nhập" : "Sign In"}
+                  </button>
+                  <Link
+                    href="#"
+                    className="block w-full text-center px-5 py-3 border-md border-border-focus text-text-primary body-md-medium rounded-full cursor-pointer hover:bg-bg-primary transition-colors"
+                    onClick={() => setOpen(false)}
+                  >
+                    {dict.downloadApp}
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </Dialog.Content>

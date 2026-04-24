@@ -4,8 +4,7 @@ import { useRouter } from "next/navigation";
 import type { Plan } from "@/lib/api";
 import type { DestinationDict } from "./types";
 import { calcTotalPrice } from "./types";
-import { formatVnd, convertUsdToVnd } from "@/lib/hooks";
-import { addToCart } from "@/lib/cart";
+import { formatVnd, convertUsdToVnd, useCart } from "@/lib/hooks";
 
 interface BuyActionsProps {
   selectedPlan: Plan | null;
@@ -20,6 +19,7 @@ interface BuyActionsProps {
 
 export function BuyActions({ selectedPlan, days, quantity, rate, isFixed, dict, lang, destination }: BuyActionsProps) {
   const router = useRouter();
+  const { addItem } = useCart();
 
   let totalPrice = 0;
   if (selectedPlan) {
@@ -30,10 +30,10 @@ export function BuyActions({ selectedPlan, days, quantity, rate, isFixed, dict, 
     }
   }
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (!selectedPlan) return;
     const unitPrice = isFixed ? Number(selectedPlan.price) : calcTotalPrice(selectedPlan, days);
-    addToCart(
+    await addItem(
       {
         id: String(selectedPlan.id),
         name: selectedPlan.name || `eSIM ${destination || ""}`.trim(),

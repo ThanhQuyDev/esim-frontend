@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useCallback, useMemo } from "react";
 import type {
   Destination,
   Faq,
@@ -9,6 +10,16 @@ import type {
   PlansByDestinationResponse,
 } from "./api";
 import type { Locale } from "./i18n-config";
+import { useAuth } from "./auth";
+import {
+  getCart as getLocalCart,
+  addToCart as addToLocalCart,
+  updateQuantity as updateLocalQuantity,
+  removeFromCart as removeFromLocalCart,
+  clearCart as clearLocalCart,
+  type CartItem,
+  type Cart,
+} from "./cart";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.saily.example.com";
@@ -648,4 +659,214 @@ export function useOrderByNumber(orderNumber: string, enabled: boolean) {
     retry: 3,
     retryDelay: 2000,
   });
+}
+
+// ===== Cart API Types =====
+
+interface ApiCartItemPlan {
+  id: number;
+  name: string;
+  slug: string;
+  dataGb: string;
+  durationDays: number;
+  vndPrice: number;
+  currency: string;
+  destination?: {
+    id: number;
+    name: string;
+    slug: string;
+    countryCode: string;
+    flagUrl?: string;
+  };
+}
+
+interface ApiCartItem {
+  id: number;
+  userId: number;
+  planId: number;
+  plan: ApiCartItemPlan;
+  quantity: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// ===== Cart API Functions =====
+
+async function fetchApiCart(token: string): Promise<ApiCartItem[]> {
+  const res = await fetch(`${API_BASE_URL}/api/v1/carts`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error(`Failed to fetch cart: ${res.status}`);
+  return res.json();
+}
+
+async function addApiCartItem(
+  token: string,
+  planId: number,
+  quantity: number
+): Promise<ApiCartItem> {
+  const res = await fetch(`${API_BASE_URL}/api/v1/carts`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ planId, quantity }),
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.message || `Failed to add to cart: ${res.status}`);
+  }
+  return res.json();
+}
+
+async function updateApiCartItem(
+  token: string,
+  cartItemId: number,
+  quantity: number
+): Promise<ApiCartItem> {
+  const res = await fetch(`${API_BASE_URL}/api/v1/carts/${cartItemId}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ quantity }),
+  });
+  if (!res.ok) throw new Error(`Failed to update cart item: ${res.status}`);
+  return res.json();
+}
+
+async function deleteApiCartItem(
+  token: string,
+  cartItemId: number
+): Promise<void> {
+  const res = await fetch(`${API_BASE_URL}/api/v1/carts/${cartItemId}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error(`Failed to remove cart item: ${res.status}`);
+}
+
+// ===== useCart Hook =====
+// When logged in → uses API; when guest → uses localStorage
+
+export function useCart() {
+  const { user, token } = useAuth();
+  const queryClient = useQueryClient();
+  const isLoggedIn = !!user && !!token;
+
+  // Fetch cart from API (only when logged in)
+  const apiCartQuery = useQuery({
+    queryKey: ["cart", "api"],
+    queryFn: () => fetchApiCart(token!),
+    enabled: isLoggedIn,
+  });
+
+  // Convert API cart items to the CartItem shape used by the UI (memoized to prevent re-renders)
+  const apiCartItems: CartItem[] = useMemo(
+    () =>
+      (apiCartQuery.data || []).map((item) => ({
+        id: String(item.planId),
+        name: item.plan?.name || `Plan #${item.planId}`,
+        description: `${item.plan?.dataGb || "?"} GB / ${item.plan?.durationDays || "?"} days`,
+        price: 0,
+        quantity: item.quantity,
+        destination: item.plan?.destination?.name,
+        dataGb: Number(item.plan?.dataGb || 0),
+        durationDays: item.plan?.durationDays,
+        flagUrl: item.plan?.destination?.flagUrl,
+        vndPrice: item.plan?.vndPrice || 0,
+        _apiId: item.id,
+      })),
+    [apiCartQuery.data]
+  );
+
+  const invalidateApiCart = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ["cart", "api"] });
+  }, [queryClient]);
+
+  const addItem = useCallback(
+    async (item: Omit<CartItem, "quantity">, quantity = 1) => {
+      if (isLoggedIn) {
+        await addApiCartItem(token!, Number(item.id), quantity);
+        invalidateApiCart();
+      } else {
+        addToLocalCart(item, quantity);
+      }
+    },
+    [isLoggedIn, token, invalidateApiCart]
+  );
+
+  const updateItem = useCallback(
+    async (itemId: string, quantity: number) => {
+      if (isLoggedIn) {
+        // Find the API cart item id
+        const apiItem = (apiCartQuery.data || []).find(
+          (i) => String(i.planId) === itemId
+        );
+        if (apiItem) {
+          await updateApiCartItem(token!, apiItem.id, quantity);
+          invalidateApiCart();
+        }
+      } else {
+        updateLocalQuantity(itemId, quantity);
+      }
+    },
+    [isLoggedIn, token, apiCartQuery.data, invalidateApiCart]
+  );
+
+  const removeItem = useCallback(
+    async (itemId: string) => {
+      if (isLoggedIn) {
+        const apiItem = (apiCartQuery.data || []).find(
+          (i) => String(i.planId) === itemId
+        );
+        if (apiItem) {
+          await deleteApiCartItem(token!, apiItem.id);
+          invalidateApiCart();
+        }
+      } else {
+        removeFromLocalCart(itemId);
+      }
+    },
+    [isLoggedIn, token, apiCartQuery.data, invalidateApiCart]
+  );
+
+  const clear = useCallback(async () => {
+    if (isLoggedIn) {
+      // Delete all items
+      const items = apiCartQuery.data || [];
+      await Promise.all(items.map((i) => deleteApiCartItem(token!, i.id)));
+      invalidateApiCart();
+    } else {
+      clearLocalCart();
+    }
+  }, [isLoggedIn, token, apiCartQuery.data, invalidateApiCart]);
+
+  // For guest: get cart from localStorage
+  const getLocalCartData = useCallback((): Cart => {
+    return getLocalCart();
+  }, []);
+
+  return {
+    /** Whether cart data is from API */
+    isApiCart: isLoggedIn,
+    /** API cart items (raw) */
+    apiCartItems,
+    /** API cart loading state */
+    isLoading: isLoggedIn ? apiCartQuery.isLoading : false,
+    /** Get localStorage cart (for guest) */
+    getLocalCartData,
+    /** Add item to cart */
+    addItem,
+    /** Update item quantity */
+    updateItem,
+    /** Remove item from cart */
+    removeItem,
+    /** Clear all cart items */
+    clear,
+    /** Refresh API cart */
+    refetch: invalidateApiCart,
+  };
 }

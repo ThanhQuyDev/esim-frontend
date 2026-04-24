@@ -22,6 +22,7 @@ import {
   type Coupon,
 } from "@/lib/cart";
 import { useExchangeRate, useCheckout, convertUsdToVnd, formatVnd } from "@/lib/hooks";
+import { useAuth } from "@/lib/auth";
 import Link from "next/link";
 
 interface CheckoutPageContentProps {
@@ -58,6 +59,8 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
   const { data: usdToVndRate = 25_500 } = useExchangeRate();
   const checkout = useCheckout();
 
+  const { user, openAuthModal } = useAuth();
+
   useEffect(() => {
     try {
       const storedItems = localStorage.getItem("saily_checkout_items");
@@ -69,10 +72,30 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
     }
   }, []);
 
+  // Auto-fill email from logged-in user
+  useEffect(() => {
+    if (user?.email && !email) {
+      setEmail(user.email);
+    }
+  }, [user]);
+
   const subtotal = getSubtotal(items);
   const discount = getDiscount(subtotal, coupon);
   const total = getTotal(items, coupon);
   const formatPrice = (usd: number) => formatVnd(convertUsdToVnd(usd, usdToVndRate));
+
+  // VND-aware subtotal/total for checkout display
+  const hasVndPricing = items.some((i) => i.vndPrice);
+  const vndSubtotal = items.reduce((sum, i) => {
+    if (i.vndPrice) return sum + i.vndPrice * i.quantity;
+    return sum + convertUsdToVnd(i.price * i.quantity, usdToVndRate);
+  }, 0);
+  const checkoutDisplaySubtotal = hasVndPricing
+    ? `${vndSubtotal.toLocaleString("vi-VN")}₫`
+    : formatPrice(subtotal);
+  const checkoutDisplayTotal = hasVndPricing
+    ? `${vndSubtotal.toLocaleString("vi-VN")}₫`
+    : formatPrice(total);
 
   const validate = (): boolean => {
     const newErrors: Record<string, string> = {};
@@ -83,9 +106,8 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
       newErrors.email = dict.emailInvalid || "Invalid email address";
     }
 
-    if (!phone.trim()) {
-      newErrors.phone = dict.phoneRequired || "Phone number is required";
-    } else if (!/^[0-9+\-\s()]{8,15}$/.test(phone)) {
+    // Phone is optional — only validate format if provided
+    if (phone.trim() && !/^[0-9+\-\s()]{8,15}$/.test(phone)) {
       newErrors.phone = dict.phoneInvalid || "Invalid phone number";
     }
 
@@ -109,6 +131,12 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
   };
 
   const handleSubmit = () => {
+    // If user is not logged in, show auth modal
+    if (!user) {
+      openAuthModal();
+      return;
+    }
+
     if (!validate()) return;
 
     const checkoutItems = items.map((item) => ({
@@ -254,7 +282,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
             {/* Phone */}
             <div className="space-y-1.5">
               <label htmlFor="phone" className="text-sm font-medium text-text-primary">
-                {dict.phone || "Phone"} <span className="text-red-500">*</span>
+                {dict.phone || "Phone"}
               </label>
               <div className="relative">
                 <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-tertiary" />
@@ -494,24 +522,31 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
 
           {/* Items */}
           <div className="space-y-3 max-h-60 overflow-y-auto">
-            {items.map((item) => (
-              <div key={item.id} className="flex justify-between text-sm">
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium text-text-primary truncate">{item.name}</p>
-                  <p className="text-xs text-text-tertiary">x{item.quantity}</p>
+            {items.map((item) => {
+              const itemPrice = item.vndPrice
+                ? `${(item.vndPrice * item.quantity).toLocaleString("vi-VN")}₫`
+                : formatPrice(item.price * item.quantity);
+              return (
+                <div key={item.id} className="flex justify-between text-sm">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-text-primary truncate">
+                      {item.destination ? `${item.destination} — ` : ""}{item.name}
+                    </p>
+                    <p className="text-xs text-text-tertiary">x{item.quantity}</p>
+                  </div>
+                  <span className="font-medium text-text-primary ml-4 flex-shrink-0">
+                    {itemPrice}
+                  </span>
                 </div>
-                <span className="font-medium text-text-primary ml-4 flex-shrink-0">
-                  {formatPrice(item.price * item.quantity)}
-                </span>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           <div className="border-t border-border-primary pt-4 space-y-3">
             {/* Subtotal */}
             <div className="flex justify-between text-sm">
               <span className="text-text-secondary">{dict.subtotal || "Subtotal"}</span>
-              <span className="font-medium text-text-primary">{formatPrice(subtotal)}</span>
+              <span className="font-medium text-text-primary">{checkoutDisplaySubtotal}</span>
             </div>
 
             {/* Discount */}
@@ -529,7 +564,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
               <span className="text-base font-bold text-text-primary">
                 {dict.total || "Total"}
               </span>
-              <span className="text-xl font-bold text-text-primary">{formatPrice(total)}</span>
+              <span className="text-xl font-bold text-text-primary">{checkoutDisplayTotal}</span>
             </div>
           </div>
 

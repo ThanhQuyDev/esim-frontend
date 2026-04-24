@@ -21,7 +21,7 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        sans: ["var(--font-montserrat)", "Montserrat", "system-ui", "sans-serif"],
+        sans: ["var(--font-sf-pro-display)", "SF Pro Display", "system-ui", "sans-serif"],
       },
       textColor: {
         primary: "var(--color-primary)",

@@ -1,13 +1,21 @@
 import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { QueryProvider } from "@/lib/query-provider";
+import { AuthProvider } from "@/lib/auth";
 
-const montserrat = Montserrat({
-  subsets: ["latin", "vietnamese"],
-  weight: ["300", "400", "500", "600", "700", "800"],
-  variable: "--font-montserrat",
+const sfProDisplay = localFont({
+  src: [
+    { path: "../public/fonts/SF-Pro-Display/SF-Pro-Display-Light.otf", weight: "300", style: "normal" },
+    { path: "../public/fonts/SF-Pro-Display/SF-Pro-Display-Regular.otf", weight: "400", style: "normal" },
+    { path: "../public/fonts/SF-Pro-Display/SF-Pro-Display-Medium.otf", weight: "500", style: "normal" },
+    { path: "../public/fonts/SF-Pro-Display/SF-Pro-Display-Semibold.otf", weight: "600", style: "normal" },
+    { path: "../public/fonts/SF-Pro-Display/SF-Pro-Display-Bold.otf", weight: "700", style: "normal" },
+    { path: "../public/fonts/SF-Pro-Display/SF-Pro-Display-Heavy.otf", weight: "800", style: "normal" },
+  ],
+  variable: "--font-sf-pro-display",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -33,11 +41,13 @@ export default function RootLayout({
       <body
         className={cn(
           "min-h-screen bg-white antialiased overflow-x-hidden",
-          montserrat.variable,
-          montserrat.className
+          sfProDisplay.variable,
+          sfProDisplay.className
         )}
       >
-        <QueryProvider>{children}</QueryProvider>
+        <QueryProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </QueryProvider>
       </body>
     </html>
   );

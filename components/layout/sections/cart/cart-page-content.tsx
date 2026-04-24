@@ -3,9 +3,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Minus, Plus, Trash2, Tag, ShoppingCart, ArrowRight, Ticket } from "lucide-react";
 import {
-  getCart,
-  updateQuantity,
-  removeFromCart,
   applyCoupon,
   removeCoupon,
   getSavedCoupons,
@@ -16,7 +13,7 @@ import {
   type Cart,
   type Coupon,
 } from "@/lib/cart";
-import { useExchangeRate, convertUsdToVnd, formatVnd } from "@/lib/hooks";
+import { useExchangeRate, convertUsdToVnd, formatVnd, useCart } from "@/lib/hooks";
 import Link from "next/link";
 
 interface CartPageContentProps {
@@ -31,20 +28,31 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
   const [couponInput, setCouponInput] = useState("");
   const [couponError, setCouponError] = useState("");
   const { data: usdToVndRate = 25_500 } = useExchangeRate();
+  const { isApiCart, apiCartItems, getLocalCartData, updateItem, removeItem, isLoading: cartLoading } = useCart();
 
-  const refreshCart = useCallback(() => {
-    const c = getCart();
-    setCart(c);
-    // Auto-select all items
-    setSelectedIds(new Set(c.items.map((i) => i.id)));
-  }, []);
-
+  // Sync cart items from API or localStorage
   useEffect(() => {
-    refreshCart();
-    const handler = () => refreshCart();
+    if (isApiCart) {
+      setCart((prev) => ({ items: apiCartItems, appliedCoupon: prev.appliedCoupon }));
+      // Only auto-select all on first load (when selectedIds is empty)
+      setSelectedIds((prev) => prev.size === 0 ? new Set(apiCartItems.map((i) => i.id)) : prev);
+    } else {
+      const c = getLocalCartData();
+      setCart(c);
+      setSelectedIds((prev) => prev.size === 0 ? new Set(c.items.map((i) => i.id)) : prev);
+    }
+  }, [isApiCart, apiCartItems, getLocalCartData]);
+
+  // Listen for localStorage cart-updated events (guest mode)
+  useEffect(() => {
+    if (isApiCart) return;
+    const handler = () => {
+      const c = getLocalCartData();
+      setCart(c);
+    };
     window.addEventListener("cart-updated", handler);
     return () => window.removeEventListener("cart-updated", handler);
-  }, [refreshCart]);
+  }, [isApiCart, getLocalCartData]);
 
   const selectedItems = cart.items.filter((i) => selectedIds.has(i.id));
   const subtotal = getSubtotal(selectedItems);
@@ -81,17 +89,24 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
     }
   };
 
-  const handleQuantity = (id: string, qty: number) => {
-    setCart(updateQuantity(id, qty));
+  const handleQuantity = async (id: string, qty: number) => {
+    await updateItem(id, qty);
+    if (!isApiCart) {
+      // For guest, re-read localStorage
+      setCart(getLocalCartData());
+    }
   };
 
-  const handleRemove = (id: string) => {
-    setCart(removeFromCart(id));
+  const handleRemove = async (id: string) => {
+    await removeItem(id);
     setSelectedIds((prev) => {
       const next = new Set(prev);
       next.delete(id);
       return next;
     });
+    if (!isApiCart) {
+      setCart(getLocalCartData());
+    }
   };
 
   const handleApplyCoupon = (coupon: Coupon) => {
@@ -125,6 +140,21 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
   };
 
   const formatPrice = (usd: number) => formatVnd(convertUsdToVnd(usd, usdToVndRate));
+
+  // For API cart items, compute VND totals directly from vndPrice
+  const getVndSubtotal = (items: CartItem[]): number => {
+    return items.reduce((sum, item) => {
+      if (item.vndPrice) return sum + item.vndPrice * item.quantity;
+      return sum + convertUsdToVnd(item.price * item.quantity, usdToVndRate);
+    }, 0);
+  };
+  const hasVndPricing = selectedItems.some((i) => i.vndPrice);
+  const displaySubtotal = hasVndPricing
+    ? `${getVndSubtotal(selectedItems).toLocaleString("vi-VN")}₫`
+    : formatPrice(subtotal);
+  const displayTotal = hasVndPricing
+    ? `${getVndSubtotal(selectedItems).toLocaleString("vi-VN")}₫`
+    : formatPrice(total);
 
   if (cart.items.length === 0) {
     return (
@@ -197,7 +227,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
           {/* Subtotal */}
           <div className="flex justify-between text-sm">
             <span className="text-text-secondary">{dict.subtotal || "Subtotal"}</span>
-            <span className="font-medium text-text-primary">{formatPrice(subtotal)}</span>
+            <span className="font-medium text-text-primary">{displaySubtotal}</span>
           </div>
 
           {/* Coupon Section */}
@@ -306,7 +336,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
             <span className="text-base font-bold text-text-primary">
               {dict.total || "Total"}
             </span>
-            <span className="text-xl font-bold text-text-primary">{formatPrice(total)}</span>
+            <span className="text-xl font-bold text-text-primary">{displayTotal}</span>
           </div>
 
           {/* Checkout Button */}
@@ -347,6 +377,11 @@ function CartItemRow({
   formatPrice: (usd: number) => string;
   dict: Record<string, any>;
 }) {
+  // Use vndPrice directly if available (API cart), otherwise convert from USD
+  const displayPrice = item.vndPrice
+    ? `${(item.vndPrice * item.quantity).toLocaleString("vi-VN")}₫`
+    : formatPrice(item.price * item.quantity);
+
   return (
     <div
       className={`flex items-start gap-4 rounded-2xl border p-4 transition-colors ${
@@ -363,12 +398,24 @@ function CartItemRow({
         className="mt-1 h-5 w-5 rounded border-border-secondary accent-[var(--bg-accent)] cursor-pointer flex-shrink-0"
       />
 
+      {/* Flag */}
+      {item.flagUrl && (
+        <div className="flex-shrink-0 mt-0.5">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={item.flagUrl}
+            alt={item.destination || ""}
+            className="w-8 h-8 rounded-full object-cover border border-border-primary"
+          />
+        </div>
+      )}
+
       {/* Product Info */}
       <div className="flex-1 min-w-0">
         <h4 className="text-sm font-semibold text-text-primary truncate">{item.name}</h4>
         <p className="text-xs text-text-tertiary mt-1 line-clamp-2">{item.description}</p>
         {item.destination && (
-          <span className="inline-block mt-2 text-xs bg-bg-secondary rounded-full px-3 py-1 text-text-secondary">
+          <span className="inline-flex items-center gap-1 mt-2 text-xs bg-bg-secondary rounded-full px-3 py-1 text-text-secondary">
             {item.destination}
           </span>
         )}
@@ -387,7 +434,7 @@ function CartItemRow({
       {/* Price & Quantity */}
       <div className="flex flex-col items-end gap-3 flex-shrink-0">
         <span className="text-sm font-bold text-text-primary">
-          {formatPrice(item.price * item.quantity)}
+          {displayPrice}
         </span>
         <div className="flex items-center gap-1 rounded-xl border border-border-primary">
           <button

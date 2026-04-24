@@ -12,6 +12,9 @@ export interface CartItem {
   destination?: string;
   dataGb?: number;
   durationDays?: number;
+  flagUrl?: string;
+  vndPrice?: number; // VND price from API
+  _apiId?: number; // API cart item id (for update/delete)
 }
 
 export interface Coupon {
