@@ -136,6 +136,32 @@ export function calcTotalRetailPrice(plan: Plan, days: number): number {
   return Number(plan.retailPrice);
 }
 
+/**
+ * Calculate the total VND price using the plan's vndPrice field directly.
+ */
+export function calcTotalVndPrice(plan: Plan, days: number): number {
+  if (plan.isAbleMultidate) {
+    return Number(plan.vndPrice) * days;
+  }
+  return Number(plan.vndPrice);
+}
+
+/**
+ * Calculate the total VND retail price.
+ * API only provides vndPrice (not vndRetailPrice), so we derive it proportionally.
+ */
+export function calcTotalVndRetailPrice(plan: Plan, days: number): number {
+  const price = Number(plan.price);
+  const retailPrice = Number(plan.retailPrice);
+  const vndPrice = Number(plan.vndPrice);
+  // Derive VND retail from the USD ratio
+  const vndRetail = price > 0 ? Math.round((vndPrice * retailPrice) / price / 1000) * 1000 : 0;
+  if (plan.isAbleMultidate) {
+    return vndRetail * days;
+  }
+  return vndRetail;
+}
+
 /** Get unique dataGb values from a list of plans, sorted ascending */
 export function getUniqueDataGb(plans: Plan[]): number[] {
   const set = new Set(plans.map((p) => p.dataGb));

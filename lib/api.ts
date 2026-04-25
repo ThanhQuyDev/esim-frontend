@@ -124,6 +124,7 @@ export interface Plan {
   createdAt: string;
   updatedAt: string;
   deletedAt?: string;
+  vndPrice: number;
 }
 
 /** Response shape from /api/v1/plans/by-destination/{slug} */

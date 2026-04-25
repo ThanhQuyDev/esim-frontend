@@ -522,12 +522,17 @@ export const orderQueryKeys = {
 
 export function useCreateOrder() {
   const queryClient = useQueryClient();
+  const { token } = useAuth();
 
   return useMutation({
     mutationFn: async (input: CreateOrderInput) => {
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
       const res = await fetch(`${API_BASE_URL}/api/v1/orders`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify(input),
       });
       if (!res.ok) throw new Error("Failed to create order");
@@ -540,11 +545,17 @@ export function useCreateOrder() {
 }
 
 export function useCreateOrderItem() {
+  const { token } = useAuth();
+
   return useMutation({
     mutationFn: async (input: CreateOrderItemInput) => {
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
       const res = await fetch(`${API_BASE_URL}/api/v1/order-items`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify(input),
       });
       if (!res.ok) throw new Error("Failed to create order item");
@@ -645,17 +656,22 @@ export function useCheckout() {
 // ===== Order by Number Query =====
 
 export function useOrderByNumber(orderNumber: string, enabled: boolean) {
+  const { token } = useAuth();
   return useQuery({
     queryKey: ["order-by-number", orderNumber],
     queryFn: async ({ signal }): Promise<OrderResponse> => {
+      const headers: Record<string, string> = {};
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
       const res = await fetch(
         `${API_BASE_URL}/api/v1/orders/my/by-number/${orderNumber}`,
-        { signal }
+        { headers, signal }
       );
       if (!res.ok) throw new Error(`Failed to fetch order: ${res.status}`);
       return res.json();
     },
-    enabled: enabled && !!orderNumber,
+    enabled: enabled && !!orderNumber && !!token,
     refetchInterval: (query) => {
       // Stop polling once we have eSIM data in any item
       const data = query.state.data;
@@ -878,4 +894,88 @@ export function useCart() {
     /** Refresh API cart */
     refetch: invalidateApiCart,
   };
+}
+
+// ===== My Orders =====
+
+export interface MyOrder {
+  id: number;
+  orderNumber: string;
+  status: string;
+  totalAmount: number;
+  currency: string;
+  vndPrice: number;
+  paymentMethod: string | null;
+  couponCode: string | null;
+  discountAmount: number;
+  createdAt: string;
+}
+
+interface MyOrdersResponse {
+  data: MyOrder[];
+  hasNextPage: boolean;
+}
+
+export function useMyOrders() {
+  const { token } = useAuth();
+  return useQuery({
+    queryKey: ["my-orders", token],
+    enabled: !!token,
+    queryFn: async ({ signal }): Promise<MyOrder[]> => {
+      const res = await fetch(`${API_BASE_URL}/api/v1/orders/my/list`, {
+        headers: { Authorization: `Bearer ${token}` },
+        signal,
+      });
+      if (!res.ok) throw new Error(`Failed to fetch orders: ${res.status}`);
+      const json: MyOrdersResponse = await res.json();
+      return json.data;
+    },
+  });
+}
+
+// ===== My eSIMs =====
+
+export interface MyEsim {
+  id: number;
+  orderItemId: number;
+  userId: number;
+  iccid: string;
+  smdpAddress: string;
+  activationCode: string;
+  lpa: string;
+  matchId: string;
+  qrcode: string;
+  directAppleInstallationUrl: string;
+  apnValue: string;
+  isRoaming: boolean;
+  status: string;
+  dataUsed: string;
+  dataTotal: string;
+  expiresAt: string | null;
+  activatedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+}
+
+interface MyEsimsResponse {
+  data: MyEsim[];
+  hasNextPage: boolean;
+}
+
+export function useMyEsims() {
+  const { token } = useAuth();
+  return useQuery({
+    queryKey: ["my-esims", token],
+    enabled: !!token,
+    queryFn: async ({ signal }): Promise<MyEsim[]> => {
+      const res = await fetch(`${API_BASE_URL}/api/v1/esims/my/list`, {
+        headers: { Authorization: `Bearer ${token}` },
+        signal,
+      });
+      if (!res.ok) throw new Error(`Failed to fetch eSIMs: ${res.status}`);
+      const json: MyEsimsResponse = await res.json();
+      return json.data;
+    },
+  });
 }

@@ -2,14 +2,13 @@
 
 import type { Plan } from "@/lib/api";
 import type { DestinationDict } from "./types";
-import { calcTotalPrice, calcTotalRetailPrice } from "./types";
-import { formatVnd, convertUsdToVnd } from "@/lib/hooks";
+import { calcTotalVndPrice, calcTotalVndRetailPrice } from "./types";
+import { formatVnd } from "@/lib/hooks";
 
 interface PriceDisplayProps {
   selectedPlan: Plan | null;
   days: number;
   quantity: number;
-  rate: number;
   dict: DestinationDict;
   isFixed: boolean;
   planLabel: string;
@@ -19,7 +18,6 @@ export function PriceDisplay({
   selectedPlan,
   days,
   quantity,
-  rate,
   dict,
   isFixed,
   planLabel,
@@ -35,22 +33,23 @@ export function PriceDisplay({
     );
   }
 
-  // Calculate total USD price based on plan type
-  let totalUsd: number;
-  let totalRetailUsd: number;
+  // Calculate total VND price directly from plan.vndPrice
+  let totalPrice: number;
+  let totalRetail: number;
 
   if (isFixed) {
-    // dataPlans & dailyUnlimited: price is for the whole package
-    totalUsd = Number(selectedPlan.price) * quantity;
-    totalRetailUsd = Number(selectedPlan.retailPrice) * quantity;
+    // dataPlans & dailyUnlimited: vndPrice is for the whole package
+    totalPrice = Number(selectedPlan.vndPrice) * quantity;
+    const price = Number(selectedPlan.price);
+    const retailPrice = Number(selectedPlan.retailPrice);
+    const vndRetail = price > 0 ? Math.round((Number(selectedPlan.vndPrice) * retailPrice) / price / 1000) * 1000 : 0;
+    totalRetail = vndRetail * quantity;
   } else {
-    // slowUnlimited & fastUnlimited: use calcTotalPrice (handles isAbleMultidate)
-    totalUsd = calcTotalPrice(selectedPlan, days) * quantity;
-    totalRetailUsd = calcTotalRetailPrice(selectedPlan, days) * quantity;
+    // slowUnlimited & fastUnlimited: use calcTotalVndPrice (handles isAbleMultidate)
+    totalPrice = calcTotalVndPrice(selectedPlan, days) * quantity;
+    totalRetail = calcTotalVndRetailPrice(selectedPlan, days) * quantity;
   }
 
-  const totalPrice = convertUsdToVnd(totalUsd, rate);
-  const totalRetail = convertUsdToVnd(totalRetailUsd, rate);
   const savePercent = totalRetail > 0 ? Math.round(((totalRetail - totalPrice) / totalRetail) * 100) : 0;
 
   return (

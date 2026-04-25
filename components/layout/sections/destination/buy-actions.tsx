@@ -3,42 +3,43 @@
 import { useRouter } from "next/navigation";
 import type { Plan } from "@/lib/api";
 import type { DestinationDict } from "./types";
-import { calcTotalPrice } from "./types";
-import { formatVnd, convertUsdToVnd, useCart } from "@/lib/hooks";
+import { calcTotalPrice, calcTotalVndPrice } from "./types";
+import { formatVnd, useCart } from "@/lib/hooks";
 
 interface BuyActionsProps {
   selectedPlan: Plan | null;
   days: number;
   quantity: number;
-  rate: number;
   isFixed: boolean;
   dict: DestinationDict;
   lang: string;
   destination?: string;
 }
 
-export function BuyActions({ selectedPlan, days, quantity, rate, isFixed, dict, lang, destination }: BuyActionsProps) {
+export function BuyActions({ selectedPlan, days, quantity, isFixed, dict, lang, destination }: BuyActionsProps) {
   const router = useRouter();
   const { addItem } = useCart();
 
   let totalPrice = 0;
   if (selectedPlan) {
     if (isFixed) {
-      totalPrice = convertUsdToVnd(Number(selectedPlan.price) * quantity, rate);
+      totalPrice = Number(selectedPlan.vndPrice) * quantity;
     } else {
-      totalPrice = convertUsdToVnd(calcTotalPrice(selectedPlan, days) * quantity, rate);
+      totalPrice = calcTotalVndPrice(selectedPlan, days) * quantity;
     }
   }
 
   const handleAddToCart = async () => {
     if (!selectedPlan) return;
     const unitPrice = isFixed ? Number(selectedPlan.price) : calcTotalPrice(selectedPlan, days);
+    const unitVndPrice = isFixed ? Number(selectedPlan.vndPrice) : calcTotalVndPrice(selectedPlan, days);
     await addItem(
       {
         id: String(selectedPlan.id),
         name: selectedPlan.name || `eSIM ${destination || ""}`.trim(),
         description: `${selectedPlan.dataGb} GB / ${isFixed ? selectedPlan.durationDays : days} days`,
         price: unitPrice,
+        vndPrice: unitVndPrice,
         destination: destination,
         dataGb: Number(selectedPlan.dataGb),
         durationDays: isFixed ? selectedPlan.durationDays : days,

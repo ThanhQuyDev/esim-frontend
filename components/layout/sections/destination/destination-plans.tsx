@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import type { Plan, PlansByDestinationResponse } from "@/lib/api";
-import { usePlansBySlug, usePlansByRegionSlug, useExchangeRate } from "@/lib/hooks";
+import { usePlansBySlug, usePlansByRegionSlug } from "@/lib/hooks";
 import type { DestinationPlansProps } from "./types";
 import { ProductHero } from "./product-hero";
 import { ProductInfo } from "./product-info";
@@ -23,7 +23,6 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
   const destQuery = usePlansBySlug(planSource === "destination" ? slug : "", lang);
   const regionQuery = usePlansByRegionSlug(planSource === "region" ? slug : "", lang);
   const { data: plans = EMPTY_PLANS, isLoading } = planSource === "region" ? regionQuery : destQuery;
-  const { data: rate = 25500 } = useExchangeRate();
 
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [days, setDays] = useState(7);
@@ -121,7 +120,6 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
             selectedPlan={selectedPlan}
             days={days}
             quantity={quantity}
-            rate={rate}
             dict={dict}
             isFixed={isFixed}
             planLabel={planLabel}
@@ -160,7 +158,6 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
             selectedPlan={selectedPlan}
             days={days}
             quantity={quantity}
-            rate={rate}
             isFixed={isFixed}
             dict={dict}
             lang={lang}

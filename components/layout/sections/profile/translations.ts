@@ -1,13 +1,21 @@
 export interface ProfileDict {
   pageTitle: string;
-  personalInfo: string;
-  editProfile: string;
-  saveChanges: string;
-  cancel: string;
-  fullName: string;
+  tabProfile: string;
+  tabSimManagement: string;
   email: string;
-  phone: string;
-  address: string;
+  myOrders: string;
+  noOrders: string;
+  orderNumber: string;
+  status: string;
+  totalAmount: string;
+  date: string;
+  pending: string;
+  paid: string;
+  completed: string;
+  cancelled: string;
+  failed: string;
+  viewDetail: string;
+  // SIM management
   myEsims: string;
   noEsims: string;
   esimDetail: string;
@@ -17,7 +25,6 @@ export interface ProfileDict {
   smdpAddress: string;
   matchingId: string;
   activationCode: string;
-  status: string;
   planName: string;
   destination: string;
   dataRemaining: string;
@@ -28,28 +35,35 @@ export interface ProfileDict {
   remaining: string;
   active: string;
   expired: string;
-  pending: string;
   copy: string;
   copied: string;
-  viewDetail: string;
   hideDetail: string;
   goShopping: string;
   of: string;
   days: string;
   gb: string;
+  topup: string;
+  simComingSoon: string;
 }
 
 export const profileTranslations: Record<"en" | "vi", ProfileDict> = {
   en: {
-    pageTitle: "My Profile",
-    personalInfo: "Personal Information",
-    editProfile: "Edit",
-    saveChanges: "Save Changes",
-    cancel: "Cancel",
-    fullName: "Full Name",
+    pageTitle: "My Account",
+    tabProfile: "Profile",
+    tabSimManagement: "SIM Management",
     email: "Email",
-    phone: "Phone",
-    address: "Address",
+    myOrders: "Order History",
+    noOrders: "No orders yet.",
+    orderNumber: "Order",
+    status: "Status",
+    totalAmount: "Total",
+    date: "Date",
+    pending: "Pending",
+    paid: "Paid",
+    completed: "Completed",
+    cancelled: "Cancelled",
+    failed: "Failed",
+    viewDetail: "View Detail",
     myEsims: "My eSIMs",
     noEsims: "You don't have any eSIMs yet.",
     esimDetail: "eSIM Detail",
@@ -59,7 +73,6 @@ export const profileTranslations: Record<"en" | "vi", ProfileDict> = {
     smdpAddress: "SM-DP+ Address",
     matchingId: "Matching ID",
     activationCode: "Activation Code",
-    status: "Status",
     planName: "Plan",
     destination: "Destination",
     dataRemaining: "Data Remaining",
@@ -70,26 +83,33 @@ export const profileTranslations: Record<"en" | "vi", ProfileDict> = {
     remaining: "Remaining",
     active: "Active",
     expired: "Expired",
-    pending: "Pending",
     copy: "Copy",
     copied: "Copied!",
-    viewDetail: "View Detail",
     hideDetail: "Hide Detail",
     goShopping: "Browse eSIM Plans",
     of: "of",
     days: "days",
     gb: "GB",
+    topup: "Top Up",
+    simComingSoon: "SIM management will be available soon. Your eSIM details will appear here after purchase.",
   },
   vi: {
-    pageTitle: "Hồ Sơ Của Tôi",
-    personalInfo: "Thông Tin Cá Nhân",
-    editProfile: "Chỉnh sửa",
-    saveChanges: "Lưu thay đổi",
-    cancel: "Hủy",
-    fullName: "Họ và tên",
+    pageTitle: "Tài Khoản",
+    tabProfile: "Hồ sơ",
+    tabSimManagement: "Quản lý SIM",
     email: "Email",
-    phone: "Số điện thoại",
-    address: "Địa chỉ",
+    myOrders: "Lịch Sử Đơn Hàng",
+    noOrders: "Chưa có đơn hàng nào.",
+    orderNumber: "Đơn hàng",
+    status: "Trạng thái",
+    totalAmount: "Tổng tiền",
+    date: "Ngày",
+    pending: "Chờ thanh toán",
+    paid: "Đã thanh toán",
+    completed: "Hoàn thành",
+    cancelled: "Đã hủy",
+    failed: "Thất bại",
+    viewDetail: "Xem chi tiết",
     myEsims: "eSIM Của Tôi",
     noEsims: "Bạn chưa có eSIM nào.",
     esimDetail: "Chi Tiết eSIM",
@@ -99,7 +119,6 @@ export const profileTranslations: Record<"en" | "vi", ProfileDict> = {
     smdpAddress: "Địa chỉ SM-DP+",
     matchingId: "Matching ID",
     activationCode: "Mã kích hoạt",
-    status: "Trạng thái",
     planName: "Gói cước",
     destination: "Điểm đến",
     dataRemaining: "Dữ liệu còn lại",
@@ -110,14 +129,14 @@ export const profileTranslations: Record<"en" | "vi", ProfileDict> = {
     remaining: "Còn lại",
     active: "Đang hoạt động",
     expired: "Hết hạn",
-    pending: "Chờ kích hoạt",
     copy: "Sao chép",
     copied: "Đã sao chép!",
-    viewDetail: "Xem chi tiết",
     hideDetail: "Ẩn chi tiết",
     goShopping: "Mua eSIM",
     of: "trên",
     days: "ngày",
     gb: "GB",
+    topup: "Nạp thêm",
+    simComingSoon: "Quản lý SIM sẽ sớm khả dụng. Chi tiết eSIM sẽ hiển thị ở đây sau khi mua.",
   },
 };

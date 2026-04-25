@@ -211,7 +211,7 @@ export function AuthModal({ lang }: AuthModalProps) {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 py-3 bg-[var(--bg-accent)] text-white font-medium rounded-xl transition-colors hover:opacity-90 disabled:opacity-60 cursor-pointer"
+              className="w-full flex items-center justify-center gap-2 py-3 bg-[var(--bg-accent)] text-primary font-medium rounded-xl transition-colors hover:opacity-90 disabled:opacity-60 cursor-pointer"
             >
               {loading && <Loader2 className="w-4 h-4 animate-spin" />}
               {t(lang, "Gửi mã OTP", "Send OTP")}
@@ -279,7 +279,7 @@ export function AuthModal({ lang }: AuthModalProps) {
                 type="button"
                 onClick={handleResend}
                 disabled={loading}
-                className="text-[var(--bg-accent)] font-medium hover:underline cursor-pointer disabled:opacity-60"
+                className="text-secondary font-medium hover:underline cursor-pointer disabled:opacity-60"
               >
                 {t(lang, "Gửi lại", "Resend")}
               </button>

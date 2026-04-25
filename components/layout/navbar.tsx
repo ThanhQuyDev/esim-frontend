@@ -10,6 +10,7 @@ import { SailyLogo } from "@/components/icons/saily-logo";
 import { DestinationSearch } from "@/components/layout/destination-search";
 import { DestinationDropdown } from "@/components/layout/destination-dropdown";
 import { useAuth } from "@/lib/auth";
+import { useCart } from "@/lib/hooks";
 import {
   ChevronDown,
   Search,
@@ -19,6 +20,7 @@ import {
   Info,
   User,
   LogOut,
+  ShoppingCart,
 } from "lucide-react";
 import type { Locale } from "@/lib/i18n-config";
 
@@ -481,6 +483,10 @@ export function Navbar({ lang, dict }: NavbarProps) {
   const [destinationsOpen, setDestinationsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { user, openAuthModal, logout } = useAuth();
+  const { apiCartItems, isApiCart, getLocalCartData } = useCart();
+  const cartCount = isApiCart
+    ? apiCartItems.length
+    : (typeof window !== "undefined" ? getLocalCartData().items.length : 0);
 
   const menuData = getMenuData(lang);
 
@@ -630,6 +636,20 @@ export function Navbar({ lang, dict }: NavbarProps) {
                 {lang === "vi" ? "Điểm đến" : "Destinations"}
               </button>
 
+              {/* Cart Button */}
+              <Link
+                href={`/${lang}/cart`}
+                className="hidden lg:flex relative items-center px-3 py-[7px] text-text-primary transition-colors rounded-lg cursor-pointer hover:bg-[rgba(0,0,0,0.06)]"
+                aria-label={lang === "vi" ? "Giỏ hàng" : "Cart"}
+              >
+                <ShoppingCart className="w-4 h-4" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold text-white bg-red-500 rounded-full">
+                    {cartCount > 99 ? "99+" : cartCount}
+                  </span>
+                )}
+              </Link>
+
               {/* Language Picker */}
               <div className="hidden lg:flex">
                 <div className="relative inline-flex items-center px-3 py-[7px] text-text-primary transition-colors rounded-lg cursor-pointer hover:bg-[rgba(0,0,0,0.06)]">
@@ -683,8 +703,20 @@ export function Navbar({ lang, dict }: NavbarProps) {
               </div>
             </div>
 
-            {/* Mobile Menu */}
-            <div className="flex ml-6 lg:hidden">
+            {/* Mobile Cart + Menu */}
+            <div className="flex items-center gap-3 ml-6 lg:hidden">
+              <Link
+                href={`/${lang}/cart`}
+                className="relative flex items-center justify-center w-6 h-6"
+                aria-label={lang === "vi" ? "Giỏ hàng" : "Cart"}
+              >
+                <ShoppingCart className="w-5 h-5 text-text-primary" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-1.5 -right-2 flex items-center justify-center min-w-[16px] h-[16px] px-0.5 text-[9px] font-bold text-white bg-red-500 rounded-full">
+                    {cartCount > 99 ? "99+" : cartCount}
+                  </span>
+                )}
+              </Link>
               <MobileSidebar
                 lang={lang}
                 dict={dict}
