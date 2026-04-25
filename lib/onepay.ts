@@ -88,7 +88,7 @@ export function buildPaymentUrl(params: CreatePaymentParams): string {
     throw new Error("OnePay configuration is incomplete. Check environment variables.");
   }
 
-  // OnePay amount is in smallest currency unit (VND has no decimals)
+  // OnePay amount is in smallest currency unit (VND × 100)
   const amountInSmallestUnit = Math.round(params.amount) * 100;
 
   const vpcParams: Record<string, string> = {

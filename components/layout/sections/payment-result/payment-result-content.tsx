@@ -26,7 +26,7 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
   const responseCode = searchParams.get("vpc_TxnResponseCode") || "";
   const orderNumber = searchParams.get("vpc_MerchTxnRef") || "";
   const transactionNo = searchParams.get("vpc_TransactionNo") || "";
-  const amount = parseInt(searchParams.get("vpc_Amount") || "0", 10);
+  const amount = parseInt(searchParams.get("vpc_Amount") || "0", 10) / 100;
   const message = searchParams.get("vpc_Message") || "";
 
   const isSuccess = responseCode === "0";
