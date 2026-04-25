@@ -1,9 +1,11 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Smartphone, Globe, Wifi, Calendar, QrCode } from "lucide-react";
 import { CopyableField } from "./copyable-field";
 import type { EsimInfo } from "@/lib/hooks";
 import type { PaymentResultDict } from "./translations";
+import QRCodeLib from "qrcode";
 
 interface EsimCardProps {
   esim: EsimInfo;
@@ -12,6 +14,27 @@ interface EsimCardProps {
   copiedField: string | null;
   onCopy: (text: string, field: string) => void;
   t: PaymentResultDict;
+}
+
+function LpaQrCode({ lpa, scanLabel }: { lpa: string; scanLabel: string }) {
+  const [src, setSrc] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!lpa) return;
+    QRCodeLib.toDataURL(lpa, { width: 200, margin: 2 })
+      .then(setSrc)
+      .catch(() => setSrc(null));
+  }, [lpa]);
+
+  if (!src) return null;
+
+  return (
+    <div className="flex flex-col items-center py-5 mb-5 rounded-xl bg-gray-50 border border-gray-100">
+      <QrCode className="w-6 h-6 text-gray-400 mb-3" />
+      <img src={src} alt="eSIM QR Code" className="w-48 h-48 rounded-lg" />
+      <p className="text-xs text-gray-500 mt-3">{scanLabel}</p>
+    </div>
+  );
 }
 
 export function EsimCard({ esim, index, totalCount, copiedField, onCopy, t }: EsimCardProps) {
@@ -56,14 +79,8 @@ export function EsimCard({ esim, index, totalCount, copiedField, onCopy, t }: Es
         </div>
       )}
 
-      {/* QR Code */}
-      {esim.qrcode && (
-        <div className="flex flex-col items-center py-5 mb-5 rounded-xl bg-gray-50 border border-gray-100">
-          <QrCode className="w-6 h-6 text-gray-400 mb-3" />
-          <img src={esim.qrcode} alt="eSIM QR Code" className="w-48 h-48 rounded-lg" />
-          <p className="text-xs text-gray-500 mt-3">{t.scanQr}</p>
-        </div>
-      )}
+      {/* QR Code — generated from LPA string */}
+      {esim.lpa && <LpaQrCode lpa={esim.lpa} scanLabel={t.scanQr} />}
 
       {/* Copyable fields */}
       <div className="space-y-3">

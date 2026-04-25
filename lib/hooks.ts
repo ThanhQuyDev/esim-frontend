@@ -963,6 +963,35 @@ interface MyEsimsResponse {
   hasNextPage: boolean;
 }
 
+// ===== eSIM Data Usage =====
+
+export interface EsimDataUsage {
+  remaining: number;   // MB remaining
+  total: number;       // MB total
+  dataUsed: number;    // MB used
+  expiredAt: string | null;
+  isUnlimited: boolean;
+  status: string;
+  lastUpdateTime: string | null;
+}
+
+export function useEsimDataUsage(esimId: number | null) {
+  const { token } = useAuth();
+  return useQuery({
+    queryKey: ["esim-data-usage", esimId],
+    enabled: !!token && !!esimId,
+    queryFn: async ({ signal }): Promise<EsimDataUsage> => {
+      const res = await fetch(`${API_BASE_URL}/api/v1/esims/my/${esimId}/data-usage`, {
+        headers: { Authorization: `Bearer ${token}` },
+        signal,
+      });
+      if (!res.ok) throw new Error(`Failed to fetch data usage: ${res.status}`);
+      return res.json();
+    },
+    staleTime: 30_000, // cache for 30s
+  });
+}
+
 export function useMyEsims() {
   const { token } = useAuth();
   return useQuery({

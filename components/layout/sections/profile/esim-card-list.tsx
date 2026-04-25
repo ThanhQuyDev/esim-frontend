@@ -10,8 +10,13 @@ import {
   Loader2,
   ExternalLink,
   QrCode,
+  Wifi,
+  Calendar,
+  Infinity,
+  Info,
 } from "lucide-react";
 import type { MyEsim } from "@/lib/hooks";
+import { useEsimDataUsage } from "@/lib/hooks";
 import type { ProfileDict } from "./translations";
 import QRCode from "qrcode";
 
@@ -104,8 +109,161 @@ function QrCodeImage({ lpa }: { lpa: string }) {
   );
 }
 
+function DataUsageBar({ label, used, total, unit, isUnlimited }: {
+  label: string;
+  used: number;
+  total: number;
+  unit: string;
+  isUnlimited: boolean;
+}) {
+  if (isUnlimited) {
+    return (
+      <div className="space-y-1.5">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-medium text-gray-600">{label}</span>
+          <span className="inline-flex items-center gap-1 text-xs font-semibold text-indigo-600">
+            <Infinity className="w-3.5 h-3.5" />
+            Unlimited
+          </span>
+        </div>
+        <div className="w-full h-2 rounded-full bg-indigo-100">
+          <div className="h-full rounded-full bg-indigo-400 w-full" />
+        </div>
+      </div>
+    );
+  }
+
+  const remaining = Math.max(0, total - used);
+  const pct = total > 0 ? Math.min(100, (used / total) * 100) : 0;
+  const barColor = pct > 80 ? "bg-red-500" : pct > 50 ? "bg-amber-500" : "bg-emerald-500";
+  const barBg = pct > 80 ? "bg-red-100" : pct > 50 ? "bg-amber-100" : "bg-emerald-100";
+
+  return (
+    <div className="space-y-1.5">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-medium text-gray-600">{label}</span>
+        <span className="text-xs font-semibold text-gray-900">
+          {remaining.toFixed(remaining < 100 ? 1 : 0)} {unit} left
+        </span>
+      </div>
+      <div className={`w-full h-2 rounded-full ${barBg}`}>
+        <div
+          className={`h-full rounded-full ${barColor} transition-all duration-500`}
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+      <div className="flex justify-between text-[11px] text-gray-400">
+        <span>{used.toFixed(used < 100 ? 1 : 0)} {unit} used</span>
+        <span>{total.toFixed(total < 100 ? 1 : 0)} {unit} total</span>
+      </div>
+    </div>
+  );
+}
+
+function DataUsageSection({ esimId, lang }: { esimId: number; lang: string }) {
+  const { data: usage, isLoading, isError } = useEsimDataUsage(esimId);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-4">
+        <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
+        <span className="ml-2 text-xs text-gray-400">
+          {lang === "vi" ? "Đang tải..." : "Loading..."}
+        </span>
+      </div>
+    );
+  }
+
+  if (isError || !usage) {
+    return (
+      <div className="text-center py-3">
+        <p className="text-xs text-gray-400">
+          {lang === "vi" ? "Không thể tải dữ liệu sử dụng" : "Unable to load data usage"}
+        </p>
+      </div>
+    );
+  }
+
+  // Convert MB to GB for display
+  const totalGb = usage.total / 1024;
+  const usedGb = usage.dataUsed / 1024;
+  const remainingGb = usage.remaining / 1024;
+
+  // Calculate days remaining from expiredAt
+  const daysRemaining = usage.expiredAt
+    ? Math.max(0, Math.ceil((new Date(usage.expiredAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+    : null;
+
+  const statusColor: Record<string, string> = {
+    ACTIVE: "bg-emerald-100 text-emerald-700",
+    EXPIRED: "bg-red-100 text-red-700",
+    NOT_ACTIVE: "bg-gray-100 text-gray-500",
+  };
+
+  return (
+    <div className="border-t border-gray-100 pt-4 mt-4 space-y-4">
+      <div className="flex items-center justify-between">
+        <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+          {lang === "vi" ? "Dữ liệu sử dụng" : "Data Usage"}
+        </h4>
+        <span className={`inline-flex items-center px-2 py-0.5 text-[11px] font-medium rounded-full ${statusColor[usage.status] || "bg-gray-100 text-gray-500"}`}>
+          {usage.status}
+        </span>
+      </div>
+
+      {/* Data bar */}
+      <DataUsageBar
+        label={lang === "vi" ? "Dữ liệu" : "Data"}
+        used={usedGb}
+        total={totalGb}
+        unit="GB"
+        isUnlimited={usage.isUnlimited}
+      />
+
+      {/* Summary cards */}
+      <div className="grid grid-cols-2 gap-2">
+        <div className="bg-blue-50 rounded-lg p-3 text-center">
+          <div className="flex items-center justify-center gap-1 mb-1">
+            <Wifi className="w-3.5 h-3.5 text-blue-500" />
+          </div>
+          <p className="text-lg font-bold text-blue-700">
+            {usage.isUnlimited ? "∞" : `${remainingGb.toFixed(1)}`}
+          </p>
+          <p className="text-[11px] text-blue-500">
+            {usage.isUnlimited ? "Unlimited" : `GB ${lang === "vi" ? "còn lại" : "remaining"}`}
+          </p>
+        </div>
+        <div className="bg-emerald-50 rounded-lg p-3 text-center">
+          <div className="flex items-center justify-center gap-1 mb-1">
+            <Calendar className="w-3.5 h-3.5 text-emerald-500" />
+          </div>
+          <p className="text-lg font-bold text-emerald-700">
+            {daysRemaining !== null ? daysRemaining : "—"}
+          </p>
+          <p className="text-[11px] text-emerald-500">
+            {lang === "vi" ? "ngày còn lại" : "days left"}
+          </p>
+        </div>
+      </div>
+
+      {/* Expiry info */}
+      {usage.expiredAt && (
+        <p className="text-[11px] text-gray-400 text-center">
+          {lang === "vi" ? "Hết hạn:" : "Expires:"}{" "}
+          {new Date(usage.expiredAt).toLocaleDateString(lang === "vi" ? "vi-VN" : "en-US", {
+            year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
+          })}
+        </p>
+      )}
+    </div>
+  );
+}
+
+type EsimTab = "info" | "dataUsage";
+
 function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: string }) {
   const [expanded, setExpanded] = useState(false);
+  const [activeTab, setActiveTab] = useState<EsimTab>("info");
 
   const fields: { label: string; value: string; copyable?: boolean }[] = [
     { label: "ICCID", value: esim.iccid, copyable: true },
@@ -149,73 +307,108 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: strin
 
       {/* Expanded Content */}
       {expanded && (
-        <div className="border-t border-gray-100 px-4 pb-4">
-          {/* QR Code */}
-          {esim.lpa && (
-            <div className="flex justify-center py-4 border-b border-gray-100 mb-4">
-              <div className="text-center">
-                <div className="flex items-center justify-center gap-1.5 mb-2">
-                  <QrCode className="w-4 h-4 text-gray-400" />
-                  <span className="text-xs font-medium text-gray-500">
-                    {lang === "vi" ? "Quét mã QR để cài đặt" : "Scan QR to install"}
-                  </span>
-                </div>
-                <QrCodeImage lpa={esim.lpa} />
-              </div>
-            </div>
-          )}
+        <div className="border-t border-gray-100">
+          {/* Tabs */}
+          <div className="flex border-b border-gray-100">
+            <button
+              onClick={() => setActiveTab("info")}
+              className={`flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 text-sm font-medium transition-colors ${
+                activeTab === "info"
+                  ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50/30"
+                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+              }`}
+            >
+              <Info className="w-3.5 h-3.5" />
+              {t.tabInfo}
+            </button>
+            <button
+              onClick={() => setActiveTab("dataUsage")}
+              className={`flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 text-sm font-medium transition-colors ${
+                activeTab === "dataUsage"
+                  ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50/30"
+                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+              }`}
+            >
+              <Wifi className="w-3.5 h-3.5" />
+              {lang === "vi" ? "Dữ liệu" : "Data Usage"}
+            </button>
+          </div>
 
-          {/* Fields */}
-          <div className="space-y-3">
-            {fields.map(({ label, value, copyable }) => (
-              <div key={label}>
-                <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wider mb-1">
-                  {label}
-                </p>
-                <div className="flex items-center gap-1 bg-gray-50 rounded-lg px-3 py-2">
-                  <p className="text-sm text-gray-900 font-mono break-all flex-1">
-                    {value || "—"}
-                  </p>
-                  {copyable && value && <CopyButton text={value} t={t} />}
-                </div>
-              </div>
-            ))}
+          <div className="px-4 pb-4 pt-4">
+            {activeTab === "info" ? (
+              <>
+                {/* QR Code */}
+                {esim.lpa && (
+                  <div className="flex justify-center py-4 border-b border-gray-100 mb-4">
+                    <div className="text-center">
+                      <div className="flex items-center justify-center gap-1.5 mb-2">
+                        <QrCode className="w-4 h-4 text-gray-400" />
+                        <span className="text-xs font-medium text-gray-500">
+                          {lang === "vi" ? "Quét mã QR để cài đặt" : "Scan QR to install"}
+                        </span>
+                      </div>
+                      <QrCodeImage lpa={esim.lpa} />
+                    </div>
+                  </div>
+                )}
 
-            {/* Status & Dates */}
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wider mb-1">
-                  {t.status}
-                </p>
-                <div className="bg-gray-50 rounded-lg px-3 py-2">
-                  <span className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full ${getStatusStyle(esim.status)}`}>
-                    {getStatusLabel(esim.status, t)}
-                  </span>
-                </div>
-              </div>
-              <div>
-                <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wider mb-1">
-                  {lang === "vi" ? "Hết hạn" : "Expires"}
-                </p>
-                <div className="bg-gray-50 rounded-lg px-3 py-2">
-                  <p className="text-sm text-gray-900">
-                    {formatDate(esim.expiresAt, lang)}
-                  </p>
-                </div>
-              </div>
-            </div>
+                {/* Fields */}
+                <div className="space-y-3">
+                  {fields.map(({ label, value, copyable }) => (
+                    <div key={label}>
+                      <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wider mb-1">
+                        {label}
+                      </p>
+                      <div className="flex items-center gap-1 bg-gray-50 rounded-lg px-3 py-2">
+                        <p className="text-sm text-gray-900 font-mono break-all flex-1">
+                          {value || "—"}
+                        </p>
+                        {copyable && value && <CopyButton text={value} t={t} />}
+                      </div>
+                    </div>
+                  ))}
 
-            {/* Apple Install Link */}
-            {esim.directAppleInstallationUrl && (
-              <a
-                href={esim.directAppleInstallationUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
-              >
-                <ExternalLink className="w-4 h-4" />
-                {lang === "vi" ? "Cài đặt trên iPhone" : "Install on iPhone"}
-              </a>
+                  {/* Status & Dates */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wider mb-1">
+                        {t.status}
+                      </p>
+                      <div className="bg-gray-50 rounded-lg px-3 py-2">
+                        <span className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full ${getStatusStyle(esim.status)}`}>
+                          {getStatusLabel(esim.status, t)}
+                        </span>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wider mb-1">
+                        {lang === "vi" ? "Hết hạn" : "Expires"}
+                      </p>
+                      <div className="bg-gray-50 rounded-lg px-3 py-2">
+                        <p className="text-sm text-gray-900">
+                          {formatDate(esim.expiresAt, lang)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Apple Install Link */}
+                  {esim.directAppleInstallationUrl && (
+                    <a
+                      href={esim.directAppleInstallationUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      {lang === "vi" ? "Cài đặt trên iPhone" : "Install on iPhone"}
+                    </a>
+                  )}
+                </div>
+              </>
+            ) : (
+              /* Data Usage Tab */
+              <DataUsageSection esimId={esim.id} lang={lang} />
             )}
           </div>
         </div>
