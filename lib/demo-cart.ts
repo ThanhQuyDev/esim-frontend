@@ -18,7 +18,7 @@ export function seedDemoCart(): void {
       price: 8.99,
       image: "/demo-img.jpg",
       destination: "Japan",
-      dataGb: 5,
+      dataMb: 5120,
       durationDays: 7,
     },
     {
@@ -28,7 +28,7 @@ export function seedDemoCart(): void {
       price: 14.99,
       image: "/demo-img.jpg",
       destination: "Thailand",
-      dataGb: 10,
+      dataMb: 10240,
       durationDays: 30,
     },
     {
@@ -38,7 +38,7 @@ export function seedDemoCart(): void {
       price: 29.99,
       image: "/demo-img.jpg",
       destination: "Europe (30+ countries)",
-      dataGb: 20,
+      dataMb: 20480,
       durationDays: 30,
     },
     {
@@ -48,7 +48,7 @@ export function seedDemoCart(): void {
       price: 24.99,
       image: "/demo-img.jpg",
       destination: "United States",
-      dataGb: 9999,
+      dataMb: 9999999,
       durationDays: 15,
     },
   ];

@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useMemo } from "react";
 import type {
   Destination,
@@ -6,6 +6,7 @@ import type {
   WhyChooseUs,
   Blog,
   Plan,
+  Region,
   PaginatedResponse,
   PlansByDestinationResponse,
 } from "./api";
@@ -141,20 +142,55 @@ export function useDestinations(
   });
 }
 
-// ===== Region Interface & Hooks =====
+// ===== Infinite Destinations Hook (for all-destinations page) =====
 
-export interface Region {
-  id: number;
-  name: string;
-  slug: string;
-  avatarUrl: string;
-  isPopular: boolean;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
-  destinationCount: number;
+const DESTINATIONS_PAGE_SIZE = 20;
+
+export function useInfiniteDestinations(
+  tab: "all" | "country" | "region" | "ultra",
+  search?: string
+) {
+  const isRegion = tab === "region";
+  const endpoint = isRegion ? "/api/v1/regions" : "/api/v1/destinations";
+
+  return useInfiniteQuery({
+    queryKey: [
+      "destinations",
+      "infinite",
+      tab,
+      search,
+    ],
+    queryFn: async ({ pageParam = 1, signal }) => {
+      const params: Record<string, string> = {
+        page: String(pageParam),
+        limit: String(DESTINATIONS_PAGE_SIZE),
+        orderBy: "name",
+        order: "ASC",
+      };
+      if (search && search.trim()) {
+        params.filters = JSON.stringify({ search: search.trim() });
+      }
+      return clientFetch<PaginatedResponse<Destination>>(
+        endpoint,
+        params,
+        undefined,
+        signal
+      );
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, _allPages, lastPageParam) =>
+      lastPage.hasNextPage ? lastPageParam + 1 : undefined,
+    select: (data) => ({
+      pages: data.pages.map((page) => ({
+        ...page,
+        data: page.data.filter((d: any) => d.isActive),
+      })),
+      pageParams: data.pageParams,
+    }),
+  });
 }
+
+// ===== Region Hooks =====
 
 export function useRegions(
   filters?: string,
@@ -177,6 +213,34 @@ export function useRegions(
         signal
       ),
     select: (data) => data.data.filter((r) => r.isActive),
+  });
+}
+
+export function useRegionBySlug(slug: string, lang?: string) {
+  return useQuery({
+    queryKey: [...queryKeys.regions.all, "detail", slug],
+    queryFn: ({ signal }) =>
+      clientFetch<Region>(
+        `/api/v1/regions/slug/${encodeURIComponent(slug)}`,
+        undefined,
+        lang ? { "x-custom-lang": lang } : undefined,
+        signal
+      ),
+    enabled: slug.length > 0,
+  });
+}
+
+export function useDestinationBySlug(slug: string, lang?: string) {
+  return useQuery({
+    queryKey: [...queryKeys.destinations.all, "detail", slug],
+    queryFn: ({ signal }) =>
+      clientFetch<Destination>(
+        `/api/v1/destinations/slug/${encodeURIComponent(slug)}`,
+        undefined,
+        lang ? { "x-custom-lang": lang } : undefined,
+        signal
+      ),
+    enabled: slug.length > 0,
   });
 }
 
@@ -692,7 +756,7 @@ interface ApiCartItemPlan {
   id: number;
   name: string;
   slug: string;
-  dataGb: string;
+  dataMb: number;
   durationDays: number;
   vndPrice: number;
   currency: string;
@@ -791,19 +855,25 @@ export function useCart() {
   // Convert API cart items to the CartItem shape used by the UI (memoized to prevent re-renders)
   const apiCartItems: CartItem[] = useMemo(
     () =>
-      (apiCartQuery.data || []).map((item) => ({
-        id: String(item.planId),
-        name: item.plan?.name || `Plan #${item.planId}`,
-        description: `${item.plan?.dataGb || "?"} GB / ${item.plan?.durationDays || "?"} days`,
-        price: 0,
-        quantity: item.quantity,
-        destination: item.plan?.destination?.name,
-        dataGb: Number(item.plan?.dataGb || 0),
-        durationDays: item.plan?.durationDays,
-        flagUrl: item.plan?.destination?.flagUrl,
-        vndPrice: item.plan?.vndPrice || 0,
-        _apiId: item.id,
-      })),
+      (apiCartQuery.data || []).map((item) => {
+        const mb = Number(item.plan?.dataMb || 0);
+        const dataLabel = mb >= 1024
+          ? `${parseFloat((mb / 1024).toFixed(1))} GB`
+          : `${mb} MB`;
+        return {
+          id: String(item.planId),
+          name: item.plan?.name || `Plan #${item.planId}`,
+          description: `${item.plan?.dataMb ? dataLabel : "?"} / ${item.plan?.durationDays || "?"} days`,
+          price: 0,
+          quantity: item.quantity,
+          destination: item.plan?.destination?.name,
+          dataMb: mb,
+          durationDays: item.plan?.durationDays,
+          flagUrl: item.plan?.destination?.flagUrl,
+          vndPrice: item.plan?.vndPrice || 0,
+          _apiId: item.id,
+        };
+      }),
     [apiCartQuery.data]
   );
 

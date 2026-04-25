@@ -452,9 +452,9 @@ function CartItemRow({
             {item.destination}
           </span>
         )}
-        {item.dataGb && (
+        {item.dataMb && (
           <span className="inline-block mt-2 ml-2 text-xs bg-blue-50 rounded-full px-3 py-1 text-blue-600">
-            {item.dataGb >= 9999 ? dict.unlimited || "Unlimited" : `${item.dataGb} GB`}
+            {item.dataMb >= 9999999 ? dict.unlimited || "Unlimited" : item.dataMb >= 1024 ? `${parseFloat((item.dataMb / 1024).toFixed(1))} GB` : `${item.dataMb} MB`}
           </span>
         )}
         {item.durationDays && (

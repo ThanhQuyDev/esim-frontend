@@ -52,6 +52,10 @@ export function PriceDisplay({
 
   const savePercent = totalRetail > 0 ? Math.round(((totalRetail - totalPrice) / totalRetail) * 100) : 0;
 
+  // Calculate per-day cost
+  const totalDays = isFixed ? selectedPlan.durationDays : days;
+  const perDayPrice = totalDays > 0 ? Math.round(totalPrice / totalDays / 1000) * 1000 : 0;
+
   return (
     <div className="mb-3.5">
       <div className="flex items-baseline gap-2 mb-1 flex-nowrap">
@@ -72,6 +76,18 @@ export function PriceDisplay({
       <span className="text-[13.5px] text-[#6b7280] block min-h-[22px]">
         {planLabel}
       </span>
+      {perDayPrice > 0 && totalDays > 1 && (
+        <div className="flex items-center justify-between bg-[#f0fdf4] border border-[#bbf7d0] rounded-sm px-3.5 py-2 mt-2">
+          <span className="text-[13px] text-[#6b7280]">
+            ≈ {formatVnd(perDayPrice)} / {dict.daysUnit.toLowerCase().charAt(0) === "d" ? "day" : "ngày"}
+            <span className="text-[#d1d5db] mx-1.5">|</span>
+            {dict.quantity.toLowerCase().includes("số") ? "cho" : "for"} {quantity} {dict.esimUnit} · {selectedPlan.name}
+          </span>
+          <span className="text-[13px] font-semibold text-[#1a1a1a] shrink-0 ml-3">
+            {formatVnd(totalPrice)}
+          </span>
+        </div>
+      )}
     </div>
   );
 }

@@ -37,11 +37,11 @@ export function BuyActions({ selectedPlan, days, quantity, isFixed, dict, lang, 
       {
         id: String(selectedPlan.id),
         name: selectedPlan.name || `eSIM ${destination || ""}`.trim(),
-        description: `${selectedPlan.dataGb} GB / ${isFixed ? selectedPlan.durationDays : days} days`,
+        description: `${selectedPlan.dataMb >= 1024 ? `${parseFloat((selectedPlan.dataMb / 1024).toFixed(1))} GB` : `${selectedPlan.dataMb} MB`} / ${isFixed ? selectedPlan.durationDays : days} days`,
         price: unitPrice,
         vndPrice: unitVndPrice,
         destination: destination,
-        dataGb: Number(selectedPlan.dataGb),
+        dataMb: Number(selectedPlan.dataMb),
         durationDays: isFixed ? selectedPlan.durationDays : days,
       },
       quantity

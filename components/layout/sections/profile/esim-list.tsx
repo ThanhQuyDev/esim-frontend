@@ -85,7 +85,7 @@ export function EsimList({ esims, t, lang }: EsimListProps) {
                       <span className="text-gray-300">·</span>
                       <span className="inline-flex items-center gap-1 text-xs text-gray-500">
                         <Wifi className="w-3 h-3" />
-                        {esim.dataGb} {t.gb}
+                        {esim.dataMb >= 1024 ? `${parseFloat((esim.dataMb / 1024).toFixed(1))} GB` : `${esim.dataMb} MB`}
                       </span>
                       <span className="text-gray-300">·</span>
                       <span className="inline-flex items-center gap-1 text-xs text-gray-500">

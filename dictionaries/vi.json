@@ -52,6 +52,22 @@
     "viewAllDestinations": "Xem tất cả điểm đến",
     "new": "Mới"
   },
+  "allDestinations": {
+    "title": "Tất cả điểm đến",
+    "description": "Tìm gói dữ liệu tốt nhất tại hơn 200 điểm đến — và tận hưởng truy cập internet dễ dàng, an toàn mọi nơi bạn đến.",
+    "tabs": {
+      "all": "Tất cả",
+      "country": "Quốc gia",
+      "region": "Khu vực",
+      "ultraPlan": "Ultra Plan"
+    },
+    "searchPlaceholder": "Tìm kiếm điểm đến",
+    "from": "Từ",
+    "new": "Mới",
+    "country": "quốc gia",
+    "countries": "quốc gia",
+    "noResults": "Không tìm thấy điểm đến nào"
+  },
   "whyChoose": {
     "badge": "Tại sao chọn esim.vn?",
     "title": "Luôn kết nối khi đi du lịch",
@@ -868,13 +884,28 @@
     "disclaimer": "Hãy đảm bảo thiết bị của bạn tương thích với eSIM trước khi thanh toán.",
     "disclaimerLink": "Xem danh sách thiết bị hỗ trợ eSIM →",
     "save": "–{percent}%",
+    "perDay": "~ {amount}/ngày",
     "calTitle": "Tháng {month}, {year}",
     "calSelectStart": "Chọn ngày bắt đầu",
     "calSelectEnd": "Chọn ngày kết thúc",
     "calClose": "Đóng",
     "calConfirm": "Xác nhận",
     "calDays": "{count} ngày",
-    "weekDays": ["T2","T3","T4","T5","T6","T7","CN"]
+    "weekDays": ["T2","T3","T4","T5","T6","T7","CN"],
+    "deviceCheck": {
+      "title": "Kiểm tra tương thích thiết bị",
+      "placeholder": "Nhập tên thiết bị (VD: iPhone 15)",
+      "button": "Kiểm tra",
+      "supported": "Thiết bị {device} của bạn hỗ trợ eSIM",
+      "notSupported": "Không tìm thấy thiết bị \"{device}\" trong danh sách hỗ trợ",
+      "similarDevices": "Các thiết bị tương tự hỗ trợ eSIM:",
+      "viewAll": "Xem tất cả thiết bị hỗ trợ eSIM →",
+      "checking": "Đang kiểm tra..."
+    },
+    "tabs": {
+      "features": "Tính năng",
+      "delivery": "Giao hàng & Kích hoạt"
+    }
   },
   "couponPage": {
     "hero": {

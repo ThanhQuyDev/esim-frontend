@@ -13,8 +13,8 @@ export interface ProfileEsim {
   planName: string;
   destination: string;
   status: "active" | "expired" | "pending";
-  dataGb: number;
-  dataUsedGb: number;
+  dataMb: number;
+  dataUsedMb: number;
   durationDays: number;
   daysUsed: number;
 }
@@ -97,7 +97,7 @@ export function EsimDetail({ esim, t }: EsimDetailProps) {
               </span>
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 text-xs font-medium text-gray-700">
                 <Wifi className="w-3.5 h-3.5 text-purple-500" />
-                {esim.dataGb} {t.gb}
+                {esim.dataMb >= 1024 ? `${parseFloat((esim.dataMb / 1024).toFixed(1))} GB` : `${esim.dataMb} MB`}
               </span>
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 text-xs font-medium text-gray-700">
                 <Calendar className="w-3.5 h-3.5 text-amber-500" />
@@ -141,9 +141,9 @@ export function EsimDetail({ esim, t }: EsimDetailProps) {
             {/* Data usage */}
             <DataPlanProgress
               label={t.dataRemaining}
-              used={esim.dataUsedGb}
-              total={esim.dataGb}
-              unit={t.gb}
+              used={esim.dataUsedMb}
+              total={esim.dataMb}
+              unit={esim.dataMb >= 1024 ? "GB" : "MB"}
               color="blue"
               t={t}
             />
@@ -162,7 +162,9 @@ export function EsimDetail({ esim, t }: EsimDetailProps) {
             <div className="grid grid-cols-2 gap-3 pt-2">
               <div className="bg-white rounded-xl border border-gray-200 p-4 text-center">
                 <p className="text-2xl font-bold text-blue-600">
-                  {Math.max(0, esim.dataGb - esim.dataUsedGb).toFixed(1)}
+                  {esim.dataMb >= 1024
+                    ? `${parseFloat((Math.max(0, esim.dataMb - esim.dataUsedMb) / 1024).toFixed(1))}`
+                    : Math.max(0, esim.dataMb - esim.dataUsedMb)}
                 </p>
                 <p className="text-xs text-gray-500 mt-1">{t.gb} {t.remaining}</p>
               </div>

@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import type { Plan, PlansByDestinationResponse } from "@/lib/api";
-import { usePlansBySlug, usePlansByRegionSlug } from "@/lib/hooks";
+import { usePlansBySlug, usePlansByRegionSlug, useRegionBySlug, useDestinationBySlug } from "@/lib/hooks";
 import type { DestinationPlansProps } from "./types";
 import { ProductHero } from "./product-hero";
 import { ProductInfo } from "./product-info";
@@ -23,6 +23,14 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
   const destQuery = usePlansBySlug(planSource === "destination" ? slug : "", lang);
   const regionQuery = usePlansByRegionSlug(planSource === "region" ? slug : "", lang);
   const { data: plans = EMPTY_PLANS, isLoading } = planSource === "region" ? regionQuery : destQuery;
+
+  // Fetch region details (with destinations list) for region pages
+  const regionDetailQuery = useRegionBySlug(planSource === "region" ? slug : "", lang);
+  const regionData = regionDetailQuery.data ?? null;
+
+  // Fetch destination details for destination pages
+  const destinationDetailQuery = useDestinationBySlug(planSource === "destination" ? slug : "", lang);
+  const destinationData = destinationDetailQuery.data ?? null;
 
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [days, setDays] = useState(7);
@@ -69,10 +77,10 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
     if (!selectedPlan || isFixed) {
       return { isFlexibleDays: false, availableDays: [] as number[] };
     }
-    // Find sibling plans (same category + same dataGb)
+    // Find sibling plans (same category + same dataMb)
     const isInSlow = plans.slowUnlimited.some((p) => p.id === selectedPlan.id);
     const categoryPlans = isInSlow ? plans.slowUnlimited : plans.fastUnlimited;
-    const sameGb = categoryPlans.filter((p) => Number(p.dataGb) === Number(selectedPlan.dataGb));
+    const sameGb = categoryPlans.filter((p) => Number(p.dataMb) === Number(selectedPlan.dataMb));
 
     const hasMultidate = sameGb.some((p) => p.isAbleMultidate);
     if (hasMultidate) {
@@ -102,15 +110,24 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
   }, [selectedPlan, isFixed, days, dict]);
 
   // Data label for green box
-  const dataLabel = selectedPlan ? `${selectedPlan.dataGb}GB/${dict.daysUnit.toLowerCase()}` : "1GB/ngày";
+  const dataLabel = selectedPlan
+    ? `${selectedPlan.dataMb >= 1024 ? `${parseFloat((selectedPlan.dataMb / 1024).toFixed(1))}GB` : `${selectedPlan.dataMb}MB`}/${dict.daysUnit.toLowerCase()}`
+    : "1GB/ngày";
 
   return (
     <div className="bg-white pt-6">
       <div className="max-w-[1200px] mx-auto px-6 grid grid-cols-[465px_minmax(0,1fr)] gap-x-8 items-start max-[1100px]:grid-cols-2 max-[1100px]:px-5 max-[1100px]:gap-x-6 max-[840px]:grid-cols-1 max-[840px]:px-4">
         {/* ── LEFT COLUMN ── */}
         <div className="min-w-0 max-[840px]:border-b max-[840px]:border-[#e5e7eb] max-[840px]:pb-6 max-[840px]:mb-6">
-          <ProductHero destination={destination} dict={dict} />
-          <ProductInfo destination={destination} dict={dict} />
+          <ProductHero destination={destinationData || destination} dict={dict} />
+          <ProductInfo
+            destination={destinationData || destination}
+            dict={dict}
+            lang={lang}
+            planSource={planSource}
+            selectedPlan={selectedPlan}
+            region={regionData}
+          />
         </div>
 
         {/* ── RIGHT COLUMN ── */}
@@ -161,7 +178,7 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
             isFixed={isFixed}
             dict={dict}
             lang={lang}
-            destination={destination?.name}
+            destination={(destinationData || destination)?.name}
           />
         </div>
       </div>

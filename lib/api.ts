@@ -106,7 +106,7 @@ export interface Plan {
   regionId?: number;
   region?: Region;
   durationDays: number;
-  dataGb: number;
+  dataMb: number;
   costPrice: number;
   price: number;
   retailPrice: number;
@@ -299,12 +299,11 @@ export async function getDestinationBySlug(
   lang?: string
 ): Promise<Destination | null> {
   try {
-    const result = await getDestinations({
-      filters: JSON.stringify({ slug }),
-      limit: 1,
-      lang,
-    });
-    return result.data[0] || null;
+    return await apiFetch<Destination>(
+      `/api/v1/destinations/slug/${encodeURIComponent(slug)}`,
+      { lang },
+      300
+    );
   } catch {
     return null;
   }
@@ -327,12 +326,11 @@ export async function getRegionBySlug(
   lang?: string
 ): Promise<Region | null> {
   try {
-    const result = await getRegions({
-      filters: JSON.stringify({ slug }),
-      limit: 1,
-      lang,
-    });
-    return result.data[0] || null;
+    return await apiFetch<Region>(
+      `/api/v1/regions/slug/${encodeURIComponent(slug)}`,
+      { lang },
+      300
+    );
   } catch {
     return null;
   }

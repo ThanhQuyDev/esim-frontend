@@ -52,6 +52,22 @@
     "viewAllDestinations": "View All Destinations",
     "new": "New"
   },
+  "allDestinations": {
+    "title": "All destinations",
+    "description": "Find the best data plans in over 200 destinations — and enjoy easy and safe internet access wherever you go.",
+    "tabs": {
+      "all": "All",
+      "country": "Country",
+      "region": "Region",
+      "ultraPlan": "Ultra Plan"
+    },
+    "searchPlaceholder": "Search for destination",
+    "from": "From",
+    "new": "New",
+    "country": "country",
+    "countries": "countries",
+    "noResults": "No destinations found"
+  },
   "whyChoose": {
     "badge": "Why choose esim.vn?",
     "title": "Stay connected while traveling",
@@ -868,13 +884,28 @@
     "disclaimer": "Make sure your device is eSIM-compatible before purchasing.",
     "disclaimerLink": "View eSIM-supported devices →",
     "save": "–{percent}%",
+    "perDay": "~ {amount}/day",
     "calTitle": "{month} {year}",
     "calSelectStart": "Select start date",
     "calSelectEnd": "Select end date",
     "calClose": "Close",
     "calConfirm": "Confirm",
     "calDays": "{count} days",
-    "weekDays": ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]
+    "weekDays": ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+    "deviceCheck": {
+      "title": "Check device compatibility",
+      "placeholder": "Enter your device name (e.g. iPhone 15)",
+      "button": "Check",
+      "supported": "Your device {device} supports eSIM",
+      "notSupported": "Device \"{device}\" not found in our supported list",
+      "similarDevices": "Similar devices that support eSIM:",
+      "viewAll": "View all eSIM-supported devices →",
+      "checking": "Checking..."
+    },
+    "tabs": {
+      "features": "Features",
+      "delivery": "Delivery & Activation"
+    }
   },
   "couponPage": {
     "hero": {

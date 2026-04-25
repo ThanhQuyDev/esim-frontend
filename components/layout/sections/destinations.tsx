@@ -85,7 +85,7 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
                 role="button"
                 className="max-md:w-full text-center inline-block text-text-primary bg-bg-accent hover:bg-bg-accent-hover border border-bg-accent hover:border-bg-accent-hover active:bg-bg-accent-active active:border-bg-accent-active box-border !border-[#d1b700] touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7 w-full sm:w-auto"
                 data-testid="view-all-destinations-cta"
-                href="#"
+                href={`/${lang}/all-destinations`}
               >
                 {dict.viewAllDestinations}
               </a>
@@ -214,7 +214,7 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
                 role="button"
                 className="max-md:w-full text-center inline-block  text-text-primary-on-color bg-bg-accent hover:bg-bg-accent-hover border border-bg-accent hover:border-bg-accent-hover active:bg-bg-accent-active active:border-bg-accent-active box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7 w-full sm:w-auto"
                 data-testid="view-all-destinations-cta"
-                href="#"
+                href={`/${lang}/all-destinations`}
               >
                 {dict.viewAllDestinations}
               </a>

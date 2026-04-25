@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import type { Plan } from "@/lib/api";
 import type { DestinationDict, CategorizedPlans } from "./types";
-import { getUniqueDataGb, findBestPlan } from "./types";
+import { getUniqueDataMb, findBestPlan } from "./types";
 
 interface PlanTabsProps {
   plans: CategorizedPlans;
@@ -27,13 +27,16 @@ function PillBadge({ type, label }: { type: "popular" | "best-val" | "discount";
   );
 }
 
-/* ── Format dataGb: 0.49 → "500MB", otherwise "1GB" etc ── */
-function formatDataGb(gb: number): string {
-  if (gb < 1) return `${Math.round(gb * 1020)}MB`;
-  return `${Number(gb)}GB`;
+/* ── Format dataMb for display ── */
+function formatDataLabel(mb: number): string {
+  if (mb >= 1024) {
+    const gb = mb / 1024;
+    return Number.isInteger(gb) ? `${gb}GB` : `${parseFloat(gb.toFixed(1))}GB`;
+  }
+  return `${mb}MB`;
 }
 
-/* ── Small pill for fixed plans — shows dataGb / days ── */
+/* ── Small pill for fixed plans — shows data / days ── */
 function PlanPill({
   plan,
   isSelected,
@@ -45,7 +48,7 @@ function PlanPill({
   onSelect: () => void;
   savePercent: number;
 }) {
-  const label = `${formatDataGb(Number(plan.dataGb))} / ${plan.durationDays} days`;
+  const label = `${formatDataLabel(Number(plan.dataMb))} / ${plan.durationDays} days`;
 
   return (
     <button
@@ -79,7 +82,7 @@ function GbPill({
         : "bg-white text-[#374151] border-[#e5e7eb] hover:border-[#f5c400] hover:bg-[#fffde7]"
         }`}
     >
-      {formatDataGb(gb)}/day
+      {formatDataLabel(gb)}/day
     </button>
   );
 }
@@ -110,7 +113,7 @@ function GbSelector({
   selectedGb: number;
   onGbChange: (gb: number) => void;
 }) {
-  const uniqueGbs = useMemo(() => getUniqueDataGb(plans), [plans]);
+  const uniqueGbs = useMemo(() => getUniqueDataMb(plans), [plans]);
 
   const handleGbChange = (gb: number) => {
     onGbChange(gb);
@@ -209,12 +212,12 @@ export function PlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }: Plan
   const hasDailyUnlimited = plans.dailyUnlimited.length > 0;
   const hasUnlimited = hasFastUnlimited || hasDailyUnlimited;
 
-  const uniqueNormalGbs = useMemo(() => getUniqueDataGb(plans.fastUnlimited), [plans.fastUnlimited]);
+  const uniqueNormalGbs = useMemo(() => getUniqueDataMb(plans.fastUnlimited), [plans.fastUnlimited]);
 
   // Initialize GB selections
   useEffect(() => {
     if (hasSlowUnlimited && dailyGb === 0) {
-      const gbs = getUniqueDataGb(plans.slowUnlimited);
+      const gbs = getUniqueDataMb(plans.slowUnlimited);
       if (gbs.length > 0) setDailyGb(gbs[0]);
     }
   }, [hasSlowUnlimited, plans.slowUnlimited, dailyGb]);
@@ -318,7 +321,7 @@ export function PlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }: Plan
             )}
           </div>
 
-          {/* Normal Speed: fastUnlimited — deduplicated by dataGb */}
+          {/* Normal Speed: fastUnlimited — deduplicated by dataMb */}
           {speedTab === "normal" && hasFastUnlimited && (
             <div className="flex flex-wrap gap-2.5 mt-1">
               {uniqueNormalGbs.map((gb) => {
@@ -333,7 +336,7 @@ export function PlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }: Plan
                       const p = findBestPlan(plans.fastUnlimited, gb, days);
                       if (p) handleSelectUnlimited(p);
                     }}
-                    mainLabel={`${formatDataGb(gb)}/day high speed`}
+                    mainLabel={`${formatDataLabel(gb)}/day high speed`}
                     hintLabel="1 Mbps unlimited"
                   />
                 );

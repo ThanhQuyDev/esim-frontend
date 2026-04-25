@@ -52,6 +52,7 @@ export interface DestinationDict {
   disclaimer: string;
   disclaimerLink: string;
   save: string;
+  perDay: string;
   calTitle: string;
   calSelectStart: string;
   calSelectEnd: string;
@@ -59,6 +60,20 @@ export interface DestinationDict {
   calConfirm: string;
   calDays: string;
   weekDays: string[];
+  deviceCheck: {
+    title: string;
+    placeholder: string;
+    button: string;
+    supported: string;
+    notSupported: string;
+    similarDevices: string;
+    viewAll: string;
+    checking: string;
+  };
+  tabs: {
+    features: string;
+    delivery: string;
+  };
 }
 
 // ===== Categorized plans from new API =====
@@ -74,9 +89,9 @@ export interface DestinationPlansProps {
   planSource?: "destination" | "region";
 }
 
-// ===== Helper: find best plan for a given dataGb + days =====
+// ===== Helper: find best plan for a given dataMb + days =====
 /**
- * Among plans with the same dataGb, pick the cheapest total cost for `days` travel days.
+ * Among plans with the same dataMb, pick the cheapest total cost for `days` travel days.
  *
  * Logic:
  * - If plan has `isAbleMultidate = true`: total cost = price * days (buy one per day)
@@ -85,14 +100,14 @@ export interface DestinationPlansProps {
  *
  * Pick the plan with the lowest total cost.
  */
-export function findBestPlan(plans: Plan[], dataGb: number, days: number): Plan | null {
-  const samGb = plans.filter((p) => Number(p.dataGb) === Number(dataGb));
-  if (samGb.length === 0) return null;
+export function findBestPlan(plans: Plan[], dataMb: number, days: number): Plan | null {
+  const sameMb = plans.filter((p) => Number(p.dataMb) === Number(dataMb));
+  if (sameMb.length === 0) return null;
 
   type Candidate = { plan: Plan; totalCost: number };
   const candidates: Candidate[] = [];
 
-  for (const p of samGb) {
+  for (const p of sameMb) {
     if (p.isAbleMultidate) {
       // Can be purchased multiple times — one per day
       candidates.push({ plan: p, totalCost: Number(p.price) * days });
@@ -104,8 +119,8 @@ export function findBestPlan(plans: Plan[], dataGb: number, days: number): Plan 
   }
 
   if (candidates.length === 0) {
-    // Fallback: pick the longest-duration plan with that dataGb
-    const fallback = samGb.sort((a, b) => b.durationDays - a.durationDays);
+    // Fallback: pick the longest-duration plan with that dataMb
+    const fallback = sameMb.sort((a, b) => b.durationDays - a.durationDays);
     return fallback[0];
   }
 
@@ -162,14 +177,14 @@ export function calcTotalVndRetailPrice(plan: Plan, days: number): number {
   return vndRetail;
 }
 
-/** Get unique dataGb values from a list of plans, sorted ascending */
-export function getUniqueDataGb(plans: Plan[]): number[] {
-  const set = new Set(plans.map((p) => p.dataGb));
+/** Get unique dataMb values from a list of plans, sorted ascending */
+export function getUniqueDataMb(plans: Plan[]): number[] {
+  const set = new Set(plans.map((p) => p.dataMb));
   return Array.from(set).sort((a, b) => a - b);
 }
 
-/** Get unique durationDays values from plans with a specific dataGb, sorted ascending */
-export function getAvailableDays(plans: Plan[], dataGb: number): number[] {
-  const set = new Set(plans.filter((p) => p.dataGb === dataGb).map((p) => p.durationDays));
+/** Get unique durationDays values from plans with a specific dataMb, sorted ascending */
+export function getAvailableDays(plans: Plan[], dataMb: number): number[] {
+  const set = new Set(plans.filter((p) => p.dataMb === dataMb).map((p) => p.durationDays));
   return Array.from(set).sort((a, b) => a - b);
 }

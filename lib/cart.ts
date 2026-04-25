@@ -10,7 +10,7 @@ export interface CartItem {
   quantity: number;
   image?: string;
   destination?: string;
-  dataGb?: number;
+  dataMb?: number;
   durationDays?: number;
   flagUrl?: string;
   vndPrice?: number; // VND price from API
