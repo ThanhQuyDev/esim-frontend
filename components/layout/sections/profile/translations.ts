@@ -2,7 +2,14 @@ export interface ProfileDict {
   pageTitle: string;
   tabProfile: string;
   tabSimManagement: string;
+  personalInfo: string;
+  fullName: string;
   email: string;
+  phone: string;
+  address: string;
+  editProfile: string;
+  cancel: string;
+  saveChanges: string;
   myOrders: string;
   noOrders: string;
   orderNumber: string;
@@ -86,6 +93,13 @@ export const profileTranslations: Record<"en" | "vi", ProfileDict> = {
     copy: "Copy",
     copied: "Copied!",
     hideDetail: "Hide Detail",
+    personalInfo: "Personal Information",
+    fullName: "Full Name",
+    phone: "Phone",
+    address: "Address",
+    editProfile: "Edit",
+    cancel: "Cancel",
+    saveChanges: "Save",
     goShopping: "Browse eSIM Plans",
     of: "of",
     days: "days",
@@ -132,6 +146,13 @@ export const profileTranslations: Record<"en" | "vi", ProfileDict> = {
     copy: "Sao chép",
     copied: "Đã sao chép!",
     hideDetail: "Ẩn chi tiết",
+    personalInfo: "Thông tin cá nhân",
+    fullName: "Họ và tên",
+    phone: "Số điện thoại",
+    address: "Địa chỉ",
+    editProfile: "Chỉnh sửa",
+    cancel: "Hủy",
+    saveChanges: "Lưu",
     goShopping: "Mua eSIM",
     of: "trên",
     days: "ngày",
