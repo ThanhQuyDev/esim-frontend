@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect, useRef, useCallback } from "react";
+import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import { DeviceType, searchSupportedDevices } from "@/lib/api";
 import { Input } from "@/components/ui/input";
 import {
@@ -52,9 +53,7 @@ interface SearchResultGroup {
 
 export function DeviceList({ initialData, dict, lang }: DeviceListProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [openAccordions, setOpenAccordions] = useState<Set<string>>(
-    new Set()
-  );
+  const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
   // Search dropdown state
   const [showDropdown, setShowDropdown] = useState(false);
@@ -146,23 +145,13 @@ export function DeviceList({ initialData, dict, lang }: DeviceListProps) {
     return map;
   }, [initialData]);
 
-  const toggleAccordion = (manufacturerId: string) => {
-    setOpenAccordions((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(manufacturerId)) {
-        newSet.delete(manufacturerId);
-      } else {
-        newSet.add(manufacturerId);
-      }
-      return newSet;
-    });
-  };
-
   // When user selects a search result, expand the manufacturer and scroll to it
   const handleSelectResult = useCallback(
     (result: { device: string; manufacturer: string; type: string }) => {
       const accordionId = `${result.type}-${result.manufacturer}`;
-      setOpenAccordions((prev) => new Set(prev).add(accordionId));
+      setExpandedItems((prev) =>
+        prev.includes(accordionId) ? prev : [...prev, accordionId]
+      );
       setShowDropdown(false);
       setSearchQuery("");
 
@@ -316,7 +305,7 @@ export function DeviceList({ initialData, dict, lang }: DeviceListProps) {
                         <div key={typeConfig.key} className="sm:mx-auto w-full">
                           <div className="container mx-auto">
                             <div className="pt-6">
-                              <div className="h-full w-full flex group/stack [&>div:empty]:hidden flex-col gap-y-4">
+                              <div className="h-full w-full flex flex-col gap-y-4">
                                 <div>
                                   <div className="flex w-fit p-2 rounded-sm bg-accent">
                                     <TabIcon className="w-6 h-6" />
@@ -328,96 +317,77 @@ export function DeviceList({ initialData, dict, lang }: DeviceListProps) {
                                   </h2>
                                 </div>
                                 <div>
-                                  <div className="h-full w-full flex group/stack [&>div:empty]:hidden flex-col gap-y-10">
-                                    <div>
-                                      <p className="scroll-mt-20 xl:scroll-mt-24">
-                                        {tabDict.description}
-                                      </p>
-                                    </div>
-                                    <div>
-                                      {/* Manufacturers Accordion */}
-                                      {deviceData.manufacturers.map(
-                                        (manufacturer) => {
-                                          const accordionId = `${typeConfig.apiType}-${manufacturer.manufacturer}`;
-                                          const isOpen =
-                                            openAccordions.has(accordionId);
+                                  <p className="scroll-mt-20 xl:scroll-mt-24">
+                                    {tabDict.description}
+                                  </p>
+                                </div>
+                                <div>
+                                  {/* Manufacturers Accordion — Radix */}
+                                  <AccordionPrimitive.Root
+                                    type="multiple"
+                                    value={expandedItems}
+                                    onValueChange={setExpandedItems}
+                                  >
+                                    {deviceData.manufacturers.map(
+                                      (manufacturer) => {
+                                        const accordionId = `${typeConfig.apiType}-${manufacturer.manufacturer}`;
 
-                                          return (
-                                            <div
-                                              key={accordionId}
-                                              id={accordionId}
-                                              className="flex flex-col items-start text-left rtl:text-right gap-4 relative h-full word-break-word transform-gpu group-hover:border-accent transition-colors duration-medium p-0 [&:not(:first-child)>li]:pt-4 [&:not(:last-child)>li]:pb-4 [&:not(:first-child)]:pt-2 [&:not(:last-child)]:pb-2 border-0 [&:not(:last-child)]:border-b-md rounded-none bg-secondary border-secondary"
-                                            >
-                                              <li className="cursor-pointer list-none w-full">
-                                                <button
-                                                  className="flex w-full items-center justify-between font-medium mb-0 lg:open:mb-4 outline-0 group transition-all focus-visible:outline-hidden focus-visible:shadow-focus open:mb-3"
-                                                  aria-expanded={isOpen}
-                                                  onClick={() =>
-                                                    toggleAccordion(accordionId)
-                                                  }
-                                                >
-                                                  <h3 className="body-lg-medium text-left text-primary scroll-mt-20 xl:scroll-mt-24">
-                                                    {manufacturer.manufacturer}
-                                                  </h3>
-                                                  <span className="ml-4 rtl:ml-0 rtl:mr-4">
-                                                    <ChevronDown
-                                                      className={`w-3 h-3 text-primary transition-transform ${
-                                                        isOpen ? "-rotate-180" : ""
-                                                      }`}
-                                                    />
-                                                  </span>
-                                                </button>
-                                                <section
-                                                  className={`overflow-hidden transition-all text-secondary ${
-                                                    isOpen ? "block" : "hidden h-0"
-                                                  }`}
-                                                >
-                                                  <div className="h-full w-full flex group/stack [&>div:empty]:hidden flex-col gap-y-4">
-                                                    <div>
-                                                      <ul className="flex flex-col list-inside gap-0 body-md">
-                                                        {manufacturer.devices.map(
-                                                          (device) => (
-                                                            <li
-                                                              key={device.id}
-                                                              className="flex text-primary'"
-                                                            >
-                                                              <span className="whitespace-nowrap ltr:mr-2 rtl:ml-2 mt-1">
-                                                                <span className="block w-4 h-4 bg-clip-content border-[5px] border-solid border-transparent rounded-full bg-[currentColor]"></span>
-                                                              </span>
-                                                              <p className="scroll-mt-20 xl:scroll-mt-24">
-                                                                {device.device}
-                                                              </p>
-                                                            </li>
-                                                          )
-                                                        )}
-                                                      </ul>
-                                                    </div>
-                                                    {dict.infoNote &&
-                                                      manufacturer.manufacturer ===
-                                                        "iPhone" && (
-                                                        <div>
-                                                          <div
-                                                            data-testid="notification-neutral"
-                                                            className="flex items-center w-full p-4 rounded-sm bg-primary border-tertiary"
-                                                          >
-                                                            <Info className="w-4 h-4 text-primary" />
-                                                            <div className="flex flex-col ml-2 text-primary">
-                                                              <span className="body-xs-medium scroll-mt-20 xl:scroll-mt-24">
-                                                                {dict.infoNote}
-                                                              </span>
-                                                            </div>
-                                                          </div>
+                                        return (
+                                          <AccordionPrimitive.Item
+                                            key={accordionId}
+                                            value={accordionId}
+                                            id={accordionId}
+                                            className="border-b border-gray-200"
+                                          >
+                                            <AccordionPrimitive.Header className="flex">
+                                              <AccordionPrimitive.Trigger className="flex w-full items-center justify-between py-4 font-medium transition-all outline-none group">
+                                                <h3 className="body-lg-medium text-left text-primary">
+                                                  {manufacturer.manufacturer}
+                                                </h3>
+                                                <ChevronDown className="w-4 h-4 text-gray-500 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+                                              </AccordionPrimitive.Trigger>
+                                            </AccordionPrimitive.Header>
+                                            <AccordionPrimitive.Content className="overflow-hidden transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
+                                              <div className="pb-4">
+                                                <ul className="flex flex-col gap-0">
+                                                  {manufacturer.devices.map(
+                                                    (device) => (
+                                                      <li
+                                                        key={device.id}
+                                                        className="flex items-center text-primary py-1.5"
+                                                      >
+                                                        <span className="w-1.5 h-1.5 rounded-full bg-gray-400 shrink-0 mr-3" />
+                                                        <p className="text-sm">
+                                                          {device.device}
+                                                        </p>
+                                                      </li>
+                                                    )
+                                                  )}
+                                                </ul>
+                                                {dict.infoNote &&
+                                                  manufacturer.manufacturer ===
+                                                    "iPhone" && (
+                                                    <div className="mt-3">
+                                                      <div
+                                                        data-testid="notification-neutral"
+                                                        className="flex items-center w-full p-4 rounded-sm border border-gray-200"
+                                                      >
+                                                        <Info className="w-4 h-4 text-primary shrink-0" />
+                                                        <div className="flex flex-col ml-2 text-primary">
+                                                          <span className="body-xs-medium">
+                                                            {dict.infoNote}
+                                                          </span>
                                                         </div>
-                                                      )}
-                                                  </div>
-                                                </section>
-                                              </li>
-                                            </div>
-                                          );
-                                        }
-                                      )}
-                                    </div>
-                                  </div>
+                                                      </div>
+                                                    </div>
+                                                  )}
+                                              </div>
+                                            </AccordionPrimitive.Content>
+                                          </AccordionPrimitive.Item>
+                                        );
+                                      }
+                                    )}
+                                  </AccordionPrimitive.Root>
                                 </div>
                               </div>
                             </div>

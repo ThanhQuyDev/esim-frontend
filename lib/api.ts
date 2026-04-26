@@ -360,3 +360,33 @@ export async function searchSupportedDevices(
 
   return res.json();
 }
+
+// ===== Help Center Types =====
+
+export interface HelpCenterArticle {
+  id: string;
+  title: string;
+  content: string;
+  order: number;
+  category: string;
+  parent: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface HelpCenterResponse {
+  data: HelpCenterArticle[];
+  hasNextPage: boolean;
+}
+
+// ===== Help Center API =====
+
+export async function fetchHelpCenterArticles(): Promise<HelpCenterResponse> {
+  const res = await fetch(`${API_BASE_URL}/api/v1/help-center`, {
+    next: { revalidate: 60 },
+  });
+  if (!res.ok) {
+    throw new Error(`API error: ${res.status} ${res.statusText}`);
+  }
+  return res.json();
+}

@@ -21,7 +21,8 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        sans: ["var(--font-sf-pro-display)", "SF Pro Display", "system-ui", "sans-serif"],
+        sans: ["'Google Sans'", "'Google Sans Text'", "system-ui", "sans-serif"],
+        "google-sans": ["'Google Sans'", "'Google Sans Text'", "system-ui", "sans-serif"],
       },
       textColor: {
         primary: "var(--color-primary)",
