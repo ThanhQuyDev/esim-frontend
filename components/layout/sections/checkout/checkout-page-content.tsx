@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
 import {
   Mail,
   Phone,
@@ -21,7 +20,7 @@ import {
   type CartItem,
   type Coupon,
 } from "@/lib/cart";
-import { useExchangeRate, useCheckout, useCart, useOrderByNumber, convertUsdToVnd, formatVnd } from "@/lib/hooks";
+import { useExchangeRate, useCheckout, useCart, convertUsdToVnd, formatVnd } from "@/lib/hooks";
 import { useAuth } from "@/lib/auth";
 import Link from "next/link";
 
@@ -40,9 +39,6 @@ interface InvoiceInfo {
 }
 
 export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
-  const searchParams = useSearchParams();
-  const existingOrderNumber = searchParams.get("orderNumber") || "";
-
   const [items, setItems] = useState<CartItem[]>([]);
   const [coupon, setCoupon] = useState<Coupon | null>(null);
   const [email, setEmail] = useState("");
@@ -58,7 +54,6 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [orderComplete, setOrderComplete] = useState(false);
-  const [retryingPayment, setRetryingPayment] = useState(false);
 
   const { data: usdToVndRate = 25_500 } = useExchangeRate();
   const checkout = useCheckout();
@@ -66,69 +61,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
 
   const { user, token, openAuthModal } = useAuth();
 
-  // Fetch existing order when orderNumber is in URL (retry payment flow)
-  const { data: existingOrder, isFetching: isLoadingOrder } = useOrderByNumber(
-    existingOrderNumber,
-    !!existingOrderNumber
-  );
-
-  // Populate items from existing order + fetch coupon details
   useEffect(() => {
-    if (existingOrder?.items && existingOrder.items.length > 0) {
-      const orderItems: CartItem[] = existingOrder.items.map((item) => ({
-        id: String(item.planId),
-        name: item.plan?.name || `Plan #${item.planId}`,
-        description: "",
-        price: item.plan ? parseFloat(item.plan.price) : 0,
-        quantity: item.quantity,
-        vndPrice: item.plan?.vndPrice || Math.round(item.vndPrice / item.quantity),
-      }));
-      setItems(orderItems);
-
-      // Fetch coupon details from API
-      if (existingOrder.couponCode) {
-        fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.saily.example.com"}/api/v1/coupons/code/${encodeURIComponent(existingOrder.couponCode)}`,
-          token ? { headers: { Authorization: `Bearer ${token}` } } : undefined
-        )
-          .then((res) => (res.ok ? res.json() : null))
-          .then((data) => {
-            if (data) {
-              setCoupon({
-                code: data.code,
-                discount: data.discountPercent || 0,
-                description: data.description || "",
-                minAmount: 0,
-                minOrderAmountVnd: data.minOrderAmount || 0,
-              });
-            } else {
-              setCoupon({
-                code: existingOrder.couponCode,
-                discount: 0,
-                description: "",
-                minAmount: 0,
-              });
-            }
-          })
-          .catch(() => {
-            setCoupon({
-              code: existingOrder.couponCode,
-              discount: 0,
-              description: "",
-              minAmount: 0,
-            });
-          });
-      }
-    }
-  }, [existingOrder, token]);
-
-  useEffect(() => {
-    if (existingOrderNumber) {
-      // Clear stale localStorage data when retrying an existing order
-      localStorage.removeItem("saily_checkout_items");
-      localStorage.removeItem("saily_checkout_coupon");
-      return;
-    }
     try {
       const storedItems = localStorage.getItem("saily_checkout_items");
       const storedCoupon = localStorage.getItem("saily_checkout_coupon");
@@ -137,7 +70,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
     } catch {
       // ignore
     }
-  }, [existingOrderNumber]);
+  }, []);
 
   // Auto-fill email from logged-in user
   useEffect(() => {
@@ -158,16 +91,10 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
     return sum + convertUsdToVnd(i.price * i.quantity, usdToVndRate);
   }, 0);
 
-  // When retrying an existing order, use the order's vndPrice as the authoritative total
-  // (BE already applied the coupon discount). Derive discount from subtotal - order total.
-  const vndDiscount = existingOrder?.vndPrice
-    ? Math.max(0, vndSubtotal - existingOrder.vndPrice)
-    : coupon
-      ? Math.round((vndSubtotal * coupon.discount) / 100)
-      : 0;
-  const vndTotal = existingOrder?.vndPrice
-    ? existingOrder.vndPrice
-    : Math.max(0, vndSubtotal - vndDiscount);
+  const vndDiscount = coupon
+    ? Math.round((vndSubtotal * coupon.discount) / 100)
+    : 0;
+  const vndTotal = Math.max(0, vndSubtotal - vndDiscount);
 
   const checkoutDisplaySubtotal = hasVndPricing
     ? `${vndSubtotal.toLocaleString("vi-VN")}₫`
@@ -212,34 +139,6 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleRetryPayment = async () => {
-    if (!existingOrderNumber) return;
-    setRetryingPayment(true);
-    try {
-      const headers: Record<string, string> = { "Content-Type": "application/json" };
-      if (token) headers["Authorization"] = `Bearer ${token}`;
-
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.saily.example.com"}/api/v1/payment/plan/retry-checkout`,
-        {
-          method: "POST",
-          headers,
-          body: JSON.stringify({ orderNumber: existingOrderNumber }),
-        }
-      );
-      const data = await res.json();
-      if (data.paymentUrl) {
-        window.location.href = data.paymentUrl;
-      } else {
-        alert(data.error || data.message || "Failed to retry payment");
-      }
-    } catch {
-      alert(lang === "vi" ? "Lỗi kết nối. Vui lòng thử lại." : "Network error. Please try again.");
-    } finally {
-      setRetryingPayment(false);
-    }
-  };
-
   const handleSubmit = () => {
     // If user is not logged in, show auth modal
     if (!user) {
@@ -248,12 +147,6 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
     }
 
     if (!validate()) return;
-
-    // Retry payment for existing order
-    if (existingOrderNumber && existingOrder) {
-      handleRetryPayment();
-      return;
-    }
 
     const checkoutItems = items.map((item) => ({
       planId: Number(item.id),
@@ -325,8 +218,8 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
     );
   }
 
-  // Empty checkout (skip when loading existing order)
-  if (items.length === 0 && !existingOrderNumber && !isLoadingOrder) {
+  // Empty checkout
+  if (items.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-6">
         <div className="flex h-20 w-20 items-center justify-center rounded-full bg-bg-secondary">
@@ -686,10 +579,10 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
           {/* Complete Order Button */}
           <button
             onClick={handleSubmit}
-            disabled={checkout.isPending || retryingPayment}
+            disabled={checkout.isPending}
             className="flex w-full items-center justify-center gap-2 rounded-full bg-bg-accent py-3.5 text-base font-semibold text-text-primary transition-colors hover:bg-bg-accent-hover disabled:opacity-60 cursor-pointer"
           >
-            {(checkout.isPending || retryingPayment) ? (
+            {checkout.isPending ? (
               <span className="flex items-center gap-2">
                 <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
@@ -700,9 +593,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
             ) : (
               <>
                 <CheckCircle2 className="h-5 w-5" />
-                {existingOrderNumber
-                  ? (dict.retryPayment || "Retry Payment")
-                  : (dict.completeOrder || "Complete Order")}
+                {dict.completeOrder || "Complete Order"}
               </>
             )}
           </button>
