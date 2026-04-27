@@ -361,6 +361,35 @@ export async function searchSupportedDevices(
   return res.json();
 }
 
+// ===== Coupon Types =====
+
+export interface Coupon {
+  id: number;
+  code: string;
+  discountPercent: number;
+  maxUsage: number;
+  maxUsagePerUser: number;
+  usageCount: number;
+  minOrderAmount: number;
+  expiresAt: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+}
+
+// ===== Coupon API =====
+
+export async function getCoupons(
+  options: FetchOptions = {}
+): Promise<PaginatedResponse<Coupon>> {
+  return apiFetch<PaginatedResponse<Coupon>>(
+    "/api/v1/coupons",
+    { limit: 20, ...options },
+    120 // cache for 2 minutes
+  );
+}
+
 // ===== Help Center Types =====
 
 export interface HelpCenterArticle {

@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { CheckoutPageContent } from "@/components/layout/sections/checkout";
 import { FooterSection } from "@/components/layout/sections/footer";
 import { getDictionary } from "@/lib/dictionaries";
@@ -16,7 +17,9 @@ export default async function CheckoutPage({
         <h1 className="text-2xl font-bold text-text-primary mb-8">
           {(dict as any).checkout?.title || "Checkout"}
         </h1>
-        <CheckoutPageContent dict={(dict as any).checkout || {}} lang={params.lang} />
+        <Suspense fallback={<div className="flex justify-center py-20"><div className="animate-spin h-8 w-8 border-4 border-gray-300 border-t-gray-600 rounded-full" /></div>}>
+          <CheckoutPageContent dict={(dict as any).checkout || {}} lang={params.lang} />
+        </Suspense>
       </div>
       <FooterSection dict={dict.footer} />
     </main>

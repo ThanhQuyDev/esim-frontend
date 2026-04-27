@@ -6,6 +6,7 @@ import {
   applyCoupon,
   removeCoupon,
   getSavedCoupons,
+  fetchApiCoupons,
   getSubtotal,
   getDiscount,
   getTotal,
@@ -57,11 +58,21 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
     return () => window.removeEventListener("cart-updated", handler);
   }, [isApiCart, getLocalCartData]);
 
+  const [availableCoupons, setAvailableCoupons] = useState<Coupon[]>([]);
+  const [couponsLoading, setCouponsLoading] = useState(false);
+
+  // Fetch coupons from API on mount
+  useEffect(() => {
+    setCouponsLoading(true);
+    fetchApiCoupons()
+      .then(setAvailableCoupons)
+      .finally(() => setCouponsLoading(false));
+  }, []);
+
   const selectedItems = cart.items.filter((i) => selectedIds.has(i.id));
   const subtotal = getSubtotal(selectedItems);
   const discount = getDiscount(subtotal, cart.appliedCoupon);
   const total = getTotal(selectedItems, cart.appliedCoupon);
-  const savedCoupons = getSavedCoupons();
 
   const handleCheckout = () => {
     if (selectedItems.length === 0) return;
@@ -143,7 +154,17 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
   };
 
   const handleApplyCoupon = (coupon: Coupon) => {
-    if (coupon.minAmount && subtotal < coupon.minAmount) {
+    // For API coupons, minAmount is in VND — compare against VND subtotal
+    if (coupon.minOrderAmountVnd && coupon.minOrderAmountVnd > 0) {
+      const vndSub = getVndSubtotal(selectedItems);
+      if (vndSub < coupon.minOrderAmountVnd) {
+        setCouponError(
+          dict.couponMinAmount?.replace("{amount}", `${coupon.minOrderAmountVnd.toLocaleString("vi-VN")}₫`) ||
+            `Minimum order ${coupon.minOrderAmountVnd.toLocaleString("vi-VN")}₫`
+        );
+        return;
+      }
+    } else if (coupon.minAmount && subtotal < coupon.minAmount) {
       setCouponError(
         dict.couponMinAmount?.replace("{amount}", `$${coupon.minAmount}`) ||
           `Minimum order $${coupon.minAmount}`
@@ -151,12 +172,13 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
       return;
     }
     setCouponError("");
-    setCart(applyCoupon(coupon));
+    applyCoupon(coupon); // persist to localStorage
+    setCart((prev) => ({ ...prev, appliedCoupon: coupon }));
     setShowCoupons(false);
   };
 
   const handleApplyCouponCode = () => {
-    const found = savedCoupons.find(
+    const found = availableCoupons.find(
       (c) => c.code.toLowerCase() === couponInput.trim().toLowerCase()
     );
     if (!found) {
@@ -168,7 +190,8 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
   };
 
   const handleRemoveCoupon = () => {
-    setCart(removeCoupon());
+    removeCoupon(); // persist to localStorage
+    setCart((prev) => ({ ...prev, appliedCoupon: null }));
     setCouponError("");
   };
 
@@ -182,11 +205,20 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
     }, 0);
   };
   const hasVndPricing = selectedItems.some((i) => i.vndPrice);
+  const vndSubtotalValue = getVndSubtotal(selectedItems);
+  const vndDiscountValue = cart.appliedCoupon
+    ? Math.round((vndSubtotalValue * cart.appliedCoupon.discount) / 100)
+    : 0;
+  const vndTotalValue = Math.max(0, vndSubtotalValue - vndDiscountValue);
+
   const displaySubtotal = hasVndPricing
-    ? `${getVndSubtotal(selectedItems).toLocaleString("vi-VN")}₫`
+    ? `${vndSubtotalValue.toLocaleString("vi-VN")}₫`
     : formatPrice(subtotal);
+  const displayDiscount = hasVndPricing
+    ? `${vndDiscountValue.toLocaleString("vi-VN")}₫`
+    : formatPrice(discount);
   const displayTotal = hasVndPricing
-    ? `${getVndSubtotal(selectedItems).toLocaleString("vi-VN")}₫`
+    ? `${vndTotalValue.toLocaleString("vi-VN")}₫`
     : formatPrice(total);
 
   if (cart.items.length === 0) {
@@ -311,18 +343,28 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
                   </button>
                 </div>
 
-                {/* Saved Coupons Toggle */}
+                {/* Available Coupons Toggle */}
                 <button
                   onClick={() => setShowCoupons(!showCoupons)}
                   className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 cursor-pointer"
                 >
                   <Ticket className="h-4 w-4" />
-                  {dict.savedCoupons || "Saved coupons"} ({savedCoupons.length})
+                  {couponsLoading
+                    ? (dict.loadingCoupons || "Loading coupons...")
+                    : `${dict.availableCoupons || "Available coupons"} (${availableCoupons.length})`}
                 </button>
 
                 {showCoupons && (
                   <div className="space-y-2">
-                    {savedCoupons.map((coupon) => (
+                    {couponsLoading ? (
+                      <div className="flex justify-center py-3">
+                        <div className="h-5 w-5 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
+                      </div>
+                    ) : availableCoupons.length === 0 ? (
+                      <p className="text-xs text-text-tertiary text-center py-2">
+                        {dict.noCoupons || "No coupons available"}
+                      </p>
+                    ) : availableCoupons.map((coupon) => (
                       <button
                         key={coupon.code}
                         onClick={() => handleApplyCoupon(coupon)}
@@ -335,11 +377,14 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
                           <p className="text-xs text-text-tertiary mt-0.5">
                             {coupon.description}
                           </p>
-                          {coupon.minAmount && (
+                          {(coupon.minOrderAmountVnd || coupon.minAmount) ? (
                             <p className="text-xs text-text-tertiary">
-                              {dict.minOrder || "Min order"}: ${coupon.minAmount}
+                              {dict.minOrder || "Min order"}:{" "}
+                              {coupon.minOrderAmountVnd
+                                ? `${coupon.minOrderAmountVnd.toLocaleString("vi-VN")}₫`
+                                : `$${coupon.minAmount}`}
                             </p>
-                          )}
+                          ) : null}
                         </div>
                         <span className="text-sm font-bold text-green-600">
                           -{coupon.discount}%
@@ -357,10 +402,10 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
           </div>
 
           {/* Discount */}
-          {discount > 0 && (
+          {(hasVndPricing ? vndDiscountValue > 0 : discount > 0) && (
             <div className="flex justify-between text-sm">
               <span className="text-green-600">{dict.discount || "Discount"}</span>
-              <span className="font-medium text-green-600">-{formatPrice(discount)}</span>
+              <span className="font-medium text-green-600">-{displayDiscount}</span>
             </div>
           )}
 

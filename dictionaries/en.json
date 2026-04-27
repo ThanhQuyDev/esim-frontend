@@ -965,6 +965,10 @@
           "answer": "While esim.vn is a paid service, you can benefit from our referral program. Every person you refer will earn you a US$5 esim.vn credit. By inviting friends and family to sign up for esim.vn using your referral link, you can earn enough credits to never have to pay for your eSIM plans."
         }
       ]
+    },
+    "couponList": {
+      "title": "Available coupon codes",
+      "subtitle": "Copy a code and apply it at checkout to save on your eSIM plan."
     }
   },
   "reviewPage": {

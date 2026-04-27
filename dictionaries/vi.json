@@ -965,6 +965,10 @@
           "answer": "Mặc dù esim.vn là dịch vụ trả phí, bạn có thể hưởng lợi từ chương trình giới thiệu của chúng tôi. Mỗi người bạn giới thiệu sẽ giúp bạn nhận được 5 USD tín dụng esim.vn. Bằng cách mời bạn bè và gia đình đăng ký esim.vn qua liên kết giới thiệu, bạn có thể kiếm đủ tín dụng để không bao giờ phải trả tiền cho gói eSIM."
         }
       ]
+    },
+    "couponList": {
+      "title": "Mã giảm giá hiện có",
+      "subtitle": "Sao chép mã và áp dụng khi thanh toán để tiết kiệm cho gói eSIM của bạn."
     }
   },
   "reviewPage": {

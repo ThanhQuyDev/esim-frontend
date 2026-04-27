@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { useSearchParams } from "next/navigation";
+import { useState, useMemo, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { CheckCircle, Home, Mail, User, Clock } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -19,25 +19,27 @@ interface PaymentResultContentProps {
 
 export function PaymentResultContent({ lang }: PaymentResultContentProps) {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const t = paymentResultTranslations[lang];
 
   // Parse OnePay callback query params
   const responseCode = searchParams.get("vpc_TxnResponseCode") || "";
-  const orderNumber = searchParams.get("vpc_MerchTxnRef") || "";
+  const orderNumber = searchParams.get("vpc_MerchTxnRef") || searchParams.get("orderNumber") || "";
   const transactionNo = searchParams.get("vpc_TransactionNo") || "";
   const amount = parseInt(searchParams.get("vpc_Amount") || "0", 10) / 100;
   const message = searchParams.get("vpc_Message") || "";
 
   const isSuccess = responseCode === "0";
+  const isPending = responseCode === "" && !!orderNumber;
   const responseMessage = getResponseCodeMessage(responseCode, lang);
 
-  // Fetch order details (only when payment succeeded)
+  // Fetch order details when payment succeeded OR pending (direct link access)
   const {
     data: orderData,
     isFetching: isPolling,
     dataUpdatedAt,
-  } = useOrderByNumber(orderNumber, isSuccess);
+  } = useOrderByNumber(orderNumber, isSuccess || isPending);
 
   // Flatten all eSIMs from order items
   const allEsims = useMemo(() => {
@@ -58,11 +60,26 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
     }
   };
 
+  // ===== Pending → redirect to checkout with orderNumber =====
+  useEffect(() => {
+    if (isPending) {
+      router.replace(`/${lang}/checkout?orderNumber=${encodeURIComponent(orderNumber)}`);
+    }
+  }, [isPending, lang, orderNumber, router]);
+
+  if (isPending) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Clock className="w-6 h-6 animate-spin text-gray-400" />
+      </div>
+    );
+  }
+
   // ===== Non-success states =====
   if (!isSuccess) {
     return (
       <PaymentFailedState
-        status={responseCode === "" ? "pending" : "failed"}
+        status="failed"
         responseMessage={responseMessage}
         orderId={orderNumber}
         transactionNo={transactionNo}

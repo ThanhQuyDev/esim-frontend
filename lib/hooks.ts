@@ -667,9 +667,24 @@ export interface EsimInfo {
   deletedAt: string | null;
 }
 
+export interface OrderItemPlan {
+  id: number;
+  name: string;
+  slug: string;
+  durationDays: number;
+  dataMb: number;
+  price: string;
+  vndPrice: number;
+  currency: string;
+  speed?: string;
+  operatorName?: string;
+  countryCode?: string;
+}
+
 export interface OrderItem {
   id: number;
   planId: number;
+  plan?: OrderItemPlan;
   orderRequestId: string;
   status: string;
   vndPrice: number;

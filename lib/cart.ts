@@ -23,6 +23,7 @@ export interface Coupon {
   description: string;
   expiresAt?: string;
   minAmount?: number;
+  minOrderAmountVnd?: number; // VND min order from API
 }
 
 export interface Cart {
@@ -115,7 +116,8 @@ export function getSubtotal(items: CartItem[]): number {
 
 export function getDiscount(subtotal: number, coupon: Coupon | null): number {
   if (!coupon) return 0;
-  if (coupon.minAmount && subtotal < coupon.minAmount) return 0;
+  // Skip USD minAmount check for API coupons (minOrderAmountVnd is validated separately in VND)
+  if (!coupon.minOrderAmountVnd && coupon.minAmount && subtotal < coupon.minAmount) return 0;
   return (subtotal * coupon.discount) / 100;
 }
 
@@ -166,6 +168,34 @@ function getDefaultCoupons(): Coupon[] {
       minAmount: 20,
     },
   ];
+}
+
+// ===== API Coupons =====
+
+/** Fetch active coupons from /api/v1/coupons and map to cart Coupon type */
+export async function fetchApiCoupons(): Promise<Coupon[]> {
+  const API_BASE_URL =
+    (typeof window !== "undefined"
+      ? process.env.NEXT_PUBLIC_API_BASE_URL
+      : process.env.NEXT_PUBLIC_API_BASE_URL) || "https://api.saily.example.com";
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/v1/coupons?limit=50`);
+    if (!res.ok) throw new Error(`API ${res.status}`);
+    const json = await res.json();
+    return (json.data || [])
+      .filter((c: any) => c.isActive && !c.deletedAt)
+      .map((c: any) => ({
+        code: c.code,
+        discount: c.discountPercent,
+        description: `${c.discountPercent}% off`,
+        expiresAt: c.expiresAt,
+        minAmount: c.minOrderAmount || 0,
+        minOrderAmountVnd: c.minOrderAmount || 0,
+      }));
+  } catch (err) {
+    console.warn("Failed to fetch API coupons, falling back to saved:", err);
+    return getSavedCoupons();
+  }
 }
 
 export function getCartItemCount(): number {
