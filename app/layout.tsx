@@ -8,6 +8,11 @@ export const metadata: Metadata = {
   title: "esim.vn - eSIM for Global Travel",
   description:
     "Stay connected worldwide with affordable eSIM data plans. No physical SIM needed.",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
