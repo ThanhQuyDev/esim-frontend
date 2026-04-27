@@ -157,10 +157,17 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
     if (i.vndPrice) return sum + i.vndPrice * i.quantity;
     return sum + convertUsdToVnd(i.price * i.quantity, usdToVndRate);
   }, 0);
-  const vndDiscount = coupon
-    ? Math.round((vndSubtotal * coupon.discount) / 100)
-    : 0;
-  const vndTotal = Math.max(0, vndSubtotal - vndDiscount);
+
+  // When retrying an existing order, use the order's vndPrice as the authoritative total
+  // (BE already applied the coupon discount). Derive discount from subtotal - order total.
+  const vndDiscount = existingOrder?.vndPrice
+    ? Math.max(0, vndSubtotal - existingOrder.vndPrice)
+    : coupon
+      ? Math.round((vndSubtotal * coupon.discount) / 100)
+      : 0;
+  const vndTotal = existingOrder?.vndPrice
+    ? existingOrder.vndPrice
+    : Math.max(0, vndSubtotal - vndDiscount);
 
   const checkoutDisplaySubtotal = hasVndPricing
     ? `${vndSubtotal.toLocaleString("vi-VN")}₫`
