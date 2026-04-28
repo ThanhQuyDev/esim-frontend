@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getRegionBySlug } from "@/lib/api";
 import { getDictionary } from "@/lib/dictionaries";
+import { getSeoMetadata } from "@/lib/seo";
 import { DestinationPlans } from "@/components/layout/sections/destination";
 import { FooterSection } from "@/components/layout/sections/footer";
 import type { Locale } from "@/lib/i18n-config";
@@ -27,11 +28,10 @@ export async function generateMetadata({
     region.name
   );
 
-  return {
+  return getSeoMetadata(`/${params.lang}/region/${params.slug}`, {
     title,
     description,
-    openGraph: { title, description },
-  };
+  });
 }
 
 export default async function RegionPage({ params }: RegionPageProps) {

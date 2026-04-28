@@ -3,6 +3,7 @@ import { NavigationProgress } from "@/components/layout/navigation-progress";
 import { AuthModal } from "@/components/layout/auth-modal";
 import { i18n, type Locale } from "@/lib/i18n-config";
 import { getDictionary } from "@/lib/dictionaries";
+import { getSeoMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
@@ -16,15 +17,10 @@ export async function generateMetadata({
   params: { lang: Locale };
 }): Promise<Metadata> {
   const dict = await getDictionary(params.lang);
-  return {
+  return getSeoMetadata(`/${params.lang}`, {
     title: dict.metadata.title,
     description: dict.metadata.description,
-    openGraph: {
-      type: "website",
-      title: dict.metadata.title,
-      description: dict.metadata.description,
-    },
-  };
+  });
 }
 
 export default async function LangLayout({

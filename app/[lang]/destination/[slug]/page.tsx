@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getDestinationBySlug } from "@/lib/api";
 import { getDictionary } from "@/lib/dictionaries";
+import { getSeoMetadata } from "@/lib/seo";
 import { DestinationPlans } from "@/components/layout/sections/destination";
 import { FooterSection } from "@/components/layout/sections/footer";
 import type { Locale } from "@/lib/i18n-config";
@@ -29,11 +30,10 @@ export async function generateMetadata({
     destination.name
   );
 
-  return {
+  return getSeoMetadata(`/${params.lang}/destination/${params.slug}`, {
     title,
     description,
-    openGraph: { title, description },
-  };
+  });
 }
 
 export default async function DestinationPage({ params }: DestinationPageProps) {

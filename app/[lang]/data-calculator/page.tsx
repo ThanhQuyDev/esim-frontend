@@ -6,6 +6,7 @@ import {
 } from "@/components/layout/sections/data-calculator";
 import { FooterSection } from "@/components/layout/sections/footer";
 import { getDictionary } from "@/lib/dictionaries";
+import { getSeoMetadata } from "@/lib/seo";
 import type { Locale } from "@/lib/i18n-config";
 import type { Metadata } from "next";
 
@@ -16,10 +17,10 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const dict = await getDictionary(params.lang);
   const calc = dict.dataCalculator;
-  return {
+  return getSeoMetadata(`/${params.lang}/data-calculator`, {
     title: calc.metadata.title,
     description: calc.metadata.description,
-  };
+  });
 }
 
 export default async function DataCalculatorPage({

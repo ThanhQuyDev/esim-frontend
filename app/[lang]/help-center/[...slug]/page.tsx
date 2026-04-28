@@ -2,7 +2,17 @@ import { Suspense } from "react";
 import { DetailContent } from "@/components/layout/sections/help-center/detail-content";
 import { FooterSection } from "@/components/layout/sections/footer";
 import { getDictionary } from "@/lib/dictionaries";
+import { getSeoMetadata } from "@/lib/seo";
 import type { Locale } from "@/lib/i18n-config";
+import type { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { lang: Locale; slug: string[] };
+}): Promise<Metadata> {
+  return getSeoMetadata(`/${params.lang}/help-center/${params.slug.join("/")}`);
+}
 
 export default async function HelpCenterDetailPage({
   params,

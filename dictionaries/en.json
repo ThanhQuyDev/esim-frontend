@@ -317,37 +317,61 @@
     "popularDestinations": {
       "title": "Popular Destinations",
       "links": [
-        "Japan eSIM",
-        "United States eSIM",
-        "Turkey eSIM",
-        "United Kingdom eSIM",
-        "Europe eSIM",
-        "Thailand eSIM",
-        "South Korea eSIM",
-        "Spain eSIM",
-        "Italy eSIM",
-        "France eSIM"
+        { "label": "Japan eSIM", "href": "/en/destination/japan" },
+        { "label": "United States eSIM", "href": "/en/destination/united-states" },
+        { "label": "Turkey eSIM", "href": "/en/destination/turkey" },
+        { "label": "United Kingdom eSIM", "href": "/en/destination/united-kingdom" },
+        { "label": "Europe eSIM", "href": "/en/region/europe" },
+        { "label": "Thailand eSIM", "href": "/en/destination/thailand" },
+        { "label": "South Korea eSIM", "href": "/en/destination/south-korea" },
+        { "label": "Spain eSIM", "href": "/en/destination/spain" },
+        { "label": "Italy eSIM", "href": "/en/destination/italy" },
+        { "label": "France eSIM", "href": "/en/destination/france" }
       ]
     },
     "saily": {
       "title": "esim.vn",
-      "links": ["About us", "Blog", "Media kit", "Affiliate"]
+      "links": [
+        { "label": "About us", "href": "/en/about-us" },
+        { "label": "Blog", "href": "/en/blog" },
+        { "label": "Press Area", "href": "/en/press-area" },
+        { "label": "Reviews", "href": "/en/review" }
+      ]
     },
     "esim": {
       "title": "eSIM",
-      "links": ["eSIM compatible devices", "What is an eSIM?", "How to set up an eSIM", "eSIM vs SIM card"]
+      "links": [
+        { "label": "eSIM compatible devices", "href": "/en/esim-supported-devices" },
+        { "label": "What is an eSIM?", "href": "/en/what-is-esim" },
+        { "label": "Data calculator", "href": "/en/data-calculator" },
+        { "label": "All destinations", "href": "/en/all-destinations" }
+      ]
     },
     "helpLinks": {
       "title": "Help",
-      "links": ["Help center", "Contact us", "How to install esim.vn"]
+      "links": [
+        { "label": "Help center", "href": "/en/help-center" },
+        { "label": "Coupons", "href": "/en/coupon" },
+        { "label": "All destinations", "href": "/en/all-destinations" }
+      ]
     },
     "followUs": {
       "title": "Follow us",
-      "links": ["YouTube", "Instagram", "X (Twitter)", "Facebook", "TikTok"]
+      "links": [
+        { "label": "YouTube", "href": "https://www.youtube.com/@saily_service" },
+        { "label": "Instagram", "href": "https://www.instagram.com/sailyworld" },
+        { "label": "X (Twitter)", "href": "https://x.com/sailyworld" },
+        { "label": "Facebook", "href": "https://www.facebook.com/sailyservice" },
+        { "label": "TikTok", "href": "https://www.tiktok.com/@sailyworld" }
+      ]
     },
     "legal": {
       "copyright": "© 2024 esim.vn. All rights reserved.",
-      "links": ["Privacy policy", "Terms of service", "Refund policy"]
+      "links": [
+        { "label": "Privacy policy", "href": "/en/help-center" },
+        { "label": "Terms of service", "href": "/en/help-center" },
+        { "label": "Refund policy", "href": "/en/help-center" }
+      ]
     },
     "paymentMethods": ["Apple Pay", "Google Pay", "Visa", "Mastercard", "Amex", "Discover", "UnionPay", "JCB"]
   },

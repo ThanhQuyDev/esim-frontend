@@ -46,18 +46,35 @@ export interface WhyChooseUs {
   updatedAt: string;
 }
 
+export interface BlogMiniTag {
+  id: string;
+  image: string | null;
+  title: string;
+  description: string | null;
+  contentButton: string | null;
+  linkUrl: string | null;
+}
+
 export interface Blog {
   id: string;
   language: string;
   publishedAt: string | null;
   isPublished: boolean;
   author: string | null;
-  tags: string | null;
+  authorAvatar?: string | null;
+  authorBio?: string | null;
+  tags?: string | null;
   coverImage: string | null;
   excerpt: string | null;
   content: string;
   slug: string;
   title: string;
+  category: string | null;
+  timeRead: number | string | null;
+  miniTag: BlogMiniTag | null;
+  planIds: number[] | string[] | null;
+  plans: Plan[] | null;
+  relatedBlogs?: Blog[] | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -240,6 +257,56 @@ export async function getBlogs(
   );
 }
 
+export async function getBlogCategories(
+  lang?: string
+): Promise<string[]> {
+  const headers: Record<string, string> = {};
+  if (lang) headers["x-custom-lang"] = lang;
+
+  const url = `${API_BASE_URL}/api/v1/blogs/categories`;
+  const res = await fetch(url, {
+    headers,
+    next: { revalidate: 300 },
+  });
+
+  if (!res.ok) {
+    throw new Error(`API error: ${res.status} ${res.statusText}`);
+  }
+
+  return res.json();
+}
+
+export async function getBlogsByCategory(
+  category: string,
+  options: FetchOptions = {}
+): Promise<PaginatedResponse<Blog>> {
+  return apiFetch<PaginatedResponse<Blog>>(
+    "/api/v1/blogs",
+    {
+      limit: 6,
+      ...options,
+      filters: JSON.stringify({ category }),
+    },
+    120
+  );
+}
+
+export async function getBlogDetail(
+  id: string,
+  lang?: string
+): Promise<Blog> {
+  const url = `${API_BASE_URL}/api/v1/blogs/${id}`;
+  const headers: Record<string, string> = {};
+  if (lang) headers["x-custom-lang"] = lang;
+
+  const res = await fetch(url, {
+    headers,
+    next: { revalidate: 60 },
+  });
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return res.json();
+}
+
 export async function getSupportedDevices(
   search?: string,
   lang?: string
@@ -401,6 +468,42 @@ export interface HelpCenterArticle {
   parent: string;
   createdAt: string;
   updatedAt: string;
+}
+
+// ===== SEO Config Types =====
+
+export interface SeoConfig {
+  id: number;
+  url: string;
+  metaTitle: string;
+  metaDescription: string;
+  metaKeywords: string;
+  ogImage: string;
+  ogTitle: string;
+  ogDescription: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+}
+
+// ===== SEO Config API =====
+
+export async function fetchSeoConfigByUrl(
+  url: string
+): Promise<SeoConfig | null> {
+  try {
+    const encodedUrl = encodeURIComponent(url);
+    const res = await fetch(
+      `${API_BASE_URL}/api/v1/seo-configs/by-url?url=${encodedUrl}`,
+      { next: { revalidate: 300 } }
+    );
+    if (!res.ok) return null;
+    const data: SeoConfig = await res.json();
+    return data.isActive ? data : null;
+  } catch {
+    return null;
+  }
 }
 
 export interface HelpCenterResponse {

@@ -1,5 +1,10 @@
 import Link from "next/link";
 
+interface FooterLink {
+  label: string;
+  href: string;
+}
+
 interface FooterSectionProps {
   dict: Record<string, any>;
 }
@@ -95,15 +100,28 @@ export function FooterSection({ dict }: FooterSectionProps) {
             <div key={i} className="flex flex-col">
               <p className="body-sm-bold text-text-primary mb-4">{col.title}</p>
               <div className="flex flex-col gap-y-3">
-                {col.links.map((link: string, j: number) => (
-                  <a
-                    key={j}
-                    href="#"
-                    className="body-sm text-text-secondary hover:underline inline-flex items-center"
-                  >
-                    {link}
-                  </a>
-                ))}
+                {col.links.map((link: FooterLink, j: number) => {
+                  const isExternal = link.href.startsWith("http");
+                  return isExternal ? (
+                    <a
+                      key={j}
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="body-sm text-text-secondary hover:underline inline-flex items-center"
+                    >
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link
+                      key={j}
+                      href={link.href}
+                      className="body-sm text-text-secondary hover:underline inline-flex items-center"
+                    >
+                      {link.label}
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           ))}
@@ -154,14 +172,14 @@ export function FooterSection({ dict }: FooterSectionProps) {
         <div className="border-t border-border-primary pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="body-xs text-text-tertiary">{dict.legal.copyright}</p>
           <div className="flex flex-wrap gap-4">
-            {dict.legal.links.map((link: string, i: number) => (
-              <a
+            {dict.legal.links.map((link: FooterLink, i: number) => (
+              <Link
                 key={i}
-                href="#"
+                href={link.href}
                 className="body-xs text-text-tertiary hover:text-text-secondary transition-colors"
               >
-                {link}
-              </a>
+                {link.label}
+              </Link>
             ))}
           </div>
         </div>

@@ -35,6 +35,7 @@ module.exports = {
       backgroundColor: {
         primary: "var(--bg-primary)",
         secondary: "var(--bg-secondary)",
+        tertiary: "#e5e5ea",
         accent: "var(--bg-accent)",
         "accent-hover": "var(--bg-accent-hover)",
         "blue-100": "var(--bg-blue-100)",

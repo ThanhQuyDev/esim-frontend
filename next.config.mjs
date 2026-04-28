@@ -18,6 +18,18 @@ const nextConfig = {
         protocol: "https",
         hostname: "sb.nordcdn.com",
       },
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
+      {
+        protocol: "https",
+        hostname: "api.dicebear.com",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn-revamp.airalo.com",
+      },
     ],
   },
 };

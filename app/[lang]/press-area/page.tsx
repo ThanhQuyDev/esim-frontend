@@ -11,7 +11,17 @@ import { pressAreaTranslations } from "@/components/layout/sections/press-area/t
 import { PartnerBar } from "@/components/layout/sections/partner-bar";
 import { FooterSection } from "@/components/layout/sections/footer";
 import { getDictionary } from "@/lib/dictionaries";
+import { getSeoMetadata } from "@/lib/seo";
 import type { Locale } from "@/lib/i18n-config";
+import type { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { lang: Locale };
+}): Promise<Metadata> {
+  return getSeoMetadata(`/${params.lang}/press-area`);
+}
 
 export default async function PressAreaPage({
   params,

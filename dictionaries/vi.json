@@ -317,37 +317,61 @@
     "popularDestinations": {
       "title": "Điểm đến phổ biến",
       "links": [
-        "eSIM Nhật Bản",
-        "eSIM Hoa Kỳ",
-        "eSIM Thổ Nhĩ Kỳ",
-        "eSIM Vương quốc Anh",
-        "eSIM Châu Âu",
-        "eSIM Thái Lan",
-        "eSIM Hàn Quốc",
-        "eSIM Tây Ban Nha",
-        "eSIM Ý",
-        "eSIM Pháp"
+        { "label": "eSIM Nhật Bản", "href": "/vi/destination/japan" },
+        { "label": "eSIM Hoa Kỳ", "href": "/vi/destination/united-states" },
+        { "label": "eSIM Thổ Nhĩ Kỳ", "href": "/vi/destination/turkey" },
+        { "label": "eSIM Vương quốc Anh", "href": "/vi/destination/united-kingdom" },
+        { "label": "eSIM Châu Âu", "href": "/vi/region/europe" },
+        { "label": "eSIM Thái Lan", "href": "/vi/destination/thailand" },
+        { "label": "eSIM Hàn Quốc", "href": "/vi/destination/south-korea" },
+        { "label": "eSIM Tây Ban Nha", "href": "/vi/destination/spain" },
+        { "label": "eSIM Ý", "href": "/vi/destination/italy" },
+        { "label": "eSIM Pháp", "href": "/vi/destination/france" }
       ]
     },
     "saily": {
       "title": "esim.vn",
-      "links": ["Về chúng tôi", "Blog", "Bộ truyền thông", "Đối tác"]
+      "links": [
+        { "label": "Về chúng tôi", "href": "/vi/gioi-thieu" },
+        { "label": "Blog", "href": "/vi/blog" },
+        { "label": "Khu vực báo chí", "href": "/vi/khu-vuc-bao-chi" },
+        { "label": "Đánh giá", "href": "/vi/review" }
+      ]
     },
     "esim": {
       "title": "eSIM",
-      "links": ["Thiết bị tương thích eSIM", "eSIM là gì?", "Cách cài đặt eSIM", "eSIM vs SIM"]
+      "links": [
+        { "label": "Thiết bị tương thích eSIM", "href": "/vi/thiet-bi-ho-tro-esim" },
+        { "label": "eSIM là gì?", "href": "/vi/esim-la-gi" },
+        { "label": "Công cụ tính data", "href": "/vi/cong-cu-tinh-data" },
+        { "label": "Tất cả điểm đến", "href": "/vi/all-destinations" }
+      ]
     },
     "helpLinks": {
       "title": "Trợ giúp",
-      "links": ["Trung tâm trợ giúp", "Liên hệ", "Cách cài đặt esim.vn"]
+      "links": [
+        { "label": "Trung tâm trợ giúp", "href": "/vi/help-center" },
+        { "label": "Mã giảm giá", "href": "/vi/ma-giam-gia" },
+        { "label": "Tất cả điểm đến", "href": "/vi/all-destinations" }
+      ]
     },
     "followUs": {
       "title": "Theo dõi",
-      "links": ["YouTube", "Instagram", "X (Twitter)", "Facebook", "TikTok"]
+      "links": [
+        { "label": "YouTube", "href": "https://www.youtube.com/@saily_service" },
+        { "label": "Instagram", "href": "https://www.instagram.com/sailyworld" },
+        { "label": "X (Twitter)", "href": "https://x.com/sailyworld" },
+        { "label": "Facebook", "href": "https://www.facebook.com/sailyservice" },
+        { "label": "TikTok", "href": "https://www.tiktok.com/@sailyworld" }
+      ]
     },
     "legal": {
       "copyright": "© 2024 esim.vn. Bảo lưu mọi quyền.",
-      "links": ["Chính sách bảo mật", "Điều khoản dịch vụ", "Chính sách hoàn tiền"]
+      "links": [
+        { "label": "Chính sách bảo mật", "href": "/vi/help-center" },
+        { "label": "Điều khoản dịch vụ", "href": "/vi/help-center" },
+        { "label": "Chính sách hoàn tiền", "href": "/vi/help-center" }
+      ]
     },
     "paymentMethods": ["Apple Pay", "Google Pay", "Visa", "Mastercard", "Amex", "Discover", "UnionPay", "JCB"]
   },

@@ -121,7 +121,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Gói du lịch cao cấp tất cả trong một."
             : "Your all-in-one premium travel plan.",
-          href: "#",
+          href: `/${lang}/all-destinations`,
           badge: isVi ? "Mới" : "New",
         },
         {
@@ -130,7 +130,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Quản lý gói dữ liệu đội nhóm trong một bảng điều khiển."
             : "All team data plans in one dashboard.",
-          href: "#",
+          href: `/${lang}/all-destinations`,
           badge: isVi ? "Mới" : "New",
         },
         {
@@ -139,7 +139,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Bảo vệ dữ liệu an toàn và riêng tư."
             : "Keep your data safe and private.",
-          href: "#",
+          href: `/${lang}/all-destinations`,
         },
         {
           icon: "mobile-check",
@@ -147,7 +147,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Kiểm tra thiết bị có hỗ trợ eSIM không."
             : "Find out if your device is eSIM compatible.",
-          href: "#",
+          href: isVi ? `/${lang}/thiet-bi-ho-tro-esim` : `/${lang}/esim-supported-devices`,
         },
       ],
       col2Label: "Tools",
@@ -167,7 +167,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Khám phá tính năng bảo vệ kỹ thuật số của esim.vn."
             : "Discover esim.vn's built-in digital protection.",
-          href: "#",
+          href: `/${lang}/all-destinations`,
           image:
             "https://sb.nordcdn.com/m/7bf573d226cb4b2d/original/mega-menu-explore-security-features.png",
           imageAlt: "A man uses esim.vn's built-in digital protection.",
@@ -177,7 +177,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Quản lý tất cả gói eSIM của đội nhóm."
             : "Manage all your team's eSIM plans.",
-          href: "#",
+          href: `/${lang}/all-destinations`,
           image:
             "https://sb.nordcdn.com/m/37ec43195ff7cbbd/original/mega-menu-explore-b2b-admin-panel.png",
           imageAlt:
@@ -188,7 +188,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Dữ liệu không giới hạn, hoàn 8% tín dụng và nhiều ưu đãi."
             : "Unlimited data, 8% back in credits, and extra perks.",
-          href: "#",
+          href: `/${lang}/all-destinations`,
           image:
             "https://sb.nordcdn.com/m/681452996b3d756b/original/mega-menu-explore-ultra-plan.png",
           imageAlt: "The Ultra plan tab on the esim.vn app.",
@@ -197,11 +197,11 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
       bottomLeft: {
         icon: true,
         text: isVi ? "eSIM là gì?" : "What is an eSIM?",
-        href: "#",
+        href: isVi ? `/${lang}/esim-la-gi` : `/${lang}/what-is-esim`,
       },
       bottomRight: {
         text: isVi ? "Tải ứng dụng" : "Download App",
-        href: "#",
+        href: `/${lang}/all-destinations`,
       },
     },
     resources: {
@@ -220,7 +220,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Đọc bài viết, hướng dẫn và cập nhật sản phẩm."
             : "Read articles, guides, and product updates.",
-          href: "#",
+          href: `/${lang}/blog`,
         },
         {
           icon: "circle-user",
@@ -236,7 +236,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Tin tức mới nhất và tài nguyên thương hiệu."
             : "The latest news, insights, and brand assets.",
-          href: "#",
+          href: isVi ? `/${lang}/khu-vuc-bao-chi` : `/${lang}/press-area`,
         },
       ],
       col2: [
@@ -246,7 +246,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Hợp tác và kiếm thu nhập qua giới thiệu."
             : "Partner with us and earn through referrals.",
-          href: "#",
+          href: `/${lang}/all-destinations`,
         },
         {
           icon: "message-dots",
@@ -254,7 +254,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Xem mọi người nói gì về chúng tôi!"
             : "Find out what people are saying about us!",
-          href: "#",
+          href: `/${lang}/review`,
         },
         {
           icon: "seedling",
@@ -262,7 +262,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Khám phá vị trí tuyển dụng và gia nhập đội ngũ."
             : "Explore open roles and join the team.",
-          href: "#",
+          href: isVi ? `/${lang}/gioi-thieu` : `/${lang}/about-us`,
         },
       ],
       explore: [
@@ -271,7 +271,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Khám phá tính năng bảo vệ kỹ thuật số của esim.vn."
             : "Discover esim.vn's built-in digital protection.",
-          href: "#",
+          href: `/${lang}/all-destinations`,
           image:
             "https://sb.nordcdn.com/m/7bf573d226cb4b2d/original/mega-menu-explore-security-features.png",
           imageAlt: "A man uses esim.vn's built-in digital protection.",
@@ -291,7 +291,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Dữ liệu không giới hạn, hoàn 8% tín dụng và nhiều ưu đãi."
             : "Unlimited data, 8% back in credits, and extra perks.",
-          href: "#",
+          href: `/${lang}/all-destinations`,
           image:
             "https://sb.nordcdn.com/m/681452996b3d756b/original/mega-menu-explore-ultra-plan.png",
           imageAlt: "The Ultra plan tab on the esim.vn app.",
@@ -302,11 +302,11 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
         text: isVi
           ? "Thiết bị của bạn có tương thích eSIM không?"
           : "Is your device eSIM compatible?",
-        href: "#",
+        href: isVi ? `/${lang}/thiet-bi-ho-tro-esim` : `/${lang}/esim-supported-devices`,
       },
       bottomRight: {
         text: isVi ? "Tải ứng dụng" : "Download App",
-        href: "#",
+        href: `/${lang}/all-destinations`,
       },
     },
     offers: {
@@ -317,7 +317,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Chia sẻ esim.vn với bạn bè và nhận thưởng."
             : "Share esim.vn with friends and earn rewards.",
-          href: "#",
+          href: `/${lang}/all-destinations`,
         },
         {
           icon: "badge-percent",
@@ -325,7 +325,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Tiết kiệm hơn với giá đặc biệt cho sinh viên."
             : "Save more with special pricing for students.",
-          href: "#",
+          href: `/${lang}/all-destinations`,
         },
         {
           icon: "tag",
@@ -333,7 +333,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Nhận ưu đãi tốt nhất và tiết kiệm dữ liệu eSIM!"
             : "Get the best deals and save on eSIM data!",
-          href: "#",
+          href: isVi ? `/${lang}/ma-giam-gia` : `/${lang}/coupon`,
         },
       ],
       col2: [
@@ -343,7 +343,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Nhận voucher esim.vn, sử dụng trong 12 tháng."
             : "Get a esim.vn voucher, use within 12 months.",
-          href: "#",
+          href: isVi ? `/${lang}/ma-giam-gia` : `/${lang}/coupon`,
         },
       ],
       explore: [
@@ -352,7 +352,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Khám phá tính năng bảo vệ kỹ thuật số của esim.vn."
             : "Discover esim.vn's built-in digital protection.",
-          href: "#",
+          href: `/${lang}/all-destinations`,
           image:
             "https://sb.nordcdn.com/m/7bf573d226cb4b2d/original/mega-menu-explore-security-features.png",
           imageAlt: "A man uses esim.vn's built-in digital protection.",
@@ -362,7 +362,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Tìm hiểu bạn cần bao nhiêu dữ liệu cho chuyến đi."
             : "Find out how much data you'll need on your trip.",
-          href: `/${lang}/data-calculator`,
+          href: isVi ? `/${lang}/cong-cu-tinh-data` : `/${lang}/data-calculator`,
           image:
             "https://sb.nordcdn.com/m/6c224dbf48f13441/original/mega-menu-explore-data-usage-calculator.png",
           imageAlt: "A woman uses esim.vn's data usage calculator.",
@@ -372,7 +372,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Dữ liệu không giới hạn, hoàn 8% tín dụng và nhiều ưu đãi."
             : "Unlimited data, 8% back in credits, and extra perks.",
-          href: "#",
+          href: `/${lang}/all-destinations`,
           image:
             "https://sb.nordcdn.com/m/681452996b3d756b/original/mega-menu-explore-ultra-plan.png",
           imageAlt: "The Ultra plan tab on the esim.vn app.",
@@ -381,11 +381,11 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
       bottomLeft: {
         icon: true,
         text: isVi ? "eSIM là gì?" : "What is an eSIM?",
-        href: "#",
+        href: isVi ? `/${lang}/esim-la-gi` : `/${lang}/what-is-esim`,
       },
       bottomRight: {
         text: isVi ? "Tải ứng dụng" : "Download App",
-        href: "#",
+        href: `/${lang}/all-destinations`,
       },
     },
     help: {
@@ -396,7 +396,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Hướng dẫn nhanh sử dụng ứng dụng esim.vn eSIM."
             : "A quick guide to using the esim.vn eSIM app.",
-          href: "#",
+          href: `/${lang}/help-center`,
         },
         {
           icon: "globe",
@@ -404,7 +404,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Duyệt hướng dẫn và tài nguyên hỗ trợ."
             : "Browse guides and support resources.",
-          href: "#",
+          href: `/${lang}/help-center`,
         },
         {
           icon: "triangle-alert",
@@ -412,7 +412,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Sửa lỗi thường gặp với hướng dẫn từng bước."
             : "Fix common issues with step-by-step help.",
-          href: "#",
+          href: `/${lang}/help-center`,
         },
       ],
       col2: [
@@ -422,7 +422,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Tìm câu trả lời cho các câu hỏi phổ biến nhất về esim.vn."
             : "Find answers to the most common questions about esim.vn.",
-          href: "#",
+          href: `/${lang}/help-center`,
         },
       ],
       explore: [
@@ -431,7 +431,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Khám phá tính năng bảo vệ kỹ thuật số của esim.vn."
             : "Discover esim.vn's built-in digital protection.",
-          href: "#",
+          href: `/${lang}/all-destinations`,
           image:
             "https://sb.nordcdn.com/m/7bf573d226cb4b2d/original/mega-menu-explore-security-features.png",
           imageAlt: "A man uses esim.vn's built-in digital protection.",
@@ -441,7 +441,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Tìm hiểu bạn cần bao nhiêu dữ liệu cho chuyến đi."
             : "Find out how much data you'll need on your trip.",
-          href: `/${lang}/data-calculator`,
+          href: isVi ? `/${lang}/cong-cu-tinh-data` : `/${lang}/data-calculator`,
           image:
             "https://sb.nordcdn.com/m/6c224dbf48f13441/original/mega-menu-explore-data-usage-calculator.png",
           imageAlt: "A woman uses esim.vn's data usage calculator.",
@@ -451,7 +451,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Dữ liệu không giới hạn, hoàn 8% tín dụng và nhiều ưu đãi."
             : "Unlimited data, 8% back in credits, and extra perks.",
-          href: "#",
+          href: `/${lang}/all-destinations`,
           image:
             "https://sb.nordcdn.com/m/681452996b3d756b/original/mega-menu-explore-ultra-plan.png",
           imageAlt: "The Ultra plan tab on the esim.vn app.",
@@ -460,11 +460,11 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
       bottomLeft: {
         icon: true,
         text: isVi ? "eSIM là gì?" : "What is an eSIM?",
-        href: "#",
+        href: isVi ? `/${lang}/esim-la-gi` : `/${lang}/what-is-esim`,
       },
       bottomRight: {
         text: isVi ? "Tải ứng dụng" : "Download App",
-        href: "#",
+        href: `/${lang}/all-destinations`,
       },
     },
   };
@@ -536,7 +536,7 @@ export function Navbar({ lang, dict }: NavbarProps) {
                   {dict.announcement}
                 </p>
                 <Link
-                  href="#"
+                  href={`/${lang}/all-destinations`}
                   className="inline-block text-text-primary-on-color border-md border-[rgba(255,255,255,0.3)] hover:bg-bg-secondary hover:text-text-primary rounded-full transition-colors body-sm-medium px-6 py-[5.5px]"
                 >
                   {dict.announcementCta}
@@ -550,7 +550,7 @@ export function Navbar({ lang, dict }: NavbarProps) {
                   </p>
                 </div>
                 <Link
-                  href="#"
+                  href={`/${lang}/all-destinations`}
                   className="w-full text-center text-text-primary-on-color border-md border-[rgba(255,255,255,0.3)] hover:bg-bg-secondary hover:text-text-primary rounded-full transition-colors body-sm-medium px-6 py-[5.5px]"
                 >
                   {dict.announcementCta}
@@ -1052,7 +1052,7 @@ function MobileSidebar({
                     {lang === "vi" ? "Đăng nhập" : "Sign In"}
                   </button>
                   <Link
-                    href="#"
+                    href={`/${lang}/all-destinations`}
                     className="block w-full text-center px-5 py-3 border-md border-border-focus text-text-primary body-md-medium rounded-full cursor-pointer hover:bg-bg-primary transition-colors"
                     onClick={() => setOpen(false)}
                   >

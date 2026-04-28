@@ -2,7 +2,17 @@ import { Suspense } from "react";
 import { CheckoutPageContent } from "@/components/layout/sections/checkout";
 import { FooterSection } from "@/components/layout/sections/footer";
 import { getDictionary } from "@/lib/dictionaries";
+import { getSeoMetadata } from "@/lib/seo";
 import type { Locale } from "@/lib/i18n-config";
+import type { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { lang: Locale };
+}): Promise<Metadata> {
+  return getSeoMetadata(`/${params.lang}/checkout`);
+}
 
 export default async function CheckoutPage({
   params,

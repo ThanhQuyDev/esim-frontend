@@ -1,5 +1,4 @@
-import { Suspense } from "react";
-import { CategoriesContent } from "@/components/layout/sections/help-center";
+import { BlogDetailContent } from "@/components/layout/sections/blog-page";
 import { FooterSection } from "@/components/layout/sections/footer";
 import { getDictionary } from "@/lib/dictionaries";
 import { getSeoMetadata } from "@/lib/seo";
@@ -9,24 +8,22 @@ import type { Metadata } from "next";
 export async function generateMetadata({
   params,
 }: {
-  params: { lang: Locale };
+  params: { lang: Locale; slug: string };
 }): Promise<Metadata> {
-  return getSeoMetadata(`/${params.lang}/help-center/categories`);
+  return getSeoMetadata(`/${params.lang}/blog/${params.slug}`);
 }
 
-export default async function HelpCenterCategoriesPage({
+export default async function BlogDetailPage({
   params,
 }: {
-  params: { lang: Locale };
+  params: { lang: Locale; slug: string };
 }) {
   const dict = await getDictionary(params.lang);
 
   return (
-    <>
-      <Suspense fallback={<div className="min-h-screen" />}>
-        <CategoriesContent lang={params.lang} />
-      </Suspense>
+    <main role="main">
+      <BlogDetailContent lang={params.lang} slug={params.slug} />
       <FooterSection dict={dict.footer} />
-    </>
+    </main>
   );
 }
