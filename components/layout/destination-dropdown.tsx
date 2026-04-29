@@ -6,14 +6,44 @@ import { useTopDestinations, useSearchDestinations, useRegions, useSearchRegions
 import { useDebounce } from "@/lib/use-debounce";
 import type { Locale } from "@/lib/i18n-config";
 
+interface DestinationDropdownDict {
+  subtitle?: string;
+  title?: string;
+  description?: string;
+  tabs?: { country?: string; region?: string; ultraPlan?: string };
+  from?: string;
+  viewAllDestinations?: string;
+  new?: string;
+}
+
 interface DestinationDropdownProps {
   lang: Locale;
+  dict?: DestinationDropdownDict;
   onClose: () => void;
 }
 
 type TabType = "top10" | "country" | "region" | "ultra";
 
-export function DestinationDropdown({ lang, onClose }: DestinationDropdownProps) {
+/* Fallback translations when dict is not provided */
+const FALLBACK: Record<string, DestinationDropdownDict> = {
+  vi: {
+    subtitle: "Bạn đang đi du lịch đâu?",
+    tabs: { country: "Quốc gia", region: "Khu vực", ultraPlan: "Ultra Plan" },
+    from: "Từ",
+    viewAllDestinations: "Xem tất cả điểm đến",
+    new: "Mới",
+  },
+  en: {
+    subtitle: "Where are you travelling to?",
+    tabs: { country: "Country", region: "Region", ultraPlan: "Ultra Plan" },
+    from: "From",
+    viewAllDestinations: "View All Destinations",
+    new: "New",
+  },
+};
+
+export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdownProps) {
+  const t = { ...FALLBACK[lang] || FALLBACK.en, ...dict };
   const [activeTab, setActiveTab] = useState<TabType>("top10");
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebounce(searchQuery, 300);
@@ -48,10 +78,18 @@ export function DestinationDropdown({ lang, onClose }: DestinationDropdownProps)
 
   const tabs = [
     { key: "top10" as const, label: "Top 10" },
-    { key: "country" as const, label: "Country" },
-    { key: "region" as const, label: "Region" },
-    { key: "ultra" as const, label: "Ultra Plan", badge: "New" },
+    { key: "country" as const, label: t.tabs?.country || "Country" },
+    { key: "region" as const, label: t.tabs?.region || "Region" },
+    { key: "ultra" as const, label: t.tabs?.ultraPlan || "Ultra Plan", badge: t.new || "New" },
   ];
+
+  /* Format price with locale */
+  const formatPrice = (price: number | string) => {
+    const num = Number(price);
+    if (!num || isNaN(num)) return lang === "vi" ? "20.000 đ" : "US$3.99";
+    if (lang === "vi") return `${num.toLocaleString("vi-VN")} đ`;
+    return `US$${num}`;
+  };
 
   return (
     <div
@@ -65,7 +103,7 @@ export function DestinationDropdown({ lang, onClose }: DestinationDropdownProps)
             <div id="input-wrapper" className="relative mb-1 lg:mb-6">
               <input
                 data-testid="search-input"
-                placeholder="Where are you travelling to?"
+                placeholder={t.subtitle || "Where are you travelling to?"}
                 autoComplete="off"
                 className="body-sm max-lg:body-md bg-primary outline-hidden appearance-none w-full leading-md py-[12.5px] pl-4 pr-12 text-text-primary placeholder-text-tertiary border border-border-primary active:border-border-focus focus:border-border-focus transition-colors rounded-full focus:bg-bg-secondary cursor-pointer"
                 type="text"
@@ -121,7 +159,9 @@ export function DestinationDropdown({ lang, onClose }: DestinationDropdownProps)
                   {/* Destinations Section */}
                   {searchDestinations.length > 0 && (
                     <div>
-                      <h3 className="body-md-medium text-text-primary mb-3 px-3">Destinations</h3>
+                      <h3 className="body-md-medium text-text-primary mb-3 px-3">
+                        {lang === "vi" ? "Điểm đến" : "Destinations"}
+                      </h3>
                       <div className="grid gap-6 lg:gap-4 w-full lg:grid-cols-3 xl:grid-cols-5">
                         {searchDestinations.map((dest: any) => (
                           <a
@@ -154,7 +194,9 @@ export function DestinationDropdown({ lang, onClose }: DestinationDropdownProps)
                               <div className="flex flex-col gap-1">
                                 <p className="body-sm-medium text-text-primary text-left">{dest.name}</p>
                                 <p className="body-xs text-text-tertiary text-left">
-                                  <span className="whitespace-nowrap">From US$${dest.minPrice || "3.99"}</span>
+                                  <span className="whitespace-nowrap">
+                                    {t.from} {formatPrice(dest.minPrice || dest.fromPrice)}
+                                  </span>
                                 </p>
                               </div>
                             </div>
@@ -167,7 +209,9 @@ export function DestinationDropdown({ lang, onClose }: DestinationDropdownProps)
                   {/* Regions Section */}
                   {searchRegions.length > 0 && (
                     <div>
-                      <h3 className="body-md-medium text-text-primary mb-3 px-3">Regions</h3>
+                      <h3 className="body-md-medium text-text-primary mb-3 px-3">
+                        {t.tabs?.region || (lang === "vi" ? "Khu vực" : "Regions")}
+                      </h3>
                       <div className="grid gap-6 lg:gap-4 w-full lg:grid-cols-3 xl:grid-cols-5">
                         {searchRegions.map((region: any) => (
                           <a
@@ -201,7 +245,7 @@ export function DestinationDropdown({ lang, onClose }: DestinationDropdownProps)
                                 <p className="body-sm-medium text-text-primary text-left">{region.name}</p>
                                 <p className="body-xs text-text-tertiary text-left">
                                   <span className="whitespace-nowrap">
-                                    {region.destinationCount} {region.destinationCount === 1 ? 'country' : 'countries'}
+                                    {region.destinationCount} {lang === "vi" ? "quốc gia" : (region.destinationCount === 1 ? "country" : "countries")}
                                   </span>
                                 </p>
                               </div>
@@ -215,7 +259,9 @@ export function DestinationDropdown({ lang, onClose }: DestinationDropdownProps)
                   {/* No Results */}
                   {searchDestinations.length === 0 && searchRegions.length === 0 && (
                     <div className="flex items-center justify-center h-40">
-                      <p className="body-md text-text-tertiary">No results found</p>
+                      <p className="body-md text-text-tertiary">
+                        {lang === "vi" ? "Không tìm thấy kết quả" : "No results found"}
+                      </p>
                     </div>
                   )}
                 </div>
@@ -225,7 +271,10 @@ export function DestinationDropdown({ lang, onClose }: DestinationDropdownProps)
                   {(showRegionsTab ? regions : topDestinations).length === 0 ? (
                     <div className="flex items-center justify-center h-full">
                       <p className="body-md text-text-tertiary">
-                        {showRegionsTab ? "No regions found" : "No destinations found"}
+                        {showRegionsTab
+                          ? (lang === "vi" ? "Không tìm thấy khu vực" : "No regions found")
+                          : (lang === "vi" ? "Không tìm thấy điểm đến" : "No destinations found")
+                        }
                       </p>
                     </div>
                   ) : (
@@ -267,8 +316,8 @@ export function DestinationDropdown({ lang, onClose }: DestinationDropdownProps)
                               <p className="body-xs text-text-tertiary text-left">
                                 <span className="whitespace-nowrap">
                                   {showRegionsTab
-                                    ? `${item.destinationCount} ${item.destinationCount === 1 ? 'country' : 'countries'}`
-                                    : `From US$${item.minPrice || "3.99"}`
+                                    ? `${item.destinationCount} ${lang === "vi" ? "quốc gia" : (item.destinationCount === 1 ? "country" : "countries")}`
+                                    : `${t.from} ${formatPrice(item.fromPrice)}`
                                   }
                                 </span>
                               </p>
@@ -293,7 +342,7 @@ export function DestinationDropdown({ lang, onClose }: DestinationDropdownProps)
               data-testid="secondary-cta"
               href={`/${lang}/esim-supported-devices`}
             >
-              Is your device eSIM compatible?
+              {lang === "vi" ? "Thiết bị của bạn có tương thích eSIM không?" : "Is your device eSIM compatible?"}
             </a>
           </div>
           <a
@@ -302,7 +351,7 @@ export function DestinationDropdown({ lang, onClose }: DestinationDropdownProps)
             data-testid="primary-cta"
             href={`/${lang}/all-destinations`}
           >
-            View All Destinations
+            {t.viewAllDestinations || "View All Destinations"}
           </a>
         </div>
       </div>

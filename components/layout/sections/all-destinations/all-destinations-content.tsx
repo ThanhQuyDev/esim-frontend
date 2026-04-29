@@ -243,7 +243,7 @@ export function AllDestinationsContent({
                               </p>
                               <p className="body-md text-text-tertiary scroll-mt-20 xl:scroll-mt-24">
                                 <span className="whitespace-nowrap">
-                                  {dict.from} US${item.minPrice || "3.99"}
+                                  `${dict.from} ${Number(item.fromPrice).toLocaleString("vi-VN") || "20.000"} đ`
                                 </span>
                                 {item.destinationCount != null && (
                                   <>

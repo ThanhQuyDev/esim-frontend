@@ -11,6 +11,7 @@ import { PriceDisplay, GreenBox } from "./price-display";
 import { PlanTabs } from "./plan-tabs";
 import { PlanConfig } from "./plan-config";
 import { BuyActions } from "./buy-actions";
+import { MobileDestinationPlans } from "./mobile-destination-plans";
 
 const EMPTY_PLANS: PlansByDestinationResponse = {
   dataPlans: [],
@@ -36,65 +37,47 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
   const [days, setDays] = useState(7);
   const [quantity, setQuantity] = useState(1);
 
-  const hasAnyPlans =
-    plans.dataPlans.length > 0 ||
-    plans.slowUnlimited.length > 0 ||
-    plans.fastUnlimited.length > 0 ||
-    plans.dailyUnlimited.length > 0;
-
-  // Auto-select first plan when data loads
-  useMemo(() => {
-    if (!selectedPlan && hasAnyPlans) {
-      if (plans.dataPlans.length > 0) {
-        setSelectedPlan(plans.dataPlans[0]);
-      } else if (plans.dailyUnlimited.length > 0) {
-        setSelectedPlan(plans.dailyUnlimited[0]);
-      } else if (plans.slowUnlimited.length > 0) {
-        setSelectedPlan(plans.slowUnlimited[0]);
-      } else if (plans.fastUnlimited.length > 0) {
-        setSelectedPlan(plans.fastUnlimited[0]);
-      }
-    }
-  }, [hasAnyPlans]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const handleSelectPlan = (plan: Plan) => {
-    setSelectedPlan(plan);
-  };
-
-  // Determine if selected plan is a "fixed" type (price is total for the package)
-  // dataPlans & dailyUnlimited = fixed (price is for the whole package)
-  // slowUnlimited & fastUnlimited = per-day pricing (user picks GB + days, price/durationDays * days)
+  // Determine if the selected plan is a fixed-duration plan (dataPlans)
   const isFixed = useMemo(() => {
     if (!selectedPlan) return false;
-    const isInDataPlans = plans.dataPlans.some((p) => p.id === selectedPlan.id);
-    const isInDailyUnlimited = plans.dailyUnlimited.some((p) => p.id === selectedPlan.id);
-    return isInDataPlans || isInDailyUnlimited;
+    return plans.dataPlans.some((p) => p.id === selectedPlan.id);
   }, [selectedPlan, plans]);
 
-  // Determine if the current selection supports flexible days (calendar picker)
-  // or only fixed durationDays options
-  const { isFlexibleDays, availableDays } = useMemo(() => {
-    if (!selectedPlan || isFixed) {
-      return { isFlexibleDays: false, availableDays: [] as number[] };
-    }
-    // Find sibling plans (same category + same dataMb)
-    const isInSlow = plans.slowUnlimited.some((p) => p.id === selectedPlan.id);
-    const categoryPlans = isInSlow ? plans.slowUnlimited : plans.fastUnlimited;
-    const sameGb = categoryPlans.filter((p) => Number(p.dataMb) === Number(selectedPlan.dataMb));
+  // Determine if the plan supports flexible days (unlimited plans)
+  const isFlexibleDays = useMemo(() => {
+    if (!selectedPlan) return false;
+    return !plans.dataPlans.some((p) => p.id === selectedPlan.id);
+  }, [selectedPlan, plans]);
 
-    const hasMultidate = sameGb.some((p) => p.isAbleMultidate);
-    if (hasMultidate) {
-      return { isFlexibleDays: true, availableDays: [] as number[] };
-    }
-    // Only fixed durationDays available
-    const daysSet = new Set(sameGb.map((p) => p.durationDays));
-    return { isFlexibleDays: false, availableDays: Array.from(daysSet).sort((a, b) => a - b) };
-  }, [selectedPlan, isFixed, plans]);
+  // Available days for fixed plans
+  const availableDays = useMemo(() => {
+    if (!selectedPlan) return [];
+    const matching = plans.dataPlans.filter((p) => p.dataMb === selectedPlan.dataMb);
+    return [...new Set(matching.map((p) => p.durationDays))].sort((a, b) => a - b);
+  }, [selectedPlan, plans]);
 
-  // Auto-correct days when switching to non-flexible plan
+  // Auto-select first plan
+  useEffect(() => {
+    if (!selectedPlan && plans) {
+      const first = plans.dataPlans[0] || plans.fastUnlimited[0] || plans.slowUnlimited[0] || plans.dailyUnlimited[0];
+      if (first) setSelectedPlan(first);
+    }
+  }, [plans, selectedPlan]);
+
+  // Handle plan selection
+  const handleSelectPlan = (plan: Plan) => {
+    setSelectedPlan(plan);
+    if (plans.dataPlans.some((p) => p.id === plan.id)) {
+      setDays(plan.durationDays);
+    }
+  };
+
+  // Check if plans have any data
+  const hasAnyPlans = plans.dataPlans.length > 0 || plans.fastUnlimited.length > 0 || plans.slowUnlimited.length > 0 || plans.dailyUnlimited.length > 0;
+
+  // Snap days to nearest available when switching between flexible/fixed
   useEffect(() => {
     if (!isFlexibleDays && availableDays.length > 0 && !availableDays.includes(days)) {
-      // Pick the closest available day
       const closest = availableDays.reduce((prev, curr) =>
         Math.abs(curr - days) < Math.abs(prev - days) ? curr : prev
       );
@@ -115,71 +98,98 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
     : "1GB/ngày";
 
   return (
-    <div className="bg-white pt-6">
-      <div className="max-w-[1200px] mx-auto px-6 grid grid-cols-[465px_minmax(0,1fr)] gap-x-8 items-start max-[1100px]:grid-cols-2 max-[1100px]:px-5 max-[1100px]:gap-x-6 max-[840px]:grid-cols-1 max-[840px]:px-4">
-        {/* ── LEFT COLUMN ── */}
-        <div className="min-w-0 max-[840px]:border-b max-[840px]:border-[#e5e7eb] max-[840px]:pb-6 max-[840px]:mb-6">
-          <ProductHero destination={destinationData || destination} dict={dict} />
-          <ProductInfo
-            destination={destinationData || destination}
-            dict={dict}
-            lang={lang}
-            planSource={planSource}
-            selectedPlan={selectedPlan}
-            region={regionData}
-          />
-        </div>
+    <div className="bg-white">
+      {/* ── MOBILE VIEW (≤840px) ── */}
+      <div className="min-[841px]:hidden">
+        <MobileDestinationPlans
+          destination={destinationData || destination}
+          plans={plans}
+          isLoading={isLoading}
+          selectedPlan={selectedPlan}
+          onSelectPlan={handleSelectPlan}
+          days={days}
+          quantity={quantity}
+          onDaysChange={setDays}
+          onQuantityChange={setQuantity}
+          dict={dict}
+          lang={lang}
+          planSource={planSource}
+          isFixed={isFixed}
+          isFlexibleDays={isFlexibleDays}
+          availableDays={availableDays}
+          planLabel={planLabel}
+          dataLabel={dataLabel}
+          region={regionData}
+          destinationData={destinationData}
+        />
+      </div>
 
-        {/* ── RIGHT COLUMN ── */}
-        <div className="min-w-0">
-          <TrustpilotBar dict={dict} />
-          <PriceDisplay
-            selectedPlan={selectedPlan}
-            days={days}
-            quantity={quantity}
-            dict={dict}
-            isFixed={isFixed}
-            planLabel={planLabel}
-          />
-          <GreenBox dict={dict} dataLabel={dataLabel} />
+      {/* ── DESKTOP VIEW (>840px) ── */}
+      <div className="hidden min-[841px]:block">
+        <div className="max-w-[1200px] mx-auto px-6 pb-[60px] grid grid-cols-[465px_minmax(0,1fr)] gap-8 items-start max-[1100px]:grid-cols-2 max-[1100px]:px-5 max-[1100px]:gap-6">
+          {/* ── LEFT COLUMN ── */}
+          <div className="flex flex-col gap-4 min-w-0">
+            <ProductHero destination={destinationData || destination} dict={dict} />
+            <ProductInfo
+              destination={destinationData || destination}
+              dict={dict}
+              lang={lang}
+              planSource={planSource}
+              selectedPlan={selectedPlan}
+              region={regionData}
+            />
+          </div>
 
-          {isLoading ? (
-            <div className="py-8 text-center text-sm text-[#6b7280]">Loading plans...</div>
-          ) : !hasAnyPlans ? (
-            <div className="py-8 text-center text-sm text-[#6b7280]">{dict.noPlans}</div>
-          ) : (
-            <>
-              <PlanTabs
-                plans={plans}
-                dict={dict}
-                selectedPlan={selectedPlan}
-                onSelectPlan={handleSelectPlan}
-                days={days}
-              />
-              <div className="h-px bg-[#f3f4f6] my-4" />
-              <PlanConfig
-                days={days}
-                quantity={quantity}
-                onDaysChange={setDays}
-                onQuantityChange={setQuantity}
-                dict={dict}
-                lang={lang}
-                isFlexibleDays={isFlexibleDays}
-                availableDays={availableDays}
-                isFixed={isFixed}
-              />
-            </>
-          )}
+          {/* ── RIGHT COLUMN ── */}
+          <div className="min-w-0 pt-1">
+            <TrustpilotBar dict={dict} />
+            <PriceDisplay
+              selectedPlan={selectedPlan}
+              days={days}
+              quantity={quantity}
+              dict={dict}
+              isFixed={isFixed}
+              planLabel={planLabel}
+            />
+            <GreenBox dict={dict} dataLabel={dataLabel} />
 
-          <BuyActions
-            selectedPlan={selectedPlan}
-            days={days}
-            quantity={quantity}
-            isFixed={isFixed}
-            dict={dict}
-            lang={lang}
-            destination={(destinationData || destination)?.name}
-          />
+            {isLoading ? (
+              <div className="py-8 text-center text-sm text-[#6b7280]">Loading plans...</div>
+            ) : !hasAnyPlans ? (
+              <div className="py-8 text-center text-sm text-[#6b7280]">{dict.noPlans}</div>
+            ) : (
+              <>
+                <PlanTabs
+                  plans={plans}
+                  dict={dict}
+                  selectedPlan={selectedPlan}
+                  onSelectPlan={handleSelectPlan}
+                  days={days}
+                />
+                <PlanConfig
+                  days={days}
+                  quantity={quantity}
+                  onDaysChange={setDays}
+                  onQuantityChange={setQuantity}
+                  dict={dict}
+                  lang={lang}
+                  isFlexibleDays={isFlexibleDays}
+                  availableDays={availableDays}
+                  isFixed={isFixed}
+                />
+              </>
+            )}
+
+            <BuyActions
+              selectedPlan={selectedPlan}
+              days={days}
+              quantity={quantity}
+              isFixed={isFixed}
+              dict={dict}
+              lang={lang}
+              destination={(destinationData || destination)?.name}
+            />
+          </div>
         </div>
       </div>
     </div>

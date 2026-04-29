@@ -739,6 +739,7 @@ export function Navbar({ lang, dict }: NavbarProps) {
         {destinationsOpen && (
           <DestinationDropdown
             lang={lang}
+            dict={dict.destinations}
             onClose={() => setDestinationsOpen(false)}
           />
         )}

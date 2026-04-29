@@ -24,11 +24,11 @@ export function PriceDisplay({
 }: PriceDisplayProps) {
   if (!selectedPlan) {
     return (
-      <div className="mb-3.5">
-        <div className="flex items-baseline gap-2 mb-1">
-          <span className="text-[30px] font-extrabold text-[#1a1a1a] tracking-tight">—</span>
+      <div className="mb-2">
+        <div className="flex items-baseline gap-2.5 mb-2">
+          <span className="text-4xl font-extrabold text-[#111] tracking-[-1px]">—</span>
         </div>
-        <span className="text-[13.5px] text-[#6b7280] block min-h-[22px]">{planLabel}</span>
+        <span className="text-[13px] text-[#6b7280] block min-h-[22px]">{planLabel}</span>
       </div>
     );
   }
@@ -38,14 +38,12 @@ export function PriceDisplay({
   let totalRetail: number;
 
   if (isFixed) {
-    // dataPlans & dailyUnlimited: vndPrice is for the whole package
     totalPrice = Number(selectedPlan.vndPrice) * quantity;
     const price = Number(selectedPlan.price);
     const retailPrice = Number(selectedPlan.retailPrice);
     const vndRetail = price > 0 ? Math.round((Number(selectedPlan.vndPrice) * retailPrice) / price / 1000) * 1000 : 0;
     totalRetail = vndRetail * quantity;
   } else {
-    // slowUnlimited & fastUnlimited: use calcTotalVndPrice (handles isAbleMultidate)
     totalPrice = calcTotalVndPrice(selectedPlan, days) * quantity;
     totalRetail = calcTotalVndRetailPrice(selectedPlan, days) * quantity;
   }
@@ -57,35 +55,27 @@ export function PriceDisplay({
   const perDayPrice = totalDays > 0 ? Math.round(totalPrice / totalDays / 1000) * 1000 : 0;
 
   return (
-    <div className="mb-3.5">
-      <div className="flex items-baseline gap-2 mb-1 flex-nowrap">
-        <span className="text-[30px] font-extrabold text-[#1a1a1a] tracking-tight shrink-0">
+    <div className="mb-2">
+      <div className="flex items-baseline gap-2.5 mb-[5px]">
+        <span className="text-4xl font-extrabold text-[#111] tracking-[-1px]">
           {formatVnd(totalPrice)}
         </span>
         {totalRetail > totalPrice && (
           <>
-            <span className="text-base text-[#9ca3af] line-through font-medium shrink-0">
+            <span className="text-base text-[#6b7280] line-through font-medium">
               {formatVnd(totalRetail)}
             </span>
-            <span className="inline-flex items-center bg-[#fef9e7] text-[#a16207] text-[11px] font-semibold px-[7px] py-[3px] rounded-[5px] border border-[#fde68a] shrink-0">
-              {dict.save.replace("{percent}", String(savePercent))}
+            <span className="px-[9px] py-[3px] bg-[#FEE2E2] text-[#dc2626] rounded-[5px] text-xs font-bold">
+              -{savePercent}%
             </span>
           </>
         )}
       </div>
-      <span className="text-[13.5px] text-[#6b7280] block min-h-[22px]">
-        {planLabel}
-      </span>
       {perDayPrice > 0 && totalDays > 1 && (
-        <div className="flex items-center justify-between bg-[#f0fdf4] border border-[#bbf7d0] rounded-sm px-3.5 py-2 mt-2">
-          <span className="text-[13px] text-[#6b7280]">
-            ≈ {formatVnd(perDayPrice)} / {dict.daysUnit.toLowerCase().charAt(0) === "d" ? "day" : "ngày"}
-            <span className="text-[#d1d5db] mx-1.5">|</span>
-            {dict.quantity.toLowerCase().includes("số") ? "cho" : "for"} {quantity} {dict.esimUnit} · {selectedPlan.name}
-          </span>
-          <span className="text-[13px] font-semibold text-[#1a1a1a] shrink-0 ml-3">
-            {formatVnd(totalPrice)}
-          </span>
+        <div className="flex items-center gap-2 text-[13px] text-[#374151] font-medium">
+          <span>≈ {formatVnd(perDayPrice)}/{dict.daysUnit.toLowerCase().charAt(0) === "d" ? "day" : "ngày"}</span>
+          <span className="text-[#e5e7eb]">|</span>
+          <span className="text-[#6b7280] text-[13px]">{planLabel}</span>
         </div>
       )}
     </div>
@@ -99,24 +89,24 @@ interface GreenBoxProps {
 }
 
 const GreenCheck = () => (
-  <svg className="shrink-0 mt-0.5" width="12" height="12" viewBox="0 0 12 12" fill="none">
-    <circle cx="6" cy="6" r="5.5" fill="#dcfce7" stroke="#16a34a" strokeWidth="1" />
-    <path d="M3.5 6l1.8 1.8L8.5 4.5" stroke="#16a34a" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+  <svg className="shrink-0 mt-0.5" width="14" height="14" viewBox="0 0 14 14" fill="none">
+    <circle cx="7" cy="7" r="6" fill="#dcfce7" />
+    <path d="M4 7l2 2 4-4" stroke="#16a34a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
 export function GreenBox({ dict, dataLabel }: GreenBoxProps) {
   return (
-    <div className="bg-[#f0fdf4] border border-[#bbf7d0] rounded-sm px-3.5 py-2.5 mb-4">
-      <div className="flex items-start gap-[7px] text-sm text-[#166534] leading-normal mb-1.5">
+    <div className="bg-[#f0fdf4] border border-[#bbf7d0] rounded-xl px-3.5 py-[13px] mb-[18px] flex flex-col gap-[9px]">
+      <div className="flex items-start gap-[9px] text-sm text-[#166534] leading-normal">
         <GreenCheck />
         <span dangerouslySetInnerHTML={{ __html: dict.greenBox.line1.replace("{data}", dataLabel) }} />
       </div>
-      <div className="flex items-start gap-[7px] text-sm text-[#166534] leading-normal mb-1.5">
+      <div className="flex items-start gap-[9px] text-sm text-[#166534] leading-normal">
         <GreenCheck />
         <span>{dict.greenBox.line2}</span>
       </div>
-      <div className="flex items-start gap-[7px] text-sm text-[#166534] leading-normal">
+      <div className="flex items-start gap-[9px] text-sm text-[#166534] leading-normal">
         <GreenCheck />
         <span>{dict.greenBox.line3}</span>
       </div>

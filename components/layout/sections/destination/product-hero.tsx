@@ -10,17 +10,20 @@ interface ProductHeroProps {
 
 export function ProductHero({ destination, dict }: ProductHeroProps) {
   return (
-    <div className="mb-5">
+    <div className="rounded-[20px] overflow-hidden border border-[#e5e7eb] bg-white mb-4">
       {/* Hero image */}
-      <div className="relative w-full h-[210px] rounded-xl overflow-hidden mb-5 bg-gradient-to-b from-[#ffd89b] via-[#ffb88a] to-[#ff9a8b]">
+      <div className="w-full h-[230px] overflow-hidden rounded-t-[20px]">
         {destination.avatarUrl ? (
           <img
             src={destination.avatarUrl}
             alt={destination.name}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover object-[center_30%] block rounded-t-[20px]"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
+          <div
+            className="w-full h-full flex items-center justify-center rounded-t-[20px]"
+            style={{ background: "linear-gradient(160deg,#E8824A,#FAC96A,#7BAFC0)" }}
+          >
             {destination.flagUrl && (
               <img
                 src={destination.flagUrl}
@@ -30,22 +33,26 @@ export function ProductHero({ destination, dict }: ProductHeroProps) {
             )}
           </div>
         )}
-        <div className="absolute bottom-2.5 left-2.5 bg-black/55 text-white text-[11px] font-semibold rounded-full px-2.5 py-1 flex items-center gap-1">
-          <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-            <circle cx="5" cy="5" r="4" stroke="white" strokeWidth="1" />
-            <path d="M3 5l1.5 1.5L7 3.5" stroke="white" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-          {dict.heroTag}
-        </div>
       </div>
 
-      {/* Title & description */}
-      <h1 className="text-[22px] font-bold text-[#1a1a1a] tracking-tight mb-2 leading-tight">
-        {dict.title.replace("{destination}", destination.name)}
-      </h1>
-      <p className="text-[15px] text-[#4b5563] leading-relaxed mb-4">
-        {dict.subtitle.replace("{destination}", destination.name)}
-      </p>
+      {/* Body — overlaps image */}
+      <div className="bg-white rounded-t-[18px] -mt-7 relative z-[2] px-[18px] pt-5 pb-4">
+        {/* Title row with globe icon */}
+        <div className="flex items-center gap-2.5 mb-2">
+          <div className="w-[30px] h-[30px] bg-[#fff500] rounded-full flex items-center justify-center shrink-0">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M2 12h20M12 2a15 15 0 010 20M12 2a15 15 0 000 20" />
+            </svg>
+          </div>
+          <h1 className="text-[26px] font-extrabold text-[#111] leading-[1.25] tracking-[-0.4px]">
+            {dict.title.replace("{destination}", destination.name)}
+          </h1>
+        </div>
+        <p className="text-sm text-[#6b7280] leading-[1.6] mb-3">
+          {dict.subtitle.replace("{destination}", destination.name)}
+        </p>
+      </div>
     </div>
   );
 }

@@ -16,9 +16,9 @@ interface PlanTabsProps {
 /* ── Pill badge ── */
 function PillBadge({ type, label }: { type: "popular" | "best-val" | "discount"; label: string }) {
   const cls = {
-    popular: "bg-[#1a1a1a] text-white",
-    "best-val": "bg-[#ea580c] text-white",
-    discount: "bg-[#b7f2c5] text-[#075f3c]",
+    popular: "bg-[#111] text-white",
+    "best-val": "bg-[#dc2626] text-white",
+    discount: "bg-[#dcfce7] text-[#166534]",
   }[type];
   return (
     <span className={`text-[9px] font-bold tracking-wide px-[5px] py-[2px] rounded leading-tight shrink-0 ${cls}`}>
@@ -36,8 +36,8 @@ function formatDataLabel(mb: number): string {
   return `${mb}MB`;
 }
 
-/* ── Small pill for fixed plans — shows data / days ── */
-function PlanPill({
+/* ── Small chip for fixed plans — shows data / days ── */
+function PlanChip({
   plan,
   isSelected,
   onSelect,
@@ -48,14 +48,14 @@ function PlanPill({
   onSelect: () => void;
   savePercent: number;
 }) {
-  const label = `${formatDataLabel(Number(plan.dataMb))} / ${plan.durationDays} days`;
+  const label = `${formatDataLabel(Number(plan.dataMb))} – ${plan.durationDays} ngày`;
 
   return (
     <button
       onClick={onSelect}
-      className={`inline-flex items-center gap-1.5 px-3 py-[7px] rounded-full text-[13.5px] font-medium border cursor-pointer transition-colors whitespace-nowrap font-inherit ${isSelected
-        ? "bg-[#fff7d6] text-[#854d0e] border-[#f5c400] font-semibold"
-        : "bg-white text-[#374151] border-[#e5e7eb] hover:border-[#f5c400] hover:bg-[#fffde7]"
+      className={`inline-flex items-center gap-[7px] px-[15px] py-[9px] rounded-[30px] text-[13.5px] font-medium border-[1.5px] cursor-pointer transition-colors whitespace-nowrap font-[inherit] ${isSelected
+        ? "bg-white text-[#1a1a1a] border-[#1a1a1a] font-semibold shadow-[0_0_0_1px_#1a1a1a]"
+        : "bg-white text-[#374151] border-[#e5e7eb] hover:bg-[#f3f4f6] hover:border-[#9ca3af]"
         }`}
     >
       {label}
@@ -64,8 +64,8 @@ function PlanPill({
   );
 }
 
-/* ── GB pill ── */
-function GbPill({
+/* ── GB chip ── */
+function GbChip({
   gb,
   isSelected,
   onSelect,
@@ -77,22 +77,22 @@ function GbPill({
   return (
     <button
       onClick={onSelect}
-      className={`inline-flex items-center gap-1.5 px-3 py-[7px] rounded-full text-[13.5px] font-medium border cursor-pointer transition-colors whitespace-nowrap font-inherit ${isSelected
-        ? "bg-[#fff7d6] text-[#854d0e] border-[#f5c400] font-semibold"
-        : "bg-white text-[#374151] border-[#e5e7eb] hover:border-[#f5c400] hover:bg-[#fffde7]"
+      className={`inline-flex items-center gap-[7px] px-[15px] py-[9px] rounded-[30px] text-[13.5px] font-medium border-[1.5px] cursor-pointer transition-colors whitespace-nowrap font-[inherit] ${isSelected
+        ? "bg-white text-[#1a1a1a] border-[#1a1a1a] font-semibold shadow-[0_0_0_1px_#1a1a1a]"
+        : "bg-white text-[#374151] border-[#e5e7eb] hover:bg-[#f3f4f6] hover:border-[#9ca3af]"
         }`}
     >
-      {formatDataLabel(gb)}/day
+      {formatDataLabel(gb)}/ngày
     </button>
   );
 }
 
-/* ── Plan section label ── */
-function PlanSectionLabel({ label, isActive }: { label: string; isActive?: boolean }) {
+/* ── Plan section label with step number ── */
+function PlanSectionLabel({ icon, label }: { icon: React.ReactNode; label: string }) {
   return (
-    <div className="text-sm font-bold mb-2.5 flex items-center gap-[7px] text-[#1a1a1a]">
-      <span className={`w-[3px] h-[15px] rounded-sm inline-block bg-[#f59e0b]`} />
-      {label}
+    <div className="flex items-center gap-[7px] mb-[11px]">
+      <span className="flex items-center text-[#6b7280]">{icon}</span>
+      <span className="text-xs font-bold text-[#6b7280] uppercase tracking-[0.07em]">{label}</span>
     </div>
   );
 }
@@ -125,9 +125,9 @@ function GbSelector({
 
   return (
     <div>
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex flex-wrap gap-2">
         {uniqueGbs.map((gb) => (
-          <GbPill
+          <GbChip
             key={gb}
             gb={gb}
             isSelected={isActive && selectedGb === gb}
@@ -158,13 +158,13 @@ function UnlimitedPill({
   return (
     <button
       onClick={onSelect}
-      className={`relative inline-flex items-center gap-2.5 px-4 py-2.5 rounded-[10px] border-[1.5px] cursor-pointer transition-all whitespace-nowrap font-inherit min-w-[140px] ${isSelected
-        ? "bg-[#fffde7] border-[#d1b700] text-[#92400e] shadow-[0_0_0_2px_rgba(251,191,36,0.2)]"
-        : "bg-white text-[#374151] border-[#e5e7eb] hover:border-[#f5c400] hover:bg-[#fffde7]"
+      className={`relative flex items-center gap-2.5 px-4 py-2.5 rounded-[10px] border-[1.5px] cursor-pointer transition-all font-[inherit] min-w-[190px] ${isSelected
+        ? "border-[#111] text-[#111] shadow-[0_0_0_1px_#111]"
+        : "bg-white text-[#374151] border-[#e5e7eb] hover:border-[#9ca3af] hover:bg-[#f9fafb]"
         }`}
     >
       {badge && (
-        <span className="absolute -top-2.5 right-2.5 text-[9px] font-bold tracking-wide px-[7px] py-[2px] rounded leading-snug pointer-events-none bg-[#1a1a1a] text-white">
+        <span className="absolute -top-[9px] right-2.5 text-[9px] font-bold tracking-wide px-[7px] py-[2px] rounded leading-snug pointer-events-none bg-[#111] text-white whitespace-nowrap">
           {badge}
         </span>
       )}
@@ -173,7 +173,7 @@ function UnlimitedPill({
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
           <g clipPath="url(#ci1)">
             <path
-              stroke={isSelected ? "#d97706" : "#9ca3af"}
+              stroke={isSelected ? "#111" : "#9ca3af"}
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth="1.5"
@@ -184,10 +184,10 @@ function UnlimitedPill({
         </svg>
       </span>
       <span className="flex flex-col gap-0.5">
-        <span className={`text-[13.5px] font-semibold leading-tight ${isSelected ? "text-[#92400e]" : "text-[#374151]"}`}>
+        <span className={`text-[13.5px] font-semibold leading-tight ${isSelected ? "text-[#111]" : "text-[#374151]"}`}>
           {mainLabel}
         </span>
-        <span className={`text-[11px] leading-tight transition-colors ${isSelected ? "text-[#d97706]" : "text-[#9ca3af]"}`}>
+        <span className={`text-[11px] leading-tight transition-colors ${isSelected ? "text-[#374151]" : "text-[#6b7280]"}`}>
           {hintLabel}
         </span>
       </span>
@@ -255,15 +255,35 @@ export function PlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }: Plan
     onSelectPlan(plan);
   };
 
+  /* Section label with step number */
+  const StepLabel = () => (
+    <div className="text-[15px] font-bold text-[#111] mb-2.5 flex items-center gap-2.5">
+      <span className="inline-flex items-center justify-center w-6 h-6 bg-[#111] text-white rounded-full text-xs font-extrabold shrink-0">1</span>
+      {dict.planTabs.data}
+    </div>
+  );
+
   return (
     <div>
+      <StepLabel />
+
       {/* ── Fixed Plan (dataPlans) ── */}
       {hasDataPlans && (
-        <div className="mb-4">
-          <PlanSectionLabel label={dict.planSections.fixed} isActive={activeSection === "fixed"} />
-          <div className="flex flex-wrap gap-1.5">
+        <div className="mb-[18px]">
+          <PlanSectionLabel
+            icon={
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2" strokeLinecap="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+              </svg>
+            }
+            label={dict.planSections.fixed}
+          />
+          <div className="flex flex-wrap gap-2">
             {plans.dataPlans.map((p) => (
-              <PlanPill
+              <PlanChip
                 key={p.id}
                 plan={p}
                 isSelected={activeSection === "fixed" && selectedPlan?.id === p.id}
@@ -277,8 +297,16 @@ export function PlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }: Plan
 
       {/* ── Daily Plan (slowUnlimited) — only GB pills, days from PlanConfig ── */}
       {hasSlowUnlimited && (
-        <div className="mb-4">
-          <PlanSectionLabel label={dict.planSections.daily} isActive={activeSection === "daily"} />
+        <div className="mb-[18px]">
+          <PlanSectionLabel
+            icon={
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2" strokeLinecap="round">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+            }
+            label={dict.planSections.daily}
+          />
           <GbSelector
             plans={plans.slowUnlimited}
             days={days}
@@ -292,17 +320,24 @@ export function PlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }: Plan
 
       {/* ── Unlimited (fastUnlimited + dailyUnlimited) with Normal/High Speed tabs ── */}
       {hasUnlimited && (
-        <div className="mb-4">
-          <PlanSectionLabel label={dict.planSections.unlimited} isActive={activeSection === "unlimited"} />
+        <div className="mb-[18px]">
+          <PlanSectionLabel
+            icon={
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2" strokeLinecap="round">
+                <path d="M9.996 14.263l-.814.919a4.5 4.5 0 1 1 0-6.364l5.636 6.364a4.5 4.5 0 1 0 0-6.364l-.814.92" />
+              </svg>
+            }
+            label={dict.planSections.unlimited}
+          />
 
-          {/* Speed tabs */}
-          <div className="flex border border-[#e5e7eb] rounded-full overflow-hidden mb-4 bg-[#f3f4f6]">
+          {/* Speed tabs — pill style matching HTML reference */}
+          <div className="flex border-[1.5px] border-[#e5e7eb] rounded-[30px] bg-[#f9fafb] p-[3px] gap-[3px] mb-4">
             {hasFastUnlimited && (
               <button
                 onClick={() => setSpeedTab("normal")}
-                className={`flex-1 text-center py-[7px] px-2.5 text-[13px] font-medium cursor-pointer border-none transition-all ${speedTab === "normal"
-                  ? "bg-white text-[#111827] font-semibold rounded-[18px] m-0.5 shadow-sm"
-                  : "bg-transparent text-[#9ca3af]"
+                className={`flex-1 text-center py-[7px] px-2.5 text-[13.5px] font-medium cursor-pointer border-none rounded-[30px] transition-all font-[inherit] ${speedTab === "normal"
+                  ? "bg-white text-[#111] font-bold shadow-[0_1px_4px_rgba(0,0,0,0.12)]"
+                  : "bg-transparent text-[#6b7280] hover:bg-white hover:text-[#374151]"
                   }`}
               >
                 {dict.speed.normal}
@@ -311,9 +346,9 @@ export function PlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }: Plan
             {hasDailyUnlimited && (
               <button
                 onClick={() => setSpeedTab("high")}
-                className={`flex-1 text-center py-[7px] px-2.5 text-[13px] font-medium cursor-pointer border-none transition-all ${speedTab === "high"
-                  ? "bg-white text-[#111827] font-semibold rounded-[18px] m-0.5 shadow-sm"
-                  : "bg-transparent text-[#9ca3af]"
+                className={`flex-1 text-center py-[7px] px-2.5 text-[13.5px] font-medium cursor-pointer border-none rounded-[30px] transition-all font-[inherit] ${speedTab === "high"
+                  ? "bg-white text-[#111] font-bold shadow-[0_1px_4px_rgba(0,0,0,0.12)]"
+                  : "bg-transparent text-[#6b7280] hover:bg-white hover:text-[#374151]"
                   }`}
               >
                 {dict.speed.high}
@@ -323,7 +358,7 @@ export function PlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }: Plan
 
           {/* Normal Speed: fastUnlimited — deduplicated by dataMb */}
           {speedTab === "normal" && hasFastUnlimited && (
-            <div className="flex flex-wrap gap-2.5 mt-1">
+            <div className="flex flex-wrap gap-2.5">
               {uniqueNormalGbs.map((gb) => {
                 const best = findBestPlan(plans.fastUnlimited, gb, days);
                 return (
@@ -336,8 +371,8 @@ export function PlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }: Plan
                       const p = findBestPlan(plans.fastUnlimited, gb, days);
                       if (p) handleSelectUnlimited(p);
                     }}
-                    mainLabel={`${formatDataLabel(gb)}/day high speed`}
-                    hintLabel="1 Mbps unlimited"
+                    mainLabel={`${formatDataLabel(gb)}/ngày tốc độ cao`}
+                    hintLabel="→ 1 Mbps không giới hạn"
                   />
                 );
               })}
@@ -346,19 +381,24 @@ export function PlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }: Plan
 
           {/* High Speed: dailyUnlimited — simple plan cards */}
           {speedTab === "high" && hasDailyUnlimited && (
-            <div className="flex flex-wrap gap-2.5 mt-1">
+            <div className="flex flex-wrap gap-2.5">
               {plans.dailyUnlimited.map((p) => (
                 <UnlimitedPill
                   key={p.id}
                   plan={p}
                   isSelected={activeSection === "unlimited" && selectedPlan?.id === p.id}
                   onSelect={() => handleSelectUnlimited(p)}
-                  mainLabel={`${p.durationDays} days highspeed`}
-                  hintLabel="5 Mbps unlimited"
+                  mainLabel={`${p.durationDays} ngày tốc độ cao`}
+                  hintLabel="→ 5 Mbps không giới hạn"
                 />
               ))}
             </div>
           )}
+
+          {/* Unlimited note */}
+          <p className="text-[13px] text-[#6b7280] mt-1 pb-4 border-b border-[#e5e7eb]">
+            {dict.unlimitedHint}
+          </p>
         </div>
       )}
     </div>

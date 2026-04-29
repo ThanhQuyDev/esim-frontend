@@ -7,22 +7,26 @@ interface TrustpilotBarProps {
 }
 
 const Star = () => (
-  <svg viewBox="0 0 16 16" fill="#00b67a" className="w-4 h-4">
-    <path d="M8 1l1.8 5.5H16l-4.9 3.6 1.9 5.5L8 12l-5 3.6 1.9-5.5L1 6.5h6.2z" />
+  <svg viewBox="0 0 20 20" fill="#22C55E" className="w-4 h-4">
+    <path d="M10 1l2.39 4.84 5.35.78-3.87 3.77.91 5.32L10 13.27l-4.78 2.51.91-5.32L2.26 6.62l5.35-.78L10 1z" />
   </svg>
 );
 
 export function TrustpilotBar({ dict }: TrustpilotBarProps) {
   return (
-    <div className="flex items-center gap-2 pb-3 mb-3.5 border-b border-[#f0f0f0]">
+    <div className="flex items-center gap-3 mb-4">
       <div className="flex gap-0.5">
-        {Array.from({ length: 5 }).map((_, i) => <Star key={i} />)}
+        {Array.from({ length: 4 }).map((_, i) => <Star key={i} />)}
+        <svg viewBox="0 0 20 20" fill="#22C55E" className="w-4 h-4 opacity-50">
+          <path d="M10 1l2.39 4.84 5.35.78-3.87 3.77.91 5.32L10 13.27l-4.78 2.51.91-5.32L2.26 6.62l5.35-.78L10 1z" />
+        </svg>
       </div>
-      <span className="text-[13px] font-bold text-[#1a1a1a]">{dict.trust.rating}</span>
+      <span className="text-sm font-bold text-[#111]">{dict.trust.rating}</span>
       <span className="text-[13px] text-[#6b7280]">{dict.trust.ratingCount}</span>
-      <span className="ml-auto flex items-center gap-1 text-[13px] font-semibold text-[#1a1a1a]">
-        <Star />{dict.trust.trustpilot}
-      </span>
+      <div className="ml-auto flex items-center gap-1.5 text-xs text-[#6b7280] font-medium">
+        <span className="text-sm text-[#22C55E]">★</span>
+        {dict.trust.trustpilot}
+      </div>
     </div>
   );
 }

@@ -183,7 +183,7 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
                                 <span className="whitespace-nowrap">
                                   {showRegions
                                     ? `${item.destinationCount} ${item.destinationCount === 1 ? 'country' : 'countries'}`
-                                    : `${dict.from} US$${item.minPrice || "3.99"}`
+                                    : `${dict.from} ${Number(item.fromPrice).toLocaleString("vi-VN") || "20.000"} đ`
                                   }
                                 </span>
                               </p>
