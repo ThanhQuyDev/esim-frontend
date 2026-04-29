@@ -53,7 +53,7 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
   const availableDays = useMemo(() => {
     if (!selectedPlan) return [];
     const matching = plans.dataPlans.filter((p) => p.dataMb === selectedPlan.dataMb);
-    return [...new Set(matching.map((p) => p.durationDays))].sort((a, b) => a - b);
+    return Array.from(new Set(matching.map((p) => p.durationDays))).sort((a, b) => a - b);
   }, [selectedPlan, plans]);
 
   // Auto-select first plan
