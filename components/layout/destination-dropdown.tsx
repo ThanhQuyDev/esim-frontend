@@ -87,8 +87,7 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
   const formatPrice = (price: number | string) => {
     const num = Number(price);
     if (!num || isNaN(num)) return lang === "vi" ? "20.000 đ" : "US$3.99";
-    if (lang === "vi") return `${num.toLocaleString("vi-VN")} đ`;
-    return `US$${num}`;
+    return `${num.toLocaleString("vi-VN")} đ`;
   };
 
   return (
@@ -125,11 +124,10 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
                       data-is-tab="true"
                       data-is-active={activeTab === tab.key}
                       onClick={() => setActiveTab(tab.key)}
-                      className={`relative body-sm-medium whitespace-nowrap md:body-md-medium px-4 py-1 focus-visible:outline-hidden focus-visible:shadow-focus rounded-full transition-all duration-200 min-w-[60px] ${
-                        activeTab === tab.key
+                      className={`relative body-sm-medium whitespace-nowrap md:body-md-medium px-4 py-1 focus-visible:outline-hidden focus-visible:shadow-focus rounded-full transition-all duration-200 min-w-[60px] ${activeTab === tab.key
                           ? "bg-bg-dark text-text-primary-on-color"
                           : "text-text-primary hover:bg-bg-primary"
-                      }`}
+                        }`}
                     >
                       {tab.badge ? (
                         <span className="flex items-center gap-2">
