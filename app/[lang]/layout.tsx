@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/layout/navbar";
 import { NavigationProgress } from "@/components/layout/navigation-progress";
 import { AuthModal } from "@/components/layout/auth-modal";
+import { ChatBubble } from "@/components/layout/chat-bubble";
 import { i18n, type Locale } from "@/lib/i18n-config";
 import { getDictionary } from "@/lib/dictionaries";
 import { getSeoMetadata } from "@/lib/seo";
@@ -40,6 +41,7 @@ export default async function LangLayout({
       <Navbar lang={params.lang} dict={dict.nav} />
       <AuthModal lang={params.lang} />
       {children}
+      <ChatBubble />
     </>
   );
 }
