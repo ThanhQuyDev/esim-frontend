@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getRegionBySlug } from "@/lib/api";
+import { getRegionBySlug, getPlansByRegionSlug } from "@/lib/api";
 import { getDictionary } from "@/lib/dictionaries";
 import { getSeoMetadata } from "@/lib/seo";
 import { DestinationPlans } from "@/components/layout/sections/destination";
@@ -42,9 +42,10 @@ export async function generateMetadata({
 }
 
 export default async function RegionPage({ params }: RegionPageProps) {
-  const [dict, region] = await Promise.all([
+  const [dict, region, plans] = await Promise.all([
     getDictionary(params.lang),
     getRegionBySlug(params.slug, params.lang),
+    getPlansByRegionSlug(params.slug, params.lang),
   ]);
 
   if (!region) {
@@ -72,6 +73,7 @@ export default async function RegionPage({ params }: RegionPageProps) {
         dict={dict.destinationPage}
         lang={params.lang}
         planSource="region"
+        initialPlans={plans}
       />
       <HowItWorksSection dict={dict.howItWorks} />
       <FeaturesSection dict={dict.whyChoose} lang={params.lang} />

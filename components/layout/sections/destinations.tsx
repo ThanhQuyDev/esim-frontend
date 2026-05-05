@@ -106,11 +106,10 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
                       data-testid={tab.testId}
                       data-is-active={activeTab === tab.key}
                       onClick={() => setActiveTab(tab.key)}
-                      className={`relative body-sm-medium whitespace-nowrap md:body-md-medium px-4 py-1 focus-visible:outline-hidden focus-visible:shadow-focus rounded-full transition-all duration-200 ${
-                        activeTab === tab.key
-                          ? "bg-bg-dark text-text-primary-on-color"
-                          : "text-text-primary hover:bg-bg-primary"
-                      }`}
+                      className={`relative body-sm-medium whitespace-nowrap md:body-md-medium px-4 py-1 focus-visible:outline-hidden focus-visible:shadow-focus rounded-full transition-all duration-200 ${activeTab === tab.key
+                        ? "bg-bg-dark text-text-primary-on-color"
+                        : "text-text-primary hover:bg-bg-primary"
+                        }`}
                     >
                       {tab.badge ? (
                         <span className="flex items-center gap-2">
@@ -212,7 +211,7 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
             >
               <a
                 role="button"
-                className="max-md:w-full text-center inline-block  text-text-primary-on-color bg-bg-accent hover:bg-bg-accent-hover border border-bg-accent hover:border-bg-accent-hover active:bg-bg-accent-active active:border-bg-accent-active box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7 w-full sm:w-auto"
+                className="max-md:w-full text-center inline-block text-text-primary bg-bg-accent hover:bg-bg-accent-hover border border-bg-accent hover:border-bg-accent-hover active:bg-bg-accent-active active:border-bg-accent-active box-border !border-[#d1b700] touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7 w-full sm:w-auto"
                 data-testid="view-all-destinations-cta"
                 href={`/${lang}/all-destinations`}
               >

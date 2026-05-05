@@ -847,7 +847,8 @@
     "supportedCountries": "{count} quốc gia được hỗ trợ",
     "carriers": {
       "title": "Nhà mạng hỗ trợ",
-      "domestic": "Mạng nội địa"
+      "domestic": "Mạng nội địa",
+      "speed": "Tốc độ"
     },
     "features": {
       "title": "Tính năng",

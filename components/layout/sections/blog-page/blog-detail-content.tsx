@@ -27,7 +27,13 @@ async function fetchBlogDetail(
   return res.json();
 }
 
-export function BlogDetailContent({ lang, slug }: { lang: Locale; slug?: string }) {
+interface BlogDetailContentProps {
+  lang: Locale;
+  slug?: string;
+  initialBlog?: Blog | null;
+}
+
+export function BlogDetailContent({ lang, slug, initialBlog }: BlogDetailContentProps) {
   const {
     data: blog,
     isLoading,
@@ -36,6 +42,7 @@ export function BlogDetailContent({ lang, slug }: { lang: Locale; slug?: string 
   } = useQuery<Blog>({
     queryKey: ["blog-detail", slug, lang],
     queryFn: ({ signal }) => fetchBlogDetail(slug!, lang, signal),
+    initialData: initialBlog ?? undefined,
     enabled: !!slug,
   });
 

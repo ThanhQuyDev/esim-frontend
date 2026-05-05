@@ -252,6 +252,7 @@ export function ProductInfo({ destination, dict, lang, planSource = "destination
 
   const operatorName = selectedPlan?.operatorName || null;
   const regionDestinations = region?.destinations || [];
+  const speed = selectedPlan?.speed || null;
 
   return (
     <>
@@ -336,6 +337,16 @@ export function ProductInfo({ destination, dict, lang, planSource = "destination
               <div className="flex flex-nowrap gap-[5px] flex-1 justify-end overflow-x-auto" style={{ scrollbarWidth: "none" }}>
                 <span className="px-2.5 py-1 border border-[#D1D5DB] rounded-md text-[13px] font-semibold whitespace-nowrap shrink-0">
                   {operatorName}
+                </span>
+              </div>
+            </div>
+          )}
+          {speed && (
+            <div className="flex items-center justify-between py-[13px] border-b border-[#f3f4f6] gap-3">
+              <span className="text-sm text-[#374151] shrink-0">{dict.carriers.speed}</span>
+              <div className="flex flex-nowrap gap-[5px] flex-1 justify-end overflow-x-auto" style={{ scrollbarWidth: "none" }}>
+                <span className="px-2.5 py-1 border border-[#D1D5DB] rounded-md text-[13px] font-semibold whitespace-nowrap shrink-0">
+                  {speed}
                 </span>
               </div>
             </div>

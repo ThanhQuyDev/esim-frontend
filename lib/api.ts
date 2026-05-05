@@ -479,6 +479,26 @@ export async function getBlogDetail(
   return res.json();
 }
 
+export async function getBlogBySlug(
+  slug: string,
+  lang?: string
+): Promise<Blog | null> {
+  try {
+    const url = `${API_BASE_URL}/api/v1/blogs/by-slug/${encodeURIComponent(slug)}`;
+    const headers: Record<string, string> = {};
+    if (lang) headers["x-custom-lang"] = lang;
+
+    const res = await fetch(url, {
+      headers,
+      next: { revalidate: 60 },
+    });
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
+}
+
 export async function getSupportedDevices(
   search?: string,
   lang?: string
@@ -531,6 +551,44 @@ export async function getPlansByDestination(
     filters: JSON.stringify({ destinationId, isActive: true }),
     lang,
   });
+}
+
+/**
+ * Server-side: fetch categorized plans by destination slug.
+ * Returns the same shape as the client-side usePlansBySlug hook.
+ */
+export async function getPlansByDestinationSlug(
+  slug: string,
+  lang?: string
+): Promise<PlansByDestinationResponse | null> {
+  try {
+    return await apiFetch<PlansByDestinationResponse>(
+      `/api/v1/plans/by-destination/${encodeURIComponent(slug)}`,
+      { lang },
+      300
+    );
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Server-side: fetch categorized plans by region slug.
+ * Returns the same shape as the client-side usePlansByRegionSlug hook.
+ */
+export async function getPlansByRegionSlug(
+  slug: string,
+  lang?: string
+): Promise<PlansByDestinationResponse | null> {
+  try {
+    return await apiFetch<PlansByDestinationResponse>(
+      `/api/v1/plans/by-region/${encodeURIComponent(slug)}`,
+      { lang },
+      300
+    );
+  } catch {
+    return null;
+  }
 }
 
 export async function getDestinationBySlug(

@@ -23,6 +23,7 @@ interface DetailContentProps {
   category: string;
   parent?: string;
   titleSlug?: string;
+  initialArticles?: HelpCenterArticle[];
 }
 
 interface GroupedData {
@@ -31,26 +32,10 @@ interface GroupedData {
   };
 }
 
-export function DetailContent({ lang, category, parent, titleSlug }: DetailContentProps) {
-  const [articles, setArticles] = useState<HelpCenterArticle[]>([]);
-  const [loading, setLoading] = useState(true);
+export function DetailContent({ lang, category, parent, titleSlug, initialArticles }: DetailContentProps) {
+  const [articles, setArticles] = useState<HelpCenterArticle[]>(initialArticles ?? []);
+  const [loading, setLoading] = useState(!initialArticles);
   const basePath = `/${lang}/help-center`;
-
-  useEffect(() => {
-    async function load() {
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/v1/help-center`);
-        if (!res.ok) throw new Error("Failed to fetch");
-        const json = await res.json();
-        setArticles(json.data || []);
-      } catch {
-        setArticles([]);
-      } finally {
-        setLoading(false);
-      }
-    }
-    load();
-  }, []);
 
   // Group all articles by category → parent
   const grouped = useMemo<GroupedData>(() => {

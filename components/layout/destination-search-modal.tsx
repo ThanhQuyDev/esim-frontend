@@ -1,0 +1,402 @@
+"use client";
+
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useTopDestinations, useSearchDestinations, useSearchRegions } from "@/lib/hooks";
+import { useDebounce } from "@/lib/use-debounce";
+import type { Locale } from "@/lib/i18n-config";
+
+interface DestinationSearchModalProps {
+  lang: Locale;
+  open: boolean;
+  onClose: () => void;
+}
+
+export function DestinationSearchModal({
+  lang,
+  open,
+  onClose,
+}: DestinationSearchModalProps) {
+  const [query, setQuery] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+  const debouncedQuery = useDebounce(query, 300);
+  const hasSearch = debouncedQuery.trim().length > 0;
+
+  // Fetch top/popular destinations
+  const { data: topDestinations = [], isLoading: isLoadingTop } =
+    useTopDestinations(10);
+
+  // Search destinations
+  const { data: searchDestinations = [], isFetching: isSearchingDest } =
+    useSearchDestinations(debouncedQuery, hasSearch);
+
+  // Search regions
+  const { data: searchRegions = [], isFetching: isSearchingReg } =
+    useSearchRegions(debouncedQuery, hasSearch);
+
+  // Focus input on open
+  useEffect(() => {
+    if (open) {
+      setTimeout(() => inputRef.current?.focus(), 100);
+    } else {
+      setQuery("");
+    }
+  }, [open]);
+
+  // Close on Escape + lock body scroll
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose();
+    }
+    if (open) {
+      document.addEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "hidden";
+    }
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "";
+    };
+  }, [open, onClose]);
+
+  const handleSelect = useCallback(
+    (slug: string) => {
+      onClose();
+      // Navigate to destination page
+      window.location.href = `/${lang}/destination/${slug}`;
+    },
+    [lang, onClose]
+  );
+
+  const handleSelectRegion = useCallback(
+    (slug: string) => {
+      onClose();
+      window.location.href = `/${lang}/region/${slug}`;
+    },
+    [lang, onClose]
+  );
+
+  if (!open) return null;
+
+  const isLoading = hasSearch
+    ? isSearchingDest || isSearchingReg
+    : isLoadingTop;
+
+  // Format price helper
+  const formatPrice = (price: number | string | undefined) => {
+    const num = Number(price);
+    if (!num || isNaN(num)) return null;
+    return `US$${num.toFixed(2)}`;
+  };
+
+  // Merge search results: destinations first, then regions
+  const mergedResults = hasSearch
+    ? [
+        ...searchDestinations.map((d: any) => ({
+          ...d,
+          _type: "destination" as const,
+        })),
+        ...searchRegions.map((r: any) => ({
+          ...r,
+          _type: "region" as const,
+          name: r.name,
+          slug: r.slug,
+          flagUrl: r.avatarUrl || r.flagUrl,
+          destinationCount: r.destinationCount,
+        })),
+      ]
+    : [];
+
+  return (
+    <div
+      data-testid="search-destinations-modal"
+      className="fixed inset-0 flex items-end md:items-center justify-center bg-black/50 backdrop-blur-[4px] z-50 animate-fade-in"
+      tabIndex={-1}
+    >
+      <div className="w-full md:w-[640px] shadow-lg text-text-primary">
+        <div
+          className="rounded-t-md md:rounded-md overflow-hidden py-6 md:py-8 max-h-[99dvh] md:max-h-[80vh] flex flex-col h-[99dvh] md:h-[554px] bg-bg-secondary"
+          role="dialog"
+          aria-modal="true"
+          tabIndex={-1}
+        >
+          {/* Header */}
+          <div className="flex justify-between items-start px-4 sm:px-6 md:px-8 pb-6">
+            <p className="heading-lg w-full mr-4 scroll-mt-20 xl:scroll-mt-24">
+              {lang === "vi" ? "Đi đâu?" : "Where?"}
+            </p>
+            <button
+              type="button"
+              data-testid="general-modal-close-button"
+              aria-label="Close"
+              className="ml-auto"
+              onClick={onClose}
+            >
+              <svg
+                className="w-4 h-4 text-text-primary"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+
+          {/* Scrollable content */}
+          <div className="overflow-x-hidden overflow-y-auto relative flex flex-col h-full px-4 sm:px-6 md:px-8 w-[calc(100%+.75rem)] [&>*]:pr-3">
+            {/* Search Input */}
+            <div id="input-wrapper" className="relative mb-6">
+              <input
+                data-testid="search-input"
+                placeholder={
+                  lang === "vi" ? "Nhập điểm đến của bạn" : "Enter your destination"
+                }
+                autoComplete="off"
+                className="outline-hidden focus-visible:outline-none appearance-none w-full leading-md py-[11px] px-4 text-text-primary placeholder-text-tertiary border border-border-primary border-md hover:border-border-focus active:border-border-focus focus:border-border-focus transition rounded-sm"
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                name="search-input"
+                ref={inputRef}
+              />
+            </div>
+
+            {/* Results */}
+            <div
+              id="country-list-items"
+              className="grid gap-3 lg:gap-6 w-full md:grid-cols-2 lg:grid-cols-3 md:h-[363px] overflow-y-auto block"
+            >
+              {isLoading ? (
+                <div className="col-span-full flex items-center justify-center py-12">
+                  <svg
+                    className="animate-spin h-6 w-6 text-text-tertiary"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                    />
+                  </svg>
+                </div>
+              ) : hasSearch ? (
+                mergedResults.length === 0 ? (
+                  <p className="body-sm-medium text-text-secondary mb-2 md:mb-3 col-span-full scroll-mt-20 xl:scroll-mt-24">
+                    {lang === "vi"
+                      ? "Không tìm thấy điểm đến"
+                      : "No destinations found"}
+                  </p>
+                ) : (
+                  mergedResults.map((item: any) => {
+                    const isRegion = item._type === "region";
+                    const href = isRegion
+                      ? `/${lang}/region/${item.slug}`
+                      : `/${lang}/destination/${item.slug}`;
+                    const priceStr = item.minPrice || item.fromPrice
+                      ? formatPrice(item.minPrice || item.fromPrice)
+                      : null;
+                    const subtitle = isRegion
+                      ? `${item.destinationCount || 0} ${
+                          lang === "vi"
+                            ? "quốc gia"
+                            : (item.destinationCount === 1 ? "country" : "countries")
+                        }`
+                      : priceStr
+                        ? `From ${priceStr}`
+                        : null;
+
+                    return (
+                      <div key={`${item._type}-${item.id}`}>
+                        <a
+                          href={href}
+                          className="align-bottom focus-visible:outline-hidden focus-visible:shadow-focus text-text-primary active:text-text-primary hover:text-text-secondary block h-full group ease-out rounded-[8px] transition-colors duration-medium hover:bg-bg-primary active:bg-bg-primary"
+                          data-ga-slug="N/A"
+                          data-testid={item.countryCode || item.slug}
+                          data-anchor-link="true"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            if (isRegion) handleSelectRegion(item.slug);
+                            else handleSelect(item.slug);
+                          }}
+                        >
+                          <div
+                            className="flex flex-col items-start text-left rtl:text-right gap-4 relative h-full bg-bg-secondary word-break-word transform-gpu border-none p-0 rounded-[8px] transition-colors duration-medium hover:bg-bg-primary active:bg-bg-primary"
+                            data-testid="destination-card-minified-undefined"
+                          >
+                            <div className="flex gap-3 items-center p-3">
+                              <div className="w-[24px] h-[24px] relative overflow-hidden shrink-0 rounded-full">
+                                {item.flagUrl ? (
+                                  <>
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img
+                                      alt={`${item.countryCode || item.slug} flag`}
+                                      loading="lazy"
+                                      decoding="async"
+                                      className="w-full h-full object-cover"
+                                      src={item.flagUrl}
+                                      style={{
+                                        position: "absolute",
+                                        height: "100%",
+                                        width: "100%",
+                                        inset: 0,
+                                        color: "transparent",
+                                      }}
+                                    />
+                                    <div className="absolute inset-0 border-md rounded-full pointer-events-none border-[rgba(0,0,0,0.1)]" />
+                                  </>
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center bg-bg-blue-100 rounded-full">
+                                    <svg
+                                      className="w-3 h-3 text-text-tertiary"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                      stroke="currentColor"
+                                      strokeWidth={2}
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"
+                                      />
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"
+                                      />
+                                    </svg>
+                                  </div>
+                                )}
+                              </div>
+                              <div className="flex flex-col">
+                                <p className="body-md-medium text-text-primary! scroll-mt-20 xl:scroll-mt-24">
+                                  {item.name}
+                                </p>
+                                {subtitle && (
+                                  <p className="body-xs text-text-tertiary scroll-mt-20 xl:scroll-mt-24">
+                                    <span className="whitespace-nowrap">
+                                      {subtitle}
+                                    </span>
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </a>
+                      </div>
+                    );
+                  })
+                )
+              ) : (
+                /* Default: Most popular destinations */
+                <>
+                  <p className="body-sm-medium text-text-secondary mb-2 md:mb-3 col-span-full scroll-mt-20 xl:scroll-mt-24">
+                    {lang === "vi"
+                      ? "Điểm đến phổ biến nhất"
+                      : "Most popular destinations"}
+                  </p>
+                  {topDestinations.map((dest: any) => {
+                    const priceStr = dest.minPrice || dest.fromPrice
+                      ? formatPrice(dest.minPrice || dest.fromPrice)
+                      : null;
+                    return (
+                      <div key={dest.id}>
+                        <a
+                          href={`/${lang}/destination/${dest.slug}`}
+                          className="align-bottom focus-visible:outline-hidden focus-visible:shadow-focus text-text-primary active:text-text-primary hover:text-text-secondary block h-full group ease-out rounded-[8px] transition-colors duration-medium hover:bg-bg-primary active:bg-bg-primary"
+                          data-ga-slug="N/A"
+                          data-testid={dest.countryCode}
+                          data-anchor-link="true"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleSelect(dest.slug);
+                          }}
+                        >
+                          <div
+                            className="flex flex-col items-start text-left rtl:text-right gap-4 relative h-full bg-bg-secondary word-break-word transform-gpu border-none p-0 rounded-[8px] transition-colors duration-medium hover:bg-bg-primary active:bg-bg-primary"
+                            data-testid="destination-card-minified-undefined"
+                          >
+                            <div className="flex gap-3 items-center p-3">
+                              <div className="w-[24px] h-[24px] relative overflow-hidden shrink-0 rounded-full">
+                                {dest.flagUrl ? (
+                                  <>
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img
+                                      alt={`${dest.countryCode} flag`}
+                                      loading="lazy"
+                                      decoding="async"
+                                      className="w-full h-full object-cover"
+                                      src={dest.flagUrl}
+                                      style={{
+                                        position: "absolute",
+                                        height: "100%",
+                                        width: "100%",
+                                        inset: 0,
+                                        color: "transparent",
+                                      }}
+                                    />
+                                    <div className="absolute inset-0 border-md rounded-full pointer-events-none border-[rgba(0,0,0,0.1)]" />
+                                  </>
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center bg-bg-blue-100 rounded-full">
+                                    <svg
+                                      className="w-3 h-3 text-text-tertiary"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                      stroke="currentColor"
+                                      strokeWidth={2}
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"
+                                      />
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"
+                                      />
+                                    </svg>
+                                  </div>
+                                )}
+                              </div>
+                              <div className="flex flex-col">
+                                <p className="body-md-medium text-text-primary! scroll-mt-20 xl:scroll-mt-24">
+                                  {dest.name}
+                                </p>
+                                {priceStr && (
+                                  <p className="body-xs text-text-tertiary scroll-mt-20 xl:scroll-mt-24">
+                                    <span className="whitespace-nowrap">
+                                      From {priceStr}
+                                    </span>
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </a>
+                      </div>
+                    );
+                  })}
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

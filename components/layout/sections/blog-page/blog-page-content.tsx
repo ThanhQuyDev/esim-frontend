@@ -540,21 +540,27 @@ function CategoryTabPanel({
 
 interface BlogPageContentProps {
   lang: Locale;
+  initialBlogs?: Blog[];
+  initialCategories?: string[];
 }
 
-export function BlogPageContent({ lang }: BlogPageContentProps) {
+export function BlogPageContent({ lang, initialBlogs, initialCategories }: BlogPageContentProps) {
   // Fetch categories
   const { data: categories } = useQuery({
     queryKey: ["blog-categories", lang],
     queryFn: () => fetchCategories(lang),
+    initialData: initialCategories,
     staleTime: 10 * 60 * 1000,
   });
 
   // Fetch all blogs (page 1, limit enough for featured + popular + recent)
   const { data: allBlogs, isLoading } = useQuery({
     queryKey: ["blogs", "all", lang],
-    queryFn: ({ signal }) => fetchBlogs(lang, 1, 20, undefined, signal),
-    select: (data) => data.data.filter((b) => b.isPublished),
+    queryFn: async ({ signal }) => {
+      const res = await fetchBlogs(lang, 1, 20, undefined, signal);
+      return res.data.filter((b) => b.isPublished);
+    },
+    initialData: initialBlogs,
     staleTime: 2 * 60 * 1000,
   });
 

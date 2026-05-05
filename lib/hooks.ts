@@ -264,7 +264,7 @@ export function useSearchRegions(query: string, enabled = true) {
 
 // ===== FAQ Hooks =====
 
-export function useFaqs(lang: Locale = "en") {
+export function useFaqs(lang: Locale = "en", initialData?: Faq[]) {
   return useQuery({
     queryKey: queryKeys.faqs.list(lang),
     queryFn: ({ signal }) =>
@@ -274,6 +274,9 @@ export function useFaqs(lang: Locale = "en") {
         { "x-custom-lang": lang },
         signal
       ),
+    initialData: initialData
+      ? { data: initialData, hasNextPage: false }
+      : undefined,
     select: (data) =>
       data.data
         .filter((f) => f.isActive)
@@ -301,7 +304,7 @@ export function usePlansByDestination(destinationId: number, lang?: string) {
   });
 }
 
-export function usePlansBySlug(slug: string, lang?: string) {
+export function usePlansBySlug(slug: string, lang?: string, initialData?: PlansByDestinationResponse) {
   return useQuery({
     queryKey: [...queryKeys.plans.all, "byDestination", slug],
     queryFn: ({ signal }) =>
@@ -312,10 +315,11 @@ export function usePlansBySlug(slug: string, lang?: string) {
         signal
       ),
     enabled: slug.length > 0,
+    ...(initialData ? { initialData } : {}),
   });
 }
 
-export function usePlansByRegionSlug(slug: string, lang?: string) {
+export function usePlansByRegionSlug(slug: string, lang?: string, initialData?: PlansByDestinationResponse) {
   return useQuery({
     queryKey: [...queryKeys.plans.all, "byRegion", slug],
     queryFn: ({ signal }) =>
@@ -326,6 +330,7 @@ export function usePlansByRegionSlug(slug: string, lang?: string) {
         signal
       ),
     enabled: slug.length > 0,
+    ...(initialData ? { initialData } : {}),
   });
 }
 

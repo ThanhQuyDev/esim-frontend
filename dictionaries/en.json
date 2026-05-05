@@ -847,7 +847,8 @@
     "supportedCountries": "{count} supported countries",
     "carriers": {
       "title": "Supported carriers",
-      "domestic": "Domestic network"
+      "domestic": "Domestic network",
+      "speed": "Speed"
     },
     "features": {
       "title": "Features",

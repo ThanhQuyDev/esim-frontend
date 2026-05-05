@@ -3,16 +3,18 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { useFaqs } from "@/lib/hooks";
+import type { Faq } from "@/lib/api";
 import type { Locale } from "@/lib/i18n-config";
 
 interface FAQSectionProps {
   dict: Record<string, any>;
   lang: Locale;
+  initialFaqs?: Faq[];
 }
 
-export function FAQSection({ dict, lang }: FAQSectionProps) {
+export function FAQSection({ dict, lang, initialFaqs }: FAQSectionProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const { data: apiFaqs } = useFaqs(lang);
+  const { data: apiFaqs } = useFaqs(lang, initialFaqs);
 
   const faqItems =
     apiFaqs && apiFaqs.length > 0

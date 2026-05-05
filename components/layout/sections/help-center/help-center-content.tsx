@@ -35,28 +35,13 @@ function timeAgo(dateStr: string): string {
 
 interface HelpCenterContentProps {
   lang: string;
+  initialArticles?: HelpCenterArticle[];
 }
 
-export function HelpCenterContent({ lang }: HelpCenterContentProps) {
+export function HelpCenterContent({ lang, initialArticles }: HelpCenterContentProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [articles, setArticles] = useState<HelpCenterArticle[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function load() {
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/v1/help-center`);
-        if (!res.ok) throw new Error("Failed to fetch");
-        const json = await res.json();
-        setArticles(json.data || []);
-      } catch {
-        setArticles([]);
-      } finally {
-        setLoading(false);
-      }
-    }
-    load();
-  }, []);
+  const [articles, setArticles] = useState<HelpCenterArticle[]>(initialArticles ?? []);
+  const [loading, setLoading] = useState(!initialArticles);
 
   // Derive unique categories from API data
   const categoryKeys = useMemo(() => {

@@ -262,6 +262,7 @@ export function SecurityFeatures({ dict }: SecurityFeaturesProps) {
                                         role="button"
                                         className="max-md:w-full text-center inline-block text-primary hover:bg-brand-black hover:text-primary-on-color border-md border-reversed active:bg-brand-black active:text-primary-on-color box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7"
                                         href="/security-features/"
+                                        aria-label={`Learn more about ${dict.features[2].title}`}
                                       >
                                         {dict.learnMore}
                                       </a>
@@ -312,6 +313,7 @@ export function SecurityFeatures({ dict }: SecurityFeaturesProps) {
                                         role="button"
                                         className="max-md:w-full text-center inline-block text-primary hover:bg-brand-black hover:text-primary-on-color border-md border-reversed active:bg-brand-black active:text-primary-on-color box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7"
                                         href="/security-features/"
+                                        aria-label={`Learn more about ${dict.features[2].title}`}
                                       >
                                         {dict.learnMore}
                                       </a>

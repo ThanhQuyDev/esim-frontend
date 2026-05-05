@@ -20,9 +20,9 @@ const EMPTY_PLANS: PlansByDestinationResponse = {
   dailyUnlimited: [],
 };
 
-export function DestinationPlans({ destination, slug, dict, lang, planSource = "destination" }: DestinationPlansProps) {
-  const destQuery = usePlansBySlug(planSource === "destination" ? slug : "", lang);
-  const regionQuery = usePlansByRegionSlug(planSource === "region" ? slug : "", lang);
+export function DestinationPlans({ destination, slug, dict, lang, planSource = "destination", initialPlans }: DestinationPlansProps) {
+  const destQuery = usePlansBySlug(planSource === "destination" ? slug : "", lang, planSource === "destination" ? (initialPlans ?? undefined) : undefined);
+  const regionQuery = usePlansByRegionSlug(planSource === "region" ? slug : "", lang, planSource === "region" ? (initialPlans ?? undefined) : undefined);
   const { data: plans = EMPTY_PLANS, isLoading } = planSource === "region" ? regionQuery : destQuery;
 
   // Fetch region details (with destinations list) for region pages

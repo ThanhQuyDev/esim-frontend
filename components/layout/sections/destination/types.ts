@@ -9,7 +9,7 @@ export interface DestinationDict {
   heroTag: string;
   viewCountries: string;
   supportedCountries: string;
-  carriers: { title: string; domestic: string };
+  carriers: { title: string; domestic: string, speed: string };
   features: {
     title: string;
     hotspot: string;
@@ -87,6 +87,8 @@ export interface DestinationPlansProps {
   lang: string;
   /** "destination" (default) or "region" — switches the plans API endpoint */
   planSource?: "destination" | "region";
+  /** Pre-fetched plans from server — avoids loading flash on initial render */
+  initialPlans?: PlansByDestinationResponse | null;
 }
 
 // ===== Helper: find best plan for a given dataMb + days =====

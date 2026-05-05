@@ -32,7 +32,7 @@ export function NonprofitBanner({ dict }: NonprofitBannerProps) {
                         </p>
                       </div>
                       <div className="col-span-12 lg:col-start-3 lg:col-span-8 flex justify-center">
-                        <a role="button" className="max-md:w-full text-center inline-block text-text-primary bg-bg-secondary hover:bg-bg-secondary/80 border border-border-secondary box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7" href="/blog/saily-impact/">
+                        <a role="button" className="max-md:w-full text-center inline-block text-text-primary bg-bg-secondary hover:bg-bg-secondary/80 border border-border-secondary box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7" href="/blog/saily-impact/" aria-label={`Learn more about ${dict.title}`}>
                           {dict.learnMore}
                         </a>
                       </div>

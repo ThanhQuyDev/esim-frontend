@@ -3,6 +3,7 @@ import { DetailContent } from "@/components/layout/sections/help-center/detail-c
 import { FooterSection } from "@/components/layout/sections/footer";
 import { getDictionary } from "@/lib/dictionaries";
 import { getSeoMetadata } from "@/lib/seo";
+import { fetchHelpCenterArticles } from "@/lib/api";
 import type { Locale } from "@/lib/i18n-config";
 import type { Metadata } from "next";
 
@@ -19,7 +20,10 @@ export default async function HelpCenterDetailPage({
 }: {
   params: { lang: Locale; slug: string[] };
 }) {
-  const dict = await getDictionary(params.lang);
+  const [dict, helpCenterRes] = await Promise.all([
+    getDictionary(params.lang),
+    fetchHelpCenterArticles(),
+  ]);
   const [category, parent, titleSlug] = params.slug;
 
   return (
@@ -30,6 +34,7 @@ export default async function HelpCenterDetailPage({
           category={category}
           parent={parent}
           titleSlug={titleSlug}
+          initialArticles={helpCenterRes.data}
         />
       </Suspense>
       <FooterSection dict={dict.footer} />
