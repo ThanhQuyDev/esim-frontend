@@ -129,20 +129,28 @@ export function findBestPlan(plans: Plan[], dataMb: number, days: number): Plan 
   return candidates[0].plan;
 }
 
+/** Apply plan discount (percentage) to a price. Returns the discounted price. */
+function applyDiscount(price: number, plan: Plan): number {
+  if (plan.discount != null && plan.discount > 0) {
+    return Math.round(price * (1 - plan.discount / 100));
+  }
+  return price;
+}
+
 /**
  * Calculate the total price for a selected plan given the user's chosen days.
  * - isAbleMultidate plans: price * days
  * - Otherwise: price (the package already covers durationDays >= days)
+ * Applies plan discount if present.
  */
 export function calcTotalPrice(plan: Plan, days: number): number {
-  if (plan.isAbleMultidate) {
-    return Number(plan.price) * days;
-  }
-  return Number(plan.price);
+  const base = plan.isAbleMultidate ? Number(plan.price) * days : Number(plan.price);
+  return applyDiscount(base, plan);
 }
 
 /**
- * Calculate the total retail price for a selected plan given the user's chosen days.
+ * Calculate the total retail price (before discount) for a selected plan.
+ * When a plan has a discount, the retail price is the original (undiscounted) price.
  */
 export function calcTotalRetailPrice(plan: Plan, days: number): number {
   if (plan.isAbleMultidate) {
@@ -153,19 +161,24 @@ export function calcTotalRetailPrice(plan: Plan, days: number): number {
 
 /**
  * Calculate the total VND price using the plan's vndPrice field directly.
+ * Applies plan discount if present.
  */
 export function calcTotalVndPrice(plan: Plan, days: number): number {
-  if (plan.isAbleMultidate) {
-    return Number(plan.vndPrice) * days;
-  }
-  return Number(plan.vndPrice);
+  const base = plan.isAbleMultidate ? Number(plan.vndPrice) * days : Number(plan.vndPrice);
+  return applyDiscount(base, plan);
 }
 
 /**
  * Calculate the total VND retail price.
- * API only provides vndPrice (not vndRetailPrice), so we derive it proportionally.
+ * When a plan has a discount, the "retail" is the original undiscounted vndPrice.
+ * Otherwise, derive from the USD retail/price ratio.
  */
 export function calcTotalVndRetailPrice(plan: Plan, days: number): number {
+  if (plan.discount != null && plan.discount > 0) {
+    // Original (undiscounted) vndPrice serves as the "retail" strikethrough
+    const base = plan.isAbleMultidate ? Number(plan.vndPrice) * days : Number(plan.vndPrice);
+    return base;
+  }
   const price = Number(plan.price);
   const retailPrice = Number(plan.retailPrice);
   const vndPrice = Number(plan.vndPrice);
@@ -175,6 +188,21 @@ export function calcTotalVndRetailPrice(plan: Plan, days: number): number {
     return vndRetail * days;
   }
   return vndRetail;
+}
+
+/**
+ * Get the VND price for a fixed plan, applying discount if present.
+ * For fixed plans that use `plan.vndPrice` directly (not calcTotalVndPrice).
+ */
+export function getFixedVndPrice(plan: Plan): number {
+  return applyDiscount(Number(plan.vndPrice), plan);
+}
+
+/**
+ * Get the USD price for a fixed plan, applying discount if present.
+ */
+export function getFixedPrice(plan: Plan): number {
+  return applyDiscount(Number(plan.price), plan);
 }
 
 /** Get unique dataMb values from a list of plans, sorted ascending */

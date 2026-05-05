@@ -137,6 +137,7 @@ export interface Plan {
   fupSpeed?: string;
   isCheapest: boolean;
   isAbleMultidate?: boolean;
+  discount?: number;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -157,6 +158,55 @@ export interface PaginatedResponse<T> {
   hasNextPage: boolean;
 }
 
+export type InfinityPaginationResponse<T> = PaginatedResponse<T>;
+
+export interface FileType {
+  id?: string | number;
+  path?: string | null;
+  url?: string | null;
+  publicUrl?: string | null;
+  public_url?: string | null;
+  secureUrl?: string | null;
+  secure_url?: string | null;
+  location?: string | null;
+  name?: string | null;
+  fileName?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  mime?: string | null;
+  size?: number | null;
+  [key: string]: unknown;
+}
+
+export interface HeroBanner {
+  id: string;
+  image?: FileType | string | null;
+  active: boolean;
+  createdAt: string | Date;
+  updatedAt: string | Date;
+}
+
+export interface Footer {
+  id: string;
+  title: string;
+  titleVi: string;
+  url: string;
+  categories?: string | null;
+  createdAt: string | Date;
+  updatedAt: string | Date;
+}
+
+export interface TopBar {
+  id: string;
+  icon?: FileType | string | null;
+  title: string;
+  titleVi: string;
+  buttonContent: string;
+  url: string;
+  createdAt: string | Date;
+  updatedAt: string | Date;
+}
+
 interface FetchOptions {
   page?: number;
   limit?: number;
@@ -164,6 +214,63 @@ interface FetchOptions {
   orderBy?: string;
   order?: string;
   lang?: string;
+}
+
+type PublicListResponse<T> = InfinityPaginationResponse<T> | T[];
+
+function normalizeListResponse<T>(response: PublicListResponse<T>): T[] {
+  if (Array.isArray(response)) return response;
+  if (response && Array.isArray(response.data)) return response.data;
+  return [];
+}
+
+function joinUrl(baseUrl: string, path: string): string {
+  const normalizedBase = baseUrl.replace(/\/+$/, "");
+  const normalizedPath = path.replace(/^\/+/, "");
+  return `${normalizedBase}/${normalizedPath}`;
+}
+
+export function resolveFileUrl(file?: FileType | string | null): string | null {
+  if (!file) return null;
+
+  if (typeof file === "string") {
+    const value = file.trim();
+    if (!value) return null;
+    if (/^https?:\/\//i.test(value)) return value;
+    if (value.startsWith("//")) return `https:${value}`;
+    return joinUrl(API_BASE_URL, value);
+  }
+
+  const candidates = [
+    file.url,
+    file.path,
+    file.publicUrl,
+    file.public_url,
+    file.secureUrl,
+    file.secure_url,
+    file.location,
+  ];
+
+  const value = candidates.find(
+    (candidate): candidate is string =>
+      typeof candidate === "string" && candidate.trim().length > 0
+  );
+
+  if (!value) return null;
+
+  const trimmedValue = value.trim();
+  if (/^https?:\/\//i.test(trimmedValue)) return trimmedValue;
+  if (trimmedValue.startsWith("//")) return `https:${trimmedValue}`;
+
+  return joinUrl(API_BASE_URL, trimmedValue);
+}
+
+export function pickLocalizedTitle(
+  item: { title?: string | null; titleVi?: string | null },
+  locale?: string
+): string {
+  if (locale === "vi") return item.titleVi || item.title || "";
+  return item.title || item.titleVi || "";
 }
 
 // ===== Generic fetcher =====
@@ -201,6 +308,71 @@ async function apiFetch<T>(
 }
 
 // ===== API functions =====
+
+async function getPublicLandingList<T>(
+  endpoint: string,
+  options: FetchOptions,
+  revalidate: number
+): Promise<T[]> {
+  const normalizedEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+  const versionedEndpoint = `/api/v1${normalizedEndpoint}`;
+
+  try {
+    const response = await apiFetch<PublicListResponse<T>>(
+      normalizedEndpoint,
+      options,
+      revalidate
+    );
+    return normalizeListResponse(response);
+  } catch (primaryError) {
+    try {
+      const response = await apiFetch<PublicListResponse<T>>(
+        versionedEndpoint,
+        options,
+        revalidate
+      );
+      return normalizeListResponse(response);
+    } catch (fallbackError) {
+      console.warn(
+        `Failed to fetch public landing endpoint ${normalizedEndpoint}:`,
+        fallbackError,
+        "Primary endpoint error:",
+        primaryError
+      );
+      return [];
+    }
+  }
+}
+
+export async function getHeroBanners(
+  options: FetchOptions = {}
+): Promise<HeroBanner[]> {
+  return getPublicLandingList<HeroBanner>(
+    "/api/v1/hero-banners",
+    { limit: 20, ...options },
+    300
+  );
+}
+
+export async function getFooters(
+  options: FetchOptions = {}
+): Promise<Footer[]> {
+  return getPublicLandingList<Footer>(
+    "/footers",
+    { limit: 100, ...options },
+    300
+  );
+}
+
+export async function getTopBars(
+  options: FetchOptions = {}
+): Promise<TopBar[]> {
+  return getPublicLandingList<TopBar>(
+    "/api/v1/top-bars",
+    { limit: 10, ...options },
+    300
+  );
+}
 
 export async function getDestinations(
   options: FetchOptions = {}

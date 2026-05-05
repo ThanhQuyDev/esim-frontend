@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import type { Plan } from "@/lib/api";
 import type { DestinationDict } from "../types";
-import { calcTotalPrice, calcTotalVndPrice } from "../types";
+import { calcTotalPrice, calcTotalVndPrice, getFixedPrice, getFixedVndPrice } from "../types";
 import { formatVnd, useCart } from "@/lib/hooks";
 
 interface MobileStickyBarProps {
@@ -52,7 +52,7 @@ export function MobileStickyBar({
   let totalPrice = 0;
   if (selectedPlan) {
     if (isFixed) {
-      totalPrice = Number(selectedPlan.vndPrice) * quantity;
+      totalPrice = getFixedVndPrice(selectedPlan) * quantity;
     } else {
       totalPrice = calcTotalVndPrice(selectedPlan, days) * quantity;
     }
@@ -60,8 +60,9 @@ export function MobileStickyBar({
 
   const handleAddToCart = async () => {
     if (!selectedPlan) return;
-    const unitPrice = isFixed ? Number(selectedPlan.price) : calcTotalPrice(selectedPlan, days);
-    const unitVndPrice = isFixed ? Number(selectedPlan.vndPrice) : calcTotalVndPrice(selectedPlan, days);
+    const unitPrice = isFixed ? getFixedPrice(selectedPlan) : calcTotalPrice(selectedPlan, days);
+    const unitVndPrice = isFixed ? getFixedVndPrice(selectedPlan) : calcTotalVndPrice(selectedPlan, days);
+    const originalVndPrice = isFixed ? Number(selectedPlan.vndPrice) : (selectedPlan.isAbleMultidate ? Number(selectedPlan.vndPrice) * days : Number(selectedPlan.vndPrice));
     await addItem(
       {
         id: String(selectedPlan.id),
@@ -72,6 +73,7 @@ export function MobileStickyBar({
         destination: destination,
         dataMb: Number(selectedPlan.dataMb),
         durationDays: isFixed ? selectedPlan.durationDays : days,
+        ...(selectedPlan.discount != null && selectedPlan.discount > 0 ? { discount: selectedPlan.discount, originalVndPrice } : {}),
       },
       quantity
     );

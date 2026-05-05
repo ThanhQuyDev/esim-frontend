@@ -6,14 +6,16 @@ export interface CartItem {
   id: string;
   name: string;
   description: string;
-  price: number; // USD
+  price: number; // USD (after discount if applicable)
   quantity: number;
   image?: string;
   destination?: string;
   dataMb?: number;
   durationDays?: number;
   flagUrl?: string;
-  vndPrice?: number; // VND price from API
+  vndPrice?: number; // VND price from API (after discount if applicable)
+  originalVndPrice?: number; // Original VND price before plan discount
+  discount?: number; // Plan discount percentage (e.g. 10 = 10%)
   _apiId?: number; // API cart item id (for update/delete)
 }
 

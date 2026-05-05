@@ -460,6 +460,12 @@ function CartItemRow({
     ? `${(item.vndPrice * item.quantity).toLocaleString("vi-VN")}₫`
     : formatPrice(item.price * item.quantity);
 
+  // Show original price (before plan discount) as strikethrough
+  const hasItemDiscount = item.discount != null && item.discount > 0 && item.originalVndPrice;
+  const displayOriginalPrice = hasItemDiscount
+    ? `${(item.originalVndPrice! * item.quantity).toLocaleString("vi-VN")}₫`
+    : null;
+
   return (
     <div
       className={`flex items-start gap-4 rounded-2xl border p-4 transition-colors ${
@@ -511,9 +517,21 @@ function CartItemRow({
 
       {/* Price & Quantity */}
       <div className="flex flex-col items-end gap-3 flex-shrink-0">
-        <span className="text-sm font-bold text-text-primary">
-          {displayPrice}
-        </span>
+        <div className="flex flex-col items-end">
+          {displayOriginalPrice && (
+            <span className="text-xs text-[#6b7280] line-through">
+              {displayOriginalPrice}
+            </span>
+          )}
+          <span className="text-sm font-bold text-text-primary">
+            {displayPrice}
+          </span>
+          {hasItemDiscount && (
+            <span className="text-[10px] font-bold text-green-600 bg-green-50 px-1.5 py-0.5 rounded mt-0.5">
+              -{item.discount}%
+            </span>
+          )}
+        </div>
         <div className="flex items-center gap-1 rounded-xl border border-border-primary">
           <button
             onClick={() => onQuantityChange(item.quantity - 1)}

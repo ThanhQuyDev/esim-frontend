@@ -10,6 +10,7 @@ import { TestimonialsSection } from "@/components/layout/sections/testimonials";
 import { FAQSection } from "@/components/layout/sections/faq";
 import { ReferFriendBanner } from "@/components/layout/sections/refer-friend";
 import { FooterSection } from "@/components/layout/sections/footer";
+import { getFooters, getHeroBanners } from "@/lib/api";
 import { getDictionary } from "@/lib/dictionaries";
 import { getSeoMetadata } from "@/lib/seo";
 import type { Locale } from "@/lib/i18n-config";
@@ -32,11 +33,15 @@ export default async function Home({
 }: {
   params: { lang: Locale };
 }) {
-  const dict = await getDictionary(params.lang);
+  const [dict, heroBanners, footerLinks] = await Promise.all([
+    getDictionary(params.lang),
+    getHeroBanners({ lang: params.lang }),
+    getFooters({ lang: params.lang }),
+  ]);
 
   return (
     <main role="main">
-      <HeroSection dict={dict.hero} />
+      <HeroSection dict={dict.hero} heroBanners={heroBanners} />
       <PartnerBar dict={dict.partnerBar} />
       <WhatIsEsim dict={dict.whatIsEsim} lang={params.lang} />
       <DestinationsSection dict={dict.destinations} lang={params.lang} />
@@ -47,7 +52,11 @@ export default async function Home({
       <TestimonialsSection dict={dict.testimonials} />
       <FAQSection dict={dict.faq} lang={params.lang} />
       <ReferFriendBanner dict={dict.referFriend} />
-      <FooterSection dict={dict.footer} />
+      <FooterSection
+        dict={dict.footer}
+        footerLinks={footerLinks}
+        lang={params.lang}
+      />
     </main>
   );
 }

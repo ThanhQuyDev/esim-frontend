@@ -2,7 +2,7 @@
 
 import type { Plan } from "@/lib/api";
 import type { DestinationDict } from "./types";
-import { calcTotalVndPrice, calcTotalVndRetailPrice } from "./types";
+import { calcTotalVndPrice, calcTotalVndRetailPrice, getFixedVndPrice } from "./types";
 import { formatVnd } from "@/lib/hooks";
 
 interface PriceDisplayProps {
@@ -38,11 +38,16 @@ export function PriceDisplay({
   let totalRetail: number;
 
   if (isFixed) {
-    totalPrice = Number(selectedPlan.vndPrice) * quantity;
-    const price = Number(selectedPlan.price);
-    const retailPrice = Number(selectedPlan.retailPrice);
-    const vndRetail = price > 0 ? Math.round((Number(selectedPlan.vndPrice) * retailPrice) / price / 1000) * 1000 : 0;
-    totalRetail = vndRetail * quantity;
+    totalPrice = getFixedVndPrice(selectedPlan) * quantity;
+    // Retail is the original undiscounted price when discount exists, otherwise derived from retailPrice
+    if (selectedPlan.discount != null && selectedPlan.discount > 0) {
+      totalRetail = Number(selectedPlan.vndPrice) * quantity;
+    } else {
+      const price = Number(selectedPlan.price);
+      const retailPrice = Number(selectedPlan.retailPrice);
+      const vndRetail = price > 0 ? Math.round((Number(selectedPlan.vndPrice) * retailPrice) / price / 1000) * 1000 : 0;
+      totalRetail = vndRetail * quantity;
+    }
   } else {
     totalPrice = calcTotalVndPrice(selectedPlan, days) * quantity;
     totalRetail = calcTotalVndRetailPrice(selectedPlan, days) * quantity;

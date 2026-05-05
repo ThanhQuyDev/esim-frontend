@@ -775,6 +775,7 @@ interface ApiCartItemPlan {
   durationDays: number;
   vndPrice: number;
   currency: string;
+  discount?: number;
   destination?: {
     id: number;
     name: string;
@@ -875,6 +876,12 @@ export function useCart() {
         const dataLabel = mb >= 1024
           ? `${parseFloat((mb / 1024).toFixed(1))} GB`
           : `${mb} MB`;
+        const rawVndPrice = item.plan?.vndPrice || 0;
+        const planDiscount = item.plan?.discount;
+        const hasDiscount = planDiscount != null && planDiscount > 0;
+        const discountedVndPrice = hasDiscount
+          ? Math.round(rawVndPrice * (1 - planDiscount! / 100))
+          : rawVndPrice;
         return {
           id: String(item.planId),
           name: item.plan?.name || `Plan #${item.planId}`,
@@ -885,7 +892,8 @@ export function useCart() {
           dataMb: mb,
           durationDays: item.plan?.durationDays,
           flagUrl: item.plan?.destination?.flagUrl,
-          vndPrice: item.plan?.vndPrice || 0,
+          vndPrice: discountedVndPrice,
+          ...(hasDiscount ? { originalVndPrice: rawVndPrice, discount: planDiscount } : {}),
           _apiId: item.id,
         };
       }),

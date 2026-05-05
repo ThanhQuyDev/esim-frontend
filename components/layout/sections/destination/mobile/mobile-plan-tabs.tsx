@@ -41,12 +41,10 @@ function MobilePlanChip({
   plan,
   isSelected,
   onSelect,
-  savePercent,
 }: {
   plan: Plan;
   isSelected: boolean;
   onSelect: () => void;
-  savePercent: number;
 }) {
   const label = `${formatDataLabel(Number(plan.dataMb))} – ${plan.durationDays} ngày`;
 
@@ -60,7 +58,9 @@ function MobilePlanChip({
       }`}
     >
       {label}
-      {savePercent > 18 && <ChipBadge type="disc" label={`–${savePercent}%`} />}
+      {plan.discount != null && plan.discount > 0 && (
+        <ChipBadge type="disc" label={`–${plan.discount}%`} />
+      )}
     </button>
   );
 }
@@ -168,9 +168,6 @@ export function MobilePlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }
   const [dailyGb, setDailyGb] = useState<number>(0);
   const [normalGb, setNormalGb] = useState<number>(0);
 
-  const getSavePercent = (p: Plan) =>
-    p.retailPrice > 0 ? Math.round(((p.retailPrice - p.price) / p.retailPrice) * 100) : 0;
-
   const hasDataPlans = plans.dataPlans.length > 0;
   const hasSlowUnlimited = plans.slowUnlimited.length > 0;
   const hasFastUnlimited = plans.fastUnlimited.length > 0;
@@ -253,7 +250,6 @@ export function MobilePlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }
                 plan={p}
                 isSelected={activeSection === "fixed" && selectedPlan?.id === p.id}
                 onSelect={() => handleSelectFixed(p)}
-                savePercent={getSavePercent(p)}
               />
             ))}
           </div>

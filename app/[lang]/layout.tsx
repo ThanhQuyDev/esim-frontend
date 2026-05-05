@@ -3,6 +3,7 @@ import { NavigationProgress } from "@/components/layout/navigation-progress";
 import { AuthModal } from "@/components/layout/auth-modal";
 import { ChatBubble } from "@/components/layout/chat-bubble";
 import { i18n, type Locale } from "@/lib/i18n-config";
+import { getTopBars } from "@/lib/api";
 import { getDictionary } from "@/lib/dictionaries";
 import { getSeoMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
@@ -31,14 +32,17 @@ export default async function LangLayout({
   children: React.ReactNode;
   params: { lang: Locale };
 }) {
-  const dict = await getDictionary(params.lang);
+  const [dict, topBars] = await Promise.all([
+    getDictionary(params.lang),
+    getTopBars({ lang: params.lang }),
+  ]);
 
   return (
     <>
       <Suspense fallback={null}>
         <NavigationProgress />
       </Suspense>
-      <Navbar lang={params.lang} dict={dict.nav} />
+      <Navbar lang={params.lang} dict={dict.nav} topBars={topBars} />
       <AuthModal lang={params.lang} />
       {children}
       <ChatBubble />

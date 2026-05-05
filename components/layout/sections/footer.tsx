@@ -1,12 +1,26 @@
 import Link from "next/link";
+import {
+  getFooters,
+  pickLocalizedTitle,
+  type Footer as ApiFooter,
+} from "@/lib/api";
+import type { Locale } from "@/lib/i18n-config";
 
 interface FooterLink {
+  id?: string;
   label: string;
   href: string;
 }
 
+interface FooterColumn {
+  title: string;
+  links: FooterLink[];
+}
+
 interface FooterSectionProps {
   dict: Record<string, any>;
+  footerLinks?: ApiFooter[];
+  lang?: Locale;
 }
 
 const socialLinks = [
@@ -29,14 +43,54 @@ const paymentIcons = [
   { name: "JCB", src: "https://sb.nordcdn.com/m/783f5e58e6359300/original/jcb.svg" },
 ];
 
-export function FooterSection({ dict }: FooterSectionProps) {
-  const columns = [
+function getFallbackColumns(dict: Record<string, any>): FooterColumn[] {
+  return [
     { title: dict.popularDestinations.title, links: dict.popularDestinations.links },
     { title: dict.saily.title, links: dict.saily.links },
     { title: dict.esim.title, links: dict.esim.links },
     { title: dict.helpLinks.title, links: dict.helpLinks.links },
     { title: dict.followUs.title, links: dict.followUs.links },
   ];
+}
+
+function getApiFooterColumns(
+  footerLinks: ApiFooter[],
+  lang: Locale = "en"
+): FooterColumn[] {
+  const groupedLinks = new Map<string, FooterLink[]>();
+  footerLinks.forEach((footerLink) => {
+    const label = pickLocalizedTitle(footerLink, lang).trim();
+    const href = footerLink.url?.trim();
+
+    if (!label || !href) return;
+
+    const category =
+      footerLink.categories?.trim() || (lang === "vi" ? "Liên kết" : "Links");
+    const links = groupedLinks.get(category) ?? [];
+
+    links.push({
+      id: footerLink.id,
+      label,
+      href,
+    });
+
+    groupedLinks.set(category, links);
+  });
+
+  return Array.from(groupedLinks.entries()).map(([title, links]) => ({
+    title,
+    links,
+  }));
+}
+
+export async function FooterSection({
+  dict,
+  footerLinks,
+  lang = "en",
+}: FooterSectionProps) {
+  const resolvedFooterLinks = footerLinks ?? (await getFooters({ lang }));
+  const apiColumns = getApiFooterColumns(resolvedFooterLinks, lang);
+  const columns = apiColumns.length > 0 ? apiColumns : getFallbackColumns(dict);
 
   return (
     <footer className="px-4 lg:px-16 bg-white text-text-secondary">
@@ -101,10 +155,11 @@ export function FooterSection({ dict }: FooterSectionProps) {
               <p className="body-sm-bold text-text-primary mb-4">{col.title}</p>
               <div className="flex flex-col gap-y-3">
                 {col.links.map((link: FooterLink, j: number) => {
+                  const linkKey = link.id ?? `${link.href}-${j}`;
                   const isExternal = link.href.startsWith("http");
                   return isExternal ? (
                     <a
-                      key={j}
+                      key={linkKey}
                       href={link.href}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -114,7 +169,7 @@ export function FooterSection({ dict }: FooterSectionProps) {
                     </a>
                   ) : (
                     <Link
-                      key={j}
+                      key={linkKey}
                       href={link.href}
                       className="body-sm text-text-secondary hover:underline inline-flex items-center"
                     >

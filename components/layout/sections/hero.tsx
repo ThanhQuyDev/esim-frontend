@@ -1,12 +1,70 @@
 "use client";
 
 import Image from "next/image";
+import type { CSSProperties } from "react";
+import { resolveFileUrl, type HeroBanner } from "@/lib/api";
 
 interface HeroSectionProps {
   dict: Record<string, any>;
+  heroBanners?: HeroBanner[];
 }
 
-export function HeroSection({ dict }: HeroSectionProps) {
+const FALLBACK_MOBILE_HERO_IMAGE =
+  "https://sb.nordcdn.com/m/1ec9b98515b5f040/original/saily-dach-campaign-man-mobile-1536x1760.png";
+const FALLBACK_DESKTOP_HERO_IMAGE =
+  "https://sb.nordcdn.com/m/70f7fbf89c133c58/original/saily_dach-campain_man_visual_desktop_5120x2220.png";
+
+interface HeroImageProps {
+  apiImageUrl: string | null;
+  fallbackSrc: string;
+  alt: string;
+  width: number;
+  height: number;
+  className?: string;
+  style?: CSSProperties;
+}
+
+function HeroImage({
+  apiImageUrl,
+  fallbackSrc,
+  alt,
+  width,
+  height,
+  className,
+  style,
+}: HeroImageProps) {
+  if (apiImageUrl) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        alt={alt}
+        src={apiImageUrl}
+        width={width}
+        height={height}
+        className={className}
+        loading="eager"
+        style={style}
+      />
+    );
+  }
+
+  return (
+    <Image
+      alt={alt}
+      src={fallbackSrc}
+      width={width}
+      height={height}
+      className={className}
+      priority
+      style={style}
+    />
+  );
+}
+
+export function HeroSection({ dict, heroBanners = [] }: HeroSectionProps) {
+  const activeBanner = heroBanners.find((banner) => banner.active === true);
+  const heroImageUrl = resolveFileUrl(activeBanner?.image);
+
   return (
     <section className="relative overflow-hidden">
       {/* Background colors per breakpoint */}
@@ -22,49 +80,49 @@ export function HeroSection({ dict }: HeroSectionProps) {
         <div className="relative h-full min-w-[768px] md:max-lg:min-w-[1720px] lg:max-xl:min-w-[1920px] xl:min-w-[2560px]">
           {/* Mobile < md */}
           <div className="block md:hidden absolute z-10 bottom-0">
-            <Image
+            <HeroImage
               alt="A person using the esim.vn eSIM app while rushing on their travels."
-              src="https://sb.nordcdn.com/m/1ec9b98515b5f040/original/saily-dach-campaign-man-mobile-1536x1760.png"
+              apiImageUrl={heroImageUrl}
+              fallbackSrc={FALLBACK_MOBILE_HERO_IMAGE}
               width={768}
               height={880}
               className="max-w-fit"
-              priority
               style={{ color: "transparent", maxWidth: "768px", width: "768px" }}
             />
           </div>
           {/* md to lg */}
           <div className="hidden md:block lg:hidden">
-            <Image
+            <HeroImage
               alt="esim.vn dach campain man visual desktop 5120x2220"
-              src="https://sb.nordcdn.com/m/70f7fbf89c133c58/original/saily_dach-campain_man_visual_desktop_5120x2220.png"
+              apiImageUrl={heroImageUrl}
+              fallbackSrc={FALLBACK_DESKTOP_HERO_IMAGE}
               width={1720}
               height={746}
               className="max-w-fit"
-              priority
               style={{ color: "transparent", maxWidth: "1720px", width: "1720px" }}
             />
           </div>
           {/* lg to xl */}
           <div className="hidden lg:block xl:hidden absolute z-10" style={{ left: "-40px" }}>
-            <Image
+            <HeroImage
               alt="esim.vn dach campain man visual desktop 5120x2220"
-              src="https://sb.nordcdn.com/m/70f7fbf89c133c58/original/saily_dach-campain_man_visual_desktop_5120x2220.png"
+              apiImageUrl={heroImageUrl}
+              fallbackSrc={FALLBACK_DESKTOP_HERO_IMAGE}
               width={1920}
               height={832}
               className="max-w-fit"
-              priority
               style={{ color: "transparent", maxWidth: "1920px", width: "1920px" }}
             />
           </div>
           {/* xl+ */}
           <div className="hidden xl:block">
-            <Image
+            <HeroImage
               alt="esim.vn dach campain man visual desktop 5120x2220"
-              src="https://sb.nordcdn.com/m/70f7fbf89c133c58/original/saily_dach-campain_man_visual_desktop_5120x2220.png"
+              apiImageUrl={heroImageUrl}
+              fallbackSrc={FALLBACK_DESKTOP_HERO_IMAGE}
               width={2560}
               height={1110}
               className="max-w-fit"
-              priority
               style={{ color: "transparent", maxWidth: "2560px", width: "2560px" }}
             />
           </div>

@@ -3,7 +3,6 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import * as Dialog from "@radix-ui/react-dialog";
 import { cn } from "@/lib/utils";
 import { SailyLogo } from "@/components/icons/saily-logo";
@@ -23,6 +22,11 @@ import {
   ShoppingCart,
 } from "lucide-react";
 import type { Locale } from "@/lib/i18n-config";
+import {
+  pickLocalizedTitle,
+  resolveFileUrl,
+  type TopBar,
+} from "@/lib/api";
 
 // Swiper
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -33,6 +37,7 @@ import { Pagination, Autoplay } from "swiper/modules";
 interface NavbarProps {
   lang: Locale;
   dict: Record<string, any>;
+  topBars?: TopBar[];
 }
 
 interface MenuLink {
@@ -62,6 +67,34 @@ interface MegaMenuData {
   explore: ExploreCard[];
   bottomLeft: { icon: boolean; text: string; href: string };
   bottomRight: { text: string; href: string };
+}
+
+interface AnnouncementIconProps {
+  iconUrl?: string | null;
+  className?: string;
+}
+
+function AnnouncementIcon({ iconUrl, className }: AnnouncementIconProps) {
+  const iconClassName = cn("w-4 h-4 shrink-0", className);
+
+  if (iconUrl) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        alt=""
+        src={iconUrl}
+        className={cn(iconClassName, "object-contain")}
+        aria-hidden="true"
+      />
+    );
+  }
+
+  return (
+    <UserPlus
+      className={cn(iconClassName, "text-text-primary-on-color")}
+      aria-hidden="true"
+    />
+  );
 }
 
 /* ===== Icon mapping (yellow circle icons) ===== */
@@ -474,7 +507,7 @@ const NAV_ITEMS = ["product", "resources", "offers", "help"] as const;
 
 /* ===== Main Navbar ===== */
 
-export function Navbar({ lang, dict }: NavbarProps) {
+export function Navbar({ lang, dict, topBars = [] }: NavbarProps) {
   const pathname = usePathname();
   const isLandingPage = pathname === `/${lang}` || pathname === `/${lang}/`;
   const [searchOpen, setSearchOpen] = useState(false);
@@ -489,6 +522,17 @@ export function Navbar({ lang, dict }: NavbarProps) {
     : (typeof window !== "undefined" ? getLocalCartData().items.length : 0);
 
   const menuData = getMenuData(lang);
+  const firstTopBar = topBars[0];
+  const announcementText = firstTopBar
+    ? pickLocalizedTitle(firstTopBar, lang).trim()
+    : "";
+  const announcementCta = firstTopBar?.buttonContent?.trim() || "";
+  const announcementHref = firstTopBar?.url?.trim() || "";
+  const announcementIconUrl = firstTopBar
+    ? resolveFileUrl(firstTopBar.icon)
+    : null;
+  const hasAnnouncement = Boolean(firstTopBar && announcementText);
+  const hasAnnouncementCta = Boolean(announcementCta && announcementHref);
 
   const handleLangChange = useCallback((value: string) => {
     window.location.href = `/${value}`;
@@ -526,35 +570,39 @@ export function Navbar({ lang, dict }: NavbarProps) {
   return (
     <>
       {/* ===== Announcement Bar ===== */}
-      {announcementVisible && isLandingPage && (
+      {announcementVisible && isLandingPage && hasAnnouncement && (
         <div className="relative bg-bg-dark text-text-primary-on-color overflow-hidden">
           <div className="px-6 min-w-full flex justify-between items-center md:gap-3">
             <div className="flex py-3 md:justify-center items-center w-full md:gap-3">
               <div className="hidden md:flex items-center gap-3">
-                <UserPlus className="w-4 h-4 text-text-primary-on-color shrink-0" />
+                <AnnouncementIcon iconUrl={announcementIconUrl} />
                 <p className="body-sm text-text-primary-on-color">
-                  {dict.announcement}
+                  {announcementText}
                 </p>
-                <Link
-                  href={`/${lang}/all-destinations`}
-                  className="inline-block text-text-primary-on-color border-md border-[rgba(255,255,255,0.3)] hover:bg-bg-secondary hover:text-text-primary rounded-full transition-colors body-sm-medium px-6 py-[5.5px]"
-                >
-                  {dict.announcementCta}
-                </Link>
+                {hasAnnouncementCta && (
+                  <Link
+                    href={announcementHref}
+                    className="inline-block text-text-primary-on-color border-md border-[rgba(255,255,255,0.3)] hover:bg-bg-secondary hover:text-text-primary rounded-full transition-colors body-sm-medium px-6 py-[5.5px]"
+                  >
+                    {announcementCta}
+                  </Link>
+                )}
               </div>
               <div className="flex md:hidden flex-col gap-2 w-full pr-8">
                 <div className="flex items-center gap-2">
-                  <UserPlus className="w-4 h-4 shrink-0 text-text-primary-on-color" />
+                  <AnnouncementIcon iconUrl={announcementIconUrl} />
                   <p className="body-sm text-text-primary-on-color">
-                    {dict.announcement}
+                    {announcementText}
                   </p>
                 </div>
-                <Link
-                  href={`/${lang}/all-destinations`}
-                  className="w-full text-center text-text-primary-on-color border-md border-[rgba(255,255,255,0.3)] hover:bg-bg-secondary hover:text-text-primary rounded-full transition-colors body-sm-medium px-6 py-[5.5px]"
-                >
-                  {dict.announcementCta}
-                </Link>
+                {hasAnnouncementCta && (
+                  <Link
+                    href={announcementHref}
+                    className="w-full text-center text-text-primary-on-color border-md border-[rgba(255,255,255,0.3)] hover:bg-bg-secondary hover:text-text-primary rounded-full transition-colors body-sm-medium px-6 py-[5.5px]"
+                  >
+                    {announcementCta}
+                  </Link>
+                )}
               </div>
             </div>
             <button
