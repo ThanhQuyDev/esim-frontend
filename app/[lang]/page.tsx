@@ -10,7 +10,7 @@ import { TestimonialsSection } from "@/components/layout/sections/testimonials";
 import { FAQSection } from "@/components/layout/sections/faq";
 import { ReferFriendBanner } from "@/components/layout/sections/refer-friend";
 import { FooterSection } from "@/components/layout/sections/footer";
-import { getFooters, getHeroBanners } from "@/lib/api";
+import { getFooters, getHeroBanners, getFaqs } from "@/lib/api";
 import { getDictionary } from "@/lib/dictionaries";
 import { getSeoMetadata } from "@/lib/seo";
 import type { Locale } from "@/lib/i18n-config";

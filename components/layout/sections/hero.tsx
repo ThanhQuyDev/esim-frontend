@@ -68,6 +68,12 @@ export function HeroSection({ dict, heroBanners = [], lang }: HeroSectionProps) 
   const activeBanner = heroBanners.find((banner) => banner.active === true);
   const heroImageUrl = resolveFileUrl(activeBanner?.image);
 
+  const title = activeBanner?.title || dict.title;
+  const subtitle = activeBanner?.description || dict.subtitle;
+  const hasFirstItem = !!(activeBanner?.firstIcon && activeBanner?.firstContent);
+  const hasSecondItem = !!(activeBanner?.secondIcon && activeBanner?.secondContent);
+  const hasPromoItems = hasFirstItem || hasSecondItem;
+
   return (
     <div className="relative">
       {/* Background gradient + hero image */}
@@ -99,32 +105,6 @@ export function HeroSection({ dict, heroBanners = [], lang }: HeroSectionProps) 
                 <div className="h-full w-full flex group/stack [&>div:empty]:hidden flex-col text-start justify-start gap-y-6 items-stretch">
                   <div>
                     <div className="h-full w-full flex group/stack [&>div:empty]:hidden flex-col gap-y-6">
-                      {/* Badge row */}
-                      <div>
-                        <div className="h-full w-full flex group/stack [&>div:empty]:hidden flex-row flex-wrap gap-x-3 gap-y-4">
-                          <div>
-                            <p
-                              className="body-sm text-secondary scroll-mt-20 xl:scroll-mt-24"
-                              id=""
-                            >
-                              {dict.badge}
-                            </p>
-                          </div>
-                          <div>
-                            <div>
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img
-                                alt="nordvpn default"
-                                src="https://sb.nordcdn.com/m/1431cb1f1a5ca2c9/original/nordvpn-default.svg"
-                                width={106}
-                                height={24}
-                                loading="lazy"
-                                style={{ color: "transparent" }}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
 
                       {/* Title */}
                       <div>
@@ -132,9 +112,46 @@ export function HeroSection({ dict, heroBanners = [], lang }: HeroSectionProps) 
                           className="heading-2xl scroll-mt-20 xl:scroll-mt-24"
                           id=""
                         >
-                          {dict.title}
+                          {title}
                         </h1>
                       </div>
+
+                      {/* Promo items from API */}
+                      {hasPromoItems && (
+                        <div className="flex flex-col gap-y-2">
+                          {hasFirstItem && (
+                            <div className="flex flex-row items-center gap-x-2">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                alt={activeBanner!.firstContent!}
+                                src={activeBanner!.firstIcon!}
+                                width={24}
+                                height={24}
+                                loading="lazy"
+                                style={{ color: "transparent" }}
+                              />
+                              <p className="body-md-bold text-text-primary">
+                                {activeBanner!.firstContent}
+                              </p>
+                            </div>
+                          )}
+                          {hasSecondItem && (
+                            <div className="flex flex-row gap-x-3">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                alt={activeBanner!.secondContent!}
+                                src={activeBanner!.secondIcon!}
+                                width={20}
+                                height={20}
+                                className="max-w-fit"
+                                loading="lazy"
+                                style={{ color: "transparent", maxWidth: "20px", width: "20px" }}
+                              />
+                              <p>{activeBanner!.secondContent}</p>
+                            </div>
+                          )}
+                        </div>
+                      )}
 
                       {/* Search */}
                       <div>
@@ -144,7 +161,7 @@ export function HeroSection({ dict, heroBanners = [], lang }: HeroSectionProps) 
                               className="body-md-medium scroll-mt-20 xl:scroll-mt-24"
                               id=""
                             >
-                              {dict.subtitle}
+                              {subtitle}
                             </p>
                           </div>
                           <div>

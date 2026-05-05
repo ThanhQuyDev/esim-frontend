@@ -180,6 +180,13 @@ export interface FileType {
 
 export interface HeroBanner {
   id: string;
+  title?: string | null;
+  language?: string | null;
+  firstIcon?: string | null;
+  firstContent?: string | null;
+  secondIcon?: string | null;
+  secondContent?: string | null;
+  description?: string | null;
   image?: FileType | string | null;
   active: boolean;
   createdAt: string | Date;
