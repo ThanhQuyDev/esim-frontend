@@ -1,6 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import type { Destination } from "@/lib/api";
+import { getCloudinaryTransformedUrl } from "@/lib/image-utils";
 import type { DestinationDict } from "../types";
 
 interface MobileHeroProps {
@@ -9,16 +11,27 @@ interface MobileHeroProps {
 }
 
 export function MobileHero({ destination, dict }: MobileHeroProps) {
+  const heroSrc = getCloudinaryTransformedUrl(destination.avatarUrl, {
+    width: 820,
+    height: 460,
+    quality: "auto:eco",
+    gravity: "center",
+  });
+
   return (
     <>
       {/* Hero - 230px full-bleed with dark gradient */}
       <div className="relative w-full h-[230px]">
         <div className="absolute inset-0">
-          {destination.avatarUrl ? (
-            <img
-              src={destination.avatarUrl}
+          {heroSrc ? (
+            <Image
+              src={heroSrc}
               alt={destination.name}
-              className="w-full h-full object-cover object-[center_30%]"
+              fill
+              priority
+              fetchPriority="high"
+              sizes="100vw"
+              className="object-cover object-[center_30%]"
             />
           ) : (
             <div

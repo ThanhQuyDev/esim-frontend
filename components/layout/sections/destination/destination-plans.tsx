@@ -20,18 +20,25 @@ const EMPTY_PLANS: PlansByDestinationResponse = {
   dailyUnlimited: [],
 };
 
-export function DestinationPlans({ destination, slug, dict, lang, planSource = "destination", initialPlans }: DestinationPlansProps) {
-  const destQuery = usePlansBySlug(planSource === "destination" ? slug : "", lang, planSource === "destination" ? (initialPlans ?? undefined) : undefined);
-  const regionQuery = usePlansByRegionSlug(planSource === "region" ? slug : "", lang, planSource === "region" ? (initialPlans ?? undefined) : undefined);
+export function DestinationPlans({ destination, slug, dict, lang, planSource = "destination", initialPlans, initialRegion }: DestinationPlansProps) {
+  const destQuery = usePlansBySlug(
+    planSource === "destination" ? slug : "",
+    lang,
+    planSource === "destination" ? (initialPlans ?? undefined) : undefined
+  );
+  const regionQuery = usePlansByRegionSlug(
+    planSource === "region" ? slug : "",
+    lang,
+    planSource === "region" ? (initialPlans ?? undefined) : undefined
+  );
   const { data: plans = EMPTY_PLANS, isLoading } = planSource === "region" ? regionQuery : destQuery;
 
-  // Fetch region details (with destinations list) for region pages
-  const regionDetailQuery = useRegionBySlug(planSource === "region" ? slug : "", lang);
-  const regionData = regionDetailQuery.data ?? null;
+  // Server already sends the initial entity. Avoid duplicate detail fetches on first load.
+  const regionDetailQuery = useRegionBySlug("", lang);
+  const regionData = planSource === "region" ? initialRegion : (regionDetailQuery.data ?? null);
 
-  // Fetch destination details for destination pages
-  const destinationDetailQuery = useDestinationBySlug(planSource === "destination" ? slug : "", lang);
-  const destinationData = destinationDetailQuery.data ?? null;
+  const destinationDetailQuery = useDestinationBySlug("", lang);
+  const destinationData = planSource === "destination" ? destination : (destinationDetailQuery.data ?? null);
 
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [days, setDays] = useState(7);

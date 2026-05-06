@@ -1,4 +1,4 @@
-import type { Destination, Plan, PlansByDestinationResponse } from "@/lib/api";
+import type { Destination, Plan, PlansByDestinationResponse, Region } from "@/lib/api";
 
 // ===== Dictionary shape for destinationPage =====
 export interface DestinationDict {
@@ -89,6 +89,8 @@ export interface DestinationPlansProps {
   planSource?: "destination" | "region";
   /** Pre-fetched plans from server — avoids loading flash on initial render */
   initialPlans?: PlansByDestinationResponse | null;
+  /** Pre-fetched region details for region pages — avoids duplicate client detail fetch */
+  initialRegion?: Region | null;
 }
 
 // ===== Helper: find best plan for a given dataMb + days =====

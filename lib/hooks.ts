@@ -306,7 +306,7 @@ export function usePlansByDestination(destinationId: number, lang?: string) {
 
 export function usePlansBySlug(slug: string, lang?: string, initialData?: PlansByDestinationResponse) {
   return useQuery({
-    queryKey: [...queryKeys.plans.all, "byDestination", slug],
+    queryKey: [...queryKeys.plans.all, "byDestination", slug || "initial"],
     queryFn: ({ signal }) =>
       clientFetch<PlansByDestinationResponse>(
         `/api/v1/plans/by-destination/${encodeURIComponent(slug)}`,
@@ -315,13 +315,13 @@ export function usePlansBySlug(slug: string, lang?: string, initialData?: PlansB
         signal
       ),
     enabled: slug.length > 0,
-    ...(initialData ? { initialData } : {}),
+    ...(initialData ? { initialData, staleTime: 5 * 60 * 1000 } : {}),
   });
 }
 
 export function usePlansByRegionSlug(slug: string, lang?: string, initialData?: PlansByDestinationResponse) {
   return useQuery({
-    queryKey: [...queryKeys.plans.all, "byRegion", slug],
+    queryKey: [...queryKeys.plans.all, "byRegion", slug || "initial"],
     queryFn: ({ signal }) =>
       clientFetch<PlansByDestinationResponse>(
         `/api/v1/plans/by-region/${encodeURIComponent(slug)}`,
@@ -330,7 +330,7 @@ export function usePlansByRegionSlug(slug: string, lang?: string, initialData?: 
         signal
       ),
     enabled: slug.length > 0,
-    ...(initialData ? { initialData } : {}),
+    ...(initialData ? { initialData, staleTime: 5 * 60 * 1000 } : {}),
   });
 }
 

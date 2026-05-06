@@ -1,14 +1,10 @@
 import { Navbar } from "@/components/layout/navbar";
-import { NavigationProgress } from "@/components/layout/navigation-progress";
-import { AuthModal } from "@/components/layout/auth-modal";
-import { ChatBubble } from "@/components/layout/chat-bubble";
+import { LayoutClientWidgets } from "@/components/layout/layout-client-widgets";
 import { i18n, type Locale } from "@/lib/i18n-config";
 import { getTopBars } from "@/lib/api";
 import { getDictionary } from "@/lib/dictionaries";
 import { getSeoMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
-import { Suspense } from "react";
-
 export async function generateStaticParams() {
   return i18n.locales.map((locale) => ({ lang: locale }));
 }
@@ -39,13 +35,9 @@ export default async function LangLayout({
 
   return (
     <>
-      <Suspense fallback={null}>
-        <NavigationProgress />
-      </Suspense>
       <Navbar lang={params.lang} dict={dict.nav} topBars={topBars} />
-      <AuthModal lang={params.lang} />
       {children}
-      <ChatBubble />
+      <LayoutClientWidgets lang={params.lang} />
     </>
   );
 }

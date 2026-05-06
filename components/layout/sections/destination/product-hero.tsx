@@ -1,6 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import type { Destination } from "@/lib/api";
+import { getCloudinaryTransformedUrl } from "@/lib/image-utils";
 import type { DestinationDict } from "./types";
 
 interface ProductHeroProps {
@@ -9,14 +11,26 @@ interface ProductHeroProps {
 }
 
 export function ProductHero({ destination, dict }: ProductHeroProps) {
+  const heroSrc = getCloudinaryTransformedUrl(destination.avatarUrl, {
+    width: 520,
+    height: 260,
+    quality: "auto:eco",
+    gravity: "center",
+  });
+
   return (
     <div className="rounded-[20px] overflow-hidden border border-[#e5e7eb] bg-white mb-4">
       {/* Hero image */}
       <div className="w-full h-[230px] overflow-hidden rounded-t-[20px]">
-        {destination.avatarUrl ? (
-          <img
-            src={destination.avatarUrl}
+        {heroSrc ? (
+          <Image
+            src={heroSrc}
             alt={destination.name}
+            width={520}
+            height={260}
+            sizes="(min-width: 841px) 465px, 100vw"
+            priority
+            fetchPriority="high"
             className="w-full h-full object-cover object-[center_30%] block rounded-t-[20px]"
           />
         ) : (
@@ -25,10 +39,12 @@ export function ProductHero({ destination, dict }: ProductHeroProps) {
             style={{ background: "linear-gradient(160deg,#E8824A,#FAC96A,#7BAFC0)" }}
           >
             {destination.flagUrl && (
-              <img
+              <Image
                 src={destination.flagUrl}
                 alt={destination.name}
-                className="w-20 h-20 rounded-lg shadow-lg"
+                width={80}
+                height={80}
+                className="w-20 h-20 rounded-lg shadow-lg object-cover"
               />
             )}
           </div>

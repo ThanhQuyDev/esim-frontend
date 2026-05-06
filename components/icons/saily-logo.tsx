@@ -1,11 +1,16 @@
+import Image from "next/image";
+
 export function SailyLogo({ className = "w-[57px] lg:w-[140px]" }: { className?: string }) {
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
+    <Image
       src="/logo.png"
       alt="esim.vn"
+      width={140}
+      height={34}
+      sizes="(min-width: 1024px) 140px, 57px"
+      priority
       className={className}
-      style={{ objectFit: "contain" }}
+      style={{ objectFit: "contain", height: "auto" }}
     />
   );
 }

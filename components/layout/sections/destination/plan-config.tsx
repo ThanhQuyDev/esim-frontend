@@ -1,7 +1,7 @@
 "use client";
 
 import type { DestinationDict } from "./types";
-import { CalendarPicker } from "./calendar-picker";
+import { LazyCalendarPicker } from "./calendar-picker-lazy";
 
 interface PlanConfigProps {
   days: number;
@@ -40,7 +40,7 @@ export function PlanConfig({ days, quantity, onDaysChange, onQuantityChange, dic
                 {days} {dict.daysUnit}
               </span>
               {isFlexibleDays ? (
-                <CalendarPicker days={days} onDaysChange={onDaysChange} dict={dict} lang={lang} />
+                <LazyCalendarPicker days={days} onDaysChange={onDaysChange} dict={dict} lang={lang} />
               ) : (
                 <span className="w-9 h-9 rounded-full flex items-center justify-center cursor-pointer m-[3px] transition-colors hover:bg-[#e5e7eb] shrink-0">
                   <svg width="15" height="15" viewBox="0 0 14 14" fill="none">

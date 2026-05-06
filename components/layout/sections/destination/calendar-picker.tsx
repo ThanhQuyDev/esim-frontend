@@ -15,8 +15,14 @@ interface CalendarPickerProps {
   lang: string;
 }
 
-export function CalendarPicker({ days, onDaysChange, dict, lang }: CalendarPickerProps) {
-  const [open, setOpen] = useState(false);
+export function CalendarPicker({
+  days,
+  onDaysChange,
+  dict,
+  lang,
+  defaultOpen = false,
+}: CalendarPickerProps & { defaultOpen?: boolean }) {
+  const [open, setOpen] = useState(defaultOpen);
 
   const locale = lang === "vi" ? vi : enUS;
   const today = useMemo(() => {
