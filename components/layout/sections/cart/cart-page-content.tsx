@@ -10,6 +10,7 @@ import {
   getSubtotal,
   getDiscount,
   getTotal,
+  getVndDiscount,
   type CartItem,
   type Cart,
   type Coupon,
@@ -206,9 +207,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
   };
   const hasVndPricing = selectedItems.some((i) => i.vndPrice);
   const vndSubtotalValue = getVndSubtotal(selectedItems);
-  const vndDiscountValue = cart.appliedCoupon
-    ? Math.round((vndSubtotalValue * cart.appliedCoupon.discount) / 100)
-    : 0;
+  const vndDiscountValue = getVndDiscount(vndSubtotalValue, cart.appliedCoupon);
   const vndTotalValue = Math.max(0, vndSubtotalValue - vndDiscountValue);
 
   const displaySubtotal = hasVndPricing

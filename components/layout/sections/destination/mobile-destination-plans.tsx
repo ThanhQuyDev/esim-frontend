@@ -81,7 +81,12 @@ export function MobileDestinationPlans({
 
       {/* 3-4. Plan selection + Config */}
       {isLoading ? (
-        <div className="py-8 text-center text-sm text-[#6b7280]">Loading plans...</div>
+        <div className="py-4 px-4 space-y-4">
+          {/* Full-area skeleton for plan tabs + config */}
+          <div className="h-[200px] bg-gray-100 rounded-xl animate-pulse" />
+          {/* Skeleton for eSIM info / features */}
+          <div className="h-[300px] bg-gray-100 rounded-xl animate-pulse" />
+        </div>
       ) : !hasAnyPlans ? (
         <div className="py-8 text-center text-sm text-[#6b7280]">{dict.noPlans}</div>
       ) : (
@@ -124,14 +129,16 @@ export function MobileDestinationPlans({
       </div>
 
       {/* 8-12. Features, Delivery, Device Checker, Disclaimer */}
-      <MobileFeatures
-        destination={resolvedDestination}
-        dict={dict}
-        lang={lang}
-        planSource={planSource}
-        selectedPlan={selectedPlan}
-        region={region}
-      />
+      {!isLoading && (
+        <MobileFeatures
+          destination={resolvedDestination}
+          dict={dict}
+          lang={lang}
+          planSource={planSource}
+          selectedPlan={selectedPlan}
+          region={region}
+        />
+      )}
 
       {/* Sticky bottom bar */}
       <MobileStickyBar

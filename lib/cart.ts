@@ -1,5 +1,7 @@
 "use client";
 
+import { roundVndToThousands } from "./utils";
+
 // ===== Cart Types =====
 
 export interface CartItem {
@@ -121,6 +123,11 @@ export function getDiscount(subtotal: number, coupon: Coupon | null): number {
   // Skip USD minAmount check for API coupons (minOrderAmountVnd is validated separately in VND)
   if (!coupon.minOrderAmountVnd && coupon.minAmount && subtotal < coupon.minAmount) return 0;
   return (subtotal * coupon.discount) / 100;
+}
+
+export function getVndDiscount(subtotal: number, coupon: Coupon | null): number {
+  if (!coupon) return 0;
+  return roundVndToThousands((subtotal * coupon.discount) / 100);
 }
 
 export function getTotal(items: CartItem[], coupon: Coupon | null): number {

@@ -6,6 +6,13 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
+ * Round a VND amount to the nearest thousand dong.
+ */
+export function roundVndToThousands(amount: number): number {
+  return Math.round(amount / 1000) * 1000;
+}
+
+/**
  * Format data amount from MB to a human-readable string.
  * - ≥ 1024 MB → display as GB (e.g. 1024 → "1 GB", 2048 → "2 GB", 1536 → "1.5 GB")
  * - < 1024 MB → display as MB (e.g. 500 → "500 MB")

@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getDestinationBySlug, getPlansByDestinationSlug } from "@/lib/api";
+import { getDestinationBySlug } from "@/lib/api";
 import { getDictionary } from "@/lib/dictionaries";
 import { getSeoMetadata } from "@/lib/seo";
 import { DestinationPlans } from "@/components/layout/sections/destination";
@@ -46,10 +46,9 @@ export async function generateMetadata({
 }
 
 export default async function DestinationPage({ params }: DestinationPageProps) {
-  const [dict, destination, plans] = await Promise.all([
+  const [dict, destination] = await Promise.all([
     getDictionary(params.lang),
     getDestinationBySlug(params.slug, params.lang),
-    getPlansByDestinationSlug(params.slug, params.lang),
   ]);
 
   if (!destination) {
@@ -63,7 +62,6 @@ export default async function DestinationPage({ params }: DestinationPageProps) 
         slug={params.slug}
         dict={dict.destinationPage}
         lang={params.lang}
-        initialPlans={plans}
       />
       <LazyHowItWorksSection dict={dict.howItWorks} />
       <LazyFeaturesSection dict={dict.whyChoose} lang={params.lang} />

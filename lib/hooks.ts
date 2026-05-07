@@ -21,6 +21,7 @@ import {
   type CartItem,
   type Cart,
 } from "./cart";
+import { roundVndToThousands } from "./utils";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.saily.example.com";
@@ -374,7 +375,7 @@ export function useExchangeRate() {
  * Convert a USD amount to VND using the live rate, rounded to nearest 1000₫.
  */
 export function convertUsdToVnd(usdAmount: number, rate: number): number {
-  return Math.round((usdAmount * rate) / 1000) * 1000;
+  return roundVndToThousands(usdAmount * rate);
 }
 
 /**
@@ -885,7 +886,7 @@ export function useCart() {
         const planDiscount = item.plan?.discount;
         const hasDiscount = planDiscount != null && planDiscount > 0;
         const discountedVndPrice = hasDiscount
-          ? Math.round(rawVndPrice * (1 - planDiscount! / 100))
+          ? roundVndToThousands(rawVndPrice * (1 - planDiscount! / 100))
           : rawVndPrice;
         return {
           id: String(item.planId),

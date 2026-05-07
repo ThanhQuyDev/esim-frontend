@@ -4,6 +4,7 @@ import type { Plan } from "@/lib/api";
 import type { DestinationDict } from "../types";
 import { calcTotalVndPrice, calcTotalVndRetailPrice, getFixedVndPrice } from "../types";
 import { formatVnd } from "@/lib/hooks";
+import { roundVndToThousands } from "@/lib/utils";
 
 interface MobilePriceProps {
   selectedPlan: Plan | null;
@@ -51,7 +52,7 @@ export function MobilePrice({
         const retailPrice = Number(selectedPlan.retailPrice);
         const vndRetail =
           price > 0
-            ? Math.round((Number(selectedPlan.vndPrice) * retailPrice) / price / 1000) * 1000
+            ? roundVndToThousands((Number(selectedPlan.vndPrice) * retailPrice) / price)
             : 0;
         totalRetail = vndRetail * quantity;
       }
@@ -64,7 +65,7 @@ export function MobilePrice({
   const savePercent =
     totalRetail > 0 ? Math.round(((totalRetail - totalPrice) / totalRetail) * 100) : 0;
   const totalDays = selectedPlan ? (isFixed ? selectedPlan.durationDays : days) : 0;
-  const perDayPrice = totalDays > 0 ? Math.round(totalPrice / totalDays / 1000) * 1000 : 0;
+  const perDayPrice = totalDays > 0 ? roundVndToThousands(totalPrice / totalDays) : 0;
 
   return (
     <>

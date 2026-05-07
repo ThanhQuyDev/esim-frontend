@@ -512,6 +512,7 @@ export function Navbar({ lang, dict, topBars = [] }: NavbarProps) {
   const isLandingPage = pathname === `/${lang}` || pathname === `/${lang}/`;
   const [searchOpen, setSearchOpen] = useState(false);
   const [announcementVisible, setAnnouncementVisible] = useState(true);
+  const [hasScrolled, setHasScrolled] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [destinationsOpen, setDestinationsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -567,6 +568,17 @@ export function Navbar({ lang, dict, topBars = [] }: NavbarProps) {
     return () => document.removeEventListener("keydown", handleKey);
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setHasScrolled(window.scrollY > 8);
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <>
       {/* ===== Announcement Bar ===== */}
@@ -618,7 +630,12 @@ export function Navbar({ lang, dict, topBars = [] }: NavbarProps) {
 
       {/* ===== Main Header ===== */}
       <header
-        className="z-40 top-0 sticky bg-[rgba(255,255,255,0.1)] backdrop-blur-[98px] [-webkit-backdrop-filter:blur(98px)]"
+        className={cn(
+          "z-40 top-0 sticky transition-all duration-300",
+          hasScrolled
+            ? "bg-[rgba(255,255,255,0.1)] backdrop-blur-[98px] [-webkit-backdrop-filter:blur(98px)]"
+            : "bg-transparent backdrop-blur-0 [-webkit-backdrop-filter:blur(0px)]"
+        )}
         id="header"
         ref={dropdownRef}
       >

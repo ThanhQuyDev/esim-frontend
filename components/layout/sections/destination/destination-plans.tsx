@@ -137,14 +137,18 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
           {/* ── LEFT COLUMN ── */}
           <div className="flex flex-col gap-4 min-w-0">
             <ProductHero destination={destinationData || destination} dict={dict} />
-            <ProductInfo
-              destination={destinationData || destination}
-              dict={dict}
-              lang={lang}
-              planSource={planSource}
-              selectedPlan={selectedPlan}
-              region={regionData}
-            />
+            {isLoading ? (
+              <div className="h-[400px] bg-gray-100 rounded-xl animate-pulse" />
+            ) : (
+              <ProductInfo
+                destination={destinationData || destination}
+                dict={dict}
+                lang={lang}
+                planSource={planSource}
+                selectedPlan={selectedPlan}
+                region={regionData}
+              />
+            )}
           </div>
 
           {/* ── RIGHT COLUMN ── */}
@@ -161,7 +165,10 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
             <GreenBox dict={dict} dataLabel={dataLabel} />
 
             {isLoading ? (
-              <div className="py-8 text-center text-sm text-[#6b7280]">Loading plans...</div>
+              <div className="py-4">
+                {/* Full-area skeleton for plan tabs + config */}
+                <div className="h-[280px] bg-gray-100 rounded-xl animate-pulse" />
+              </div>
             ) : !hasAnyPlans ? (
               <div className="py-8 text-center text-sm text-[#6b7280]">{dict.noPlans}</div>
             ) : (

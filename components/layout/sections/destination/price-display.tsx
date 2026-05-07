@@ -4,6 +4,7 @@ import type { Plan } from "@/lib/api";
 import type { DestinationDict } from "./types";
 import { calcTotalVndPrice, calcTotalVndRetailPrice, getFixedVndPrice } from "./types";
 import { formatVnd } from "@/lib/hooks";
+import { roundVndToThousands } from "@/lib/utils";
 
 interface PriceDisplayProps {
   selectedPlan: Plan | null;
@@ -45,7 +46,7 @@ export function PriceDisplay({
     } else {
       const price = Number(selectedPlan.price);
       const retailPrice = Number(selectedPlan.retailPrice);
-      const vndRetail = price > 0 ? Math.round((Number(selectedPlan.vndPrice) * retailPrice) / price / 1000) * 1000 : 0;
+      const vndRetail = price > 0 ? roundVndToThousands((Number(selectedPlan.vndPrice) * retailPrice) / price) : 0;
       totalRetail = vndRetail * quantity;
     }
   } else {
@@ -57,7 +58,7 @@ export function PriceDisplay({
 
   // Calculate per-day cost
   const totalDays = isFixed ? selectedPlan.durationDays : days;
-  const perDayPrice = totalDays > 0 ? Math.round(totalPrice / totalDays / 1000) * 1000 : 0;
+  const perDayPrice = totalDays > 0 ? roundVndToThousands(totalPrice / totalDays) : 0;
 
   return (
     <div className="mb-2">

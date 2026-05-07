@@ -17,6 +17,7 @@ import {
   getSubtotal,
   getDiscount,
   getTotal,
+  getVndDiscount,
   type CartItem,
   type Coupon,
 } from "@/lib/cart";
@@ -91,9 +92,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
     return sum + convertUsdToVnd(i.price * i.quantity, usdToVndRate);
   }, 0);
 
-  const vndDiscount = coupon
-    ? Math.round((vndSubtotal * coupon.discount) / 100)
-    : 0;
+  const vndDiscount = getVndDiscount(vndSubtotal, coupon);
   const vndTotal = Math.max(0, vndSubtotal - vndDiscount);
 
   const checkoutDisplaySubtotal = hasVndPricing

@@ -1,4 +1,5 @@
 import type { Destination, Plan, PlansByDestinationResponse, Region } from "@/lib/api";
+import { roundVndToThousands } from "@/lib/utils";
 
 // ===== Dictionary shape for destinationPage =====
 export interface DestinationDict {
@@ -134,9 +135,10 @@ export function findBestPlan(plans: Plan[], dataMb: number, days: number): Plan 
 }
 
 /** Apply plan discount (percentage) to a price. Returns the discounted price. */
-function applyDiscount(price: number, plan: Plan): number {
+function applyDiscount(price: number, plan: Plan, roundAfterDiscount = false): number {
   if (plan.discount != null && plan.discount > 0) {
-    return Math.round(price * (1 - plan.discount / 100));
+    const discountedPrice = price * (1 - plan.discount / 100);
+    return roundAfterDiscount ? roundVndToThousands(discountedPrice) : Math.round(discountedPrice);
   }
   return price;
 }
@@ -169,7 +171,7 @@ export function calcTotalRetailPrice(plan: Plan, days: number): number {
  */
 export function calcTotalVndPrice(plan: Plan, days: number): number {
   const base = plan.isAbleMultidate ? Number(plan.vndPrice) * days : Number(plan.vndPrice);
-  return applyDiscount(base, plan);
+  return applyDiscount(base, plan, true);
 }
 
 /**
@@ -187,7 +189,7 @@ export function calcTotalVndRetailPrice(plan: Plan, days: number): number {
   const retailPrice = Number(plan.retailPrice);
   const vndPrice = Number(plan.vndPrice);
   // Derive VND retail from the USD ratio
-  const vndRetail = price > 0 ? Math.round((vndPrice * retailPrice) / price / 1000) * 1000 : 0;
+  const vndRetail = price > 0 ? roundVndToThousands((vndPrice * retailPrice) / price) : 0;
   if (plan.isAbleMultidate) {
     return vndRetail * days;
   }
@@ -199,7 +201,7 @@ export function calcTotalVndRetailPrice(plan: Plan, days: number): number {
  * For fixed plans that use `plan.vndPrice` directly (not calcTotalVndPrice).
  */
 export function getFixedVndPrice(plan: Plan): number {
-  return applyDiscount(Number(plan.vndPrice), plan);
+  return applyDiscount(Number(plan.vndPrice), plan, true);
 }
 
 /**
