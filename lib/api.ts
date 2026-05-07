@@ -751,7 +751,7 @@ export interface HelpCenterResponse {
 // ===== Help Center API =====
 
 export async function fetchHelpCenterArticles(): Promise<HelpCenterResponse> {
-  const res = await fetch(`${API_BASE_URL}/api/v1/help-center`, {
+  const res = await fetch(`${API_BASE_URL}/api/v1/help-center?limit=100`, {
     next: { revalidate: 60 },
   });
   if (!res.ok) {
