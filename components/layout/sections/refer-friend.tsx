@@ -37,6 +37,7 @@ export function ReferFriendBanner({ dict }: ReferFriendBannerProps) {
                         aria-label={`Learn more about ${dict.title}`}
                       >
                         {dict.cta}
+                        <span className="sr-only"> about {dict.title}</span>
                       </a>
                     </div>
                   </div>

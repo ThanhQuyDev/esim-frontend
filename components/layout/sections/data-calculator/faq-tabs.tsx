@@ -2,9 +2,12 @@
 
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import { useFaqs } from "@/lib/hooks";
+import type { Locale } from "@/lib/i18n-config";
 
 interface FaqTabsSectionProps {
   dict: Record<string, any>;
+  lang: Locale;
 }
 
 interface FaqItem {
@@ -17,12 +20,24 @@ interface FaqTab {
   items: FaqItem[];
 }
 
-export function FaqTabsSection({ dict }: FaqTabsSectionProps) {
+export function FaqTabsSection({ dict, lang }: FaqTabsSectionProps) {
   const tabs: FaqTab[] = dict.tabs || [];
   const [activeTab, setActiveTab] = useState(0);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-  const currentItems = tabs[activeTab]?.items || [];
+  const { data: apiFaqs } = useFaqs(lang);
+
+  // Use API data if available, otherwise fall back to dictionary tabs
+  const apiItems: FaqItem[] =
+    apiFaqs && apiFaqs.length > 0
+      ? apiFaqs.map((f: any) => ({ question: f.question, answer: f.answer }))
+      : [];
+
+  const hasApiData = apiItems.length > 0;
+
+  const currentItems = hasApiData
+    ? apiItems
+    : tabs[activeTab]?.items || [];
 
   const toggle = (i: number) => {
     setOpenIndex(openIndex === i ? null : i);
@@ -39,30 +54,32 @@ export function FaqTabsSection({ dict }: FaqTabsSectionProps) {
               </h2>
             </div>
             <div className="col-span-12 lg:col-start-3 lg:col-span-8">
-              {/* Tabs */}
-              <div className="flex gap-1 pb-4 scrollbar-none overflow-auto">
-                <div className="relative flex gap-1 w-full">
-                  {tabs.map((tab, i) => (
-                    <button
-                      key={i}
-                      onClick={() => {
-                        setActiveTab(i);
-                        setOpenIndex(null);
-                      }}
-                      className={`relative z-[1] body-md text-ellipsis flex max-w-[165px] px-6 pb-3 transition-colors ${
-                        activeTab === i
-                          ? "text-text-primary after:w-full"
-                          : "text-text-tertiary hover:text-text-primary after:w-0"
-                      } first:ml-auto last:mr-auto after:absolute after:block after:content-[''] after:bottom-0 after:inset-x-0 after:border-b-2 after:border-text-primary after:transition-[width]`}
-                    >
-                      {tab.label}
-                    </button>
-                  ))}
+              {/* Tabs — only show when using dictionary data (no API data) */}
+              {!hasApiData && tabs.length > 0 && (
+                <div className="flex gap-1 pb-4 scrollbar-none overflow-auto">
+                  <div className="relative flex gap-1 w-full">
+                    {tabs.map((tab, i) => (
+                      <button
+                        key={i}
+                        onClick={() => {
+                          setActiveTab(i);
+                          setOpenIndex(null);
+                        }}
+                        className={`relative z-[1] body-md text-ellipsis flex max-w-[165px] px-6 pb-3 transition-colors ${
+                          activeTab === i
+                            ? "text-text-primary after:w-full"
+                            : "text-text-tertiary hover:text-text-primary after:w-0"
+                        } first:ml-auto last:mr-auto after:absolute after:block after:content-[''] after:bottom-0 after:inset-x-0 after:border-b-2 after:border-text-primary after:transition-[width]`}
+                      >
+                        {tab.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* FAQ Items */}
-              <div className="pt-6">
+              <div className={!hasApiData && tabs.length > 0 ? "pt-6" : ""}>
                 <div className="grid grid-cols-1 gap-y-3">
                   {currentItems.map((item, i) => (
                     <div

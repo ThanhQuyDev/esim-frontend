@@ -18,12 +18,18 @@ const ChatBubble = dynamic(
   { ssr: false }
 );
 
+const ReferralCapture = dynamic(
+  () => import("@/components/layout/referral-capture").then((mod) => mod.ReferralCapture),
+  { ssr: false }
+);
+
 export function LayoutClientWidgets({ lang }: { lang: Locale }) {
   return (
     <>
       <NavigationProgress />
       <AuthModal lang={lang} />
       <ChatBubble />
+      <ReferralCapture />
     </>
   );
 }

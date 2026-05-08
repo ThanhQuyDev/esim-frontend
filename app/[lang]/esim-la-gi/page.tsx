@@ -6,8 +6,8 @@ import {
   EsimAdvantages,
   EsimComparison,
   EsimCtaBanner,
-  EsimFaq,
 } from "@/components/layout/sections/what-is-esim-page";
+import { FAQSection } from "@/components/layout/sections/faq";
 import { FooterSection } from "@/components/layout/sections/footer";
 import { getDictionary } from "@/lib/dictionaries";
 import { getSeoMetadata } from "@/lib/seo";
@@ -39,7 +39,7 @@ export default async function WhatIsEsimPage({
       <EsimAdvantages dict={esim.whyUse} />
       <EsimComparison dict={esim.comparison} />
       <EsimCtaBanner dict={esim.ctaBanner} lang={params.lang} />
-      <EsimFaq dict={esim.faq} />
+      <FAQSection dict={esim.faq} lang={params.lang} />
       <FooterSection dict={dict.footer} />
     </main>
   );

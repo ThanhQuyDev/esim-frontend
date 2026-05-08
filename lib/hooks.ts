@@ -643,11 +643,53 @@ export interface CheckoutPayload {
   currency: string;
   items: { planId: number; quantity: number }[];
   couponCode: string;
+  referralCode?: string;
+  useWalletAmountVnd?: number;
 }
 
 export interface CheckoutResponse {
   paymentUrl: string;
   orderNumber: string;
+}
+
+// ===== eXu Wallet Types =====
+
+export type WalletTransactionType =
+  | "order_cashback"
+  | "order_cashback_reversal"
+  | "referral_reward"
+  | "referral_reward_reversal"
+  | "refund_to_wallet"
+  | "manual_credit"
+  | "manual_debit"
+  | "manual_cancel"
+  | "redemption_capture"
+  | "redemption_release"
+  | "expiry_debit";
+
+export interface WalletMeResponse {
+  balanceVnd: number;
+  availableBalanceVnd: number;
+  status: "active" | "locked";
+  expiresAt: string | null;
+  daysLeft: number | null;
+}
+
+export interface WalletTransaction {
+  id: number;
+  userId: number;
+  type: WalletTransactionType;
+  amountVnd: number;
+  balanceAfterVnd: number;
+  orderId: number | null;
+  reason: string | null;
+  createdAt: string;
+}
+
+export interface ReferralProfileResponse {
+  userId: number;
+  code: string;
+  isActive: boolean;
 }
 
 export interface EsimInfo {
@@ -1104,6 +1146,95 @@ export function useMyEsims() {
       if (!res.ok) throw new Error(`Failed to fetch eSIMs: ${res.status}`);
       const json: MyEsimsResponse = await res.json();
       return json.data;
+    },
+  });
+}
+
+// ===== eXu Wallet Hooks =====
+
+const WALLET_BASE = "/api/v1/wallets";
+
+/** Vietnamese labels for wallet transaction types */
+const TRANSACTION_LABELS_VI: Record<WalletTransactionType, string> = {
+  order_cashback: "Nhận eXu từ đơn hàng",
+  order_cashback_reversal: "Thu hồi eXu do hoàn đơn",
+  referral_reward: "Thưởng giới thiệu bạn bè",
+  referral_reward_reversal: "Thu hồi thưởng giới thiệu",
+  refund_to_wallet: "Hoàn tiền vào ví",
+  manual_credit: "Admin cộng eXu",
+  manual_debit: "Admin trừ eXu",
+  manual_cancel: "Admin hủy số dư",
+  redemption_capture: "Dùng eXu thanh toán",
+  redemption_release: "Hoàn trả eXu (đơn hàng thất bại)",
+  expiry_debit: "eXu hết hạn",
+};
+
+const TRANSACTION_LABELS_EN: Record<WalletTransactionType, string> = {
+  order_cashback: "eXu cashback from order",
+  order_cashback_reversal: "eXu reversed (refund)",
+  referral_reward: "Referral reward",
+  referral_reward_reversal: "Referral reward reversed",
+  refund_to_wallet: "Refund to wallet",
+  manual_credit: "Admin credit",
+  manual_debit: "Admin debit",
+  manual_cancel: "Admin cancelled",
+  redemption_capture: "eXu spent on order",
+  redemption_release: "eXu released (order failed)",
+  expiry_debit: "eXu expired",
+};
+
+export function getTransactionLabel(type: WalletTransactionType, lang: string): string {
+  return lang === "vi" ? TRANSACTION_LABELS_VI[type] : TRANSACTION_LABELS_EN[type];
+}
+
+export function useWalletMe() {
+  const { token } = useAuth();
+  return useQuery({
+    queryKey: ["wallet-me", token],
+    enabled: !!token,
+    queryFn: async ({ signal }): Promise<WalletMeResponse> => {
+      const res = await fetch(`${API_BASE_URL}${WALLET_BASE}/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+        signal,
+      });
+      if (!res.ok) throw new Error(`Failed to fetch wallet: ${res.status}`);
+      return res.json();
+    },
+    staleTime: 30_000,
+  });
+}
+
+export function useWalletTransactions(limit = 50) {
+  const { token } = useAuth();
+  return useQuery({
+    queryKey: ["wallet-transactions", token, limit],
+    enabled: !!token,
+    queryFn: async ({ signal }): Promise<WalletTransaction[]> => {
+      const res = await fetch(
+        `${API_BASE_URL}${WALLET_BASE}/me/transactions?limit=${limit}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          signal,
+        }
+      );
+      if (!res.ok) throw new Error(`Failed to fetch transactions: ${res.status}`);
+      return res.json();
+    },
+  });
+}
+
+export function useReferralProfile() {
+  const { token } = useAuth();
+  return useQuery({
+    queryKey: ["referral-profile", token],
+    enabled: !!token,
+    queryFn: async ({ signal }): Promise<ReferralProfileResponse> => {
+      const res = await fetch(`${API_BASE_URL}${WALLET_BASE}/me/referral`, {
+        headers: { Authorization: `Bearer ${token}` },
+        signal,
+      });
+      if (!res.ok) throw new Error(`Failed to fetch referral: ${res.status}`);
+      return res.json();
     },
   });
 }

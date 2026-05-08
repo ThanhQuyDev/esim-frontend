@@ -66,7 +66,7 @@ export default async function DataCalculatorPage({
       <DataUsageTable dict={calc.dataTable} />
 
       {/* FAQ with Tabs */}
-      <FaqTabsSection dict={calc.faqSection} />
+      <FaqTabsSection dict={calc.faqSection} lang={params.lang} />
 
       {/* Footer */}
       <FooterSection dict={dict.footer} />

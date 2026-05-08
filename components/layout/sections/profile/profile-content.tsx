@@ -1,26 +1,64 @@
 "use client";
 
 import { useState } from "react";
-import { User, Smartphone, Mail, LogOut } from "lucide-react";
+import { User, Smartphone, Mail, LogOut, Wallet, Gift, Copy, Clock, ArrowRight } from "lucide-react";
 import { useAuth } from "@/lib/auth";
-import { useMyOrders, useMyEsims } from "@/lib/hooks";
+import { useMyOrders, useMyEsims, useWalletMe, useReferralProfile } from "@/lib/hooks";
 import { profileTranslations } from "./translations";
 import { OrderList } from "./order-list";
 import { EsimCardList } from "./esim-card-list";
+import { WalletPageContent } from "@/components/layout/sections/wallet/wallet-page-content";
 import Link from "next/link";
 
 interface ProfileContentProps {
   lang: "en" | "vi";
 }
 
-type Tab = "profile" | "sim";
+type Tab = "profile" | "sim" | "wallet";
+
+function formatVnd(amount: number): string {
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
+
+function getExpiryColor(daysLeft: number | null): string {
+  if (daysLeft === null) return "text-gray-400";
+  if (daysLeft <= 0) return "text-gray-400";
+  if (daysLeft <= 7) return "text-red-500";
+  if (daysLeft <= 30) return "text-amber-500";
+  return "text-emerald-500";
+}
+
+function getExpiryBg(daysLeft: number | null): string {
+  if (daysLeft === null) return "bg-gray-100";
+  if (daysLeft <= 0) return "bg-gray-100";
+  if (daysLeft <= 7) return "bg-red-50";
+  if (daysLeft <= 30) return "bg-amber-50";
+  return "bg-emerald-50";
+}
 
 export function ProfileContent({ lang }: ProfileContentProps) {
   const t = profileTranslations[lang];
   const { user, logout } = useAuth();
   const { data: orders = [], isLoading: ordersLoading } = useMyOrders();
   const { data: esims = [], isLoading: esimsLoading } = useMyEsims();
+  const { data: wallet } = useWalletMe();
+  const { data: referral } = useReferralProfile();
   const [activeTab, setActiveTab] = useState<Tab>("profile");
+  const [referralCopied, setReferralCopied] = useState(false);
+
+  const copyReferralCode = async (code: string) => {
+    try {
+      await navigator.clipboard.writeText(code);
+      setReferralCopied(true);
+      setTimeout(() => setReferralCopied(false), 2000);
+    } catch {
+      /* ignore */
+    }
+  };
 
   if (!user) {
     return (
@@ -43,8 +81,13 @@ export function ProfileContent({ lang }: ProfileContentProps) {
 
   const tabs: { key: Tab; label: string; icon: React.ReactNode }[] = [
     { key: "profile", label: t.tabProfile, icon: <User className="w-4 h-4" /> },
+    { key: "wallet", label: t.tabWallet, icon: <Wallet className="w-4 h-4" /> },
     { key: "sim", label: t.tabSimManagement, icon: <Smartphone className="w-4 h-4" /> },
   ];
+
+  const daysLeft = wallet?.daysLeft ?? null;
+  const expiryColor = getExpiryColor(daysLeft);
+  const expiryBg = getExpiryBg(daysLeft);
 
   return (
     <main className="min-h-screen bg-gray-50 pt-24 pb-16">
@@ -102,6 +145,105 @@ export function ProfileContent({ lang }: ProfileContentProps) {
               </div>
             </div>
 
+            {/* eXu Wallet Balance Card */}
+            {wallet && (
+              <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+                <div className="bg-gradient-to-r from-emerald-500 to-teal-600 p-5 text-white">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Wallet className="w-4 h-4 opacity-80" />
+                    <span className="text-sm font-medium opacity-90">{t.walletBalance}</span>
+                  </div>
+                  <p className="text-2xl font-bold tracking-tight">{formatVnd(wallet.balanceVnd)}</p>
+                  {wallet.availableBalanceVnd !== wallet.balanceVnd && (
+                    <p className="text-xs mt-1 opacity-80">
+                      {t.availableBalance}: {formatVnd(wallet.availableBalanceVnd)}
+                    </p>
+                  )}
+                </div>
+                <div className="px-5 py-3 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-gray-400" />
+                    {daysLeft === null ? (
+                      <span className="text-sm text-gray-400">{t.noExpiry}</span>
+                    ) : daysLeft <= 0 ? (
+                      <span className="text-sm text-gray-400">{t.expired}</span>
+                    ) : (
+                      <span className={`text-sm font-medium ${expiryColor}`}>
+                        {t.expiresIn} {daysLeft} {t.days}
+                      </span>
+                    )}
+                  </div>
+                  {daysLeft !== null && daysLeft > 0 && (
+                    <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${expiryBg} ${expiryColor}`}>
+                      {daysLeft} {t.days}
+                    </span>
+                  )}
+                </div>
+                {wallet.status === "locked" && (
+                  <div className="mx-5 mb-4 flex items-start gap-3 rounded-xl bg-red-50 border border-red-100 p-3">
+                    <span className="text-sm text-red-700">{t.walletLocked}</span>
+                  </div>
+                )}
+                <div className="px-5 pb-4">
+                  <button
+                    onClick={() => setActiveTab("wallet")}
+                    className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-medium bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-colors cursor-pointer"
+                  >
+                    <Wallet className="w-4 h-4" />
+                    {t.viewWallet}
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Referral Code Card */}
+            {referral && (
+              <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+                <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-5 text-white">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Gift className="w-4 h-4 opacity-80" />
+                    <span className="text-sm font-medium opacity-90">{t.referralCode}</span>
+                  </div>
+                  <p className="text-2xl font-bold tracking-tight font-mono">{referral.code}</p>
+                </div>
+                <div className="p-5 space-y-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1 bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
+                      <p className="text-xs text-gray-400 mb-0.5">{t.referralLink}</p>
+                      <p className="text-sm text-gray-600 truncate">{`https://esim.vn/?ref=${referral.code}`}</p>
+                    </div>
+                    <button
+                      onClick={() => copyReferralCode(referral.code)}
+                      className="flex items-center gap-1.5 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors flex-shrink-0"
+                    >
+                      {referralCopied ? (
+                        t.copied
+                      ) : (
+                        <>
+                          <Copy className="w-3.5 h-3.5" />
+                          {t.copyCode}
+                        </>
+                      )}
+                    </button>
+                  </div>
+                  {!referral.isActive && (
+                    <div className="flex items-start gap-2 rounded-xl bg-amber-50 border border-amber-100 p-3">
+                      <span className="text-sm text-amber-700">{t.referralInactive}</span>
+                    </div>
+                  )}
+                  <button
+                    onClick={() => setActiveTab("wallet")}
+                    className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-medium bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors cursor-pointer"
+                  >
+                    <Gift className="w-4 h-4" />
+                    {t.shareReferral}
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* Order History */}
             <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
@@ -117,6 +259,10 @@ export function ProfileContent({ lang }: ProfileContentProps) {
               </div>
             </div>
           </div>
+        )}
+
+        {activeTab === "wallet" && (
+          <WalletPageContent lang={lang} embedded />
         )}
 
         {activeTab === "sim" && (

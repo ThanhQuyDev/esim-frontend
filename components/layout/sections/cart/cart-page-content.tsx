@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Minus, Plus, Trash2, Tag, ShoppingCart, ArrowRight, Ticket } from "lucide-react";
+import { Minus, Plus, Trash2, Tag, ShoppingCart, ArrowRight, Ticket, Gift, AlertTriangle, CheckCircle2 } from "lucide-react";
 import {
   applyCoupon,
   removeCoupon,
@@ -15,8 +15,9 @@ import {
   type Cart,
   type Coupon,
 } from "@/lib/cart";
-import { useExchangeRate, convertUsdToVnd, formatVnd, useCart } from "@/lib/hooks";
+import { useExchangeRate, convertUsdToVnd, formatVnd, useCart, useReferralProfile } from "@/lib/hooks";
 import { useAuth } from "@/lib/auth";
+import { walletTranslations } from "@/components/layout/sections/wallet/translations";
 import Link from "next/link";
 
 interface CartPageContentProps {
@@ -30,10 +31,15 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
   const [showCoupons, setShowCoupons] = useState(false);
   const [couponInput, setCouponInput] = useState("");
   const [couponError, setCouponError] = useState("");
+  const [referralCode, setReferralCode] = useState("");
+  const [referralError, setReferralError] = useState("");
+  const [referralApplied, setReferralApplied] = useState(false);
   const { data: usdToVndRate = 25_500 } = useExchangeRate();
   const { isApiCart, apiCartItems, getLocalCartData, updateItem, removeItem, isLoading: cartLoading } = useCart();
   const { user, openAuthModal } = useAuth();
+  const { data: referralProfile } = useReferralProfile();
   const pendingCheckoutRef = useRef(false);
+  const wt = walletTranslations[lang as "en" | "vi"];
 
   // Sync cart items from API or localStorage
   useEffect(() => {
@@ -47,6 +53,15 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
       setSelectedIds((prev) => prev.size === 0 ? new Set(c.items.map((i) => i.id)) : prev);
     }
   }, [isApiCart, apiCartItems, getLocalCartData]);
+
+  // Auto-fill referral code from URL capture
+  useEffect(() => {
+    const storedRef = localStorage.getItem("saily_referral_code");
+    if (storedRef && !referralApplied) {
+      setReferralCode(storedRef);
+      setReferralApplied(true);
+    }
+  }, []);
 
   // Listen for localStorage cart-updated events (guest mode)
   useEffect(() => {
@@ -91,6 +106,12 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
       localStorage.setItem("saily_checkout_coupon", JSON.stringify(cart.appliedCoupon));
     } else {
       localStorage.removeItem("saily_checkout_coupon");
+    }
+    // Persist referral code
+    if (referralApplied && referralCode.trim()) {
+      localStorage.setItem("saily_checkout_referral", referralCode.trim().toUpperCase());
+    } else {
+      localStorage.removeItem("saily_checkout_referral");
     }
     window.location.href = `/${lang}/checkout`;
   };
@@ -293,6 +314,74 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
             <span className="text-text-secondary">{dict.subtotal || "Subtotal"}</span>
             <span className="font-medium text-text-primary">{displaySubtotal}</span>
           </div>
+
+          {/* Referral Code Section */}
+          {!cart.appliedCoupon && (
+            <div className="space-y-3 border-t border-border-primary pt-4">
+              <div className="flex items-center gap-2">
+                <Gift className="h-4 w-4 text-blue-500" />
+                <span className="text-sm font-medium text-text-primary">
+                  {wt.referralCodeInput}
+                </span>
+              </div>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={referralCode}
+                  onChange={(e) => {
+                    setReferralCode(e.target.value.toUpperCase());
+                    setReferralError("");
+                    setReferralApplied(false);
+                  }}
+                  disabled={referralApplied}
+                  placeholder={wt.referralCodePlaceholder}
+                  className={`flex-1 rounded-xl border px-4 py-2.5 text-sm outline-none transition-colors ${
+                    referralError ? "border-red-400" : referralApplied ? "border-emerald-400 bg-emerald-50/30" : "border-border-primary focus:border-[var(--border-focus)]"
+                  }`}
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (referralApplied) {
+                      setReferralApplied(false);
+                      setReferralCode("");
+                      return;
+                    }
+                    if (!referralCode.trim()) return;
+                    if (referralProfile && referralCode.toUpperCase() === referralProfile.code.toUpperCase()) {
+                      setReferralError(wt.referralOwnCode);
+                      return;
+                    }
+                    const vndSub = getVndSubtotal(selectedItems);
+                    if (vndSub < 100000) {
+                      setReferralError(wt.referralMinOrder);
+                      return;
+                    }
+                    setReferralApplied(true);
+                    setReferralError("");
+                  }}
+                  className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                    referralApplied
+                      ? "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      : "bg-blue-600 text-white hover:bg-blue-700"
+                  }`}
+                >
+                  {referralApplied ? (lang === "vi" ? "Hủy" : "Remove") : wt.applyReferral}
+                </button>
+              </div>
+              {referralError && (
+                <p className="text-xs text-red-500 flex items-center gap-1">
+                  <AlertTriangle className="w-3 h-3" />{referralError}
+                </p>
+              )}
+              {referralApplied && (
+                <p className="text-xs text-emerald-600 flex items-center gap-1">
+                  <CheckCircle2 className="w-3 h-3" />
+                  {lang === "vi" ? "Đã áp dụng giảm 10.000₫" : "Applied 10,000₫ discount"}
+                </p>
+              )}
+            </div>
+          )}
 
           {/* Coupon Section */}
           <div className="space-y-3 border-t border-border-primary pt-4">

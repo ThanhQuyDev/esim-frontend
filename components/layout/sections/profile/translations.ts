@@ -1,6 +1,7 @@
 export interface ProfileDict {
   pageTitle: string;
   tabProfile: string;
+  tabWallet: string;
   tabSimManagement: string;
   personalInfo: string;
   fullName: string;
@@ -51,12 +52,26 @@ export interface ProfileDict {
   gb: string;
   topup: string;
   simComingSoon: string;
+  // eXu Wallet
+  walletBalance: string;
+  availableBalance: string;
+  expiresIn: string;
+  noExpiry: string;
+  walletLocked: string;
+  viewWallet: string;
+  // Referral
+  referralCode: string;
+  referralLink: string;
+  copyCode: string;
+  shareReferral: string;
+  referralInactive: string;
 }
 
 export const profileTranslations: Record<"en" | "vi", ProfileDict> = {
   en: {
     pageTitle: "My Account",
     tabProfile: "Profile",
+    tabWallet: "eXu Wallet",
     tabSimManagement: "SIM Management",
     email: "Email",
     myOrders: "Order History",
@@ -106,10 +121,24 @@ export const profileTranslations: Record<"en" | "vi", ProfileDict> = {
     gb: "GB",
     topup: "Top Up",
     simComingSoon: "SIM management will be available soon. Your eSIM details will appear here after purchase.",
+    // eXu Wallet
+    walletBalance: "eXu Balance",
+    availableBalance: "Available",
+    expiresIn: "Expires in",
+    noExpiry: "No expiry",
+    walletLocked: "Wallet is locked. Contact support.",
+    viewWallet: "View Wallet",
+    // Referral
+    referralCode: "Your Referral Code",
+    referralLink: "Referral Link",
+    copyCode: "Copy Code",
+    shareReferral: "Share Referral Code",
+    referralInactive: "Your referral code is currently inactive.",
   },
   vi: {
     pageTitle: "Tài Khoản",
     tabProfile: "Hồ sơ",
+    tabWallet: "Ví eXu",
     tabSimManagement: "Quản lý SIM",
     email: "Email",
     myOrders: "Lịch Sử Đơn Hàng",
@@ -159,5 +188,18 @@ export const profileTranslations: Record<"en" | "vi", ProfileDict> = {
     gb: "GB",
     topup: "Nạp thêm",
     simComingSoon: "Quản lý SIM sẽ sớm khả dụng. Chi tiết eSIM sẽ hiển thị ở đây sau khi mua.",
+    // eXu Wallet
+    walletBalance: "Số dư eXu",
+    availableBalance: "Khả dụng",
+    expiresIn: "Hết hạn sau",
+    noExpiry: "Không có hạn",
+    walletLocked: "Ví đang bị khóa. Liên hệ hỗ trợ.",
+    viewWallet: "Xem ví",
+    // Referral
+    referralCode: "Mã giới thiệu của bạn",
+    referralLink: "Link giới thiệu",
+    copyCode: "Sao chép mã",
+    shareReferral: "Chia sẻ mã giới thiệu",
+    referralInactive: "Mã giới thiệu của bạn hiện không hoạt động.",
   },
 };

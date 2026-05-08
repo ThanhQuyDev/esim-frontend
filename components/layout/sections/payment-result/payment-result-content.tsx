@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { CheckCircle, Home, Mail, User, Clock } from "lucide-react";
+import { CheckCircle, Home, Mail, User, Clock, Wallet, Coins } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { getResponseCodeMessage } from "@/lib/onepay";
@@ -17,9 +17,22 @@ interface PaymentResultContentProps {
   lang: "en" | "vi";
 }
 
+function formatVnd(amount: number): string {
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
+
 export function PaymentResultContent({ lang }: PaymentResultContentProps) {
   const searchParams = useSearchParams();
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [lastOrderInfo, setLastOrderInfo] = useState<{
+    exuUsed?: number;
+    referralDiscount?: number;
+    referralCode?: string | null;
+  } | null>(null);
   const t = paymentResultTranslations[lang];
 
   // Parse OnePay callback query params
@@ -52,6 +65,27 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
 
   const hasEsims = allEsims.length > 0;
   const pollingFinished = !isPolling && dataUpdatedAt > 0 && !hasEsims;
+
+  // Load last order info for eXu/referral display
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("saily_last_order");
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        setLastOrderInfo({
+          exuUsed: parsed.exuUsed,
+          referralDiscount: parsed.referralDiscount,
+          referralCode: parsed.referralCode,
+        });
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  // Calculate cashback (2% of payable amount)
+  const orderVndPrice = orderData?.vndPrice || 0;
+  const cashbackAmount = orderVndPrice > 0 ? Math.round(orderVndPrice * 0.02) : 0;
 
   const copyToClipboard = async (text: string, field: string) => {
     try {
@@ -118,6 +152,27 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
           t={t}
         />
 
+        {/* eXu Cashback Banner */}
+        {cashbackAmount > 0 && (
+          <div className="rounded-2xl border border-emerald-200 bg-emerald-50/80 p-5 mb-6">
+            <div className="flex items-start gap-3">
+              <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-emerald-100 flex-shrink-0">
+                <Coins className="w-5 h-5 text-emerald-600" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-semibold text-emerald-800">
+                  {lang === "vi" ? "Bạn đã nhận được" : "You earned"} {formatVnd(cashbackAmount)} eXu!
+                </p>
+                <p className="text-sm text-emerald-600 mt-0.5">
+                  {lang === "vi"
+                    ? "Số dư eXu sẽ được cộng vào ví của bạn."
+                    : "eXu balance has been added to your wallet."}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* eSIM Loading */}
         {isPolling && !hasEsims && <EsimLoadingState t={t} />}
 
@@ -171,6 +226,16 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
             <Link href={`/${lang}/profile`}>
               <User className="w-4 h-4 mr-2" />
               {t.myProfile}
+            </Link>
+          </Button>
+          <Button
+            asChild
+            variant="outline"
+            className="flex-1 h-12 rounded-full border-emerald-200 text-emerald-700 font-semibold hover:bg-emerald-50 transition-colors cursor-pointer"
+          >
+            <Link href={`/${lang}/profile`}>
+              <Wallet className="w-4 h-4 mr-2" />
+              {lang === "vi" ? "Xem ví" : "View Wallet"}
             </Link>
           </Button>
         </div>
