@@ -13,10 +13,6 @@ import {
   ShoppingBag,
   ArrowLeft,
   Wallet,
-  Gift,
-  ToggleLeft,
-  ToggleRight,
-  AlertTriangle,
 } from "lucide-react";
 import {
   getSubtotal,
@@ -26,7 +22,7 @@ import {
   type CartItem,
   type Coupon,
 } from "@/lib/cart";
-import { useExchangeRate, useCheckout, useCart, convertUsdToVnd, formatVnd, useWalletMe, useReferralProfile } from "@/lib/hooks";
+import { useExchangeRate, useCheckout, useCart, convertUsdToVnd, formatVnd, useWalletMe } from "@/lib/hooks";
 import { useAuth } from "@/lib/auth";
 import { walletTranslations } from "@/components/layout/sections/wallet/translations";
 import Link from "next/link";
@@ -62,20 +58,18 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [orderComplete, setOrderComplete] = useState(false);
 
-  // eXu wallet state
+  // eXU wallet state
   const [useExu, setUseExu] = useState(false);
   const [exuAmount, setExuAmount] = useState("");
 
-  // Referral code state
+  // Referral code state (read from cart, not editable here)
   const [referralCode, setReferralCode] = useState("");
-  const [referralError, setReferralError] = useState("");
   const [referralApplied, setReferralApplied] = useState(false);
 
   const { data: usdToVndRate = 25_500 } = useExchangeRate();
   const checkout = useCheckout();
   const cart = useCart();
   const { data: wallet } = useWalletMe();
-  const { data: referralProfile } = useReferralProfile();
 
   const { user, token, openAuthModal } = useAuth();
 
@@ -86,11 +80,16 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
       const storedItems = localStorage.getItem("saily_checkout_items");
       const storedCoupon = localStorage.getItem("saily_checkout_coupon");
       const storedReferral = localStorage.getItem("saily_checkout_referral") || localStorage.getItem("saily_referral_code");
+      const storedUseExu = localStorage.getItem("saily_checkout_use_exu");
       if (storedItems) setItems(JSON.parse(storedItems));
       if (storedCoupon) setCoupon(JSON.parse(storedCoupon));
       if (storedReferral) {
         setReferralCode(storedReferral);
         setReferralApplied(true);
+      }
+      if (storedUseExu === "true") {
+        setUseExu(true);
+        localStorage.removeItem("saily_checkout_use_exu");
       }
     } catch {
       // ignore
@@ -119,7 +118,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
   const vndDiscount = getVndDiscount(vndSubtotal, coupon);
   const vndTotal = Math.max(0, vndSubtotal - vndDiscount);
 
-  // eXu calculations
+  // eXU calculations
   const exuAmountNum = useExu ? Math.max(0, parseInt(exuAmount.replace(/\D/g, ""), 10) || 0) : 0;
   const maxExuUsable = wallet && wallet.status === "active"
     ? Math.min(wallet.availableBalanceVnd, Math.max(0, vndTotal - (referralApplied ? 10000 : 0)))
@@ -183,6 +182,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
     const checkoutItems = items.map((item) => ({
       planId: Number(item.id),
       quantity: item.quantity,
+      ...(item.durationDays ? { periodNum: item.durationDays } : {}),
     }));
 
     checkout.mutate(
@@ -420,7 +420,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
           </div>
         </div>
 
-        {/* eXu Wallet */}
+        {/* eXU Wallet */}
         {wallet && wallet.status === "active" && wallet.availableBalanceVnd > 0 && (
           <div className="rounded-2xl border border-border-primary bg-white p-6 space-y-4">
             <div className="flex items-center justify-between">
@@ -475,72 +475,6 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
                   {wt.exuBalance}: {formatVnd(wallet.availableBalanceVnd)} · {lang === "vi" ? "Tối đa" : "Max"}: {formatVnd(maxExuUsable)}
                 </p>
               </div>
-            )}
-          </div>
-        )}
-
-        {/* Referral Code */}
-        {!coupon && (
-          <div className="rounded-2xl border border-border-primary bg-white p-6 space-y-4">
-            <div className="flex items-center gap-2">
-              <Gift className="h-5 w-5 text-blue-600" />
-              <h3 className="text-lg font-bold text-text-primary">{wt.referralCodeInput}</h3>
-            </div>
-            <div className="flex gap-3">
-              <input
-                type="text"
-                value={referralCode}
-                onChange={(e) => {
-                  setReferralCode(e.target.value.toUpperCase());
-                  setReferralError("");
-                  setReferralApplied(false);
-                }}
-                disabled={referralApplied}
-                placeholder={wt.referralCodePlaceholder}
-                className={`flex-1 rounded-xl border px-4 py-2.5 text-sm outline-none transition-colors ${
-                  referralError ? "border-red-400" : referralApplied ? "border-emerald-400 bg-emerald-50/30" : "border-border-primary focus:border-[var(--border-focus)]"
-                }`}
-              />
-              <button
-                type="button"
-                onClick={() => {
-                  if (referralApplied) {
-                    setReferralApplied(false);
-                    setReferralCode("");
-                    return;
-                  }
-                  // Validation
-                  if (!referralCode.trim()) return;
-                  if (referralProfile && referralCode.toUpperCase() === referralProfile.code.toUpperCase()) {
-                    setReferralError(wt.referralOwnCode);
-                    return;
-                  }
-                  if (vndSubtotal < 100000) {
-                    setReferralError(wt.referralMinOrder);
-                    return;
-                  }
-                  setReferralApplied(true);
-                  setReferralError("");
-                }}
-                className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                  referralApplied
-                    ? "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                    : "bg-blue-600 text-white hover:bg-blue-700"
-                }`}
-              >
-                {referralApplied ? (lang === "vi" ? "Hủy" : "Remove") : wt.applyReferral}
-              </button>
-            </div>
-            {referralError && (
-              <p className="text-xs text-red-500 flex items-center gap-1">
-                <AlertTriangle className="w-3 h-3" />{referralError}
-              </p>
-            )}
-            {referralApplied && (
-              <p className="text-xs text-emerald-600 flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3" />
-                {lang === "vi" ? "Đã áp dụng giảm 10.000₫" : "Applied 10,000₫ discount"}
-              </p>
             )}
           </div>
         )}
@@ -737,7 +671,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
               </div>
             )}
 
-            {/* eXu Spent */}
+            {/* eXU Spent */}
             {actualExuUsed > 0 && (
               <div className="flex justify-between text-sm">
                 <span className="text-emerald-600">{wt.exuSpent}</span>

@@ -6,12 +6,50 @@ import {
   useState,
   useEffect,
   useCallback,
+  useRef,
   type ReactNode,
 } from "react";
 import { getCart, clearCart } from "@/lib/cart";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.saily.example.com";
+
+// ===== Auth expiry callback (module-level, set by AuthProvider) =====
+
+let _onAuthExpired: (() => void) | null = null;
+
+/**
+ * Register a callback to be invoked when an API call returns 401.
+ * Called internally by AuthProvider.
+ */
+export function setOnAuthExpired(cb: (() => void) | null) {
+  _onAuthExpired = cb;
+}
+
+/**
+ * Drop-in replacement for `fetch()` that:
+ * 1. Attaches `Authorization: Bearer <token>` if token is provided
+ * 2. On 401 response: triggers logout via the registered callback
+ * 3. Otherwise behaves identically to native `fetch()`
+ */
+export async function authFetch(
+  url: string | URL,
+  token: string | null | undefined,
+  init?: RequestInit
+): Promise<Response> {
+  const headers = new Headers(init?.headers);
+  if (token) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+
+  const res = await fetch(url, { ...init, headers });
+
+  if (res.status === 401 && _onAuthExpired) {
+    _onAuthExpired();
+  }
+
+  return res;
+}
 
 // ===== Types =====
 
@@ -119,6 +157,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const logoutRef = useRef<() => void>(() => {});
 
   // Hydrate from localStorage on mount
   useEffect(() => {
@@ -128,6 +167,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(persisted.user);
     }
     setIsLoading(false);
+  }, []);
+
+  // Register the auth-expired callback so authFetch can trigger logout on 401
+  useEffect(() => {
+    setOnAuthExpired(() => logoutRef.current());
+    return () => setOnAuthExpired(null);
   }, []);
 
   const sendOtp = useCallback(async (email: string) => {
@@ -172,6 +217,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     clearPersistedAuth();
   }, []);
+
+  // Keep logoutRef in sync so authFetch can always call the latest logout
+  logoutRef.current = logout;
 
   const openAuthModal = useCallback(() => {
     setAuthModalOpen(true);

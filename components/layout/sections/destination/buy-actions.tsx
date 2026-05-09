@@ -33,7 +33,7 @@ export function BuyActions({ selectedPlan, days, quantity, isFixed, dict, lang, 
     if (!selectedPlan) return;
     const unitPrice = isFixed ? getFixedPrice(selectedPlan) : calcTotalPrice(selectedPlan, days);
     const unitVndPrice = isFixed ? getFixedVndPrice(selectedPlan) : calcTotalVndPrice(selectedPlan, days);
-    const originalVndPrice = isFixed ? Number(selectedPlan.vndPrice) : (selectedPlan.isAbleMultidate ? Number(selectedPlan.vndPrice) * days : Number(selectedPlan.vndPrice));
+    const originalVndPrice = isFixed ? Number(selectedPlan.vndPrice) : Number(selectedPlan.vndPrice) * days;
     await addItem(
       {
         id: String(selectedPlan.id),

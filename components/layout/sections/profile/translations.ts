@@ -52,7 +52,7 @@ export interface ProfileDict {
   gb: string;
   topup: string;
   simComingSoon: string;
-  // eXu Wallet
+  // eXU Wallet
   walletBalance: string;
   availableBalance: string;
   expiresIn: string;
@@ -71,7 +71,7 @@ export const profileTranslations: Record<"en" | "vi", ProfileDict> = {
   en: {
     pageTitle: "My Account",
     tabProfile: "Profile",
-    tabWallet: "eXu Wallet",
+    tabWallet: "eXU Wallet",
     tabSimManagement: "SIM Management",
     email: "Email",
     myOrders: "Order History",
@@ -121,8 +121,8 @@ export const profileTranslations: Record<"en" | "vi", ProfileDict> = {
     gb: "GB",
     topup: "Top Up",
     simComingSoon: "SIM management will be available soon. Your eSIM details will appear here after purchase.",
-    // eXu Wallet
-    walletBalance: "eXu Balance",
+    // eXU Wallet
+    walletBalance: "eXU Balance",
     availableBalance: "Available",
     expiresIn: "Expires in",
     noExpiry: "No expiry",
@@ -138,7 +138,7 @@ export const profileTranslations: Record<"en" | "vi", ProfileDict> = {
   vi: {
     pageTitle: "Tài Khoản",
     tabProfile: "Hồ sơ",
-    tabWallet: "Ví eXu",
+    tabWallet: "Ví eXU",
     tabSimManagement: "Quản lý SIM",
     email: "Email",
     myOrders: "Lịch Sử Đơn Hàng",
@@ -188,8 +188,8 @@ export const profileTranslations: Record<"en" | "vi", ProfileDict> = {
     gb: "GB",
     topup: "Nạp thêm",
     simComingSoon: "Quản lý SIM sẽ sớm khả dụng. Chi tiết eSIM sẽ hiển thị ở đây sau khi mua.",
-    // eXu Wallet
-    walletBalance: "Số dư eXu",
+    // eXU Wallet
+    walletBalance: "Số dư eXU",
     availableBalance: "Khả dụng",
     expiresIn: "Hết hạn sau",
     noExpiry: "Không có hạn",

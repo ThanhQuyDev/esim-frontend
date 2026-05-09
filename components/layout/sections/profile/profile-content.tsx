@@ -145,7 +145,7 @@ export function ProfileContent({ lang }: ProfileContentProps) {
               </div>
             </div>
 
-            {/* eXu Wallet Balance Card */}
+            {/* eXU Wallet Balance Card */}
             {wallet && (
               <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
                 <div className="bg-gradient-to-r from-emerald-500 to-teal-600 p-5 text-white">

@@ -66,7 +66,7 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
   const hasEsims = allEsims.length > 0;
   const pollingFinished = !isPolling && dataUpdatedAt > 0 && !hasEsims;
 
-  // Load last order info for eXu/referral display
+  // Load last order info for eXU/referral display
   useEffect(() => {
     try {
       const raw = localStorage.getItem("saily_last_order");
@@ -152,7 +152,7 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
           t={t}
         />
 
-        {/* eXu Cashback Banner */}
+        {/* eXU Cashback Banner */}
         {cashbackAmount > 0 && (
           <div className="rounded-2xl border border-emerald-200 bg-emerald-50/80 p-5 mb-6">
             <div className="flex items-start gap-3">
@@ -161,12 +161,12 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
               </div>
               <div className="flex-1">
                 <p className="text-sm font-semibold text-emerald-800">
-                  {lang === "vi" ? "Bạn đã nhận được" : "You earned"} {formatVnd(cashbackAmount)} eXu!
+                  {lang === "vi" ? "Bạn đã nhận được" : "You earned"} {formatVnd(cashbackAmount)} eXU!
                 </p>
                 <p className="text-sm text-emerald-600 mt-0.5">
                   {lang === "vi"
-                    ? "Số dư eXu sẽ được cộng vào ví của bạn."
-                    : "eXu balance has been added to your wallet."}
+                    ? "Số dư eXU sẽ được cộng vào ví của bạn."
+                    : "eXU balance has been added to your wallet."}
                 </p>
               </div>
             </div>

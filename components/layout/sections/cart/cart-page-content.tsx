@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Minus, Plus, Trash2, Tag, ShoppingCart, ArrowRight, Ticket, Gift, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { Minus, Plus, Trash2, Tag, ShoppingCart, ArrowRight, Ticket, Gift, AlertTriangle, CheckCircle2, Wallet, Coins } from "lucide-react";
 import {
   applyCoupon,
   removeCoupon,
@@ -15,7 +15,7 @@ import {
   type Cart,
   type Coupon,
 } from "@/lib/cart";
-import { useExchangeRate, convertUsdToVnd, formatVnd, useCart, useReferralProfile } from "@/lib/hooks";
+import { useExchangeRate, convertUsdToVnd, formatVnd, useCart, useReferralProfile, useWalletMe, formatExu } from "@/lib/hooks";
 import { useAuth } from "@/lib/auth";
 import { walletTranslations } from "@/components/layout/sections/wallet/translations";
 import Link from "next/link";
@@ -29,15 +29,15 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
   const [cart, setCart] = useState<Cart>({ items: [], appliedCoupon: null });
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [showCoupons, setShowCoupons] = useState(false);
-  const [couponInput, setCouponInput] = useState("");
-  const [couponError, setCouponError] = useState("");
-  const [referralCode, setReferralCode] = useState("");
-  const [referralError, setReferralError] = useState("");
-  const [referralApplied, setReferralApplied] = useState(false);
+  // Unified promo input: handles both coupon codes and referral codes
+  const [promoInput, setPromoInput] = useState("");
+  const [promoError, setPromoError] = useState("");
+  const [promoApplied, setPromoApplied] = useState<{ type: "coupon" | "referral"; code: string; discountVnd: number } | null>(null);
   const { data: usdToVndRate = 25_500 } = useExchangeRate();
   const { isApiCart, apiCartItems, getLocalCartData, updateItem, removeItem, isLoading: cartLoading } = useCart();
   const { user, openAuthModal } = useAuth();
   const { data: referralProfile } = useReferralProfile();
+  const { data: wallet } = useWalletMe();
   const pendingCheckoutRef = useRef(false);
   const wt = walletTranslations[lang as "en" | "vi"];
 
@@ -45,7 +45,6 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
   useEffect(() => {
     if (isApiCart) {
       setCart((prev) => ({ items: apiCartItems, appliedCoupon: prev.appliedCoupon }));
-      // Only auto-select all on first load (when selectedIds is empty)
       setSelectedIds((prev) => prev.size === 0 ? new Set(apiCartItems.map((i) => i.id)) : prev);
     } else {
       const c = getLocalCartData();
@@ -57,9 +56,10 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
   // Auto-fill referral code from URL capture
   useEffect(() => {
     const storedRef = localStorage.getItem("saily_referral_code");
-    if (storedRef && !referralApplied) {
-      setReferralCode(storedRef);
-      setReferralApplied(true);
+    if (storedRef && !promoApplied) {
+      setPromoInput(storedRef);
+      // Auto-apply the referral
+      validateAndApplyPromo(storedRef);
     }
   }, []);
 
@@ -90,6 +90,114 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
   const discount = getDiscount(subtotal, cart.appliedCoupon);
   const total = getTotal(selectedItems, cart.appliedCoupon);
 
+  // VND-aware calculations
+  const getVndSubtotal = (items: CartItem[]): number => {
+    return items.reduce((sum, item) => {
+      if (item.vndPrice) return sum + item.vndPrice * item.quantity;
+      return sum + convertUsdToVnd(item.price * item.quantity, usdToVndRate);
+    }, 0);
+  };
+  const hasVndPricing = selectedItems.some((i) => i.vndPrice);
+  const vndSubtotalValue = getVndSubtotal(selectedItems);
+  const vndDiscountValue = getVndDiscount(vndSubtotalValue, cart.appliedCoupon);
+  const vndTotalBeforePromo = Math.max(0, vndSubtotalValue - vndDiscountValue);
+
+  // Apply promo discount only when valid (referral requires subtotal >= 100k)
+  const isReferralValid = promoApplied?.type === "referral" ? vndSubtotalValue >= 100000 : true;
+  const promoDiscountVnd = promoApplied && isReferralValid ? promoApplied.discountVnd : 0;
+  const vndTotalValue = Math.max(0, vndTotalBeforePromo - promoDiscountVnd);
+
+  // Cashback: 2% of the final payable amount (before eXU deduction)
+  const cashbackVnd = Math.round(vndTotalValue * 0.02);
+
+  // Reactive referral validation: when selected items change, re-validate
+  useEffect(() => {
+    if (promoApplied?.type === "referral") {
+      if (vndSubtotalValue < 100000) {
+        setPromoError(wt.referralMinOrder);
+        // Auto-remove invalid referral so discount is not applied
+        setPromoApplied(null);
+      } else {
+        setPromoError("");
+      }
+    }
+  }, [vndSubtotalValue, promoApplied, wt.referralMinOrder]);
+
+  const validateAndApplyPromo = (code: string) => {
+    const trimmed = code.trim().toUpperCase();
+    if (!trimmed) return;
+
+    // Check if it's a known coupon code
+    const foundCoupon = availableCoupons.find(
+      (c) => c.code.toUpperCase() === trimmed
+    );
+
+    if (foundCoupon) {
+      // Validate coupon min amount
+      if (foundCoupon.minOrderAmountVnd && foundCoupon.minOrderAmountVnd > 0) {
+        if (vndSubtotalValue < foundCoupon.minOrderAmountVnd) {
+          setPromoError(
+            dict.couponMinAmount?.replace("{amount}", `${foundCoupon.minOrderAmountVnd.toLocaleString("vi-VN")}₫`) ||
+              `Minimum order ${foundCoupon.minOrderAmountVnd.toLocaleString("vi-VN")}₫`
+          );
+          return;
+        }
+      } else if (foundCoupon.minAmount && subtotal < foundCoupon.minAmount) {
+        setPromoError(
+          dict.couponMinAmount?.replace("{amount}", `$${foundCoupon.minAmount}`) ||
+            `Minimum order $${foundCoupon.minAmount}`
+        );
+        return;
+      }
+
+      // Apply coupon
+      setPromoError("");
+      applyCoupon(foundCoupon);
+      setCart((prev) => ({ ...prev, appliedCoupon: foundCoupon }));
+      setPromoApplied({ type: "coupon", code: foundCoupon.code, discountVnd: vndDiscountValue });
+      setPromoInput("");
+      return;
+    }
+
+    // Not a coupon — treat as referral code
+    // Validate: can't use own code
+    if (referralProfile && trimmed === referralProfile.code.toUpperCase()) {
+      setPromoError(wt.referralOwnCode);
+      return;
+    }
+
+    // Validate: min order 100,000₫
+    if (vndSubtotalValue < 100000) {
+      setPromoError(wt.referralMinOrder);
+      return;
+    }
+
+    // Validate: can't use with coupon
+    if (cart.appliedCoupon) {
+      setPromoError(wt.referralWithCoupon);
+      return;
+    }
+
+    // Apply referral
+    setPromoError("");
+    setPromoApplied({ type: "referral", code: trimmed, discountVnd: 10000 });
+    setPromoInput("");
+  };
+
+  const handleApplyPromo = () => {
+    if (promoApplied) {
+      // Remove current promo
+      if (promoApplied.type === "coupon") {
+        removeCoupon();
+        setCart((prev) => ({ ...prev, appliedCoupon: null }));
+      }
+      setPromoApplied(null);
+      setPromoError("");
+      return;
+    }
+    validateAndApplyPromo(promoInput);
+  };
+
   const handleCheckout = () => {
     if (selectedItems.length === 0) return;
 
@@ -108,8 +216,8 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
       localStorage.removeItem("saily_checkout_coupon");
     }
     // Persist referral code
-    if (referralApplied && referralCode.trim()) {
-      localStorage.setItem("saily_checkout_referral", referralCode.trim().toUpperCase());
+    if (promoApplied?.type === "referral") {
+      localStorage.setItem("saily_checkout_referral", promoApplied.code);
     } else {
       localStorage.removeItem("saily_checkout_referral");
     }
@@ -120,9 +228,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
   useEffect(() => {
     if (user && pendingCheckoutRef.current) {
       pendingCheckoutRef.current = false;
-      // Wait briefly for API cart sync to settle, then redirect
       const timer = setTimeout(() => {
-        // Re-read selected items from the current cart state
         const currentItems = cart.items.filter((i) => selectedIds.has(i.id));
         if (currentItems.length > 0) {
           localStorage.setItem("saily_checkout_items", JSON.stringify(currentItems));
@@ -131,12 +237,15 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
           } else {
             localStorage.removeItem("saily_checkout_coupon");
           }
+          if (promoApplied?.type === "referral") {
+            localStorage.setItem("saily_checkout_referral", promoApplied.code);
+          }
         }
         window.location.href = `/${lang}/checkout`;
       }, 1500);
       return () => clearTimeout(timer);
     }
-  }, [user, cart.items, selectedIds, cart.appliedCoupon, lang]);
+  }, [user, cart.items, selectedIds, cart.appliedCoupon, promoApplied, lang]);
 
   const toggleSelect = (id: string) => {
     setSelectedIds((prev) => {
@@ -158,7 +267,6 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
   const handleQuantity = async (id: string, qty: number) => {
     await updateItem(id, qty);
     if (!isApiCart) {
-      // For guest, re-read localStorage
       setCart(getLocalCartData());
     }
   };
@@ -175,61 +283,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
     }
   };
 
-  const handleApplyCoupon = (coupon: Coupon) => {
-    // For API coupons, minAmount is in VND — compare against VND subtotal
-    if (coupon.minOrderAmountVnd && coupon.minOrderAmountVnd > 0) {
-      const vndSub = getVndSubtotal(selectedItems);
-      if (vndSub < coupon.minOrderAmountVnd) {
-        setCouponError(
-          dict.couponMinAmount?.replace("{amount}", `${coupon.minOrderAmountVnd.toLocaleString("vi-VN")}₫`) ||
-            `Minimum order ${coupon.minOrderAmountVnd.toLocaleString("vi-VN")}₫`
-        );
-        return;
-      }
-    } else if (coupon.minAmount && subtotal < coupon.minAmount) {
-      setCouponError(
-        dict.couponMinAmount?.replace("{amount}", `$${coupon.minAmount}`) ||
-          `Minimum order $${coupon.minAmount}`
-      );
-      return;
-    }
-    setCouponError("");
-    applyCoupon(coupon); // persist to localStorage
-    setCart((prev) => ({ ...prev, appliedCoupon: coupon }));
-    setShowCoupons(false);
-  };
-
-  const handleApplyCouponCode = () => {
-    const found = availableCoupons.find(
-      (c) => c.code.toLowerCase() === couponInput.trim().toLowerCase()
-    );
-    if (!found) {
-      setCouponError(dict.couponInvalid || "Invalid coupon code");
-      return;
-    }
-    handleApplyCoupon(found);
-    setCouponInput("");
-  };
-
-  const handleRemoveCoupon = () => {
-    removeCoupon(); // persist to localStorage
-    setCart((prev) => ({ ...prev, appliedCoupon: null }));
-    setCouponError("");
-  };
-
   const formatPrice = (usd: number) => formatVnd(convertUsdToVnd(usd, usdToVndRate));
-
-  // For API cart items, compute VND totals directly from vndPrice
-  const getVndSubtotal = (items: CartItem[]): number => {
-    return items.reduce((sum, item) => {
-      if (item.vndPrice) return sum + item.vndPrice * item.quantity;
-      return sum + convertUsdToVnd(item.price * item.quantity, usdToVndRate);
-    }, 0);
-  };
-  const hasVndPricing = selectedItems.some((i) => i.vndPrice);
-  const vndSubtotalValue = getVndSubtotal(selectedItems);
-  const vndDiscountValue = getVndDiscount(vndSubtotalValue, cart.appliedCoupon);
-  const vndTotalValue = Math.max(0, vndSubtotalValue - vndDiscountValue);
 
   const displaySubtotal = hasVndPricing
     ? `${vndSubtotalValue.toLocaleString("vi-VN")}₫`
@@ -315,95 +369,36 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
             <span className="font-medium text-text-primary">{displaySubtotal}</span>
           </div>
 
-          {/* Referral Code Section */}
-          {!cart.appliedCoupon && (
-            <div className="space-y-3 border-t border-border-primary pt-4">
-              <div className="flex items-center gap-2">
-                <Gift className="h-4 w-4 text-blue-500" />
-                <span className="text-sm font-medium text-text-primary">
-                  {wt.referralCodeInput}
-                </span>
-              </div>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={referralCode}
-                  onChange={(e) => {
-                    setReferralCode(e.target.value.toUpperCase());
-                    setReferralError("");
-                    setReferralApplied(false);
-                  }}
-                  disabled={referralApplied}
-                  placeholder={wt.referralCodePlaceholder}
-                  className={`flex-1 rounded-xl border px-4 py-2.5 text-sm outline-none transition-colors ${
-                    referralError ? "border-red-400" : referralApplied ? "border-emerald-400 bg-emerald-50/30" : "border-border-primary focus:border-[var(--border-focus)]"
-                  }`}
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (referralApplied) {
-                      setReferralApplied(false);
-                      setReferralCode("");
-                      return;
-                    }
-                    if (!referralCode.trim()) return;
-                    if (referralProfile && referralCode.toUpperCase() === referralProfile.code.toUpperCase()) {
-                      setReferralError(wt.referralOwnCode);
-                      return;
-                    }
-                    const vndSub = getVndSubtotal(selectedItems);
-                    if (vndSub < 100000) {
-                      setReferralError(wt.referralMinOrder);
-                      return;
-                    }
-                    setReferralApplied(true);
-                    setReferralError("");
-                  }}
-                  className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                    referralApplied
-                      ? "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                      : "bg-blue-600 text-white hover:bg-blue-700"
-                  }`}
-                >
-                  {referralApplied ? (lang === "vi" ? "Hủy" : "Remove") : wt.applyReferral}
-                </button>
-              </div>
-              {referralError && (
-                <p className="text-xs text-red-500 flex items-center gap-1">
-                  <AlertTriangle className="w-3 h-3" />{referralError}
-                </p>
-              )}
-              {referralApplied && (
-                <p className="text-xs text-emerald-600 flex items-center gap-1">
-                  <CheckCircle2 className="w-3 h-3" />
-                  {lang === "vi" ? "Đã áp dụng giảm 10.000₫" : "Applied 10,000₫ discount"}
-                </p>
-              )}
-            </div>
-          )}
-
-          {/* Coupon Section */}
+          {/* Unified Promo Section */}
           <div className="space-y-3 border-t border-border-primary pt-4">
             <div className="flex items-center gap-2">
               <Tag className="h-4 w-4 text-text-tertiary" />
               <span className="text-sm font-medium text-text-primary">
-                {dict.coupon || "Coupon"}
+                {dict.coupon || "Promo Code"}
               </span>
             </div>
 
-            {cart.appliedCoupon ? (
+            {promoApplied ? (
               <div className="flex items-center justify-between rounded-xl bg-green-50 px-4 py-3">
                 <div>
-                  <span className="text-sm font-semibold text-green-700">
-                    {cart.appliedCoupon.code}
-                  </span>
-                  <span className="ml-2 text-xs text-green-600">
-                    -{cart.appliedCoupon.discount}%
+                  <div className="flex items-center gap-2">
+                    {promoApplied.type === "referral" ? (
+                      <Gift className="h-4 w-4 text-blue-600" />
+                    ) : (
+                      <Ticket className="h-4 w-4 text-green-600" />
+                    )}
+                    <span className="text-sm font-semibold text-green-700">
+                      {promoApplied.code}
+                    </span>
+                  </div>
+                  <span className="text-xs text-green-600">
+                    {promoApplied.type === "referral"
+                      ? (lang === "vi" ? "Giảm 10.000₫" : "10,000₫ off")
+                      : `-${cart.appliedCoupon?.discount}%`}
                   </span>
                 </div>
                 <button
-                  onClick={handleRemoveCoupon}
+                  onClick={handleApplyPromo}
                   className="text-xs text-red-500 hover:text-red-700 cursor-pointer"
                 >
                   {dict.remove || "Remove"}
@@ -414,17 +409,17 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
                 <div className="flex gap-2">
                   <input
                     type="text"
-                    value={couponInput}
+                    value={promoInput}
                     onChange={(e) => {
-                      setCouponInput(e.target.value);
-                      setCouponError("");
+                      setPromoInput(e.target.value);
+                      setPromoError("");
                     }}
-                    placeholder={dict.enterCoupon || "Enter coupon code"}
+                    placeholder={dict.enterCoupon || "Enter promo or referral code"}
                     className="flex-1 rounded-xl border border-border-primary px-4 py-2.5 text-sm outline-none focus:border-[var(--border-focus)] transition-colors"
                   />
                   <button
-                    onClick={handleApplyCouponCode}
-                    disabled={!couponInput.trim()}
+                    onClick={handleApplyPromo}
+                    disabled={!promoInput.trim()}
                     className="rounded-xl bg-bg-brand-black px-4 py-2.5 text-sm font-medium text-white transition-colors hover:opacity-90 disabled:opacity-50 cursor-pointer"
                   >
                     {dict.apply || "Apply"}
@@ -455,7 +450,10 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
                     ) : availableCoupons.map((coupon) => (
                       <button
                         key={coupon.code}
-                        onClick={() => handleApplyCoupon(coupon)}
+                        onClick={() => {
+                          setPromoInput(coupon.code);
+                          validateAndApplyPromo(coupon.code);
+                        }}
                         className="w-full flex items-center justify-between rounded-xl border border-dashed border-border-secondary p-3 text-left transition-colors hover:bg-bg-secondary cursor-pointer"
                       >
                         <div>
@@ -484,16 +482,26 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
               </>
             )}
 
-            {couponError && (
-              <p className="text-xs text-red-500">{couponError}</p>
+            {promoError && (
+              <p className="text-xs text-red-500 flex items-center gap-1">
+                <AlertTriangle className="w-3 h-3 flex-shrink-0" />{promoError}
+              </p>
             )}
           </div>
 
-          {/* Discount */}
+          {/* Coupon Discount */}
           {(hasVndPricing ? vndDiscountValue > 0 : discount > 0) && (
             <div className="flex justify-between text-sm">
               <span className="text-green-600">{dict.discount || "Discount"}</span>
               <span className="font-medium text-green-600">-{displayDiscount}</span>
+            </div>
+          )}
+
+          {/* Referral Discount */}
+          {promoApplied?.type === "referral" && promoDiscountVnd > 0 && (
+            <div className="flex justify-between text-sm">
+              <span className="text-blue-600">{wt.referralDiscount}</span>
+              <span className="font-medium text-blue-600">-{formatVnd(promoDiscountVnd)}</span>
             </div>
           )}
 
@@ -504,6 +512,51 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
             </span>
             <span className="text-xl font-bold text-text-primary">{displayTotal}</span>
           </div>
+
+          {/* eXU Cashback Preview */}
+          {cashbackVnd > 0 && (
+            <div className="flex items-center gap-3 rounded-xl bg-emerald-50 border border-emerald-100 p-3">
+              <Coins className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+              <div>
+                <p className="text-sm font-medium text-emerald-700">
+                  {lang === "vi" ? "Nhận" : "Earn"} {formatExu(cashbackVnd)}
+                </p>
+                <p className="text-xs text-emerald-600">
+                  {lang === "vi"
+                    ? "2% hoàn tiền vào ví eXU sau khi thanh toán"
+                    : "2% cashback to your eXU wallet after payment"}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* eXU Pay Button */}
+          {wallet && wallet.status === "active" && wallet.availableBalanceVnd > 0 && (
+            <button
+              onClick={() => {
+                if (!user) {
+                  openAuthModal();
+                  return;
+                }
+                // Navigate to checkout with eXU pre-selected
+                localStorage.setItem("saily_checkout_items", JSON.stringify(selectedItems));
+                if (cart.appliedCoupon) {
+                  localStorage.setItem("saily_checkout_coupon", JSON.stringify(cart.appliedCoupon));
+                }
+                if (promoApplied?.type === "referral") {
+                  localStorage.setItem("saily_checkout_referral", promoApplied.code);
+                }
+                localStorage.setItem("saily_checkout_use_exu", "true");
+                window.location.href = `/${lang}/checkout`;
+              }}
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-50 py-3 text-sm font-semibold text-emerald-700 hover:bg-emerald-100 transition-colors cursor-pointer"
+            >
+              <Wallet className="h-4 w-4" />
+              {lang === "vi"
+                ? `Thanh toán bằng ví eXU (${formatVnd(wallet.availableBalanceVnd)})`
+                : `Pay with eXU Wallet (${formatVnd(wallet.availableBalanceVnd)})`}
+            </button>
+          )}
 
           {/* Checkout Button */}
           <button
@@ -543,12 +596,10 @@ function CartItemRow({
   formatPrice: (usd: number) => string;
   dict: Record<string, any>;
 }) {
-  // Use vndPrice directly if available (API cart), otherwise convert from USD
   const displayPrice = item.vndPrice
     ? `${(item.vndPrice * item.quantity).toLocaleString("vi-VN")}₫`
     : formatPrice(item.price * item.quantity);
 
-  // Show original price (before plan discount) as strikethrough
   const hasItemDiscount = item.discount != null && item.discount > 0 && item.originalVndPrice;
   const displayOriginalPrice = hasItemDiscount
     ? `${(item.originalVndPrice! * item.quantity).toLocaleString("vi-VN")}₫`

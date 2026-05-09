@@ -11,7 +11,7 @@ import type {
   PlansByDestinationResponse,
 } from "./api";
 import type { Locale } from "./i18n-config";
-import { useAuth } from "./auth";
+import { useAuth, authFetch } from "./auth";
 import {
   getCart as getLocalCart,
   addToCart as addToLocalCart,
@@ -384,6 +384,9 @@ export function convertUsdToVnd(usdAmount: number, rate: number): number {
 export function formatVnd(amount: number): string {
   return amount.toLocaleString("vi-VN") + "₫";
 }
+export function formatExu(amount: number): string {
+  return amount.toLocaleString("vi-VN") + " eXU";
+}
 
 // ===== Why Choose Us Hooks =====
 
@@ -596,13 +599,9 @@ export function useCreateOrder() {
 
   return useMutation({
     mutationFn: async (input: CreateOrderInput) => {
-      const headers: Record<string, string> = { "Content-Type": "application/json" };
-      if (token) {
-        headers["Authorization"] = `Bearer ${token}`;
-      }
-      const res = await fetch(`${API_BASE_URL}/api/v1/orders`, {
+      const res = await authFetch(`${API_BASE_URL}/api/v1/orders`, token, {
         method: "POST",
-        headers,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(input),
       });
       if (!res.ok) throw new Error("Failed to create order");
@@ -619,13 +618,9 @@ export function useCreateOrderItem() {
 
   return useMutation({
     mutationFn: async (input: CreateOrderItemInput) => {
-      const headers: Record<string, string> = { "Content-Type": "application/json" };
-      if (token) {
-        headers["Authorization"] = `Bearer ${token}`;
-      }
-      const res = await fetch(`${API_BASE_URL}/api/v1/order-items`, {
+      const res = await authFetch(`${API_BASE_URL}/api/v1/order-items`, token, {
         method: "POST",
-        headers,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(input),
       });
       if (!res.ok) throw new Error("Failed to create order item");
@@ -641,7 +636,7 @@ export interface CheckoutPayload {
   paymentMethod: string;
   paymentId: string;
   currency: string;
-  items: { planId: number; quantity: number }[];
+  items: { planId: number; quantity: number; periodNum?: number }[];
   couponCode: string;
   referralCode?: string;
   useWalletAmountVnd?: number;
@@ -652,7 +647,7 @@ export interface CheckoutResponse {
   orderNumber: string;
 }
 
-// ===== eXu Wallet Types =====
+// ===== eXU Wallet Types =====
 
 export type WalletTransactionType =
   | "order_cashback"
@@ -757,16 +752,10 @@ export function useCheckout() {
   return useMutation({
     mutationFn: async (payload: CheckoutPayload): Promise<CheckoutResponse> => {
       const { token, ...body } = payload;
-      const headers: Record<string, string> = {
-        "Content-Type": "application/json",
-      };
-      if (token) {
-        headers["Authorization"] = `Bearer ${token}`;
-      }
 
-      const res = await fetch(`${API_BASE_URL}/api/v1/payment/plan/checkout`, {
+      const res = await authFetch(`${API_BASE_URL}/api/v1/payment/plan/checkout`, token, {
         method: "POST",
-        headers,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
 
@@ -787,13 +776,10 @@ export function useOrderByNumber(orderNumber: string, enabled: boolean) {
   return useQuery({
     queryKey: ["order-by-number", orderNumber],
     queryFn: async ({ signal }): Promise<OrderResponse> => {
-      const headers: Record<string, string> = {};
-      if (token) {
-        headers["Authorization"] = `Bearer ${token}`;
-      }
-      const res = await fetch(
+      const res = await authFetch(
         `${API_BASE_URL}/api/v1/orders/my/by-number/${orderNumber}`,
-        { headers, signal }
+        token,
+        { signal }
       );
       if (!res.ok) throw new Error(`Failed to fetch order: ${res.status}`);
       return res.json();
@@ -824,6 +810,7 @@ interface ApiCartItemPlan {
   vndPrice: number;
   currency: string;
   discount?: number;
+  isAbleMultidate?: boolean;
   destination?: {
     id: number;
     name: string;
@@ -839,6 +826,7 @@ interface ApiCartItem {
   planId: number;
   plan: ApiCartItemPlan;
   quantity: number;
+  periodNum?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -846,9 +834,7 @@ interface ApiCartItem {
 // ===== Cart API Functions =====
 
 async function fetchApiCart(token: string): Promise<ApiCartItem[]> {
-  const res = await fetch(`${API_BASE_URL}/api/v1/carts`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  const res = await authFetch(`${API_BASE_URL}/api/v1/carts`, token);
   if (!res.ok) throw new Error(`Failed to fetch cart: ${res.status}`);
   return res.json();
 }
@@ -856,15 +842,13 @@ async function fetchApiCart(token: string): Promise<ApiCartItem[]> {
 async function addApiCartItem(
   token: string,
   planId: number,
-  quantity: number
+  quantity: number,
+  periodNum?: number
 ): Promise<ApiCartItem> {
-  const res = await fetch(`${API_BASE_URL}/api/v1/carts`, {
+  const res = await authFetch(`${API_BASE_URL}/api/v1/carts`, token, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ planId, quantity }),
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ planId, quantity, ...(periodNum ? { periodNum } : {}) }),
   });
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
@@ -878,12 +862,9 @@ async function updateApiCartItem(
   cartItemId: number,
   quantity: number
 ): Promise<ApiCartItem> {
-  const res = await fetch(`${API_BASE_URL}/api/v1/carts/${cartItemId}`, {
+  const res = await authFetch(`${API_BASE_URL}/api/v1/carts/${cartItemId}`, token, {
     method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ quantity }),
   });
   if (!res.ok) throw new Error(`Failed to update cart item: ${res.status}`);
@@ -894,9 +875,8 @@ async function deleteApiCartItem(
   token: string,
   cartItemId: number
 ): Promise<void> {
-  const res = await fetch(`${API_BASE_URL}/api/v1/carts/${cartItemId}`, {
+  const res = await authFetch(`${API_BASE_URL}/api/v1/carts/${cartItemId}`, token, {
     method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` },
   });
   if (!res.ok) throw new Error(`Failed to remove cart item: ${res.status}`);
 }
@@ -927,21 +907,26 @@ export function useCart() {
         const rawVndPrice = item.plan?.vndPrice || 0;
         const planDiscount = item.plan?.discount;
         const hasDiscount = planDiscount != null && planDiscount > 0;
+        // For multidate plans, multiply per-day price by periodNum to get total price
+        const periodNum = item.periodNum || 1;
+        const isMultidate = item.plan?.isAbleMultidate || (item.periodNum != null && item.periodNum > 1);
+        const dayMultiplier = isMultidate ? periodNum : 1;
+        const totalRawVndPrice = rawVndPrice * dayMultiplier;
         const discountedVndPrice = hasDiscount
-          ? roundVndToThousands(rawVndPrice * (1 - planDiscount! / 100))
-          : rawVndPrice;
+          ? roundVndToThousands(totalRawVndPrice * (1 - planDiscount! / 100))
+          : totalRawVndPrice;
         return {
           id: String(item.planId),
           name: item.plan?.name || `Plan #${item.planId}`,
-          description: `${item.plan?.dataMb ? dataLabel : "?"} / ${item.plan?.durationDays || "?"} days`,
+          description: `${item.plan?.dataMb ? dataLabel : "?"} / ${(item.periodNum ?? item.plan?.durationDays) || "?"} days`,
           price: 0,
           quantity: item.quantity,
           destination: item.plan?.destination?.name,
           dataMb: mb,
-          durationDays: item.plan?.durationDays,
+          durationDays: item.periodNum ?? item.plan?.durationDays,
           flagUrl: item.plan?.destination?.flagUrl,
           vndPrice: discountedVndPrice,
-          ...(hasDiscount ? { originalVndPrice: rawVndPrice, discount: planDiscount } : {}),
+          ...(hasDiscount ? { originalVndPrice: totalRawVndPrice, discount: planDiscount } : {}),
           _apiId: item.id,
         };
       }),
@@ -955,7 +940,7 @@ export function useCart() {
   const addItem = useCallback(
     async (item: Omit<CartItem, "quantity">, quantity = 1) => {
       if (isLoggedIn) {
-        await addApiCartItem(token!, Number(item.id), quantity);
+        await addApiCartItem(token!, Number(item.id), quantity, item.durationDays);
         invalidateApiCart();
       } else {
         addToLocalCart(item, quantity);
@@ -1063,10 +1048,7 @@ export function useMyOrders() {
     queryKey: ["my-orders", token],
     enabled: !!token,
     queryFn: async ({ signal }): Promise<MyOrder[]> => {
-      const res = await fetch(`${API_BASE_URL}/api/v1/orders/my/list`, {
-        headers: { Authorization: `Bearer ${token}` },
-        signal,
-      });
+      const res = await authFetch(`${API_BASE_URL}/api/v1/orders/my/list`, token, { signal });
       if (!res.ok) throw new Error(`Failed to fetch orders: ${res.status}`);
       const json: MyOrdersResponse = await res.json();
       return json.data;
@@ -1122,10 +1104,7 @@ export function useEsimDataUsage(esimId: number | null) {
     queryKey: ["esim-data-usage", esimId],
     enabled: !!token && !!esimId,
     queryFn: async ({ signal }): Promise<EsimDataUsage> => {
-      const res = await fetch(`${API_BASE_URL}/api/v1/esims/my/${esimId}/data-usage`, {
-        headers: { Authorization: `Bearer ${token}` },
-        signal,
-      });
+      const res = await authFetch(`${API_BASE_URL}/api/v1/esims/my/${esimId}/data-usage`, token, { signal });
       if (!res.ok) throw new Error(`Failed to fetch data usage: ${res.status}`);
       return res.json();
     },
@@ -1139,10 +1118,7 @@ export function useMyEsims() {
     queryKey: ["my-esims", token],
     enabled: !!token,
     queryFn: async ({ signal }): Promise<MyEsim[]> => {
-      const res = await fetch(`${API_BASE_URL}/api/v1/esims/my/list`, {
-        headers: { Authorization: `Bearer ${token}` },
-        signal,
-      });
+      const res = await authFetch(`${API_BASE_URL}/api/v1/esims/my/list`, token, { signal });
       if (!res.ok) throw new Error(`Failed to fetch eSIMs: ${res.status}`);
       const json: MyEsimsResponse = await res.json();
       return json.data;
@@ -1150,37 +1126,37 @@ export function useMyEsims() {
   });
 }
 
-// ===== eXu Wallet Hooks =====
+// ===== eXU Wallet Hooks =====
 
 const WALLET_BASE = "/api/v1/wallets";
 
 /** Vietnamese labels for wallet transaction types */
 const TRANSACTION_LABELS_VI: Record<WalletTransactionType, string> = {
-  order_cashback: "Nhận eXu từ đơn hàng",
-  order_cashback_reversal: "Thu hồi eXu do hoàn đơn",
+  order_cashback: "Nhận eXU từ đơn hàng",
+  order_cashback_reversal: "Thu hồi eXU do hoàn đơn",
   referral_reward: "Thưởng giới thiệu bạn bè",
   referral_reward_reversal: "Thu hồi thưởng giới thiệu",
   refund_to_wallet: "Hoàn tiền vào ví",
-  manual_credit: "Admin cộng eXu",
-  manual_debit: "Admin trừ eXu",
+  manual_credit: "Admin cộng eXU",
+  manual_debit: "Admin trừ eXU",
   manual_cancel: "Admin hủy số dư",
-  redemption_capture: "Dùng eXu thanh toán",
-  redemption_release: "Hoàn trả eXu (đơn hàng thất bại)",
-  expiry_debit: "eXu hết hạn",
+  redemption_capture: "Dùng eXU thanh toán",
+  redemption_release: "Hoàn trả eXU (đơn hàng thất bại)",
+  expiry_debit: "eXU hết hạn",
 };
 
 const TRANSACTION_LABELS_EN: Record<WalletTransactionType, string> = {
-  order_cashback: "eXu cashback from order",
-  order_cashback_reversal: "eXu reversed (refund)",
+  order_cashback: "eXU cashback from order",
+  order_cashback_reversal: "eXU reversed (refund)",
   referral_reward: "Referral reward",
   referral_reward_reversal: "Referral reward reversed",
   refund_to_wallet: "Refund to wallet",
   manual_credit: "Admin credit",
   manual_debit: "Admin debit",
   manual_cancel: "Admin cancelled",
-  redemption_capture: "eXu spent on order",
-  redemption_release: "eXu released (order failed)",
-  expiry_debit: "eXu expired",
+  redemption_capture: "eXU spent on order",
+  redemption_release: "eXU released (order failed)",
+  expiry_debit: "eXU expired",
 };
 
 export function getTransactionLabel(type: WalletTransactionType, lang: string): string {
@@ -1193,10 +1169,7 @@ export function useWalletMe() {
     queryKey: ["wallet-me", token],
     enabled: !!token,
     queryFn: async ({ signal }): Promise<WalletMeResponse> => {
-      const res = await fetch(`${API_BASE_URL}${WALLET_BASE}/me`, {
-        headers: { Authorization: `Bearer ${token}` },
-        signal,
-      });
+      const res = await authFetch(`${API_BASE_URL}${WALLET_BASE}/me`, token, { signal });
       if (!res.ok) throw new Error(`Failed to fetch wallet: ${res.status}`);
       return res.json();
     },
@@ -1210,12 +1183,10 @@ export function useWalletTransactions(limit = 50) {
     queryKey: ["wallet-transactions", token, limit],
     enabled: !!token,
     queryFn: async ({ signal }): Promise<WalletTransaction[]> => {
-      const res = await fetch(
+      const res = await authFetch(
         `${API_BASE_URL}${WALLET_BASE}/me/transactions?limit=${limit}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          signal,
-        }
+        token,
+        { signal }
       );
       if (!res.ok) throw new Error(`Failed to fetch transactions: ${res.status}`);
       return res.json();
@@ -1229,10 +1200,7 @@ export function useReferralProfile() {
     queryKey: ["referral-profile", token],
     enabled: !!token,
     queryFn: async ({ signal }): Promise<ReferralProfileResponse> => {
-      const res = await fetch(`${API_BASE_URL}${WALLET_BASE}/me/referral`, {
-        headers: { Authorization: `Bearer ${token}` },
-        signal,
-      });
+      const res = await authFetch(`${API_BASE_URL}${WALLET_BASE}/me/referral`, token, { signal });
       if (!res.ok) throw new Error(`Failed to fetch referral: ${res.status}`);
       return res.json();
     },
