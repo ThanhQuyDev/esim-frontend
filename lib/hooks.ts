@@ -1206,3 +1206,25 @@ export function useReferralProfile() {
     },
   });
 }
+
+export function useUpdateReferralCode() {
+  const { token } = useAuth();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (code: string): Promise<ReferralProfileResponse> => {
+      const res = await authFetch(`${API_BASE_URL}${WALLET_BASE}/me/referral`, token, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || `Failed to update referral code: ${res.status}`);
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["referral-profile"] });
+    },
+  });
+}

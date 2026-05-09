@@ -42,6 +42,15 @@ export interface WalletDict {
   copyLink: string;
   shareVia: string;
   referralInactive: string;
+  // Edit referral code
+  editReferralCode: string;
+  editReferralCodeDesc: string;
+  editReferralPlaceholder: string;
+  editReferralSave: string;
+  editReferralCancel: string;
+  editReferralSuccess: string;
+  editReferralValidation: string;
+  editReferralDuplicate: string;
   howItWorks: string;
   howItWorksDesc: string;
   howStep1: string;
@@ -117,6 +126,14 @@ export const walletTranslations: Record<"en" | "vi", WalletDict> = {
     copyLink: "Copy Link",
     shareVia: "Share via",
     referralInactive: "Your referral code is currently inactive.",
+    editReferralCode: "Edit Referral Code",
+    editReferralCodeDesc: "Customize your referral code. Must be exactly 10 alphanumeric characters.",
+    editReferralPlaceholder: "e.g. MYCODE1234",
+    editReferralSave: "Save",
+    editReferralCancel: "Cancel",
+    editReferralSuccess: "Referral code updated successfully!",
+    editReferralValidation: "Code must be exactly 10 alphanumeric characters (A-Z, 0-9).",
+    editReferralDuplicate: "This code is already taken. Please choose another.",
     howItWorks: "How It Works",
     howItWorksDesc: "Share your referral code with friends and earn eXU rewards when they make their first purchase.",
     howStep1: "Share your code",
@@ -188,6 +205,14 @@ export const walletTranslations: Record<"en" | "vi", WalletDict> = {
     copyLink: "Sao chép link",
     shareVia: "Chia sẻ qua",
     referralInactive: "Mã giới thiệu của bạn hiện không hoạt động.",
+    editReferralCode: "Đổi mã giới thiệu",
+    editReferralCodeDesc: "Tùy chỉnh mã giới thiệu của bạn. Phải đúng 10 ký tự chữ hoặc số.",
+    editReferralPlaceholder: "VD: MYCODE1234",
+    editReferralSave: "Lưu",
+    editReferralCancel: "Hủy",
+    editReferralSuccess: "Đã cập nhật mã giới thiệu thành công!",
+    editReferralValidation: "Mã phải đúng 10 ký tự chữ hoặc số (A-Z, 0-9).",
+    editReferralDuplicate: "Mã này đã được sử dụng. Vui lòng chọn mã khác.",
     howItWorks: "Cách thức hoạt động",
     howItWorksDesc: "Chia sẻ mã giới thiệu với bạn bè và nhận thưởng eXU khi họ mua hàng lần đầu.",
     howStep1: "Chia sẻ mã",

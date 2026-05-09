@@ -20,12 +20,17 @@ import {
   Share2,
   Link2,
   MessageCircle,
+  Pencil,
+  Check,
+  X,
+  Loader2,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import {
   useWalletMe,
   useWalletTransactions,
   useReferralProfile,
+  useUpdateReferralCode,
   getTransactionLabel,
   type WalletTransaction,
 } from "@/lib/hooks";
@@ -367,7 +372,12 @@ function WalletTab({ t, lang }: { t: WalletDict; lang: string }) {
 
 function ReferralTab({ t, lang }: { t: WalletDict; lang: string }) {
   const { data: referral, isLoading, error, refetch } = useReferralProfile();
+  const updateReferral = useUpdateReferralCode();
   const [copied, setCopied] = useState<"code" | "link" | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editCode, setEditCode] = useState("");
+  const [editError, setEditError] = useState("");
+  const [editSuccess, setEditSuccess] = useState(false);
 
   const copyToClipboard = async (text: string, field: "code" | "link") => {
     try {
@@ -377,6 +387,35 @@ function ReferralTab({ t, lang }: { t: WalletDict; lang: string }) {
     } catch {
       /* ignore */
     }
+  };
+
+  const validateCode = (code: string): boolean => {
+    return /^[A-Z0-9]{10}$/.test(code);
+  };
+
+  const handleSaveCode = () => {
+    const normalized = editCode.toUpperCase().trim();
+    if (!validateCode(normalized)) {
+      setEditError(t.editReferralValidation);
+      return;
+    }
+    setEditError("");
+    updateReferral.mutate(normalized, {
+      onSuccess: () => {
+        setIsEditing(false);
+        setEditCode("");
+        setEditSuccess(true);
+        setTimeout(() => setEditSuccess(false), 3000);
+      },
+      onError: (err: Error) => {
+        const msg = err.message || "";
+        if (msg.toLowerCase().includes("duplicate") || msg.toLowerCase().includes("already") || msg.toLowerCase().includes("exists")) {
+          setEditError(t.editReferralDuplicate);
+        } else {
+          setEditError(msg || t.editReferralDuplicate);
+        }
+      },
+    });
   };
 
   if (isLoading) {
@@ -426,26 +465,103 @@ function ReferralTab({ t, lang }: { t: WalletDict; lang: string }) {
         )}
 
         <div className="p-6 space-y-4">
-          {/* Copy Code */}
-          <div className="flex items-center gap-3">
-            <div className="flex-1 bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
-              <p className="text-xs text-gray-400 mb-0.5">{t.referralCode}</p>
-              <p className="text-sm font-mono font-medium text-gray-900">{referral.code}</p>
+          {/* Success message */}
+          {editSuccess && (
+            <div className="flex items-center gap-2 rounded-xl bg-emerald-50 border border-emerald-100 p-3">
+              <Check className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+              <p className="text-sm text-emerald-700">{t.editReferralSuccess}</p>
             </div>
-            <button
-              onClick={() => copyToClipboard(referral.code, "code")}
-              className="flex items-center gap-1.5 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors flex-shrink-0"
-            >
-              {copied === "code" ? (
-                <>{t.copied}</>
-              ) : (
-                <>
-                  <Copy className="w-3.5 h-3.5" />
-                  {t.copyCode}
-                </>
+          )}
+
+          {/* Copy Code + Edit */}
+          {!isEditing ? (
+            <div className="flex items-center gap-3">
+              <div className="flex-1 bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
+                <p className="text-xs text-gray-400 mb-0.5">{t.referralCode}</p>
+                <p className="text-sm font-mono font-medium text-gray-900">{referral.code}</p>
+              </div>
+              <button
+                onClick={() => copyToClipboard(referral.code, "code")}
+                className="flex items-center gap-1.5 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors flex-shrink-0"
+              >
+                {copied === "code" ? (
+                  <>{t.copied}</>
+                ) : (
+                  <>
+                    <Copy className="w-3.5 h-3.5" />
+                    {t.copyCode}
+                  </>
+                )}
+              </button>
+              <button
+                onClick={() => {
+                  setIsEditing(true);
+                  setEditCode(referral.code);
+                  setEditError("");
+                  setEditSuccess(false);
+                }}
+                className="flex items-center gap-1.5 px-3 py-2.5 bg-gray-100 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-200 transition-colors flex-shrink-0"
+                title={t.editReferralCode}
+              >
+                <Pencil className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <div>
+                <p className="text-sm font-medium text-gray-700 mb-1">{t.editReferralCode}</p>
+                <p className="text-xs text-gray-500 mb-2">{t.editReferralCodeDesc}</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={editCode}
+                  onChange={(e) => {
+                    const val = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 10);
+                    setEditCode(val);
+                    setEditError("");
+                  }}
+                  placeholder={t.editReferralPlaceholder}
+                  maxLength={10}
+                  className={`flex-1 rounded-xl border px-4 py-2.5 text-sm font-mono outline-none transition-colors ${
+                    editError ? "border-red-400" : "border-border-primary focus:border-blue-400"
+                  }`}
+                />
+                <button
+                  onClick={handleSaveCode}
+                  disabled={updateReferral.isPending || editCode.length !== 10}
+                  className="flex items-center gap-1.5 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 flex-shrink-0"
+                >
+                  {updateReferral.isPending ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <Check className="w-3.5 h-3.5" />
+                  )}
+                  {t.editReferralSave}
+                </button>
+                <button
+                  onClick={() => {
+                    setIsEditing(false);
+                    setEditCode("");
+                    setEditError("");
+                  }}
+                  className="flex items-center gap-1.5 px-3 py-2.5 bg-gray-100 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-200 transition-colors flex-shrink-0"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className={`text-xs ${editCode.length === 10 ? "text-emerald-600" : "text-gray-400"}`}>
+                  {editCode.length}/10
+                </span>
+              </div>
+              {editError && (
+                <p className="text-xs text-red-500 flex items-center gap-1">
+                  <AlertTriangle className="w-3 h-3 flex-shrink-0" />{editError}
+                </p>
               )}
-            </button>
-          </div>
+            </div>
+          )}
 
           {/* Referral Link */}
           <div className="flex items-center gap-3">
