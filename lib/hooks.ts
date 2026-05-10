@@ -923,7 +923,7 @@ export function useCart() {
           quantity: item.quantity,
           destination: item.plan?.destination?.name,
           dataMb: mb,
-          durationDays: item.periodNum ?? item.plan?.durationDays,
+          durationDays: item.plan?.isAbleMultidate ? (item.periodNum ?? item.plan?.durationDays) : undefined,
           flagUrl: item.plan?.destination?.flagUrl,
           vndPrice: discountedVndPrice,
           ...(hasDiscount ? { originalVndPrice: totalRawVndPrice, discount: planDiscount } : {}),
