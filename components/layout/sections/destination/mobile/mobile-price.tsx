@@ -14,6 +14,7 @@ interface MobilePriceProps {
   isFixed: boolean;
   planLabel: string;
   dataLabel: string;
+  greenBoxLine1: string;
 }
 
 const GreenCheck = () => (
@@ -37,6 +38,7 @@ export function MobilePrice({
   isFixed,
   planLabel,
   dataLabel,
+  greenBoxLine1,
 }: MobilePriceProps) {
   // Calculate prices
   let totalPrice = 0;
@@ -101,7 +103,7 @@ export function MobilePrice({
           <GreenCheck />
           <span
             dangerouslySetInnerHTML={{
-              __html: dict.greenBox.line1.replace("{data}", dataLabel),
+              __html: greenBoxLine1,
             }}
           />
         </div>

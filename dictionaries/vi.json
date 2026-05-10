@@ -902,7 +902,9 @@
       "refund": "Cam kết hoàn tiền 100%"
     },
     "greenBox": {
-      "line1": "<strong>{data}</strong> tốc độ cao — sau đó tự động về 1 Mbps không giới hạn",
+      "line1": "<strong>{data}</strong> tốc độ cao — sau đó giảm tốc độ xuống {fupSpeed} Mbps không giới hạn",
+      "line1Fixed": "<strong>{data} / {days} ngày</strong> tốc độ cao — sau đó cắt",
+      "line1UnlimitedHigh": "Không giới hạn data tốc độ <strong>{fupSpeed} Mbps</strong>",
       "line2": "Bảo mật tích hợp — vượt tường lửa, chặn quảng cáo độc hại",
       "line3": "Hỗ trợ TikTok, Facebook, Google, YouTube, Zalo"
     },

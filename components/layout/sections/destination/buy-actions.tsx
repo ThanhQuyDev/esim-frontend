@@ -31,19 +31,23 @@ export function BuyActions({ selectedPlan, days, quantity, isFixed, dict, lang, 
 
   const handleAddToCart = async () => {
     if (!selectedPlan) return;
+    const isMultidate = !!selectedPlan.isAbleMultidate;
     const unitPrice = isFixed ? getFixedPrice(selectedPlan) : calcTotalPrice(selectedPlan, days);
     const unitVndPrice = isFixed ? getFixedVndPrice(selectedPlan) : calcTotalVndPrice(selectedPlan, days);
-    const originalVndPrice = isFixed ? Number(selectedPlan.vndPrice) : Number(selectedPlan.vndPrice) * days;
+    const originalVndPrice = isFixed ? Number(selectedPlan.vndPrice) : (isMultidate ? Number(selectedPlan.vndPrice) * days : Number(selectedPlan.vndPrice));
+    // Only pass durationDays (periodNum) for isAbleMultidate plans
+    const cartDurationDays = isMultidate ? days : undefined;
+    const displayDays = isFixed ? selectedPlan.durationDays : (isMultidate ? days : selectedPlan.durationDays);
     await addItem(
       {
         id: String(selectedPlan.id),
         name: selectedPlan.name || `eSIM ${destination || ""}`.trim(),
-        description: `${selectedPlan.dataMb >= 1024 ? `${parseFloat((selectedPlan.dataMb / 1024).toFixed(1))} GB` : `${selectedPlan.dataMb} MB`} / ${isFixed ? selectedPlan.durationDays : days} days`,
+        description: `${selectedPlan.dataMb >= 1024 ? `${parseFloat((selectedPlan.dataMb / 1024).toFixed(1))} GB` : `${selectedPlan.dataMb} MB`} / ${displayDays} days`,
         price: unitPrice,
         vndPrice: unitVndPrice,
         destination: destination,
         dataMb: Number(selectedPlan.dataMb),
-        durationDays: isFixed ? selectedPlan.durationDays : days,
+        durationDays: cartDurationDays,
         ...(selectedPlan.discount != null && selectedPlan.discount > 0 ? { discount: selectedPlan.discount, originalVndPrice } : {}),
       },
       quantity

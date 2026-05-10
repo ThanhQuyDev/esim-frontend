@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import type { Plan, PlansByDestinationResponse } from "@/lib/api";
 import { usePlansBySlug, usePlansByRegionSlug, useRegionBySlug, useDestinationBySlug } from "@/lib/hooks";
+import { hasMultidatePlan } from "./types";
 import type { DestinationPlansProps } from "./types";
 import { ProductHero } from "./product-hero";
 import { ProductInfo } from "./product-info";
@@ -11,6 +12,7 @@ import { PriceDisplay, GreenBox } from "./price-display";
 import { PlanTabs } from "./plan-tabs";
 import { PlanConfig } from "./plan-config";
 import { BuyActions } from "./buy-actions";
+import { DesktopStickyBar } from "./desktop-sticky-bar";
 import { MobileDestinationPlans } from "./mobile-destination-plans";
 
 const EMPTY_PLANS: PlansByDestinationResponse = {
@@ -43,24 +45,50 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [days, setDays] = useState(7);
   const [quantity, setQuantity] = useState(1);
+  const desktopCtaRef = useRef<HTMLDivElement>(null);
 
-  // Determine if the selected plan is a fixed-duration plan (dataPlans)
+  // Determine if the selected plan is a fixed-duration plan (dataPlans) — hides day selector
   const isFixed = useMemo(() => {
     if (!selectedPlan) return false;
     return plans.dataPlans.some((p) => p.id === selectedPlan.id);
   }, [selectedPlan, plans]);
 
-  // Determine if the plan supports flexible days (unlimited plans)
+  // Flexible days when the selected GB group has any isAbleMultidate plan
   const isFlexibleDays = useMemo(() => {
     if (!selectedPlan) return false;
-    return !plans.dataPlans.some((p) => p.id === selectedPlan.id);
+    if (selectedPlan.isAbleMultidate) return true;
+    // Check if the same dataMb group in slowUnlimited has any multidate plan
+    if (plans.slowUnlimited.some((p) => p.id === selectedPlan.id)) {
+      return hasMultidatePlan(plans.slowUnlimited, selectedPlan.dataMb);
+    }
+    // Check fastUnlimited
+    if (plans.fastUnlimited.some((p) => p.id === selectedPlan.id)) {
+      return hasMultidatePlan(plans.fastUnlimited, selectedPlan.dataMb);
+    }
+    return false;
   }, [selectedPlan, plans]);
 
-  // Available days for fixed plans
+  // Available days for non-flexible plans (when isAbleMultidate = false and not fixed)
   const availableDays = useMemo(() => {
     if (!selectedPlan) return [];
-    const matching = plans.dataPlans.filter((p) => p.dataMb === selectedPlan.dataMb);
-    return Array.from(new Set(matching.map((p) => p.durationDays))).sort((a, b) => a - b);
+    if (selectedPlan.isAbleMultidate) return []; // flexible plans use calendar
+    // For dataPlans: group by dataMb
+    if (plans.dataPlans.some((p) => p.id === selectedPlan.id)) {
+      const matching = plans.dataPlans.filter((p) => p.dataMb === selectedPlan.dataMb);
+      return Array.from(new Set(matching.map((p) => p.durationDays))).sort((a, b) => a - b);
+    }
+    // For dailyUnlimited: group by fupSpeed
+    if (plans.dailyUnlimited.some((p) => p.id === selectedPlan.id)) {
+      const matching = plans.dailyUnlimited.filter((p) => p.fupSpeed === selectedPlan.fupSpeed);
+      return Array.from(new Set(matching.map((p) => p.durationDays))).sort((a, b) => a - b);
+    }
+    // For slowUnlimited/fastUnlimited without isAbleMultidate: group by dataMb
+    const allUnlimited = [...plans.slowUnlimited, ...plans.fastUnlimited];
+    if (allUnlimited.some((p) => p.id === selectedPlan.id)) {
+      const matching = allUnlimited.filter((p) => p.dataMb === selectedPlan.dataMb);
+      return Array.from(new Set(matching.map((p) => p.durationDays))).sort((a, b) => a - b);
+    }
+    return [];
   }, [selectedPlan, plans]);
 
   // Auto-select first plan
@@ -74,7 +102,8 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
   // Handle plan selection
   const handleSelectPlan = (plan: Plan) => {
     setSelectedPlan(plan);
-    if (plans.dataPlans.some((p) => p.id === plan.id)) {
+    // For non-isAbleMultidate plans, sync days to the plan's durationDays
+    if (!plan.isAbleMultidate) {
       setDays(plan.durationDays);
     }
   };
@@ -104,6 +133,39 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
     ? `${selectedPlan.dataMb >= 1024 ? `${parseFloat((selectedPlan.dataMb / 1024).toFixed(1))}GB` : `${selectedPlan.dataMb}MB`}/${dict.daysUnit.toLowerCase()}`
     : "1GB/ngày";
 
+  // Compute GreenBox line1 based on plan category
+  const greenBoxLine1 = useMemo(() => {
+    if (!selectedPlan) return (dict.greenBox as any).line1?.replace("{data}", dataLabel).replace("{fupSpeed}", "1") || "";
+    const fupSpeed = selectedPlan.fupSpeed || "1";
+
+    // Fixed plans (dataPlans) — high speed then cut off
+    if (plans.dataPlans.some((p) => p.id === selectedPlan.id)) {
+      const template = (dict.greenBox as any).line1Fixed || (dict.greenBox as any).line1;
+      // For fixed plans, use raw data amount without "/ngày" suffix
+      const rawData = selectedPlan.dataMb >= 1024
+        ? `${parseFloat((selectedPlan.dataMb / 1024).toFixed(1))}GB`
+        : `${selectedPlan.dataMb}MB`;
+      return template
+        .replace("{data}", rawData)
+        .replace("{days}", String(selectedPlan.durationDays))
+        .replace("{fupSpeed}", fupSpeed);
+    }
+
+    // Unlimited High Speed (dailyUnlimited) — unlimited data at fupSpeed
+    if (plans.dailyUnlimited.some((p) => p.id === selectedPlan.id)) {
+      const template = (dict.greenBox as any).line1UnlimitedHigh || (dict.greenBox as any).line1;
+      return template
+        .replace("{data}", dataLabel)
+        .replace("{fupSpeed}", fupSpeed);
+    }
+
+    // Daily (slowUnlimited) and Unlimited Normal Speed (fastUnlimited) — throttle to fupSpeed
+    const template = (dict.greenBox as any).line1 || "";
+    return template
+      .replace("{data}", dataLabel)
+      .replace("{fupSpeed}", fupSpeed);
+  }, [selectedPlan, plans, dataLabel, dict]);
+
   return (
     <div className="bg-white">
       {/* ── MOBILE VIEW (≤840px) ── */}
@@ -126,6 +188,7 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
           availableDays={availableDays}
           planLabel={planLabel}
           dataLabel={dataLabel}
+          greenBoxLine1={greenBoxLine1}
           region={regionData}
           destinationData={destinationData}
         />
@@ -162,7 +225,7 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
               isFixed={isFixed}
               planLabel={planLabel}
             />
-            <GreenBox dict={dict} dataLabel={dataLabel} />
+            <GreenBox dict={dict} line1Html={greenBoxLine1} />
 
             {isLoading ? (
               <div className="py-4">
@@ -194,17 +257,33 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
               </>
             )}
 
-            <BuyActions
-              selectedPlan={selectedPlan}
-              days={days}
-              quantity={quantity}
-              isFixed={isFixed}
-              dict={dict}
-              lang={lang}
-              destination={(destinationData || destination)?.name}
-            />
+            <div ref={desktopCtaRef}>
+              <BuyActions
+                selectedPlan={selectedPlan}
+                days={days}
+                quantity={quantity}
+                isFixed={isFixed}
+                dict={dict}
+                lang={lang}
+                destination={(destinationData || destination)?.name}
+              />
+            </div>
           </div>
         </div>
+
+        {/* Desktop Sticky Bar */}
+        <DesktopStickyBar
+          selectedPlan={selectedPlan}
+          days={days}
+          quantity={quantity}
+          isFixed={isFixed}
+          dict={dict}
+          lang={lang}
+          destination={(destinationData || destination)?.name}
+          planLabel={planLabel}
+          onQuantityChange={setQuantity}
+          ctaRef={desktopCtaRef}
+        />
       </div>
     </div>
   );

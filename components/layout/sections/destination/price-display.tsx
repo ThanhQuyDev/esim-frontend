@@ -91,7 +91,7 @@ export function PriceDisplay({
 /* ── Green feature box ── */
 interface GreenBoxProps {
   dict: DestinationDict;
-  dataLabel: string;
+  line1Html: string;
 }
 
 const GreenCheck = () => (
@@ -101,12 +101,12 @@ const GreenCheck = () => (
   </svg>
 );
 
-export function GreenBox({ dict, dataLabel }: GreenBoxProps) {
+export function GreenBox({ dict, line1Html }: GreenBoxProps) {
   return (
     <div className="bg-[#f0fdf4] border border-[#bbf7d0] rounded-xl px-3.5 py-[13px] mb-[18px] flex flex-col gap-[9px]">
       <div className="flex items-start gap-[9px] text-sm text-[#166534] leading-normal">
         <GreenCheck />
-        <span dangerouslySetInnerHTML={{ __html: dict.greenBox.line1.replace("{data}", dataLabel) }} />
+        <span dangerouslySetInnerHTML={{ __html: line1Html }} />
       </div>
       <div className="flex items-start gap-[9px] text-sm text-[#166534] leading-normal">
         <GreenCheck />

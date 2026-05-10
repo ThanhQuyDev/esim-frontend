@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import type { Plan } from "@/lib/api";
 import type { DestinationDict, CategorizedPlans } from "../types";
-import { getUniqueDataMb, findBestPlan } from "../types";
+import { getUniqueDataMb, findBestPlan, getUniqueFupSpeeds } from "../types";
 
 interface MobilePlanTabsProps {
   plans: CategorizedPlans;
@@ -167,6 +167,7 @@ export function MobilePlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }
   const [activeSection, setActiveSection] = useState<ActiveSection>("fixed");
   const [dailyGb, setDailyGb] = useState<number>(0);
   const [normalGb, setNormalGb] = useState<number>(0);
+  const [highSpeedFup, setHighSpeedFup] = useState<string>("");
 
   const hasDataPlans = plans.dataPlans.length > 0;
   const hasSlowUnlimited = plans.slowUnlimited.length > 0;
@@ -175,6 +176,7 @@ export function MobilePlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }
   const hasUnlimited = hasFastUnlimited || hasDailyUnlimited;
 
   const uniqueNormalGbs = useMemo(() => getUniqueDataMb(plans.fastUnlimited), [plans.fastUnlimited]);
+  const uniqueHighFupSpeeds = useMemo(() => getUniqueFupSpeeds(plans.dailyUnlimited), [plans.dailyUnlimited]);
 
   // Initialize GB selections
   useEffect(() => {
@@ -190,6 +192,13 @@ export function MobilePlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }
     }
   }, [hasFastUnlimited, uniqueNormalGbs, normalGb]);
 
+  // Initialize highSpeedFup selection
+  useEffect(() => {
+    if (hasDailyUnlimited && highSpeedFup === "" && uniqueHighFupSpeeds.length > 0) {
+      setHighSpeedFup(uniqueHighFupSpeeds[0]);
+    }
+  }, [hasDailyUnlimited, uniqueHighFupSpeeds, highSpeedFup]);
+
   // Re-pick best plan when days change
   useEffect(() => {
     if (activeSection === "daily" && hasSlowUnlimited && dailyGb > 0) {
@@ -198,6 +207,9 @@ export function MobilePlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }
     } else if (activeSection === "unlimited" && speedTab === "normal" && hasFastUnlimited && normalGb > 0) {
       const best = findBestPlan(plans.fastUnlimited, normalGb, days);
       if (best) onSelectPlan(best);
+    } else if (activeSection === "unlimited" && speedTab === "high" && hasDailyUnlimited && highSpeedFup) {
+      const match = plans.dailyUnlimited.find((p) => p.fupSpeed === highSpeedFup && p.durationDays === days);
+      if (match) onSelectPlan(match);
     }
   }, [days]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -353,23 +365,27 @@ export function MobilePlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }
             </div>
           )}
 
-          {/* High Speed pills */}
+          {/* High Speed pills — grouped by fupSpeed, days from PlanConfig */}
           {speedTab === "high" && hasDailyUnlimited && (
             <div className="flex flex-col gap-3 pt-2.5">
-              {plans.dailyUnlimited.map((p, idx) => {
+              {uniqueHighFupSpeeds.map((fup, idx) => {
+                const match = plans.dailyUnlimited.find((p) => p.fupSpeed === fup);
                 const badge =
                   idx === 0
                     ? { type: "pop" as const, label: "Phổ biến" }
-                    : idx === plans.dailyUnlimited.length - 1
+                    : idx === uniqueHighFupSpeeds.length - 1
                     ? { type: "bv" as const, label: "Rẻ nhất" }
                     : undefined;
                 return (
                   <MobileUnlimitedPill
-                    key={p.id}
-                    isSelected={activeSection === "unlimited" && selectedPlan?.id === p.id}
-                    onSelect={() => handleSelectUnlimited(p)}
-                    mainLabel={`${p.durationDays} ngày tốc độ cao`}
-                    hintLabel="5 Mbps không giới hạn"
+                    key={fup}
+                    isSelected={activeSection === "unlimited" && highSpeedFup === fup}
+                    onSelect={() => {
+                      setHighSpeedFup(fup);
+                      if (match) handleSelectUnlimited(match);
+                    }}
+                    mainLabel={`${fup} tốc độ cao`}
+                    hintLabel="Không giới hạn data"
                     badge={badge}
                   />
                 );

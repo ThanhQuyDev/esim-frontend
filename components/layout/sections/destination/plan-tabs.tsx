@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import type { Plan } from "@/lib/api";
 import type { DestinationDict, CategorizedPlans } from "./types";
-import { getUniqueDataMb, findBestPlan } from "./types";
+import { getUniqueDataMb, findBestPlan, getUniqueFupSpeeds } from "./types";
 
 interface PlanTabsProps {
   plans: CategorizedPlans;
@@ -202,6 +202,7 @@ export function PlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }: Plan
   const [activeSection, setActiveSection] = useState<ActiveSection>("fixed");
   const [dailyGb, setDailyGb] = useState<number>(0);
   const [normalGb, setNormalGb] = useState<number>(0);
+  const [highSpeedFup, setHighSpeedFup] = useState<string>("");
 
   const hasDataPlans = plans.dataPlans.length > 0;
   const hasSlowUnlimited = plans.slowUnlimited.length > 0;
@@ -210,6 +211,7 @@ export function PlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }: Plan
   const hasUnlimited = hasFastUnlimited || hasDailyUnlimited;
 
   const uniqueNormalGbs = useMemo(() => getUniqueDataMb(plans.fastUnlimited), [plans.fastUnlimited]);
+  const uniqueHighFupSpeeds = useMemo(() => getUniqueFupSpeeds(plans.dailyUnlimited), [plans.dailyUnlimited]);
 
   // Initialize GB selections
   useEffect(() => {
@@ -225,6 +227,13 @@ export function PlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }: Plan
     }
   }, [hasFastUnlimited, uniqueNormalGbs, normalGb]);
 
+  // Initialize highSpeedFup selection
+  useEffect(() => {
+    if (hasDailyUnlimited && highSpeedFup === "" && uniqueHighFupSpeeds.length > 0) {
+      setHighSpeedFup(uniqueHighFupSpeeds[0]);
+    }
+  }, [hasDailyUnlimited, uniqueHighFupSpeeds, highSpeedFup]);
+
   // When days change externally, re-pick best plan for active section
   useEffect(() => {
     if (activeSection === "daily" && hasSlowUnlimited && dailyGb > 0) {
@@ -233,6 +242,9 @@ export function PlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }: Plan
     } else if (activeSection === "unlimited" && speedTab === "normal" && hasFastUnlimited && normalGb > 0) {
       const best = findBestPlan(plans.fastUnlimited, normalGb, days);
       if (best) onSelectPlan(best);
+    } else if (activeSection === "unlimited" && speedTab === "high" && hasDailyUnlimited && highSpeedFup) {
+      const match = plans.dailyUnlimited.find((p) => p.fupSpeed === highSpeedFup && p.durationDays === days);
+      if (match) onSelectPlan(match);
     }
   }, [days]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -375,19 +387,25 @@ export function PlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }: Plan
             </div>
           )}
 
-          {/* High Speed: dailyUnlimited — simple plan cards */}
+          {/* High Speed: dailyUnlimited — grouped by fupSpeed, days from PlanConfig */}
           {speedTab === "high" && hasDailyUnlimited && (
             <div className="flex flex-wrap gap-2.5">
-              {plans.dailyUnlimited.map((p) => (
-                <UnlimitedPill
-                  key={p.id}
-                  plan={p}
-                  isSelected={activeSection === "unlimited" && selectedPlan?.id === p.id}
-                  onSelect={() => handleSelectUnlimited(p)}
-                  mainLabel={`${p.durationDays} ngày tốc độ cao`}
-                  hintLabel="→ 5 Mbps không giới hạn"
-                />
-              ))}
+              {uniqueHighFupSpeeds.map((fup) => {
+                const match = plans.dailyUnlimited.find((p) => p.fupSpeed === fup);
+                return (
+                  <UnlimitedPill
+                    key={fup}
+                    plan={match || plans.dailyUnlimited[0]}
+                    isSelected={activeSection === "unlimited" && highSpeedFup === fup}
+                    onSelect={() => {
+                      setHighSpeedFup(fup);
+                      if (match) handleSelectUnlimited(match);
+                    }}
+                    mainLabel={`${fup} tốc độ cao`}
+                    hintLabel="→ Không giới hạn data"
+                  />
+                );
+              })}
             </div>
           )}
 

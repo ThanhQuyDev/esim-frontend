@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getRegionBySlug } from "@/lib/api";
+import { getRegionBySlug, getWhyChooseUs } from "@/lib/api";
 import { getDictionary } from "@/lib/dictionaries";
 import { getSeoMetadata } from "@/lib/seo";
 import { DestinationPlans } from "@/components/layout/sections/destination";
@@ -44,9 +44,10 @@ export async function generateMetadata({
 }
 
 export default async function RegionPage({ params }: RegionPageProps) {
-  const [dict, region] = await Promise.all([
+  const [dict, region, whyChooseUsRes] = await Promise.all([
     getDictionary(params.lang),
     getRegionBySlug(params.slug, params.lang),
+    getWhyChooseUs({ lang: params.lang }),
   ]);
 
   if (!region) {
@@ -77,7 +78,7 @@ export default async function RegionPage({ params }: RegionPageProps) {
         initialRegion={region}
       />
       <LazyHowItWorksSection dict={dict.howItWorks} />
-      <LazyFeaturesSection dict={dict.whyChoose} lang={params.lang} />
+      <LazyFeaturesSection dict={dict.whyChoose} lang={params.lang} features={whyChooseUsRes.data} />
       <LazyEsimComparison dict={dict.whatIsEsimPage.comparison} />
       <LazyTestimonialsSection dict={dict.testimonials} />
       <LazyDownloadAppSection dict={dict.downloadApp} />

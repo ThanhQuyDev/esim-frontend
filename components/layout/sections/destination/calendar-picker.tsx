@@ -15,6 +15,8 @@ interface CalendarPickerProps {
   lang: string;
 }
 
+type SelectionStep = "start" | "end";
+
 export function CalendarPicker({
   days,
   onDaysChange,
@@ -31,39 +33,61 @@ export function CalendarPicker({
     return d;
   }, []);
 
-  // Selected end date (user picks this)
+  // Two-step selection: start date then end date
+  const [step, setStep] = useState<SelectionStep>("start");
+  const [startDate, setStartDate] = useState<Date>(today);
   const [endDate, setEndDate] = useState<Date>(() => addDays(today, days));
 
-  // Sync endDate when days prop changes externally (quick day pills)
+  // Sync when days prop changes externally (quick day pills)
   useEffect(() => {
+    setStartDate(today);
     setEndDate(addDays(today, days));
   }, [days, today]);
 
-  // Highlight range from today to endDate
+  // Reset step when popover opens
+  useEffect(() => {
+    if (open) {
+      setStep("start");
+    }
+  }, [open]);
+
+  // Highlight range between start and end
   const highlightedDays = useMemo(() => {
-    if (!endDate) return [];
-    return eachDayOfInterval({ start: addDays(today, 1), end: endDate });
-  }, [today, endDate]);
+    if (!startDate || !endDate || endDate <= startDate) return [];
+    return eachDayOfInterval({ start: addDays(startDate, 1), end: addDays(endDate, -1) });
+  }, [startDate, endDate]);
 
   const handleSelect = (selected: Date | undefined) => {
     if (!selected) return;
-    const diff = differenceInDays(selected, today);
-    if (diff > 0) {
-      setEndDate(selected);
+
+    if (step === "start") {
+      // Selecting start date
+      setStartDate(selected);
+      // Reset end date to start + current days
+      setEndDate(addDays(selected, days));
+      setStep("end");
+    } else {
+      // Selecting end date — must be after start date
+      if (selected > startDate) {
+        setEndDate(selected);
+      }
     }
   };
 
   const handleConfirm = () => {
-    const diff = differenceInDays(endDate, today);
+    const diff = differenceInDays(endDate, startDate);
     if (diff > 0) {
       onDaysChange(diff);
     }
     setOpen(false);
   };
 
-  const selectedDays = differenceInDays(endDate, today);
+  const selectedDays = differenceInDays(endDate, startDate);
 
-  const rangeText = `${today.toLocaleDateString(lang)} → ${endDate.toLocaleDateString(lang)} (${selectedDays} ${dict.daysUnit.toLowerCase()})`;
+  const formatDate = (date: Date) => date.toLocaleDateString(lang);
+  const rangeText = `${formatDate(startDate)} → ${formatDate(endDate)} (${selectedDays} ${dict.daysUnit.toLowerCase()})`;
+
+  const stepLabel = step === "start" ? dict.calSelectStart : dict.calSelectEnd;
 
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
@@ -85,22 +109,52 @@ export function CalendarPicker({
           sideOffset={8}
           align="end"
         >
-          <div className="text-xs text-[#6b7280] mb-2 text-center">
-            {dict.calSelectEnd}
+          {/* Step indicator */}
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <span
+              className={`text-xs font-semibold px-2.5 py-1 rounded-full transition-colors ${
+                step === "start"
+                  ? "bg-[#111] text-white"
+                  : "bg-[#f3f4f6] text-[#6b7280] cursor-pointer hover:bg-[#e5e7eb]"
+              }`}
+              onClick={() => setStep("start")}
+            >
+              {dict.calSelectStart}
+            </span>
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M4 2l4 4-4 4" stroke="#9ca3af" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <span
+              className={`text-xs font-semibold px-2.5 py-1 rounded-full transition-colors ${
+                step === "end"
+                  ? "bg-[#111] text-white"
+                  : "bg-[#f3f4f6] text-[#6b7280] cursor-pointer hover:bg-[#e5e7eb]"
+              }`}
+              onClick={() => step === "end" || startDate ? setStep("end") : undefined}
+            >
+              {dict.calSelectEnd}
+            </span>
           </div>
+
           <DayPicker
             mode="single"
-            selected={endDate}
+            selected={step === "start" ? startDate : endDate}
             onSelect={handleSelect}
             locale={locale}
-            disabled={{ before: addDays(today, 1) }}
+            disabled={step === "start" ? { before: today } : { before: addDays(startDate, 1) }}
             showOutsideDays
             today={today}
-            modifiers={{ highlighted: highlightedDays }}
+            modifiers={{
+              highlighted: highlightedDays,
+              rangeStart: startDate ? [startDate] : [],
+              rangeEnd: endDate ? [endDate] : [],
+            }}
             modifiersStyles={{
               highlighted: { backgroundColor: "#fef9c3", color: "#854d0e", borderRadius: "50%" },
               today: { color: "#d97706", fontWeight: "bold" },
               selected: { backgroundColor: "#1a1a1a", color: "#fff", fontWeight: "bold", borderRadius: "50%" },
+              rangeStart: { backgroundColor: "#22c55e", color: "#fff", fontWeight: "bold", borderRadius: "50%" },
+              rangeEnd: { backgroundColor: "#1a1a1a", color: "#fff", fontWeight: "bold", borderRadius: "50%" },
             }}
             styles={{
               month_grid: { borderCollapse: "separate", borderSpacing: "2px", width: "100%" },

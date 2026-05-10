@@ -10,7 +10,7 @@ import { TestimonialsSection } from "@/components/layout/sections/testimonials";
 import { FAQSection } from "@/components/layout/sections/faq";
 import { ReferFriendBanner } from "@/components/layout/sections/refer-friend";
 import { FooterSection } from "@/components/layout/sections/footer";
-import { getFooters, getHeroBanners, getFaqs } from "@/lib/api";
+import { getFooters, getHeroBanners, getFaqs, getWhyChooseUs } from "@/lib/api";
 import { getDictionary } from "@/lib/dictionaries";
 import { getSeoMetadata } from "@/lib/seo";
 import type { Locale } from "@/lib/i18n-config";
@@ -33,11 +33,12 @@ export default async function Home({
 }: {
   params: { lang: Locale };
 }) {
-  const [dict, heroBanners, footerLinks, faqsRes] = await Promise.all([
+  const [dict, heroBanners, footerLinks, faqsRes, whyChooseUsRes] = await Promise.all([
     getDictionary(params.lang),
     getHeroBanners({ lang: params.lang }),
     getFooters({ lang: params.lang }),
     getFaqs({ lang: params.lang }),
+    getWhyChooseUs({ lang: params.lang }),
   ]);
 
   return (
@@ -46,7 +47,7 @@ export default async function Home({
       <PartnerBar dict={dict.partnerBar} />
       <WhatIsEsim dict={dict.whatIsEsim} lang={params.lang} />
       <DestinationsSection dict={dict.destinations} lang={params.lang} />
-      <FeaturesSection dict={dict.whyChoose} lang={params.lang} />
+      <FeaturesSection dict={dict.whyChoose} lang={params.lang} features={whyChooseUsRes.data} />
       <SecurityFeatures dict={dict.security} />
       <HowItWorksSection dict={dict.howItWorks} />
       <DownloadAppSection dict={dict.downloadApp} />

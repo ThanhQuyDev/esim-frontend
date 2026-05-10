@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Wallet,
   Clock,
@@ -36,6 +36,7 @@ import {
 } from "@/lib/hooks";
 import { walletTranslations, type WalletDict } from "./translations";
 import Link from "next/link";
+import QRCode from "qrcode";
 
 interface WalletPageContentProps {
   lang: "en" | "vi";
@@ -584,6 +585,9 @@ function ReferralTab({ t, lang }: { t: WalletDict; lang: string }) {
             </button>
           </div>
 
+          {/* QR Code with logo */}
+          <ReferralQrCode url={referralLink} />
+
           {/* Share buttons */}
           <div>
             <p className="text-xs text-gray-400 mb-2">{t.shareVia}</p>
@@ -635,6 +639,44 @@ function ReferralTab({ t, lang }: { t: WalletDict; lang: string }) {
           ))}
         </div>
       </div>
+    </div>
+  );
+}
+
+// ===== QR Code with Logo Overlay =====
+
+function ReferralQrCode({ url }: { url: string }) {
+  const [qrSrc, setQrSrc] = useState<string | null>(null);
+
+  useEffect(() => {
+    QRCode.toDataURL(url, {
+      width: 200,
+      margin: 2,
+      errorCorrectionLevel: "H", // High error correction to allow logo overlay
+      color: { dark: "#1e293b", light: "#ffffff" },
+    })
+      .then(setQrSrc)
+      .catch(() => setQrSrc(null));
+  }, [url]);
+
+  if (!qrSrc) return null;
+
+  return (
+    <div className="flex flex-col items-center py-4">
+      <div className="relative inline-block">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={qrSrc} alt="Referral QR Code" className="w-48 h-48 rounded-xl border border-gray-200" />
+        {/* Logo overlay in center */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-12 h-12 rounded-xl bg-white shadow-md flex items-center justify-center border border-gray-100">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.png" alt="Logo" className="w-9 h-9 object-contain" />
+          </div>
+        </div>
+      </div>
+      <p className="text-xs text-gray-400 mt-2 text-center">
+        {url}
+      </p>
     </div>
   );
 }

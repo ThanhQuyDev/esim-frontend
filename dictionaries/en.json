@@ -902,7 +902,9 @@
       "refund": "100% money-back guarantee"
     },
     "greenBox": {
-      "line1": "<strong>{data}</strong> high speed — then auto-throttle to 1 Mbps unlimited",
+      "line1": "<strong>{data}</strong> high speed — then auto-throttle to {fupSpeed} Mbps unlimited",
+      "line1Fixed": "<strong>{data} / {days} days</strong> high speed — then cut off",
+      "line1UnlimitedHigh": "Unlimited data at <strong>{fupSpeed} Mbps</strong> speed",
       "line2": "Built-in security — bypass firewalls, block malicious ads",
       "line3": "Supports TikTok, Facebook, Google, YouTube, Zalo"
     },

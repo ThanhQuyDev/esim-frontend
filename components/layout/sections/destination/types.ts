@@ -100,7 +100,7 @@ export interface DestinationPlansProps {
  *
  * Logic:
  * - If plan has `isAbleMultidate = true`: total cost = price * days (buy one per day)
- * - If plan has `durationDays >= days`: total cost = price (one package covers all days)
+ * - If plan has `durationDays === days` (exact match only): total cost = price
  * - Otherwise the plan can't cover the requested days → skip it
  *
  * Pick the plan with the lowest total cost.
@@ -116,22 +116,26 @@ export function findBestPlan(plans: Plan[], dataMb: number, days: number): Plan 
     if (p.isAbleMultidate) {
       // Can be purchased multiple times — one per day
       candidates.push({ plan: p, totalCost: Number(p.price) * days });
-    } else if (p.durationDays >= days) {
-      // Single package covers all requested days
+    } else if (p.durationDays === days) {
+      // Exact match only — plan duration must equal requested days
       candidates.push({ plan: p, totalCost: Number(p.price) });
     }
-    // else: plan can't cover the days, skip
+    // else: plan doesn't match the requested days exactly, skip
   }
 
   if (candidates.length === 0) {
-    // Fallback: pick the longest-duration plan with that dataMb
-    const fallback = sameMb.sort((a, b) => b.durationDays - a.durationDays);
-    return fallback[0];
+    // No exact match and no multidate plan — return null (no valid plan for this days selection)
+    return null;
   }
 
   // Pick cheapest total cost
   candidates.sort((a, b) => a.totalCost - b.totalCost);
   return candidates[0].plan;
+}
+
+/** Check if a given dataMb group has any isAbleMultidate plan */
+export function hasMultidatePlan(plans: Plan[], dataMb: number): boolean {
+  return plans.some((p) => Number(p.dataMb) === Number(dataMb) && p.isAbleMultidate);
 }
 
 /** Apply plan discount (percentage) to a price. Returns the discounted price. */
@@ -215,6 +219,12 @@ export function getFixedPrice(plan: Plan): number {
 export function getUniqueDataMb(plans: Plan[]): number[] {
   const set = new Set(plans.map((p) => p.dataMb));
   return Array.from(set).sort((a, b) => a - b);
+}
+
+/** Get unique fupSpeed values from a list of plans, sorted ascending by numeric value */
+export function getUniqueFupSpeeds(plans: Plan[]): string[] {
+  const set = new Set(plans.map((p) => p.fupSpeed || "").filter(Boolean));
+  return Array.from(set).sort((a, b) => parseFloat(a) - parseFloat(b));
 }
 
 /** Get unique durationDays values from plans with a specific dataMb, sorted ascending */

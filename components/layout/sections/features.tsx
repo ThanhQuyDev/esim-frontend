@@ -1,64 +1,18 @@
-import {
-  Layers,
-  CheckCircle,
-  ClipboardCheck,
-  CreditCard,
-  BellRing,
-  Globe,
-} from "lucide-react";
-import Link from "next/link";
+import Image from "next/image";
 import type { Locale } from "@/lib/i18n-config";
+import type { WhyChooseUs } from "@/lib/api";
 
 interface FeaturesSectionProps {
   dict: Record<string, any>;
   lang: Locale;
+  features?: WhyChooseUs[];
 }
 
-const iconMap: Record<string, React.ElementType> = {
-  layers: Layers,
-  "circle-check": CheckCircle,
-  "ballot-check": ClipboardCheck,
-  "sim-card": CreditCard,
-  "bell-ring": BellRing,
-  earth: Globe,
-  // legacy fallbacks
-  globe: Globe,
-  smartphone: CheckCircle,
-  ban: ClipboardCheck,
-  sim: CreditCard,
-  bell: BellRing,
-  map: Globe,
-};
-
-// Helper to render description with links
-function DescriptionWithLinks({ text }: { text: string }) {
-  // Parse text for markdown-style links: [text](url)
-  const parts = text.split(/(\[.*?\]\(.*?\))/g);
-  
-  return (
-    <>
-      {parts.map((part, idx) => {
-        const linkMatch = part.match(/\[(.*?)\]\((.*?)\)/);
-        if (linkMatch) {
-          const [, linkText, url] = linkMatch;
-          return (
-            <Link
-              key={idx}
-              href={url}
-              className="underline transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus"
-            >
-              {linkText}
-            </Link>
-          );
-        }
-        return <span key={idx}>{part}</span>;
-      })}
-    </>
-  );
-}
-
-export function FeaturesSection({ dict, lang }: FeaturesSectionProps) {
-  const features = dict.features ?? [];
+export function FeaturesSection({ dict, lang, features = [] }: FeaturesSectionProps) {
+  // Sort by sortOrder and filter active items
+  const sortedFeatures = [...features]
+    .filter((f) => f.isActive)
+    .sort((a, b) => a.sortOrder - b.sortOrder);
 
   return (
     <div
@@ -88,70 +42,90 @@ export function FeaturesSection({ dict, lang }: FeaturesSectionProps) {
           <div className="container mx-auto">
             {/* Desktop grid (md+) */}
             <div className="sm:gap-x-8 md:grid-cols-3 grid-cols-1 gap-y-8 hidden md:grid">
-              {features.map((feature: any, i: number) => {
-                const Icon = iconMap[feature.icon] || Globe;
-                return (
-                  <div key={i}>
-                    <div className="h-full w-full flex flex-col justify-start gap-y-4">
-                      <div>
-                        <div className="h-full w-full flex flex-col text-start items-start justify-start gap-y-6">
-                          <div>
-                            <Icon className="lg:text-[32px] text-[24px] w-6 h-6 lg:w-8 lg:h-8 text-primary" />
-                          </div>
-                          <div>
-                            <h3 className="body-lg-medium text-primary">
-                              {feature.title}
-                            </h3>
-                          </div>
+              {sortedFeatures.map((feature) => (
+                <div key={feature.id}>
+                  <div className="h-full w-full flex flex-col justify-start gap-y-4">
+                    <div>
+                      <div className="h-full w-full flex flex-col text-start items-start justify-start gap-y-6">
+                        <div>
+                          {feature.icon ? (
+                            <Image
+                              src={feature.icon}
+                              alt={feature.title}
+                              width={32}
+                              height={32}
+                              className="lg:w-8 lg:h-8 w-6 h-6"
+                              unoptimized
+                            />
+                          ) : (
+                            <div className="lg:w-8 lg:h-8 w-6 h-6 bg-muted rounded" />
+                          )}
+                        </div>
+                        <div>
+                          <h3 className="body-lg-medium text-primary">
+                            {feature.title}
+                          </h3>
                         </div>
                       </div>
-                      <div>
-                        <p className="body-md" style={{ color: '#4d4e56' }}>
-                          <DescriptionWithLinks text={feature.description} />
-                        </p>
-                      </div>
+                    </div>
+                    <div>
+                      <div
+                        className="body-md prose prose-sm max-w-none"
+                        style={{ color: '#4d4e56' }}
+                        dangerouslySetInnerHTML={{ __html: feature.description }}
+                      />
                     </div>
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
 
             {/* Mobile carousel (below md) */}
             <div className="md:hidden max-sm:-mx-4 max-sm:px-4 overflow-hidden">
               <div className="flex gap-4 overflow-x-auto scrollbar-none snap-x snap-mandatory pb-4">
-                {features.map((feature: any, i: number) => {
-                  const Icon = iconMap[feature.icon] || Globe;
-                  return (
-                    <div
-                      key={i}
-                      className="snap-start shrink-0 max-w-[87%] min-[480px]:max-w-[71%] sm:max-w-[62%]"
-                    >
-                      <div className="h-full w-full flex flex-col justify-start gap-y-4">
-                        <div>
-                          <div className="h-full w-full flex flex-col text-start items-start justify-start gap-y-6">
-                            <div>
-                              <Icon className="text-[24px] w-6 h-6 text-primary" />
-                            </div>
-                            <div>
-                              <p
-                                className="body-lg-medium text-primary"
-                                role="heading"
-                                aria-level={3}
-                              >
-                                {feature.title}
-                              </p>
-                            </div>
+                {sortedFeatures.map((feature) => (
+                  <div
+                    key={feature.id}
+                    className="snap-start shrink-0 max-w-[87%] min-[480px]:max-w-[71%] sm:max-w-[62%]"
+                  >
+                    <div className="h-full w-full flex flex-col justify-start gap-y-4">
+                      <div>
+                        <div className="h-full w-full flex flex-col text-start items-start justify-start gap-y-6">
+                          <div>
+                            {feature.icon ? (
+                              <Image
+                                src={feature.icon}
+                                alt={feature.title}
+                                width={24}
+                                height={24}
+                                className="w-6 h-6"
+                                unoptimized
+                              />
+                            ) : (
+                              <div className="w-6 h-6 bg-muted rounded" />
+                            )}
+                          </div>
+                          <div>
+                            <p
+                              className="body-lg-medium text-primary"
+                              role="heading"
+                              aria-level={3}
+                            >
+                              {feature.title}
+                            </p>
                           </div>
                         </div>
-                        <div>
-                          <p className="body-md" style={{ color: '#4d4e56' }}>
-                            <DescriptionWithLinks text={feature.description} />
-                          </p>
-                        </div>
+                      </div>
+                      <div>
+                        <div
+                          className="body-md prose prose-sm max-w-none"
+                          style={{ color: '#4d4e56' }}
+                          dangerouslySetInnerHTML={{ __html: feature.description }}
+                        />
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             </div>
           </div>

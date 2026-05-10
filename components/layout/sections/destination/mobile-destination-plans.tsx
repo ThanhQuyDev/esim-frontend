@@ -29,6 +29,7 @@ export interface MobileDestinationPlansProps {
   availableDays: number[];
   planLabel: string;
   dataLabel: string;
+  greenBoxLine1: string;
   region?: Region | null;
   destinationData?: Destination | null;
 }
@@ -51,6 +52,7 @@ export function MobileDestinationPlans({
   availableDays,
   planLabel,
   dataLabel,
+  greenBoxLine1,
   region,
   destinationData,
 }: MobileDestinationPlansProps) {
@@ -77,6 +79,7 @@ export function MobileDestinationPlans({
         isFixed={isFixed}
         planLabel={planLabel}
         dataLabel={dataLabel}
+        greenBoxLine1={greenBoxLine1}
       />
 
       {/* 3-4. Plan selection + Config */}
