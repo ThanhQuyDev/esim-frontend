@@ -408,11 +408,6 @@ export function PlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }: Plan
               })}
             </div>
           )}
-
-          {/* Unlimited note */}
-          <p className="text-[13px] text-[#6b7280] mt-1 pb-4 border-b border-[#e5e7eb]">
-            {dict.unlimitedHint}
-          </p>
         </div>
       )}
     </div>
