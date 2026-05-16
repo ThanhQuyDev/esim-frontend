@@ -22,6 +22,7 @@ import {
   ShoppingCart,
 } from "lucide-react";
 import type { Locale } from "@/lib/i18n-config";
+import { routeMap, localizedHref } from "@/lib/route-mapping";
 import {
   pickLocalizedTitle,
   resolveFileUrl,
@@ -536,8 +537,21 @@ export function Navbar({ lang, dict, topBars = [] }: NavbarProps) {
   const hasAnnouncementCta = Boolean(announcementCta && announcementHref);
 
   const handleLangChange = useCallback((value: string) => {
-    window.location.href = `/${value}`;
-  }, []);
+    const segments = pathname.split('/');
+    const currentLocale = segments[1];
+    const currentSlug = segments[2];
+    segments[1] = value;
+    // Translate the slug to the target locale if it's a mapped route
+    if (currentSlug) {
+      for (const entry of routeMap) {
+        if (entry.slugs[currentLocale] === currentSlug) {
+          segments[2] = entry.slugs[value] || currentSlug;
+          break;
+        }
+      }
+    }
+    window.location.href = segments.join('/');
+  }, [pathname]);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -703,7 +717,7 @@ export function Navbar({ lang, dict, topBars = [] }: NavbarProps) {
 
               {/* Cart Button */}
               <Link
-                href={`/${lang}/cart`}
+                href={localizedHref(lang, "cart")}
                 className="hidden lg:flex relative items-center px-3 py-[7px] text-text-primary transition-colors rounded-lg cursor-pointer hover:bg-[rgba(0,0,0,0.06)]"
                 aria-label={lang === "vi" ? "Giỏ hàng" : "Cart"}
               >
@@ -740,7 +754,7 @@ export function Navbar({ lang, dict, topBars = [] }: NavbarProps) {
                 {user ? (
                   <div className="flex items-center gap-2">
                     <Link
-                      href={`/${lang}/profile`}
+                      href={localizedHref(lang, "profile")}
                       className="flex items-center gap-2 px-3 py-[7px] text-text-primary transition-colors rounded-lg cursor-pointer hover:bg-[rgba(0,0,0,0.06)]"
                     >
                       <User className="w-4 h-4" />
@@ -771,7 +785,7 @@ export function Navbar({ lang, dict, topBars = [] }: NavbarProps) {
             {/* Mobile Cart + Menu */}
             <div className="flex items-center gap-3 ml-6 lg:hidden">
               <Link
-                href={`/${lang}/cart`}
+                href={localizedHref(lang, "cart")}
                 className="relative flex items-center justify-center w-6 h-6"
                 aria-label={lang === "vi" ? "Giỏ hàng" : "Cart"}
               >
@@ -1093,7 +1107,7 @@ function MobileSidebar({
               {user ? (
                 <>
                   <Link
-                    href={`/${lang}/profile`}
+                    href={localizedHref(lang, "profile")}
                     className="flex items-center justify-center gap-2 w-full px-5 py-3 bg-bg-accent text-text-primary-on-color body-md-medium rounded-full cursor-pointer hover:bg-bg-accent-hover transition-colors"
                     onClick={() => setOpen(false)}
                   >
@@ -1118,7 +1132,7 @@ function MobileSidebar({
                     {lang === "vi" ? "Đăng nhập" : "Sign In"}
                   </button>
                   <Link
-                    href={`/${lang}/all-destinations`}
+                    href={localizedHref(lang, "all-destinations")}
                     className="block w-full text-center px-5 py-3 border-md border-border-focus text-text-primary body-md-medium rounded-full cursor-pointer hover:bg-bg-primary transition-colors"
                     onClick={() => setOpen(false)}
                   >

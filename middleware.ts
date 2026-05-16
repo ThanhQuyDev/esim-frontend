@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { i18n } from "./lib/i18n-config";
+import { resolveInternalPath, routeMap } from "./lib/route-mapping";
 
 function getLocale(request: NextRequest): string {
   // Check cookie first
@@ -43,12 +44,33 @@ export function middleware(request: NextRequest) {
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
   );
 
-  if (pathnameHasLocale) return;
+  if (!pathnameHasLocale) {
+    // Redirect to locale-prefixed path
+    const locale = getLocale(request);
+    request.nextUrl.pathname = `/${locale}${pathname}`;
+    return NextResponse.redirect(request.nextUrl);
+  }
 
-  // Redirect to locale-prefixed path
-  const locale = getLocale(request);
-  request.nextUrl.pathname = `/${locale}${pathname}`;
-  return NextResponse.redirect(request.nextUrl);
+  // --- Localized URL rewriting ---
+  // Extract locale and the rest of the path
+  const segments = pathname.split("/"); // ['', locale, slug, ...rest]
+  const locale = segments[1];
+  const publicSlug = segments[2];
+
+  if (!publicSlug) return; // root locale page, no rewrite needed
+
+  // Check if the public slug maps to a different internal path
+  const internalPath = resolveInternalPath(locale, publicSlug);
+
+  if (internalPath && internalPath !== publicSlug) {
+    // Rewrite: keep the rest of the path intact (for sub-routes like /ho-tro/huong-dan)
+    const rest = segments.slice(3).join("/");
+    const newPathname = `/${locale}/${internalPath}${rest ? `/${rest}` : ""}`;
+    request.nextUrl.pathname = newPathname;
+    return NextResponse.rewrite(request.nextUrl);
+  }
+
+  return;
 }
 
 export const config = {

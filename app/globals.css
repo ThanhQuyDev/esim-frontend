@@ -4,6 +4,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Remove underline from all links globally */
+a {
+  text-decoration: none;
+}
+
 /* react-day-picker v9 — fix Tailwind reset breaking grid layout */
 .rdp {
   --rdp-accent-color: #1a1a1a;

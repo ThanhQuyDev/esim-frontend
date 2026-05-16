@@ -5,6 +5,7 @@ import { Search, Info, MapPin, Loader2 } from "lucide-react";
 import { useTopDestinations, useSearchDestinations, useRegions, useSearchRegions } from "@/lib/hooks";
 import { useDebounce } from "@/lib/use-debounce";
 import type { Locale } from "@/lib/i18n-config";
+import { localizedHref } from "@/lib/route-mapping";
 
 interface DestinationDropdownDict {
   subtitle?: string;
@@ -71,10 +72,19 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
 
   // Determine which data to show
   const showRegionsTab = activeTab === "region" && !hasSearch;
+  const showTop10Tab = activeTab === "top10" && !hasSearch;
   const showSearchResults = hasSearch;
   const isLoading = hasSearch
     ? (isSearchingDestinations || isSearchingRegions)
-    : (showRegionsTab ? isLoadingRegions : isLoadingTop);
+    : (showRegionsTab ? isLoadingRegions : (showTop10Tab ? (isLoadingTop || isLoadingRegions) : isLoadingTop));
+
+  // Combined Top 10 list: mix countries and regions together
+  const top10Combined = (() => {
+    if (!showTop10Tab) return [];
+    const countryItems = topDestinations.map((d: any) => ({ ...d, _type: "destination" as const }));
+    const regionItems = regions.map((r: any) => ({ ...r, _type: "region" as const }));
+    return [...countryItems, ...regionItems].slice(0, 10);
+  })();
 
   const tabs = [
     { key: "top10" as const, label: "Top 10" },
@@ -221,14 +231,14 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
                             <div className="flex flex-row gap-2">
                               <div className="flex items-center justify-center h-6 w-6 rounded-full shrink-0 text-text-primary">
                                 <div className="w-[24px] h-[24px] relative overflow-hidden shrink-0 rounded-full">
-                                  {region.avatarUrl ? (
+                                  {region.iconUrl ? (
                                     <>
                                       <img
                                         alt={`${region.name} avatar`}
                                         loading="lazy"
                                         decoding="async"
                                         className="w-full h-full object-cover"
-                                        src={region.avatarUrl}
+                                        src={region.iconUrl}
                                       />
                                       <div className="absolute inset-0 border rounded-full pointer-events-none border-[rgba(0,0,0,0.1)]" />
                                     </>
@@ -264,67 +274,83 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
                   )}
                 </div>
               ) : (
-                /* Tab Results - Show either Destinations or Regions */
+                /* Tab Results - Show Destinations, Regions, or Combined Top 10 */
                 <div className="h-40">
-                  {(showRegionsTab ? regions : topDestinations).length === 0 ? (
-                    <div className="flex items-center justify-center h-full">
-                      <p className="body-md text-text-tertiary">
-                        {showRegionsTab
-                          ? (lang === "vi" ? "Không tìm thấy khu vực" : "No regions found")
-                          : (lang === "vi" ? "Không tìm thấy điểm đến" : "No destinations found")
-                        }
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="grid gap-6 lg:gap-4 w-full lg:grid-cols-3 xl:grid-cols-5 max-h-40 overflow-auto">
-                      {(showRegionsTab ? regions : topDestinations).map((item: any) => (
-                        <a
-                          key={item.id}
-                          className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus rounded-sm w-full block group lg:p-3 lg:hover:bg-bg-primary"
-                          data-testid={item.code || item.slug}
-                          href={
-                            showRegionsTab
-                              ? `/${lang}/region/${item.slug}`
-                              : `/${lang}/destination/${item.slug || item.code?.toLowerCase()}`
-                          }
-                        >
-                          <div className="flex flex-row gap-2">
-                            <div className="flex items-center justify-center h-6 w-6 rounded-full shrink-0 text-text-primary">
-                              <div className="w-[24px] h-[24px] relative overflow-hidden shrink-0 rounded-full">
-                                {(item.flagUrl || item.avatarUrl) ? (
-                                  <>
-                                    <img
-                                      alt={`${item.name} ${showRegionsTab ? 'avatar' : 'flag'}`}
-                                      loading="lazy"
-                                      decoding="async"
-                                      className="w-full h-full object-cover"
-                                      src={item.flagUrl || item.avatarUrl}
-                                    />
-                                    <div className="absolute inset-0 border rounded-full pointer-events-none border-[rgba(0,0,0,0.1)]" />
-                                  </>
-                                ) : (
-                                  <div className="w-full h-full flex items-center justify-center bg-bg-secondary">
-                                    <MapPin className="w-3 h-3 text-text-tertiary" />
+                  {(() => {
+                    const tabItems = showTop10Tab ? top10Combined : (showRegionsTab ? regions : topDestinations);
+                    if (tabItems.length === 0) {
+                      return (
+                        <div className="flex items-center justify-center h-full">
+                          <p className="body-md text-text-tertiary">
+                            {showRegionsTab
+                              ? (lang === "vi" ? "Không tìm thấy khu vực" : "No regions found")
+                              : (lang === "vi" ? "Không tìm thấy điểm đến" : "No destinations found")
+                            }
+                          </p>
+                        </div>
+                      );
+                    }
+                    return (
+                      <div className="grid gap-6 lg:gap-4 w-full lg:grid-cols-3 xl:grid-cols-5 max-h-40 overflow-auto">
+                        {tabItems.map((item: any) => {
+                          const isRegionItem = showRegionsTab || item._type === "region";
+                          return (
+                            <a
+                              key={`${item._type || 'dest'}-${item.id}`}
+                              className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus rounded-sm w-full block group lg:p-3 lg:hover:bg-bg-primary"
+                              data-testid={item.code || item.slug}
+                              href={
+                                isRegionItem
+                                  ? `/${lang}/region/${item.slug}`
+                                  : `/${lang}/destination/${item.slug || item.code?.toLowerCase()}`
+                              }
+                            >
+                              <div className="flex flex-row gap-2">
+                                <div className="flex items-center justify-center h-6 w-6 rounded-full shrink-0 text-text-primary">
+                                  <div className="w-[24px] h-[24px] relative overflow-hidden shrink-0 rounded-full">
+                                    {(item.flagUrl || item.iconUrl) ? (
+                                      <>
+                                        <img
+                                          alt={`${item.name} ${isRegionItem ? 'avatar' : 'flag'}`}
+                                          loading="lazy"
+                                          decoding="async"
+                                          className="w-full h-full object-cover"
+                                          src={item.flagUrl || item.iconUrl}
+                                        />
+                                        <div className="absolute inset-0 border rounded-full pointer-events-none border-[rgba(0,0,0,0.1)]" />
+                                      </>
+                                    ) : (
+                                      <div className="w-full h-full flex items-center justify-center bg-bg-secondary">
+                                        <MapPin className="w-3 h-3 text-text-tertiary" />
+                                      </div>
+                                    )}
                                   </div>
-                                )}
+                                </div>
+                                <div className="flex flex-col gap-1">
+                                  <div className="flex items-center gap-1.5">
+                                    <p className="body-sm-medium text-text-primary text-left">{item.name}</p>
+                                    {showTop10Tab && isRegionItem && (
+                                      <span className="text-center whitespace-nowrap rounded-full inline-block bg-blue-100 text-blue-700 py-0 px-1.5 body-2xs-medium">
+                                        {lang === "vi" ? "Khu vực" : "Region"}
+                                      </span>
+                                    )}
+                                  </div>
+                                  <p className="body-xs text-text-tertiary text-left">
+                                    <span className="whitespace-nowrap">
+                                      {isRegionItem
+                                        ? `${item.destinationCount} ${lang === "vi" ? "quốc gia" : (item.destinationCount === 1 ? "country" : "countries")}`
+                                        : `${t.from} ${formatPrice(item.fromPrice)}`
+                                      }
+                                    </span>
+                                  </p>
+                                </div>
                               </div>
-                            </div>
-                            <div className="flex flex-col gap-1">
-                              <p className="body-sm-medium text-text-primary text-left">{item.name}</p>
-                              <p className="body-xs text-text-tertiary text-left">
-                                <span className="whitespace-nowrap">
-                                  {showRegionsTab
-                                    ? `${item.destinationCount} ${lang === "vi" ? "quốc gia" : (item.destinationCount === 1 ? "country" : "countries")}`
-                                    : `${t.from} ${formatPrice(item.fromPrice)}`
-                                  }
-                                </span>
-                              </p>
-                            </div>
-                          </div>
-                        </a>
-                      ))}
-                    </div>
-                  )}
+                            </a>
+                          );
+                        })}
+                      </div>
+                    );
+                  })()}
                 </div>
               )}
             </div>
@@ -347,7 +373,7 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
             role="button"
             className="max-md:w-full text-center inline-block text-primary-on-color bg-bg-dark hover:bg-neutral-800 border border-border-primary hover:border-neutral-800 active:bg-bg-dark active:text-primary-on-color box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[5.5px] body-sm-medium px-6"
             data-testid="primary-cta"
-            href={`/${lang}/all-destinations`}
+            href={localizedHref(lang, "all-destinations")}
           >
             {t.viewAllDestinations || "View All Destinations"}
           </a>

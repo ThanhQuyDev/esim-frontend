@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useTopDestinations, useSearchDestinations, useSearchRegions } from "@/lib/hooks";
+import { useTopDestinations, useSearchDestinations, useSearchRegions, useRegions } from "@/lib/hooks";
 import { useDebounce } from "@/lib/use-debounce";
 import type { Locale } from "@/lib/i18n-config";
 
@@ -25,6 +25,14 @@ export function DestinationSearchModal({
   const { data: topDestinations = [], isLoading: isLoadingTop } =
     useTopDestinations(10);
 
+  // Fetch regions (for combining popular ones in Top 10)
+  const { data: allRegions = [], isLoading: isLoadingRegions } = useRegions(
+    undefined,
+    "name",
+    "ASC",
+    20
+  );
+
   // Search destinations
   const { data: searchDestinations = [], isFetching: isSearchingDest } =
     useSearchDestinations(debouncedQuery, hasSearch);
@@ -32,6 +40,13 @@ export function DestinationSearchModal({
   // Search regions
   const { data: searchRegions = [], isFetching: isSearchingReg } =
     useSearchRegions(debouncedQuery, hasSearch);
+
+  // Combined Top 10: popular destinations + regions
+  const top10Combined = (() => {
+    const countryItems = topDestinations.map((d: any) => ({ ...d, _type: "destination" as const }));
+    const regionItems = allRegions.map((r: any) => ({ ...r, _type: "region" as const }));
+    return [...countryItems, ...regionItems].slice(0, 10);
+  })();
 
   // Focus input on open
   useEffect(() => {
@@ -78,7 +93,7 @@ export function DestinationSearchModal({
 
   const isLoading = hasSearch
     ? isSearchingDest || isSearchingReg
-    : isLoadingTop;
+    : isLoadingTop || isLoadingRegions;
 
   // Format price helper
   const formatPrice = (price: number | string | undefined) => {
@@ -301,28 +316,39 @@ export function DestinationSearchModal({
                   })
                 )
               ) : (
-                /* Default: Most popular destinations */
+                /* Default: Most popular destinations + regions */
                 <>
                   <p className="body-sm-medium text-text-secondary mb-2 md:mb-3 col-span-full scroll-mt-20 xl:scroll-mt-24">
                     {lang === "vi"
                       ? "Điểm đến phổ biến nhất"
                       : "Most popular destinations"}
                   </p>
-                  {topDestinations.map((dest: any) => {
-                    const priceStr = dest.minPrice || dest.fromPrice
-                      ? formatPrice(dest.minPrice || dest.fromPrice)
+                  {top10Combined.map((item: any) => {
+                    const isRegionItem = item._type === "region";
+                    const priceStr = !isRegionItem && (item.minPrice || item.fromPrice)
+                      ? formatPrice(item.minPrice || item.fromPrice)
                       : null;
+                    const subtitle = isRegionItem
+                      ? `${item.destinationCount || 0} ${lang === "vi" ? "quốc gia" : (item.destinationCount === 1 ? "country" : "countries")}`
+                      : priceStr
+                        ? `From ${priceStr}`
+                        : null;
+                    const href = isRegionItem
+                      ? `/${lang}/region/${item.slug}`
+                      : `/${lang}/destination/${item.slug}`;
+
                     return (
-                      <div key={dest.id}>
+                      <div key={`${item._type}-${item.id}`}>
                         <a
-                          href={`/${lang}/destination/${dest.slug}`}
+                          href={href}
                           className="align-bottom focus-visible:outline-hidden focus-visible:shadow-focus text-text-primary active:text-text-primary hover:text-text-secondary block h-full group ease-out rounded-[8px] transition-colors duration-medium hover:bg-bg-primary active:bg-bg-primary"
                           data-ga-slug="N/A"
-                          data-testid={dest.countryCode}
+                          data-testid={item.countryCode || item.slug}
                           data-anchor-link="true"
                           onClick={(e) => {
                             e.preventDefault();
-                            handleSelect(dest.slug);
+                            if (isRegionItem) handleSelectRegion(item.slug);
+                            else handleSelect(item.slug);
                           }}
                         >
                           <div
@@ -331,15 +357,15 @@ export function DestinationSearchModal({
                           >
                             <div className="flex gap-3 items-center p-3">
                               <div className="w-[24px] h-[24px] relative overflow-hidden shrink-0 rounded-full">
-                                {dest.flagUrl ? (
+                                {(item.flagUrl || item.avatarUrl) ? (
                                   <>
                                     {/* eslint-disable-next-line @next/next/no-img-element */}
                                     <img
-                                      alt={`${dest.countryCode} flag`}
+                                      alt={`${item.countryCode || item.slug} ${isRegionItem ? 'avatar' : 'flag'}`}
                                       loading="lazy"
                                       decoding="async"
                                       className="w-full h-full object-cover"
-                                      src={dest.flagUrl}
+                                      src={item.flagUrl || item.avatarUrl}
                                       style={{
                                         position: "absolute",
                                         height: "100%",
@@ -374,13 +400,20 @@ export function DestinationSearchModal({
                                 )}
                               </div>
                               <div className="flex flex-col">
-                                <p className="body-md-medium text-text-primary! scroll-mt-20 xl:scroll-mt-24">
-                                  {dest.name}
-                                </p>
-                                {priceStr && (
+                                <div className="flex items-center gap-1.5">
+                                  <p className="body-md-medium text-text-primary! scroll-mt-20 xl:scroll-mt-24">
+                                    {item.name}
+                                  </p>
+                                  {isRegionItem && (
+                                    <span className="text-center whitespace-nowrap rounded-full inline-block bg-blue-100 text-blue-700 py-0 px-1.5 body-2xs-medium">
+                                      {lang === "vi" ? "Khu vực" : "Region"}
+                                    </span>
+                                  )}
+                                </div>
+                                {subtitle && (
                                   <p className="body-xs text-text-tertiary scroll-mt-20 xl:scroll-mt-24">
                                     <span className="whitespace-nowrap">
-                                      From {priceStr}
+                                      {subtitle}
                                     </span>
                                   </p>
                                 )}

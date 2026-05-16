@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { localizedHref } from "@/lib/route-mapping";
 
 export function BlogSidebarBanner({ lang }: { lang: string }) {
   return (
@@ -46,7 +47,7 @@ export function BlogSidebarBanner({ lang }: { lang: string }) {
               <Link
                 role="button"
                 className="max-md:w-full text-center inline-block text-primary-on-color bg-dark pointer-fine:hover:bg-neutral-800 border-md border-reversed pointer-fine:hover:border-neutral-800 active:bg-dark! active:text-primary-on-color! box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7"
-                href={`/${lang}/all-destinations/`}
+                href={localizedHref(lang, "all-destinations")}
               >
                 Get Saily
               </Link>

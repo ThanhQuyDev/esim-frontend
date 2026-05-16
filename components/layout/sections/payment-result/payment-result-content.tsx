@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { CheckCircle, Home, Mail, User, Clock, Wallet, Coins } from "lucide-react";
 import Link from "next/link";
+import { localizedHref } from "@/lib/route-mapping";
 import { Button } from "@/components/ui/button";
 import { getResponseCodeMessage } from "@/lib/onepay";
 import { useOrderByNumber } from "@/lib/hooks";
@@ -223,7 +224,7 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
             variant="outline"
             className="flex-1 h-12 rounded-full border-gray-200 text-gray-700 font-semibold hover:bg-gray-50 transition-colors cursor-pointer"
           >
-            <Link href={`/${lang}/profile`}>
+            <Link href={localizedHref(lang, "profile")}>
               <User className="w-4 h-4 mr-2" />
               {t.myProfile}
             </Link>
@@ -233,7 +234,7 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
             variant="outline"
             className="flex-1 h-12 rounded-full border-emerald-200 text-emerald-700 font-semibold hover:bg-emerald-50 transition-colors cursor-pointer"
           >
-            <Link href={`/${lang}/profile`}>
+            <Link href={localizedHref(lang, "profile")}>
               <Wallet className="w-4 h-4 mr-2" />
               {lang === "vi" ? "Xem ví" : "View Wallet"}
             </Link>

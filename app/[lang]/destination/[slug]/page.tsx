@@ -49,7 +49,7 @@ export default async function DestinationPage({ params }: DestinationPageProps) 
   const [dict, destination, whyChooseUsRes] = await Promise.all([
     getDictionary(params.lang),
     getDestinationBySlug(params.slug, params.lang),
-    getWhyChooseUs({ lang: params.lang }),
+    getWhyChooseUs({ lang: params.lang, filters: JSON.stringify({ url: `/${params.lang}/destination/${params.slug}` }) }),
   ]);
 
   if (!destination) {

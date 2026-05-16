@@ -18,6 +18,7 @@ export interface Destination {
   isPopular: boolean;
   isActive: boolean;
   description?: string;
+  descriptionVi?: string;
   createdAt: string;
   updatedAt: string;
   deletedAt?: string;
@@ -421,7 +422,7 @@ export async function getWhyChooseUs(
 ): Promise<PaginatedResponse<WhyChooseUs>> {
   return apiFetch<PaginatedResponse<WhyChooseUs>>(
     "/api/v1/why-choose-us",
-    { limit: 20, ...options },
+    { limit: 6, ...options },
     300
   );
 }

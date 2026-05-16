@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { localizedHref } from "@/lib/route-mapping";
 import type { HelpCenterArticle } from "@/lib/api";
 
 const API_BASE_URL =

@@ -199,7 +199,7 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
         <div className="max-w-[1200px] mx-auto px-6 pb-[60px] grid grid-cols-[465px_minmax(0,1fr)] gap-8 items-start max-[1100px]:grid-cols-2 max-[1100px]:px-5 max-[1100px]:gap-6">
           {/* ── LEFT COLUMN ── */}
           <div className="flex flex-col gap-4 min-w-0">
-            <ProductHero destination={destinationData || destination} dict={dict} />
+            <ProductHero destination={destinationData || destination} dict={dict} lang={lang} />
             {isLoading ? (
               <div className="h-[400px] bg-gray-100 rounded-xl animate-pulse" />
             ) : (

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { MapPin, Loader2 } from "lucide-react";
 import { useDestinations, useRegions } from "@/lib/hooks";
 import type { Locale } from "@/lib/i18n-config";
+import { localizedHref } from "@/lib/route-mapping";
 
 interface DestinationsSectionProps {
   dict: Record<string, any>;
@@ -85,7 +86,7 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
                 role="button"
                 className="max-md:w-full text-center inline-block text-text-primary bg-bg-accent hover:bg-bg-accent-hover border border-bg-accent hover:border-bg-accent-hover active:bg-bg-accent-active active:border-bg-accent-active box-border !border-[#d1b700] touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7 w-full sm:w-auto"
                 data-testid="view-all-destinations-cta"
-                href={`/${lang}/all-destinations`}
+                href={localizedHref(lang, "all-destinations")}
               >
                 {dict.viewAllDestinations}
               </a>
@@ -213,7 +214,7 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
                 role="button"
                 className="max-md:w-full text-center inline-block text-text-primary bg-bg-accent hover:bg-bg-accent-hover border border-bg-accent hover:border-bg-accent-hover active:bg-bg-accent-active active:border-bg-accent-active box-border !border-[#d1b700] touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7 w-full sm:w-auto"
                 data-testid="view-all-destinations-cta"
-                href={`/${lang}/all-destinations`}
+                href={localizedHref(lang, "all-destinations")}
               >
                 {dict.viewAllDestinations}
               </a>

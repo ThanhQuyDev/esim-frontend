@@ -38,7 +38,7 @@ export default async function Home({
     getHeroBanners({ lang: params.lang }),
     getFooters({ lang: params.lang }),
     getFaqs({ lang: params.lang }),
-    getWhyChooseUs({ lang: params.lang }),
+    getWhyChooseUs({ lang: params.lang, filters: JSON.stringify({ url: `/${params.lang}` }) }),
   ]);
 
   return (

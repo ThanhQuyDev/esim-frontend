@@ -36,6 +36,7 @@ import {
 } from "@/lib/hooks";
 import { walletTranslations, type WalletDict } from "./translations";
 import Link from "next/link";
+import { localizedHref } from "@/lib/route-mapping";
 import QRCode from "qrcode";
 
 interface WalletPageContentProps {
@@ -289,7 +290,7 @@ function WalletTab({ t, lang }: { t: WalletDict; lang: string }) {
         {/* Quick actions */}
         <div className="px-6 pb-4 flex gap-3">
           <Link
-            href={`/${lang}/cart`}
+            href={localizedHref(lang, "cart")}
             className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition-colors ${
               isLocked
                 ? "bg-gray-100 text-gray-400 cursor-not-allowed pointer-events-none"

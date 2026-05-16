@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { localizedHref } from "@/lib/route-mapping";
 
 interface WhatIsEsimProps {
   dict: Record<string, any>;
@@ -33,7 +34,7 @@ export function WhatIsEsim({ dict, lang = "en" }: WhatIsEsimProps) {
                               {dict.descriptionBefore}
                               <Link
                                 className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus underline"
-                                href={`/${lang}/what-is-esim/`}
+                                href={localizedHref(lang || "en", "what-is-esim")}
                               >
                                 {dict.linkText}
                               </Link>

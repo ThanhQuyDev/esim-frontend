@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
+import { localizedHref } from "@/lib/route-mapping";
 import { RocketIcon, CreditCardIcon, Pickaxe, MessageCircleQuestionIcon, Search } from "lucide-react";
 import type { HelpCenterArticle } from "@/lib/api";
 

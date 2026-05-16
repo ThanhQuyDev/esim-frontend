@@ -26,6 +26,7 @@ import { useExchangeRate, useCheckout, useCart, convertUsdToVnd, formatVnd, useW
 import { useAuth } from "@/lib/auth";
 import { walletTranslations } from "@/components/layout/sections/wallet/translations";
 import Link from "next/link";
+import { localizedHref } from "@/lib/route-mapping";
 
 interface CheckoutPageContentProps {
   dict: Record<string, any>;
@@ -266,7 +267,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
           {dict.noItems || "No items to checkout"}
         </h2>
         <Link
-          href={`/${lang}/cart`}
+          href={localizedHref(lang, "cart")}
           className="inline-flex items-center gap-2 rounded-full bg-bg-accent px-7 py-3 font-medium text-text-primary transition-colors hover:bg-bg-accent-hover"
         >
           <ArrowLeft className="h-4 w-4" />
@@ -282,7 +283,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
       <div className="lg:col-span-2 space-y-6">
         {/* Back to cart */}
         <Link
-          href={`/${lang}/cart`}
+          href={localizedHref(lang, "cart")}
           className="inline-flex items-center gap-2 text-sm text-text-secondary hover:text-text-primary transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />

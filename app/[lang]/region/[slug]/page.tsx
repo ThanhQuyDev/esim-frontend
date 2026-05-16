@@ -47,7 +47,7 @@ export default async function RegionPage({ params }: RegionPageProps) {
   const [dict, region, whyChooseUsRes] = await Promise.all([
     getDictionary(params.lang),
     getRegionBySlug(params.slug, params.lang),
-    getWhyChooseUs({ lang: params.lang }),
+    getWhyChooseUs({ lang: params.lang, filters: JSON.stringify({ url: `/${params.lang}/region/${params.slug}` }) }),
   ]);
 
   if (!region) {

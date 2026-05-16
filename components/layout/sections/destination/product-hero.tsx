@@ -8,9 +8,10 @@ import type { DestinationDict } from "./types";
 interface ProductHeroProps {
   destination: Destination;
   dict: DestinationDict;
+  lang: string;
 }
 
-export function ProductHero({ destination, dict }: ProductHeroProps) {
+export function ProductHero({ destination, dict, lang }: ProductHeroProps) {
   const heroSrc = getCloudinaryTransformedUrl(destination.avatarUrl, {
     width: 520,
     height: 260,
@@ -62,7 +63,7 @@ export function ProductHero({ destination, dict }: ProductHeroProps) {
             </svg>
           </div>
           <h1 className="text-[26px] font-extrabold text-[#111] leading-[1.25] tracking-[-0.4px]">
-            {dict.title.replace("{destination}", destination.name)}
+            {(lang === "vi" ? destination.descriptionVi : destination.description) || dict.title.replace("{destination}", destination.name)}
           </h1>
         </div>
         <p className="text-sm text-[#6b7280] leading-[1.6] mb-3">

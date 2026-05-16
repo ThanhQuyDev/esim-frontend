@@ -390,13 +390,13 @@ export function formatExu(amount: number): string {
 
 // ===== Why Choose Us Hooks =====
 
-export function useWhyChooseUs(lang: Locale = "en") {
+export function useWhyChooseUs(lang: Locale = "en", url?: string) {
   return useQuery({
     queryKey: queryKeys.whyChooseUs.list(lang),
     queryFn: ({ signal }) =>
       clientFetch<PaginatedResponse<WhyChooseUs>>(
         "/api/v1/why-choose-us",
-        { limit: "20", page: "1" },
+        { limit: "6", page: "1", ...(url ? { filters: JSON.stringify({ url }) } : {}) },
         { "x-custom-lang": lang },
         signal
       ),
