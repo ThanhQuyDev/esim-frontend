@@ -26,7 +26,7 @@ export default async function AllDestinationsPage({
         dict={dict.allDestinations}
         lang={params.lang}
       />
-      <FooterSection dict={dict.footer} />
+      <FooterSection dict={dict.footer} lang={params.lang} />
     </main>
   );
 }

@@ -33,14 +33,14 @@ const socialLinks = [
 ];
 
 const paymentIcons = [
-  { name: "Apple Pay", src: "https://sb.nordcdn.com/m/3a97dd853ad8a7a5/original/apple-pay.svg" },
-  { name: "Google Pay", src: "https://sb.nordcdn.com/m/4472df3ff7fad3db/original/google-pay.svg" },
-  { name: "Visa", src: "https://sb.nordcdn.com/m/7053db2e1118cc8/original/visa.svg" },
-  { name: "Mastercard", src: "https://sb.nordcdn.com/m/7f0ece0e4ee50365/original/mastercard.svg" },
-  { name: "Amex", src: "https://sb.nordcdn.com/m/7f041c7528221650/original/amex.svg" },
-  { name: "Discover", src: "https://sb.nordcdn.com/m/669348c02827ab8f/original/16.svg" },
-  { name: "UnionPay", src: "https://sb.nordcdn.com/m/7fee670fbbf9292b/original/union-pay.svg" },
-  { name: "JCB", src: "https://sb.nordcdn.com/m/783f5e58e6359300/original/jcb.svg" },
+  { name: "Apple Pay", src: "https://sb.nordcdn.com/m/3a97dd853ad8a7a5/original/apple-pay.svg", width: 38 },
+  { name: "Google Pay", src: "https://sb.nordcdn.com/m/4472df3ff7fad3db/original/google-pay.svg", width: 46 },
+  { name: "Visa", src: "https://sb.nordcdn.com/m/7053db2e1118cc8/original/visa.svg", width: 36 },
+  { name: "Mastercard", src: "https://sb.nordcdn.com/m/7f0ece0e4ee50365/original/mastercard.svg", width: 29 },
+  { name: "Amex", src: "https://sb.nordcdn.com/m/7f041c7528221650/original/amex.svg", width: 25 },
+  { name: "Discover", src: "https://sb.nordcdn.com/m/669348c02827ab8f/original/16.svg", width: 44 },
+  { name: "UnionPay", src: "https://sb.nordcdn.com/m/7fee670fbbf9292b/original/union-pay.svg", width: 38 },
+  { name: "JCB", src: "https://sb.nordcdn.com/m/783f5e58e6359300/original/jcb.svg", width: 31 },
 ];
 
 function getFallbackColumns(dict: Record<string, any>): FooterColumn[] {
@@ -148,11 +148,11 @@ export async function FooterSection({
 
         <hr className="pb-8 border-border-primary" />
 
-        {/* Footer Columns */}
+        {/* Footer Columns - Style 2.1: Bold category titles */}
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-x-8 gap-y-6 md:gap-y-8 pb-8">
           {columns.map((col, i) => (
             <div key={i} className="flex flex-col">
-              <p className="body-sm-bold text-text-primary mb-4">{col.title}</p>
+              <p className="font-bold text-text-primary mb-4">{col.title}</p>
               <div className="flex flex-col gap-y-3">
                 {col.links.map((link: FooterLink, j: number) => {
                   const linkKey = link.id ?? `${link.href}-${j}`;
@@ -182,7 +182,7 @@ export async function FooterSection({
           ))}
         </div>
 
-        {/* Social Links */}
+        {/* Social Links - Layout 2.2: Icon before text */}
         <div className="flex flex-wrap gap-4 pb-8">
           {socialLinks.map((social) => (
             <a
@@ -190,7 +190,7 @@ export async function FooterSection({
               href={social.href}
               target="_blank"
               rel="noopener noreferrer nofollow"
-              className="hover:opacity-80 transition-opacity"
+              className="hover:opacity-80 transition-opacity inline-flex items-center gap-2"
               aria-label={social.name}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -202,40 +202,71 @@ export async function FooterSection({
                 loading="lazy"
                 style={{ color: "transparent" }}
               />
+              <span className="body-sm text-text-secondary">{social.name}</span>
             </a>
           ))}
         </div>
 
-        {/* Payment Methods */}
-        <div className="flex flex-wrap gap-3 pb-8">
-          {paymentIcons.map((payment) => (
-            <div key={payment.name} className="flex items-center justify-center">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={payment.src}
-                alt={payment.name.toLowerCase()}
-                width={40}
-                height={26}
-                loading="lazy"
-                style={{ color: "transparent" }}
-              />
+        {/* Bottom Footer - Layout 2.3: Restructured copyright, policies, payment */}
+        <div className="border-t border-border-primary pt-6">
+          <div className="flex flex-col-reverse md:flex-row flex-wrap-reverse justify-between gap-8">
+            <p className="body-xs flex flex-wrap gap-6 items-start sm:items-center font-normal scroll-mt-20 xl:scroll-mt-24">
+              <span className="font-normal text-text-tertiary">
+                © 2026 esim.vn. All rights reserved.
+              </span>
+              <span className="font-normal text-text-tertiary">
+                {lang === "vi"
+                  ? "Chịu trách nhiệm nội dung: Nguyễn Đức Thọ"
+                  : "Content responsibility: Nguyễn Đức Thọ"}
+              </span>
+              <span className="flex flex-wrap gap-6 items-center">
+                <a
+                  className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus underline inline-block text-text-tertiary"
+                  rel="noopener noreferrer nofollow"
+                  data-ga-slug="Privacy Policy"
+                  target="_blank"
+                  href="/legal/privacy-policy/"
+                >
+                  {lang === "vi" ? "Chính sách bảo mật" : "Privacy Policy"}
+                </a>
+                <a
+                  className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus underline inline-block text-text-tertiary"
+                  rel="noopener noreferrer nofollow"
+                  data-ga-slug="Terms of Service"
+                  target="_blank"
+                  href="/legal/terms-of-service/"
+                >
+                  {lang === "vi" ? "Điều khoản dịch vụ" : "Terms of Service"}
+                </a>
+                <button
+                  className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus underline inline-block text-text-tertiary"
+                  data-ga-slug="Cookie Preference"
+                >
+                  {lang === "vi" ? "Quản lý Cookie" : "Cookie Preference"}
+                </button>
+              </span>
+            </p>
+            <div>
+              <div className="h-full w-full flex group/stack [&>div:empty]:hidden flex-row gap-x-3">
+                {paymentIcons.map((payment) => (
+                  <div key={payment.name}>
+                    <div>
+                      <picture>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          alt={payment.name.toLowerCase()}
+                          loading="lazy"
+                          width={payment.width}
+                          height={24}
+                          src={payment.src}
+                          style={{ color: "transparent" }}
+                        />
+                      </picture>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
-        </div>
-
-        {/* Legal */}
-        <div className="border-t border-border-primary pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="body-xs text-text-tertiary">{dict.legal.copyright}</p>
-          <div className="flex flex-wrap gap-4">
-            {dict.legal.links.map((link: FooterLink, i: number) => (
-              <Link
-                key={i}
-                href={link.href}
-                className="body-xs text-text-tertiary hover:text-text-secondary transition-colors"
-              >
-                {link.label}
-              </Link>
-            ))}
           </div>
         </div>
       </div>

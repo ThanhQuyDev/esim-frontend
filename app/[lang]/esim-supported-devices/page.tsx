@@ -29,7 +29,7 @@ export default async function SupportedDevicesPage({
         dict={dict.supportedDevicesPage}
         lang={params.lang}
       />
-      <FooterSection dict={dict.footer} />
+      <FooterSection dict={dict.footer} lang={params.lang} />
     </main>
   );
 }

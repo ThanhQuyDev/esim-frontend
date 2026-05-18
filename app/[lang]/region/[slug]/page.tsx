@@ -84,7 +84,7 @@ export default async function RegionPage({ params }: RegionPageProps) {
       <LazyDownloadAppSection dict={dict.downloadApp} />
       <LazyFAQSection dict={dict.faq} lang={params.lang} />
       <LazyReferFriendBanner dict={dict.referFriend} />
-      <LazyFooterSection dict={dict.footer} />
+      <LazyFooterSection dict={dict.footer} lang={params.lang} />
     </main>
   );
 }

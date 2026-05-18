@@ -41,7 +41,7 @@ export default async function KhuVucBaoChiPage({
       <PressResources dict={t.pressResources} />
       <NonprofitBanner dict={t.banner} />
       <ProductFamily dict={t.productFamily} />
-      <FooterSection dict={dict.footer} />
+      <FooterSection dict={dict.footer} lang={params.lang} />
     </main>
   );
 }

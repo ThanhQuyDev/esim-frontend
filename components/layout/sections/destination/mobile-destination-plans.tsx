@@ -10,6 +10,8 @@ import { MobilePlanConfig } from "./mobile/mobile-plan-config";
 import { MobileCta } from "./mobile/mobile-cta";
 import { MobileFeatures } from "./mobile/mobile-features";
 import { MobileStickyBar } from "./mobile/mobile-sticky-bar";
+import { CategoryTabs, type PlanCategory } from "./category-tabs";
+import { SimplePlanList } from "./simple-plan-list";
 
 export interface MobileDestinationPlansProps {
   destination: Destination;
@@ -32,6 +34,10 @@ export interface MobileDestinationPlansProps {
   greenBoxLine1: string;
   region?: Region | null;
   destinationData?: Destination | null;
+  activeCategory: PlanCategory;
+  onCategoryChange: (category: PlanCategory) => void;
+  hasSmsCallPlans: boolean;
+  hasLocalSimPlans: boolean;
 }
 
 export function MobileDestinationPlans({
@@ -55,6 +61,10 @@ export function MobileDestinationPlans({
   greenBoxLine1,
   region,
   destinationData,
+  activeCategory,
+  onCategoryChange,
+  hasSmsCallPlans,
+  hasLocalSimPlans,
 }: MobileDestinationPlansProps) {
   const ctaRef = useRef<HTMLDivElement>(null);
   const resolvedDestination = destinationData || destination;
@@ -63,7 +73,9 @@ export function MobileDestinationPlans({
     plans.dataPlans.length > 0 ||
     plans.slowUnlimited.length > 0 ||
     plans.fastUnlimited.length > 0 ||
-    plans.dailyUnlimited.length > 0;
+    plans.dailyUnlimited.length > 0 ||
+    (plans.smsCallEsim?.length ?? 0) > 0 ||
+    (plans.localEsim?.length ?? 0) > 0;
 
   return (
     <div className="bg-white">
@@ -94,27 +106,91 @@ export function MobileDestinationPlans({
         <div className="py-8 text-center text-sm text-[#6b7280]">{dict.noPlans}</div>
       ) : (
         <>
-          {/* 5. Choose Plan */}
-          <MobilePlanTabs
-            plans={plans}
-            dict={dict}
-            selectedPlan={selectedPlan}
-            onSelectPlan={onSelectPlan}
-            days={days}
-          />
+          {/* Category Tabs (Data / Data & SMS & Call / Local Sim) */}
+          <div className="px-4 pt-2">
+            <CategoryTabs
+              activeCategory={activeCategory}
+              onCategoryChange={onCategoryChange}
+              dict={dict}
+              hasSmsCallPlans={hasSmsCallPlans}
+              hasLocalSimPlans={hasLocalSimPlans}
+            />
+          </div>
 
-          {/* 6. Customize */}
-          <MobilePlanConfig
-            days={days}
-            quantity={quantity}
-            onDaysChange={onDaysChange}
-            onQuantityChange={onQuantityChange}
-            dict={dict}
-            lang={lang}
-            isFlexibleDays={isFlexibleDays}
-            availableDays={availableDays}
-            isFixed={isFixed}
-          />
+          {/* Plan selection based on active category */}
+          {activeCategory === "data" && (
+            <>
+              {/* 5. Choose Plan */}
+              <MobilePlanTabs
+                plans={plans}
+                dict={dict}
+                selectedPlan={selectedPlan}
+                onSelectPlan={onSelectPlan}
+                days={days}
+              />
+
+              {/* 6. Customize */}
+              <MobilePlanConfig
+                days={days}
+                quantity={quantity}
+                onDaysChange={onDaysChange}
+                onQuantityChange={onQuantityChange}
+                dict={dict}
+                lang={lang}
+                isFlexibleDays={isFlexibleDays}
+                availableDays={availableDays}
+                isFixed={isFixed}
+              />
+            </>
+          )}
+
+          {activeCategory === "smsCall" && (
+            <>
+              <div className="px-4 pt-2">
+                <SimplePlanList
+                  plans={plans.smsCallEsim ?? []}
+                  selectedPlan={selectedPlan}
+                  onSelectPlan={onSelectPlan}
+                  dict={dict}
+                />
+              </div>
+              <MobilePlanConfig
+                days={days}
+                quantity={quantity}
+                onDaysChange={onDaysChange}
+                onQuantityChange={onQuantityChange}
+                dict={dict}
+                lang={lang}
+                isFlexibleDays={false}
+                availableDays={[]}
+                isFixed={true}
+              />
+            </>
+          )}
+
+          {activeCategory === "localSim" && (
+            <>
+              <div className="px-4 pt-2">
+                <SimplePlanList
+                  plans={plans.localEsim ?? []}
+                  selectedPlan={selectedPlan}
+                  onSelectPlan={onSelectPlan}
+                  dict={dict}
+                />
+              </div>
+              <MobilePlanConfig
+                days={days}
+                quantity={quantity}
+                onDaysChange={onDaysChange}
+                onQuantityChange={onQuantityChange}
+                dict={dict}
+                lang={lang}
+                isFlexibleDays={false}
+                availableDays={[]}
+                isFixed={true}
+              />
+            </>
+          )}
         </>
       )}
 

@@ -595,42 +595,102 @@ export function Navbar({ lang, dict, topBars = [] }: NavbarProps) {
 
   return (
     <>
-      {/* ===== Announcement Bar ===== */}
-      {announcementVisible && isLandingPage && hasAnnouncement && (
-        <div className="relative bg-bg-dark text-text-primary-on-color overflow-hidden">
+      {/* ===== Announcement Bar (Sticky + Carousel) ===== */}
+      {announcementVisible && hasAnnouncement && (
+        <div className="sticky top-0 z-50 relative bg-[#1a1a1a] text-text-primary-on-color overflow-hidden">
           <div className="px-6 min-w-full flex justify-between items-center md:gap-3">
-            <div className="flex py-3 md:justify-center items-center w-full md:gap-3">
-              <div className="hidden md:flex items-center gap-3">
-                <AnnouncementIcon iconUrl={announcementIconUrl} />
-                <p className="body-sm text-text-primary-on-color">
-                  {announcementText}
-                </p>
-                {hasAnnouncementCta && (
-                  <Link
-                    href={announcementHref}
-                    className="inline-block text-text-primary-on-color border-md border-[rgba(255,255,255,0.3)] hover:bg-bg-secondary hover:text-text-primary rounded-full transition-colors body-sm-medium px-6 py-[5.5px]"
-                  >
-                    {announcementCta}
-                  </Link>
-                )}
+            {topBars.length > 1 ? (
+              /* Multiple promotions: auto-play carousel */
+              <div className="flex-1 py-3">
+                <Swiper
+                  modules={[Autoplay]}
+                  spaceBetween={0}
+                  slidesPerView={1}
+                  loop
+                  autoplay={{ delay: 4000, disableOnInteraction: false }}
+                  className="w-full"
+                >
+                  {topBars.map((bar, idx) => {
+                    const text = pickLocalizedTitle(bar, lang).trim();
+                    const cta = bar.buttonContent?.trim() || "";
+                    const href = bar.url?.trim() || "";
+                    const iconUrl = resolveFileUrl(bar.icon);
+                    const hasCta = Boolean(cta && href);
+                    if (!text) return null;
+                    return (
+                      <SwiperSlide key={bar.id || idx}>
+                        <div className="flex justify-center items-center w-full gap-3">
+                          <div className="hidden md:flex items-center gap-3">
+                            <AnnouncementIcon iconUrl={iconUrl} />
+                            <p className="body-sm text-text-primary-on-color">
+                              {text}
+                            </p>
+                            {hasCta && (
+                              <Link
+                                href={href}
+                                className="inline-block text-text-primary-on-color border-md border-[#FFFFFF] hover:bg-bg-secondary hover:text-text-primary rounded-full transition-colors body-sm-medium px-6 py-[5.5px]"
+                              >
+                                {cta}
+                              </Link>
+                            )}
+                          </div>
+                          <div className="flex md:hidden flex-col gap-2 w-full pr-8">
+                            <div className="flex items-center gap-2">
+                              <AnnouncementIcon iconUrl={iconUrl} />
+                              <p className="body-sm text-text-primary-on-color">
+                                {text}
+                              </p>
+                            </div>
+                            {hasCta && (
+                              <Link
+                                href={href}
+                                className="w-full text-center text-text-primary-on-color border-md border-[#FFFFFF] hover:bg-bg-secondary hover:text-text-primary rounded-full transition-colors body-sm-medium px-6 py-[5.5px]"
+                              >
+                                {cta}
+                              </Link>
+                            )}
+                          </div>
+                        </div>
+                      </SwiperSlide>
+                    );
+                  })}
+                </Swiper>
               </div>
-              <div className="flex md:hidden flex-col gap-2 w-full pr-8">
-                <div className="flex items-center gap-2">
+            ) : (
+              /* Single promotion */
+              <div className="flex py-3 md:justify-center items-center w-full md:gap-3">
+                <div className="hidden md:flex items-center gap-3">
                   <AnnouncementIcon iconUrl={announcementIconUrl} />
                   <p className="body-sm text-text-primary-on-color">
                     {announcementText}
                   </p>
+                  {hasAnnouncementCta && (
+                    <Link
+                      href={announcementHref}
+                      className="inline-block text-text-primary-on-color border-md border-[#FFFFFF] hover:bg-bg-secondary hover:text-text-primary rounded-full transition-colors body-sm-medium px-6 py-[5.5px]"
+                    >
+                      {announcementCta}
+                    </Link>
+                  )}
                 </div>
-                {hasAnnouncementCta && (
-                  <Link
-                    href={announcementHref}
-                    className="w-full text-center text-text-primary-on-color border-md border-[rgba(255,255,255,0.3)] hover:bg-bg-secondary hover:text-text-primary rounded-full transition-colors body-sm-medium px-6 py-[5.5px]"
-                  >
-                    {announcementCta}
-                  </Link>
-                )}
+                <div className="flex md:hidden flex-col gap-2 w-full pr-8">
+                  <div className="flex items-center gap-2">
+                    <AnnouncementIcon iconUrl={announcementIconUrl} />
+                    <p className="body-sm text-text-primary-on-color">
+                      {announcementText}
+                    </p>
+                  </div>
+                  {hasAnnouncementCta && (
+                    <Link
+                      href={announcementHref}
+                      className="w-full text-center text-text-primary-on-color border-md border-[#FFFFFF] hover:bg-bg-secondary hover:text-text-primary rounded-full transition-colors body-sm-medium px-6 py-[5.5px]"
+                    >
+                      {announcementCta}
+                    </Link>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
             <button
               onClick={() => setAnnouncementVisible(false)}
               className="flex h-5 md:h-6 ml-auto md:ml-0 max-md:absolute top-3 right-6 cursor-pointer"

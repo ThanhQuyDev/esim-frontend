@@ -30,7 +30,7 @@ export interface DestinationDict {
     activationDesc: string;
   };
   note: { title: string; text: string };
-  planTabs: { data: string; dataCalls: string };
+  planTabs: { data: string; dataCalls: string; localSim: string };
   planSections: { fixed: string; daily: string; unlimited: string };
   speed: { normal: string; high: string };
   unlimitedHint: string;

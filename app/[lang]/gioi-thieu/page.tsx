@@ -42,7 +42,7 @@ export default async function AboutUsPage({
         <AboutLife dict={about.life} />
       </div>
       <AboutBanner dict={about.banner} />
-      <FooterSection dict={dict.footer} />
+      <FooterSection dict={dict.footer} lang={params.lang} />
     </main>
   );
 }

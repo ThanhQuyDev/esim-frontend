@@ -34,7 +34,7 @@ export default async function BlogPage({
         initialBlogs={blogs}
         initialCategories={categories}
       />
-      <FooterSection dict={dict.footer} />
+      <FooterSection dict={dict.footer} lang={params.lang} />
     </main>
   );
 }

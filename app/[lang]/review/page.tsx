@@ -36,7 +36,7 @@ export default async function ReviewPage({
       <ReviewComparisonTable dict={review.comparisonTable} lang={params.lang} />
       <DestinationsSection dict={dict.destinations} lang={params.lang} />
       <FAQSection dict={dict.faq} lang={params.lang} />
-      <FooterSection dict={dict.footer} />
+      <FooterSection dict={dict.footer} lang={params.lang} />
     </main>
   );
 }

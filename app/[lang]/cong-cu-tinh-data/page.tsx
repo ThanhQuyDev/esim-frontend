@@ -69,7 +69,7 @@ export default async function DataCalculatorPage({
       <FaqTabsSection dict={calc.faqSection} lang={params.lang} />
 
       {/* Footer */}
-      <FooterSection dict={dict.footer} />
+      <FooterSection dict={dict.footer} lang={params.lang} />
     </main>
   );
 }

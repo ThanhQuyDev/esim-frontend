@@ -14,12 +14,16 @@ import { PlanConfig } from "./plan-config";
 import { BuyActions } from "./buy-actions";
 import { DesktopStickyBar } from "./desktop-sticky-bar";
 import { MobileDestinationPlans } from "./mobile-destination-plans";
+import { CategoryTabs, type PlanCategory } from "./category-tabs";
+import { SimplePlanList } from "./simple-plan-list";
 
 const EMPTY_PLANS: PlansByDestinationResponse = {
   dataPlans: [],
   slowUnlimited: [],
   fastUnlimited: [],
   dailyUnlimited: [],
+  smsCallEsim: [],
+  localEsim: [],
 };
 
 export function DestinationPlans({ destination, slug, dict, lang, planSource = "destination", initialPlans, initialRegion }: DestinationPlansProps) {
@@ -45,17 +49,27 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [days, setDays] = useState(7);
   const [quantity, setQuantity] = useState(1);
+  const [activeCategory, setActiveCategory] = useState<PlanCategory>("data");
   const desktopCtaRef = useRef<HTMLDivElement>(null);
+
+  // Determine available categories
+  const hasSmsCallPlans = (plans.smsCallEsim?.length ?? 0) > 0;
+  const hasLocalSimPlans = (plans.localEsim?.length ?? 0) > 0;
 
   // Determine if the selected plan is a fixed-duration plan (dataPlans) — hides day selector
   const isFixed = useMemo(() => {
     if (!selectedPlan) return false;
+    if (activeCategory !== "data") {
+      // For smsCall and localSim, plans are always fixed-duration
+      return true;
+    }
     return plans.dataPlans.some((p) => p.id === selectedPlan.id);
-  }, [selectedPlan, plans]);
+  }, [selectedPlan, plans, activeCategory]);
 
   // Flexible days when the selected GB group has any isAbleMultidate plan
   const isFlexibleDays = useMemo(() => {
     if (!selectedPlan) return false;
+    if (activeCategory !== "data") return false;
     if (selectedPlan.isAbleMultidate) return true;
     // Check if the same dataMb group in slowUnlimited has any multidate plan
     if (plans.slowUnlimited.some((p) => p.id === selectedPlan.id)) {
@@ -66,11 +80,12 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
       return hasMultidatePlan(plans.fastUnlimited, selectedPlan.dataMb);
     }
     return false;
-  }, [selectedPlan, plans]);
+  }, [selectedPlan, plans, activeCategory]);
 
   // Available days for non-flexible plans (when isAbleMultidate = false and not fixed)
   const availableDays = useMemo(() => {
     if (!selectedPlan) return [];
+    if (activeCategory !== "data") return [];
     if (selectedPlan.isAbleMultidate) return []; // flexible plans use calendar
     // For dataPlans: group by dataMb
     if (plans.dataPlans.some((p) => p.id === selectedPlan.id)) {
@@ -89,15 +104,33 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
       return Array.from(new Set(matching.map((p) => p.durationDays))).sort((a, b) => a - b);
     }
     return [];
-  }, [selectedPlan, plans]);
+  }, [selectedPlan, plans, activeCategory]);
 
-  // Auto-select first plan
+  // Auto-select first plan when category changes or plans load
   useEffect(() => {
-    if (!selectedPlan && plans) {
-      const first = plans.dataPlans[0] || plans.fastUnlimited[0] || plans.slowUnlimited[0] || plans.dailyUnlimited[0];
-      if (first) setSelectedPlan(first);
+    if (activeCategory === "data") {
+      if (!selectedPlan && plans) {
+        const first = plans.dataPlans[0] || plans.fastUnlimited[0] || plans.slowUnlimited[0] || plans.dailyUnlimited[0];
+        if (first) setSelectedPlan(first);
+      }
+    } else if (activeCategory === "smsCall") {
+      const smsPlans = plans.smsCallEsim ?? [];
+      if (smsPlans.length > 0) {
+        setSelectedPlan(smsPlans[0]);
+      }
+    } else if (activeCategory === "localSim") {
+      const localPlans = plans.localEsim ?? [];
+      if (localPlans.length > 0) {
+        setSelectedPlan(localPlans[0]);
+      }
     }
-  }, [plans, selectedPlan]);
+  }, [activeCategory, plans]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Handle category change
+  const handleCategoryChange = (category: PlanCategory) => {
+    setActiveCategory(category);
+    setSelectedPlan(null); // Reset selection, useEffect above will pick first
+  };
 
   // Handle plan selection
   const handleSelectPlan = (plan: Plan) => {
@@ -109,7 +142,7 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
   };
 
   // Check if plans have any data
-  const hasAnyPlans = plans.dataPlans.length > 0 || plans.fastUnlimited.length > 0 || plans.slowUnlimited.length > 0 || plans.dailyUnlimited.length > 0;
+  const hasAnyPlans = plans.dataPlans.length > 0 || plans.fastUnlimited.length > 0 || plans.slowUnlimited.length > 0 || plans.dailyUnlimited.length > 0 || hasSmsCallPlans || hasLocalSimPlans;
 
   // Snap days to nearest available when switching between flexible/fixed
   useEffect(() => {
@@ -191,6 +224,10 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
           greenBoxLine1={greenBoxLine1}
           region={regionData}
           destinationData={destinationData}
+          activeCategory={activeCategory}
+          onCategoryChange={handleCategoryChange}
+          hasSmsCallPlans={hasSmsCallPlans}
+          hasLocalSimPlans={hasLocalSimPlans}
         />
       </div>
 
@@ -236,24 +273,82 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
               <div className="py-8 text-center text-sm text-[#6b7280]">{dict.noPlans}</div>
             ) : (
               <>
-                <PlanTabs
-                  plans={plans}
+                {/* Category Tabs (Data / Data & SMS & Call / Local Sim) */}
+                <CategoryTabs
+                  activeCategory={activeCategory}
+                  onCategoryChange={handleCategoryChange}
                   dict={dict}
-                  selectedPlan={selectedPlan}
-                  onSelectPlan={handleSelectPlan}
-                  days={days}
+                  hasSmsCallPlans={hasSmsCallPlans}
+                  hasLocalSimPlans={hasLocalSimPlans}
                 />
-                <PlanConfig
-                  days={days}
-                  quantity={quantity}
-                  onDaysChange={setDays}
-                  onQuantityChange={setQuantity}
-                  dict={dict}
-                  lang={lang}
-                  isFlexibleDays={isFlexibleDays}
-                  availableDays={availableDays}
-                  isFixed={isFixed}
-                />
+
+                {/* Plan selection based on active category */}
+                {activeCategory === "data" && (
+                  <>
+                    <PlanTabs
+                      plans={plans}
+                      dict={dict}
+                      selectedPlan={selectedPlan}
+                      onSelectPlan={handleSelectPlan}
+                      days={days}
+                    />
+                    <PlanConfig
+                      days={days}
+                      quantity={quantity}
+                      onDaysChange={setDays}
+                      onQuantityChange={setQuantity}
+                      dict={dict}
+                      lang={lang}
+                      isFlexibleDays={isFlexibleDays}
+                      availableDays={availableDays}
+                      isFixed={isFixed}
+                    />
+                  </>
+                )}
+
+                {activeCategory === "smsCall" && (
+                  <>
+                    <SimplePlanList
+                      plans={plans.smsCallEsim ?? []}
+                      selectedPlan={selectedPlan}
+                      onSelectPlan={handleSelectPlan}
+                      dict={dict}
+                    />
+                    <PlanConfig
+                      days={days}
+                      quantity={quantity}
+                      onDaysChange={setDays}
+                      onQuantityChange={setQuantity}
+                      dict={dict}
+                      lang={lang}
+                      isFlexibleDays={false}
+                      availableDays={[]}
+                      isFixed={true}
+                    />
+                  </>
+                )}
+
+                {activeCategory === "localSim" && (
+                  <>
+                    <SimplePlanList
+                      plans={plans.localEsim ?? []}
+                      selectedPlan={selectedPlan}
+                      onSelectPlan={handleSelectPlan}
+                      dict={dict}
+                    />
+                    <PlanConfig
+                      days={days}
+                      quantity={quantity}
+                      onDaysChange={setDays}
+                      onQuantityChange={setQuantity}
+                      dict={dict}
+                      lang={lang}
+                      isFlexibleDays={false}
+                      availableDays={[]}
+                      isFixed={true}
+                    />
+                  </>
+                )}
               </>
             )}
 

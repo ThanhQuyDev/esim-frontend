@@ -26,7 +26,7 @@ export default async function HelpCenterCategoriesPage({
       <Suspense fallback={<div className="min-h-screen" />}>
         <CategoriesContent lang={params.lang} />
       </Suspense>
-      <FooterSection dict={dict.footer} />
+      <FooterSection dict={dict.footer} lang={params.lang} />
     </>
   );
 }

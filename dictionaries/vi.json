@@ -874,7 +874,8 @@
     },
     "planTabs": {
       "data": "Data",
-      "dataCalls": "Data / Gọi / SMS"
+      "dataCalls": "Data & SMS & Call",
+      "localSim": "Local Sim"
     },
     "planSections": {
       "fixed": "Gói cố định",

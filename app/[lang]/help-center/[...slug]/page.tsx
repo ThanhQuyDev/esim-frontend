@@ -22,7 +22,7 @@ export default async function HelpCenterDetailPage({
 }) {
   const [dict, helpCenterRes] = await Promise.all([
     getDictionary(params.lang),
-    fetchHelpCenterArticles(),
+    fetchHelpCenterArticles(params.lang),
   ]);
   const [category, parent, titleSlug] = params.slug;
 
@@ -37,7 +37,7 @@ export default async function HelpCenterDetailPage({
           initialArticles={helpCenterRes.data}
         />
       </Suspense>
-      <FooterSection dict={dict.footer} />
+      <FooterSection dict={dict.footer} lang={params.lang} />
     </>
   );
 }

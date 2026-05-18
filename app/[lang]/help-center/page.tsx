@@ -21,13 +21,13 @@ export default async function HelpCenterPage({
 }) {
   const [dict, helpCenterRes] = await Promise.all([
     getDictionary(params.lang),
-    fetchHelpCenterArticles(),
+    fetchHelpCenterArticles(params.lang),
   ]);
 
   return (
     <>
       <HelpCenterContent lang={params.lang} initialArticles={helpCenterRes.data} />
-      <FooterSection dict={dict.footer} />
+      <FooterSection dict={dict.footer} lang={params.lang} />
     </>
   );
 }

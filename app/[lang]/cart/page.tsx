@@ -28,7 +28,7 @@ export default async function CartPage({
         </h1>
         <CartPageContent dict={(dict as any).cart || {}} lang={params.lang} />
       </div>
-      <FooterSection dict={dict.footer} />
+      <FooterSection dict={dict.footer} lang={params.lang} />
     </main>
   );
 }

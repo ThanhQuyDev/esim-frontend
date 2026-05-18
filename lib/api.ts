@@ -152,6 +152,8 @@ export interface PlansByDestinationResponse {
   slowUnlimited: Plan[];
   fastUnlimited: Plan[];
   dailyUnlimited: Plan[];
+  smsCallEsim?: Plan[];
+  localEsim?: Plan[];
 }
 
 export interface PaginatedResponse<T> {
@@ -751,12 +753,49 @@ export interface HelpCenterResponse {
 
 // ===== Help Center API =====
 
-export async function fetchHelpCenterArticles(): Promise<HelpCenterResponse> {
+export async function fetchHelpCenterArticles(lang?: string): Promise<HelpCenterResponse> {
+  const headers: Record<string, string> = {};
+  if (lang) {
+    headers["x-custom-lang"] = lang;
+  }
   const res = await fetch(`${API_BASE_URL}/api/v1/help-center?limit=100`, {
+    headers,
     next: { revalidate: 60 },
   });
   if (!res.ok) {
     throw new Error(`API error: ${res.status} ${res.statusText}`);
+  }
+  return res.json();
+}
+
+export async function fetchHelpCenterBySlug(slug: string, lang?: string): Promise<HelpCenterArticle | null> {
+  const headers: Record<string, string> = {};
+  if (lang) {
+    headers["x-custom-lang"] = lang;
+  }
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/v1/help-center/by-slug/${encodeURIComponent(slug)}`, {
+      headers,
+      next: { revalidate: 60 },
+    });
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
+}
+
+export async function searchHelpCenterArticles(keyword: string, lang?: string, page = 1, limit = 10): Promise<HelpCenterResponse> {
+  const headers: Record<string, string> = {};
+  if (lang) {
+    headers["x-custom-lang"] = lang;
+  }
+  const res = await fetch(
+    `${API_BASE_URL}/api/help-center?page=${page}&limit=${limit}&search=${encodeURIComponent(keyword)}`,
+    { headers, next: { revalidate: 0 } }
+  );
+  if (!res.ok) {
+    return { data: [], hasNextPage: false };
   }
   return res.json();
 }

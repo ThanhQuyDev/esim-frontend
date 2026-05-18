@@ -12,7 +12,34 @@ export async function generateMetadata({
 }: {
   params: { lang: Locale; slug: string };
 }): Promise<Metadata> {
-  return getSeoMetadata(`/${params.lang}/blog/${params.slug}`);
+  const baseMeta = await getSeoMetadata(`/${params.lang}/blog/${params.slug}`);
+  const blog = await getBlogBySlug(params.slug, params.lang);
+
+  if (!blog) return baseMeta;
+
+  // SEO Feature 1.6: Add article:modified_time for Google freshness signals
+  const openGraph: Record<string, any> = {
+    ...(baseMeta.openGraph || {}),
+    type: "article",
+  };
+
+  if (blog.publishedAt) {
+    openGraph["article:published_time"] = blog.publishedAt;
+  }
+  if (blog.updatedAt && blog.updatedAt !== blog.createdAt) {
+    openGraph["article:modified_time"] = blog.updatedAt;
+  }
+
+  const otherMeta: Record<string, string> = {};
+  if (blog.updatedAt && blog.updatedAt !== blog.createdAt) {
+    otherMeta["article:modified_time"] = blog.updatedAt;
+  }
+
+  return {
+    ...baseMeta,
+    openGraph,
+    other: otherMeta,
+  };
 }
 
 export default async function BlogDetailPage({
@@ -32,7 +59,7 @@ export default async function BlogDetailPage({
   return (
     <main role="main">
       <BlogDetailContent lang={params.lang} slug={params.slug} initialBlog={blog} />
-      <FooterSection dict={dict.footer} />
+      <FooterSection dict={dict.footer} lang={params.lang} />
     </main>
   );
 }

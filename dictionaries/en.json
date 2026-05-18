@@ -874,7 +874,8 @@
     },
     "planTabs": {
       "data": "Data",
-      "dataCalls": "Data / Calls / SMS"
+      "dataCalls": "Data & SMS & Call",
+      "localSim": "Local Sim"
     },
     "planSections": {
       "fixed": "Fixed plans",

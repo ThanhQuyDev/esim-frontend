@@ -40,7 +40,7 @@ export default async function WhatIsEsimPage({
       <EsimComparison dict={esim.comparison} />
       <EsimCtaBanner dict={esim.ctaBanner} lang={params.lang} />
       <FAQSection dict={esim.faq} lang={params.lang} />
-      <FooterSection dict={dict.footer} />
+      <FooterSection dict={dict.footer} lang={params.lang} />
     </main>
   );
 }

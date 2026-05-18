@@ -42,7 +42,7 @@ export default async function CouponPage({
       <ReviewComparisonTable dict={coupon.comparisonTable} lang={params.lang} />
       <CouponFreeCredits dict={coupon.freeCredits} lang={params.lang} />
       <FAQSection dict={coupon.faq} lang={params.lang} />
-      <FooterSection dict={dict.footer} />
+      <FooterSection dict={dict.footer} lang={params.lang} />
     </main>
   );
 }

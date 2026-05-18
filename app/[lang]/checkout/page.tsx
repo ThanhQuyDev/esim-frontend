@@ -31,7 +31,7 @@ export default async function CheckoutPage({
           <CheckoutPageContent dict={(dict as any).checkout || {}} lang={params.lang} />
         </Suspense>
       </div>
-      <FooterSection dict={dict.footer} />
+      <FooterSection dict={dict.footer} lang={params.lang} />
     </main>
   );
 }

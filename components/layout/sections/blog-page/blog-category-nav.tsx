@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { Search, ChevronDown } from "lucide-react";
 
@@ -18,6 +19,58 @@ async function fetchCategories(lang: string): Promise<string[]> {
 
 function categorySlug(cat: string): string {
   return cat.toLowerCase().replace(/\s+/g, "-");
+}
+
+function BlogSearchInput({ lang }: { lang: string }) {
+  const [open, setOpen] = useState(false);
+  const [keyword, setKeyword] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (open && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [open]);
+
+  function handleSearch(e: React.FormEvent) {
+    e.preventDefault();
+    if (keyword.trim()) {
+      router.push(`/${lang}/blog?search=${encodeURIComponent(keyword.trim())}`);
+    }
+  }
+
+  return (
+    <div className="relative flex items-center">
+      <button
+        data-testid="toggle-blog-search"
+        aria-label="Toggle on/off blog search"
+        aria-haspopup="true"
+        aria-controls="blog-search"
+        aria-expanded={open}
+        onClick={() => setOpen(!open)}
+        className="flex justify-center items-center rounded-full transition-colors hover:bg-neutral-1000/[.08] w-9 h-9"
+      >
+        <Search size={20} />
+      </button>
+      {open && (
+        <form
+          id="blog-search"
+          onSubmit={handleSearch}
+          className="absolute right-10 top-1/2 -translate-y-1/2 flex items-center z-10"
+        >
+          <input
+            ref={inputRef}
+            type="text"
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+            placeholder={lang === "vi" ? "Tìm kiếm bài viết..." : "Search articles..."}
+            className="w-48 sm:w-64 px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+          />
+        </form>
+      )}
+    </div>
+  );
 }
 
 function MobileCategoryNav({ categories, lang }: { categories: string[]; lang: string }) {
@@ -42,19 +95,7 @@ function MobileCategoryNav({ categories, lang }: { categories: string[]; lang: s
             </div>
           </button>
           <div className="px-2">
-            <div>
-              <div aria-expanded="false" className="relative">
-                <button
-                  data-testid="toggle-blog-search"
-                  aria-label="Toggle on/off blog search"
-                  aria-haspopup="true"
-                  aria-controls="blog-search"
-                  className="flex justify-center items-center rounded-full transition-colors hover:bg-neutral-1000/[.08] w-9 h-9"
-                >
-                  <Search size={20} />
-                </button>
-              </div>
-            </div>
+            <BlogSearchInput lang={lang} />
           </div>
         </div>
         <div
@@ -99,19 +140,7 @@ function DesktopCategoryNav({ categories, lang }: { categories: string[]; lang: 
           </li>
         ))}
         <li className="ml-auto">
-          <div>
-            <div aria-expanded="false" className="relative">
-              <button
-                data-testid="toggle-blog-search"
-                aria-label="Toggle on/off blog search"
-                aria-haspopup="true"
-                aria-controls="blog-search"
-                className="flex justify-center items-center rounded-full transition-colors hover:bg-neutral-1000/[.08] w-9 h-9"
-              >
-                <Search size={20} />
-              </button>
-            </div>
-          </div>
+          <BlogSearchInput lang={lang} />
         </li>
       </ul>
     </div>

@@ -4,6 +4,9 @@ const nextConfig = {
     optimizePackageImports: ["lucide-react"],
   },
   images: {
+    dangerouslyAllowSVG: true,
+    contentDispositionType: "attachment",
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     formats: ["image/avif", "image/webp"],
     deviceSizes: [360, 414, 640, 768, 1024, 1200, 1600],
     imageSizes: [16, 32, 48, 64, 96, 128, 256],
