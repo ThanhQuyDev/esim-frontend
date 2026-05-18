@@ -90,10 +90,18 @@ export function DetailContent({ lang, category, parent, titleSlug, initialArticl
   // Auto-expand to current article location
   useEffect(() => {
     if (category) {
-      setExpandedCategories((prev) => new Set([...prev, category]));
+      setExpandedCategories((prev) => {
+        const next = new Set(prev);
+        next.add(category);
+        return next;
+      });
     }
     if (parent) {
-      setExpandedParents((prev) => new Set([...prev, `${category}/${parent}`]));
+      setExpandedParents((prev) => {
+        const next = new Set(prev);
+        next.add(`${category}/${parent}`);
+        return next;
+      });
     }
   }, [category, parent]);
 
