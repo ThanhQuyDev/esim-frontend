@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import type { Plan } from "@/lib/api";
 import type { DestinationDict } from "./types";
@@ -35,19 +35,64 @@ export function DesktopStickyBar({
   const router = useRouter();
   const { addItem } = useCart();
   const [visible, setVisible] = useState(false);
+  const [nearFooter, setNearFooter] = useState(false);
 
-  // Show sticky bar when CTA buttons scroll out of view
+  // Show sticky bar ONLY when user has scrolled PAST the CTA button (CTA is above viewport)
+  // Not when CTA is below viewport (page just loaded, not scrolled to it yet)
   useEffect(() => {
     if (!ctaRef.current) return;
-    const observer = new IntersectionObserver(
+
+    const ctaObserver = new IntersectionObserver(
       ([entry]) => {
-        setVisible(!entry.isIntersecting);
+        if (entry.isIntersecting) {
+          // CTA is visible on screen — hide sticky bar
+          setVisible(false);
+        } else {
+          // CTA is not visible — check if it's ABOVE viewport (scrolled past)
+          // boundingClientRect.bottom < 0 means the element is above the viewport
+          const isAboveViewport = entry.boundingClientRect.bottom < 0;
+          setVisible(isAboveViewport);
+        }
       },
       { threshold: 0 }
     );
-    observer.observe(ctaRef.current);
-    return () => observer.disconnect();
+    ctaObserver.observe(ctaRef.current);
+
+    // Observe footer to hide sticky bar when near bottom
+    const footerEl = document.querySelector("footer");
+    let footerObserver: IntersectionObserver | null = null;
+    if (footerEl) {
+      footerObserver = new IntersectionObserver(
+        ([entry]) => {
+          setNearFooter(entry.isIntersecting);
+        },
+        { threshold: 0, rootMargin: "100px 0px 0px 0px" }
+      );
+      footerObserver.observe(footerEl);
+    }
+
+    return () => {
+      ctaObserver.disconnect();
+      footerObserver?.disconnect();
+    };
   }, [ctaRef]);
+
+  // Determine final visibility: show only when CTA is out of view AND not near footer
+  const isVisible = visible && !nearFooter;
+
+  // Push chat icon up when sticky bar is visible
+  useEffect(() => {
+    const chatBtn = document.getElementById("chat-bubble-toggle");
+    if (chatBtn) {
+      if (isVisible) {
+        chatBtn.style.transition = "bottom 0.28s cubic-bezier(.4,0,.2,1)";
+        chatBtn.style.bottom = "80px"; // Push above sticky bar
+      } else {
+        chatBtn.style.transition = "bottom 0.28s cubic-bezier(.4,0,.2,1)";
+        chatBtn.style.bottom = "24px"; // Default position (bottom-6 = 1.5rem = 24px)
+      }
+    }
+  }, [isVisible]);
 
   let totalPrice = 0;
   if (selectedPlan) {
@@ -88,7 +133,7 @@ export function DesktopStickyBar({
   return (
     <div
       className="fixed bottom-0 left-0 right-0 z-[300] bg-white border-t border-[#e5e7eb] shadow-[0_-4px_24px_rgba(0,0,0,0.08)] transition-transform duration-[280ms] ease-[cubic-bezier(.4,0,.2,1)] hidden min-[841px]:block"
-      style={{ transform: visible ? "translateY(0)" : "translateY(110%)" }}
+      style={{ transform: isVisible ? "translateY(0)" : "translateY(110%)" }}
     >
       <div className="max-w-[1200px] mx-auto px-6 py-3 flex items-center justify-between gap-6">
         {/* Left: Plan info */}

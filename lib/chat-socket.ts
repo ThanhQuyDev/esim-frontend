@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { io, type Socket } from "socket.io-client";
 import { useAuth } from "@/lib/auth";
+import type { FileAttachment } from "@/lib/cloudinary";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.saily.example.com";
@@ -17,7 +18,13 @@ export interface ChatMessage {
   isRead: boolean;
   createdAt: string;
   updatedAt: string;
+  fileUrl?: string;
+  fileName?: string;
+  fileType?: string;
+  fileSize?: number;
 }
+
+export type { FileAttachment } from "@/lib/cloudinary";
 
 // ===== Hook =====
 
@@ -28,6 +35,7 @@ export function useChatSocket() {
   const [roomId, setRoomId] = useState<number | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   // Connect socket when token is available
   useEffect(() => {
@@ -70,8 +78,10 @@ export function useChatSocket() {
 
     socket.on("newMessage", (msg: ChatMessage) => {
       setMessages((prev) => [...prev, msg]);
-      // Auto mark as read
-      socket.emit("markAsRead", { chatRoomId: msg.chatRoomId });
+      // Increment unread if message is from admin (not from current user)
+      if (msg.senderId !== user?.id) {
+        setUnreadCount((prev) => prev + 1);
+      }
     });
 
     socket.on("error", (data: { message: string }) => {
@@ -85,15 +95,26 @@ export function useChatSocket() {
       setRoomId(null);
       setMessages([]);
     };
-  }, [token]);
+  }, [token]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const sendMessage = useCallback(
-    (text: string) => {
-      if (!socketRef.current || !roomId || !text.trim()) return;
-      socketRef.current.emit("sendMessage", {
+    (text: string, attachment?: FileAttachment) => {
+      if (!socketRef.current || !roomId) return;
+      if (!text.trim() && !attachment) return;
+
+      const payload: Record<string, unknown> = {
         chatRoomId: roomId,
-        message: text.trim(),
-      });
+        message: text.trim() || (attachment ? "📎" : ""),
+      };
+
+      if (attachment) {
+        payload.fileUrl = attachment.fileUrl;
+        payload.fileName = attachment.fileName;
+        payload.fileType = attachment.fileType;
+        payload.fileSize = attachment.fileSize;
+      }
+
+      socketRef.current.emit("sendMessage", payload);
     },
     [roomId]
   );
@@ -110,6 +131,12 @@ export function useChatSocket() {
     [roomId]
   );
 
+  const markAsRead = useCallback(() => {
+    if (!socketRef.current || !roomId) return;
+    socketRef.current.emit("markAsRead", { chatRoomId: roomId });
+    setUnreadCount(0);
+  }, [roomId]);
+
   return {
     connected,
     roomId,
@@ -117,6 +144,8 @@ export function useChatSocket() {
     error,
     sendMessage,
     loadMore,
+    markAsRead,
+    unreadCount,
     userId: user?.id ?? null,
   };
 }

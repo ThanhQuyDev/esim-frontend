@@ -77,11 +77,13 @@ export function PriceDisplay({
           </>
         )}
       </div>
-      {perDayPrice > 0 && totalDays > 1 && (
-        <div className="flex items-center gap-2 text-[13px] text-[#374151] font-medium">
+      {perDayPrice > 0 && totalDays > 1 && !isFixed && (
+        <div className="flex items-center gap-2 text-[13px] text-[#374151] font-medium flex-wrap">
           <span>≈ {formatVnd(perDayPrice)}/{dict.daysUnit.toLowerCase().charAt(0) === "d" ? "day" : "ngày"}</span>
           <span className="text-[#e5e7eb]">|</span>
-          <span className="text-[#6b7280] text-[13px]">{planLabel}</span>
+          {/* Full info on PC, truncated on mobile */}
+          <span className="text-[#6b7280] text-[13px] hidden min-[841px]:inline">{planLabel}</span>
+          <span className="text-[#6b7280] text-[13px] min-[841px]:hidden">{planLabel.split("·").slice(0, 2).join("·").trim()}</span>
         </div>
       )}
     </div>
@@ -107,10 +109,6 @@ export function GreenBox({ dict, line1Html }: GreenBoxProps) {
       <div className="flex items-start gap-[9px] text-sm text-[#166534] leading-normal">
         <GreenCheck />
         <span dangerouslySetInnerHTML={{ __html: line1Html }} />
-      </div>
-      <div className="flex items-start gap-[9px] text-sm text-[#166534] leading-normal">
-        <GreenCheck />
-        <span>{dict.greenBox.line2}</span>
       </div>
       <div className="flex items-start gap-[9px] text-sm text-[#166534] leading-normal">
         <GreenCheck />

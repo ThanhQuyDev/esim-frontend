@@ -168,7 +168,7 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
 
   // Compute GreenBox line1 based on plan category
   const greenBoxLine1 = useMemo(() => {
-    if (!selectedPlan) return (dict.greenBox as any).line1?.replace("{data}", dataLabel).replace("{fupSpeed}", "1") || "";
+    if (!selectedPlan) return (dict.greenBox as any).line1?.replace("{data}", dataLabel).replace("{fupSpeed}", "384") || "";
     const fupSpeed = selectedPlan.fupSpeed || "1";
 
     // Fixed plans (dataPlans) — high speed then cut off
@@ -192,7 +192,15 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
         .replace("{fupSpeed}", fupSpeed);
     }
 
-    // Daily (slowUnlimited) and Unlimited Normal Speed (fastUnlimited) — throttle to fupSpeed
+    // fastUnlimited — high speed then unlimited at Mbps speed
+    if (plans.fastUnlimited.some((p) => p.id === selectedPlan.id)) {
+      const template = (dict.greenBox as any).line1Fast || (dict.greenBox as any).line1;
+      return template
+        .replace("{data}", dataLabel)
+        .replace("{fupSpeed}", fupSpeed);
+    }
+
+    // slowUnlimited — high speed then throttled to Kbps
     const template = (dict.greenBox as any).line1 || "";
     return template
       .replace("{data}", dataLabel)

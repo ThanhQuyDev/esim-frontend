@@ -88,11 +88,11 @@ export function MobilePrice({
             </>
           )}
         </div>
-        {perDayPrice > 0 && totalDays > 1 && (
+        {perDayPrice > 0 && totalDays > 1 && !isFixed && (
           <div className="flex items-center gap-2 text-[13px] text-[#374151]">
-            <span>≈ {formatVnd(perDayPrice)}/ngày</span>
+            <span>≈ {formatVnd(perDayPrice)}/{dict.daysUnit.toLowerCase().charAt(0) === "d" ? "day" : "ngày"}</span>
             <span className="text-[#e5e7eb]">|</span>
-            <span className="text-[#6b7280]">{planLabel}</span>
+            <span className="text-[#6b7280]">{planLabel.split("·").slice(0, 2).join("·").trim()}</span>
           </div>
         )}
       </div>
@@ -106,10 +106,6 @@ export function MobilePrice({
               __html: greenBoxLine1,
             }}
           />
-        </div>
-        <div className="flex items-start gap-[9px] text-sm text-[#166534] leading-normal">
-          <GreenCheck />
-          <span>{dict.greenBox.line2}</span>
         </div>
         <div className="flex items-start gap-[9px] text-sm text-[#166534] leading-normal">
           <GreenCheck />

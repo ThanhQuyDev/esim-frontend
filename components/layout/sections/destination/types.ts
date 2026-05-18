@@ -49,7 +49,7 @@ export interface DestinationDict {
     support: string;
     refund: string;
   };
-  greenBox: { line1: string; line2: string; line3: string };
+  greenBox: { line1: string; line1Fast?: string; line1Fixed?: string; line1UnlimitedHigh?: string; line3: string };
   disclaimer: string;
   disclaimerLink: string;
   save: string;

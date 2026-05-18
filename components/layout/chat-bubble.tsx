@@ -1,31 +1,125 @@
 "use client";
 
-import { useState, useRef, useEffect, type FormEvent } from "react";
+import { useState, useRef, useEffect, useCallback, type FormEvent, type ChangeEvent } from "react";
 import { useChatSocket, type ChatMessage } from "@/lib/chat-socket";
+import { uploadToCloudinary, validateChatFile, type FileAttachment } from "@/lib/cloudinary";
 import { useAuth } from "@/lib/auth";
-import { MessageCircle, X, Send, Loader2 } from "lucide-react";
+import { MessageCircle, X, Send, Loader2, Paperclip, Image as ImageIcon } from "lucide-react";
+
+// ===== Browser Title Notification Hook =====
+
+function useTitleNotification(unreadCount: number, chatOpen: boolean) {
+  const originalTitleRef = useRef<string>("");
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    if (!originalTitleRef.current) {
+      originalTitleRef.current = document.title;
+    }
+  }, []);
+
+  useEffect(() => {
+    // Clear any existing interval
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+
+    // If chat is open or no unread, restore title
+    if (chatOpen || unreadCount === 0) {
+      document.title = originalTitleRef.current || document.title;
+      return;
+    }
+
+    // Only flash when tab is not visible
+    const handleVisibility = () => {
+      if (document.hidden && unreadCount > 0 && !chatOpen) {
+        startFlashing();
+      } else {
+        stopFlashing();
+      }
+    };
+
+    const startFlashing = () => {
+      if (intervalRef.current) return;
+      let showNotification = true;
+      intervalRef.current = setInterval(() => {
+        document.title = showNotification
+          ? `(${unreadCount}) Tin nhắn mới...`
+          : (originalTitleRef.current || "esim.vn");
+        showNotification = !showNotification;
+      }, 1500);
+    };
+
+    const stopFlashing = () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+      document.title = originalTitleRef.current || document.title;
+    };
+
+    // Start immediately if hidden
+    if (document.hidden && unreadCount > 0) {
+      startFlashing();
+    }
+
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibility);
+      stopFlashing();
+    };
+  }, [unreadCount, chatOpen]);
+}
 
 // ===== Chat Bubble — fixed bottom-right =====
 
 export function ChatBubble() {
   const { user, token, openAuthModal } = useAuth();
   const [open, setOpen] = useState(false);
+  const { unreadCount, markAsRead } = useChatSocket();
+
+  // Browser title notification
+  useTitleNotification(unreadCount, open);
+
+  const handleOpen = () => {
+    if (!token) {
+      openAuthModal();
+      return;
+    }
+    setOpen(true);
+    // Mark messages as read when opening chat
+    markAsRead();
+  };
 
   return (
     <>
       {/* Floating toggle button */}
       <button
         onClick={() => {
-          if (!token) {
-            openAuthModal();
-            return;
+          if (open) {
+            setOpen(false);
+          } else {
+            handleOpen();
           }
-          setOpen((prev) => !prev);
         }}
         className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#1a1a2e] text-white shadow-lg transition-transform hover:scale-105 active:scale-95"
         aria-label={open ? "Close chat" : "Open support chat"}
+        id="chat-bubble-toggle"
       >
-        {open ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
+        {open ? (
+          <X className="h-6 w-6" />
+        ) : (
+          <>
+            <MessageCircle className="h-6 w-6" />
+            {/* Unread badge */}
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[11px] font-bold text-white shadow-md">
+                {unreadCount > 99 ? "99+" : unreadCount}
+              </span>
+            )}
+          </>
+        )}
       </button>
 
       {/* Chat window */}
@@ -37,20 +131,23 @@ export function ChatBubble() {
 // ===== Chat Window =====
 
 function ChatWindow({ onClose }: { onClose: () => void }) {
-  const { connected, messages, sendMessage, error, userId } = useChatSocket();
+  const { connected, messages, sendMessage, error, userId, markAsRead } = useChatSocket();
   const [input, setInput] = useState("");
+  const [uploading, setUploading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Focus input when window opens
+  // Focus input when window opens & mark as read
   useEffect(() => {
     inputRef.current?.focus();
-  }, []);
+    markAsRead();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -58,6 +155,27 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
     sendMessage(input);
     setInput("");
   };
+
+  const handleFileSelect = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const validationError = validateChatFile(file);
+    if (validationError) return;
+
+    setUploading(true);
+    try {
+      const attachment = await uploadToCloudinary(file);
+      sendMessage(input || "", attachment);
+      setInput("");
+    } catch {
+      // Upload failed silently
+    } finally {
+      setUploading(false);
+      // Reset file input
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  }, [input, sendMessage]);
 
   return (
     <div
@@ -116,6 +234,29 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
         onSubmit={handleSubmit}
         className="flex items-center gap-2 border-t border-gray-200 bg-white px-3 py-2"
       >
+        {/* File attachment button */}
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={!connected || uploading}
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-gray-500 transition-colors hover:bg-gray-100 disabled:opacity-40"
+          aria-label="Attach file"
+        >
+          {uploading ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Paperclip className="h-4 w-4" />
+          )}
+        </button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*,video/*"
+          onChange={handleFileSelect}
+          className="hidden"
+          aria-hidden="true"
+        />
+
         <input
           ref={inputRef}
           type="text"
@@ -128,7 +269,7 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
         />
         <button
           type="submit"
-          disabled={!connected || !input.trim()}
+          disabled={!connected || (!input.trim() && !uploading)}
           className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1a1a2e] text-white transition-opacity disabled:opacity-40"
           aria-label="Send message"
         >
@@ -157,20 +298,57 @@ function MessageBubble({
     minute: "2-digit",
   });
 
+  const hasImage = !!(message.fileUrl && message.fileType?.startsWith("image/"));
+  const hasTextContent = !!(message.message && message.message !== "📎");
+
   return (
     <div className={`flex ${isOwn ? "justify-end" : "justify-start"}`}>
+      {/* Admin logo — shown before admin messages */}
+      {!isOwn && (
+        <div className="flex-shrink-0 mr-2 mt-1">
+          <img
+            src="/logo.png"
+            alt="Admin"
+            className="h-7 w-7 rounded-full object-cover border border-gray-200"
+          />
+        </div>
+      )}
       <div
-        className={`max-w-[75%] rounded-2xl px-3.5 py-2 text-sm leading-relaxed ${
-          isOwn
-            ? "bg-[#1a1a2e] text-white rounded-br-md"
-            : "bg-white text-gray-800 border border-gray-200 rounded-bl-md"
+        className={`max-w-[75%] rounded-2xl text-sm leading-relaxed ${
+          hasImage && !hasTextContent
+            ? "p-0 bg-transparent"
+            : isOwn
+              ? "px-3.5 py-2 bg-[#5353ff] text-white rounded-br-md"
+              : "px-3.5 py-2 bg-white text-gray-800 border border-gray-200 rounded-bl-md"
         }`}
       >
-        <p className="whitespace-pre-wrap break-words">{message.message}</p>
+        {/* File attachment preview */}
+        {message.fileUrl && message.fileType?.startsWith("image/") && (
+          <a href={message.fileUrl} target="_blank" rel="noopener noreferrer" className="block">
+            <img
+              src={message.fileUrl}
+              alt={message.fileName || "Image"}
+              className="max-w-full rounded-sm max-h-[200px] object-cover"
+              loading="lazy"
+            />
+          </a>
+        )}
+        {message.fileUrl && message.fileType?.startsWith("video/") && (
+          <video
+            src={message.fileUrl}
+            controls
+            className="max-w-full rounded-lg max-h-[200px] mb-1.5"
+            preload="metadata"
+          />
+        )}
+
+        {hasTextContent && (
+          <p className={`whitespace-pre-wrap break-words ${hasImage ? "mt-1.5 px-3.5" : ""}`}>{message.message}</p>
+        )}
         <p
           className={`mt-1 text-[10px] ${
             isOwn ? "text-gray-300" : "text-gray-400"
-          } text-right`}
+          } text-right ${hasImage && !hasTextContent ? "px-1" : ""}`}
         >
           {time}
         </p>

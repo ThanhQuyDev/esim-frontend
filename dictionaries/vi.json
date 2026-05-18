@@ -903,10 +903,10 @@
       "refund": "Cam kết hoàn tiền 100%"
     },
     "greenBox": {
-      "line1": "<strong>{data}</strong> tốc độ cao — sau đó giảm tốc độ xuống {fupSpeed} Mbps không giới hạn",
-      "line1Fixed": "<strong>{data} / {days} ngày</strong> tốc độ cao — sau đó cắt",
-      "line1UnlimitedHigh": "Không giới hạn data tốc độ <strong>{fupSpeed} Mbps</strong>",
-      "line2": "Bảo mật tích hợp — vượt tường lửa, chặn quảng cáo độc hại",
+      "line1": "Data <strong>{data}</strong> tốc độ cao – Hết lưu lượng, hạ tốc độ {fupSpeed} Kbps",
+      "line1Fast": "Data <strong>{data}</strong> tốc độ cao → Tốc độ {fupSpeed} Mbps không giới hạn.",
+      "line1Fixed": "Data <strong>{data} / {days} ngày</strong> tốc độ cao – Hết lưu lượng, ngừng truy cập",
+      "line1UnlimitedHigh": "Không giới hạn data tốc độ <strong>{fupSpeed}</strong>",
       "line3": "Hỗ trợ TikTok, Facebook, Google, YouTube, Zalo"
     },
     "disclaimer": "Hãy đảm bảo thiết bị của bạn tương thích với eSIM trước khi thanh toán.",
