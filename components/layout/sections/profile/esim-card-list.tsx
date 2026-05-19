@@ -14,11 +14,13 @@ import {
   Calendar,
   Infinity,
   Info,
+  Zap,
 } from "lucide-react";
 import type { MyEsim } from "@/lib/hooks";
 import { useEsimDataUsage } from "@/lib/hooks";
 import type { ProfileDict } from "./translations";
 import QRCode from "qrcode";
+import { TopupModal } from "./topup-modal";
 
 interface EsimCardListProps {
   esims: MyEsim[];
@@ -261,9 +263,10 @@ function DataUsageSection({ esimId, lang }: { esimId: number; lang: string }) {
 
 type EsimTab = "info" | "dataUsage";
 
-function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: string }) {
+function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" | "vi" }) {
   const [expanded, setExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState<EsimTab>("info");
+  const [topupOpen, setTopupOpen] = useState(false);
 
   const fields: { label: string; value: string; copyable?: boolean }[] = [
     { label: "ICCID", value: esim.iccid, copyable: true },
@@ -271,6 +274,8 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: strin
     { label: t.activationCode, value: esim.activationCode, copyable: true },
     { label: "APN", value: esim.apnValue, copyable: true },
   ];
+
+  const canTopup = esim.plan?.topUp === true;
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white overflow-hidden transition-shadow hover:shadow-sm">
@@ -404,6 +409,18 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: strin
                       {lang === "vi" ? "Cài đặt trên iPhone" : "Install on iPhone"}
                     </a>
                   )}
+
+                  {/* Top Up Button — only when the plan supports it */}
+                  {canTopup && (
+                    <button
+                      type="button"
+                      onClick={() => setTopupOpen(true)}
+                      className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors shadow-sm"
+                    >
+                      <Zap className="w-4 h-4" />
+                      {t.topup}
+                    </button>
+                  )}
                 </div>
               </>
             ) : (
@@ -412,6 +429,17 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: strin
             )}
           </div>
         </div>
+      )}
+
+      {/* Topup Modal — mounted at card root so it overlays page */}
+      {canTopup && (
+        <TopupModal
+          esim={esim}
+          open={topupOpen}
+          onClose={() => setTopupOpen(false)}
+          t={t}
+          lang={lang}
+        />
       )}
     </div>
   );

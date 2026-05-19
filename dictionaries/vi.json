@@ -1035,5 +1035,73 @@
     "comparisonTable": {
       "title": "esim.vn so sánh với các nhà cung cấp eSIM khác như thế nào?"
     }
+  },
+  "support": {
+    "form": {
+      "pageTitle": "Gửi yêu cầu hỗ trợ",
+      "pageSubtitle": "Đội ngũ esim.vn sẽ phản hồi qua email trong vòng 24 giờ.",
+      "breadcrumbHome": "Trung tâm trợ giúp",
+      "breadcrumbCurrent": "Gửi yêu cầu",
+      "email": "Email",
+      "emailPlaceholder": "ban@example.com",
+      "emailHelp": "Chúng tôi sẽ liên hệ với bạn qua email này.",
+      "subject": "Tiêu đề",
+      "subjectPlaceholder": "Tóm tắt ngắn gọn vấn đề của bạn",
+      "orderId": "Mã đơn hàng",
+      "orderIdPlaceholder": "VD: ORD-12345",
+      "orderIdHelp": "Để trống nếu không liên quan đến đơn hàng cụ thể.",
+      "deviceModel": "Dòng máy",
+      "deviceModelPlaceholder": "Chọn hoặc nhập dòng máy",
+      "iccid": "ICCID",
+      "iccidPlaceholder": "VD: 8932000000000000000",
+      "iccidHelp": "ICCID là số định danh in trên thẻ eSIM (19-20 chữ số).",
+      "planDestination": "Quốc gia/Khu vực",
+      "planDestinationPlaceholder": "Chọn điểm đến",
+      "description": "Nội dung",
+      "descriptionPlaceholder": "Mô tả chi tiết vấn đề bạn gặp phải...",
+      "descriptionCounter": "{{count}}/{{max}} ký tự",
+      "attachments": "File đính kèm",
+      "attachmentsHelp": "Kéo thả file vào đây hoặc nhấn để chọn. Tối đa 5 file, mỗi file ≤ 5MB.",
+      "attachmentsAccept": "Chấp nhận: ảnh, PDF, DOC, DOCX",
+      "attachmentsBrowse": "Chọn file",
+      "attachmentsRemove": "Xoá",
+      "attachmentsTooMany": "Tối đa 5 file đính kèm.",
+      "attachmentsTooLarge": "{{name}} vượt quá 5MB.",
+      "attachmentsInvalidType": "{{name}} có định dạng không được hỗ trợ.",
+      "submit": "Gửi yêu cầu",
+      "submitting": "Đang gửi...",
+      "uploading": "Đang tải file lên...",
+      "required": "Bắt buộc",
+      "optional": "Tuỳ chọn",
+      "privacyNotice": "Email của bạn chỉ dùng để phản hồi yêu cầu này, không gửi marketing.",
+      "validation": {
+        "emailRequired": "Vui lòng nhập email.",
+        "emailInvalid": "Email không hợp lệ.",
+        "subjectRequired": "Vui lòng nhập tiêu đề.",
+        "subjectMin": "Tiêu đề tối thiểu 5 ký tự.",
+        "subjectMax": "Tiêu đề tối đa 255 ký tự.",
+        "descriptionRequired": "Vui lòng nhập nội dung.",
+        "descriptionMin": "Nội dung tối thiểu 20 ký tự.",
+        "descriptionMax": "Nội dung tối đa 5000 ký tự.",
+        "orderIdMax": "Mã đơn hàng tối đa 100 ký tự.",
+        "deviceModelMax": "Dòng máy tối đa 100 ký tự.",
+        "iccidPattern": "ICCID phải gồm 19-20 chữ số.",
+        "planDestinationMax": "Tối đa 100 ký tự.",
+        "attachmentsMax": "Tối đa 5 file đính kèm."
+      },
+      "toast": {
+        "successTitle": "Đã gửi yêu cầu thành công!",
+        "successDescription": "Mã yêu cầu: #{{id}}. Chúng tôi sẽ phản hồi qua email trong 24 giờ.",
+        "errorGeneric": "Có lỗi xảy ra, vui lòng thử lại.",
+        "errorUpload": "Tải file lên thất bại, vui lòng thử lại."
+      },
+      "success": {
+        "title": "Đã gửi yêu cầu thành công!",
+        "description": "Cảm ơn bạn đã liên hệ. Chúng tôi sẽ phản hồi qua email trong vòng 24 giờ.",
+        "ticketId": "Mã yêu cầu: #{{id}}",
+        "ctaNew": "Gửi yêu cầu khác",
+        "ctaHome": "Về trang chủ"
+      }
+    }
   }
 }

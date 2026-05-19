@@ -1035,5 +1035,73 @@
     "comparisonTable": {
       "title": "How does esim.vn compare with other eSIM providers?"
     }
+  },
+  "support": {
+    "form": {
+      "pageTitle": "Submit Support Request",
+      "pageSubtitle": "Our team will reply via email within 24 hours.",
+      "breadcrumbHome": "Help Center",
+      "breadcrumbCurrent": "Submit a Ticket",
+      "email": "Email",
+      "emailPlaceholder": "you@example.com",
+      "emailHelp": "We'll get back to you using this email.",
+      "subject": "Subject",
+      "subjectPlaceholder": "Briefly summarize your issue",
+      "orderId": "Order ID",
+      "orderIdPlaceholder": "e.g. ORD-12345",
+      "orderIdHelp": "Leave empty if it's not related to a specific order.",
+      "deviceModel": "Device Model",
+      "deviceModelPlaceholder": "Choose or type your device",
+      "iccid": "ICCID",
+      "iccidPlaceholder": "e.g. 8932000000000000000",
+      "iccidHelp": "ICCID is the identifier printed on your eSIM card (19-20 digits).",
+      "planDestination": "Destination",
+      "planDestinationPlaceholder": "Choose a destination",
+      "description": "Description",
+      "descriptionPlaceholder": "Describe your issue in detail...",
+      "descriptionCounter": "{{count}}/{{max}} characters",
+      "attachments": "Attachments",
+      "attachmentsHelp": "Drag and drop files or click to browse. Up to 5 files, max 5MB each.",
+      "attachmentsAccept": "Accepted: images, PDF, DOC, DOCX",
+      "attachmentsBrowse": "Browse files",
+      "attachmentsRemove": "Remove",
+      "attachmentsTooMany": "You can attach up to 5 files.",
+      "attachmentsTooLarge": "{{name}} exceeds the 5MB limit.",
+      "attachmentsInvalidType": "{{name}} is an unsupported file type.",
+      "submit": "Submit",
+      "submitting": "Submitting...",
+      "uploading": "Uploading files...",
+      "required": "Required",
+      "optional": "Optional",
+      "privacyNotice": "Your email is only used to reply to this request, never for marketing.",
+      "validation": {
+        "emailRequired": "Email is required.",
+        "emailInvalid": "Please enter a valid email.",
+        "subjectRequired": "Subject is required.",
+        "subjectMin": "Subject must be at least 5 characters.",
+        "subjectMax": "Subject must be 255 characters or less.",
+        "descriptionRequired": "Description is required.",
+        "descriptionMin": "Description must be at least 20 characters.",
+        "descriptionMax": "Description must be 5000 characters or less.",
+        "orderIdMax": "Order ID must be 100 characters or less.",
+        "deviceModelMax": "Device model must be 100 characters or less.",
+        "iccidPattern": "ICCID must be 19-20 digits.",
+        "planDestinationMax": "Must be 100 characters or less.",
+        "attachmentsMax": "Up to 5 attachments allowed."
+      },
+      "toast": {
+        "successTitle": "Ticket submitted successfully!",
+        "successDescription": "Ticket ID: #{{id}}. We'll reply via email within 24 hours.",
+        "errorGeneric": "Something went wrong, please try again.",
+        "errorUpload": "File upload failed, please try again."
+      },
+      "success": {
+        "title": "Ticket submitted successfully!",
+        "description": "Thank you for reaching out. We'll reply via email within 24 hours.",
+        "ticketId": "Ticket ID: #{{id}}",
+        "ctaNew": "Submit another request",
+        "ctaHome": "Back to home"
+      }
+    }
   }
 }

@@ -631,6 +631,13 @@ export function useCreateOrderItem() {
 
 // ===== Payment Types =====
 
+export interface InvoicePayload {
+  companyName: string;
+  taxCode: string;
+  address: string;
+  invoiceEmail: string;
+}
+
 export interface CheckoutPayload {
   token?: string;
   paymentMethod: string;
@@ -640,6 +647,12 @@ export interface CheckoutPayload {
   couponCode: string;
   referralCode?: string;
   useWalletAmountVnd?: number;
+  /**
+   * Optional invoice info. When present, backend creates an Invoice (PENDING)
+   * tied to the new order. Omit entirely (do not send `null` or `{}`) when the
+   * user does not want an invoice.
+   */
+  invoice?: InvoicePayload;
 }
 
 export interface CheckoutResponse {
@@ -786,9 +799,18 @@ export function useOrderByNumber(orderNumber: string, enabled: boolean) {
     },
     enabled: enabled && !!orderNumber && !!token,
     refetchInterval: (query) => {
-      // Stop polling once we have eSIM data in any item
+      // Stop polling once we have eSIM data in any item, or order reached a terminal status
       const data = query.state.data;
       if (data?.items?.some((item) => item.esims && item.esims.length > 0)) {
+        return false;
+      }
+      const status = data?.status;
+      if (
+        status === "completed" ||
+        status === "failed" ||
+        status === "cancelled" ||
+        status === "MANUAL_INTERVENTION"
+      ) {
         return false;
       }
       return 5000; // Poll every 5s
@@ -1058,6 +1080,27 @@ export function useMyOrders() {
 
 // ===== My eSIMs =====
 
+export interface MyEsimPlan {
+  id?: number;
+  name?: string;
+  slug?: string;
+  durationDays?: number;
+  dataMb?: number;
+  topUp?: boolean;
+  destination?: {
+    id?: number;
+    name?: string;
+    slug?: string;
+    countryCode?: string;
+    flagUrl?: string;
+  } | null;
+  region?: {
+    id?: number;
+    name?: string;
+    slug?: string;
+  } | null;
+}
+
 export interface MyEsim {
   id: number;
   orderItemId: number;
@@ -1079,6 +1122,8 @@ export interface MyEsim {
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
+  /** Plan info attached by the backend (`GET /esims/my/list` includes `plan`). */
+  plan?: MyEsimPlan | null;
 }
 
 interface MyEsimsResponse {
@@ -1122,6 +1167,91 @@ export function useMyEsims() {
       if (!res.ok) throw new Error(`Failed to fetch eSIMs: ${res.status}`);
       const json: MyEsimsResponse = await res.json();
       return json.data;
+    },
+  });
+}
+
+// ===== Topup =====
+
+export type TopupProvider = "AIRALO" | "ESIM_ACCESS" | "GADGET_KOREA";
+
+export interface TopupPackage {
+  provider: TopupProvider;
+  packageId: string;
+  name: string;
+  dataAmountBytes: number;
+  dataAmountText: string;
+  durationDays: number;
+  isUnlimited: boolean;
+  price: number;
+  retailPrice: number;
+  vndPrice?: number;
+}
+
+export interface TopupListResponse {
+  success: true;
+  iccid: string;
+  provider: TopupProvider;
+  packages: TopupPackage[];
+}
+
+export interface TopupCheckoutPayload {
+  iccid: string;
+  packageId: string;
+  provider: TopupProvider;
+  paymentMethod: "ONEPAY";
+}
+
+export interface TopupCheckoutResponse {
+  success: true;
+  orderId: string;
+  paymentUrl: string;
+}
+
+/**
+ * List Topup packages available for a given ICCID.
+ * Backend auto-detects the underlying provider; FE just passes ICCID.
+ */
+export function useTopupPackages(iccid: string | null, enabled = true) {
+  const { token } = useAuth();
+  return useQuery({
+    queryKey: ["topup-packages", iccid],
+    enabled: !!token && !!iccid && enabled,
+    queryFn: async ({ signal }): Promise<TopupListResponse> => {
+      const res = await authFetch(
+        `${API_BASE_URL}/api/v1/topup/packages?iccid=${encodeURIComponent(iccid!)}`,
+        token,
+        { signal }
+      );
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || `Failed to fetch topup packages: ${res.status}`);
+      }
+      return res.json();
+    },
+    staleTime: 60_000,
+  });
+}
+
+/**
+ * Create a Topup order and obtain the OnePay redirect URL.
+ */
+export function useTopupCheckout() {
+  const { token } = useAuth();
+  return useMutation({
+    mutationFn: async (
+      payload: TopupCheckoutPayload
+    ): Promise<TopupCheckoutResponse> => {
+      const res = await authFetch(`${API_BASE_URL}/api/v1/topup/checkout`, token, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || `Topup checkout failed: ${res.status}`);
+      }
+      return res.json();
     },
   });
 }

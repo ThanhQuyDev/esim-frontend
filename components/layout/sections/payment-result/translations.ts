@@ -28,6 +28,16 @@ export interface PaymentResultDict {
   myProfile: string;
   esimProcessing: string;
   esimProcessingDesc: string;
+  // Topup-specific
+  topupSuccessTitle: string;
+  topupSuccessSubtitle: string;
+  topupProcessingTitle: string;
+  topupProcessingDesc: string;
+  topupFailedTitle: string;
+  topupFailedDesc: string;
+  topupManualTitle: string;
+  topupManualDesc: string;
+  topupBackToProfile: string;
 }
 
 export const paymentResultTranslations: Record<"en" | "vi", PaymentResultDict> = {
@@ -61,6 +71,15 @@ export const paymentResultTranslations: Record<"en" | "vi", PaymentResultDict> =
     myProfile: "Go to My Profile",
     esimProcessing: "eSIM is being processed",
     esimProcessingDesc: "Please check your email or My Profile section in a few minutes.",
+    topupSuccessTitle: "Top Up Successful!",
+    topupSuccessSubtitle: "We've added the package to your eSIM. Your data is ready to use.",
+    topupProcessingTitle: "Processing your top-up...",
+    topupProcessingDesc: "Payment received — we are activating the package with your provider. This usually takes a few seconds.",
+    topupFailedTitle: "Top Up Failed",
+    topupFailedDesc: "Your payment was not successful. You have not been charged. Please try again.",
+    topupManualTitle: "Order is being processed manually",
+    topupManualDesc: "We received your payment but the activation needs a manual review. Our support team will contact you within a few hours.",
+    topupBackToProfile: "Back to My eSIMs",
   },
   vi: {
     orderId: "Mã đơn hàng",
@@ -92,5 +111,14 @@ export const paymentResultTranslations: Record<"en" | "vi", PaymentResultDict> =
     myProfile: "Đi đến Hồ sơ",
     esimProcessing: "eSIM đang được xử lý",
     esimProcessingDesc: "Vui lòng kiểm tra email hoặc phần Hồ sơ của bạn sau vài phút.",
+    topupSuccessTitle: "Nạp thành công!",
+    topupSuccessSubtitle: "Gói cước đã được nạp vào eSIM của bạn và sẵn sàng sử dụng.",
+    topupProcessingTitle: "Đang xử lý nạp tiền...",
+    topupProcessingDesc: "Đã nhận thanh toán — chúng tôi đang kích hoạt gói cước với nhà cung cấp. Thường chỉ mất vài giây.",
+    topupFailedTitle: "Nạp tiền thất bại",
+    topupFailedDesc: "Thanh toán chưa thành công. Bạn chưa bị trừ tiền. Vui lòng thử lại.",
+    topupManualTitle: "Đơn hàng đang được xử lý thủ công",
+    topupManualDesc: "Chúng tôi đã nhận thanh toán nhưng việc kích hoạt cần được xem xét thủ công. CSKH sẽ liên hệ với bạn trong vòng vài giờ.",
+    topupBackToProfile: "Về trang eSIM của tôi",
   },
 };

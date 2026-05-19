@@ -6,6 +6,7 @@ import Link from "next/link";
 import * as Dialog from "@radix-ui/react-dialog";
 import { cn } from "@/lib/utils";
 import { SailyLogo } from "@/components/icons/saily-logo";
+import { HelpCenterNavbar } from "@/components/layout/help-center-navbar";
 import { DestinationSearch } from "@/components/layout/destination-search";
 import { DestinationDropdown } from "@/components/layout/destination-dropdown";
 import { useAuth } from "@/lib/auth";
@@ -508,7 +509,36 @@ const NAV_ITEMS = ["product", "resources", "offers", "help"] as const;
 
 /* ===== Main Navbar ===== */
 
-export function Navbar({ lang, dict, topBars = [] }: NavbarProps) {
+/**
+ * Outer dispatcher: picks the right navbar variant based on the current route.
+ *
+ * Kept side-effect free (no hooks beyond `usePathname`) so the inner
+ * `MainNavbar` can own all the React hooks unconditionally and satisfy
+ * `react-hooks/rules-of-hooks`.
+ */
+export function Navbar(props: NavbarProps) {
+  const pathname = usePathname();
+
+  // Help Center pages get a dedicated navbar (per Phần 7 spec).
+  // Match both internal path (`/help-center/...`) and localized public slugs
+  // (`/ho-tro/...` for vi, `/help/...` for en) since usePathname can return
+  // either depending on whether the request was rewritten by middleware.
+  const helpCenterEntry = routeMap.find((e) => e.internal === "help-center");
+  const helpCenterPrefixes = [
+    `/${props.lang}/help-center`,
+    helpCenterEntry ? `/${props.lang}/${helpCenterEntry.slugs[props.lang]}` : null,
+  ].filter(Boolean) as string[];
+  const isHelpCenterRoute = helpCenterPrefixes.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
+  );
+
+  if (isHelpCenterRoute) {
+    return <HelpCenterNavbar lang={props.lang} />;
+  }
+  return <MainNavbar {...props} />;
+}
+
+function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
   const pathname = usePathname();
   const isLandingPage = pathname === `/${lang}` || pathname === `/${lang}/`;
   const [searchOpen, setSearchOpen] = useState(false);

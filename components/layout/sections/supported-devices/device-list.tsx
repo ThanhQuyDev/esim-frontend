@@ -51,6 +51,13 @@ interface SearchResultGroup {
   results: { device: string; manufacturer: string; type: string }[];
 }
 
+const TYPE_ICON_MAP: Record<string, typeof Smartphone> = {
+  "Smart Phones": Smartphone,
+  "Smart Watches": Watch,
+  Tablets: Tablet,
+  Laptops: Laptop,
+};
+
 export function DeviceList({ initialData, dict, lang }: DeviceListProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
@@ -63,13 +70,6 @@ export function DeviceList({ initialData, dict, lang }: DeviceListProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const debouncedSearch = useDebounce(searchQuery, 300);
-
-  const TYPE_ICON_MAP: Record<string, typeof Smartphone> = {
-    "Smart Phones": Smartphone,
-    "Smart Watches": Watch,
-    Tablets: Tablet,
-    Laptops: Laptop,
-  };
 
   // Call API when debounced search changes
   useEffect(() => {

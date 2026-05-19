@@ -65,6 +65,23 @@ export interface ProfileDict {
   copyCode: string;
   shareReferral: string;
   referralInactive: string;
+  // Topup
+  topupTitle: string;
+  topupSubtitle: string;
+  topupNoPackages: string;
+  topupErrorLoading: string;
+  topupConfirmButton: string;
+  topupProcessing: string;
+  topupCancel: string;
+  topupSelectPackage: string;
+  topupNotSupported: string;
+  topupErrorProviderMismatch: string;
+  topupErrorPackageUnavailable: string;
+  topupErrorIccidNotFound: string;
+  topupErrorGeneric: string;
+  topupUnlimited: string;
+  topupDuration: string; // e.g. "30 days"
+  topupVndUnavailable: string;
 }
 
 export const profileTranslations: Record<"en" | "vi", ProfileDict> = {
@@ -134,6 +151,22 @@ export const profileTranslations: Record<"en" | "vi", ProfileDict> = {
     copyCode: "Copy Code",
     shareReferral: "Share Referral Code",
     referralInactive: "Your referral code is currently inactive.",
+    topupTitle: "Top Up Your eSIM",
+    topupSubtitle: "Choose a package to add data to this eSIM.",
+    topupNoPackages: "No top-up packages are available for this eSIM right now.",
+    topupErrorLoading: "Could not load top-up packages. Please try again.",
+    topupConfirmButton: "Continue to Payment",
+    topupProcessing: "Creating your order...",
+    topupCancel: "Cancel",
+    topupSelectPackage: "Please select a package first.",
+    topupNotSupported: "This eSIM does not support top-up.",
+    topupErrorProviderMismatch: "SIM provider mismatch. Please reload the page and try again.",
+    topupErrorPackageUnavailable: "This package is no longer available. Please pick another one.",
+    topupErrorIccidNotFound: "ICCID not found in our system.",
+    topupErrorGeneric: "Something went wrong. Please try again.",
+    topupUnlimited: "Unlimited",
+    topupDuration: "days",
+    topupVndUnavailable: "VND price unavailable, USD price shown.",
   },
   vi: {
     pageTitle: "Tài Khoản",
@@ -201,5 +234,21 @@ export const profileTranslations: Record<"en" | "vi", ProfileDict> = {
     copyCode: "Sao chép mã",
     shareReferral: "Chia sẻ mã giới thiệu",
     referralInactive: "Mã giới thiệu của bạn hiện không hoạt động.",
+    topupTitle: "Nạp dung lượng cho eSIM",
+    topupSubtitle: "Chọn gói cước để nạp thêm dung lượng cho eSIM này.",
+    topupNoPackages: "SIM này hiện không có gói nạp khả dụng.",
+    topupErrorLoading: "Không thể tải danh sách gói nạp. Vui lòng thử lại.",
+    topupConfirmButton: "Tiếp tục thanh toán",
+    topupProcessing: "Đang tạo đơn hàng...",
+    topupCancel: "Hủy",
+    topupSelectPackage: "Vui lòng chọn một gói cước.",
+    topupNotSupported: "eSIM này không hỗ trợ nạp dung lượng.",
+    topupErrorProviderMismatch: "SIM không khớp với nhà cung cấp đã chọn. Vui lòng tải lại trang.",
+    topupErrorPackageUnavailable: "Gói cước này không còn khả dụng. Vui lòng chọn gói khác.",
+    topupErrorIccidNotFound: "Không tìm thấy ICCID trong hệ thống.",
+    topupErrorGeneric: "Đã xảy ra lỗi. Vui lòng thử lại.",
+    topupUnlimited: "Không giới hạn",
+    topupDuration: "ngày",
+    topupVndUnavailable: "Không có giá VND, hiển thị giá USD.",
   },
 };

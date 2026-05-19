@@ -196,6 +196,18 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
         couponCode: coupon?.code || "",
         referralCode: referralApplied ? referralCode : undefined,
         useWalletAmountVnd: actualExuUsed > 0 ? actualExuUsed : undefined,
+        // Only attach `invoice` when the user opted in. Backend rejects
+        // partial/empty invoice objects with 422, so we omit entirely otherwise.
+        ...(wantInvoice
+          ? {
+              invoice: {
+                companyName: invoiceInfo.companyName.trim(),
+                taxCode: invoiceInfo.taxCode.trim(),
+                address: invoiceInfo.address.trim(),
+                invoiceEmail: invoiceInfo.email.trim(),
+              },
+            }
+          : {}),
       },
       {
         onSuccess: (data) => {

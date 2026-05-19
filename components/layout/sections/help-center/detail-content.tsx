@@ -178,53 +178,7 @@ export function DetailContent({ lang, category, parent, titleSlug, initialArticl
   return (
     <main role="main">
       {/* Search Box on top for sub-pages (Bug 2.8 + Layout 2.3) */}
-      {titleSlug && (
-        <div className="bg-gray-100 border-b border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 py-3">
-            <form role="search" className="relative max-w-lg mx-auto" onSubmit={(e) => e.preventDefault()}>
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input
-                type="search"
-                placeholder={lang === "vi" ? "Nhập chủ đề, câu hỏi hoặc vấn đề" : "Type a topic, question or issue here"}
-                className="w-full pl-10 pr-4 py-2.5 rounded-full text-sm border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                aria-label={lang === "vi" ? "Tìm kiếm bài viết" : "Search articles"}
-              />
-              {/* Search Results Dropdown */}
-              {searchQuery.trim() && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-xl border border-gray-200 max-h-64 overflow-y-auto z-50">
-                  {isSearching ? (
-                    <div className="p-3 text-center text-gray-500 text-sm">
-                      {lang === "vi" ? "Đang tìm kiếm..." : "Searching..."}
-                    </div>
-                  ) : searchResults.length > 0 ? (
-                    <ul className="list-none p-0 m-0">
-                      {searchResults.map((article) => (
-                        <li key={article.id}>
-                          <Link
-                            href={`${basePath}/${article.category}/${article.parent}/${slugify(article.title)}`}
-                            className="block px-4 py-2.5 text-gray-900 no-underline hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
-                          >
-                            <p className="text-sm font-medium">{article.title}</p>
-                            <p className="text-xs text-gray-500 mt-0.5">
-                              {getCategoryLabel(article.category, lang)} › {formatLabel(article.parent)}
-                            </p>
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <div className="p-3 text-center text-gray-500 text-sm">
-                      {lang === "vi" ? "Không tìm thấy kết quả" : "No results found"}
-                    </div>
-                  )}
-                </div>
-              )}
-            </form>
-          </div>
-        </div>
-      )}
+     
 
       {/* Breadcrumb (Style 2.9) */}
       <div className="bg-gray-200">
@@ -380,8 +334,8 @@ export function DetailContent({ lang, category, parent, titleSlug, initialArticl
                                     onClick={() => toggleParent(catKey, parentKey)}
                                     className={`w-full flex items-center justify-between px-3 py-1.5 text-sm text-left rounded transition-colors cursor-pointer ${
                                       isParentActive
-                                        ? "bg-gray-100 font-semibold text-gray-900 border-l-[3px] border-l-[#ffdc52]"
-                                        : "text-gray-600 hover:bg-gray-50 border-l-[3px] border-l-transparent"
+                                        ? "bg-gray-100 font-semibold text-gray-900"
+                                        : "text-gray-600 hover:bg-gray-50"
                                     }`}
                                     aria-expanded={isParentExpanded}
                                   >
