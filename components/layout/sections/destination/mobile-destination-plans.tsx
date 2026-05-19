@@ -37,7 +37,8 @@ export interface MobileDestinationPlansProps {
   activeCategory: PlanCategory;
   onCategoryChange: (category: PlanCategory) => void;
   hasSmsCallPlans: boolean;
-  hasLocalSimPlans: boolean;
+  /** Open the shared eKYC guide modal. */
+  onOpenEkyc?: () => void;
 }
 
 export function MobileDestinationPlans({
@@ -64,7 +65,7 @@ export function MobileDestinationPlans({
   activeCategory,
   onCategoryChange,
   hasSmsCallPlans,
-  hasLocalSimPlans,
+  onOpenEkyc,
 }: MobileDestinationPlansProps) {
   const ctaRef = useRef<HTMLDivElement>(null);
   const resolvedDestination = destinationData || destination;
@@ -74,15 +75,23 @@ export function MobileDestinationPlans({
     plans.slowUnlimited.length > 0 ||
     plans.fastUnlimited.length > 0 ||
     plans.dailyUnlimited.length > 0 ||
-    (plans.smsCallEsim?.length ?? 0) > 0 ||
-    (plans.localEsim?.length ?? 0) > 0;
+    (plans.smsCallEsim?.length ?? 0) > 0;
+
+  // Inline KYC warning state — shown when the selected plan requires verification
+  const showInlineKyc = !!selectedPlan?.isKyc;
 
   return (
-    <div className="bg-white">
+    <div className="bg-white overflow-x-hidden max-w-full">
       {/* 1. Hero */}
-      <MobileHero destination={resolvedDestination} dict={dict} />
+      <MobileHero
+        destination={resolvedDestination}
+        dict={dict}
+        lang={lang}
+        region={region}
+        operatorName={selectedPlan?.operatorName}
+      />
 
-      {/* 2. Price + Green Box */}
+      {/* 2. Price + Green Box + inline KYC banner */}
       <MobilePrice
         selectedPlan={selectedPlan}
         days={days}
@@ -92,6 +101,8 @@ export function MobileDestinationPlans({
         planLabel={planLabel}
         dataLabel={dataLabel}
         greenBoxLine1={greenBoxLine1}
+        onOpenEkyc={onOpenEkyc}
+        lang={lang}
       />
 
       {/* 3-4. Plan selection + Config */}
@@ -113,7 +124,6 @@ export function MobileDestinationPlans({
               onCategoryChange={onCategoryChange}
               dict={dict}
               hasSmsCallPlans={hasSmsCallPlans}
-              hasLocalSimPlans={hasLocalSimPlans}
             />
           </div>
 
@@ -168,29 +178,6 @@ export function MobileDestinationPlans({
             </>
           )}
 
-          {activeCategory === "localSim" && (
-            <>
-              <div className="px-4 pt-2">
-                <SimplePlanList
-                  plans={plans.localEsim ?? []}
-                  selectedPlan={selectedPlan}
-                  onSelectPlan={onSelectPlan}
-                  dict={dict}
-                />
-              </div>
-              <MobilePlanConfig
-                days={days}
-                quantity={quantity}
-                onDaysChange={onDaysChange}
-                onQuantityChange={onQuantityChange}
-                dict={dict}
-                lang={lang}
-                isFlexibleDays={false}
-                availableDays={[]}
-                isFixed={true}
-              />
-            </>
-          )}
         </>
       )}
 
@@ -216,6 +203,7 @@ export function MobileDestinationPlans({
           planSource={planSource}
           selectedPlan={selectedPlan}
           region={region}
+          onOpenEkyc={onOpenEkyc}
         />
       )}
 
@@ -231,6 +219,7 @@ export function MobileDestinationPlans({
         planLabel={planLabel}
         onQuantityChange={onQuantityChange}
         ctaRef={ctaRef}
+        onOpenEkyc={onOpenEkyc}
       />
     </div>
   );

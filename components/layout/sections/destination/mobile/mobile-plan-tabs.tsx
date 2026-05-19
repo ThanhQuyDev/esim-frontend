@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect } from "react";
 import type { Plan } from "@/lib/api";
 import type { DestinationDict, CategorizedPlans } from "../types";
 import { getUniqueDataMb, findBestPlan, getUniqueFupSpeeds } from "../types";
+import { PlanTagBadges, ProviderBadge } from "../plan-badges";
 
 interface MobilePlanTabsProps {
   plans: CategorizedPlans;
@@ -22,34 +23,23 @@ function formatDataLabel(mb: number): string {
   return `${mb}MB`;
 }
 
-/* ── Chip badge ── */
-function ChipBadge({ type, label }: { type: "pop" | "disc" | "bv"; label: string }) {
-  const cls = {
-    pop: "bg-[#1a1a1a] text-white",
-    disc: "bg-[#dcfce7] text-[#166534]",
-    bv: "bg-[#dc2626] text-white",
-  }[type];
-  return (
-    <span className={`text-[10px] font-bold px-[7px] py-[2px] rounded leading-[1.4] whitespace-nowrap ${cls}`}>
-      {label}
-    </span>
-  );
-}
-
-/* ── Plan chip (fixed plans) ── */
+/* ── Plan chip (fixed plans) — with tag + provider badges ── */
 function MobilePlanChip({
   plan,
   isSelected,
   onSelect,
+  lang,
 }: {
   plan: Plan;
   isSelected: boolean;
   onSelect: () => void;
+  lang: string;
 }) {
-  const label = `${formatDataLabel(Number(plan.dataMb))} – ${plan.durationDays} ngày`;
+  const label = `${formatDataLabel(Number(plan.dataMb))} – ${plan.durationDays} ${lang === "en" ? "days" : "ngày"}`;
 
   return (
     <button
+      type="button"
       onClick={onSelect}
       className={`inline-flex items-center gap-[7px] px-[18px] py-2.5 rounded-[30px] text-sm font-medium border-[1.5px] cursor-pointer transition-colors whitespace-nowrap font-[inherit] ${
         isSelected
@@ -58,25 +48,34 @@ function MobilePlanChip({
       }`}
     >
       {label}
+      <PlanTagBadges tags={plan.tags as string[] | undefined} lang={lang} />
       {plan.discount != null && plan.discount > 0 && (
-        <ChipBadge type="disc" label={`–${plan.discount}%`} />
+        <span className="text-[10px] font-bold px-[7px] py-[2px] rounded leading-[1.4] whitespace-nowrap bg-[#dcfce7] text-[#166534] border border-[#BBF7D0]">
+          –{Number(plan.discount).toFixed()}%
+        </span>
       )}
+      <ProviderBadge plan={plan} />
     </button>
   );
 }
 
-/* ── GB chip (daily plans) ── */
+/* ── GB chip (daily plans) — with tag + provider badges from the best matching plan ── */
 function MobileGbChip({
   gb,
   isSelected,
   onSelect,
+  bestPlan,
+  lang,
 }: {
   gb: number;
   isSelected: boolean;
   onSelect: () => void;
+  bestPlan?: Plan | null;
+  lang: string;
 }) {
   return (
     <button
+      type="button"
       onClick={onSelect}
       className={`inline-flex items-center gap-[7px] px-[18px] py-2.5 rounded-[30px] text-sm font-medium border-[1.5px] cursor-pointer transition-colors whitespace-nowrap font-[inherit] ${
         isSelected
@@ -84,50 +83,60 @@ function MobileGbChip({
           : "bg-white text-[#374151] border-[#e5e7eb] active:bg-[#f3f4f6]"
       }`}
     >
-      {formatDataLabel(gb)}/ngày
+      {formatDataLabel(gb)}/{lang === "en" ? "day" : "ngày"}
+      {bestPlan && <PlanTagBadges tags={bestPlan.tags as string[] | undefined} lang={lang} />}
+      {bestPlan?.discount != null && bestPlan.discount > 0 && (
+        <span className="text-[10px] font-bold px-[7px] py-[2px] rounded leading-[1.4] whitespace-nowrap bg-[#dcfce7] text-[#166534] border border-[#BBF7D0]">
+          –{Number(bestPlan.discount).toFixed()}%
+        </span>
+      )}
+      {bestPlan && <ProviderBadge plan={bestPlan} />}
     </button>
   );
 }
 
 /* ── Unlimited pill ── */
 function MobileUnlimitedPill({
+  plan,
   isSelected,
   onSelect,
   mainLabel,
   hintLabel,
-  badge,
+  lang,
 }: {
+  plan: Plan;
   isSelected: boolean;
   onSelect: () => void;
   mainLabel: string;
   hintLabel: string;
-  badge?: { type: "pop" | "disc" | "bv"; label: string };
+  lang: string;
 }) {
+  const tags = (plan.tags as string[] | undefined) || [];
+  const firstTag = tags.length > 0 ? tags[0] : null;
+
   return (
     <button
+      type="button"
       onClick={onSelect}
-      className={`relative flex items-center w-full px-4 py-3.5 rounded-[14px] border-[1.5px] cursor-pointer transition-all font-[inherit] ${
+      className={`relative flex items-center w-full max-w-full min-w-0 px-3.5 py-3.5 rounded-[14px] border-[1.5px] cursor-pointer transition-all font-[inherit] overflow-hidden ${
         isSelected
           ? "border-[#1a1a1a] shadow-[0_0_0_1px_#1a1a1a]"
           : "bg-white border-[#e5e7eb] active:border-[#9ca3af]"
       }`}
     >
-      {badge && (
-        <span
-          className={`absolute -top-[11px] right-3 text-[10px] font-bold px-[9px] py-[3px] rounded-[5px] leading-[1.4] whitespace-nowrap z-[1] ${
-            badge.type === "pop"
-              ? "bg-[#1a1a1a] text-white"
-              : badge.type === "bv"
-              ? "bg-[#dc2626] text-white"
-              : "bg-[#dcfce7] text-[#166534] border border-[#bbf7d0]"
-          }`}
-        >
-          {badge.label}
+      {(firstTag || (plan.discount != null && plan.discount > 0)) && (
+        <span className="absolute -top-[11px] right-3 z-[1] flex gap-1 items-center pointer-events-none">
+          {firstTag ? (
+            <PlanTagBadges tags={[firstTag]} lang={lang} />
+          ) : (
+            <span className="text-[10px] font-bold px-[9px] py-[3px] rounded-[5px] leading-[1.4] whitespace-nowrap bg-[#dcfce7] text-[#166534] border border-[#BBF7D0]">
+              –{Number(plan.discount!).toFixed()}%
+            </span>
+          )}
         </span>
       )}
 
-      {/* Icon */}
-      <span className="w-9 h-9 rounded-full bg-[#f3f4f6] flex items-center justify-center shrink-0 mr-3.5">
+      <span className="w-9 h-9 rounded-full bg-[#f3f4f6] flex items-center justify-center shrink-0 mr-3">
         <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
           <path
             d="M9.996 14.263l-.814.919a4.5 4.5 0 1 1 0-6.364l5.636 6.364a4.5 4.5 0 1 0 0-6.364l-.814.92"
@@ -139,13 +148,16 @@ function MobileUnlimitedPill({
         </svg>
       </span>
 
-      <span className="flex items-baseline min-w-0 overflow-hidden whitespace-nowrap">
-        <span className={`text-sm font-medium shrink-0 ${isSelected ? "text-[#1a1a1a] font-semibold" : "text-[#374151]"}`}>
+      {/* Two-line layout — main label on top, hint below — keeps everything within 390px */}
+      <span className="flex flex-col items-start gap-0.5 min-w-0 flex-1 overflow-hidden">
+        <span className={`text-[13.5px] font-medium leading-tight truncate w-full ${isSelected ? "text-[#1a1a1a] font-semibold" : "text-[#374151]"}`}>
           {mainLabel}
         </span>
-        <span className="text-sm text-[#6b7280] mx-1 shrink-0">→</span>
-        <span className="text-xs text-[#6b7280] overflow-hidden text-ellipsis">{hintLabel}</span>
+        <span className="text-[11px] leading-tight text-[#6b7280] truncate w-full">
+          → {hintLabel}
+        </span>
       </span>
+      <ProviderBadge plan={plan} />
     </button>
   );
 }
@@ -169,6 +181,8 @@ export function MobilePlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }
   const [normalGb, setNormalGb] = useState<number>(0);
   const [highSpeedFup, setHighSpeedFup] = useState<string>("");
 
+  const lang = dict.daysUnit?.toLowerCase().startsWith("d") ? "en" : "vi";
+
   const hasDataPlans = plans.dataPlans.length > 0;
   const hasSlowUnlimited = plans.slowUnlimited.length > 0;
   const hasFastUnlimited = plans.fastUnlimited.length > 0;
@@ -178,7 +192,6 @@ export function MobilePlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }
   const uniqueNormalGbs = useMemo(() => getUniqueDataMb(plans.fastUnlimited), [plans.fastUnlimited]);
   const uniqueHighFupSpeeds = useMemo(() => getUniqueFupSpeeds(plans.dailyUnlimited), [plans.dailyUnlimited]);
 
-  // Initialize GB selections
   useEffect(() => {
     if (hasSlowUnlimited && dailyGb === 0) {
       const gbs = getUniqueDataMb(plans.slowUnlimited);
@@ -192,14 +205,12 @@ export function MobilePlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }
     }
   }, [hasFastUnlimited, uniqueNormalGbs, normalGb]);
 
-  // Initialize highSpeedFup selection
   useEffect(() => {
     if (hasDailyUnlimited && highSpeedFup === "" && uniqueHighFupSpeeds.length > 0) {
       setHighSpeedFup(uniqueHighFupSpeeds[0]);
     }
   }, [hasDailyUnlimited, uniqueHighFupSpeeds, highSpeedFup]);
 
-  // Re-pick best plan when days change
   useEffect(() => {
     if (activeSection === "daily" && hasSlowUnlimited && dailyGb > 0) {
       const best = findBestPlan(plans.slowUnlimited, dailyGb, days);
@@ -217,12 +228,10 @@ export function MobilePlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }
     setActiveSection("fixed");
     onSelectPlan(plan);
   };
-
   const handleSelectDaily = (plan: Plan) => {
     setActiveSection("daily");
     onSelectPlan(plan);
   };
-
   const handleSelectUnlimited = (plan: Plan) => {
     setActiveSection("unlimited");
     onSelectPlan(plan);
@@ -230,18 +239,13 @@ export function MobilePlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }
 
   return (
     <div className="px-4 py-[18px] border-t-[7px] border-[#f3f4f6]">
-      {/* Section header */}
       <div className="flex items-center gap-2.5 mb-4">
         <span className="w-6 h-6 rounded-full bg-[#1a1a1a] text-white text-xs font-extrabold flex items-center justify-center shrink-0">
           1
         </span>
-        <span className="text-[15px] font-bold text-[#1a1a1a]">{dict.planTabs.data}</span>
+        <span className="text-[15px] font-bold text-[#1a1a1a]">{lang === "en" ? "Pick a plan" : "Chọn gói cước"}</span>
       </div>
 
-      {/* Main tabs (Data / Data+Calls) - placeholder for future use */}
-      {/* Currently only showing Data tab content */}
-
-      {/* ── Fixed Plans (dataPlans) ── */}
       {hasDataPlans && (
         <div className="mb-5">
           <PlanGroupHeader
@@ -262,13 +266,13 @@ export function MobilePlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }
                 plan={p}
                 isSelected={activeSection === "fixed" && selectedPlan?.id === p.id}
                 onSelect={() => handleSelectFixed(p)}
+                lang={lang}
               />
             ))}
           </div>
         </div>
       )}
 
-      {/* ── Daily Plans (slowUnlimited) ── */}
       {hasSlowUnlimited && (
         <div className="mb-5">
           <PlanGroupHeader
@@ -281,23 +285,26 @@ export function MobilePlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }
             label={dict.planSections.daily}
           />
           <div className="flex flex-wrap gap-2">
-            {getUniqueDataMb(plans.slowUnlimited).map((gb) => (
-              <MobileGbChip
-                key={gb}
-                gb={gb}
-                isSelected={activeSection === "daily" && dailyGb === gb}
-                onSelect={() => {
-                  setDailyGb(gb);
-                  const best = findBestPlan(plans.slowUnlimited, gb, days);
-                  if (best) handleSelectDaily(best);
-                }}
-              />
-            ))}
+            {getUniqueDataMb(plans.slowUnlimited).map((gb) => {
+              const best = findBestPlan(plans.slowUnlimited, gb, days);
+              return (
+                <MobileGbChip
+                  key={gb}
+                  gb={gb}
+                  isSelected={activeSection === "daily" && dailyGb === gb}
+                  bestPlan={best}
+                  lang={lang}
+                  onSelect={() => {
+                    setDailyGb(gb);
+                    if (best) handleSelectDaily(best);
+                  }}
+                />
+              );
+            })}
           </div>
         </div>
       )}
 
-      {/* ── Unlimited (fastUnlimited + dailyUnlimited) ── */}
       {hasUnlimited && (
         <div className="mb-5">
           <PlanGroupHeader
@@ -309,10 +316,10 @@ export function MobilePlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }
             label={dict.planSections.unlimited}
           />
 
-          {/* Speed tabs */}
           <div className="flex border-[1.5px] border-[#e5e7eb] rounded-[30px] bg-[#f9fafb] p-[3px] gap-[3px] mb-[5px]">
             {hasFastUnlimited && (
               <button
+                type="button"
                 onClick={() => setSpeedTab("normal")}
                 className={`flex-1 text-center py-[9px] px-1.5 text-sm font-medium cursor-pointer border-none rounded-[30px] transition-all font-[inherit] ${
                   speedTab === "normal"
@@ -325,6 +332,7 @@ export function MobilePlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }
             )}
             {hasDailyUnlimited && (
               <button
+                type="button"
                 onClick={() => setSpeedTab("high")}
                 className={`flex-1 text-center py-[9px] px-1.5 text-sm font-medium cursor-pointer border-none rounded-[30px] transition-all font-[inherit] ${
                   speedTab === "high"
@@ -337,63 +345,51 @@ export function MobilePlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }
             )}
           </div>
 
-          {/* Normal Speed pills */}
           {speedTab === "normal" && hasFastUnlimited && (
             <div className="flex flex-col gap-3 pt-2.5">
-              {uniqueNormalGbs.map((gb, idx) => {
-                const badge =
-                  idx === 0
-                    ? { type: "pop" as const, label: "Phổ biến" }
-                    : idx === uniqueNormalGbs.length - 1
-                    ? { type: "bv" as const, label: "Rẻ nhất" }
-                    : undefined;
+              {uniqueNormalGbs.map((gb) => {
+                const best = findBestPlan(plans.fastUnlimited, gb, days) || plans.fastUnlimited[0];
                 return (
                   <MobileUnlimitedPill
                     key={gb}
+                    plan={best}
                     isSelected={activeSection === "unlimited" && normalGb === gb}
                     onSelect={() => {
                       setNormalGb(gb);
                       const p = findBestPlan(plans.fastUnlimited, gb, days);
                       if (p) handleSelectUnlimited(p);
                     }}
-                    mainLabel={`${formatDataLabel(gb)}/ngày tốc độ cao`}
-                    hintLabel="1 Mbps không giới hạn"
-                    badge={badge}
+                    mainLabel={`${formatDataLabel(gb)}/${lang === "en" ? "day" : "ngày"} ${dict.speed.high.toLowerCase()}`}
+                    hintLabel={lang === "en" ? "1 Mbps unlimited" : "1 Mbps không giới hạn"}
+                    lang={lang}
                   />
                 );
               })}
             </div>
           )}
 
-          {/* High Speed pills — grouped by fupSpeed, days from PlanConfig */}
           {speedTab === "high" && hasDailyUnlimited && (
             <div className="flex flex-col gap-3 pt-2.5">
-              {uniqueHighFupSpeeds.map((fup, idx) => {
-                const match = plans.dailyUnlimited.find((p) => p.fupSpeed === fup);
-                const badge =
-                  idx === 0
-                    ? { type: "pop" as const, label: "Phổ biến" }
-                    : idx === uniqueHighFupSpeeds.length - 1
-                    ? { type: "bv" as const, label: "Rẻ nhất" }
-                    : undefined;
+              {uniqueHighFupSpeeds.map((fup) => {
+                const match = plans.dailyUnlimited.find((p) => p.fupSpeed === fup) || plans.dailyUnlimited[0];
                 return (
                   <MobileUnlimitedPill
                     key={fup}
+                    plan={match}
                     isSelected={activeSection === "unlimited" && highSpeedFup === fup}
                     onSelect={() => {
                       setHighSpeedFup(fup);
                       if (match) handleSelectUnlimited(match);
                     }}
-                    mainLabel={`${fup} tốc độ cao`}
-                    hintLabel="Không giới hạn data"
-                    badge={badge}
+                    mainLabel={`${fup} ${dict.speed.high.toLowerCase()}`}
+                    hintLabel={lang === "en" ? "Unlimited data" : "Không giới hạn data"}
+                    lang={lang}
                   />
                 );
               })}
             </div>
           )}
 
-          {/* Unlimited note */}
           <p className="text-[13px] text-[#6b7280] mt-2.5 leading-normal">
             {dict.unlimitedHint}
           </p>

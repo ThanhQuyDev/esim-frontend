@@ -11,6 +11,8 @@ interface MobileFeaturesProps {
   planSource: "destination" | "region";
   selectedPlan: Plan | null;
   region?: Region | null;
+  /** Open the eKYC guide modal — shown when the selected plan requires KYC. */
+  onOpenEkyc?: () => void;
 }
 
 const API_BASE_URL =
@@ -197,14 +199,16 @@ export function MobileFeatures({
   planSource,
   selectedPlan,
   region,
+  onOpenEkyc,
 }: MobileFeaturesProps) {
+  const [bannerOpen, setBannerOpen] = useState(false);
   const deviceLink = lang === "vi" ? "/vi/thiet-bi-ho-tro-esim" : `/${lang}/esim-supported-devices`;
 
   // Determine feature values from selected plan
   const hasHotspot = selectedPlan?.type !== "voice"; // Most data plans support hotspot
   const hasCalls = selectedPlan?.call != null && Number(selectedPlan.call) > 0;
   const hasLocalNumber = false; // eSIM typically doesn't provide local number
-  const hasEkyc = false;
+  const hasEkyc = !!selectedPlan?.isKyc;
   const hasTopup = selectedPlan?.topUp ?? true;
 
   return (
@@ -227,8 +231,98 @@ export function MobileFeatures({
         <FeatureRow label={dict.features.hotspot} value={hasHotspot} yesText={dict.features.yes} noText={dict.features.no} />
         <FeatureRow label={dict.features.calls} value={hasCalls} yesText={dict.features.yes} noText={dict.features.no} />
         <FeatureRow label={dict.features.localNumber} value={hasLocalNumber} yesText={dict.features.yes} noText={dict.features.no} />
-        <FeatureRow label={dict.features.ekyc} value={hasEkyc} yesText={dict.features.yes} noText={dict.features.no} />
         <FeatureRow label={dict.features.topup} value={hasTopup} yesText={dict.features.yes} noText={dict.features.no} />
+        {!hasEkyc && (
+          <FeatureRow label={dict.features.ekyc} value={false} yesText={dict.features.yes} noText={dict.features.no} />
+        )}
+
+        {/* Inline eKYC banner — appears at the bottom of the Features list */}
+        {hasEkyc && (
+          <div
+            className="mt-3.5 rounded-[14px] overflow-hidden"
+            style={{
+              border: "2px solid #FCA5A5",
+              background: "linear-gradient(135deg, #FFF1F2, #FFF7ED)",
+            }}
+          >
+            <button
+              type="button"
+              onClick={() => setBannerOpen((v) => !v)}
+              className="flex items-center gap-2.5 px-3.5 py-3 w-full cursor-pointer select-none border-none bg-transparent font-[inherit] text-left"
+            >
+              <span
+                className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
+                style={{
+                  background: "linear-gradient(135deg, #EF4444, #DC2626)",
+                  boxShadow: "0 2px 6px rgba(239,68,68,0.3)",
+                }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="4" width="18" height="16" rx="2" />
+                  <circle cx="9" cy="10" r="2" />
+                  <path d="M3 20s1-3 6-3 6 3 6 3" />
+                  <path d="M16 8h3M16 12h3" />
+                </svg>
+              </span>
+              <span className="flex-1 text-[13px] font-extrabold text-[#991B1B]">
+                {lang === "en" ? "⚠ This eSIM requires identity verification" : "⚠ eSIM này cần xác thực danh tính"}
+              </span>
+              <span
+                className="w-[26px] h-[26px] rounded-full border-none cursor-pointer flex items-center justify-center text-[#DC2626] shrink-0 transition-transform"
+                style={{
+                  background: "rgba(220,38,38,0.1)",
+                  transform: bannerOpen ? "rotate(180deg)" : "none",
+                }}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </span>
+            </button>
+            {bannerOpen && (
+              <div style={{ borderTop: "1.5px dashed #FCA5A5" }}>
+                <div className="flex flex-col gap-[7px] px-3.5 pt-[11px] pb-2.5">
+                  {[
+                    lang === "en" ? "Buy eSIM & receive QR code via email" : "Mua eSIM & nhận mã QR qua email",
+                    lang === "en" ? "Scan the QR code to install on your device." : "Quét mã QR để cài đặt vào thiết bị.",
+                    lang === "en"
+                      ? "Complete identity verification (Passport) → Start using."
+                      : "Hoàn tất xác thực danh tính (Hộ chiếu) → Bắt đầu sử dụng.",
+                  ].map((step, i) => (
+                    <div key={i} className="flex items-start gap-2.5">
+                      <span className="w-5 h-5 rounded-full bg-[#DC2626] text-white text-[10px] font-extrabold flex items-center justify-center shrink-0 mt-px">
+                        {i + 1}
+                      </span>
+                      <span className="text-[13px] leading-[1.5]" style={{ color: "#7F1D1D" }}>
+                        {step}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                {onOpenEkyc && (
+                  <button
+                    type="button"
+                    onClick={onOpenEkyc}
+                    className="flex items-center justify-center gap-2 px-4 py-2.5 mx-3.5 mb-3.5 rounded-full text-[13px] font-bold text-white border-none cursor-pointer font-[inherit] w-[calc(100%-28px)] max-w-full"
+                    style={{
+                      background: "linear-gradient(135deg, #DC2626, #B91C1C)",
+                      boxShadow: "0 3px 10px rgba(220,38,38,0.3)",
+                    }}
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                      <polyline points="14 2 14 8 20 8" />
+                    </svg>
+                    {lang === "en" ? "View detailed registration guide" : "Xem hướng dẫn đăng ký chi tiết"}
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round">
+                      <polyline points="9 18 15 12 9 6" />
+                    </svg>
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* ── Delivery Section ── */}

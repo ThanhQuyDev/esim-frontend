@@ -112,6 +112,9 @@ export interface Region {
   deletedAt?: string;
 }
 
+/** Marketing/UI tags attached to a plan. */
+export type PlanTag = "popular" | "best-seller" | "new" | "hot-deal";
+
 export interface Plan {
   id: number;
   provider: string;
@@ -144,6 +147,12 @@ export interface Plan {
   updatedAt: string;
   deletedAt?: string;
   vndPrice: number;
+  /** Marketing tags shown as chips on the plan card. */
+  tags?: PlanTag[] | string[];
+  /** True when the plan uses local provider inventory (e.g. Viettel) — show a provider badge. */
+  isLocalInventory?: boolean;
+  /** True when the plan requires KYC verification before activation. */
+  isKyc?: boolean;
 }
 
 /** Response shape from /api/v1/plans/by-destination/{slug} */
