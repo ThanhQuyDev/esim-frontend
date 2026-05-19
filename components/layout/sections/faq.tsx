@@ -10,11 +10,18 @@ interface FAQSectionProps {
   dict: Record<string, any>;
   lang: Locale;
   initialFaqs?: Faq[];
+  /**
+   * Page-context identifier so the FAQ block resolves only the entries the
+   * CMS has tagged for the current screen (e.g. `"home"`, `"checkout"`,
+   * `"destination:vietnam"`). Forwarded to `/api/v1/faqs/by-context` per
+   * Refactor 4.1.
+   */
+  context?: string;
 }
 
-export function FAQSection({ dict, lang, initialFaqs }: FAQSectionProps) {
+export function FAQSection({ dict, lang, initialFaqs, context }: FAQSectionProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const { data: apiFaqs } = useFaqs(lang, initialFaqs);
+  const { data: apiFaqs } = useFaqs(lang, initialFaqs, context);
 
   const faqItems =
     apiFaqs && apiFaqs.length > 0

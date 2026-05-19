@@ -530,7 +530,11 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
             </div>
           )}
 
-          {/* eXU Pay Button */}
+          {/* eXU Pay Button — high-emphasis primary action so users
+              immediately see the wallet payment option. Uses a vibrant
+              emerald→teal gradient, generous padding, inner glow,
+              shimmer-on-hover, and a balance pill so the available
+              amount stays scannable. */}
           {wallet && wallet.status === "active" && wallet.availableBalanceVnd > 0 && (
             <button
               onClick={() => {
@@ -549,12 +553,29 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
                 localStorage.setItem("saily_checkout_use_exu", "true");
                 window.location.href = `/${lang}/checkout`;
               }}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-50 py-3 text-sm font-semibold text-emerald-700 hover:bg-emerald-100 transition-colors cursor-pointer"
+              className="group relative flex w-full items-center justify-between gap-3 rounded-2xl bg-gradient-to-r from-emerald-500 via-emerald-500 to-teal-600 px-4 py-3.5 text-sm font-semibold text-white shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer overflow-hidden ring-1 ring-emerald-400/40"
             >
-              <Wallet className="h-4 w-4" />
-              {lang === "vi"
-                ? `Thanh toán bằng ví eXU (${formatVnd(wallet.availableBalanceVnd)})`
-                : `Pay with eXU Wallet (${formatVnd(wallet.availableBalanceVnd)})`}
+              {/* Soft shimmer that sweeps across on hover */}
+              <span
+                aria-hidden="true"
+                className="absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-white/25 to-transparent skew-x-12 -translate-x-full group-hover:translate-x-[400%] transition-transform duration-700 ease-out"
+              />
+              <span className="relative flex items-center gap-2.5">
+                <span className="flex items-center justify-center w-9 h-9 rounded-xl bg-white/15 backdrop-blur-sm ring-1 ring-white/20">
+                  <Wallet className="h-[18px] w-[18px]" />
+                </span>
+                <span className="flex flex-col items-start leading-tight">
+                  <span className="text-[11px] font-medium uppercase tracking-wider text-white/80">
+                    {lang === "vi" ? "Thanh toán nhanh" : "Quick Pay"}
+                  </span>
+                  <span className="text-base font-bold">
+                    {lang === "vi" ? "Dùng ví eXU" : "Use eXU Wallet"}
+                  </span>
+                </span>
+              </span>
+              <span className="relative inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-sm text-xs font-bold ring-1 ring-white/25">
+                {formatVnd(wallet.availableBalanceVnd)}
+              </span>
             </button>
           )}
 

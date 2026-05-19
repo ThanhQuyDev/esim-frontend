@@ -5,7 +5,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { RocketIcon, CreditCardIcon, Pickaxe, MessageCircleQuestionIcon, Search } from "lucide-react";
 import type { HelpCenterArticle } from "@/lib/api";
-import { getCategoryLabel } from "./category-config";
+import {
+  getCategoryLabel,
+  getParentLabel,
+  resolveCategoryKey,
+} from "./category-config";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.saily.example.com";
@@ -18,8 +22,14 @@ const CATEGORY_ICONS: Record<string, React.ElementType> = {
   faq: MessageCircleQuestionIcon,
 };
 
-function slugify(text: string): string {
-  return text
+/**
+ * Resolve the URL slug for a help-center article.
+ * Prefers the canonical `slug` field from the API, falls back to a
+ * title-derived slug only when the CMS hasn't provided one.
+ */
+function getArticleSlug(article: { slug?: string; title: string }): string {
+  if (article.slug && article.slug.trim().length > 0) return article.slug;
+  return article.title
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
@@ -140,12 +150,12 @@ export function HelpCenterContent({ lang, initialArticles }: HelpCenterContentPr
                     {searchResults.map((article) => (
                       <li key={article.id}>
                         <Link
-                          href={`/${lang}/help-center/${article.category}/${article.parent}/${slugify(article.title)}`}
+                          href={`/${lang}/help-center/${article.category}/${article.parent}/${getArticleSlug(article)}`}
                           className="block px-4 py-3 text-gray-900 no-underline hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
                         >
                           <p className="text-sm font-medium">{article.title}</p>
                           <p className="text-xs text-gray-500 mt-1">
-                            {getCategoryLabel(article.category, lang)} › {article.parent.replace(/_/g, " ")}
+                            {getCategoryLabel(article.category, lang)} › {getParentLabel(article.parent, lang)}
                           </p>
                         </Link>
                       </li>
@@ -171,7 +181,8 @@ export function HelpCenterContent({ lang, initialArticles }: HelpCenterContentPr
 
           <ul className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 list-none p-0">
             {categoryKeys.map((catKey) => {
-              const Icon = CATEGORY_ICONS[catKey] ?? RocketIcon;
+              const canonicalKey = resolveCategoryKey(catKey);
+              const Icon = CATEGORY_ICONS[canonicalKey] ?? RocketIcon;
               return (
                 <li key={catKey}>
                   <Link
@@ -211,7 +222,7 @@ export function HelpCenterContent({ lang, initialArticles }: HelpCenterContentPr
               {recentArticles.map((article) => (
                 <Link
                   key={article.id}
-                  href={`/${lang}/help-center/${article.category}/${article.parent}/${slugify(article.title)}`}
+                  href={`/${lang}/help-center/${article.category}/${article.parent}/${getArticleSlug(article)}`}
                   className="block bg-gray-100 rounded-md p-5 hover:shadow-md transition no-underline"
                 >
                   <p className="text-sm text-gray-600 mb-2">

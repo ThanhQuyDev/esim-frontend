@@ -3,7 +3,10 @@ import { DetailContent } from "@/components/layout/sections/help-center/detail-c
 import { FooterSection } from "@/components/layout/sections/footer";
 import { getDictionary } from "@/lib/dictionaries";
 import { getSeoMetadata } from "@/lib/seo";
-import { fetchHelpCenterArticles } from "@/lib/api";
+import {
+  fetchHelpCenterArticles,
+  fetchHelpCenterBySlug,
+} from "@/lib/api";
 import type { Locale } from "@/lib/i18n-config";
 import type { Metadata } from "next";
 
@@ -20,11 +23,21 @@ export default async function HelpCenterDetailPage({
 }: {
   params: { lang: Locale; slug: string[] };
 }) {
-  const [dict, helpCenterRes] = await Promise.all([
+  const [category, parent, titleSlug] = params.slug;
+
+  // Fetch the article list (for the sidebar tree) and — if we're on a
+  // specific article — the article itself by its canonical slug, in parallel.
+  // The CMS slug may include a leading "/" (e.g. "/honest-review2"); the URL
+  // strips that, so we try the bare slug first and fall back to "/${slug}".
+  const [dict, helpCenterRes, slugArticle] = await Promise.all([
     getDictionary(params.lang),
     fetchHelpCenterArticles(params.lang),
+    titleSlug
+      ? fetchHelpCenterBySlug(titleSlug, params.lang).then(
+          (a) => a ?? fetchHelpCenterBySlug(`/${titleSlug}`, params.lang)
+        )
+      : Promise.resolve(null),
   ]);
-  const [category, parent, titleSlug] = params.slug;
 
   return (
     <>
@@ -35,6 +48,7 @@ export default async function HelpCenterDetailPage({
           parent={parent}
           titleSlug={titleSlug}
           initialArticles={helpCenterRes.data}
+          initialArticle={slugArticle ?? undefined}
         />
       </Suspense>
       <FooterSection dict={dict.footer} lang={params.lang} />

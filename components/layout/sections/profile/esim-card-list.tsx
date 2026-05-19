@@ -15,9 +15,14 @@ import {
   Infinity,
   Info,
   Zap,
+  Apple,
+  User,
+  Phone,
+  Save,
 } from "lucide-react";
 import type { MyEsim } from "@/lib/hooks";
 import { useEsimDataUsage } from "@/lib/hooks";
+import { useAuth } from "@/lib/auth";
 import type { ProfileDict } from "./translations";
 import QRCode from "qrcode";
 import { TopupModal } from "./topup-modal";
@@ -27,6 +32,160 @@ interface EsimCardListProps {
   isLoading: boolean;
   t: ProfileDict;
   lang: "en" | "vi";
+}
+
+/**
+ * Build the deep link the OS handler can pick up to auto-install an eSIM
+ * profile, given the LPA activation string.
+ *
+ * Apple/Android both expose a universal URL scheme that takes the raw LPA
+ * string (`LPA:1$<smdp>$<matchingId>`) URL-encoded as the `carddata` query
+ * parameter.
+ */
+function buildEsimAutoInstallUrl(
+  platform: "apple" | "android",
+  lpa: string
+): string {
+  const host =
+    platform === "apple" ? "esimsetup.apple.com" : "esimsetup.android.com";
+  return `https://${host}/esim_qrcode_provisioning?carddata=${encodeURIComponent(
+    lpa
+  )}`;
+}
+
+/**
+ * Inline form to let a customer update contact info (full name + phone)
+ * without leaving the eSIM management tab.
+ *
+ * Persists to localStorage as a lightweight client-side stash, since the
+ * project does not yet expose a `PATCH /users/me` endpoint. When the
+ * endpoint becomes available the submit handler can swap to a real API
+ * call without changing the UI.
+ */
+function PersonalInfoEditCard({ t, lang }: { t: ProfileDict; lang: "en" | "vi" }) {
+  const { user } = useAuth();
+  const storageKey = user ? `profile-contact-${user.id}` : null;
+
+  const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [savedAt, setSavedAt] = useState<number | null>(null);
+
+  // Hydrate stored values once we know the user
+  useEffect(() => {
+    if (!storageKey) return;
+    try {
+      const raw = localStorage.getItem(storageKey);
+      if (raw) {
+        const parsed = JSON.parse(raw) as { fullName?: string; phone?: string };
+        if (parsed.fullName) setFullName(parsed.fullName);
+        if (parsed.phone) setPhone(parsed.phone);
+        return;
+      }
+    } catch {
+      // ignore corrupted entries
+    }
+    // Fall back to the auth user's name when nothing is stored yet.
+    const derivedName = [user?.firstName, user?.lastName]
+      .filter(Boolean)
+      .join(" ")
+      .trim();
+    if (derivedName) setFullName(derivedName);
+  }, [storageKey, user?.firstName, user?.lastName]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!storageKey) return;
+    setSaving(true);
+    try {
+      localStorage.setItem(
+        storageKey,
+        JSON.stringify({ fullName: fullName.trim(), phone: phone.trim() })
+      );
+      setSavedAt(Date.now());
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const justSaved = savedAt && Date.now() - savedAt < 2500;
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="rounded-xl border border-gray-200 bg-white p-4 mb-4"
+    >
+      <div className="flex items-start gap-2 mb-3">
+        <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 shrink-0">
+          <User className="w-4 h-4 text-blue-500" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <h3 className="text-sm font-semibold text-gray-900">
+            {t.personalInfo}
+          </h3>
+          <p className="text-xs text-gray-500 mt-0.5">
+            {lang === "vi"
+              ? "Cập nhật thông tin liên hệ để hỗ trợ tốt hơn."
+              : "Keep your contact details up to date for faster support."}
+          </p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <label className="block">
+          <span className="text-[11px] font-medium text-gray-400 uppercase tracking-wider">
+            {t.fullName}
+          </span>
+          <div className="relative mt-1">
+            <User className="absolute top-1/2 left-3 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+            <input
+              type="text"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              placeholder={lang === "vi" ? "Nguyễn Văn A" : "John Doe"}
+              className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-colors"
+            />
+          </div>
+        </label>
+
+        <label className="block">
+          <span className="text-[11px] font-medium text-gray-400 uppercase tracking-wider">
+            {t.phone}
+          </span>
+          <div className="relative mt-1">
+            <Phone className="absolute top-1/2 left-3 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+            <input
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder={lang === "vi" ? "0901 234 567" : "+1 555 123 4567"}
+              className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-colors"
+            />
+          </div>
+        </label>
+      </div>
+
+      <div className="mt-3 flex items-center justify-between">
+        <p className="text-[11px] text-gray-400">
+          {justSaved
+            ? lang === "vi"
+              ? "✓ Đã lưu thông tin"
+              : "✓ Saved"
+            : lang === "vi"
+              ? "Lưu cục bộ trên thiết bị này."
+              : "Saved locally on this device."}
+        </p>
+        <button
+          type="submit"
+          disabled={saving}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-900 text-white text-xs font-medium rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-60"
+        >
+          <Save className="w-3.5 h-3.5" />
+          {t.saveChanges}
+        </button>
+      </div>
+    </form>
+  );
 }
 
 function getStatusStyle(status: string) {
@@ -270,6 +429,9 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
 
   const fields: { label: string; value: string; copyable?: boolean }[] = [
     { label: "ICCID", value: esim.iccid, copyable: true },
+    // LPA equivalent of ICCID — shown so users can copy the full activation
+    // string when configuring an eSIM manually.
+    { label: "LPA", value: esim.lpa, copyable: true },
     { label: "SM-DP+", value: esim.smdpAddress, copyable: true },
     { label: t.activationCode, value: esim.activationCode, copyable: true },
     { label: "APN", value: esim.apnValue, copyable: true },
@@ -342,17 +504,45 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
           <div className="px-4 pb-4 pt-4">
             {activeTab === "info" ? (
               <>
-                {/* QR Code */}
+                {/* QR Code + Auto-install Deep Links — Feature 2.3 */}
                 {esim.lpa && (
-                  <div className="flex justify-center py-4 border-b border-gray-100 mb-4">
-                    <div className="text-center">
-                      <div className="flex items-center justify-center gap-1.5 mb-2">
-                        <QrCode className="w-4 h-4 text-gray-400" />
-                        <span className="text-xs font-medium text-gray-500">
-                          {lang === "vi" ? "Quét mã QR để cài đặt" : "Scan QR to install"}
-                        </span>
+                  <div className="py-4 border-b border-gray-100 mb-4 space-y-4">
+                    <div className="flex justify-center">
+                      <div className="text-center">
+                        <div className="flex items-center justify-center gap-1.5 mb-2">
+                          <QrCode className="w-4 h-4 text-gray-400" />
+                          <span className="text-xs font-medium text-gray-500">
+                            {lang === "vi" ? "Quét mã QR để cài đặt" : "Scan QR to install"}
+                          </span>
+                        </div>
+                        <QrCodeImage lpa={esim.lpa} />
                       </div>
-                      <QrCodeImage lpa={esim.lpa} />
+                    </div>
+
+                    <div>
+                      <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wider mb-2 text-center">
+                        {lang === "vi" ? "Hoặc cài đặt nhanh" : "Or install with one tap"}
+                      </p>
+                      <div className="grid grid-cols-2 gap-2">
+                        <a
+                          href={buildEsimAutoInstallUrl("apple", esim.lpa)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg bg-gray-900 text-white text-xs font-semibold hover:bg-gray-800 transition-colors"
+                        >
+                          <Apple className="w-4 h-4" />
+                          {lang === "vi" ? "Cài cho iPhone" : "Install on iOS"}
+                        </a>
+                        <a
+                          href={buildEsimAutoInstallUrl("android", esim.lpa)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 transition-colors"
+                        >
+                          <Smartphone className="w-4 h-4" />
+                          {lang === "vi" ? "Cài cho Android" : "Install on Android"}
+                        </a>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -454,20 +644,23 @@ export function EsimCardList({ esims, isLoading, t, lang }: EsimCardListProps) {
     );
   }
 
-  if (esims.length === 0) {
-    return (
-      <div className="text-center py-12">
-        <Smartphone className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-        <p className="text-gray-500 text-sm">{t.noEsims}</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="space-y-3">
-      {esims.map((esim) => (
-        <EsimCard key={esim.id} esim={esim} t={t} lang={lang} />
-      ))}
+    <div>
+      {/* Inline contact-info edit form — Feature 2.2 */}
+      <PersonalInfoEditCard t={t} lang={lang} />
+
+      {esims.length === 0 ? (
+        <div className="text-center py-12">
+          <Smartphone className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+          <p className="text-gray-500 text-sm">{t.noEsims}</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {esims.map((esim) => (
+            <EsimCard key={esim.id} esim={esim} t={t} lang={lang} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

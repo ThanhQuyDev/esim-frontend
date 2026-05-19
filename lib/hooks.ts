@@ -265,16 +265,46 @@ export function useSearchRegions(query: string, enabled = true) {
 
 // ===== FAQ Hooks =====
 
-export function useFaqs(lang: Locale = "en", initialData?: Faq[]) {
+/**
+ * Fetch FAQs scoped to the current page context.
+ *
+ * Per Refactor 4.1, every FAQ block must hit the canonical
+ * `/api/v1/faqs/by-context` endpoint and pass a context identifier so the
+ * backend can return only the relevant entries. The optional `context`
+ * argument is a free-form key (e.g. `"home"`, `"destination:vietnam"`) the
+ * caller can derive from the route. The response is normalized so callers
+ * can keep using the existing `PaginatedResponse<Faq>` shape.
+ */
+export function useFaqs(
+  lang: Locale = "en",
+  initialData?: Faq[],
+  context?: string
+) {
+  const ctx = context && context.trim().length > 0 ? context : "global";
   return useQuery({
-    queryKey: queryKeys.faqs.list(lang),
-    queryFn: ({ signal }) =>
-      clientFetch<PaginatedResponse<Faq>>(
-        "/api/v1/faqs",
-        { limit: "20", page: "1" },
-        { "x-custom-lang": lang },
-        signal
-      ),
+    queryKey: [...queryKeys.faqs.list(lang), "by-context", ctx],
+    queryFn: async ({ signal }) => {
+      const params: Record<string, string> = {
+        context: ctx,
+        language: lang,
+        limit: "20",
+      };
+      try {
+        const res = await clientFetch<PaginatedResponse<Faq> | Faq[]>(
+          "/api/v1/faqs/by-context",
+          params,
+          { "x-custom-lang": lang },
+          signal
+        );
+        // Endpoint may return either a paginated envelope or a bare array.
+        if (Array.isArray(res)) {
+          return { data: res, hasNextPage: false } as PaginatedResponse<Faq>;
+        }
+        return res;
+      } catch {
+        return { data: [], hasNextPage: false } as PaginatedResponse<Faq>;
+      }
+    },
     initialData: initialData
       ? { data: initialData, hasNextPage: false }
       : undefined,

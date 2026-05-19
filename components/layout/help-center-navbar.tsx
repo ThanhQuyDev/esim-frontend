@@ -109,14 +109,26 @@ export function HelpCenterNavbar({ lang }: HelpCenterNavbarProps) {
                 className="container mx-auto flex items-center justify-between px-4 lg:px-6 h-16"
                 aria-label="Help Center navigation"
             >
-                {/* LEFT: Brand + Help Center context label */}
-                <Link
-                    href={helpCenterHome}
-                    className="flex items-center min-w-0"
-                    aria-label={isVi ? "Trung tâm hỗ trợ" : "Help Center"}
-                >
-                    <SailyLogo className="w-[57px] lg:w-[120px]" />
-                </Link>
+                {/* LEFT: Brand logo (goes to site home) + Help Center context label */}
+                <div className="flex items-center min-w-0 gap-3">
+                    <Link
+                        href={`/${lang}`}
+                        className="flex items-center shrink-0"
+                        aria-label={isVi ? "Về trang chủ esim.vn" : "Back to esim.vn home"}
+                    >
+                        <SailyLogo className="w-[57px] lg:w-[120px]" />
+                    </Link>
+                    <span
+                        className="hidden sm:inline-block h-6 w-px bg-gray-300"
+                        aria-hidden="true"
+                    />
+                    <Link
+                        href={helpCenterHome}
+                        className="hidden sm:inline-block text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
+                    >
+                        {isVi ? "Trung tâm trợ giúp" : "Help Center"}
+                    </Link>
+                </div>
 
                 {/* MOBILE: Hamburger toggle (parity with `xl:hidden` button + Alpine toggle) */}
                 <button

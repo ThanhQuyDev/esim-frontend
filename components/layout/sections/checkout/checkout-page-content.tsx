@@ -200,13 +200,13 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
         // partial/empty invoice objects with 422, so we omit entirely otherwise.
         ...(wantInvoice
           ? {
-              invoice: {
-                companyName: invoiceInfo.companyName.trim(),
-                taxCode: invoiceInfo.taxCode.trim(),
-                address: invoiceInfo.address.trim(),
-                invoiceEmail: invoiceInfo.email.trim(),
-              },
-            }
+            invoice: {
+              companyName: invoiceInfo.companyName.trim(),
+              taxCode: invoiceInfo.taxCode.trim(),
+              address: invoiceInfo.address.trim(),
+              invoiceEmail: invoiceInfo.email.trim(),
+            },
+          }
           : {}),
       },
       {
@@ -235,9 +235,9 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
         onError: (error) => {
           alert(
             error.message ||
-              (lang === "vi"
-                ? "Lỗi kết nối. Vui lòng thử lại."
-                : "Network error. Please try again.")
+            (lang === "vi"
+              ? "Lỗi kết nối. Vui lòng thử lại."
+              : "Network error. Please try again.")
           );
         },
       }
@@ -329,9 +329,8 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
                     setErrors((prev) => ({ ...prev, email: "" }));
                   }}
                   placeholder={dict.emailPlaceholder || "your@email.com"}
-                  className={`w-full rounded-xl border pl-10 pr-4 py-2.5 text-sm outline-none transition-colors ${
-                    errors.email ? "border-red-400" : "border-border-primary focus:border-[var(--border-focus)]"
-                  }`}
+                  className={`w-full rounded-xl border pl-10 pr-4 py-2.5 text-sm outline-none transition-colors ${errors.email ? "border-red-400" : "border-border-primary focus:border-[var(--border-focus)]"
+                    }`}
                 />
               </div>
               {errors.email && <p className="text-xs text-red-500">{errors.email}</p>}
@@ -353,86 +352,14 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
                     setErrors((prev) => ({ ...prev, phone: "" }));
                   }}
                   placeholder={dict.phonePlaceholder || "+84 xxx xxx xxx"}
-                  className={`w-full rounded-xl border pl-10 pr-4 py-2.5 text-sm outline-none transition-colors ${
-                    errors.phone ? "border-red-400" : "border-border-primary focus:border-[var(--border-focus)]"
-                  }`}
+                  className={`w-full rounded-xl border pl-10 pr-4 py-2.5 text-sm outline-none transition-colors ${errors.phone ? "border-red-400" : "border-border-primary focus:border-[var(--border-focus)]"
+                    }`}
                 />
               </div>
               {errors.phone && <p className="text-xs text-red-500">{errors.phone}</p>}
             </div>
           </div>
         </div>
-
-        {/* Payment Method */}
-        <div className="rounded-2xl border border-border-primary bg-white p-6 space-y-4">
-          <h3 className="text-lg font-bold text-text-primary flex items-center gap-2">
-            <CreditCard className="h-5 w-5 text-text-tertiary" />
-            {dict.paymentMethod || "Payment Method"}
-          </h3>
-
-          <div className="space-y-3">
-            {/* OnePay */}
-            <label
-              className={`flex items-center gap-4 rounded-xl border p-4 cursor-pointer transition-colors ${
-                paymentMethod === "onepay"
-                  ? "border-[var(--bg-accent)] bg-yellow-50/30"
-                  : "border-border-primary hover:bg-bg-secondary"
-              }`}
-            >
-              <input
-                type="radio"
-                name="payment"
-                value="onepay"
-                checked={paymentMethod === "onepay"}
-                onChange={() => setPaymentMethod("onepay")}
-                className="h-4 w-4 accent-[var(--bg-accent)]"
-              />
-              <div className="flex items-center gap-3 flex-1">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50">
-                  <CreditCard className="h-5 w-5 text-blue-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-text-primary">OnePay</p>
-                  <p className="text-xs text-text-tertiary">
-                    {dict.onepayDescription || "Pay with credit/debit card via OnePay"}
-                  </p>
-                </div>
-              </div>
-            </label>
-
-            {/* Bank Transfer */}
-            <label
-              className={`flex items-center gap-4 rounded-xl border p-4 cursor-pointer transition-colors ${
-                paymentMethod === "bank_transfer"
-                  ? "border-[var(--bg-accent)] bg-yellow-50/30"
-                  : "border-border-primary hover:bg-bg-secondary"
-              }`}
-            >
-              <input
-                type="radio"
-                name="payment"
-                value="bank_transfer"
-                checked={paymentMethod === "bank_transfer"}
-                onChange={() => setPaymentMethod("bank_transfer")}
-                className="h-4 w-4 accent-[var(--bg-accent)]"
-              />
-              <div className="flex items-center gap-3 flex-1">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
-                  <Building2 className="h-5 w-5 text-green-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-text-primary">
-                    {dict.bankTransfer || "Bank Transfer"}
-                  </p>
-                  <p className="text-xs text-text-tertiary">
-                    {dict.bankTransferDescription || "Transfer directly to our bank account"}
-                  </p>
-                </div>
-              </div>
-            </label>
-          </div>
-        </div>
-
         {/* eXU Wallet */}
         {wallet && wallet.status === "active" && wallet.availableBalanceVnd > 0 && (
           <div className="rounded-2xl border border-border-primary bg-white p-6 space-y-4">
@@ -450,14 +377,12 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
                     setUseExu(!useExu);
                     if (useExu) setExuAmount("");
                   }}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer ${
-                    useExu ? "bg-emerald-500" : "bg-gray-200"
-                  }`}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer ${useExu ? "bg-emerald-500" : "bg-gray-200"
+                    }`}
                 >
                   <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform shadow-sm ${
-                      useExu ? "translate-x-6" : "translate-x-1"
-                    }`}
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform shadow-sm ${useExu ? "translate-x-6" : "translate-x-1"
+                      }`}
                   />
                 </button>
               </label>
@@ -491,6 +416,75 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
             )}
           </div>
         )}
+        {/* Payment Method */}
+        <div className="rounded-2xl border border-border-primary bg-white p-6 space-y-4">
+          <h3 className="text-lg font-bold text-text-primary flex items-center gap-2">
+            <CreditCard className="h-5 w-5 text-text-tertiary" />
+            {dict.paymentMethod || "Payment Method"}
+          </h3>
+
+          <div className="space-y-3">
+            {/* OnePay */}
+            <label
+              className={`flex items-center gap-4 rounded-xl border p-4 cursor-pointer transition-colors ${paymentMethod === "onepay"
+                  ? "border-[var(--bg-accent)] bg-yellow-50/30"
+                  : "border-border-primary hover:bg-bg-secondary"
+                }`}
+            >
+              <input
+                type="radio"
+                name="payment"
+                value="onepay"
+                checked={paymentMethod === "onepay"}
+                onChange={() => setPaymentMethod("onepay")}
+                className="h-4 w-4 accent-[var(--bg-accent)]"
+              />
+              <div className="flex items-center gap-3 flex-1">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50">
+                  <CreditCard className="h-5 w-5 text-blue-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-text-primary">OnePay</p>
+                  <p className="text-xs text-text-tertiary">
+                    {dict.onepayDescription || "Pay with credit/debit card via OnePay"}
+                  </p>
+                </div>
+              </div>
+            </label>
+
+            {/* Bank Transfer */}
+            <label
+              className={`flex items-center gap-4 rounded-xl border p-4 cursor-pointer transition-colors ${paymentMethod === "bank_transfer"
+                  ? "border-[var(--bg-accent)] bg-yellow-50/30"
+                  : "border-border-primary hover:bg-bg-secondary"
+                }`}
+            >
+              <input
+                type="radio"
+                name="payment"
+                value="bank_transfer"
+                checked={paymentMethod === "bank_transfer"}
+                onChange={() => setPaymentMethod("bank_transfer")}
+                className="h-4 w-4 accent-[var(--bg-accent)]"
+              />
+              <div className="flex items-center gap-3 flex-1">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                  <Building2 className="h-5 w-5 text-green-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-text-primary">
+                    {dict.bankTransfer || "Bank Transfer"}
+                  </p>
+                  <p className="text-xs text-text-tertiary">
+                    {dict.bankTransferDescription || "Transfer directly to our bank account"}
+                  </p>
+                </div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+
 
         {/* Invoice Option */}
         <div className="rounded-2xl border border-border-primary bg-white p-6 space-y-4">
@@ -511,14 +505,12 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
                   setWantInvoice(!wantInvoice);
                   setShowInvoiceForm(!wantInvoice);
                 }}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer ${
-                  wantInvoice ? "bg-bg-accent" : "bg-gray-200"
-                }`}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer ${wantInvoice ? "bg-bg-accent" : "bg-gray-200"
+                  }`}
               >
                 <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform shadow-sm ${
-                    wantInvoice ? "translate-x-6" : "translate-x-1"
-                  }`}
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform shadow-sm ${wantInvoice ? "translate-x-6" : "translate-x-1"
+                    }`}
                 />
               </button>
             </label>
@@ -554,9 +546,8 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
                         setErrors((prev) => ({ ...prev, companyName: "" }));
                       }}
                       placeholder={dict.companyNamePlaceholder || "Company name"}
-                      className={`w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition-colors ${
-                        errors.companyName ? "border-red-400" : "border-border-primary focus:border-[var(--border-focus)]"
-                      }`}
+                      className={`w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition-colors ${errors.companyName ? "border-red-400" : "border-border-primary focus:border-[var(--border-focus)]"
+                        }`}
                     />
                     {errors.companyName && <p className="text-xs text-red-500">{errors.companyName}</p>}
                   </div>
@@ -575,9 +566,8 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
                         setErrors((prev) => ({ ...prev, taxCode: "" }));
                       }}
                       placeholder={dict.taxCodePlaceholder || "Tax identification number"}
-                      className={`w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition-colors ${
-                        errors.taxCode ? "border-red-400" : "border-border-primary focus:border-[var(--border-focus)]"
-                      }`}
+                      className={`w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition-colors ${errors.taxCode ? "border-red-400" : "border-border-primary focus:border-[var(--border-focus)]"
+                        }`}
                     />
                     {errors.taxCode && <p className="text-xs text-red-500">{errors.taxCode}</p>}
                   </div>
@@ -596,9 +586,8 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
                         setErrors((prev) => ({ ...prev, invoiceAddress: "" }));
                       }}
                       placeholder={dict.addressPlaceholder || "Company address"}
-                      className={`w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition-colors ${
-                        errors.invoiceAddress ? "border-red-400" : "border-border-primary focus:border-[var(--border-focus)]"
-                      }`}
+                      className={`w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition-colors ${errors.invoiceAddress ? "border-red-400" : "border-border-primary focus:border-[var(--border-focus)]"
+                        }`}
                     />
                     {errors.invoiceAddress && <p className="text-xs text-red-500">{errors.invoiceAddress}</p>}
                   </div>
@@ -617,9 +606,8 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
                         setErrors((prev) => ({ ...prev, invoiceEmail: "" }));
                       }}
                       placeholder={dict.invoiceEmailPlaceholder || "Email to receive invoice"}
-                      className={`w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition-colors ${
-                        errors.invoiceEmail ? "border-red-400" : "border-border-primary focus:border-[var(--border-focus)]"
-                      }`}
+                      className={`w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition-colors ${errors.invoiceEmail ? "border-red-400" : "border-border-primary focus:border-[var(--border-focus)]"
+                        }`}
                     />
                     {errors.invoiceEmail && <p className="text-xs text-red-500">{errors.invoiceEmail}</p>}
                   </div>

@@ -224,6 +224,8 @@ interface FetchOptions {
   orderBy?: string;
   order?: string;
   lang?: string;
+  /** Context identifier for endpoints like `/api/v1/faqs/by-context`. */
+  context?: string;
 }
 
 type PublicListResponse<T> = InfinityPaginationResponse<T> | T[];
@@ -412,9 +414,13 @@ export async function searchDestinations(
 export async function getFaqs(
   options: FetchOptions = {}
 ): Promise<PaginatedResponse<Faq>> {
+  // Per Refactor 4.1: every contextual FAQ fetch must hit the canonical
+  // `/api/v1/faqs/by-context` endpoint. Callers can supply `{ context: "..." }`
+  // through `options`; the param is forwarded as a query string by `apiFetch`.
+  const { context = "global", ...rest } = options;
   return apiFetch<PaginatedResponse<Faq>>(
-    "/api/v1/faqs",
-    { limit: 20, ...options },
+    "/api/v1/faqs/by-context",
+    { limit: 20, context, ...rest },
     300
   );
 }
@@ -701,6 +707,8 @@ export async function getCoupons(
 
 export interface HelpCenterArticle {
   id: string;
+  /** Canonical slug from the CMS used for the article URL. */
+  slug: string;
   title: string;
   content: string;
   order: number;

@@ -4,17 +4,32 @@ import { useEffect, useState, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { Search, ChevronDown, ChevronRight } from "lucide-react";
 import type { HelpCenterArticle } from "@/lib/api";
-import { getCategoryLabel } from "./category-config";
+import { getCategoryLabel, getParentLabel } from "./category-config";
+import { ArticleFooter } from "./article-footer";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.saily.example.com";
 
-function formatLabel(key: string): string {
-  return key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+/**
+ * Normalize a slug for comparison/URL building.
+ * Strips an optional leading slash and trims whitespace, since the CMS may
+ * return slugs like "/honest-review2" while URLs only carry "honest-review2".
+ */
+function normalizeSlug(slug: string | undefined | null): string {
+  if (!slug) return "";
+  return slug.trim().replace(/^\/+/, "");
 }
 
-function slugify(text: string): string {
-  return text
+/**
+ * Resolve the URL slug for a help-center article.
+ * Prefers the canonical `slug` field from the API (normalized to drop a
+ * leading "/"); falls back to a title-derived slug only when the CMS hasn't
+ * provided one.
+ */
+function getArticleSlug(article: { slug?: string; title: string }): string {
+  const fromApi = normalizeSlug(article.slug);
+  if (fromApi.length > 0) return fromApi;
+  return article.title
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
@@ -26,6 +41,12 @@ interface DetailContentProps {
   parent?: string;
   titleSlug?: string;
   initialArticles?: HelpCenterArticle[];
+  /**
+   * Article fetched server-side via /api/v1/help-center/by-slug/{slug}.
+   * Preferred over an in-memory lookup since the article-list endpoint may
+   * not contain the article (paging / locale variants).
+   */
+  initialArticle?: HelpCenterArticle;
 }
 
 interface GroupedData {
@@ -34,7 +55,14 @@ interface GroupedData {
   };
 }
 
-export function DetailContent({ lang, category, parent, titleSlug, initialArticles }: DetailContentProps) {
+export function DetailContent({
+  lang,
+  category,
+  parent,
+  titleSlug,
+  initialArticles,
+  initialArticle,
+}: DetailContentProps) {
   const [articles, setArticles] = useState<HelpCenterArticle[]>(initialArticles ?? []);
   const [loading, setLoading] = useState(!initialArticles);
   const [searchQuery, setSearchQuery] = useState("");
@@ -66,18 +94,36 @@ export function DetailContent({ lang, category, parent, titleSlug, initialArticl
   // Current category's parents
   const currentParents = grouped[category] || {};
 
-  // Find selected article when titleSlug is provided
+  const normalizedTitleSlug = useMemo(
+    () => normalizeSlug(titleSlug),
+    [titleSlug]
+  );
+
+  // Resolve the selected article. Order of preference:
+  //  1. The server-fetched `initialArticle` (always authoritative).
+  //  2. A match in the in-memory list by canonical slug.
+  //  3. A match by title-derived slug (legacy URLs).
   const selectedArticle = useMemo(() => {
-    if (!titleSlug || !parent) return null;
+    if (!normalizedTitleSlug) return null;
+    if (initialArticle) return initialArticle;
     return (
       articles.find(
         (a) =>
-          a.category === category &&
-          a.parent === parent &&
-          slugify(a.title) === titleSlug
+          (!parent || a.parent === parent) &&
+          (!category || a.category === category) &&
+          getArticleSlug(a) === normalizedTitleSlug
       ) || null
     );
-  }, [articles, category, parent, titleSlug]);
+  }, [articles, category, parent, normalizedTitleSlug, initialArticle]);
+
+  // Slug used to drive sidebar "active" state. We prefer the
+  // server-fetched article's slug (most authoritative) and fall back to the
+  // raw URL segment.
+  const activeArticleSlug = useMemo(
+    () =>
+      normalizeSlug(selectedArticle?.slug) || normalizedTitleSlug,
+    [selectedArticle, normalizedTitleSlug]
+  );
 
   // Articles for the current parent
   const parentArticles = useMemo(() => {
@@ -189,7 +235,7 @@ export function DetailContent({ lang, category, parent, titleSlug, initialArticl
                 <ol className="flex items-center gap-1 list-none p-0 m-0 flex-wrap">
                   <li>
                     <Link href={basePath} className="text-gray-700 no-underline hover:text-gray-900 transition-colors">
-                      {lang === "vi" ? "Trung tâm trợ giúp" : "Saily Help Center"}
+                      {lang === "vi" ? "Trung tâm trợ giúp" : "Help Center"}
                     </Link>
                   </li>
                   <li className="text-gray-400 mx-1">›</li>
@@ -208,10 +254,10 @@ export function DetailContent({ lang, category, parent, titleSlug, initialArticl
                       <li>
                         {titleSlug ? (
                           <Link href={`${basePath}/${category}/${parent}`} className="text-gray-700 no-underline hover:text-gray-900 transition-colors">
-                            {formatLabel(parent)}
+                            {getParentLabel(parent, lang)}
                           </Link>
                         ) : (
-                          <span className="text-gray-900 font-medium" aria-current="page">{formatLabel(parent)}</span>
+                          <span className="text-gray-900 font-medium" aria-current="page">{getParentLabel(parent, lang)}</span>
                         )}
                       </li>
                     </>
@@ -230,55 +276,6 @@ export function DetailContent({ lang, category, parent, titleSlug, initialArticl
           </div>
         </div>
       </div>
-
-      {/* Search Box for non-article pages (Bug 2.8) */}
-      {!titleSlug && (
-        <div className="bg-white border-b border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 py-3">
-            <form role="search" className="relative max-w-lg" onSubmit={(e) => e.preventDefault()}>
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input
-                type="search"
-                placeholder={lang === "vi" ? "Nhập chủ đề, câu hỏi hoặc vấn đề" : "Type a topic, question or issue here"}
-                className="w-full pl-10 pr-4 py-2.5 rounded-full text-sm border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                aria-label={lang === "vi" ? "Tìm kiếm bài viết" : "Search articles"}
-              />
-              {/* Search Results Dropdown */}
-              {searchQuery.trim() && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-xl border border-gray-200 max-h-64 overflow-y-auto z-50">
-                  {isSearching ? (
-                    <div className="p-3 text-center text-gray-500 text-sm">
-                      {lang === "vi" ? "Đang tìm kiếm..." : "Searching..."}
-                    </div>
-                  ) : searchResults.length > 0 ? (
-                    <ul className="list-none p-0 m-0">
-                      {searchResults.map((article) => (
-                        <li key={article.id}>
-                          <Link
-                            href={`${basePath}/${article.category}/${article.parent}/${slugify(article.title)}`}
-                            className="block px-4 py-2.5 text-gray-900 no-underline hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
-                          >
-                            <p className="text-sm font-medium">{article.title}</p>
-                            <p className="text-xs text-gray-500 mt-0.5">
-                              {getCategoryLabel(article.category, lang)} › {formatLabel(article.parent)}
-                            </p>
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <div className="p-3 text-center text-gray-500 text-sm">
-                      {lang === "vi" ? "Không tìm thấy kết quả" : "No results found"}
-                    </div>
-                  )}
-                </div>
-              )}
-            </form>
-          </div>
-        </div>
-      )}
 
       {/* Page container (Layout 2.2: max-w-7xl) */}
       <div className="max-w-7xl mx-auto px-4 flex-1" id="page-container">
@@ -344,7 +341,7 @@ export function DetailContent({ lang, category, parent, titleSlug, initialArticl
                                       className="flex-1 text-inherit no-underline hover:text-inherit"
                                       onClick={(e) => e.stopPropagation()}
                                     >
-                                      {formatLabel(parentKey)}
+                                      {getParentLabel(parentKey, lang)}
                                     </Link>
                                     {isParentExpanded ? (
                                       <ChevronDown className="w-3 h-3 text-gray-400 shrink-0" />
@@ -357,11 +354,11 @@ export function DetailContent({ lang, category, parent, titleSlug, initialArticl
                                   {isParentExpanded && (
                                     <ul className="list-none p-0 m-0 ml-3 mt-0.5">
                                       {arts.map((article) => {
-                                        const artSlug = slugify(article.title);
+                                        const artSlug = getArticleSlug(article);
                                         const isArticleActive =
                                           catKey === category &&
                                           parentKey === parent &&
-                                          artSlug === titleSlug;
+                                          artSlug === activeArticleSlug;
                                         return (
                                           <li key={article.id}>
                                             <Link
@@ -427,12 +424,22 @@ export function DetailContent({ lang, category, parent, titleSlug, initialArticl
                     [&_code]:bg-gray-100 [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm"
                   dangerouslySetInnerHTML={{ __html: selectedArticle.content }}
                 />
+
+                {/* Content 5.1: Support CTA + related articles */}
+                <ArticleFooter
+                  lang={lang}
+                  currentArticle={selectedArticle}
+                  allArticles={articles}
+                  buildHref={(a) =>
+                    `${basePath}/${a.category}/${a.parent}/${getArticleSlug(a)}`
+                  }
+                />
               </div>
             ) : /* === LEVEL 2: Parent section with article list === */
             parent ? (
               <div className="my-10">
                 <h1 className="text-2xl md:text-4xl font-medium mb-8">
-                  {formatLabel(parent)}
+                  {getParentLabel(parent, lang)}
                 </h1>
                 <ul className="list-none p-0 m-0">
                   {parentArticles.map((article) => (
@@ -440,7 +447,7 @@ export function DetailContent({ lang, category, parent, titleSlug, initialArticl
                       <div className="relative flex items-baseline py-2">
                         <div className="flex-1">
                           <Link
-                            href={`${basePath}/${category}/${parent}/${slugify(article.title)}`}
+                            href={`${basePath}/${category}/${parent}/${getArticleSlug(article)}`}
                             className="text-gray-800 hover:text-gray-900 no-underline transition-colors"
                           >
                             {article.title}
@@ -478,7 +485,7 @@ export function DetailContent({ lang, category, parent, titleSlug, initialArticl
                             href={`${basePath}/${category}/${parentKey}`}
                             className="text-gray-900 hover:text-gray-700 no-underline transition-colors"
                           >
-                            {formatLabel(parentKey)}
+                            {getParentLabel(parentKey, lang)}
                           </Link>
                         </h2>
 
@@ -488,7 +495,7 @@ export function DetailContent({ lang, category, parent, titleSlug, initialArticl
                               <div className="relative flex items-baseline py-2">
                                 <div className="flex-1">
                                   <Link
-                                    href={`${basePath}/${category}/${parentKey}/${slugify(article.title)}`}
+                                    href={`${basePath}/${category}/${parentKey}/${getArticleSlug(article)}`}
                                     className="text-gray-800 hover:text-gray-900 no-underline transition-colors"
                                   >
                                     {article.title}

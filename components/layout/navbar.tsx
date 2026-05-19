@@ -32,7 +32,8 @@ import {
 
 // Swiper
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination, Autoplay } from "swiper/modules";
+import { Pagination, Autoplay, EffectFade } from "swiper/modules";
+import "swiper/css/effect-fade";
 
 /* ===== Types ===== */
 
@@ -630,15 +631,24 @@ function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
         <div className="sticky top-0 z-50 relative bg-[#1a1a1a] text-text-primary-on-color overflow-hidden">
           <div className="px-6 min-w-full flex justify-between items-center md:gap-3">
             {topBars.length > 1 ? (
-              /* Multiple promotions: auto-play carousel */
+              /* Multiple promotions — Animation 3.1: smooth cross-fade
+                 between announcements so the copy never snaps abruptly. */
               <div className="flex-1 py-3">
                 <Swiper
-                  modules={[Autoplay]}
+                  modules={[Autoplay, EffectFade]}
+                  effect="fade"
+                  fadeEffect={{ crossFade: true }}
+                  speed={700}
                   spaceBetween={0}
                   slidesPerView={1}
                   loop
-                  autoplay={{ delay: 4000, disableOnInteraction: false }}
-                  className="w-full"
+                  allowTouchMove={false}
+                  autoplay={{
+                    delay: 4500,
+                    disableOnInteraction: false,
+                    pauseOnMouseEnter: true,
+                  }}
+                  className="w-full announcement-swiper"
                 >
                   {topBars.map((bar, idx) => {
                     const text = pickLocalizedTitle(bar, lang).trim();
