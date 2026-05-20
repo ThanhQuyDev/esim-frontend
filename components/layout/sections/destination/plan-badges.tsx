@@ -55,7 +55,7 @@ export function PlanTagBadges({ tags, lang = "vi", className = "" }: PlanTagBadg
       {normalized.map((tag) => (
         <span
           key={tag}
-          className={`text-[9px] font-bold tracking-wide px-[5px] py-[2px] rounded leading-tight shrink-0 whitespace-nowrap ${TAG_STYLES[tag]} ${className}`}
+          className={`text-[11px] font-bold tracking-wide px-[5px] py-[2px] rounded leading-tight shrink-0 whitespace-nowrap ${TAG_STYLES[tag]} ${className}`}
         >
           {labels[tag]}
         </span>

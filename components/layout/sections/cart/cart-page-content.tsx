@@ -565,7 +565,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
                   <Wallet className="h-[18px] w-[18px]" />
                 </span>
                 <span className="flex flex-col items-start leading-tight">
-                  <span className="text-[11px] font-medium uppercase tracking-wider text-white/80">
+                  <span className="text-[13px] font-medium uppercase tracking-wider text-white/80">
                     {lang === "vi" ? "Thanh toán nhanh" : "Quick Pay"}
                   </span>
                   <span className="text-base font-bold">
@@ -687,7 +687,7 @@ function CartItemRow({
             {displayPrice}
           </span>
           {hasItemDiscount && (
-            <span className="text-[10px] font-bold text-green-600 bg-green-50 px-1.5 py-0.5 rounded mt-0.5">
+            <span className="text-[12px] font-bold text-green-600 bg-green-50 px-1.5 py-0.5 rounded mt-0.5">
               -{item.discount}%
             </span>
           )}

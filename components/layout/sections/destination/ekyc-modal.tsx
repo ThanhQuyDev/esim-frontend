@@ -233,7 +233,7 @@ export function EkycModal({ open, onClose, lang }: EkycModalProps) {
                 style={{ borderRight: i < 2 ? "1px solid rgba(255,255,255,0.12)" : "none" }}
               >
                 <div className="text-white font-extrabold text-[17px]">{s.v}</div>
-                <div className="text-[11px] mt-px" style={{ color: "rgba(255,255,255,0.72)" }}>{s.l}</div>
+                <div className="text-[13px] mt-px" style={{ color: "rgba(255,255,255,0.72)" }}>{s.l}</div>
               </div>
             ))}
           </div>
@@ -338,7 +338,7 @@ export function EkycModal({ open, onClose, lang }: EkycModalProps) {
                     {c.name}
                   </div>
                   <div
-                    className="inline-flex items-center justify-center gap-[3px] px-3 py-1 rounded-full text-[11px] font-bold text-white relative z-[1] whitespace-nowrap"
+                    className="inline-flex items-center justify-center gap-[3px] px-3 py-1 rounded-full text-[13px] font-bold text-white relative z-[1] whitespace-nowrap"
                     style={{ background: "#DC2626" }}
                   >
                     {t.seeGuide}

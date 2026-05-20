@@ -50,7 +50,7 @@ function MobilePlanChip({
       {label}
       <PlanTagBadges tags={plan.tags as string[] | undefined} lang={lang} />
       {plan.discount != null && plan.discount > 0 && (
-        <span className="text-[10px] font-bold px-[7px] py-[2px] rounded leading-[1.4] whitespace-nowrap bg-[#dcfce7] text-[#166534] border border-[#BBF7D0]">
+        <span className="text-[12px] font-bold px-[7px] py-[2px] rounded leading-[1.4] whitespace-nowrap bg-[#dcfce7] text-[#166534] border border-[#BBF7D0]">
           –{Number(plan.discount).toFixed()}%
         </span>
       )}
@@ -86,7 +86,7 @@ function MobileGbChip({
       {formatDataLabel(gb)}/{lang === "en" ? "day" : "ngày"}
       {bestPlan && <PlanTagBadges tags={bestPlan.tags as string[] | undefined} lang={lang} />}
       {bestPlan?.discount != null && bestPlan.discount > 0 && (
-        <span className="text-[10px] font-bold px-[7px] py-[2px] rounded leading-[1.4] whitespace-nowrap bg-[#dcfce7] text-[#166534] border border-[#BBF7D0]">
+        <span className="text-[12px] font-bold px-[7px] py-[2px] rounded leading-[1.4] whitespace-nowrap bg-[#dcfce7] text-[#166534] border border-[#BBF7D0]">
           –{Number(bestPlan.discount).toFixed()}%
         </span>
       )}
@@ -129,7 +129,7 @@ function MobileUnlimitedPill({
           {firstTag ? (
             <PlanTagBadges tags={[firstTag]} lang={lang} />
           ) : (
-            <span className="text-[10px] font-bold px-[9px] py-[3px] rounded-[5px] leading-[1.4] whitespace-nowrap bg-[#dcfce7] text-[#166534] border border-[#BBF7D0]">
+            <span className="text-[12px] font-bold px-[9px] py-[3px] rounded-[5px] leading-[1.4] whitespace-nowrap bg-[#dcfce7] text-[#166534] border border-[#BBF7D0]">
               –{Number(plan.discount!).toFixed()}%
             </span>
           )}
@@ -153,7 +153,7 @@ function MobileUnlimitedPill({
         <span className={`text-[13.5px] font-medium leading-tight truncate w-full ${isSelected ? "text-[#1a1a1a] font-semibold" : "text-[#374151]"}`}>
           {mainLabel}
         </span>
-        <span className="text-[11px] leading-tight text-[#6b7280] truncate w-full">
+        <span className="text-[13px] leading-tight text-[#6b7280] truncate w-full">
           → {hintLabel}
         </span>
       </span>

@@ -386,7 +386,7 @@ export function ProductCard({
                     ].map((step, i) => (
                       <div key={i} className="flex items-start gap-2.5">
                         <span
-                          className="w-5 h-5 rounded-full bg-[#DC2626] text-white text-[10px] font-extrabold flex items-center justify-center shrink-0 mt-px"
+                          className="w-5 h-5 rounded-full bg-[#DC2626] text-white text-[12px] font-extrabold flex items-center justify-center shrink-0 mt-px"
                         >
                           {i + 1}
                         </span>

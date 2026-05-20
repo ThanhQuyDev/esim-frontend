@@ -108,7 +108,7 @@ export function MobileStickyBar({
             </svg>
           </div>
           <div className="min-w-0 flex-1">
-            <div className="text-[11px] text-[#6b7280] font-medium truncate">
+            <div className="text-[13px] text-[#6b7280] font-medium truncate">
               eSIM {destination || ""}
             </div>
             <div className="text-[13px] font-bold truncate">

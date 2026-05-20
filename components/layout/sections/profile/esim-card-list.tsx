@@ -124,7 +124,7 @@ function QrCodeImage({ lpa }: { lpa: string }) {
   return (
     <div className="flex flex-col items-center gap-2 py-3">
       <img src={src} alt="eSIM QR Code" className="w-[180px] h-[180px] rounded-sm border border-gray-200" />
-      <p className="text-[11px] text-gray-400 text-center max-w-[200px] break-all leading-tight">
+      <p className="text-[13px] text-gray-400 text-center max-w-[200px] break-all leading-tight">
         {lpa}
       </p>
     </div>
@@ -174,7 +174,7 @@ function DataUsageBar({ label, used, total, unit, isUnlimited }: {
           style={{ width: `${pct}%` }}
         />
       </div>
-      <div className="flex justify-between text-[11px] text-gray-400">
+      <div className="flex justify-between text-[13px] text-gray-400">
         <span>{used.toFixed(used < 100 ? 1 : 0)} {unit} used</span>
         <span>{total.toFixed(total < 100 ? 1 : 0)} {unit} total</span>
       </div>
@@ -228,7 +228,7 @@ function DataUsageSection({ esimId, lang }: { esimId: number; lang: string }) {
         <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
           {lang === "vi" ? "Dữ liệu sử dụng" : "Data Usage"}
         </h4>
-        <span className={`inline-flex items-center px-2 py-0.5 text-[11px] font-medium rounded-full ${statusColor[usage.status] || "bg-gray-100 text-gray-500"}`}>
+        <span className={`inline-flex items-center px-2 py-0.5 text-[13px] font-medium rounded-full ${statusColor[usage.status] || "bg-gray-100 text-gray-500"}`}>
           {usage.status}
         </span>
       </div>
@@ -251,7 +251,7 @@ function DataUsageSection({ esimId, lang }: { esimId: number; lang: string }) {
           <p className="text-lg font-bold text-blue-700">
             {usage.isUnlimited ? "∞" : `${remainingGb.toFixed(1)}`}
           </p>
-          <p className="text-[11px] text-blue-500">
+          <p className="text-[13px] text-blue-500">
             {usage.isUnlimited ? "Unlimited" : `GB ${lang === "vi" ? "còn lại" : "remaining"}`}
           </p>
         </div>
@@ -262,7 +262,7 @@ function DataUsageSection({ esimId, lang }: { esimId: number; lang: string }) {
           <p className="text-lg font-bold text-emerald-700">
             {daysRemaining !== null ? daysRemaining : "—"}
           </p>
-          <p className="text-[11px] text-emerald-500">
+          <p className="text-[13px] text-emerald-500">
             {lang === "vi" ? "ngày còn lại" : "days left"}
           </p>
         </div>
@@ -270,7 +270,7 @@ function DataUsageSection({ esimId, lang }: { esimId: number; lang: string }) {
 
       {/* Expiry info */}
       {usage.expiredAt && (
-        <p className="text-[11px] text-gray-400 text-center">
+        <p className="text-[13px] text-gray-400 text-center">
           {lang === "vi" ? "Hết hạn:" : "Expires:"}{" "}
           {new Date(usage.expiredAt).toLocaleDateString(lang === "vi" ? "vi-VN" : "en-US", {
             year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
@@ -316,7 +316,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
             <p className="text-sm font-semibold text-gray-900 truncate font-mono">
               {esim.iccid}
             </p>
-            <span className={`inline-flex items-center px-2 py-0.5 text-[11px] font-medium rounded-full ${getStatusStyle(esim.status)}`}>
+            <span className={`inline-flex items-center px-2 py-0.5 text-[13px] font-medium rounded-full ${getStatusStyle(esim.status)}`}>
               {getStatusLabel(esim.status, t)}
             </span>
           </div>
@@ -380,7 +380,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                     </div>
 
                     <div>
-                      <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wider mb-2 text-center">
+                      <p className="text-[13px] font-medium text-gray-400 uppercase tracking-wider mb-2 text-center">
                         {lang === "vi" ? "Hoặc cài đặt nhanh" : "Or install with one tap"}
                       </p>
                       <div className="grid grid-cols-2 gap-2">
@@ -411,7 +411,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                 <div className="space-y-3">
                   {fields.map(({ label, value, copyable }) => (
                     <div key={label}>
-                      <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wider mb-1">
+                      <p className="text-[13px] font-medium text-gray-400 uppercase tracking-wider mb-1">
                         {label}
                       </p>
                       <div className="flex items-center gap-1 bg-gray-50 rounded-lg px-3 py-2">
@@ -426,7 +426,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                   {/* Status & Dates */}
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wider mb-1">
+                      <p className="text-[13px] font-medium text-gray-400 uppercase tracking-wider mb-1">
                         {t.status}
                       </p>
                       <div className="bg-gray-50 rounded-lg px-3 py-2">
@@ -436,7 +436,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                       </div>
                     </div>
                     <div>
-                      <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wider mb-1">
+                      <p className="text-[13px] font-medium text-gray-400 uppercase tracking-wider mb-1">
                         {lang === "vi" ? "Hết hạn" : "Expires"}
                       </p>
                       <div className="bg-gray-50 rounded-lg px-3 py-2">

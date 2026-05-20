@@ -56,17 +56,17 @@ export function SimplePlanList({ plans, selectedPlan, onSelectPlan, dict }: Simp
               {label}
               <PlanTagBadges tags={plan.tags as string[] | undefined} lang={lang} />
               {plan.sms != null && plan.sms > 0 && (
-                <span className="text-[9px] font-bold tracking-wide px-[5px] py-[2px] rounded leading-tight shrink-0 bg-[#dbeafe] text-[#1e40af]">
+                <span className="text-[11px] font-bold tracking-wide px-[5px] py-[2px] rounded leading-tight shrink-0 bg-[#dbeafe] text-[#1e40af]">
                   SMS
                 </span>
               )}
               {plan.call != null && plan.call > 0 && (
-                <span className="text-[9px] font-bold tracking-wide px-[5px] py-[2px] rounded leading-tight shrink-0 bg-[#ede9fe] text-[#5b21b6]">
+                <span className="text-[11px] font-bold tracking-wide px-[5px] py-[2px] rounded leading-tight shrink-0 bg-[#ede9fe] text-[#5b21b6]">
                   Call
                 </span>
               )}
               {plan.discount != null && plan.discount > 0 && (
-                <span className="text-[9px] font-bold tracking-wide px-[5px] py-[2px] rounded leading-tight shrink-0 bg-[#dcfce7] text-[#166534] border border-[#BBF7D0]">
+                <span className="text-[11px] font-bold tracking-wide px-[5px] py-[2px] rounded leading-tight shrink-0 bg-[#dcfce7] text-[#166534] border border-[#BBF7D0]">
                   –{Number(plan.discount).toFixed()}%
                 </span>
               )}

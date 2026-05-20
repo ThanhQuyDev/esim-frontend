@@ -49,7 +49,7 @@ function PlanChip({
       {label}
       <PlanTagBadges tags={plan.tags as string[] | undefined} lang={lang} />
       {plan.discount != null && plan.discount > 0 && (
-        <span className="text-[9px] font-bold tracking-wide px-[5px] py-[2px] rounded leading-tight shrink-0 bg-[#DCFCE7] text-[#166534] border border-[#BBF7D0]">
+        <span className="text-[11px] font-bold tracking-wide px-[5px] py-[2px] rounded leading-tight shrink-0 bg-[#DCFCE7] text-[#166534] border border-[#BBF7D0]">
           –{Number(plan.discount).toFixed()}%
         </span>
       )}
@@ -84,7 +84,7 @@ function GbChip({
       {formatDataLabel(gb)}/{lang === "en" ? "day" : "ngày"}
       {bestPlan && <PlanTagBadges tags={bestPlan.tags as string[] | undefined} lang={lang} />}
       {bestPlan?.discount != null && bestPlan.discount > 0 && (
-        <span className="text-[9px] font-bold tracking-wide px-[5px] py-[2px] rounded leading-tight shrink-0 bg-[#DCFCE7] text-[#166534] border border-[#BBF7D0]">
+        <span className="text-[11px] font-bold tracking-wide px-[5px] py-[2px] rounded leading-tight shrink-0 bg-[#DCFCE7] text-[#166534] border border-[#BBF7D0]">
           –{Number(bestPlan.discount).toFixed()}%
         </span>
       )}
@@ -190,7 +190,7 @@ function UnlimitedPill({
           {firstTag ? (
             <PlanTagBadges tags={[firstTag]} lang={lang} />
           ) : (
-            <span className="text-[9px] font-bold tracking-wide px-[7px] py-[2px] rounded leading-snug bg-[#DCFCE7] text-[#166534] border border-[#BBF7D0]">
+            <span className="text-[11px] font-bold tracking-wide px-[7px] py-[2px] rounded leading-snug bg-[#DCFCE7] text-[#166534] border border-[#BBF7D0]">
               –{Number(plan.discount!).toFixed()}%
             </span>
           )}
@@ -212,7 +212,7 @@ function UnlimitedPill({
         <span className={`text-[13.5px] font-semibold leading-tight ${isSelected ? "text-[#111]" : "text-[#374151]"}`}>
           {mainLabel}
         </span>
-        <span className={`text-[11px] leading-tight transition-colors ${isSelected ? "text-[#374151]" : "text-[#6b7280]"}`}>
+        <span className={`text-[13px] leading-tight transition-colors ${isSelected ? "text-[#374151]" : "text-[#6b7280]"}`}>
           {hintLabel}
         </span>
       </span>

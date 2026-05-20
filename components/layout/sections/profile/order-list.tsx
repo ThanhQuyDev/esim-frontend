@@ -214,7 +214,7 @@ export function OrderList({ orders, isLoading, t, lang }: OrderListProps) {
                   {order.orderNumber}
                 </p>
                 <span
-                  className={`inline-flex items-center px-2 py-0.5 text-[11px] font-medium rounded-full ${getStatusColor(order.status)}`}
+                  className={`inline-flex items-center px-2 py-0.5 text-[13px] font-medium rounded-full ${getStatusColor(order.status)}`}
                 >
                   {getStatusLabel(order.status, t)}
                 </span>

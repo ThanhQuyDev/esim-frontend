@@ -114,7 +114,7 @@ export function ChatBubble() {
             <MessageCircle className="h-6 w-6" />
             {/* Unread badge */}
             {unreadCount > 0 && (
-              <span className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[11px] font-bold text-white shadow-md">
+              <span className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[13px] font-bold text-white shadow-md">
                 {unreadCount > 99 ? "99+" : unreadCount}
               </span>
             )}
@@ -346,7 +346,7 @@ function MessageBubble({
           <p className={`whitespace-pre-wrap break-words ${hasImage ? "mt-1.5 px-3.5" : ""}`}>{message.message}</p>
         )}
         <p
-          className={`mt-1 text-[10px] ${
+          className={`mt-1 text-[12px] ${
             isOwn ? "text-gray-300" : "text-gray-400"
           } text-right ${hasImage && !hasTextContent ? "px-1" : ""}`}
         >

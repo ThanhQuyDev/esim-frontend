@@ -107,7 +107,7 @@ function AuthorLink({ author, lang }: { author: string | null; lang: string }) {
       <div className="flex flex-row items-center gap-3">
         <div className="relative rounded-full overflow-hidden w-[24px] min-w-[24px] h-[24px] bg-tertiary">
           <div className="relative overflow-hidden w-full h-full flex items-center justify-center">
-            <span className="text-[10px] text-secondary font-medium">
+            <span className="text-[12px] text-secondary font-medium">
               {author.charAt(0).toUpperCase()}
             </span>
           </div>

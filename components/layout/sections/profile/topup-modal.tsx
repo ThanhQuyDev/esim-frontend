@@ -161,7 +161,7 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
             <p className="text-xs text-gray-500 mt-0.5 truncate font-mono">
               {esim.iccid}
               {provider && (
-                <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded bg-white border border-gray-200 text-[10px] text-gray-600 font-sans">
+                <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded bg-white border border-gray-200 text-[12px] text-gray-600 font-sans">
                   {PROVIDER_LABEL[provider] ?? provider}
                 </span>
               )}
@@ -320,7 +320,7 @@ function TopupPackageItem({ pkg, selected, onSelect, t, lang }: TopupPackageItem
           </div>
           <p className="text-sm text-gray-700 leading-snug">{pkg.name}</p>
           {!pkg.vndPrice && (
-            <p className="text-[11px] text-amber-600 mt-1">
+            <p className="text-[13px] text-amber-600 mt-1">
               ⚠ {t.topupVndUnavailable}
             </p>
           )}

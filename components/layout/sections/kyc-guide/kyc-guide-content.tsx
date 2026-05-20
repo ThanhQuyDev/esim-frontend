@@ -149,7 +149,7 @@ function Illustration({ svg, caption }: { svg: string; caption: string }) {
     <div className="rounded-[14px] max-[640px]:rounded-xl overflow-hidden bg-[#F3F4F6] mt-3 max-[640px]:mt-2" style={{ border: "1.5px solid #E5E7EB" }}>
       <div className="block w-full" dangerouslySetInnerHTML={{ __html: svg }} />
       <div
-        className="text-xs max-[640px]:text-[11px] text-[#6B7280] text-center px-3 max-[640px]:px-2.5 py-2 max-[640px]:py-1.5 bg-white font-medium leading-[1.4]"
+        className="text-xs max-[640px]:text-[13px] text-[#6B7280] text-center px-3 max-[640px]:px-2.5 py-2 max-[640px]:py-1.5 bg-white font-medium leading-[1.4]"
         style={{ borderTop: "1px solid #E5E7EB" }}
       >
         {caption}
@@ -221,7 +221,7 @@ function StepItem({ step, index, isLast }: { step: KycStep; index: number; isLas
               >
                 <div className="block w-full" dangerouslySetInnerHTML={{ __html: item.svg }} />
                 <div
-                  className="text-xs max-[640px]:text-[11px] text-[#6B7280] text-center px-3 max-[640px]:px-2.5 py-2 max-[640px]:py-1.5 bg-white font-medium leading-[1.4]"
+                  className="text-xs max-[640px]:text-[13px] text-[#6B7280] text-center px-3 max-[640px]:px-2.5 py-2 max-[640px]:py-1.5 bg-white font-medium leading-[1.4]"
                   style={{ borderTop: "1px solid #E5E7EB" }}
                 >
                   {item.caption}
@@ -378,7 +378,7 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
                 style={{ borderRight: i < 2 ? "1px solid rgba(255,255,255,0.1)" : "none" }}
               >
                 <div className="text-[21px] max-[640px]:text-[17px] font-extrabold text-white leading-none">{s.v}</div>
-                <div className="text-[11px] max-[640px]:text-[10px] mt-[3px] leading-[1.3]" style={{ color: "rgba(255,255,255,0.7)" }}>{s.l}</div>
+                <div className="text-[13px] max-[640px]:text-[12px] mt-[3px] leading-[1.3]" style={{ color: "rgba(255,255,255,0.7)" }}>{s.l}</div>
               </div>
             ))}
           </div>

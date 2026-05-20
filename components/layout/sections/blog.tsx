@@ -83,7 +83,7 @@ export function BlogSection({ dict, lang }: BlogSectionProps) {
                 {post.tags && (
                   <div className="absolute top-3 left-3 flex gap-1.5 flex-wrap">
                     {post.tags.split(",").slice(0, 2).map((tag) => (
-                      <span key={tag.trim()} className="text-[10px] font-medium px-2 py-1 rounded-full bg-black/40 backdrop-blur-sm text-white/90">{tag.trim()}</span>
+                      <span key={tag.trim()} className="text-[12px] font-medium px-2 py-1 rounded-full bg-black/40 backdrop-blur-sm text-white/90">{tag.trim()}</span>
                     ))}
                   </div>
                 )}

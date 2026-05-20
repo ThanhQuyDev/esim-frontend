@@ -264,7 +264,7 @@ export function ProductInfo({ destination, dict, lang, planSource = "destination
             className="w-full flex items-center justify-between px-3.5 py-2.5 border-[1.5px] border-[#e5e7eb] rounded-lg bg-[#f9fafb] text-[13px] font-semibold text-[#111] cursor-pointer font-[inherit] transition-colors hover:bg-[#f0f0f0] hover:border-[#c1c7cf] mb-3"
           >
             <span className="flex items-center gap-2">
-              <span className="text-[11px] font-bold text-[#6b7280] border border-[#e5e7eb] rounded px-1.5 py-0.5 bg-white">
+              <span className="text-[13px] font-bold text-[#6b7280] border border-[#e5e7eb] rounded px-1.5 py-0.5 bg-white">
                 {regionDestinations.slice(0, 4).map((d) => d.countryCode || "").join(" ")}
               </span>
               {dict.viewCountries.replace("{count}", String(regionDestinations.length || region?.destinationCount || 0))}
@@ -276,7 +276,7 @@ export function ProductInfo({ destination, dict, lang, planSource = "destination
 
           {countriesOpen && regionDestinations.length > 0 && (
             <div className="bg-white border border-[#e5e7eb] rounded-lg mb-3 p-3.5">
-              <div className="text-[11px] font-bold text-[#9ca3af] uppercase tracking-wider mb-2.5">
+              <div className="text-[13px] font-bold text-[#9ca3af] uppercase tracking-wider mb-2.5">
                 {dict.supportedCountries.replace("{count}", String(regionDestinations.length))}
               </div>
               <div className="flex flex-wrap gap-1.5">

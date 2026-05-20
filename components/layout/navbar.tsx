@@ -823,7 +823,7 @@ function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
               >
                 <ShoppingCart className="w-4 h-4" />
                 {cartCount > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold text-white bg-red-500 rounded-full">
+                  <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[12px] font-bold text-white bg-red-500 rounded-full">
                     {cartCount > 99 ? "99+" : cartCount}
                   </span>
                 )}
@@ -891,7 +891,7 @@ function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
               >
                 <ShoppingCart className="w-5 h-5 text-text-primary" />
                 {cartCount > 0 && (
-                  <span className="absolute -top-1.5 -right-2 flex items-center justify-center min-w-[16px] h-[16px] px-0.5 text-[9px] font-bold text-white bg-red-500 rounded-full">
+                  <span className="absolute -top-1.5 -right-2 flex items-center justify-center min-w-[16px] h-[16px] px-0.5 text-[11px] font-bold text-white bg-red-500 rounded-full">
                     {cartCount > 99 ? "99+" : cartCount}
                   </span>
                 )}
