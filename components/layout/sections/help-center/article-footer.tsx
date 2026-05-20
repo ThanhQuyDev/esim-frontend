@@ -29,7 +29,7 @@ const EN = {
   ctaTitle: "Still need a hand?",
   ctaSubtitle:
     "Our support team is one click away — start a live chat or send us a support ticket and we'll take it from there.",
-  ctaChat: "Chat with an agent",
+  ctaChat: "Chat with us",
   ctaTicket: "Submit a ticket",
   relatedTitle: "Related articles",
   relatedSubtitle: "Keep exploring topics close to this one.",

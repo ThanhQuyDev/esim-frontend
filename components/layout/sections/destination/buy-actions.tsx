@@ -59,13 +59,13 @@ export function BuyActions({ selectedPlan, days, quantity, isFixed, dict, lang, 
 
   return (
     <>
-      {/* CTA buttons — grid layout matching HTML reference */}
+      {/* CTA buttons — slimmer than the HTML reference (was py-[13px] / text-sm; now py-2.5 / text-[13.5px] for a tighter ~42px row) */}
       <div className="grid grid-cols-[1fr_1.4fr] gap-2.5 mb-3">
         <button
           onClick={handleAddToCart}
-          className="flex items-center justify-center gap-2 py-[13px] rounded-[30px] border border-[#111] bg-white text-sm font-semibold cursor-pointer text-[#111] font-[inherit] transition-all hover:bg-[#111] hover:text-white"
+          className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-full border border-[#111] bg-white text-[13.5px] font-semibold cursor-pointer text-[#111] font-[inherit] transition-all hover:bg-[#111] hover:text-white whitespace-nowrap"
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="9" cy="21" r="1" />
             <circle cx="20" cy="21" r="1" />
             <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6" />
@@ -74,7 +74,7 @@ export function BuyActions({ selectedPlan, days, quantity, isFixed, dict, lang, 
         </button>
         <button
           onClick={handleAddToCart}
-          className="flex items-center justify-center py-[13px] rounded-[30px] border border-[#d1b700] bg-[#fff500] text-sm font-bold cursor-pointer font-[inherit] transition-all hover:bg-[#d1b700]"
+          className="flex items-center justify-center px-3 py-2.5 rounded-full border border-[#d1b700] bg-[#fff500] text-[13.5px] font-bold cursor-pointer font-[inherit] transition-all hover:bg-[#d1b700] whitespace-nowrap"
         >
           {dict.buyNow} — {selectedPlan ? formatVnd(totalPrice) : "—"}
         </button>

@@ -7,6 +7,7 @@ import { useMyOrders, useMyEsims, useWalletMe, useReferralProfile } from "@/lib/
 import { profileTranslations } from "./translations";
 import { OrderList } from "./order-list";
 import { EsimCardList } from "./esim-card-list";
+import { PersonalInfo } from "./personal-info";
 import { WalletPageContent } from "@/components/layout/sections/wallet/wallet-page-content";
 import Link from "next/link";
 
@@ -144,6 +145,9 @@ export function ProfileContent({ lang }: ProfileContentProps) {
                 </div>
               </div>
             </div>
+
+            {/* Personal Info — moved out of SIM management tab */}
+            <PersonalInfo t={t} lang={lang} />
 
             {/* eXU Wallet Balance Card */}
             {wallet && (

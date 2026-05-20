@@ -235,6 +235,8 @@ interface FetchOptions {
   lang?: string;
   /** Context identifier for endpoints like `/api/v1/faqs/by-context`. */
   context?: string;
+  /** Generic `type` query param (e.g. `trang_chu` | `quoc_gia` | `khu_vuc`). */
+  type?: string;
 }
 
 type PublicListResponse<T> = InfinityPaginationResponse<T> | T[];
@@ -307,6 +309,7 @@ async function apiFetch<T>(
   if (options.filters) params.set("filters", options.filters);
   if (options.orderBy) params.set("orderBy", options.orderBy);
   if (options.order) params.set("order", options.order);
+  if (options.type) params.set("type", options.type);
 
   const queryString = params.toString();
   const url = `${API_BASE_URL}${endpoint}${queryString ? `?${queryString}` : ""}`;

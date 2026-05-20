@@ -41,7 +41,9 @@ export function Modal({ open, onClose, children, zIndex = 600, ariaLabel }: Moda
       role="dialog"
       aria-modal="true"
       aria-label={ariaLabel}
-      className="fixed inset-0 flex items-center justify-center"
+      // Center on desktop, anchor to bottom on small screens so children styled as
+      // bottom sheets sit flush against the bottom edge.
+      className="fixed inset-0 flex items-center justify-center max-[640px]:items-end"
       style={{ zIndex, background: "rgba(0,0,0,0.45)" }}
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();

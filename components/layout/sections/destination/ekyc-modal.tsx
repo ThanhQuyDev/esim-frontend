@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Modal } from "./modal";
+import type { KycRegionKey } from "@/components/layout/sections/kyc-guide";
 
 interface EkycModalProps {
   open: boolean;
@@ -12,6 +14,8 @@ interface EkycModalProps {
 interface EkycCountry {
   flag: string;
   name: string;
+  /** KYC guide region key — drives the `?region=` deep link. */
+  region: KycRegionKey;
 }
 
 interface FaqItem {
@@ -20,15 +24,15 @@ interface FaqItem {
 }
 
 const COUNTRIES: EkycCountry[] = [
-  { flag: "🇭🇰", name: "Hong Kong" },
-  { flag: "🇹🇼", name: "Đài Loan (Taiwan)" },
-  { flag: "🇲🇴", name: "Macau" },
+  { flag: "🇭🇰", name: "Hong Kong", region: "hk" },
+  { flag: "🇹🇼", name: "Taiwan", region: "tw" },
+  { flag: "🇲🇴", name: "Macau", region: "hkmo" },
 ];
 
 const COUNTRIES_EN: EkycCountry[] = [
-  { flag: "🇭🇰", name: "Hong Kong" },
-  { flag: "🇹🇼", name: "Taiwan" },
-  { flag: "🇲🇴", name: "Macau" },
+  { flag: "🇭🇰", name: "Hong Kong", region: "hk" },
+  { flag: "🇹🇼", name: "Taiwan", region: "tw" },
+  { flag: "🇲🇴", name: "Macau", region: "hkmo" },
 ];
 
 const FAQ_VI: FaqItem[] = [
@@ -106,15 +110,26 @@ const TEXT = {
 
 /** Modal showing the eKYC requirement guide — countries list, FAQ, primary CTA. */
 export function EkycModal({ open, onClose, lang }: EkycModalProps) {
+  const router = useRouter();
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const t = lang === "en" ? TEXT.en : TEXT.vi;
   const countries = lang === "en" ? COUNTRIES_EN : COUNTRIES;
   const faq = lang === "en" ? FAQ_EN : FAQ_VI;
 
+  const goToGuide = (region: KycRegionKey) => {
+    onClose();
+    router.push(`/${lang}/kyc-guide?region=${region}`);
+  };
+
   return (
     <Modal open={open} onClose={onClose} zIndex={800} ariaLabel={t.title}>
       <div
-        className="bg-white flex flex-col overflow-hidden"
+        className={[
+          "bg-white flex flex-col overflow-hidden",
+          // Mobile (≤640px): bottom sheet anchored to bottom, full width, top corners rounded only.
+          // Desktop: centered modal (700px, all corners rounded).
+          "max-[640px]:!w-full max-[640px]:!max-w-none max-[640px]:!max-h-none max-[640px]:!h-[88vh] max-[640px]:!rounded-t-[24px] max-[640px]:!rounded-b-none",
+        ].join(" ")}
         style={{
           width: "min(700px, calc(100vw - 32px))",
           maxHeight: "90vh",
@@ -123,9 +138,14 @@ export function EkycModal({ open, onClose, lang }: EkycModalProps) {
         }}
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Mobile drag handle */}
+        <div className="hidden max-[640px]:flex justify-center pt-3 pb-1 shrink-0" style={{ background: "linear-gradient(to right, #C0392B, #922B21, #7B241C)" }}>
+          <span className="w-11 h-[5px] rounded-full" style={{ background: "rgba(255,255,255,0.35)" }} />
+        </div>
+
         {/* Hero header */}
         <div
-          className="px-8 pt-6 pb-[22px] shrink-0 relative overflow-hidden"
+          className="px-8 pt-6 pb-[22px] max-[640px]:px-5 max-[640px]:pt-3 max-[640px]:pb-4 shrink-0 relative overflow-hidden"
           style={{ background: "linear-gradient(to right, #C0392B, #922B21, #7B241C)" }}
         >
           {/* Decorative circle */}
@@ -220,7 +240,7 @@ export function EkycModal({ open, onClose, lang }: EkycModalProps) {
         </div>
 
         {/* Body */}
-        <div className="overflow-y-auto px-8 py-2 flex-1">
+        <div className="overflow-y-auto px-8 py-2 max-[640px]:px-5 flex-1" style={{ overscrollBehavior: "contain" }}>
           <div
             className="rounded-xl mt-[18px] mb-4 px-4 py-3 text-[13px] leading-[1.6]"
             style={{ background: "#FFFBEB", border: "1.5px solid #FDE68A", color: "#92400E" }}
@@ -232,10 +252,17 @@ export function EkycModal({ open, onClose, lang }: EkycModalProps) {
             <span className="flex-1 h-px bg-[#E5E7EB]" />
           </div>
 
-          <div className="grid grid-cols-3 gap-3 mb-5">
+          {/* Desktop: 3-column grid with white cards. Mobile: horizontal scroll with red gradient cards. */}
+          <div className="grid grid-cols-3 gap-3 mb-5 max-[640px]:hidden">
             {countries.map((c) => (
               <div
                 key={c.name}
+                role="button"
+                tabIndex={0}
+                onClick={() => goToGuide(c.region)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") goToGuide(c.region);
+                }}
                 className="flex flex-col items-center gap-2 px-3 pt-[18px] pb-3.5 rounded-2xl bg-white cursor-pointer transition-all"
                 style={{ border: "1.5px solid #E5E7EB" }}
                 onMouseEnter={(e) => {
@@ -264,6 +291,64 @@ export function EkycModal({ open, onClose, lang }: EkycModalProps) {
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* Mobile country row — horizontal scroll, square cards with gradient + decorative circle */}
+          <div
+            className="hidden max-[640px]:block overflow-x-auto mb-[18px] pb-0.5 -mx-5 px-5"
+            style={{ scrollbarWidth: "none" }}
+          >
+            <div className="flex gap-2.5">
+              {countries.map((c) => (
+                <div
+                  key={c.name}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => goToGuide(c.region)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") goToGuide(c.region);
+                  }}
+                  className="relative flex flex-col items-center gap-2 px-3 pt-4 pb-3.5 rounded-[14px] cursor-pointer overflow-hidden shrink-0"
+                  style={{
+                    border: "2px solid #FECACA",
+                    background: "linear-gradient(145deg, #FFF5F5, #FFF0EE)",
+                    width: "calc((100vw - 62px) / 3)",
+                    minWidth: "108px",
+                    maxWidth: "140px",
+                    aspectRatio: "1 / 1",
+                  }}
+                >
+                  {/* Decorative circle (top-right) */}
+                  <span
+                    className="absolute pointer-events-none"
+                    style={{
+                      top: "-16px",
+                      right: "-16px",
+                      width: "60px",
+                      height: "60px",
+                      background: "rgba(220,38,38,0.07)",
+                      borderRadius: "50%",
+                    }}
+                  />
+                  <div className="text-3xl leading-none relative z-[1]">{c.flag}</div>
+                  <div
+                    className="text-xs font-bold text-center leading-[1.35] relative z-[1] flex-1 flex items-center justify-center"
+                    style={{ color: "#991B1B" }}
+                  >
+                    {c.name}
+                  </div>
+                  <div
+                    className="inline-flex items-center justify-center gap-[3px] px-3 py-1 rounded-full text-[11px] font-bold text-white relative z-[1] whitespace-nowrap"
+                    style={{ background: "#DC2626" }}
+                  >
+                    {t.seeGuide}
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round">
+                      <polyline points="9 18 15 12 9 6" />
+                    </svg>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* FAQ */}
@@ -311,8 +396,11 @@ export function EkycModal({ open, onClose, lang }: EkycModalProps) {
 
         {/* Footer */}
         <div
-          className="px-8 pt-3.5 pb-5 shrink-0 flex flex-col gap-2.5"
-          style={{ borderTop: "1px solid #E5E7EB" }}
+          className="px-8 pt-3.5 pb-5 max-[640px]:px-5 shrink-0 flex flex-col gap-2.5"
+          style={{
+            borderTop: "1px solid #E5E7EB",
+            paddingBottom: "max(20px, calc(env(safe-area-inset-bottom, 0px) + 14px))",
+          }}
         >
           <button
             type="button"
