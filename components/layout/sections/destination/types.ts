@@ -40,6 +40,7 @@ export interface DestinationDict {
   esimUnit: string;
   buyNow: string;
   addToCart: string;
+  addToCartMobile: string;
   noPlans: string;
   trust: {
     rating: string;

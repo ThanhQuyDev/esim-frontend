@@ -893,6 +893,7 @@
     "esimUnit": "eSIM",
     "buyNow": "Buy Now",
     "addToCart": "Add to cart",
+    "addToCartMobile":"Add cart",
     "noPlans": "No plans available for this destination.",
     "trust": {
       "rating": "4.7",
