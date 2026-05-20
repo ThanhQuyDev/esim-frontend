@@ -18,6 +18,9 @@ interface CountriesModalProps {
 }
 
 interface CountryRow {
+  /** Country flag URL when available — preferred over the emoji fallback. */
+  flagUrl?: string | null;
+  /** Emoji flag fallback derived from the country code. */
   flag: string;
   name: string;
   carrier: string;
@@ -47,6 +50,7 @@ export function CountriesModal({
   const rows: CountryRow[] = useMemo(() => {
     if (region?.destinations && region.destinations.length > 0) {
       return region.destinations.map((d) => ({
+        flagUrl: d.flagUrl,
         flag: flagEmoji(d.countryCode),
         name: d.name,
         carrier: defaultCarrier || "",
@@ -55,6 +59,7 @@ export function CountriesModal({
     if (destination) {
       return [
         {
+          flagUrl: destination.flagUrl,
           flag: flagEmoji(destination.countryCode),
           name: destination.name,
           carrier: defaultCarrier || "",
@@ -160,7 +165,16 @@ export function CountriesModal({
                 key={`${row.name}-${i}`}
                 className="flex items-center gap-3.5 px-3.5 py-3 rounded-xl transition-colors hover:bg-[#F9FAFB]"
               >
-                <span className="text-2xl w-[34px] text-center leading-none shrink-0">{row.flag}</span>
+                {row.flagUrl ? (
+                  <img
+                    src={row.flagUrl}
+                    alt={row.name}
+                    loading="lazy"
+                    className="w-[34px] h-6 rounded-[3px] object-cover shrink-0"
+                  />
+                ) : (
+                  <span className="text-2xl w-[34px] text-center leading-none shrink-0">{row.flag}</span>
+                )}
                 <div>
                   <div className="text-[15px] font-bold text-[#111] leading-tight">{row.name}</div>
                   {row.carrier && <div className="text-xs text-[#6B7280] mt-0.5">{row.carrier}</div>}

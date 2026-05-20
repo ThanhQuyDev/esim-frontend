@@ -34,10 +34,15 @@ export function MobileHero({ destination, dict, lang, region, operatorName }: Mo
     gravity: "center",
   });
 
-  const isRegion = !!region?.destinations && region.destinations.length > 0;
-  const previewFlags = isRegion
-    ? region!.destinations!.slice(0, 4).map((d) => flagEmoji(d.countryCode))
-    : [flagEmoji(destination.countryCode)];
+  const isRegion =
+    !!region && ((region.destinations?.length ?? 0) > 0 || (region.destinationCount ?? 0) > 1);
+  const previewCountries = isRegion
+    ? (region?.destinations || []).slice(0, 4).map((d) => ({
+        url: d.flagUrl,
+        emoji: flagEmoji(d.countryCode),
+        name: d.name,
+      }))
+    : [{ url: destination.flagUrl, emoji: flagEmoji(destination.countryCode), name: destination.name }];
   const countryCount = isRegion
     ? (region?.destinations?.length ?? region?.destinationCount ?? 0)
     : 1;
@@ -107,34 +112,48 @@ export function MobileHero({ destination, dict, lang, region, operatorName }: Mo
 
       {/* Sheet - white card overlapping hero by 22px */}
       <div className="relative z-10 bg-white rounded-t-[22px] -mt-[22px] pt-1.5 shadow-[0_-4px_20px_rgba(0,0,0,0.10)]">
-        {/* Countries button — min-w-0 + truncate so long labels don't push the pill out */}
-        <div className="px-4 pt-4 max-w-full">
-          <button
-            type="button"
-            onClick={() => setCountriesOpen(true)}
-            className="w-full flex items-center gap-2 px-3 py-2.5 border-[1.5px] border-[#e5e7eb] rounded-[40px] bg-white cursor-pointer font-[inherit] active:bg-[#f9fafb] overflow-hidden"
-          >
-            <span className="flex gap-0.5 shrink-0">
-              {previewFlags.slice(0, 4).map((f, i) => (
-                <span key={i} className="text-base">{f}</span>
-              ))}
-            </span>
-            <span className="w-px h-[18px] bg-[#e5e7eb] mx-0.5 shrink-0" />
-            <span className="flex-1 min-w-0 text-[13px] font-semibold text-[#111] text-left truncate">
-              {buttonLabel}
-            </span>
-            <span
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11.5px] font-bold text-white shrink-0"
-              style={{ background: "#111" }}
+        {/* Countries button — only meaningful for region pages (multi-country coverage) */}
+        {isRegion && (
+          <div className="px-4 pt-4 max-w-full">
+            <button
+              type="button"
+              onClick={() => setCountriesOpen(true)}
+              className="w-full flex items-center gap-2 px-3 py-2.5 border-[1.5px] border-[#e5e7eb] rounded-[40px] bg-white cursor-pointer font-[inherit] active:bg-[#f9fafb] overflow-hidden"
             >
-              {viewAllLabel}
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                <polyline points="9 18 15 12 9 6" />
-                <polyline points="15 18 21 12 15 6" opacity=".4" />
-              </svg>
-            </span>
-          </button>
-        </div>
+              <span className="flex gap-1 shrink-0">
+                {previewCountries.map((c, i) =>
+                  c.url ? (
+                    <img
+                      key={i}
+                      src={c.url}
+                      alt={c.name}
+                      loading="lazy"
+                      className="w-5 h-[14px] rounded-[2px] object-cover shrink-0"
+                    />
+                  ) : (
+                    <span key={i} className="text-base leading-none">
+                      {c.emoji}
+                    </span>
+                  )
+                )}
+              </span>
+              <span className="w-px h-[18px] bg-[#e5e7eb] mx-0.5 shrink-0" />
+              <span className="flex-1 min-w-0 text-[13px] font-semibold text-[#111] text-left truncate">
+                {buttonLabel}
+              </span>
+              <span
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11.5px] font-bold text-white shrink-0"
+                style={{ background: "#111" }}
+              >
+                {viewAllLabel}
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <polyline points="9 18 15 12 9 6" />
+                  <polyline points="15 18 21 12 15 6" opacity=".4" />
+                </svg>
+              </span>
+            </button>
+          </div>
+        )}
 
         {/* Description */}
         <p className="px-4 pt-3.5 text-[14.5px] text-[#6b7280] leading-[1.65]">
@@ -142,15 +161,17 @@ export function MobileHero({ destination, dict, lang, region, operatorName }: Mo
         </p>
       </div>
 
-      <CountriesModal
-        open={countriesOpen}
-        onClose={() => setCountriesOpen(false)}
-        region={region}
-        destination={destination}
-        defaultCarrier={operatorName || ""}
-        dict={dict}
-        lang={lang}
-      />
+      {isRegion && (
+        <CountriesModal
+          open={countriesOpen}
+          onClose={() => setCountriesOpen(false)}
+          region={region}
+          destination={destination}
+          defaultCarrier={operatorName || ""}
+          dict={dict}
+          lang={lang}
+        />
+      )}
     </>
   );
 }

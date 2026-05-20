@@ -108,10 +108,14 @@ export function ProductCard({
   const operatorName = selectedPlan?.operatorName || null;
   const speed = selectedPlan?.speed || null;
 
-  // Country preview (flags) for the button
-  const previewFlags = isRegion
-    ? (region?.destinations || []).slice(0, 4).map((d) => flagEmoji(d.countryCode))
-    : [flagEmoji(destination.countryCode)];
+  // Country preview (flag images) for the button — falls back to emoji when flagUrl is missing
+  const previewCountries = isRegion
+    ? (region?.destinations || []).slice(0, 4).map((d) => ({
+        url: d.flagUrl,
+        emoji: flagEmoji(d.countryCode),
+        name: d.name,
+      }))
+    : [{ url: destination.flagUrl, emoji: flagEmoji(destination.countryCode), name: destination.name }];
   const countryCount = isRegion
     ? (region?.destinations?.length ?? region?.destinationCount ?? 0)
     : 1;
@@ -175,32 +179,47 @@ export function ProductCard({
             {dict.subtitle.replace("{destination}", destination.name)}
           </p>
 
-          {/* Countries button — opens modal */}
-          <button
-            type="button"
-            onClick={() => setCountriesOpen(true)}
-            className="w-full flex items-center gap-[9px] pl-3.5 pr-3 py-[9px] border-[1.5px] border-[#e5e7eb] rounded-[40px] bg-white cursor-pointer font-[inherit] transition-colors hover:bg-[#f9fafb] hover:border-[#9ca3af] whitespace-nowrap overflow-hidden"
-          >
-            <span className="flex gap-px shrink-0">
-              {previewFlags.map((f, i) => (
-                <span key={i} className="text-sm">{f}</span>
-              ))}
-            </span>
-            <span className="w-px h-4 bg-[#e5e7eb] shrink-0" />
-            <span className="flex-1 text-[13px] font-semibold text-[#111] text-left overflow-hidden text-ellipsis">
-              {buttonLabel}
-            </span>
-            <span
-              className="inline-flex items-center gap-1.5 px-2.5 py-[3px] rounded-full text-[11.5px] font-bold text-white shrink-0"
-              style={{ background: "#111" }}
+          {/* Countries button — only meaningful on region pages (multi-country coverage). */}
+          {isRegion && (
+            <button
+              type="button"
+              onClick={() => setCountriesOpen(true)}
+              className="w-full flex items-center gap-[9px] pl-3.5 pr-3 py-[9px] border-[1.5px] border-[#e5e7eb] rounded-[40px] bg-white cursor-pointer font-[inherit] transition-colors hover:bg-[#f9fafb] hover:border-[#9ca3af] whitespace-nowrap overflow-hidden"
             >
-              {viewAllLabel}
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                <polyline points="9 18 15 12 9 6" />
-                <polyline points="15 18 21 12 15 6" opacity=".45" />
-              </svg>
-            </span>
-          </button>
+              {/* Stacked flag images — falls back to emoji when flagUrl is missing */}
+              <span className="flex gap-1 shrink-0">
+                {previewCountries.map((c, i) =>
+                  c.url ? (
+                    <img
+                      key={i}
+                      src={c.url}
+                      alt={c.name}
+                      className="w-5 h-[14px] rounded-[2px] object-cover shrink-0"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <span key={i} className="text-sm leading-none">
+                      {c.emoji}
+                    </span>
+                  )
+                )}
+              </span>
+              <span className="w-px h-4 bg-[#e5e7eb] shrink-0" />
+              <span className="flex-1 text-[13px] font-semibold text-[#111] text-left overflow-hidden text-ellipsis">
+                {buttonLabel}
+              </span>
+              <span
+                className="inline-flex items-center gap-1.5 px-2.5 py-[3px] rounded-full text-[11.5px] font-bold text-white shrink-0"
+                style={{ background: "#111" }}
+              >
+                {viewAllLabel}
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <polyline points="9 18 15 12 9 6" />
+                  <polyline points="15 18 21 12 15 6" opacity=".45" />
+                </svg>
+              </span>
+            </button>
+          )}
 
           {/* Tab bar */}
           <div className="grid grid-cols-2 border-b-[1.5px] border-[#e5e7eb] mt-3.5">
