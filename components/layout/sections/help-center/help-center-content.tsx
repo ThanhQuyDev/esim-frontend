@@ -125,7 +125,12 @@ export function HelpCenterContent({ lang, initialArticles }: HelpCenterContentPr
             <form
               role="search"
               className="relative"
-              onSubmit={(e) => e.preventDefault()}
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (searchQuery.trim()) {
+                  router.push(`/${lang}/help-center/search?q=${encodeURIComponent(searchQuery.trim())}`);
+                }
+              }}
             >
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input

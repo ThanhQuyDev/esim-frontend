@@ -17,6 +17,8 @@ export interface Destination {
   keySearch?: string;
   isPopular: boolean;
   isActive: boolean;
+  title?: string;
+  titleVi?: string;
   description?: string;
   descriptionVi?: string;
   createdAt: string;
@@ -726,6 +728,7 @@ export interface HelpCenterArticle {
   order: number;
   category: string;
   parent: string;
+  isPopular?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -810,8 +813,16 @@ export async function searchHelpCenterArticles(keyword: string, lang?: string, p
   if (lang) {
     headers["x-custom-lang"] = lang;
   }
+  const params = new URLSearchParams({
+    q: keyword,
+    page: String(page),
+    limit: String(limit),
+  });
+  if (lang) {
+    params.set("language", lang);
+  }
   const res = await fetch(
-    `${API_BASE_URL}/api/help-center?page=${page}&limit=${limit}&search=${encodeURIComponent(keyword)}`,
+    `${API_BASE_URL}/api/v1/help-center/search?${params.toString()}`,
     { headers, next: { revalidate: 0 } }
   );
   if (!res.ok) {

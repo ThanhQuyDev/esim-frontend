@@ -63,11 +63,11 @@ export function ProductHero({ destination, dict, lang }: ProductHeroProps) {
             </svg>
           </div>
           <h1 className="text-[26px] font-extrabold text-[#111] leading-[1.25] tracking-[-0.4px]">
-            {(lang === "vi" ? destination.descriptionVi : destination.description) || dict.title.replace("{destination}", destination.name)}
+            {(lang === "vi" ? destination.titleVi : destination.title) || dict.title.replace("{destination}", destination.name)}
           </h1>
         </div>
         <p className="text-sm text-[#6b7280] leading-[1.6] mb-3">
-          {dict.subtitle.replace("{destination}", destination.name)}
+          {(lang === "vi" ? destination.descriptionVi : destination.description) || dict.subtitle.replace("{destination}", destination.name)}
         </p>
       </div>
     </div>

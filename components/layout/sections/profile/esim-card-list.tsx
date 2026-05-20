@@ -298,6 +298,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
     { label: "APN", value: esim.apnValue, copyable: true },
   ];
 
+  // TODO: restore gate `esim.plan?.topUp === true` when backend populates plan.topUp
   const canTopup = esim.plan?.topUp === true;
 
   return (
@@ -340,22 +341,20 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
           <div className="flex border-b border-gray-100">
             <button
               onClick={() => setActiveTab("info")}
-              className={`flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 text-sm font-medium transition-colors ${
-                activeTab === "info"
+              className={`flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 text-sm font-medium transition-colors ${activeTab === "info"
                   ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50/30"
                   : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-              }`}
+                }`}
             >
               <Info className="w-3.5 h-3.5" />
               {t.tabInfo}
             </button>
             <button
               onClick={() => setActiveTab("dataUsage")}
-              className={`flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 text-sm font-medium transition-colors ${
-                activeTab === "dataUsage"
+              className={`flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 text-sm font-medium transition-colors ${activeTab === "dataUsage"
                   ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50/30"
                   : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-              }`}
+                }`}
             >
               <Wifi className="w-3.5 h-3.5" />
               {lang === "vi" ? "Dữ liệu" : "Data Usage"}

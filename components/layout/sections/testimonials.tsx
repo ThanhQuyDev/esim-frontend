@@ -197,9 +197,9 @@ export function TestimonialsSection({ dict }: TestimonialsSectionProps) {
       className="relative scroll-mt-20 xl:scroll-mt-24 group/section"
     >
       <div className="absolute top-0 group-first/section:-top-24 bottom-0 w-full">
-        <div className="w-full h-full bg-blue-100" style={{ backgroundColor: "rgb(228, 234, 244)" }} />
+        <div className="w-full h-full bg-blue-100 rounded-md" style={{ backgroundColor: "rgb(228, 234, 244)" }} />
       </div>
-      <div className="relative">
+      <div className="relative px-4">
         <div className="py-16">
           <div className="mx-4 sm:mx-auto">
             <div className="container mx-auto">

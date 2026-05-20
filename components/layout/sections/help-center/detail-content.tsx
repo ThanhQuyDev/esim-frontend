@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo, useCallback } from "react";
 import Link from "next/link";
-import { Search, ChevronDown, ChevronRight } from "lucide-react";
+import { Search, ChevronDown, ChevronRight, Star } from "lucide-react";
 import type { HelpCenterArticle } from "@/lib/api";
 import { getCategoryLabel, getParentLabel } from "./category-config";
 import { ArticleFooter } from "./article-footer";
@@ -396,6 +396,9 @@ export function DetailContent({
               <div className="my-10">
                 <h1 className="text-2xl md:text-3xl font-bold mb-4">
                   {selectedArticle.title}
+                  {selectedArticle.isPopular && (
+                    <Star className="inline-block w-5 h-5 ml-2 text-yellow-400 fill-yellow-400" aria-label="Popular article" />
+                  )}
                 </h1>
                 <div className="text-sm text-gray-500 mb-6">
                   {lang === "vi" ? "Cập nhật lần cuối: " : "Last updated: "}
@@ -451,6 +454,9 @@ export function DetailContent({
                             className="text-gray-800 hover:text-gray-900 no-underline transition-colors"
                           >
                             {article.title}
+                            {article.isPopular && (
+                              <Star className="inline-block w-4 h-4 ml-1.5 text-yellow-400 fill-yellow-400" aria-label="Popular" />
+                            )}
                           </Link>
                         </div>
                       </div>
@@ -499,6 +505,9 @@ export function DetailContent({
                                     className="text-gray-800 hover:text-gray-900 no-underline transition-colors"
                                   >
                                     {article.title}
+                                    {article.isPopular && (
+                                      <Star className="inline-block w-4 h-4 ml-1.5 text-yellow-400 fill-yellow-400" aria-label="Popular" />
+                                    )}
                                   </Link>
                                 </div>
                               </div>

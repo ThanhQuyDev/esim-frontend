@@ -77,14 +77,16 @@ export default async function RegionPage({ params }: RegionPageProps) {
         planSource="region"
         initialRegion={region}
       />
-      <LazyHowItWorksSection dict={dict.howItWorks} />
-      <LazyFeaturesSection dict={dict.whyChoose} lang={params.lang} features={whyChooseUsRes.data} />
-      <LazyEsimComparison dict={dict.whatIsEsimPage.comparison} />
-      <LazyTestimonialsSection dict={dict.testimonials} />
-      <LazyDownloadAppSection dict={dict.downloadApp} />
-      <LazyFAQSection dict={dict.faq} lang={params.lang} />
-      <LazyReferFriendBanner dict={dict.referFriend} />
-      <LazyFooterSection dict={dict.footer} lang={params.lang} />
+      <div className="max-w-[1200px] mx-auto px-6">
+        <LazyHowItWorksSection dict={dict.howItWorks} />
+        <LazyFeaturesSection dict={dict.whyChoose} lang={params.lang} features={whyChooseUsRes.data} />
+        <LazyEsimComparison dict={dict.whatIsEsimPage.comparison} />
+        <LazyTestimonialsSection dict={dict.testimonials} />
+        <LazyDownloadAppSection dict={dict.downloadApp} />
+        <LazyFAQSection dict={dict.faq} lang={params.lang} />
+        <LazyReferFriendBanner dict={dict.referFriend} />
+        <LazyFooterSection dict={dict.footer} lang={params.lang} />
+      </div>
     </main>
   );
 }

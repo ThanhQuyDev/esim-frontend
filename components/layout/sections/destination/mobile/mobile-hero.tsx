@@ -104,7 +104,7 @@ export function MobileHero({ destination, dict, lang, region, operatorName }: Mo
               </svg>
             </div>
             <h1 className="text-[28px] font-extrabold text-white tracking-[-0.4px] leading-[1.15] min-w-0 break-words">
-              {dict.title.replace("{destination}", destination.name)}
+              {(lang === "vi" ? destination.titleVi : destination.title) || dict.title.replace("{destination}", destination.name)}
             </h1>
           </div>
         </div>
@@ -157,7 +157,7 @@ export function MobileHero({ destination, dict, lang, region, operatorName }: Mo
 
         {/* Description */}
         <p className="px-4 pt-3.5 text-[14.5px] text-[#6b7280] leading-[1.65]">
-          {dict.subtitle.replace("{destination}", destination.name)}
+          {(lang === "vi" ? destination.descriptionVi : destination.description) || dict.subtitle.replace("{destination}", destination.name)}
         </p>
       </div>
 
