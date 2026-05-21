@@ -155,6 +155,10 @@ export interface Plan {
   isLocalInventory?: boolean;
   /** True when the plan requires KYC verification before activation. */
   isKyc?: boolean;
+  /** Whether the plan allows hotspot / tethering. */
+  hotSpot?: boolean;
+  /** Hotspot data allowance in GB per day (e.g. 2 means 2 GB/day). */
+  hotSpotAllow?: number | null;
 }
 
 /** Response shape from /api/v1/plans/by-destination/{slug} */

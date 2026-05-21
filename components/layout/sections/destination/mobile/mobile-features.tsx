@@ -205,7 +205,8 @@ export function MobileFeatures({
   const deviceLink = lang === "vi" ? "/vi/thiet-bi-ho-tro-esim" : `/${lang}/esim-supported-devices`;
 
   // Determine feature values from selected plan
-  const hasHotspot = selectedPlan?.type !== "voice"; // Most data plans support hotspot
+  const hasHotspot = selectedPlan?.hotSpot ?? false;
+  const hotSpotAllowGb = selectedPlan?.hotSpotAllow ?? null;
   const hasCalls = selectedPlan?.call != null && Number(selectedPlan.call) > 0;
   const hasLocalNumber = false; // eSIM typically doesn't provide local number
   const hasEkyc = !!selectedPlan?.isKyc;
@@ -228,7 +229,42 @@ export function MobileFeatures({
           <span className="text-[15px] font-bold text-[#1a1a1a]">{dict.features.title}</span>
         </div>
 
-        <FeatureRow label={dict.features.hotspot} value={hasHotspot} yesText={dict.features.yes} noText={dict.features.no} />
+        {/* Hotspot — dynamic from plan.hotSpot / plan.hotSpotAllow */}
+        <div className="flex items-center justify-between py-[13px] border-b border-[#f3f4f6] gap-3">
+          <span className="text-sm text-[#374151]">{dict.features.hotspot}</span>
+          {hasHotspot && hotSpotAllowGb ? (
+            <span
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[13px] font-bold whitespace-nowrap"
+              style={{ background: "#EFF6FF", color: "#1D4ED8", border: "1.5px solid #BFDBFE" }}
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12.55a11 11 0 0114.08 0" />
+                <path d="M1.42 9a16 16 0 0121.16 0" />
+                <path d="M8.53 16.11a6 6 0 016.95 0" />
+                <circle cx="12" cy="20" r="1" fill="#1D4ED8" />
+              </svg>
+              {hotSpotAllowGb} GB / {lang === "en" ? "day" : "ngày"}
+            </span>
+          ) : hasHotspot ? (
+            <span
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[13px] font-bold whitespace-nowrap"
+              style={{ background: "#EFF6FF", color: "#1D4ED8", border: "1.5px solid #BFDBFE" }}
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12.55a11 11 0 0114.08 0" />
+                <path d="M1.42 9a16 16 0 0121.16 0" />
+                <path d="M8.53 16.11a6 6 0 016.95 0" />
+                <circle cx="12" cy="20" r="1" fill="#1D4ED8" />
+              </svg>
+              {dict.features.unlimited}
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[13px] font-bold" style={{ background: "#FEF2F2", color: "#B91C1C", border: "1.5px solid #FECACA" }}>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#B91C1C" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+              {dict.features.no}
+            </span>
+          )}
+        </div>
         <FeatureRow label={dict.features.calls} value={hasCalls} yesText={dict.features.yes} noText={dict.features.no} />
         <FeatureRow label={dict.features.localNumber} value={hasLocalNumber} yesText={dict.features.yes} noText={dict.features.no} />
         <FeatureRow label={dict.features.topup} value={hasTopup} yesText={dict.features.yes} noText={dict.features.no} />

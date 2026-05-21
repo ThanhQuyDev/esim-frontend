@@ -858,7 +858,8 @@
       "ekyc": "ID / eKYC required",
       "topup": "Data top-up",
       "yes": "Yes",
-      "no": "No"
+      "no": "No",
+      "unlimited": "Unlimited"
     },
     "delivery": {
       "title": "Delivery & Activation",
@@ -904,11 +905,11 @@
       "refund": "100% money-back guarantee"
     },
     "greenBox": {
-      "line1": "Data <strong>{data}</strong> high speed – Out of data, throttled to {fupSpeed} Kbps",
-      "line1Fast": "Data <strong>{data}</strong> high speed → {fupSpeed} Mbps unlimited.",
+      "line1": "Data <strong>{data}</strong> high speed – Out of data, throttled to {fupSpeed}",
+      "line1Fast": "Data <strong>{data}</strong> high speed → {fupSpeed} unlimited.",
       "line1Fixed": "Data <strong>{data} / {days} days</strong> high speed – Out of data, access stopped",
       "line1UnlimitedHigh": "Unlimited data at <strong>{fupSpeed}</strong> speed",
-      "line3": "Supports TikTok, Facebook, Google, YouTube, Zalo"
+      "line3": "Supports TikTok, ChatGPT, Zalo, Facebook, YouTube…"
     },
     "disclaimer": "Make sure your device is eSIM-compatible before purchasing.",
     "disclaimerLink": "View eSIM-supported devices →",

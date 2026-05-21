@@ -20,6 +20,7 @@ export interface DestinationDict {
     topup: string;
     yes: string;
     no: string;
+    unlimited: string;
   };
   delivery: {
     title: string;

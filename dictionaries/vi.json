@@ -858,7 +858,8 @@
       "ekyc": "Yêu cầu giấy tờ / eKYC",
       "topup": "Nạp thêm dữ liệu (Topup)",
       "yes": "Có",
-      "no": "Không"
+      "no": "Không",
+      "unlimited": "Không giới hạn"
     },
     "delivery": {
       "title": "Giao hàng & Kích hoạt",
@@ -904,11 +905,11 @@
       "refund": "Cam kết hoàn tiền 100%"
     },
     "greenBox": {
-      "line1": "Data <strong>{data}</strong> tốc độ cao – Hết lưu lượng, hạ tốc độ {fupSpeed} Kbps",
-      "line1Fast": "Data <strong>{data}</strong> tốc độ cao → Tốc độ {fupSpeed} Mbps không giới hạn.",
+      "line1": "Data <strong>{data}</strong> tốc độ cao – Hết lưu lượng, hạ tốc độ {fupSpeed}",
+      "line1Fast": "Data <strong>{data}</strong> tốc độ cao → Tốc độ {fupSpeed} không giới hạn.",
       "line1Fixed": "Data <strong>{data} / {days} ngày</strong> tốc độ cao – Hết lưu lượng, ngừng truy cập",
       "line1UnlimitedHigh": "Không giới hạn data tốc độ <strong>{fupSpeed}</strong>",
-      "line3": "Hỗ trợ TikTok, Facebook, Google, YouTube, Zalo"
+      "line3": "Hỗ trợ truy cập TikTok, Chat GPT, Zalo, Facebook, YouTube…"
     },
     "disclaimer": "Hãy đảm bảo thiết bị của bạn tương thích với eSIM trước khi thanh toán.",
     "disclaimerLink": "Xem danh sách thiết bị hỗ trợ eSIM →",
