@@ -769,7 +769,7 @@ html {
   font-size: 15px;
 }
 .hc-recent-activity__controls a:hover {
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 /* Recent item */
@@ -802,7 +802,7 @@ html {
   margin-bottom: 6px;
 }
 .hc-recent-item__link:hover {
-  text-decoration: underline;
+  text-decoration: none;
 }
 .hc-recent-item__meta {
   display: flex;
@@ -839,7 +839,7 @@ html {
   color: #3662e3;
   text-decoration: none;
 }
-.hc-breadcrumb__link:hover { text-decoration: underline; }
+.hc-breadcrumb__link:hover { text-decoration: none; }
 .hc-breadcrumb__sep { color: #ccc; }
 .hc-breadcrumb__current { color: #555; }
 
@@ -1056,11 +1056,11 @@ html {
 /* ===== HELP CENTER - Prevent blue hover on links (UX 2.10) ===== */
 .hc-article-body a {
   color: #374151 !important;
-  text-decoration: underline;
+  text-decoration: none;
 }
 .hc-article-body a:hover {
   color: #111827 !important;
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 /* Help Center sidebar & content links: no blue on hover */
@@ -1258,10 +1258,10 @@ html {
    rule that forces gray. Keep accessible blue with sufficient contrast. */
 .hc-article-body a {
   color: #1d4ed8 !important;
-  text-decoration: underline;
+  text-decoration: none;
   word-break: break-word;
 }
 .hc-article-body a:hover {
   color: #1e40af !important;
-  text-decoration: underline;
+  text-decoration: none;
 }

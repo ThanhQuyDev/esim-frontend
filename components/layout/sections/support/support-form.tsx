@@ -19,13 +19,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
 
@@ -96,46 +89,6 @@ export interface SupportFormDict {
   };
 }
 
-// ----------- Static option lists -----------
-
-const DEVICE_MODELS = [
-  "iPhone 15 Pro Max",
-  "iPhone 15 Pro",
-  "iPhone 15 Plus",
-  "iPhone 15",
-  "iPhone 14 Pro",
-  "iPhone 14",
-  "iPhone 13",
-  "iPhone 12",
-  "iPhone SE (2022)",
-  "Samsung Galaxy S24 Ultra",
-  "Samsung Galaxy S24",
-  "Samsung Galaxy S23",
-  "Samsung Galaxy Z Fold 5",
-  "Samsung Galaxy Z Flip 5",
-  "Google Pixel 8 Pro",
-  "Google Pixel 8",
-  "Google Pixel 7",
-  "Xiaomi 14",
-  "Other / Khác",
-];
-
-const PLAN_DESTINATIONS = [
-  "Vietnam",
-  "Japan",
-  "South Korea",
-  "Thailand",
-  "Singapore",
-  "United States",
-  "United Kingdom",
-  "France",
-  "Germany",
-  "Australia",
-  "China",
-  "Asia (regional)",
-  "Europe (regional)",
-  "Global",
-];
 
 // ----------- Helpers -----------
 
@@ -511,24 +464,16 @@ export function SupportForm({ lang, dict, successHref }: SupportFormProps) {
                     ({dict.optional})
                   </span>
                 </FormLabel>
-                <Select
-                  onValueChange={(v) => field.onChange(v || undefined)}
-                  value={field.value ?? ""}
-                  disabled={isBusy}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder={dict.deviceModelPlaceholder} />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {DEVICE_MODELS.map((d) => (
-                      <SelectItem key={d} value={d}>
-                        {d}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <FormControl>
+                  <Input
+                    type="text"
+                    maxLength={100}
+                    placeholder={dict.deviceModelPlaceholder}
+                    disabled={isBusy}
+                    {...field}
+                    value={field.value ?? ""}
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -581,24 +526,16 @@ export function SupportForm({ lang, dict, successHref }: SupportFormProps) {
                     ({dict.optional})
                   </span>
                 </FormLabel>
-                <Select
-                  onValueChange={(v) => field.onChange(v || undefined)}
-                  value={field.value ?? ""}
-                  disabled={isBusy}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder={dict.planDestinationPlaceholder} />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {PLAN_DESTINATIONS.map((d) => (
-                      <SelectItem key={d} value={d}>
-                        {d}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <FormControl>
+                  <Input
+                    type="text"
+                    maxLength={100}
+                    placeholder={dict.planDestinationPlaceholder}
+                    disabled={isBusy}
+                    {...field}
+                    value={field.value ?? ""}
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -682,7 +619,7 @@ export function SupportForm({ lang, dict, successHref }: SupportFormProps) {
           <Button
             type="submit"
             size="lg"
-            className="w-full cursor-pointer sm:w-auto"
+            className="w-full cursor-pointer sm:w-auto border border-primary"
             disabled={isBusy || !form.formState.isValid && form.formState.isSubmitted}
           >
             {phase === "uploading" ? (

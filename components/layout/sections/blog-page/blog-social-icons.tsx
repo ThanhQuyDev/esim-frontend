@@ -8,7 +8,7 @@ export function SocialIconsRow({ className }: { className?: string }) {
         <div key={s.alt}>
           <a
             className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus"
-            rel="noopener noreferrer nofollow"
+             
             target="_blank"
             href={s.href}
           >
@@ -29,7 +29,7 @@ export function SocialIconsCol({ className }: { className?: string }) {
         <div key={s.alt}>
           <a
             className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus"
-            rel="noopener noreferrer nofollow"
+             
             target="_blank"
             href={s.href}
           >

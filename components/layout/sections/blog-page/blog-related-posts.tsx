@@ -70,7 +70,7 @@ export function BlogRelatedPosts({ posts, lang }: BlogRelatedPostsProps) {
               <h3 className="body-md-medium">
                 <Link
                   href={`/${lang}/blog/${post.slug}`}
-                  className="hover:underline"
+                  className=""
                 >
                   {post.title}
                 </Link>

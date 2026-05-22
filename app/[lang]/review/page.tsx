@@ -7,6 +7,7 @@ import { TestimonialsSection } from "@/components/layout/sections/testimonials";
 import { DestinationsSection } from "@/components/layout/sections/destinations";
 import { FAQSection } from "@/components/layout/sections/faq";
 import { FooterSection } from "@/components/layout/sections/footer";
+import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { getDictionary } from "@/lib/dictionaries";
 import { getSeoMetadata } from "@/lib/seo";
 import type { Locale } from "@/lib/i18n-config";
@@ -30,6 +31,10 @@ export default async function ReviewPage({
 
   return (
     <main role="main">
+      <Breadcrumb
+        items={[{ label: dict.breadcrumb.review }]}
+        lang={params.lang}
+      />
       <ReviewHero dict={review.hero} lang={params.lang} />
       <ReviewFeatures dict={review.features} lang={params.lang} />
       <TestimonialsSection dict={dict.testimonials} />

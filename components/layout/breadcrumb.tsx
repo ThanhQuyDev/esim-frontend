@@ -1,0 +1,91 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { ChevronRight, Home } from "lucide-react";
+
+export interface BreadcrumbItem {
+  label: string;
+  href?: string;
+}
+
+interface BreadcrumbProps {
+  items: BreadcrumbItem[];
+  lang: string;
+  className?: string;
+}
+
+/**
+ * Breadcrumb navigation component with JSON-LD structured data for SEO.
+ * Follows shadcn/ui design patterns with Tailwind CSS.
+ */
+export function Breadcrumb({ items, lang, className = "" }: BreadcrumbProps) {
+  const pathname = usePathname();
+
+  // Build full breadcrumb list with Home as first item
+  const allItems: BreadcrumbItem[] = [
+    { label: lang === "vi" ? "Trang chủ" : "Home", href: `/${lang}` },
+    ...items,
+  ];
+
+  // JSON-LD structured data for SEO
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: allItems.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.label,
+      item: item.href
+        ? `https://esim.vn${item.href}`
+        : `https://esim.vn${pathname}`,
+    })),
+  };
+
+  return (
+    <>
+      {/* JSON-LD for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
+      {/* Visual breadcrumb */}
+      <nav
+        aria-label="Breadcrumb"
+        className={`w-full py-3 px-4 md:px-6 ${className}`}
+      >
+        <ol className="flex items-center flex-wrap gap-1 text-sm text-muted-foreground">
+          {allItems.map((item, index) => {
+            const isLast = index === allItems.length - 1;
+            const isFirst = index === 0;
+
+            return (
+              <li key={index} className="flex items-center gap-1">
+                {index > 0 && (
+                  <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/60 flex-shrink-0" />
+                )}
+                {isLast ? (
+                  <span
+                    className="text-foreground font-medium truncate max-w-[200px] md:max-w-none"
+                    aria-current="page"
+                  >
+                    {item.label}
+                  </span>
+                ) : (
+                  <Link
+                    href={item.href || `/${lang}`}
+                    className="hover:text-primary transition-colors flex items-center gap-1 whitespace-nowrap"
+                  >
+                    {isFirst && <Home className="h-3.5 w-3.5" />}
+                    <span className="hidden sm:inline">{item.label}</span>
+                  </Link>
+                )}
+              </li>
+            );
+          })}
+        </ol>
+      </nav>
+    </>
+  );
+}

@@ -279,7 +279,7 @@ export function AuthModal({ lang }: AuthModalProps) {
                 type="button"
                 onClick={handleResend}
                 disabled={loading}
-                className="text-secondary font-medium hover:underline cursor-pointer disabled:opacity-60"
+                className="text-secondary font-medium cursor-pointer disabled:opacity-60"
               >
                 {t(lang, "Gửi lại", "Resend")}
               </button>

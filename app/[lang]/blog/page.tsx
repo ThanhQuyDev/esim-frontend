@@ -1,5 +1,6 @@
 import { BlogPageContent } from "@/components/layout/sections/blog-page";
 import { FooterSection } from "@/components/layout/sections/footer";
+import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { getDictionary } from "@/lib/dictionaries";
 import { getSeoMetadata } from "@/lib/seo";
 import { getBlogs, getBlogCategories } from "@/lib/api";
@@ -29,6 +30,10 @@ export default async function BlogPage({
 
   return (
     <main role="main">
+      <Breadcrumb
+        items={[{ label: dict.breadcrumb.blog }]}
+        lang={params.lang}
+      />
       <BlogPageContent
         lang={params.lang}
         initialBlogs={blogs}

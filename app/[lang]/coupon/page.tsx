@@ -7,6 +7,7 @@ import { TestimonialsSection } from "@/components/layout/sections/testimonials";
 import { ReviewComparisonTable } from "@/components/layout/sections/review-page";
 import { FAQSection } from "@/components/layout/sections/faq";
 import { FooterSection } from "@/components/layout/sections/footer";
+import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { getDictionary } from "@/lib/dictionaries";
 import { getSeoMetadata } from "@/lib/seo";
 import type { Locale } from "@/lib/i18n-config";
@@ -36,6 +37,10 @@ export default async function CouponPage({
 
   return (
     <main role="main">
+      <Breadcrumb
+        items={[{ label: dict.breadcrumb.coupon }]}
+        lang={params.lang}
+      />
       <CouponHero dict={coupon.hero} lang={params.lang} />
       <CouponHowToUse dict={coupon.howToUse} lang={params.lang} />
       <TestimonialsSection dict={testimonialsDict} />

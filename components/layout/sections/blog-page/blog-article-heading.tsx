@@ -78,7 +78,7 @@ export function BlogArticleHeading({ blog, lang }: { blog: Blog; lang: string })
                   {/* Author */}
                   <div className="flex">
                     <Link
-                      className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus hover:underline"
+                      className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus "
                       href={`/${lang}/blog/author/${authorSlug(authorName)}/`}
                     >
                       <div className="flex flex-row items-center gap-4">

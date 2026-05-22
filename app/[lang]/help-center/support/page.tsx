@@ -1,7 +1,6 @@
-import Link from "next/link";
-import { ChevronRight } from "lucide-react";
 import { SupportForm } from "@/components/layout/sections/support";
 import { FooterSection } from "@/components/layout/sections/footer";
+import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { getDictionary } from "@/lib/dictionaries";
 import { getSeoMetadata } from "@/lib/seo";
 import type { Locale } from "@/lib/i18n-config";
@@ -26,39 +25,17 @@ export default async function SupportPage({
 }) {
   const dict = await getDictionary(params.lang);
   const formDict = dict.support.form;
-  const basePath = `/${params.lang}/help-center`;
 
   return (
     <>
       <main role="main" className="min-h-[calc(100vh-200px)]">
-        {/* Breadcrumb */}
-        <div className="bg-gray-100 border-b border-gray-200">
-          <div className="max-w-7xl mx-auto px-4">
-            <nav aria-label="Breadcrumb" className="py-4">
-              <ol className="flex items-center gap-1 list-none p-0 m-0 flex-wrap text-sm">
-                <li>
-                  <Link
-                    href={basePath}
-                    className="text-gray-700 no-underline hover:text-gray-900 transition-colors"
-                  >
-                    {formDict.breadcrumbHome}
-                  </Link>
-                </li>
-                <li className="text-gray-400" aria-hidden="true">
-                  <ChevronRight className="h-3.5 w-3.5" />
-                </li>
-                <li>
-                  <span
-                    className="text-gray-900 font-medium"
-                    aria-current="page"
-                  >
-                    {formDict.breadcrumbCurrent}
-                  </span>
-                </li>
-              </ol>
-            </nav>
-          </div>
-        </div>
+        <Breadcrumb
+          items={[
+            { label: dict.breadcrumb.helpCenter, href: `/${params.lang}/help-center` },
+            { label: dict.breadcrumb.helpCenterSupport },
+          ]}
+          lang={params.lang}
+        />
 
         {/* Hero header */}
         <section className="bg-gradient-to-b from-blue-50/60 to-white border-b border-gray-100">

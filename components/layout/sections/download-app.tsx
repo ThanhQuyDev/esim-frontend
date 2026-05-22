@@ -26,7 +26,7 @@ export function DownloadAppSection({ dict }: DownloadAppSectionProps) {
                         <div className="body-md-medium text-disabled">
                           <a
                             className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus"
-                            rel="noopener noreferrer nofollow"
+                             
                             target="_blank"
                             href="https://www.trustpilot.com/review/saily.com"
                           >
@@ -77,7 +77,7 @@ export function DownloadAppSection({ dict }: DownloadAppSectionProps) {
                                         <div>
                                           <a
                                             className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus app-download-link"
-                                            rel="noopener noreferrer nofollow"
+                                             
                                             target="_blank"
                                             href="https://saily.onelink.me/ymzx/appstore"
                                           >
@@ -124,7 +124,7 @@ export function DownloadAppSection({ dict }: DownloadAppSectionProps) {
                                         <div>
                                           <a
                                             className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus app-download-link"
-                                            rel="noopener noreferrer nofollow"
+                                             
                                             target="_blank"
                                             href="https://saily.onelink.me/ymzx/android"
                                           >

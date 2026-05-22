@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { CheckoutPageContent } from "@/components/layout/sections/checkout";
 import { FooterSection } from "@/components/layout/sections/footer";
+import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { getDictionary } from "@/lib/dictionaries";
 import { getSeoMetadata } from "@/lib/seo";
 import type { Locale } from "@/lib/i18n-config";
@@ -23,6 +24,10 @@ export default async function CheckoutPage({
 
   return (
     <main role="main">
+      <Breadcrumb
+        items={[{ label: dict.breadcrumb.checkout }]}
+        lang={params.lang}
+      />
       <div className="container mx-auto px-4 py-8 min-h-[60vh]">
         <h1 className="text-2xl font-bold text-text-primary mb-8">
           {(dict as any).checkout?.title || "Checkout"}

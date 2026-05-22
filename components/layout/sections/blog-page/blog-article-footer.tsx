@@ -10,7 +10,7 @@ function RelatedArticle({ article, lang }: { article: Blog; lang: string }) {
     <article className="flex flex-col gap-4 sm:flex-row sm:items-center sm:[&>figure]:max-w-[240px]">
       {article.coverImage && (
         <Link
-          className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus hover:underline"
+          className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus "
           href={`/${lang}/blog/${article.slug}`}
         >
           <figure className="overflow-hidden rounded-sm">
@@ -67,7 +67,7 @@ function RelatedArticle({ article, lang }: { article: Blog; lang: string }) {
             <div>
               <p className="body-md-medium scroll-mt-20 xl:scroll-mt-24">
                 <Link
-                  className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus hover:underline"
+                  className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus "
                   href={`/${lang}/blog/${article.slug}`}
                 >
                   {article.title}
@@ -147,7 +147,7 @@ export function BlogArticleFooter({ blog, lang }: { blog: Blog; lang: string }) 
                                 </div>
                               </div>
                             )}
-                            <address className="heading-sm sm:heading-md not-italic group-hover:underline scroll-mt-20 xl:scroll-mt-24">
+                            <address className="heading-sm sm:heading-md not-italic group-scroll-mt-20 xl:scroll-mt-24">
                               {authorName}
                             </address>
                           </div>

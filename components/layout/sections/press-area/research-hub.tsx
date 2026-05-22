@@ -44,7 +44,7 @@ function ArticleCard({ article }: { article: Article }) {
   return (
     <div className={`flex flex-col gap-4 md:gap-6 ${article.hideOnMd ? "md:hidden lg:flex" : ""}`}>
       <div className="leading-[0] [&_div]:inline-flex [&_picture]:inline-flex [&_picture]:rounded-[var(--radius-md)] [&_picture]:overflow-hidden [&_*]:leading-[0]">
-        <a className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus" rel="noopener noreferrer nofollow" target="_blank" href={article.href}>
+        <a className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus"   target="_blank" href={article.href}>
           <div>
             <picture>
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -54,7 +54,7 @@ function ArticleCard({ article }: { article: Article }) {
         </a>
       </div>
       <h3 className="heading-sm scroll-mt-20 xl:scroll-mt-24">
-        <a className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus hover:underline" rel="noopener noreferrer nofollow" target="_blank" href={article.href}>
+        <a className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus "   target="_blank" href={article.href}>
           {article.title}
         </a>
       </h3>

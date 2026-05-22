@@ -1,7 +1,4 @@
-import type { UploadFileResponse } from "@/lib/types/ticket";
-
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.saily.example.com";
+import { uploadToCloudinary } from "@/lib/cloudinary";
 
 /**
  * Maximum size per individual file (5MB).
@@ -51,35 +48,12 @@ export function validateAttachment(file: File): FileValidationError | null {
 }
 
 /**
- * Upload a single file to POST /api/v1/files/upload (multipart/form-data,
- * field name "file"). Returns the public URL stored in `file.path`.
+ * Upload a single file to Cloudinary.
+ * Returns the public secure URL of the uploaded file.
  *
- * Throws on non-2xx responses so callers can show a generic error toast.
+ * Throws on failure so callers can show a generic error toast.
  */
 export async function uploadFile(file: File): Promise<string> {
-  const formData = new FormData();
-  formData.append("file", file);
-
-  const res = await fetch(`${API_BASE_URL}/api/v1/files/upload`, {
-    method: "POST",
-    body: formData,
-  });
-
-  if (!res.ok) {
-    let message = `Upload failed (${res.status})`;
-    try {
-      const body = await res.json();
-      if (body?.message) message = String(body.message);
-    } catch {
-      // ignore JSON parse failures
-    }
-    throw new Error(message);
-  }
-
-  const data = (await res.json()) as UploadFileResponse;
-  const url = data?.file?.path ?? data?.file?.url;
-  if (!url || typeof url !== "string") {
-    throw new Error("Upload response did not include a file URL.");
-  }
-  return url;
+  const result = await uploadToCloudinary(file);
+  return result.fileUrl;
 }

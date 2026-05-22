@@ -114,7 +114,7 @@ export async function FooterSection({
             <a
               href="https://saily.onelink.me/ymzx/appstore"
               target="_blank"
-              rel="noopener noreferrer nofollow"
+               
               className="inline-block"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -130,7 +130,7 @@ export async function FooterSection({
             <a
               href="https://saily.onelink.me/ymzx/android"
               target="_blank"
-              rel="noopener noreferrer nofollow"
+               
               className="inline-block"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -163,7 +163,7 @@ export async function FooterSection({
                       href={link.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="body-sm text-text-secondary hover:underline inline-flex items-center"
+                      className="body-sm text-text-secondary inline-flex items-center"
                     >
                       {link.label}
                     </a>
@@ -171,7 +171,7 @@ export async function FooterSection({
                     <Link
                       key={linkKey}
                       href={link.href}
-                      className="body-sm text-text-secondary hover:underline inline-flex items-center"
+                      className="body-sm text-text-secondary inline-flex items-center"
                     >
                       {link.label}
                     </Link>
@@ -189,7 +189,7 @@ export async function FooterSection({
               key={social.name}
               href={social.href}
               target="_blank"
-              rel="noopener noreferrer nofollow"
+               
               className="hover:opacity-80 transition-opacity inline-flex items-center gap-2"
               aria-label={social.name}
             >
@@ -222,7 +222,7 @@ export async function FooterSection({
               <span className="flex flex-wrap gap-6 items-center">
                 <a
                   className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus underline inline-block text-text-tertiary"
-                  rel="noopener noreferrer nofollow"
+                   
                   data-ga-slug="Privacy Policy"
                   target="_blank"
                   href="/legal/privacy-policy/"
@@ -231,7 +231,7 @@ export async function FooterSection({
                 </a>
                 <a
                   className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus underline inline-block text-text-tertiary"
-                  rel="noopener noreferrer nofollow"
+                   
                   data-ga-slug="Terms of Service"
                   target="_blank"
                   href="/legal/terms-of-service/"

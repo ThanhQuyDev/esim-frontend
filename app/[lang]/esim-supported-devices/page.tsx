@@ -1,5 +1,6 @@
 import { DeviceList } from "@/components/layout/sections/supported-devices";
 import { FooterSection } from "@/components/layout/sections/footer";
+import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { getDictionary } from "@/lib/dictionaries";
 import { getSupportedDevices } from "@/lib/api";
 import { getSeoMetadata } from "@/lib/seo";
@@ -24,6 +25,10 @@ export default async function SupportedDevicesPage({
 
   return (
     <main role="main">
+      <Breadcrumb
+        items={[{ label: dict.breadcrumb.supportedDevices }]}
+        lang={params.lang}
+      />
       <DeviceList
         initialData={devicesData.data}
         dict={dict.supportedDevicesPage}

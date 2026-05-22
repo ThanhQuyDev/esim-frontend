@@ -9,6 +9,7 @@ import {
 } from "@/components/layout/sections/what-is-esim-page";
 import { FAQSection } from "@/components/layout/sections/faq";
 import { FooterSection } from "@/components/layout/sections/footer";
+import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { getDictionary } from "@/lib/dictionaries";
 import { getSeoMetadata } from "@/lib/seo";
 import type { Locale } from "@/lib/i18n-config";
@@ -32,6 +33,10 @@ export default async function WhatIsEsimPage({
 
   return (
     <main role="main">
+      <Breadcrumb
+        items={[{ label: dict.breadcrumb.whatIsEsim }]}
+        lang={params.lang}
+      />
       <EsimHero dict={esim.hero} lang={params.lang} />
       <EsimDefinition dict={esim.definition} />
       <EsimHowWorks dict={esim.howWorks} />

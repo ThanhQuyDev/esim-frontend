@@ -106,7 +106,7 @@ function MobileCategoryNav({ categories, lang }: { categories: string[]; lang: s
               <li key={cat} aria-expanded="false">
                 <div className="flex items-center">
                   <Link
-                    className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus text-primary active:text-primary hover:text-secondary hover:underline body-sm-medium"
+                    className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus text-primary active:text-primary hover:text-secondary body-sm-medium"
                     href={`/${lang}/blog/category/${categorySlug(cat)}/`}
                   >
                     {cat}
@@ -131,7 +131,7 @@ function DesktopCategoryNav({ categories, lang }: { categories: string[]; lang: 
         {categories.map((cat) => (
           <li key={cat} className="relative" aria-expanded="false" aria-haspopup="true" aria-controls="menu">
             <Link
-              className="text=[18px] font-semibold align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus text-primary active:text-primary hover:text-secondary hover:underline "
+              className="text=[18px] font-semibold align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus text-primary active:text-primary hover:text-secondary "
               href={`/${lang}/blog/category/${categorySlug(cat)}/`}
             >
               {cat}

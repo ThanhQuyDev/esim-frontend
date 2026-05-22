@@ -141,7 +141,7 @@ export function SearchResultsContent({ lang }: SearchResultsContentProps) {
             <nav aria-label="Breadcrumb">
               <ol className="flex items-center gap-2 text-sm list-none p-0 m-0">
                 <li>
-                  <Link href={`/${lang}/help-center`} className="text-blue-600 hover:underline">
+                  <Link href={`/${lang}/help-center`} className="text-blue-600 ">
                     {lang === "vi" ? "Trung tâm trợ giúp" : "Help Center"}
                   </Link>
                 </li>
@@ -210,7 +210,7 @@ export function SearchResultsContent({ lang }: SearchResultsContentProps) {
                         <h3 className="text-lg font-semibold mb-2">
                           <Link
                             href={`/${lang}/help-center/${article.category}/${article.parent}/${getArticleSlug(article)}`}
-                            className="text-blue-700 hover:underline"
+                            className="text-blue-700 "
                           >
                             {article.title}
                           </Link>
@@ -220,7 +220,7 @@ export function SearchResultsContent({ lang }: SearchResultsContentProps) {
                             <li>
                               <Link
                                 href={`/${lang}/help-center`}
-                                className="text-gray-500 hover:underline"
+                                className="text-gray-500 "
                               >
                                 {lang === "vi" ? "Trung tâm trợ giúp" : "Help Center"}
                               </Link>
@@ -229,7 +229,7 @@ export function SearchResultsContent({ lang }: SearchResultsContentProps) {
                             <li>
                               <Link
                                 href={`/${lang}/help-center/${article.category}`}
-                                className="text-gray-500 hover:underline"
+                                className="text-gray-500 "
                               >
                                 {getCategoryLabel(article.category, lang)}
                               </Link>
@@ -238,7 +238,7 @@ export function SearchResultsContent({ lang }: SearchResultsContentProps) {
                             <li>
                               <Link
                                 href={`/${lang}/help-center/${article.category}/${article.parent}`}
-                                className="text-gray-500 hover:underline"
+                                className="text-gray-500 "
                               >
                                 {getParentLabel(article.parent, lang)}
                               </Link>

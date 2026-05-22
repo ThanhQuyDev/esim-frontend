@@ -1105,5 +1105,29 @@
         "ctaHome": "Back to home"
       }
     }
+  },
+  "breadcrumb": {
+    "home": "Home",
+    "aboutUs": "About Us",
+    "allDestinations": "All Destinations",
+    "blog": "Blog",
+    "cart": "Cart",
+    "checkout": "Checkout",
+    "dataCalculator": "Data Calculator",
+    "coupon": "Coupons",
+    "destination": "Destination",
+    "whatIsEsim": "What is eSIM",
+    "supportedDevices": "Supported Devices",
+    "helpCenter": "Help Center",
+    "helpCenterCategories": "Categories",
+    "helpCenterSearch": "Search",
+    "helpCenterSupport": "Support",
+    "helpCenterSupportSuccess": "Success",
+    "kycGuide": "KYC Guide",
+    "paymentResult": "Payment Result",
+    "pressArea": "Press Area",
+    "profile": "My Account",
+    "region": "Region",
+    "review": "Reviews"
   }
 }

@@ -1105,5 +1105,29 @@
         "ctaHome": "Về trang chủ"
       }
     }
+  },
+  "breadcrumb": {
+    "home": "Trang chủ",
+    "aboutUs": "Về chúng tôi",
+    "allDestinations": "Tất cả điểm đến",
+    "blog": "Blog",
+    "cart": "Giỏ hàng",
+    "checkout": "Thanh toán",
+    "dataCalculator": "Công cụ tính data",
+    "coupon": "Mã giảm giá",
+    "destination": "Điểm đến",
+    "whatIsEsim": "eSIM là gì",
+    "supportedDevices": "Thiết bị hỗ trợ",
+    "helpCenter": "Trung tâm trợ giúp",
+    "helpCenterCategories": "Danh mục",
+    "helpCenterSearch": "Tìm kiếm",
+    "helpCenterSupport": "Hỗ trợ",
+    "helpCenterSupportSuccess": "Thành công",
+    "kycGuide": "Hướng dẫn KYC",
+    "paymentResult": "Kết quả thanh toán",
+    "pressArea": "Khu vực báo chí",
+    "profile": "Tài khoản",
+    "region": "Khu vực",
+    "review": "Đánh giá"
   }
 }

@@ -56,7 +56,7 @@ export function PressResources({ dict }: PressResourcesProps) {
                         <a
                           role="button"
                           className="max-md:w-full text-center inline-block text-text-primary hover:text-white hover:bg-[var(--bg-dark)] border border-border-secondary active:bg-[var(--bg-dark)] active:text-white box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7"
-                          rel="noopener noreferrer nofollow"
+                           
                           target="_blank"
                           href="https://zeroheight.com/5c8b55fba/p/90ce90-who-we-are"
                         >

@@ -60,7 +60,7 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
 
   // Fetch regions
   const { data: regions = [], isLoading: isLoadingRegions } = useRegions(
-    undefined,
+    JSON.stringify({ isPopular: true }),
     "name",
     "ASC",
     20

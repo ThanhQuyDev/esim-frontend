@@ -1,4 +1,6 @@
 import { KycGuideContent } from "@/components/layout/sections/kyc-guide";
+import { Breadcrumb } from "@/components/layout/breadcrumb";
+import { getDictionary } from "@/lib/dictionaries";
 import type { KycRegionKey } from "@/components/layout/sections/kyc-guide";
 import type { Locale } from "@/lib/i18n-config";
 import type { Metadata } from "next";
@@ -26,10 +28,19 @@ export function generateMetadata({ params }: KycGuidePageProps): Metadata {
   };
 }
 
-export default function KycGuidePage({ params, searchParams }: KycGuidePageProps) {
+export default async function KycGuidePage({ params, searchParams }: KycGuidePageProps) {
+  const dict = await getDictionary(params.lang);
   const raw = searchParams?.region;
   const initialRegion: KycRegionKey =
     raw && (VALID_REGIONS as string[]).includes(raw) ? (raw as KycRegionKey) : "hk";
 
-  return <KycGuideContent initialRegion={initialRegion} />;
+  return (
+    <main role="main">
+      <Breadcrumb
+        items={[{ label: dict.breadcrumb.kycGuide }]}
+        lang={params.lang}
+      />
+      <KycGuideContent initialRegion={initialRegion} />
+    </main>
+  );
 }

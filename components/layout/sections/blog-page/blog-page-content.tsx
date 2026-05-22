@@ -102,7 +102,7 @@ function AuthorLink({ author, lang }: { author: string | null; lang: string }) {
   return (
     <Link
       href={`/${lang}/blog/author/${authorSlug}/`}
-      className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus hover:underline"
+      className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus "
     >
       <div className="flex flex-row items-center gap-3">
         <div className="relative rounded-full overflow-hidden w-[24px] min-w-[24px] h-[24px] bg-tertiary">
@@ -123,7 +123,7 @@ function BlogCard({ blog, lang }: { blog: Blog; lang: string }) {
     <article className="flex flex-col gap-4">
       <Link
         href={`/${lang}/blog/${blog.slug}/`}
-        className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus hover:underline"
+        className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus "
       >
         <figure className="overflow-hidden rounded-sm">
           <div>
@@ -158,7 +158,7 @@ function BlogCard({ blog, lang }: { blog: Blog; lang: string }) {
               <h3 className="heading-sm">
                 <Link
                   href={`/${lang}/blog/${blog.slug}/`}
-                  className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus hover:underline"
+                  className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus "
                 >
                   {blog.title}
                 </Link>
@@ -229,7 +229,7 @@ function CategoryNavBar({
                   <div className="flex items-center">
                     <Link
                       href={`/${lang}/blog/category/${categorySlug(cat)}/`}
-                      className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus text-primary active:text-primary hover:text-secondary hover:underline body-sm-medium"
+                      className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus text-primary active:text-primary hover:text-secondary body-sm-medium"
                     >
                       {cat}
                     </Link>
@@ -251,7 +251,7 @@ function CategoryNavBar({
             <li key={cat} className="relative" aria-expanded="false" aria-haspopup="true">
               <Link
                 href={`/${lang}/blog/category/${categorySlug(cat)}/`}
-                className="text-[18px] font-semibold salign-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus text-primary active:text-primary hover:text-secondary hover:underline"
+                className="text-[18px] font-semibold salign-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus text-primary active:text-primary hover:text-secondary "
               >
                 {cat}
               </Link>
@@ -294,7 +294,7 @@ function FeaturedArticle({ blog, lang }: { blog: Blog; lang: string }) {
                     <div>
                       <Link
                         href={`/${lang}/blog/${blog.slug}/`}
-                        className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus hover:underline"
+                        className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus "
                       >
                         <h3 className="heading-xl">{blog.title}</h3>
                       </Link>
@@ -510,7 +510,7 @@ function CategoryTabPanel({
         <h3 className="heading-lg">{category}</h3>
         <Link
           href={`/${lang}/blog/category/${categorySlug(category)}/`}
-          className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus hover:underline flex gap-2 items-center"
+          className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus flex gap-2 items-center"
         >
           View All
           <ChevronRight size={16} />

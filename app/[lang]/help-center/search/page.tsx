@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { SearchResultsContent } from "@/components/layout/sections/help-center/search-results-content";
 import { FooterSection } from "@/components/layout/sections/footer";
+import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { getDictionary } from "@/lib/dictionaries";
 import type { Locale } from "@/lib/i18n-config";
 import type { Metadata } from "next";
@@ -29,6 +30,13 @@ export default async function HelpCenterSearchPage({
 
   return (
     <>
+      <Breadcrumb
+        items={[
+          { label: dict.breadcrumb.helpCenter, href: `/${params.lang}/help-center` },
+          { label: dict.breadcrumb.helpCenterSearch },
+        ]}
+        lang={params.lang}
+      />
       <Suspense
         fallback={
           <div className="max-w-7xl mx-auto px-4 py-12 text-center text-gray-500">

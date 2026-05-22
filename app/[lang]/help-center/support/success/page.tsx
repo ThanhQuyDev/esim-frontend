@@ -2,6 +2,7 @@ import Link from "next/link";
 import { CheckCircle2, Home, Mail, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FooterSection } from "@/components/layout/sections/footer";
+import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { getDictionary } from "@/lib/dictionaries";
 import { getSeoMetadata } from "@/lib/seo";
 import type { Locale } from "@/lib/i18n-config";
@@ -38,6 +39,14 @@ export default async function SupportSuccessPage({
 
   return (
     <>
+      <Breadcrumb
+        items={[
+          { label: dict.breadcrumb.helpCenter, href: `/${params.lang}/help-center` },
+          { label: dict.breadcrumb.helpCenterSupport, href: `/${params.lang}/help-center/support` },
+          { label: dict.breadcrumb.helpCenterSupportSuccess },
+        ]}
+        lang={params.lang}
+      />
       <main role="main" className="min-h-[calc(100vh-200px)] py-10 md:py-16">
         <div className="max-w-2xl mx-auto px-4">
           <div className="rounded-2xl border border-emerald-200 bg-emerald-50/60 p-8 md:p-10 text-center">

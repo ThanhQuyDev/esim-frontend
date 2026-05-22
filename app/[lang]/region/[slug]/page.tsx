@@ -3,6 +3,8 @@ import { getRegionBySlug, getWhyChooseUs } from "@/lib/api";
 import { getDictionary } from "@/lib/dictionaries";
 import { getSeoMetadata } from "@/lib/seo";
 import { DestinationPlans } from "@/components/layout/sections/destination";
+import { Breadcrumb } from "@/components/layout/breadcrumb";
+import { localizedHref } from "@/lib/route-mapping";
 import {
   LazyDownloadAppSection,
   LazyEsimComparison,
@@ -69,6 +71,13 @@ export default async function RegionPage({ params }: RegionPageProps) {
 
   return (
     <main role="main">
+      <Breadcrumb
+        items={[
+          { label: dict.breadcrumb.allDestinations, href: localizedHref(params.lang, "all-destinations") },
+          { label: region.name },
+        ]}
+        lang={params.lang}
+      />
       <DestinationPlans
         destination={destination}
         slug={params.slug}

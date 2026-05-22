@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { DetailContent } from "@/components/layout/sections/help-center/detail-content";
 import { FooterSection } from "@/components/layout/sections/footer";
+import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { getDictionary } from "@/lib/dictionaries";
 import { getSeoMetadata } from "@/lib/seo";
 import {
@@ -41,6 +42,13 @@ export default async function HelpCenterDetailPage({
 
   return (
     <>
+      <Breadcrumb
+        items={[
+          { label: dict.breadcrumb.helpCenter, href: `/${params.lang}/help-center` },
+          ...(slugArticle ? [{ label: slugArticle.title }] : []),
+        ]}
+        lang={params.lang}
+      />
       <Suspense fallback={<div className="min-h-screen" />}>
         <DetailContent
           lang={params.lang}

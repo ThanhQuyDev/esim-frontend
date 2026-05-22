@@ -27,7 +27,7 @@ export function DestinationSearchModal({
 
   // Fetch regions (for combining popular ones in Top 10)
   const { data: allRegions = [], isLoading: isLoadingRegions } = useRegions(
-    undefined,
+    JSON.stringify({ isPopular: true }),
     "name",
     "ASC",
     20

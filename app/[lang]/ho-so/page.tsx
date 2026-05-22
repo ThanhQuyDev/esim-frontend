@@ -1,11 +1,20 @@
 "use client";
 
 import { ProfileContent } from "@/components/layout/sections/profile";
+import { Breadcrumb } from "@/components/layout/breadcrumb";
 
 export default function HoSoPage({
   params,
 }: {
   params: { lang: "en" | "vi" };
 }) {
-  return <ProfileContent lang={params.lang} />;
+  return (
+    <main role="main">
+      <Breadcrumb
+        items={[{ label: params.lang === "vi" ? "Tài khoản" : "My Account" }]}
+        lang={params.lang}
+      />
+      <ProfileContent lang={params.lang} />
+    </main>
+  );
 }

@@ -9,6 +9,7 @@ import {
 } from "@/components/layout/sections/about";
 import { PartnerBar } from "@/components/layout/sections/partner-bar";
 import { FooterSection } from "@/components/layout/sections/footer";
+import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { getDictionary } from "@/lib/dictionaries";
 import { getSeoMetadata } from "@/lib/seo";
 import type { Locale } from "@/lib/i18n-config";
@@ -32,6 +33,10 @@ export default async function AboutUsPage({
 
   return (
     <main role="main">
+      <Breadcrumb
+        items={[{ label: dict.breadcrumb.aboutUs }]}
+        lang={params.lang}
+      />
       <AboutHero dict={about.hero} />
       <AboutStory dict={about.story} />
       <PartnerBar dict={dict.partnerBar} />

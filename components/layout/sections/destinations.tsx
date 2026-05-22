@@ -42,7 +42,7 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
   );
 
   const { data: regions = [], isLoading: isLoadingRegions } = useRegions(
-    undefined,
+    JSON.stringify({ isPopular: true }),
     "name",
     "ASC",
     9

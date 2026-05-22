@@ -112,10 +112,10 @@ export function ProductCard({
   // Country preview (flag images) for the button — falls back to emoji when flagUrl is missing
   const previewCountries = isRegion
     ? (region?.destinations || []).slice(0, 4).map((d) => ({
-        url: d.flagUrl,
-        emoji: flagEmoji(d.countryCode),
-        name: d.name,
-      }))
+      url: d.flagUrl,
+      emoji: flagEmoji(d.countryCode),
+      name: d.name,
+    }))
     : [{ url: destination.flagUrl, emoji: flagEmoji(destination.countryCode), name: destination.name }];
   const countryCount = isRegion
     ? (region?.destinations?.length ?? region?.destinationCount ?? 0)
@@ -172,12 +172,11 @@ export function ProductCard({
               </svg>
             </div>
             <h1 className="text-[26px] font-extrabold text-[#111] leading-[1.25] tracking-[-0.4px]">
-              {(lang === "vi" ? destination.descriptionVi : destination.description) ||
-                dict.title.replace("{destination}", destination.name)}
+              {(lang === "vi" ? destination.titleVi : destination.title) || dict.title.replace("{destination}", destination.name)}
             </h1>
           </div>
           <p className="text-sm text-[#6b7280] leading-[1.6] mb-3">
-            {dict.subtitle.replace("{destination}", destination.name)}
+            {(lang === "vi" ? destination.descriptionVi : destination.description) || dict.subtitle.replace("{destination}", destination.name)}
           </p>
 
           {/* Countries button — only meaningful on region pages (multi-country coverage). */}
@@ -227,11 +226,10 @@ export function ProductCard({
             <button
               type="button"
               onClick={() => setActiveTab("features")}
-              className={`py-[11px] px-2 text-[13px] font-semibold text-center flex items-center justify-center gap-1.5 transition-colors border-b-[2.5px] -mb-[1.5px] cursor-pointer bg-transparent font-[inherit] ${
-                activeTab === "features"
+              className={`py-[11px] px-2 text-[13px] font-semibold text-center flex items-center justify-center gap-1.5 transition-colors border-b-[2.5px] -mb-[1.5px] cursor-pointer bg-transparent font-[inherit] ${activeTab === "features"
                   ? "text-[#111] border-[#111]"
                   : "text-[#6b7280] border-transparent"
-              }`}
+                }`}
             >
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                 <circle cx="12" cy="12" r="3" />
@@ -242,11 +240,10 @@ export function ProductCard({
             <button
               type="button"
               onClick={() => setActiveTab("delivery")}
-              className={`py-[11px] px-2 text-[13px] font-semibold text-center flex items-center justify-center gap-1.5 transition-colors border-b-[2.5px] -mb-[1.5px] cursor-pointer bg-transparent font-[inherit] ${
-                activeTab === "delivery"
+              className={`py-[11px] px-2 text-[13px] font-semibold text-center flex items-center justify-center gap-1.5 transition-colors border-b-[2.5px] -mb-[1.5px] cursor-pointer bg-transparent font-[inherit] ${activeTab === "delivery"
                   ? "text-[#111] border-[#111]"
                   : "text-[#6b7280] border-transparent"
-              }`}
+                }`}
             >
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 2l9 4.5v9L12 22l-9-4.5v-9L12 2z" />

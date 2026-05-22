@@ -50,7 +50,7 @@ export function CouponFreeCredits({ dict, lang }: CouponFreeCreditsProps) {
                                         {dict.disclaimer || "For more information, check out the"}{" "}
                                         <a
                                           className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus underline"
-                                          rel="noopener noreferrer nofollow"
+                                           
                                           target="_blank"
                                           href="/legal/referral-program-terms-and-conditions/"
                                         >
