@@ -108,6 +108,10 @@ export interface Region {
   destinations?: Destination[];
   destinationCount?: number;
   avatarUrl?: string;
+  title?: string;
+  titleVi?: string;
+  description?: string;
+  descriptionVi?: string;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;

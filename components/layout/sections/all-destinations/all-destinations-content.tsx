@@ -219,14 +219,14 @@ export function AllDestinationsContent({
                           <div className="w-full h-full flex gap-4 items-center">
                             {/* Flag/Avatar */}
                             <div className="w-[36px] h-[36px] relative overflow-hidden shrink-0 rounded-full">
-                              {item.flagUrl || item.avatarUrl ? (
+                              {item.flagUrl || item.iconUrl ? (
                                 <>
                                   <img
                                     alt={`${item.countryCode || item.slug} ${showRegions ? "globe icon" : "flag"}`}
                                     loading="lazy"
                                     decoding="async"
                                     className="w-full h-full object-cover absolute inset-0"
-                                    src={item.flagUrl || item.avatarUrl}
+                                    src={item.flagUrl || item.iconUrl}
                                   />
                                   <div className="absolute inset-0 rounded-full pointer-events-none border border-[rgba(0,0,0,0.1)]" />
                                 </>
@@ -243,7 +243,7 @@ export function AllDestinationsContent({
                               </p>
                               <p className="body-md text-text-tertiary scroll-mt-20 xl:scroll-mt-24">
                                 <span className="whitespace-nowrap">
-                                  `${dict.from} ${Number(item.fromPrice).toLocaleString("vi-VN") || "20.000"} đ`
+                                  {dict.from} {Number(item.fromPrice).toLocaleString("vi-VN") || "20.000"} đ
                                 </span>
                                 {item.destinationCount != null && (
                                   <>
