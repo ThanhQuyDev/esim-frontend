@@ -226,13 +226,19 @@ export function DetailContent({
       {/* Search Box on top for sub-pages (Bug 2.8 + Layout 2.3) */}
      
 
-      {/* Breadcrumb (Style 2.9) */}
-      <div className="bg-gray-200">
+      {/* Breadcrumb (Style 2.9) — merged: Trang chủ > Trung tâm trợ giúp > ... */}
+      <div className="bg-gray-100">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center pt-4 pb-4">
             <div className="text-sm">
               <nav aria-label="Breadcrumb">
                 <ol className="flex items-center gap-1 list-none p-0 m-0 flex-wrap">
+                  <li>
+                    <Link href={`/${lang}`} className="text-gray-700 no-underline hover:text-gray-900 transition-colors">
+                      {lang === "vi" ? "Trang chủ" : "Home"}
+                    </Link>
+                  </li>
+                  <li className="text-gray-400 mx-1">›</li>
                   <li>
                     <Link href={basePath} className="text-gray-700 no-underline hover:text-gray-900 transition-colors">
                       {lang === "vi" ? "Trung tâm trợ giúp" : "Help Center"}

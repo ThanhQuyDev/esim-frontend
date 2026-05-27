@@ -1,10 +1,8 @@
 import { BlogDetailContent } from "@/components/layout/sections/blog-page";
 import { FooterSection } from "@/components/layout/sections/footer";
-import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { getDictionary } from "@/lib/dictionaries";
 import { getSeoMetadata } from "@/lib/seo";
 import { getBlogBySlug } from "@/lib/api";
-import { localizedHref } from "@/lib/route-mapping";
 import { notFound } from "next/navigation";
 import type { Locale } from "@/lib/i18n-config";
 import type { Metadata } from "next";
@@ -60,13 +58,6 @@ export default async function BlogDetailPage({
 
   return (
     <main role="main">
-      <Breadcrumb
-        items={[
-          { label: dict.breadcrumb.blog, href: localizedHref(params.lang, "blog") },
-          { label: blog.title },
-        ]}
-        lang={params.lang}
-      />
       <BlogDetailContent lang={params.lang} slug={params.slug} initialBlog={blog} />
       <FooterSection dict={dict.footer} lang={params.lang} />
     </main>

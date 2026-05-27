@@ -1,6 +1,5 @@
 import { HelpCenterContent } from "@/components/layout/sections/help-center";
 import { FooterSection } from "@/components/layout/sections/footer";
-import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { getDictionary } from "@/lib/dictionaries";
 import { getSeoMetadata } from "@/lib/seo";
 import { fetchHelpCenterArticles } from "@/lib/api";
@@ -27,10 +26,6 @@ export default async function HelpCenterPage({
 
   return (
     <>
-      <Breadcrumb
-        items={[{ label: dict.breadcrumb.helpCenter }]}
-        lang={params.lang}
-      />
       <HelpCenterContent lang={params.lang} initialArticles={helpCenterRes.data} />
       <FooterSection dict={dict.footer} lang={params.lang} />
     </>

@@ -162,7 +162,6 @@ export async function FooterSection({
                       key={linkKey}
                       href={link.href}
                       target="_blank"
-                      rel="noopener noreferrer"
                       className="body-sm text-text-secondary inline-flex items-center"
                     >
                       {link.label}
