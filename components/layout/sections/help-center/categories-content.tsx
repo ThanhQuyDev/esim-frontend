@@ -215,7 +215,7 @@ export function CategoriesContent({ lang }: CategoriesContentProps) {
                 [&_th]:border [&_th]:border-gray-300 [&_th]:px-3 [&_th]:py-2 [&_th]:bg-gray-100 [&_th]:text-left [&_th]:font-semibold
                 [&_td]:border [&_td]:border-gray-300 [&_td]:px-3 [&_td]:py-2
                 [&_blockquote]:border-l-4 [&_blockquote]:border-gray-300 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-gray-600 [&_blockquote]:my-4
-                [&_a]:text-gray-700 [&_a]:underline [&_a]:hover:text-gray-900
+                [&_a]:text-gray-700 [&_a]:no-underline [&_a]:hover:underline [&_a]:hover:text-gray-900
                 [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded"
               dangerouslySetInnerHTML={{ __html: selectedArticle.content }}
             />

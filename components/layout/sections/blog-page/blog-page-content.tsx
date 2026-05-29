@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { BookOpen, Search, ChevronDown, ChevronRight } from "lucide-react";
 import type { Blog, PaginatedResponse } from "@/lib/api";
 import type { Locale } from "@/lib/i18n-config";
+import { BlogCategoryNav } from "./blog-category-nav";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.saily.example.com";
@@ -589,8 +590,8 @@ export function BlogPageContent({ lang, initialBlogs, initialCategories }: BlogP
 
   return (
     <div>
-      {/* Category Navigation Bar */}
-      <CategoryNavBar categories={cats} lang={lang} />
+      {/* Category Navigation Bar — uses shared BlogCategoryNav with working search */}
+      <BlogCategoryNav lang={lang} />
 
       {/* Featured Article */}
       {featuredBlog && <FeaturedArticle blog={featuredBlog} lang={lang} />}

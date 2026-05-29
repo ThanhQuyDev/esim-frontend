@@ -6,6 +6,7 @@ import { getSeoMetadata } from "@/lib/seo";
 import {
   fetchHelpCenterArticles,
   fetchHelpCenterBySlug,
+  fetchPopularHelpCenterArticles,
 } from "@/lib/api";
 import { localizedHref } from "@/lib/route-mapping";
 import {
@@ -47,7 +48,7 @@ export default async function HelpCenterDetailPage({
   // specific article — the article itself by its canonical slug, in parallel.
   // The CMS slug may include a leading "/" (e.g. "/honest-review2"); the URL
   // strips that, so we try the bare slug first and fall back to "/${slug}".
-  const [dict, helpCenterRes, slugArticle] = await Promise.all([
+  const [dict, helpCenterRes, slugArticle, popularRes] = await Promise.all([
     getDictionary(params.lang),
     fetchHelpCenterArticles(params.lang),
     titleSlug
@@ -55,6 +56,11 @@ export default async function HelpCenterDetailPage({
           (a) => a ?? fetchHelpCenterBySlug(`/${titleSlug}`, params.lang)
         )
       : Promise.resolve(null),
+    // Fetch popular articles only when rendering an article detail page —
+    // that's the only place the "Related articles" block appears.
+    titleSlug
+      ? fetchPopularHelpCenterArticles(params.lang, 6)
+      : Promise.resolve({ data: [], hasNextPage: false }),
   ]);
 
   return (
@@ -67,6 +73,7 @@ export default async function HelpCenterDetailPage({
           titleSlug={titleSlug}
           initialArticles={helpCenterRes.data}
           initialArticle={slugArticle ?? undefined}
+          popularArticles={popularRes.data}
         />
       </Suspense>
       <FooterSection dict={dict.footer} lang={params.lang} />

@@ -811,6 +811,35 @@ export async function fetchHelpCenterArticles(lang?: string): Promise<HelpCenter
   return res.json();
 }
 
+/**
+ * Fetch popular help-center articles (server-side filter via `isPopular=true`).
+ * Used for the "Related articles" block at the bottom of an article detail page.
+ */
+export async function fetchPopularHelpCenterArticles(
+  lang?: string,
+  limit = 6
+): Promise<HelpCenterResponse> {
+  const headers: Record<string, string> = {};
+  if (lang) {
+    headers["x-custom-lang"] = lang;
+  }
+  try {
+    const res = await fetch(
+      `${API_BASE_URL}/api/v1/help-center?isPopular=true&limit=${limit}`,
+      {
+        headers,
+        next: { revalidate: 60 },
+      }
+    );
+    if (!res.ok) {
+      return { data: [], hasNextPage: false };
+    }
+    return res.json();
+  } catch {
+    return { data: [], hasNextPage: false };
+  }
+}
+
 export async function fetchHelpCenterBySlug(slug: string, lang?: string): Promise<HelpCenterArticle | null> {
   const headers: Record<string, string> = {};
   if (lang) {

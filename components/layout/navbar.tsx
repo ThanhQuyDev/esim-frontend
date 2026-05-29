@@ -633,7 +633,7 @@ function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
             {topBars.length > 1 ? (
               /* Multiple promotions — Animation 3.1: smooth cross-fade
                  between announcements so the copy never snaps abruptly. */
-              <div className="flex-1 py-3">
+              <div className="flex-1 min-w-0 py-3">
                 <Swiper
                   modules={[Autoplay, EffectFade]}
                   effect="fade"

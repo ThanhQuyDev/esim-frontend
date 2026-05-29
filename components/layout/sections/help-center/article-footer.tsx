@@ -9,8 +9,8 @@ interface ArticleFooterProps {
   lang: string;
   /** Currently displayed article — used to filter it out of related results. */
   currentArticle: HelpCenterArticle;
-  /** Full article catalog so we can derive related items client-side. */
-  allArticles: HelpCenterArticle[];
+  /** Popular articles fetched from the API with `?isPopular=true&limit=6`. */
+  popularArticles: HelpCenterArticle[];
   /** URL builder for an article slug. */
   buildHref: (article: HelpCenterArticle) => string;
 }
@@ -48,42 +48,16 @@ function openChatBubble() {
   toggle?.click();
 }
 
-/**
- * Pick 3–5 articles related to the current one. Priority:
- *   1. Same category + same parent (closest siblings)
- *   2. Same category, different parent
- *   3. Same parent across categories
- * Always excludes the current article and trims to a max of 5 entries.
- */
-function selectRelated(
-  current: HelpCenterArticle,
-  pool: HelpCenterArticle[],
-  max = 5
-): HelpCenterArticle[] {
-  if (!current || pool.length === 0) return [];
-
-  const others = pool.filter((a) => a.id !== current.id);
-  const byScore = others
-    .map((a) => {
-      let score = 0;
-      if (a.category === current.category) score += 2;
-      if (a.parent === current.parent) score += 3;
-      return { article: a, score };
-    })
-    .filter((x) => x.score > 0)
-    .sort((a, b) => b.score - a.score || a.article.order - b.article.order);
-
-  return byScore.slice(0, max).map((x) => x.article);
-}
 
 export function ArticleFooter({
   lang,
   currentArticle,
-  allArticles,
+  popularArticles,
   buildHref,
 }: ArticleFooterProps) {
   const t = lang === "vi" ? VI : EN;
-  const related = selectRelated(currentArticle, allArticles, 5);
+  // Exclude the current article from the popular list
+  const related = popularArticles.filter((a) => a.id !== currentArticle.id).slice(0, 6);
   const ticketHref = `${localizedHref(lang, "help-center")}/support`;
 
   return (
@@ -125,8 +99,8 @@ export function ArticleFooter({
         </div>
       </section>
 
-      {/* === 2. Related Articles === */}
-      {related.length >= 3 && (
+      {/* === 2. Related Articles (up to 6 popular articles) === */}
+      {related.length > 0 && (
         <section aria-labelledby="article-related-title">
           <div className="mb-5">
             <h3

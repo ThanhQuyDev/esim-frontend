@@ -204,7 +204,7 @@ export function BlogDetailContent({ lang, slug, initialBlog }: BlogDetailContent
                     <div className="flex flex-col gap-12">
                       {/* Article body - Bug 1.1: prose for rich text + Style 1.5: rounded images */}
                       <div
-                        className="prose prose-slate max-w-none prose-headings:font-bold prose-h2:text-2xl prose-h3:text-xl prose-h4:text-lg prose-table:border prose-table:border-gray-300 prose-th:border prose-th:border-gray-300 prose-th:p-2 prose-td:border prose-td:border-gray-300 prose-td:p-2 prose-blockquote:border-l-4 prose-blockquote:border-gray-300 prose-blockquote:pl-4 prose-img:rounded-lg"
+                        className="prose prose-slate max-w-none prose-headings:font-bold prose-h2:text-2xl prose-h3:text-xl prose-h4:text-lg prose-table:border prose-table:border-gray-300 prose-th:border prose-th:border-gray-300 prose-th:p-2 prose-td:border prose-td:border-gray-300 prose-td:p-2 prose-blockquote:border-l-4 prose-blockquote:border-gray-300 prose-blockquote:pl-4 prose-img:rounded-lg prose-a:no-underline hover:prose-a:underline"
                         dangerouslySetInnerHTML={{ __html: processedContent }}
                       />
 

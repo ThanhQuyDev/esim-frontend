@@ -36,7 +36,7 @@ function BlogSearchInput({ lang }: { lang: string }) {
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
     if (keyword.trim()) {
-      router.push(`/${lang}/blog?search=${encodeURIComponent(keyword.trim())}`);
+      router.push(`/${lang}/blog/search?q=${encodeURIComponent(keyword.trim())}`);
     }
   }
 
@@ -57,7 +57,7 @@ function BlogSearchInput({ lang }: { lang: string }) {
         <form
           id="blog-search"
           onSubmit={handleSearch}
-          className="absolute right-10 top-1/2 -translate-y-1/2 flex items-center z-10"
+          className="absolute right-10 top-1/2 -translate-y-1/2 flex items-center gap-1 z-10"
         >
           <input
             ref={inputRef}
@@ -65,8 +65,14 @@ function BlogSearchInput({ lang }: { lang: string }) {
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
             placeholder={lang === "vi" ? "Tìm kiếm bài viết..." : "Search articles..."}
-            className="w-48 sm:w-64 px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            className="w-48 sm:w-64 px-3 py-1.5 border border-gray-300 rounded-l-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
           />
+          <button
+            type="submit"
+            className="px-3 py-1.5 bg-brand-black text-white text-sm font-medium rounded-r-md hover:opacity-80 transition-opacity"
+          >
+            {lang === "vi" ? "Tìm" : "Go"}
+          </button>
         </form>
       )}
     </div>

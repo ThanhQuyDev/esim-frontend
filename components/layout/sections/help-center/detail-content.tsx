@@ -56,6 +56,11 @@ interface DetailContentProps {
    * not contain the article (paging / locale variants).
    */
   initialArticle?: HelpCenterArticle;
+  /**
+   * Popular articles fetched server-side (`?isPopular=true&limit=6`) — rendered
+   * inside the bottom "Related articles" block on the article detail view.
+   */
+  popularArticles?: HelpCenterArticle[];
 }
 
 interface GroupedData {
@@ -71,6 +76,7 @@ export function DetailContent({
   titleSlug,
   initialArticles,
   initialArticle,
+  popularArticles,
 }: DetailContentProps) {
   const [articles, setArticles] = useState<HelpCenterArticle[]>(initialArticles ?? []);
   const [loading, setLoading] = useState(!initialArticles);
@@ -450,18 +456,18 @@ export function DetailContent({
                     [&_th]:border [&_th]:border-gray-300 [&_th]:px-3 [&_th]:py-2 [&_th]:bg-gray-100 [&_th]:text-left [&_th]:font-semibold
                     [&_td]:border [&_td]:border-gray-300 [&_td]:px-3 [&_td]:py-2
                     [&_blockquote]:border-l-4 [&_blockquote]:border-gray-300 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-gray-600 [&_blockquote]:my-4
-                    [&_a]:text-gray-700 [&_a]:underline [&_a]:hover:text-gray-900
+                    [&_a]:text-gray-700 [&_a]:no-underline [&_a]:hover:underline [&_a]:hover:text-gray-900
                     [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded
                     [&_pre]:bg-gray-100 [&_pre]:p-4 [&_pre]:rounded [&_pre]:overflow-x-auto
                     [&_code]:bg-gray-100 [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm"
                   dangerouslySetInnerHTML={{ __html: articleProcessed.html || selectedArticle.content }}
                 />
 
-                {/* Content 5.1: Support CTA + related articles */}
+                {/* Content 5.1: Support CTA + related articles (6 popular) */}
                 <ArticleFooter
                   lang={lang}
                   currentArticle={selectedArticle}
-                  allArticles={articles}
+                  popularArticles={popularArticles ?? []}
                   buildHref={(a) =>
                     `${basePath}/${toUrlSlug(a.category)}/${toUrlSlug(a.parent)}/${getArticleSlug(a)}`
                   }
