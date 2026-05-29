@@ -358,7 +358,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-0.5">
             <p className="text-sm font-semibold text-gray-900 truncate font-mono">
-              {esim.iccid}
+              {esim.plan?.name}
             </p>
             <span className={`inline-flex items-center px-2 py-0.5 text-[13px] font-medium rounded-full ${getStatusStyle(esim.status)}`}>
               {getStatusLabel(esim.status, t)}
