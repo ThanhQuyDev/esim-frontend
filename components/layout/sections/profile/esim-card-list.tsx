@@ -288,6 +288,50 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
   const [activeTab, setActiveTab] = useState<EsimTab>("info");
   const [topupOpen, setTopupOpen] = useState(false);
 
+  // --- Derived plan info ---
+  const planTypeLabel = (() => {
+    const pt = esim.plan?.type;
+    if (!pt) return "—";
+    const key = pt.trim().toLowerCase();
+    const map: Record<string, Record<string, string>> = {
+      "fixed": { en: "Fixed plan", vi: "Gói cố định" },
+      "daily": { en: "Daily plan", vi: "Gói theo ngày" },
+      "unlimited-reduce": {
+        en: "Unlimited (normal speed)",
+        vi: "Không giới hạn tốc độ thường",
+      },
+      "unlimite": {
+        en: "Unlimited (high speed)",
+        vi: "Không giới hạn tốc độ cao",
+      },
+    };
+    return map[key]?.[lang] || pt;
+  })();
+
+  // operatorName is comma-separated, e.g. "True,AIS"
+  const operatorNames = (esim.plan?.operatorName || "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  // speed is slash-separated, e.g. "5G/4G"
+  const speedTiers = (esim.plan?.speed || "")
+    .split("/")
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  // Activation validity: 180 days from createdAt
+  const activationDeadline = (() => {
+    if (!esim.createdAt) return null;
+    const deadline = new Date(esim.createdAt);
+    deadline.setDate(deadline.getDate() + 180);
+    return deadline;
+  })();
+
+  const activationDaysLeft = activationDeadline
+    ? Math.max(0, Math.ceil((activationDeadline.getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+    : null;
+
   const fields: { label: string; value: string; copyable?: boolean }[] = [
     { label: "ICCID", value: esim.iccid, copyable: true },
     // LPA equivalent of ICCID — shown so users can copy the full activation
@@ -422,6 +466,84 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                       </div>
                     </div>
                   ))}
+
+                  {/* Plan Info Section */}
+                  <div className="border-t border-gray-100 pt-3 mt-3">
+                    <p className="text-[13px] font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                      {lang === "vi" ? "Thông tin gói cước" : "Plan Info"}
+                    </p>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <p className="text-[13px] font-medium text-gray-400 uppercase tracking-wider mb-1">
+                          {lang === "vi" ? "Loại gói" : "Plan Type"}
+                        </p>
+                        <div className="bg-gray-50 rounded-lg px-3 py-2">
+                          <p className="text-sm text-gray-900">{planTypeLabel}</p>
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-[13px] font-medium text-gray-400 uppercase tracking-wider mb-1">
+                          {lang === "vi" ? "Nhà mạng" : "Carrier"}
+                        </p>
+                        <div className="bg-gray-50 rounded-lg px-3 py-2">
+                          {operatorNames.length > 0 ? (
+                            <div className="flex flex-wrap gap-1">
+                              {operatorNames.map((op) => (
+                                <span
+                                  key={op}
+                                  className="inline-flex items-center px-2 py-0.5 text-[13px] font-medium rounded-full bg-indigo-50 text-indigo-700"
+                                >
+                                  {op}
+                                </span>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="text-sm text-gray-900">—</p>
+                          )}
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-[13px] font-medium text-gray-400 uppercase tracking-wider mb-1">
+                          {lang === "vi" ? "Tốc độ mạng" : "Network Speed"}
+                        </p>
+                        <div className="bg-gray-50 rounded-lg px-3 py-2">
+                          {speedTiers.length > 0 ? (
+                            <div className="flex flex-wrap gap-1">
+                              {speedTiers.map((s) => (
+                                <span
+                                  key={s}
+                                  className="inline-flex items-center px-2 py-0.5 text-[13px] font-semibold rounded-full bg-emerald-50 text-emerald-700"
+                                >
+                                  {s}
+                                </span>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="text-sm text-gray-900">—</p>
+                          )}
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-[13px] font-medium text-gray-400 uppercase tracking-wider mb-1">
+                          {lang === "vi" ? "Thời hạn kích hoạt" : "Activation Validity"}
+                        </p>
+                        <div className="bg-gray-50 rounded-lg px-3 py-2">
+                          {activationDeadline ? (
+                            <p className={`text-sm ${activationDaysLeft !== null && activationDaysLeft <= 30 ? "text-amber-600 font-medium" : "text-gray-900"}`}>
+                              {activationDaysLeft !== null && activationDaysLeft > 0
+                                ? `${activationDaysLeft} ${lang === "vi" ? "ngày còn lại" : "days left"}`
+                                : lang === "vi" ? "Đã hết hạn" : "Expired"}
+                              <span className="block text-[13px] text-gray-400 mt-0.5">
+                                {formatDate(activationDeadline.toISOString(), lang)}
+                              </span>
+                            </p>
+                          ) : (
+                            <p className="text-sm text-gray-900">—</p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 
                   {/* Status & Dates */}
                   <div className="grid grid-cols-2 gap-3">

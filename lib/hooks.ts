@@ -1129,6 +1129,12 @@ export interface MyEsimPlan {
   durationDays?: number;
   dataMb?: number;
   topUp?: boolean;
+  /** Plan type: "fixed" | "daily" | "unlimited normal speed" | "unlimited highspeed" */
+  type?: string;
+  /** Operator / carrier names (nhà mạng), comma-separated, e.g. "True,AIS" */
+  operatorName?: string;
+  /** Network speeds, slash-separated, e.g. "5G/4G" */
+  speed?: string;
   destination?: {
     id?: number;
     name?: string;
