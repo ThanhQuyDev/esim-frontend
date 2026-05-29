@@ -22,7 +22,7 @@ export function getCloudinaryTransformedUrl(
 
     const quality = options.quality ?? "auto:eco";
     const transformationParts = [
-      "f_auto",
+      "f_webp",
       typeof quality === "number" ? `q_${quality}` : `q_${quality}`,
       `c_${options.crop ?? "fill"}`,
       `w_${options.width}`,
