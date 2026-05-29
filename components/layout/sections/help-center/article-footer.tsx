@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { MessageCircle, Mail, FileText, ArrowRight } from "lucide-react";
 import type { HelpCenterArticle } from "@/lib/api";
+import { localizedHref } from "@/lib/route-mapping";
 
 interface ArticleFooterProps {
   lang: string;
@@ -83,7 +84,7 @@ export function ArticleFooter({
 }: ArticleFooterProps) {
   const t = lang === "vi" ? VI : EN;
   const related = selectRelated(currentArticle, allArticles, 5);
-  const ticketHref = `/${lang}/help-center/support`;
+  const ticketHref = `${localizedHref(lang, "help-center")}/support`;
 
   return (
     <div className="mt-12 pt-10 border-t border-gray-200 space-y-10">

@@ -6,6 +6,25 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
+ * Replace `${key}` placeholders in a template string using values from `vars`.
+ * Unknown keys and missing values are left untouched.
+ *
+ * @example
+ *   interpolate("Hello ${name}", { name: "Vietnam" }) // → "Hello Vietnam"
+ */
+export function interpolate(
+  template: string,
+  vars?: Record<string, string | number | null | undefined>
+): string {
+  if (!template || !vars) return template ?? "";
+  return template.replace(/\$\{(\w+)\}/g, (match, key: string) => {
+    const value = vars[key];
+    if (value === undefined || value === null || value === "") return match;
+    return String(value);
+  });
+}
+
+/**
  * Round a VND amount to the nearest thousand dong.
  */
 export function roundVndToThousands(amount: number): number {

@@ -5,7 +5,8 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Search } from "lucide-react";
 import type { HelpCenterArticle } from "@/lib/api";
-import { getCategoryLabel, getParentLabel } from "./category-config";
+import { localizedHref } from "@/lib/route-mapping";
+import { getCategoryLabel, getParentLabel, toUrlSlug } from "./category-config";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.saily.example.com";
@@ -126,7 +127,7 @@ export function SearchResultsContent({ lang }: SearchResultsContentProps) {
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchInput.trim()) {
-      router.push(`/${lang}/help-center/search?q=${encodeURIComponent(searchInput.trim())}`);
+      router.push(`${localizedHref(lang, "help-center")}/search?q=${encodeURIComponent(searchInput.trim())}`);
     }
   };
 
@@ -134,29 +135,6 @@ export function SearchResultsContent({ lang }: SearchResultsContentProps) {
 
   return (
     <main role="main">
-      {/* Breadcrumb */}
-      <div className="bg-gray-200">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center pt-4 pb-4">
-            <nav aria-label="Breadcrumb">
-              <ol className="flex items-center gap-2 text-sm list-none p-0 m-0">
-                <li>
-                  <Link href={`/${lang}/help-center`} className="text-blue-600 ">
-                    {lang === "vi" ? "Trung tâm trợ giúp" : "Help Center"}
-                  </Link>
-                </li>
-                <li className="text-gray-400">/</li>
-                <li>
-                  <span className="text-gray-700" aria-current="page">
-                    {lang === "vi" ? "Kết quả tìm kiếm" : "Search results"}
-                  </span>
-                </li>
-              </ol>
-            </nav>
-          </div>
-        </div>
-      </div>
-
       {/* Main content */}
       <div className="max-w-7xl mx-auto px-4">
         <div className="mt-6 mb-8">
@@ -209,7 +187,7 @@ export function SearchResultsContent({ lang }: SearchResultsContentProps) {
                       <header>
                         <h3 className="text-lg font-semibold mb-2">
                           <Link
-                            href={`/${lang}/help-center/${article.category}/${article.parent}/${getArticleSlug(article)}`}
+                            href={`${localizedHref(lang, "help-center")}/${toUrlSlug(article.category)}/${toUrlSlug(article.parent)}/${getArticleSlug(article)}`}
                             className="text-blue-700 "
                           >
                             {article.title}
@@ -219,7 +197,7 @@ export function SearchResultsContent({ lang }: SearchResultsContentProps) {
                           <ol className="flex items-center gap-1 text-sm text-gray-500 list-none p-0 m-0">
                             <li>
                               <Link
-                                href={`/${lang}/help-center`}
+                                href={localizedHref(lang, "help-center")}
                                 className="text-gray-500 "
                               >
                                 {lang === "vi" ? "Trung tâm trợ giúp" : "Help Center"}
@@ -228,7 +206,7 @@ export function SearchResultsContent({ lang }: SearchResultsContentProps) {
                             <li className="text-gray-400">›</li>
                             <li>
                               <Link
-                                href={`/${lang}/help-center/${article.category}`}
+                                href={`${localizedHref(lang, "help-center")}/${toUrlSlug(article.category)}`}
                                 className="text-gray-500 "
                               >
                                 {getCategoryLabel(article.category, lang)}
@@ -237,7 +215,7 @@ export function SearchResultsContent({ lang }: SearchResultsContentProps) {
                             <li className="text-gray-400">›</li>
                             <li>
                               <Link
-                                href={`/${lang}/help-center/${article.category}/${article.parent}`}
+                                href={`${localizedHref(lang, "help-center")}/${toUrlSlug(article.category)}/${toUrlSlug(article.parent)}`}
                                 className="text-gray-500 "
                               >
                                 {getParentLabel(article.parent, lang)}
@@ -273,7 +251,7 @@ export function SearchResultsContent({ lang }: SearchResultsContentProps) {
               <nav className="mt-8 flex items-center justify-center gap-4" aria-label="Pagination">
                 {currentPage > 1 && (
                   <Link
-                    href={`/${lang}/help-center/search?q=${encodeURIComponent(query)}&page=${currentPage - 1}`}
+                    href={`${localizedHref(lang, "help-center")}/search?q=${encodeURIComponent(query)}&page=${currentPage - 1}`}
                     className="px-4 py-2 text-sm border border-gray-300 rounded hover:bg-gray-50"
                   >
                     ‹ {lang === "vi" ? "Trước" : "Previous"}
@@ -287,7 +265,7 @@ export function SearchResultsContent({ lang }: SearchResultsContentProps) {
 
                 {hasNextPage && (
                   <Link
-                    href={`/${lang}/help-center/search?q=${encodeURIComponent(query)}&page=${currentPage + 1}`}
+                    href={`${localizedHref(lang, "help-center")}/search?q=${encodeURIComponent(query)}&page=${currentPage + 1}`}
                     className="px-4 py-2 text-sm border border-gray-300 rounded hover:bg-gray-50"
                   >
                     {lang === "vi" ? "Tiếp" : "Next"} ›

@@ -4,6 +4,7 @@ import { FooterSection } from "@/components/layout/sections/footer";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { getDictionary } from "@/lib/dictionaries";
 import { getSeoMetadata } from "@/lib/seo";
+import { localizedHref } from "@/lib/route-mapping";
 import type { Locale } from "@/lib/i18n-config";
 import type { Metadata } from "next";
 
@@ -12,7 +13,7 @@ export async function generateMetadata({
 }: {
   params: { lang: Locale };
 }): Promise<Metadata> {
-  return getSeoMetadata(`/${params.lang}/help-center/categories`);
+  return getSeoMetadata(`${localizedHref(params.lang, "help-center")}/categories`);
 }
 
 export default async function HelpCenterCategoriesPage({
@@ -26,7 +27,7 @@ export default async function HelpCenterCategoriesPage({
     <>
       <Breadcrumb
         items={[
-          { label: dict.breadcrumb.helpCenter, href: `/${params.lang}/help-center` },
+          { label: dict.breadcrumb.helpCenter, href: localizedHref(params.lang, "help-center") },
           { label: dict.breadcrumb.helpCenterCategories },
         ]}
         lang={params.lang}

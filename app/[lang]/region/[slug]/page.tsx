@@ -23,6 +23,16 @@ interface RegionPageProps {
   params: { lang: Locale; slug: string };
 }
 
+function pickLocalizedName(
+  region: { name: string; title?: string | null; titleVi?: string | null },
+  lang: Locale
+): string {
+  if (lang === "vi") {
+    return region.titleVi || region.title || region.name;
+  }
+  return region.title || region.titleVi || region.name;
+}
+
 export async function generateMetadata({
   params,
 }: RegionPageProps): Promise<Metadata> {
@@ -33,16 +43,21 @@ export async function generateMetadata({
     return { title: dict.destinationPage.notFound };
   }
 
-  const title = dict.destinationPage.title.replace("{destination}", region.name);
+  const localizedName = pickLocalizedName(region, params.lang);
+  const title = dict.destinationPage.title.replace(
+    "{destination}",
+    localizedName
+  );
   const description = dict.destinationPage.subtitle.replace(
     "{destination}",
-    region.name
+    localizedName
   );
 
-  return getSeoMetadata(`/${params.lang}/region/${params.slug}`, {
-    title,
-    description,
-  });
+  return getSeoMetadata(
+    `/${params.lang}/region/${params.slug}`,
+    { title, description },
+    { name: localizedName }
+  );
 }
 
 export default async function RegionPage({ params }: RegionPageProps) {
@@ -55,6 +70,9 @@ export default async function RegionPage({ params }: RegionPageProps) {
   if (!region) {
     notFound();
   }
+
+  const localizedName = pickLocalizedName(region, params.lang);
+  const pageUrl = `/${params.lang}/region/${params.slug}`;
 
   // Adapt Region to Destination shape for shared components
   const destination: Destination = {
@@ -96,7 +114,12 @@ export default async function RegionPage({ params }: RegionPageProps) {
         <LazyEsimComparison dict={dict.whatIsEsimPage.comparison} />
         <LazyTestimonialsSection dict={dict.testimonials} />
         <LazyDownloadAppSection dict={dict.downloadApp} />
-        <LazyFAQSection dict={dict.faq} lang={params.lang} />
+        <LazyFAQSection
+          dict={dict.faq}
+          lang={params.lang}
+          url={pageUrl}
+          templateVars={{ name: localizedName }}
+        />
         <LazyReferFriendBanner dict={dict.referFriend} />
         <LazyFooterSection dict={dict.footer} lang={params.lang} />
       </div>

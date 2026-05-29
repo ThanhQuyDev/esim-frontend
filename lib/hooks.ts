@@ -265,30 +265,42 @@ export function useSearchRegions(query: string, enabled = true) {
 
 // ===== FAQ Hooks =====
 
+interface UseFaqsOptions {
+  /** Current page URL/pathname so the backend scopes FAQs to this page. */
+  url?: string;
+  /** Blog id — pass when on a blog detail page. */
+  blogId?: string;
+}
+
 /**
- * Fetch FAQs scoped to the current page context.
+ * Fetch FAQs scoped to the current page.
  *
- * Per Refactor 4.1, every FAQ block must hit the canonical
- * `/api/v1/faqs/by-context` endpoint and pass a context identifier so the
- * backend can return only the relevant entries. The optional `context`
- * argument is a free-form key (e.g. `"home"`, `"destination:vietnam"`) the
- * caller can derive from the route. The response is normalized so callers
- * can keep using the existing `PaginatedResponse<Faq>` shape.
+ * The `/api/v1/faqs/by-context` endpoint filters by:
+ *   - `url`    : the current page URL/pathname
+ *   - `blogId` : the blog id (only on blog detail pages)
+ *
+ * Callers should pass `{ url }` (derived from the current route) so the
+ * backend returns only the FAQs relevant to the current screen.
  */
 export function useFaqs(
   lang: Locale = "en",
   initialData?: Faq[],
-  context?: string
+  options?: UseFaqsOptions
 ) {
-  const ctx = context && context.trim().length > 0 ? context : "global";
+  const url = options?.url || "";
+  const blogId = options?.blogId || "";
+  const cacheKey = blogId || url || "all";
+
   return useQuery({
-    queryKey: [...queryKeys.faqs.list(lang), "by-context", ctx],
+    queryKey: [...queryKeys.faqs.list(lang), "by-context", cacheKey],
     queryFn: async ({ signal }) => {
       const params: Record<string, string> = {
-        context: ctx,
         language: lang,
-        limit: "20",
+        limit: "6",
       };
+      if (url) params.url = url;
+      if (blogId) params.blogId = blogId;
+
       try {
         const res = await clientFetch<PaginatedResponse<Faq> | Faq[]>(
           "/api/v1/faqs/by-context",

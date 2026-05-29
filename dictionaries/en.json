@@ -838,7 +838,7 @@
     }
   },
   "destinationPage": {
-    "title": "eSIM {destination} — Stay connected",
+    "title": "{destination} — Stay connected",
     "subtitle": "Buy a travel eSIM for {destination} and enjoy reliable coverage with flexible plans.",
     "notFound": "Destination not found",
     "notFoundDesc": "The destination you're looking for doesn't exist or has been removed.",

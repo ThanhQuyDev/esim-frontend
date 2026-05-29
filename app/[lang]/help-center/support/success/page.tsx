@@ -5,6 +5,7 @@ import { FooterSection } from "@/components/layout/sections/footer";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { getDictionary } from "@/lib/dictionaries";
 import { getSeoMetadata } from "@/lib/seo";
+import { localizedHref } from "@/lib/route-mapping";
 import type { Locale } from "@/lib/i18n-config";
 import type { Metadata } from "next";
 
@@ -14,7 +15,7 @@ export async function generateMetadata({
   params: { lang: Locale };
 }): Promise<Metadata> {
   const dict = await getDictionary(params.lang);
-  return getSeoMetadata(`/${params.lang}/help-center/support/success`, {
+  return getSeoMetadata(`${localizedHref(params.lang, "help-center")}/support/success`, {
     title: dict.support?.form?.success?.title,
     description: dict.support?.form?.success?.description,
   });
@@ -41,8 +42,8 @@ export default async function SupportSuccessPage({
     <>
       <Breadcrumb
         items={[
-          { label: dict.breadcrumb.helpCenter, href: `/${params.lang}/help-center` },
-          { label: dict.breadcrumb.helpCenterSupport, href: `/${params.lang}/help-center/support` },
+          { label: dict.breadcrumb.helpCenter, href: localizedHref(params.lang, "help-center") },
+          { label: dict.breadcrumb.helpCenterSupport, href: `${localizedHref(params.lang, "help-center")}/support` },
           { label: dict.breadcrumb.helpCenterSupportSuccess },
         ]}
         lang={params.lang}
@@ -72,7 +73,7 @@ export default async function SupportSuccessPage({
 
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Button asChild className="cursor-pointer">
-                <Link href={`/${params.lang}/help-center/support`}>
+                <Link href={`${localizedHref(params.lang, "help-center")}/support`}>
                   <Send className="mr-2 h-4 w-4" aria-hidden="true" />
                   {successDict.ctaNew}
                 </Link>

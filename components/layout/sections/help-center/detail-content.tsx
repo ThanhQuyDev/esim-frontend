@@ -4,8 +4,17 @@ import { useEffect, useState, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { Search, ChevronDown, ChevronRight, Star } from "lucide-react";
 import type { HelpCenterArticle } from "@/lib/api";
-import { getCategoryLabel, getParentLabel } from "./category-config";
+import { localizedHref } from "@/lib/route-mapping";
+import {
+  getCategoryLabel,
+  getParentLabel,
+  toUrlSlug,
+  resolveCategoryKey,
+  resolveParentKey,
+} from "./category-config";
 import { ArticleFooter } from "./article-footer";
+import { ArticleToc, processArticleContent } from "./article-toc";
+import { ScrollToTop } from "./scroll-to-top";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.saily.example.com";
@@ -72,16 +81,20 @@ export function DetailContent({
   const [expandedParents, setExpandedParents] = useState<Set<string>>(
     new Set(parent ? [`${category}/${parent}`] : [])
   );
-  const basePath = `/${lang}/help-center`;
+  const basePath = localizedHref(lang, "help-center");
 
-  // Group all articles by category → parent
+  // Group all articles by category → parent.
+  // Articles from the API may use either canonical EN keys (`getting_started`)
+  // or locale-specific variants (`bat_dau`). We normalize to canonical keys so
+  // the sidebar, comparisons, and URL params all line up regardless of locale.
   const grouped = useMemo<GroupedData>(() => {
     const result: GroupedData = {};
     for (const article of articles) {
-      if (!result[article.category]) result[article.category] = {};
-      if (!result[article.category][article.parent])
-        result[article.category][article.parent] = [];
-      result[article.category][article.parent].push(article);
+      const catKey = resolveCategoryKey(article.category) || article.category;
+      const parentKey = resolveParentKey(article.parent) || article.parent;
+      if (!result[catKey]) result[catKey] = {};
+      if (!result[catKey][parentKey]) result[catKey][parentKey] = [];
+      result[catKey][parentKey].push(article);
     }
     for (const cat of Object.values(result)) {
       for (const parentKey of Object.keys(cat)) {
@@ -109,8 +122,8 @@ export function DetailContent({
     return (
       articles.find(
         (a) =>
-          (!parent || a.parent === parent) &&
-          (!category || a.category === category) &&
+          (!parent || resolveParentKey(a.parent) === parent) &&
+          (!category || resolveCategoryKey(a.category) === category) &&
           getArticleSlug(a) === normalizedTitleSlug
       ) || null
     );
@@ -125,13 +138,23 @@ export function DetailContent({
     [selectedArticle, normalizedTitleSlug]
   );
 
-  // Articles for the current parent
+  // Articles for the current parent (compare against canonical keys)
   const parentArticles = useMemo(() => {
     if (!parent) return [];
     return articles
-      .filter((a) => a.category === category && a.parent === parent)
+      .filter(
+        (a) =>
+          resolveCategoryKey(a.category) === category &&
+          resolveParentKey(a.parent) === parent
+      )
       .sort((a, b) => a.order - b.order);
   }, [articles, category, parent]);
+
+  // Process article content: inject ids into <h2> headings and extract TOC items
+  const articleProcessed = useMemo(() => {
+    if (!selectedArticle?.content) return { headings: [], html: "" };
+    return processArticleContent(selectedArticle.content);
+  }, [selectedArticle?.content]);
 
   // Auto-expand to current article location
   useEffect(() => {
@@ -247,7 +270,7 @@ export function DetailContent({
                   <li className="text-gray-400 mx-1">›</li>
                   <li>
                     {parent ? (
-                      <Link href={`${basePath}/${category}`} className="text-gray-700 no-underline hover:text-gray-900 transition-colors">
+                      <Link href={`${basePath}/${toUrlSlug(category)}`} className="text-gray-700 no-underline hover:text-gray-900 transition-colors">
                         {getCategoryLabel(category, lang)}
                       </Link>
                     ) : (
@@ -259,7 +282,7 @@ export function DetailContent({
                       <li className="text-gray-400 mx-1">›</li>
                       <li>
                         {titleSlug ? (
-                          <Link href={`${basePath}/${category}/${parent}`} className="text-gray-700 no-underline hover:text-gray-900 transition-colors">
+                          <Link href={`${basePath}/${toUrlSlug(category)}/${toUrlSlug(parent)}`} className="text-gray-700 no-underline hover:text-gray-900 transition-colors">
                             {getParentLabel(parent, lang)}
                           </Link>
                         ) : (
@@ -285,7 +308,7 @@ export function DetailContent({
 
       {/* Page container (Layout 2.2: max-w-7xl) */}
       <div className="max-w-7xl mx-auto px-4 flex-1" id="page-container">
-        <div className="flex flex-col md:flex-row gap-8 lg:gap-12">
+        <div className="flex flex-col md:flex-row gap-8 lg:gap-10">
           {/* Sidebar navigation - LEFT (Navigation 2.5: 3-level tree) */}
           <aside className="w-full md:w-4/12 lg:w-3/12 flex-shrink-0 order-1">
             <div className="mt-6 border-t border-b md:border rounded-sm md:py-4 md:px-4 md:my-10">
@@ -311,7 +334,7 @@ export function DetailContent({
                           aria-expanded={isCatExpanded}
                         >
                           <Link
-                            href={`${basePath}/${catKey}`}
+                            href={`${basePath}/${toUrlSlug(catKey)}`}
                             className="flex-1 text-inherit no-underline hover:text-inherit"
                             onClick={(e) => e.stopPropagation()}
                           >
@@ -343,7 +366,7 @@ export function DetailContent({
                                     aria-expanded={isParentExpanded}
                                   >
                                     <Link
-                                      href={`${basePath}/${catKey}/${parentKey}`}
+                                      href={`${basePath}/${toUrlSlug(catKey)}/${toUrlSlug(parentKey)}`}
                                       className="flex-1 text-inherit no-underline hover:text-inherit"
                                       onClick={(e) => e.stopPropagation()}
                                     >
@@ -368,7 +391,7 @@ export function DetailContent({
                                         return (
                                           <li key={article.id}>
                                             <Link
-                                              href={`${basePath}/${catKey}/${parentKey}/${artSlug}`}
+                                              href={`${basePath}/${toUrlSlug(catKey)}/${toUrlSlug(parentKey)}/${artSlug}`}
                                               className={`block px-3 py-2 text-xs rounded transition-colors no-underline ${
                                                 isArticleActive
                                                   ? "bg-gray-100 font-medium text-gray-900 border-l-[3px] border-l-[#ffdc52]"
@@ -395,8 +418,8 @@ export function DetailContent({
             </div>
           </aside>
 
-          {/* Main content - RIGHT */}
-          <div className="flex-1 order-2">
+          {/* Main content - CENTER */}
+          <div className="flex-1 order-2 min-w-0">
             {/* === LEVEL 3: Article detail (Bug 2.4: Rich Text) === */}
             {titleSlug && selectedArticle ? (
               <div className="my-10">
@@ -431,7 +454,7 @@ export function DetailContent({
                     [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded
                     [&_pre]:bg-gray-100 [&_pre]:p-4 [&_pre]:rounded [&_pre]:overflow-x-auto
                     [&_code]:bg-gray-100 [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm"
-                  dangerouslySetInnerHTML={{ __html: selectedArticle.content }}
+                  dangerouslySetInnerHTML={{ __html: articleProcessed.html || selectedArticle.content }}
                 />
 
                 {/* Content 5.1: Support CTA + related articles */}
@@ -440,7 +463,7 @@ export function DetailContent({
                   currentArticle={selectedArticle}
                   allArticles={articles}
                   buildHref={(a) =>
-                    `${basePath}/${a.category}/${a.parent}/${getArticleSlug(a)}`
+                    `${basePath}/${toUrlSlug(a.category)}/${toUrlSlug(a.parent)}/${getArticleSlug(a)}`
                   }
                 />
               </div>
@@ -456,7 +479,7 @@ export function DetailContent({
                       <div className="relative flex items-baseline py-2">
                         <div className="flex-1">
                           <Link
-                            href={`${basePath}/${category}/${parent}/${getArticleSlug(article)}`}
+                            href={`${basePath}/${toUrlSlug(category)}/${toUrlSlug(parent!)}/${getArticleSlug(article)}`}
                             className="text-gray-800 hover:text-gray-900 no-underline transition-colors"
                           >
                             {article.title}
@@ -494,7 +517,7 @@ export function DetailContent({
                       >
                         <h2 className="text-xl font-semibold mb-2">
                           <Link
-                            href={`${basePath}/${category}/${parentKey}`}
+                            href={`${basePath}/${toUrlSlug(category)}/${toUrlSlug(parentKey)}`}
                             className="text-gray-900 hover:text-gray-700 no-underline transition-colors"
                           >
                             {getParentLabel(parentKey, lang)}
@@ -507,7 +530,7 @@ export function DetailContent({
                               <div className="relative flex items-baseline py-2">
                                 <div className="flex-1">
                                   <Link
-                                    href={`${basePath}/${category}/${parentKey}/${getArticleSlug(article)}`}
+                                    href={`${basePath}/${toUrlSlug(category)}/${toUrlSlug(parentKey)}/${getArticleSlug(article)}`}
                                     className="text-gray-800 hover:text-gray-900 no-underline transition-colors"
                                   >
                                     {article.title}
@@ -524,7 +547,7 @@ export function DetailContent({
                         {arts.length > 6 && (
                           <p className="mt-2">
                             <Link
-                              href={`${basePath}/${category}/${parentKey}`}
+                              href={`${basePath}/${toUrlSlug(category)}/${toUrlSlug(parentKey)}`}
                               className="inline-block px-4 py-1.5 text-sm border border-gray-300 rounded hover:bg-gray-50 text-gray-800 no-underline transition-colors"
                             >
                               {lang === "vi" ? `Xem tất cả ${arts.length} bài viết` : `See all ${arts.length} articles`}
@@ -544,8 +567,20 @@ export function DetailContent({
               </div>
             )}
           </div>
+
+          {/* TOC Sidebar - RIGHT (only on article detail, desktop only) */}
+          {titleSlug && selectedArticle && articleProcessed.headings.length > 0 && (
+            <aside className="hidden lg:block w-56 xl:w-64 flex-shrink-0 order-3">
+              <div className="sticky top-[120px] pt-16">
+                <ArticleToc headings={articleProcessed.headings} lang={lang} />
+              </div>
+            </aside>
+          )}
         </div>
       </div>
+
+      {/* Scroll to top button */}
+      <ScrollToTop />
     </main>
   );
 }

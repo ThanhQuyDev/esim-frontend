@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 import { useFaqs } from "@/lib/hooks";
+import { interpolate } from "@/lib/utils";
 import type { Faq } from "@/lib/api";
 import type { Locale } from "@/lib/i18n-config";
 
@@ -11,22 +13,52 @@ interface FAQSectionProps {
   lang: Locale;
   initialFaqs?: Faq[];
   /**
-   * Page-context identifier so the FAQ block resolves only the entries the
-   * CMS has tagged for the current screen (e.g. `"home"`, `"checkout"`,
-   * `"destination:vietnam"`). Forwarded to `/api/v1/faqs/by-context` per
-   * Refactor 4.1.
+   * Current page URL/pathname forwarded to `/api/v1/faqs/by-context` so the
+   * backend returns only FAQs scoped to this page. Defaults to the current
+   * pathname when omitted.
    */
-  context?: string;
+  url?: string;
+  /**
+   * Blog id — pass when the FAQ block is rendered inside a blog detail page
+   * so the API returns FAQs attached to that post.
+   */
+  blogId?: string;
+  /**
+   * Variables used to replace `${name}`-style placeholders in the FAQ
+   * question/answer text. Useful on destination/region pages where the CMS
+   * stores templates like `"Test with name ${name}"` and we want to inject
+   * the localized destination name.
+   */
+  templateVars?: Record<string, string | number | null | undefined>;
 }
 
-export function FAQSection({ dict, lang, initialFaqs, context }: FAQSectionProps) {
+export function FAQSection({
+  dict,
+  lang,
+  initialFaqs,
+  url,
+  blogId,
+  templateVars,
+}: FAQSectionProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const { data: apiFaqs } = useFaqs(lang, initialFaqs, context);
+  const pathname = usePathname();
+  const resolvedUrl = url ?? pathname ?? "";
+  const { data: apiFaqs } = useFaqs(lang, initialFaqs, {
+    url: resolvedUrl,
+    blogId,
+  });
 
-  const faqItems =
+  const rawItems =
     apiFaqs && apiFaqs.length > 0
       ? apiFaqs.map((f: any) => ({ question: f.question, answer: f.answer }))
       : dict.items;
+
+  const faqItems = templateVars
+    ? rawItems.map((item: any) => ({
+        question: interpolate(item.question ?? "", templateVars),
+        answer: interpolate(item.answer ?? "", templateVars),
+      }))
+    : rawItems;
 
   const toggle = (i: number) => {
     setOpenIndex(openIndex === i ? null : i);
@@ -74,9 +106,10 @@ export function FAQSection({ dict, lang, initialFaqs, context }: FAQSectionProps
                                     </span>
                                   </button>
                                   {openIndex === i && (
-                                    <section className="overflow-hidden transition-all body-md text-text-secondary mt-3">
-                                      {item.answer}
-                                    </section>
+                                    <section
+                                      className="overflow-hidden transition-all body-md text-text-secondary mt-3 prose prose-sm max-w-none"
+                                      dangerouslySetInnerHTML={{ __html: item.answer }}
+                                    />
                                   )}
                                 </li>
                               </div>

@@ -7,6 +7,12 @@ import {
   fetchHelpCenterArticles,
   fetchHelpCenterBySlug,
 } from "@/lib/api";
+import { localizedHref } from "@/lib/route-mapping";
+import {
+  fromUrlSlug,
+  resolveCategoryKey,
+  resolveParentKey,
+} from "@/components/layout/sections/help-center/category-config";
 import type { Locale } from "@/lib/i18n-config";
 import type { Metadata } from "next";
 
@@ -15,7 +21,9 @@ export async function generateMetadata({
 }: {
   params: { lang: Locale; slug: string[] };
 }): Promise<Metadata> {
-  return getSeoMetadata(`/${params.lang}/help-center/${params.slug.join("/")}`);
+  // Use the public (localized) URL for SEO lookup since the CMS stores public URLs
+  const publicUrl = `${localizedHref(params.lang, "help-center")}/${params.slug.join("/")}`;
+  return getSeoMetadata(publicUrl);
 }
 
 export default async function HelpCenterDetailPage({
@@ -23,7 +31,17 @@ export default async function HelpCenterDetailPage({
 }: {
   params: { lang: Locale; slug: string[] };
 }) {
-  const [category, parent, titleSlug] = params.slug;
+  // URL uses dashes (`bat-dau`), internal data uses underscores (`bat_dau`),
+  // and articles in the API are stored with the canonical EN key (`getting_started`).
+  // Normalize URL → canonical key so the sidebar tree, comparisons, and lookups
+  // all work regardless of the locale used in the URL.
+  const [rawCategory, rawParent, titleSlug] = params.slug;
+  const category = rawCategory
+    ? resolveCategoryKey(fromUrlSlug(rawCategory))
+    : rawCategory;
+  const parent = rawParent
+    ? resolveParentKey(fromUrlSlug(rawParent))
+    : rawParent;
 
   // Fetch the article list (for the sidebar tree) and — if we're on a
   // specific article — the article itself by its canonical slug, in parallel.

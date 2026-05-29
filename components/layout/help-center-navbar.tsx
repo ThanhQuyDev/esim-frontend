@@ -80,7 +80,7 @@ export function HelpCenterNavbar({ lang }: HelpCenterNavbarProps) {
             e.preventDefault();
             const trimmed = query.trim();
             if (!trimmed) return;
-            router.push(`${helpCenterHome}?q=${encodeURIComponent(trimmed)}`);
+            router.push(`${helpCenterHome}/search?q=${encodeURIComponent(trimmed)}`);
         },
         [query, router, helpCenterHome]
     );
@@ -164,7 +164,7 @@ export function HelpCenterNavbar({ lang }: HelpCenterNavbarProps) {
                         <form
                             role="search"
                             onSubmit={handleSearchSubmit}
-                            action={helpCenterHome}
+                            action={`${helpCenterHome}/search`}
                             className="flex items-center w-full xl:max-w-md xl:flex-1 xl:mx-4 relative"
                         >
                             <Search

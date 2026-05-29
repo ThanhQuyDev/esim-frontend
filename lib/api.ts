@@ -243,8 +243,16 @@ interface FetchOptions {
   orderBy?: string;
   order?: string;
   lang?: string;
-  /** Context identifier for endpoints like `/api/v1/faqs/by-context`. */
-  context?: string;
+  /**
+   * Current page URL/pathname. Used by `/api/v1/faqs/by-context` to scope
+   * FAQs to the page that is calling the API (e.g. `"/vi/coupon"`).
+   */
+  url?: string;
+  /**
+   * Blog id. Used by `/api/v1/faqs/by-context` when the caller is a blog
+   * detail page so the backend can return FAQs attached to that post.
+   */
+  blogId?: string;
   /** Generic `type` query param (e.g. `trang_chu` | `quoc_gia` | `khu_vuc`). */
   type?: string;
 }
@@ -320,6 +328,9 @@ async function apiFetch<T>(
   if (options.orderBy) params.set("orderBy", options.orderBy);
   if (options.order) params.set("order", options.order);
   if (options.type) params.set("type", options.type);
+  if (options.url) params.set("url", options.url);
+  if (options.blogId) params.set("blogId", options.blogId);
+  if (options.lang) params.set("language", options.lang);
 
   const queryString = params.toString();
   const url = `${API_BASE_URL}${endpoint}${queryString ? `?${queryString}` : ""}`;
@@ -383,7 +394,7 @@ export async function getHeroBanners(
 ): Promise<HeroBanner[]> {
   return getPublicLandingList<HeroBanner>(
     "/api/v1/hero-banners",
-    { limit: 20, ...options },
+    { limit: 6, ...options },
     300
   );
 }
@@ -436,13 +447,14 @@ export async function searchDestinations(
 export async function getFaqs(
   options: FetchOptions = {}
 ): Promise<PaginatedResponse<Faq>> {
-  // Per Refactor 4.1: every contextual FAQ fetch must hit the canonical
-  // `/api/v1/faqs/by-context` endpoint. Callers can supply `{ context: "..." }`
-  // through `options`; the param is forwarded as a query string by `apiFetch`.
-  const { context = "global", ...rest } = options;
+  // `/api/v1/faqs/by-context` filters by:
+  //   - `url`    : the current page URL/pathname
+  //   - `blogId` : the blog id (only on blog detail pages)
+  // Callers should supply `{ url }` (and optionally `{ blogId }`) so the
+  // backend returns only FAQs scoped to the current screen.
   return apiFetch<PaginatedResponse<Faq>>(
     "/api/v1/faqs/by-context",
-    { limit: 20, context, ...rest },
+    { limit: 6, ...options },
     300
   );
 }

@@ -53,6 +53,17 @@ function getFallbackColumns(dict: Record<string, any>): FooterColumn[] {
   ];
 }
 
+function isFollowUsTitle(title: string): boolean {
+  const t = title.trim().toLowerCase();
+  return (
+    t === "follow us" ||
+    t === "theo dõi" ||
+    t === "theo doi" ||
+    t.includes("follow") ||
+    t.includes("theo dõi")
+  );
+}
+
 function getApiFooterColumns(
   footerLinks: ApiFooter[],
   lang: Locale = "en"
@@ -77,10 +88,16 @@ function getApiFooterColumns(
     groupedLinks.set(category, links);
   });
 
-  return Array.from(groupedLinks.entries()).map(([title, links]) => ({
+  const columns = Array.from(groupedLinks.entries()).map(([title, links]) => ({
     title,
     links,
   }));
+
+  // Always render the "Follow Us" / "Theo dõi" column at the end
+  return [
+    ...columns.filter((c) => !isFollowUsTitle(c.title)),
+    ...columns.filter((c) => isFollowUsTitle(c.title)),
+  ];
 }
 
 export async function FooterSection({
@@ -150,35 +167,46 @@ export async function FooterSection({
 
         {/* Footer Columns - Style 2.1: Bold category titles */}
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-x-8 gap-y-6 md:gap-y-8 pb-8">
-          {columns.map((col, i) => (
-            <div key={i} className="flex flex-col">
-              <p className="font-bold text-text-primary mb-4">{col.title}</p>
-              <div className="flex flex-col gap-y-3">
-                {col.links.map((link: FooterLink, j: number) => {
-                  const linkKey = link.id ?? `${link.href}-${j}`;
-                  const isExternal = link.href.startsWith("http");
-                  return isExternal ? (
-                    <a
-                      key={linkKey}
-                      href={link.href}
-                      target="_blank"
-                      className="body-sm text-text-secondary inline-flex items-center"
-                    >
-                      {link.label}
-                    </a>
-                  ) : (
-                    <Link
-                      key={linkKey}
-                      href={link.href}
-                      className="body-sm text-text-secondary inline-flex items-center"
-                    >
-                      {link.label}
-                    </Link>
-                  );
-                })}
+          {columns.map((col, i) => {
+            const isFollowCol = isFollowUsTitle(col.title);
+            return (
+              <div key={i} className="flex flex-col">
+                <p className="font-bold text-text-primary mb-4">{col.title}</p>
+                <div className="flex flex-col gap-y-3">
+                  {col.links.map((link: FooterLink, j: number) => {
+                    const linkKey = link.id ?? `${link.href}-${j}`;
+                    const isExternal = link.href.startsWith("http");
+
+                    // Only "Follow Us" column opens links in a new tab
+                    if (isFollowCol && isExternal) {
+                      return (
+                        <a
+                          key={linkKey}
+                          href={link.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="body-sm text-text-secondary inline-flex items-center"
+                        >
+                          {link.label}
+                        </a>
+                      );
+                    }
+
+                    // All other columns open in the same page
+                    return (
+                      <Link
+                        key={linkKey}
+                        href={link.href}
+                        className="body-sm text-text-secondary inline-flex items-center"
+                      >
+                        {link.label}
+                      </Link>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Social Links - Layout 2.2: Icon before text */}

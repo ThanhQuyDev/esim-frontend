@@ -33,11 +33,12 @@ export default async function Home({
 }: {
   params: { lang: Locale };
 }) {
+  const homeUrl = `/${params.lang}`;
   const [dict, heroBanners, footerLinks, faqsRes, whyChooseUsRes] = await Promise.all([
     getDictionary(params.lang),
     getHeroBanners({ lang: params.lang }),
     getFooters({ lang: params.lang }),
-    getFaqs({ lang: params.lang }),
+    getFaqs({ lang: params.lang, url: homeUrl }),
     getWhyChooseUs({ lang: params.lang, type: "trang_chu" }),
   ]);
 
@@ -52,7 +53,12 @@ export default async function Home({
       <HowItWorksSection dict={dict.howItWorks} />
       <DownloadAppSection dict={dict.downloadApp} />
       <TestimonialsSection dict={dict.testimonials} />
-      <FAQSection dict={dict.faq} lang={params.lang} initialFaqs={faqsRes.data} />
+      <FAQSection
+        dict={dict.faq}
+        lang={params.lang}
+        initialFaqs={faqsRes.data}
+        url={homeUrl}
+      />
       <ReferFriendBanner dict={dict.referFriend} />
       <FooterSection
         dict={dict.footer}

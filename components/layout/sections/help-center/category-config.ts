@@ -115,6 +115,18 @@ function buildIndexes(entries: CategoryEntry[]) {
 const CATEGORY_INDEX = buildIndexes(CATEGORIES);
 const PARENT_INDEX = buildIndexes(PARENTS);
 
+// ---------- URL slug helpers ----------
+
+/** Convert internal key (with `_`) to URL-friendly slug (with `-`). */
+export function toUrlSlug(key: string): string {
+  return key.replace(/_/g, "-");
+}
+
+/** Convert URL slug (with `-`) back to internal key (with `_`). */
+export function fromUrlSlug(slug: string): string {
+  return slug.replace(/-/g, "_");
+}
+
 // ---------- Generic helpers ----------
 
 function fallbackLabel(key: string): string {
@@ -126,7 +138,8 @@ function getEntry(
   key: string | null | undefined
 ): CategoryEntry | null {
   if (!key) return null;
-  return index.byAnyKey.get(key) ?? null;
+  // Try exact match first, then try converting `-` to `_` (URL slug → internal key)
+  return index.byAnyKey.get(key) ?? index.byAnyKey.get(key.replace(/-/g, "_")) ?? null;
 }
 
 function getEntryFromLabel(

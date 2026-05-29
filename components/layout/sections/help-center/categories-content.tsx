@@ -5,7 +5,8 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Search } from "lucide-react";
 import type { HelpCenterArticle } from "@/lib/api";
-import { getCategoryLabel, getParentLabel } from "./category-config";
+import { localizedHref } from "@/lib/route-mapping";
+import { getCategoryLabel, getParentLabel, toUrlSlug } from "./category-config";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.saily.example.com";
@@ -150,7 +151,7 @@ export function CategoriesContent({ lang }: CategoriesContentProps) {
                       {searchResults.map((article) => (
                         <li key={article.id}>
                           <Link
-                            href={`/${lang}/help-center/${article.category}/${article.parent}/${getArticleSlug(article)}`}
+                            href={`${localizedHref(lang, "help-center")}/${toUrlSlug(article.category)}/${toUrlSlug(article.parent)}/${getArticleSlug(article)}`}
                             className="block px-4 py-2.5 text-gray-900 no-underline hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
                           >
                             <p className="text-sm font-medium">{article.title}</p>
@@ -179,13 +180,13 @@ export function CategoriesContent({ lang }: CategoriesContentProps) {
               <nav aria-label="Breadcrumb">
                 <ol className="flex items-center gap-1 list-none p-0 m-0 text-sm">
                   <li>
-                    <Link href={`/${lang}/help-center`} className="text-gray-700 no-underline hover:text-gray-900 transition-colors">
+                    <Link href={localizedHref(lang, "help-center")} className="text-gray-700 no-underline hover:text-gray-900 transition-colors">
                       {lang === "vi" ? "Trung tâm trợ giúp" : "Help Center"}
                     </Link>
                   </li>
                   <li className="text-gray-400 mx-1">›</li>
                   <li>
-                    <Link href={`/${lang}/help-center/categories?category=${selectedArticle.category}`} className="text-gray-700 no-underline hover:text-gray-900 transition-colors">
+                    <Link href={`${localizedHref(lang, "help-center")}/categories?category=${selectedArticle.category}`} className="text-gray-700 no-underline hover:text-gray-900 transition-colors">
                       {getCategoryLabel(selectedArticle.category, lang)}
                     </Link>
                   </li>
@@ -250,7 +251,7 @@ export function CategoriesContent({ lang }: CategoriesContentProps) {
                     {searchResults.map((article) => (
                       <li key={article.id}>
                         <Link
-                          href={`/${lang}/help-center/${article.category}/${article.parent}/${getArticleSlug(article)}`}
+                          href={`${localizedHref(lang, "help-center")}/${toUrlSlug(article.category)}/${toUrlSlug(article.parent)}/${getArticleSlug(article)}`}
                           className="block px-4 py-2.5 text-gray-900 no-underline hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
                         >
                           <p className="text-sm font-medium">{article.title}</p>
@@ -279,7 +280,7 @@ export function CategoriesContent({ lang }: CategoriesContentProps) {
             <nav aria-label="Breadcrumb">
               <ol className="flex items-center gap-1 list-none p-0 m-0 text-sm">
                 <li>
-                  <Link href={`/${lang}/help-center`} className="text-gray-700 no-underline hover:text-gray-900 transition-colors">
+                  <Link href={localizedHref(lang, "help-center")} className="text-gray-700 no-underline hover:text-gray-900 transition-colors">
                     {lang === "vi" ? "Trung tâm trợ giúp" : "Help Center"}
                   </Link>
                 </li>
@@ -306,7 +307,7 @@ export function CategoriesContent({ lang }: CategoriesContentProps) {
               {arts.map((article) => (
                 <li key={article.id}>
                   <Link
-                    href={`/${lang}/help-center/${article.category}/${article.parent}/${getArticleSlug(article)}`}
+                    href={`${localizedHref(lang, "help-center")}/${toUrlSlug(article.category)}/${toUrlSlug(article.parent)}/${getArticleSlug(article)}`}
                     className="block px-3 py-2 text-gray-800 no-underline hover:bg-gray-100 hover:text-gray-900 rounded transition-colors"
                   >
                     {article.title}

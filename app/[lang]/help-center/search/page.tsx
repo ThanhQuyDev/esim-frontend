@@ -3,6 +3,7 @@ import { SearchResultsContent } from "@/components/layout/sections/help-center/s
 import { FooterSection } from "@/components/layout/sections/footer";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { getDictionary } from "@/lib/dictionaries";
+import { localizedHref } from "@/lib/route-mapping";
 import type { Locale } from "@/lib/i18n-config";
 import type { Metadata } from "next";
 
@@ -32,7 +33,7 @@ export default async function HelpCenterSearchPage({
     <>
       <Breadcrumb
         items={[
-          { label: dict.breadcrumb.helpCenter, href: `/${params.lang}/help-center` },
+          { label: dict.breadcrumb.helpCenter, href: localizedHref(params.lang, "help-center") },
           { label: dict.breadcrumb.helpCenterSearch },
         ]}
         lang={params.lang}

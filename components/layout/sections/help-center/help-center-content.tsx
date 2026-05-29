@@ -5,10 +5,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { RocketIcon, CreditCardIcon, Pickaxe, MessageCircleQuestionIcon, Search } from "lucide-react";
 import type { HelpCenterArticle } from "@/lib/api";
+import { localizedHref } from "@/lib/route-mapping";
 import {
   getCategoryLabel,
   getParentLabel,
   resolveCategoryKey,
+  toUrlSlug,
 } from "./category-config";
 
 const API_BASE_URL =
@@ -120,59 +122,39 @@ export function HelpCenterContent({ lang, initialArticles }: HelpCenterContentPr
             </h1>
           </div>
 
-          <div className="max-w-md my-4 mx-auto relative">
+          <div className="max-w-xl my-4 mx-auto relative">
             <h2 className="sr-only">{lang === "vi" ? "Tìm kiếm" : "Search"}</h2>
             <form
               role="search"
-              className="relative"
+              className="flex items-center gap-2"
               onSubmit={(e) => {
                 e.preventDefault();
                 if (searchQuery.trim()) {
-                  router.push(`/${lang}/help-center/search?q=${encodeURIComponent(searchQuery.trim())}`);
+                  router.push(`${localizedHref(lang, "help-center")}/search?q=${encodeURIComponent(searchQuery.trim())}`);
                 }
               }}
             >
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <input
-                type="search"
-                placeholder={lang === "vi" ? "Nhập chủ đề, câu hỏi hoặc vấn đề" : "Type a topic, question or issue here"}
-                className="w-full pl-12 pr-4 py-3 rounded-full text-base border-0 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                aria-label={lang === "vi" ? "Nhập chủ đề, câu hỏi hoặc vấn đề" : "Type a topic, question or issue here"}
-              />
-            </form>
-
-            {/* Search Results Dropdown */}
-            {searchQuery.trim() && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-xl border border-gray-200 max-h-80 overflow-y-auto z-50">
-                {isSearching ? (
-                  <div className="p-4 text-center text-gray-500 text-sm">
-                    {lang === "vi" ? "Đang tìm kiếm..." : "Searching..."}
-                  </div>
-                ) : searchResults.length > 0 ? (
-                  <ul className="list-none p-0 m-0">
-                    {searchResults.map((article) => (
-                      <li key={article.id}>
-                        <Link
-                          href={`/${lang}/help-center/${article.category}/${article.parent}/${getArticleSlug(article)}`}
-                          className="block px-4 py-3 text-gray-900 no-underline hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
-                        >
-                          <p className="text-sm font-medium">{article.title}</p>
-                          <p className="text-xs text-gray-500 mt-1">
-                            {getCategoryLabel(article.category, lang)} › {getParentLabel(article.parent, lang)}
-                          </p>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <div className="p-4 text-center text-gray-500 text-sm">
-                    {lang === "vi" ? "Không tìm thấy kết quả" : "No results found"}
-                  </div>
-                )}
+              <div className="relative flex-1">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="search"
+                  placeholder={lang === "vi" ? "Nhập chủ đề, câu hỏi hoặc vấn đề" : "Type a topic, question or issue here"}
+                  className="w-full pl-12 pr-4 py-3 rounded-full text-base border-0 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  aria-label={lang === "vi" ? "Nhập chủ đề, câu hỏi hoặc vấn đề" : "Type a topic, question or issue here"}
+                />
               </div>
-            )}
+              <button
+                type="submit"
+                disabled={!searchQuery.trim()}
+                className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-blue-600 text-white text-sm font-semibold shadow-lg hover:bg-blue-700 transition-colors disabled:bg-blue-400 disabled:cursor-not-allowed cursor-pointer whitespace-nowrap"
+                aria-label={lang === "vi" ? "Tìm kiếm" : "Search"}
+              >
+                <Search className="w-4 h-4" aria-hidden="true" />
+                <span className="hidden sm:inline">{lang === "vi" ? "Tìm kiếm" : "Search"}</span>
+              </button>
+            </form>
           </div>
         </div>
       </div>
@@ -191,7 +173,7 @@ export function HelpCenterContent({ lang, initialArticles }: HelpCenterContentPr
               return (
                 <li key={catKey}>
                   <Link
-                    href={`/${lang}/help-center/${catKey}`}
+                    href={`${localizedHref(lang, "help-center")}/${toUrlSlug(catKey)}`}
                     className="flex flex-col items-center justify-center bg-gray-100 border border-gray-200 rounded-md p-6 h-full transition no-underline hover:border-gray-400 hover:shadow-md group"
                   >
                     <div className="w-[80px] h-[80px] bg-blue-200 rounded-full flex items-center justify-center mb-3">
@@ -227,7 +209,7 @@ export function HelpCenterContent({ lang, initialArticles }: HelpCenterContentPr
               {recentArticles.map((article) => (
                 <Link
                   key={article.id}
-                  href={`/${lang}/help-center/${article.category}/${article.parent}/${getArticleSlug(article)}`}
+                  href={`${localizedHref(lang, "help-center")}/${toUrlSlug(article.category)}/${toUrlSlug(article.parent)}/${getArticleSlug(article)}`}
                   className="block bg-gray-100 rounded-md p-5 hover:shadow-md transition no-underline"
                 >
                   <p className="text-sm text-gray-600 mb-2">
@@ -246,7 +228,7 @@ export function HelpCenterContent({ lang, initialArticles }: HelpCenterContentPr
 
           <div className="mt-6 text-center">
             <Link
-              href={`/${lang}/help-center/categories`}
+              href={`${localizedHref(lang, "help-center")}/categories`}
               className="text-gray-700 hover:text-gray-900 no-underline text-sm"
             >
               {lang === "vi" ? "Xem thêm" : "See more"}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 import { useFaqs } from "@/lib/hooks";
 import type { Locale } from "@/lib/i18n-config";
@@ -25,7 +26,8 @@ export function FaqTabsSection({ dict, lang }: FaqTabsSectionProps) {
   const [activeTab, setActiveTab] = useState(0);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-  const { data: apiFaqs } = useFaqs(lang);
+  const pathname = usePathname();
+  const { data: apiFaqs } = useFaqs(lang, undefined, { url: pathname ?? "" });
 
   // Use API data if available, otherwise fall back to dictionary tabs
   const apiItems: FaqItem[] =
@@ -107,11 +109,10 @@ export function FaqTabsSection({ dict, lang }: FaqTabsSectionProps) {
                         </span>
                       </button>
                       {openIndex === i && (
-                        <div className="px-4 lg:px-6 pb-4 lg:pb-6 -mt-1">
-                          <p className="body-md text-text-secondary">
-                            {item.answer}
-                          </p>
-                        </div>
+                        <div
+                          className="px-4 lg:px-6 pb-4 lg:pb-6 -mt-1 body-md text-text-secondary prose prose-sm max-w-none"
+                          dangerouslySetInnerHTML={{ __html: item.answer }}
+                        />
                       )}
                     </div>
                   ))}

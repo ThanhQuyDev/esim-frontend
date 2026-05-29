@@ -1,11 +1,12 @@
 "use client";
 
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { Blog, Faq } from "@/lib/api";
 import type { Locale } from "@/lib/i18n-config";
 import { BlogCategoryNav } from "./blog-category-nav";
 import { BlogArticleHeading } from "./blog-article-heading";
-import { BlogTableOfContents } from "./blog-toc";
+import { BlogTableOfContents, processBlogContent } from "./blog-toc";
 import { BlogMiniTagWidget } from "./blog-mini-tag";
 import { BlogCountryPlansList } from "./blog-country-plans";
 import { BlogSidebarBanner } from "./blog-sidebar-banner";
@@ -138,6 +139,12 @@ export function BlogDetailContent({ lang, slug, initialBlog }: BlogDetailContent
   const hasMiniTag = blog.miniTag && (blog.miniTag.title || blog.miniTag.image);
   const hasPlans = blog.plans && blog.plans.length > 0;
 
+  // Inject ids into <h1> headings and extract them for the Table of Contents
+  const { headings: tocHeadings, html: processedContent } = useMemo(
+    () => processBlogContent(blog.content || ""),
+    [blog.content]
+  );
+
   return (
     <div>
       {/* Category Navigation */}
@@ -146,6 +153,19 @@ export function BlogDetailContent({ lang, slug, initialBlog }: BlogDetailContent
       <div>
         {/* Article Heading with Last Updated (SEO 1.6) */}
         <BlogArticleHeading blog={blog} lang={lang} />
+
+        {/* Table of Contents — placed right below the hero image */}
+        {tocHeadings.length > 0 && (
+          <div className="mx-4 sm:mx-auto">
+            <div className="container mx-auto">
+              <div className="grid sm:gap-x-8 grid-cols-12">
+                <div className="col-span-12 lg:col-start-2 lg:col-span-7 -mt-8 mb-8">
+                  <BlogTableOfContents headings={tocHeadings} />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Last Updated meta info */}
         {blog.updatedAt && blog.updatedAt !== blog.createdAt && (
@@ -181,13 +201,10 @@ export function BlogDetailContent({ lang, slug, initialBlog }: BlogDetailContent
                   {/* Main content column */}
                   <div className="col-span-12 lg:odd:col-start-2 lg:odd:col-span-7 lg:col-span-3">
                     <div className="flex flex-col gap-12">
-                      {/* Table of Contents */}
-                      <BlogTableOfContents content={blog.content} />
-
                       {/* Article body - Bug 1.1: prose for rich text + Style 1.5: rounded images */}
                       <div
                         className="prose prose-slate max-w-none prose-headings:font-bold prose-h2:text-2xl prose-h3:text-xl prose-h4:text-lg prose-table:border prose-table:border-gray-300 prose-th:border prose-th:border-gray-300 prose-th:p-2 prose-td:border prose-td:border-gray-300 prose-td:p-2 prose-blockquote:border-l-4 prose-blockquote:border-gray-300 prose-blockquote:pl-4 prose-img:rounded-lg"
-                        dangerouslySetInnerHTML={{ __html: blog.content }}
+                        dangerouslySetInnerHTML={{ __html: processedContent }}
                       />
 
                       {/* Mini Tag Widget — only show if API returns miniTag */}

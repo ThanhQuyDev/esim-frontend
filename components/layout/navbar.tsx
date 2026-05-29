@@ -432,7 +432,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Hướng dẫn nhanh sử dụng ứng dụng esim.vn eSIM."
             : "A quick guide to using the esim.vn eSIM app.",
-          href: `/${lang}/help-center`,
+          href: localizedHref(lang, "help-center"),
         },
         {
           icon: "globe",
@@ -440,7 +440,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Duyệt hướng dẫn và tài nguyên hỗ trợ."
             : "Browse guides and support resources.",
-          href: `/${lang}/help-center`,
+          href: localizedHref(lang, "help-center"),
         },
         {
           icon: "triangle-alert",
@@ -448,7 +448,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Sửa lỗi thường gặp với hướng dẫn từng bước."
             : "Fix common issues with step-by-step help.",
-          href: `/${lang}/help-center`,
+          href: localizedHref(lang, "help-center"),
         },
       ],
       col2: [
@@ -458,7 +458,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Tìm câu trả lời cho các câu hỏi phổ biến nhất về esim.vn."
             : "Find answers to the most common questions about esim.vn.",
-          href: `/${lang}/help-center`,
+          href: localizedHref(lang, "help-center"),
         },
       ],
       explore: [
