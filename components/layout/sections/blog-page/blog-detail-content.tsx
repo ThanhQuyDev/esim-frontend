@@ -99,6 +99,13 @@ export function BlogDetailContent({ lang, slug, initialBlog }: BlogDetailContent
     staleTime: 5 * 60 * 1000,
   });
 
+  // Inject ids into <h1> headings and extract them for the Table of Contents
+  // Must be called before any early returns to satisfy React hooks rules
+  const { headings: tocHeadings, html: processedContent } = useMemo(
+    () => processBlogContent(blog?.content || ""),
+    [blog?.content]
+  );
+
   if (isLoading) {
     return (
       <div>
@@ -138,12 +145,6 @@ export function BlogDetailContent({ lang, slug, initialBlog }: BlogDetailContent
 
   const hasMiniTag = blog.miniTag && (blog.miniTag.title || blog.miniTag.image);
   const hasPlans = blog.plans && blog.plans.length > 0;
-
-  // Inject ids into <h1> headings and extract them for the Table of Contents
-  const { headings: tocHeadings, html: processedContent } = useMemo(
-    () => processBlogContent(blog.content || ""),
-    [blog.content]
-  );
 
   return (
     <div>
