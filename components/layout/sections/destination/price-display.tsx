@@ -77,7 +77,7 @@ export function PriceDisplay({
           </>
         )}
       </div>
-      {perDayPrice > 0 && totalDays > 1 && !isFixed && (
+      {perDayPrice > 0 && totalDays > 1 && (
         <div className="flex items-center gap-2 text-[13px] text-[#374151] font-medium flex-wrap">
           <span>≈ {formatVnd(perDayPrice)}/{dict.daysUnit.toLowerCase().charAt(0) === "d" ? "day" : "ngày"}</span>
           <span className="text-[#e5e7eb]">|</span>

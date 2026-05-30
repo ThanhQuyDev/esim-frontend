@@ -320,8 +320,11 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
     .map((s) => s.trim())
     .filter(Boolean);
 
-  // Activation validity: 180 days from createdAt
+  // Activation validity: viettel uses expiresAt directly, others use 180 days from createdAt
   const activationDeadline = (() => {
+    if (esim.provider === 'viettel' && esim.expiresAt) {
+      return new Date(esim.expiresAt);
+    }
     if (!esim.createdAt) return null;
     const deadline = new Date(esim.createdAt);
     deadline.setDate(deadline.getDate() + 180);

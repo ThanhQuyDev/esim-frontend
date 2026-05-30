@@ -150,8 +150,8 @@ export function DesktopStickyBar({
             <div className="text-xs text-[#6b7280] font-medium">
               eSIM {destination || ""}
             </div>
-            <div className="text-sm font-bold text-[#1a1a1a] whitespace-nowrap overflow-hidden text-ellipsis">
-              {selectedPlan.name} {planLabel}
+            <div className="text-sm font-medium text-[#1a1a1a] whitespace-nowrap overflow-hidden text-ellipsis">
+              {planLabel}
             </div>
           </div>
         </div>

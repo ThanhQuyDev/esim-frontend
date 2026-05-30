@@ -57,7 +57,12 @@ export function middleware(request: NextRequest) {
   const locale = segments[1];
   const publicSlug = segments[2];
 
-  if (!publicSlug) return; // root locale page, no rewrite needed
+  if (!publicSlug) {
+    // root locale page — set header for structured data
+    const response = NextResponse.next();
+    response.headers.set("x-pathname", pathname);
+    return response;
+  }
 
   // Check if the public slug maps to a different internal path
   const internalPath = resolveInternalPath(locale, publicSlug);
@@ -67,10 +72,14 @@ export function middleware(request: NextRequest) {
     const rest = segments.slice(3).join("/");
     const newPathname = `/${locale}/${internalPath}${rest ? `/${rest}` : ""}`;
     request.nextUrl.pathname = newPathname;
-    return NextResponse.rewrite(request.nextUrl);
+    const response = NextResponse.rewrite(request.nextUrl);
+    response.headers.set("x-pathname", pathname);
+    return response;
   }
 
-  return;
+  const response = NextResponse.next();
+  response.headers.set("x-pathname", pathname);
+  return response;
 }
 
 export const config = {

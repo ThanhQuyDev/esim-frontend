@@ -138,19 +138,6 @@ export function SearchResultsContent({ lang }: SearchResultsContentProps) {
       {/* Main content */}
       <div className="max-w-7xl mx-auto px-4">
         <div className="mt-6 mb-8">
-          {/* Search input on results page */}
-          <form onSubmit={handleSearchSubmit} role="search" className="max-w-md mb-6 relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-            <input
-              type="search"
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              placeholder={lang === "vi" ? "Nhập chủ đề, câu hỏi hoặc vấn đề" : "Type a topic, question or issue here"}
-              className="w-full pl-12 pr-4 py-3 rounded-full text-base border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              aria-label={lang === "vi" ? "Tìm kiếm" : "Search"}
-            />
-          </form>
-
           <section>
             <header>
               <h1 className="text-xl font-semibold pb-3 border-b border-gray-200">

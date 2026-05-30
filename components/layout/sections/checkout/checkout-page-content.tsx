@@ -22,7 +22,7 @@ import {
   type CartItem,
   type Coupon,
 } from "@/lib/cart";
-import { useExchangeRate, useCheckout, useCart, convertUsdToVnd, formatVnd, useWalletMe } from "@/lib/hooks";
+import { useExchangeRate, useCheckout, useCart, convertUsdToVnd, formatVnd, useWalletMe, useMyProfile } from "@/lib/hooks";
 import { useAuth } from "@/lib/auth";
 import { walletTranslations } from "@/components/layout/sections/wallet/translations";
 import Link from "next/link";
@@ -97,12 +97,19 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
     }
   }, []);
 
-  // Auto-fill email from logged-in user
+  // Auto-fill email + phone from logged-in user profile
+  const { data: myProfile } = useMyProfile();
   useEffect(() => {
     if (user?.email && !email) {
       setEmail(user.email);
     }
   }, [user]);
+
+  useEffect(() => {
+    if (myProfile?.phoneNumber && !phone) {
+      setPhone(myProfile.phoneNumber);
+    }
+  }, [myProfile]);
 
   const subtotal = getSubtotal(items);
   const discount = getDiscount(subtotal, coupon);
@@ -196,6 +203,8 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
         couponCode: coupon?.code || "",
         referralCode: referralApplied ? referralCode : undefined,
         useWalletAmountVnd: actualExuUsed > 0 ? actualExuUsed : undefined,
+        ...(phone.trim() ? { phoneNumber: phone.trim() } : {}),
+        ...(email.trim() ? { email: email.trim() } : {}),
         // Only attach `invoice` when the user opted in. Backend rejects
         // partial/empty invoice objects with 422, so we omit entirely otherwise.
         ...(wantInvoice

@@ -568,10 +568,14 @@ export function BlogPageContent({ lang, initialBlogs, initialCategories }: BlogP
   const cats = categories ?? [];
   const blogs = allBlogs ?? [];
 
-  // Split blogs into sections
-  const featuredBlog = blogs[0] ?? null;
-  const popularBlogs = blogs.slice(1, 4);
-  const recentBlogs = blogs.slice(4, 10);
+  // Featured = most recent isPopular blog
+  const popularAll = blogs.filter((b) => b.isPopular);
+  const featuredBlog = popularAll[0] ?? blogs[0] ?? null;
+  // Popular articles = remaining isPopular blogs (exclude featured)
+  const popularBlogs = popularAll.filter((b) => b.id !== featuredBlog?.id).slice(0, 3);
+  // Recent = all other blogs not in featured or popular
+  const usedIds = new Set([featuredBlog?.id, ...popularBlogs.map((b) => b.id)].filter(Boolean));
+  const recentBlogs = blogs.filter((b) => !usedIds.has(b.id)).slice(0, 6);
 
   if (isLoading) {
     return (

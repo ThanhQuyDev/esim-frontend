@@ -192,7 +192,7 @@ export async function fetchApiCoupons(): Promise<Coupon[]> {
     if (!res.ok) throw new Error(`API ${res.status}`);
     const json = await res.json();
     return (json.data || [])
-      .filter((c: any) => c.isActive && !c.deletedAt)
+      .filter((c: any) => c.isActive && !c.deletedAt && (!c.expiresAt || new Date(c.expiresAt) > new Date()))
       .map((c: any) => ({
         code: c.code,
         discount: c.discountPercent,

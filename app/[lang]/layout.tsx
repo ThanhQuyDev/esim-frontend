@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/layout/navbar";
 import { LayoutClientWidgets } from "@/components/layout/layout-client-widgets";
+import { PageStructuredData } from "@/components/page-structured-data";
 import { i18n, type Locale } from "@/lib/i18n-config";
 import { getTopBars } from "@/lib/api";
 import { getDictionary } from "@/lib/dictionaries";
@@ -35,6 +36,7 @@ export default async function LangLayout({
 
   return (
     <>
+      <PageStructuredData />
       <Navbar lang={params.lang} dict={dict.nav} topBars={topBars} />
       {children}
       <LayoutClientWidgets lang={params.lang} />

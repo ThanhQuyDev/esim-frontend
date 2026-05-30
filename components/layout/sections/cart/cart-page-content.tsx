@@ -35,7 +35,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
   const [promoApplied, setPromoApplied] = useState<{ type: "coupon" | "referral"; code: string; discountVnd: number } | null>(null);
   const { data: usdToVndRate = 25_500 } = useExchangeRate();
   const { isApiCart, apiCartItems, getLocalCartData, updateItem, removeItem, isLoading: cartLoading } = useCart();
-  const { user, openAuthModal } = useAuth();
+  const { user, openAuthModal, token } = useAuth();
   const { data: referralProfile } = useReferralProfile();
   const { data: wallet } = useWalletMe();
   const validateReferralMutation = useValidateReferral();
@@ -126,6 +126,31 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
     }
   }, [vndSubtotalValue, promoApplied, wt.referralMinOrder]);
 
+  // Reactive coupon validation: auto-remove coupon when subtotal drops below minimum
+  useEffect(() => {
+    if (!cart.appliedCoupon) return;
+    const coupon = cart.appliedCoupon;
+    const belowMin = coupon.minOrderAmountVnd
+      ? vndSubtotalValue < coupon.minOrderAmountVnd
+      : coupon.minAmount
+        ? subtotal < coupon.minAmount
+        : false;
+
+    if (belowMin) {
+      removeCoupon();
+      setCart((prev) => ({ ...prev, appliedCoupon: null }));
+      setPromoApplied(null);
+      const minDisplay = coupon.minOrderAmountVnd
+        ? `${coupon.minOrderAmountVnd.toLocaleString("vi-VN")}₫`
+        : `$${coupon.minAmount}`;
+      setPromoError(
+        lang === "vi"
+          ? `Mã giảm giá không còn hợp lệ vì giá trị đơn hàng dưới ${minDisplay}`
+          : `Coupon is no longer valid because order total is below ${minDisplay}`
+      );
+    }
+  }, [vndSubtotalValue, subtotal, cart.appliedCoupon, lang]);
+
   const validateAndApplyPromo = async (code: string) => {
     const trimmed = code.trim().toUpperCase();
     if (!trimmed) return;
@@ -151,6 +176,39 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
             `Minimum order $${foundCoupon.minAmount}`
         );
         return;
+      }
+
+      // If user is logged in, validate via backend API (checks per-user usage, expiry, etc.)
+      if (user && token) {
+        try {
+          const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.saily.example.com";
+          const res = await fetch(`${API_BASE_URL}/api/v1/coupons/validate`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ code: trimmed, orderAmount: vndSubtotalValue }),
+          });
+          if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            const msg = err.message || err.errors?.code;
+            if (msg?.includes("maximum usage")) {
+              setPromoError(lang === "vi" ? "Bạn đã sử dụng hết số lần dùng mã này" : "You have reached the maximum usage for this coupon");
+            } else if (msg?.includes("expired")) {
+              setPromoError(lang === "vi" ? "Mã giảm giá đã hết hạn" : "Coupon has expired");
+            } else if (msg?.includes("inactive")) {
+              setPromoError(lang === "vi" ? "Mã giảm giá không còn hoạt động" : "Coupon is inactive");
+            } else if (msg?.includes("usage limit")) {
+              setPromoError(lang === "vi" ? "Mã giảm giá đã hết lượt sử dụng" : "Coupon usage limit reached");
+            } else {
+              setPromoError(msg || (lang === "vi" ? "Mã giảm giá không hợp lệ" : "Invalid coupon"));
+            }
+            return;
+          }
+        } catch {
+          // If API fails, fall through to local validation
+        }
       }
 
       // Apply coupon
@@ -556,11 +614,11 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
                 localStorage.setItem("saily_checkout_use_exu", "true");
                 window.location.href = `/${lang}/checkout`;
               }}
-              className="flex w-full items-center justify-center gap-2 rounded-full bg-emerald-500 py-3.5 text-base font-semibold text-white transition-colors hover:bg-emerald-600 cursor-pointer"
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-emerald-500 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-600 cursor-pointer"
             >
               <Wallet className="h-5 w-5" />
               {lang === "vi"
-                ? `Thanh toán bằng ví eXU (${formatVnd(wallet.availableBalanceVnd)})`
+                ? `Thanh toán bằng eXU (${formatVnd(wallet.availableBalanceVnd)})`
                 : `Pay with eXU Wallet (${formatVnd(wallet.availableBalanceVnd)})`}
             </button>
           ) : null}

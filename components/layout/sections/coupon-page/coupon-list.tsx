@@ -24,7 +24,7 @@ export function CouponList({ dict, lang }: CouponListProps) {
         if (!res.ok) throw new Error("Failed to fetch coupons");
         const data = await res.json();
         setCoupons(
-          data.data.filter((c: Coupon) => c.isActive && !c.deletedAt)
+          data.data.filter((c: Coupon) => c.isActive && !c.deletedAt && (!c.expiresAt || new Date(c.expiresAt) > new Date()))
         );
       } catch (err) {
         console.warn("Failed to fetch coupons:", err);

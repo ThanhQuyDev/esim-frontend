@@ -689,6 +689,8 @@ export interface CheckoutPayload {
   couponCode: string;
   referralCode?: string;
   useWalletAmountVnd?: number;
+  phoneNumber?: string;
+  email?: string;
   /**
    * Optional invoice info. When present, backend creates an Invoice (PENDING)
    * tied to the new order. Omit entirely (do not send `null` or `{}`) when the
@@ -1170,6 +1172,7 @@ export interface MyEsim {
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
+  provider: string | null;
   /** Plan info attached by the backend (`GET /esims/my/list` includes `plan`). */
   plan?: MyEsimPlan | null;
 }
@@ -1436,6 +1439,53 @@ export function useValidateReferral() {
         throw new Error(err.message || "Mã giới thiệu không hợp lệ");
       }
       return res.json();
+    },
+  });
+}
+
+// ===== Profile =====
+
+export type UpdateProfilePayload = {
+  firstName?: string;
+  lastName?: string;
+  phoneNumber?: string | null;
+};
+
+export function useMyProfile() {
+  const { token } = useAuth();
+  return useQuery({
+    queryKey: ["my-profile", token],
+    enabled: !!token,
+    queryFn: async ({ signal }) => {
+      const res = await authFetch(
+        `${API_BASE_URL}/api/v1/auth/me`,
+        token,
+        { signal }
+      );
+      if (!res.ok) throw new Error(`Failed to fetch profile: ${res.status}`);
+      return res.json();
+    },
+  });
+}
+
+export function useUpdateProfile() {
+  const { token } = useAuth();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: UpdateProfilePayload) => {
+      const res = await authFetch(`${API_BASE_URL}/api/v1/auth/me`, token, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || `Failed to update profile: ${res.status}`);
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["my-profile"] });
     },
   });
 }

@@ -78,6 +78,7 @@ export interface Blog {
   planIds: number[] | string[] | null;
   plans: Plan[] | null;
   relatedBlogs?: Blog[] | null;
+  isPopular?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -766,6 +767,7 @@ export interface SeoConfig {
   ogImage: string;
   ogTitle: string;
   ogDescription: string;
+  structuredData: string | null;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Plan } from "@/lib/api";
 import type { DestinationDict } from "./types";
@@ -19,6 +20,7 @@ interface BuyActionsProps {
 export function BuyActions({ selectedPlan, days, quantity, isFixed, dict, lang, destination }: BuyActionsProps) {
   const router = useRouter();
   const { addItem } = useCart();
+  const [showConfirm, setShowConfirm] = useState(false);
 
   let totalPrice = 0;
   if (selectedPlan) {
@@ -29,13 +31,12 @@ export function BuyActions({ selectedPlan, days, quantity, isFixed, dict, lang, 
     }
   }
 
-  const handleAddToCart = async () => {
+  const doAddToCart = async () => {
     if (!selectedPlan) return;
     const isMultidate = !!selectedPlan.isAbleMultidate;
     const unitPrice = isFixed ? getFixedPrice(selectedPlan) : calcTotalPrice(selectedPlan, days);
     const unitVndPrice = isFixed ? getFixedVndPrice(selectedPlan) : calcTotalVndPrice(selectedPlan, days);
     const originalVndPrice = isFixed ? Number(selectedPlan.vndPrice) : (isMultidate ? Number(selectedPlan.vndPrice) * days : Number(selectedPlan.vndPrice));
-    // Only pass durationDays (periodNum) for isAbleMultidate plans
     const cartDurationDays = isMultidate ? days : undefined;
     const displayDays = isFixed ? selectedPlan.durationDays : (isMultidate ? days : selectedPlan.durationDays);
     await addItem(
@@ -52,6 +53,15 @@ export function BuyActions({ selectedPlan, days, quantity, isFixed, dict, lang, 
       },
       quantity
     );
+  };
+
+  const handleAddToCart = async () => {
+    await doAddToCart();
+    setShowConfirm(true);
+  };
+
+  const handleBuyNow = async () => {
+    await doAddToCart();
     router.push(`/${lang}/cart`);
   };
 
@@ -59,7 +69,42 @@ export function BuyActions({ selectedPlan, days, quantity, isFixed, dict, lang, 
 
   return (
     <>
-      {/* CTA buttons — slimmer than the HTML reference (was py-[13px] / text-sm; now py-2.5 / text-[13.5px] for a tighter ~42px row) */}
+      {/* Cart confirmation popup */}
+      {showConfirm && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setShowConfirm(false)}>
+          <div className="bg-white rounded-2xl shadow-2xl p-6 mx-4 max-w-sm w-full animate-in fade-in zoom-in-95" onClick={(e) => e.stopPropagation()}>
+            <div className="flex flex-col items-center text-center gap-4">
+              <div className="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20 6L9 17l-5-5" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-bold text-[#111]">
+                {lang === "vi" ? "Đã thêm vào giỏ hàng!" : "Added to cart!"}
+              </h3>
+              <p className="text-sm text-[#6b7280]">
+                {selectedPlan?.name || "eSIM"} — {formatVnd(totalPrice)}
+              </p>
+              <div className="flex flex-col gap-2.5 w-full mt-2">
+                <button
+                  onClick={() => router.push(`/${lang}/cart`)}
+                  className="w-full py-3 rounded-full bg-[#fff500] border border-[#d1b700] text-sm font-bold text-[#111] transition-all hover:bg-[#d1b700] cursor-pointer"
+                >
+                  {lang === "vi" ? "Thanh toán ngay" : "Checkout now"}
+                </button>
+                <button
+                  onClick={() => setShowConfirm(false)}
+                  className="w-full py-3 rounded-full border border-[#e5e7eb] bg-white text-sm font-semibold text-[#111] transition-all hover:bg-gray-50 cursor-pointer"
+                >
+                  {lang === "vi" ? "Tiếp tục mua hàng" : "Continue shopping"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* CTA buttons */}
       <div className="grid grid-cols-[1fr_1.4fr] gap-2.5 mb-3">
         <button
           onClick={handleAddToCart}
@@ -73,7 +118,7 @@ export function BuyActions({ selectedPlan, days, quantity, isFixed, dict, lang, 
           {dict.addToCart}
         </button>
         <button
-          onClick={handleAddToCart}
+          onClick={handleBuyNow}
           className="flex items-center justify-center px-3 py-2.5 rounded-full border border-[#d1b700] bg-[#fff500] text-[13.5px] font-bold cursor-pointer font-[inherit] transition-all hover:bg-[#d1b700] whitespace-nowrap"
         >
           {dict.buyNow} — {selectedPlan ? formatVnd(totalPrice) : "—"}

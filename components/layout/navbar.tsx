@@ -626,9 +626,10 @@ function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
 
   return (
     <>
-      {/* ===== Announcement Bar (Sticky + Carousel) ===== */}
+      <div className="sticky top-0 z-40">
+      {/* ===== Announcement Bar (Carousel) ===== */}
       {announcementVisible && hasAnnouncement && (
-        <div className="sticky top-0 z-50 relative bg-[#1a1a1a] text-text-primary-on-color overflow-hidden">
+        <div className="relative bg-[#1a1a1a] text-text-primary-on-color overflow-hidden">
           <div className="px-6 min-w-full flex justify-between items-center md:gap-3">
             {topBars.length > 1 ? (
               /* Multiple promotions — Animation 3.1: smooth cross-fade
@@ -745,7 +746,7 @@ function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
       {/* ===== Main Header ===== */}
       <header
         className={cn(
-          "z-40 top-0 sticky transition-all duration-300",
+          "relative transition-all duration-300",
           hasScrolled
             ? "bg-[rgba(255,255,255,0.1)] backdrop-blur-[98px] [-webkit-backdrop-filter:blur(98px)]"
             : "bg-transparent backdrop-blur-0 [-webkit-backdrop-filter:blur(0px)]"
@@ -923,6 +924,7 @@ function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
           />
         )}
       </header>
+      </div>
 
       {/* Destination Search Modal */}
       <DestinationSearch
