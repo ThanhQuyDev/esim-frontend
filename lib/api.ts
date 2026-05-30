@@ -113,6 +113,7 @@ export interface Region {
   description?: string;
   descriptionVi?: string;
   isActive: boolean;
+  fromPrice?: number | null;
   createdAt: string;
   updatedAt: string;
   deletedAt?: string;
@@ -221,6 +222,7 @@ export interface Footer {
   titleVi: string;
   url: string;
   categories?: string | null;
+  iconUrl?: string | null;
   createdAt: string | Date;
   updatedAt: string | Date;
 }

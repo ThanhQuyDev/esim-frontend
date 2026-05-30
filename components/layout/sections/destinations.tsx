@@ -182,8 +182,10 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
                               <p className="body-md text-text-tertiary">
                                 <span className="whitespace-nowrap">
                                   {showRegions
-                                    ? `${dict.from} ${Number(item.fromPrice).toLocaleString("vi-VN") || "20.000"} đ · ${item.destinationCount} ${item.destinationCount === 1 ? (lang === "vi" ? "quốc gia" : "country") : (lang === "vi" ? "quốc gia" : "countries")}`
-                                    : `${dict.from} ${Number(item.fromPrice).toLocaleString("vi-VN") || "20.000"} đ`
+                                    ? `${item.fromPrice ? `${dict.from} ${Number(item.fromPrice).toLocaleString("vi-VN")}₫ · ` : ""}${item.destinationCount} ${item.destinationCount === 1 ? (lang === "vi" ? "quốc gia" : "country") : (lang === "vi" ? "quốc gia" : "countries")}`
+                                    : item.fromPrice
+                                      ? `${dict.from} ${Number(item.fromPrice).toLocaleString("vi-VN")}₫`
+                                      : ""
                                   }
                                 </span>
                               </p>

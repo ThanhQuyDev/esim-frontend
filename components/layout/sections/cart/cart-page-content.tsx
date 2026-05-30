@@ -15,7 +15,7 @@ import {
   type Cart,
   type Coupon,
 } from "@/lib/cart";
-import { useExchangeRate, convertUsdToVnd, formatVnd, useCart, useReferralProfile, useWalletMe, formatExu } from "@/lib/hooks";
+import { useExchangeRate, convertUsdToVnd, formatVnd, useCart, useReferralProfile, useWalletMe, formatExu, useValidateReferral } from "@/lib/hooks";
 import { useAuth } from "@/lib/auth";
 import { walletTranslations } from "@/components/layout/sections/wallet/translations";
 import Link from "next/link";
@@ -38,6 +38,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
   const { user, openAuthModal } = useAuth();
   const { data: referralProfile } = useReferralProfile();
   const { data: wallet } = useWalletMe();
+  const validateReferralMutation = useValidateReferral();
   const pendingCheckoutRef = useRef(false);
   const wt = walletTranslations[lang as "en" | "vi"];
 
@@ -58,10 +59,12 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
     const storedRef = localStorage.getItem("saily_referral_code");
     if (storedRef && !promoApplied) {
       setPromoInput(storedRef);
-      // Auto-apply the referral
-      validateAndApplyPromo(storedRef);
+      // Only auto-validate via API if user is logged in
+      if (user) {
+        validateAndApplyPromo(storedRef);
+      }
     }
-  }, []);
+  }, [user]);
 
   // Listen for localStorage cart-updated events (guest mode)
   useEffect(() => {
@@ -107,8 +110,8 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
   const promoDiscountVnd = promoApplied && isReferralValid ? promoApplied.discountVnd : 0;
   const vndTotalValue = Math.max(0, vndTotalBeforePromo - promoDiscountVnd);
 
-  // Cashback: 2% of the final payable amount (before eXU deduction)
-  const cashbackVnd = Math.round(vndTotalValue * 0.02);
+  // Cashback: 2% of original product price (before any discount/coupon/eXU)
+  const cashbackVnd = Math.round(vndSubtotalValue * 0.02);
 
   // Reactive referral validation: when selected items change, re-validate
   useEffect(() => {
@@ -123,7 +126,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
     }
   }, [vndSubtotalValue, promoApplied, wt.referralMinOrder]);
 
-  const validateAndApplyPromo = (code: string) => {
+  const validateAndApplyPromo = async (code: string) => {
     const trimmed = code.trim().toUpperCase();
     if (!trimmed) return;
 
@@ -159,32 +162,33 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
       return;
     }
 
-    // Not a coupon — treat as referral code
-    // Validate: can't use own code
-    if (referralProfile && trimmed === referralProfile.code.toUpperCase()) {
-      setPromoError(wt.referralOwnCode);
+    // Not a coupon — treat as referral code, validate via backend API
+    if (!user) {
+      openAuthModal();
       return;
     }
 
-    // Validate: min order 100,000₫
-    if (vndSubtotalValue < 100000) {
-      setPromoError(wt.referralMinOrder);
-      return;
-    }
-
-    // Validate: can't use with coupon
+    // Can't use with coupon
     if (cart.appliedCoupon) {
       setPromoError(wt.referralWithCoupon);
       return;
     }
 
-    // Apply referral
-    setPromoError("");
-    setPromoApplied({ type: "referral", code: trimmed, discountVnd: 10000 });
-    setPromoInput("");
+    try {
+      const result = await validateReferralMutation.mutateAsync({
+        code: trimmed,
+        subtotalVnd: vndSubtotalValue,
+        hasCoupon: !!cart.appliedCoupon,
+      });
+      setPromoError("");
+      setPromoApplied({ type: "referral", code: result.referralCode, discountVnd: result.buyerDiscountVnd });
+      setPromoInput("");
+    } catch (err: any) {
+      setPromoError(err.message || "Mã giới thiệu không hợp lệ");
+    }
   };
 
-  const handleApplyPromo = () => {
+  const handleApplyPromo = async () => {
     if (promoApplied) {
       // Remove current promo
       if (promoApplied.type === "coupon") {
@@ -195,7 +199,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
       setPromoError("");
       return;
     }
-    validateAndApplyPromo(promoInput);
+    await validateAndApplyPromo(promoInput);
   };
 
   const handleCheckout = () => {
@@ -530,19 +534,18 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
             </div>
           )}
 
-          {/* eXU Pay Button — high-emphasis primary action so users
-              immediately see the wallet payment option. Uses a vibrant
-              emerald→teal gradient, generous padding, inner glow,
-              shimmer-on-hover, and a balance pill so the available
-              amount stays scannable. */}
-          {wallet && wallet.status === "active" && wallet.availableBalanceVnd > 0 && (
+          {/* eXU Pay Button — 3 states per business rules */}
+          {!user ? (
+            <button
+              onClick={() => openAuthModal()}
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-gray-100 py-3.5 text-base font-semibold text-gray-500 transition-colors hover:bg-gray-200 cursor-pointer"
+            >
+              <Wallet className="h-5 w-5" />
+              {lang === "vi" ? "Bạn có eXU không?" : "Do you have eXU?"}
+            </button>
+          ) : wallet && wallet.status === "active" && wallet.availableBalanceVnd > 0 ? (
             <button
               onClick={() => {
-                if (!user) {
-                  openAuthModal();
-                  return;
-                }
-                // Navigate to checkout with eXU pre-selected
                 localStorage.setItem("saily_checkout_items", JSON.stringify(selectedItems));
                 if (cart.appliedCoupon) {
                   localStorage.setItem("saily_checkout_coupon", JSON.stringify(cart.appliedCoupon));
@@ -553,31 +556,14 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
                 localStorage.setItem("saily_checkout_use_exu", "true");
                 window.location.href = `/${lang}/checkout`;
               }}
-              className="group relative flex w-full items-center justify-between gap-3 rounded-2xl bg-gradient-to-r from-emerald-500 via-emerald-500 to-teal-600 px-4 py-3.5 text-sm font-semibold text-white shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer overflow-hidden ring-1 ring-emerald-400/40"
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-emerald-500 py-3.5 text-base font-semibold text-white transition-colors hover:bg-emerald-600 cursor-pointer"
             >
-              {/* Soft shimmer that sweeps across on hover */}
-              <span
-                aria-hidden="true"
-                className="absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-white/25 to-transparent skew-x-12 -translate-x-full group-hover:translate-x-[400%] transition-transform duration-700 ease-out"
-              />
-              <span className="relative flex items-center gap-2.5">
-                <span className="flex items-center justify-center w-9 h-9 rounded-xl bg-white/15 backdrop-blur-sm ring-1 ring-white/20">
-                  <Wallet className="h-[18px] w-[18px]" />
-                </span>
-                <span className="flex flex-col items-start leading-tight">
-                  <span className="text-[13px] font-medium uppercase tracking-wider text-white/80">
-                    {lang === "vi" ? "Thanh toán nhanh" : "Quick Pay"}
-                  </span>
-                  <span className="text-base font-bold">
-                    {lang === "vi" ? "Dùng ví eXU" : "Use eXU Wallet"}
-                  </span>
-                </span>
-              </span>
-              <span className="relative inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-sm text-xs font-bold ring-1 ring-white/25">
-                {formatVnd(wallet.availableBalanceVnd)}
-              </span>
+              <Wallet className="h-5 w-5" />
+              {lang === "vi"
+                ? `Thanh toán bằng ví eXU (${formatVnd(wallet.availableBalanceVnd)})`
+                : `Pay with eXU Wallet (${formatVnd(wallet.availableBalanceVnd)})`}
             </button>
-          )}
+          ) : null}
 
           {/* Checkout Button */}
           <button

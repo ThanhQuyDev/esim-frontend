@@ -1406,3 +1406,36 @@ export function useUpdateReferralCode() {
     },
   });
 }
+
+export type ValidateReferralResult = {
+  referralCode: string;
+  referrerUserId: number;
+  buyerDiscountVnd: number;
+  rewardVnd: number;
+};
+
+export function useValidateReferral() {
+  const { token } = useAuth();
+  return useMutation({
+    mutationFn: async (params: {
+      code: string;
+      subtotalVnd: number;
+      hasCoupon: boolean;
+    }): Promise<ValidateReferralResult> => {
+      const res = await authFetch(
+        `${API_BASE_URL}${WALLET_BASE}/me/referral/validate`,
+        token,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(params),
+        }
+      );
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || "Mã giới thiệu không hợp lệ");
+      }
+      return res.json();
+    },
+  });
+}

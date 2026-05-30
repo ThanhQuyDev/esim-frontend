@@ -99,7 +99,7 @@ export function DestinationSearchModal({
   const formatPrice = (price: number | string | undefined) => {
     const num = Number(price);
     if (!num || isNaN(num)) return null;
-    return `US$${num.toFixed(2)}`;
+    return `${num.toLocaleString("vi-VN")}₫`;
   };
 
   // Merge search results: destinations first, then regions
@@ -225,13 +225,16 @@ export function DestinationSearchModal({
                       ? formatPrice(item.minPrice || item.fromPrice)
                       : null;
                     const subtitle = isRegion
-                      ? `${item.destinationCount || 0} ${
-                          lang === "vi"
-                            ? "quốc gia"
-                            : (item.destinationCount === 1 ? "country" : "countries")
-                        }`
+                      ? [
+                          `${item.destinationCount || 0} ${
+                            lang === "vi"
+                              ? "quốc gia"
+                              : (item.destinationCount === 1 ? "country" : "countries")
+                          }`,
+                          priceStr ? `${lang === "vi" ? "Từ" : "From"} ${priceStr}` : null,
+                        ].filter(Boolean).join(" · ")
                       : priceStr
-                        ? `From ${priceStr}`
+                        ? `${lang === "vi" ? "Từ" : "From"} ${priceStr}`
                         : null;
 
                     return (
@@ -302,7 +305,7 @@ export function DestinationSearchModal({
                                 </p>
                                 {subtitle && (
                                   <p className="body-xs text-text-tertiary scroll-mt-20 xl:scroll-mt-24">
-                                    <span className="whitespace-nowrap">
+                                    <span className="whitespace-normal">
                                       {subtitle}
                                     </span>
                                   </p>
@@ -325,13 +328,16 @@ export function DestinationSearchModal({
                   </p>
                   {top10Combined.map((item: any) => {
                     const isRegionItem = item._type === "region";
-                    const priceStr = !isRegionItem && (item.minPrice || item.fromPrice)
+                    const priceStr = (item.minPrice || item.fromPrice)
                       ? formatPrice(item.minPrice || item.fromPrice)
                       : null;
                     const subtitle = isRegionItem
-                      ? `${item.destinationCount || 0} ${lang === "vi" ? "quốc gia" : (item.destinationCount === 1 ? "country" : "countries")}`
+                      ? [
+                          `${item.destinationCount || 0} ${lang === "vi" ? "quốc gia" : (item.destinationCount === 1 ? "country" : "countries")}`,
+                          priceStr ? `${lang === "vi" ? "Từ" : "From"} ${priceStr}` : null,
+                        ].filter(Boolean).join(" · ")
                       : priceStr
-                        ? `From ${priceStr}`
+                        ? `${lang === "vi" ? "Từ" : "From"} ${priceStr}`
                         : null;
                     const href = isRegionItem
                       ? `/${lang}/region/${item.slug}`
@@ -357,7 +363,7 @@ export function DestinationSearchModal({
                           >
                             <div className="flex gap-3 items-center p-3">
                               <div className="w-[24px] h-[24px] relative overflow-hidden shrink-0 rounded-full">
-                                {(item.flagUrl || item.avatarUrl) ? (
+                                {(item.flagUrl || item.iconUrl) ? (
                                   <>
                                     {/* eslint-disable-next-line @next/next/no-img-element */}
                                     <img
@@ -365,7 +371,7 @@ export function DestinationSearchModal({
                                       loading="lazy"
                                       decoding="async"
                                       className="w-full h-full object-cover"
-                                      src={item.flagUrl || item.avatarUrl}
+                                      src={item.flagUrl || item.iconUrl}
                                       style={{
                                         position: "absolute",
                                         height: "100%",
@@ -412,7 +418,7 @@ export function DestinationSearchModal({
                                 </div>
                                 {subtitle && (
                                   <p className="body-xs text-text-tertiary scroll-mt-20 xl:scroll-mt-24">
-                                    <span className="whitespace-nowrap">
+                                    <span className="whitespace-normal">
                                       {subtitle}
                                     </span>
                                   </p>

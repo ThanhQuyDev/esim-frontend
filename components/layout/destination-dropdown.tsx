@@ -96,8 +96,8 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
   /* Format price with locale */
   const formatPrice = (price: number | string) => {
     const num = Number(price);
-    if (!num || isNaN(num)) return lang === "vi" ? "20.000 đ" : "US$3.99";
-    return `${num.toLocaleString("vi-VN")} đ`;
+    if (!num || isNaN(num)) return null;
+    return `${num.toLocaleString("vi-VN")}₫`;
   };
 
   return (
@@ -253,7 +253,10 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
                                 <p className="body-sm-medium text-text-primary text-left">{region.name}</p>
                                 <p className="body-xs text-text-tertiary text-left">
                                   <span className="whitespace-nowrap">
-                                    {region.destinationCount} {lang === "vi" ? "quốc gia" : (region.destinationCount === 1 ? "country" : "countries")}
+                                    {[
+                                      formatPrice(region.fromPrice) ? `${t.from} ${formatPrice(region.fromPrice)}` : null,
+                                      `${region.destinationCount} ${lang === "vi" ? "quốc gia" : (region.destinationCount === 1 ? "country" : "countries")}`
+                                    ].filter(Boolean).join(" · ")}
                                   </span>
                                 </p>
                               </div>
@@ -338,8 +341,13 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
                                   <p className="body-xs text-text-tertiary text-left">
                                     <span className="whitespace-nowrap">
                                       {isRegionItem
-                                        ? `${item.destinationCount} ${lang === "vi" ? "quốc gia" : (item.destinationCount === 1 ? "country" : "countries")}`
-                                        : `${t.from} ${formatPrice(item.fromPrice)}`
+                                        ? [
+                                            formatPrice(item.fromPrice) ? `${t.from} ${formatPrice(item.fromPrice)}` : null,
+                                            `${item.destinationCount} ${lang === "vi" ? "quốc gia" : (item.destinationCount === 1 ? "country" : "countries")}`
+                                          ].filter(Boolean).join(" · ")
+                                        : formatPrice(item.fromPrice)
+                                          ? `${t.from} ${formatPrice(item.fromPrice)}`
+                                          : ""
                                       }
                                     </span>
                                   </p>

@@ -10,6 +10,7 @@ interface FooterLink {
   id?: string;
   label: string;
   href: string;
+  iconUrl?: string | null;
 }
 
 interface FooterColumn {
@@ -23,14 +24,20 @@ interface FooterSectionProps {
   lang?: Locale;
 }
 
-const socialLinks = [
-  { name: "Facebook", src: "https://sb.nordcdn.com/m/73b0007dac464eb4/original/facebook.svg", href: "https://www.facebook.com/sailyservice" },
-  { name: "X (Twitter)", src: "https://sb.nordcdn.com/m/3cffb132be50069/original/x-twitter.svg", href: "https://x.com/sailyworld" },
-  { name: "LinkedIn", src: "https://sb.nordcdn.com/m/7479eac8a4f6a155/original/linkedin.svg", href: "https://www.linkedin.com/company/sailyworld/" },
-  { name: "YouTube", src: "https://sb.nordcdn.com/m/544926c91d4179c6/original/youtube.svg", href: "https://www.youtube.com/@saily_service" },
-  { name: "Instagram", src: "https://sb.nordcdn.com/m/327ee6481264b8e0/original/instagram.svg", href: "https://www.instagram.com/sailyworld" },
-  { name: "Reddit", src: "https://sb.nordcdn.com/m/7e0fac0feb703767/original/Reddit.svg", href: "https://www.reddit.com/r/saily/" },
-];
+const socialIconMap: Record<string, string> = {
+  facebook: "https://sb.nordcdn.com/m/73b0007dac464eb4/original/facebook.svg",
+  tiktok: "https://sb.nordcdn.com/m/3cffb132be50069/original/tiktok.svg",
+  "x (twitter)": "https://sb.nordcdn.com/m/3cffb132be50069/original/x-twitter.svg",
+  twitter: "https://sb.nordcdn.com/m/3cffb132be50069/original/x-twitter.svg",
+  instagram: "https://sb.nordcdn.com/m/327ee6481264b8e0/original/instagram.svg",
+  youtube: "https://sb.nordcdn.com/m/544926c91d4179c6/original/youtube.svg",
+  linkedin: "https://sb.nordcdn.com/m/7479eac8a4f6a155/original/linkedin.svg",
+  reddit: "https://sb.nordcdn.com/m/7e0fac0feb703767/original/Reddit.svg",
+};
+
+function getSocialIcon(name: string): string | undefined {
+  return socialIconMap[name.trim().toLowerCase()];
+}
 
 const paymentIcons = [
   { name: "Apple Pay", src: "https://sb.nordcdn.com/m/3a97dd853ad8a7a5/original/apple-pay.svg", width: 38 },
@@ -83,6 +90,7 @@ function getApiFooterColumns(
       id: footerLink.id,
       label,
       href,
+      iconUrl: footerLink.iconUrl || null,
     });
 
     groupedLinks.set(category, links);
@@ -176,8 +184,8 @@ export async function FooterSection({
                   {col.links.map((link: FooterLink, j: number) => {
                     const linkKey = link.id ?? `${link.href}-${j}`;
                     const isExternal = link.href.startsWith("http");
+                    const icon = link.iconUrl || (isFollowCol ? getSocialIcon(link.label) : null);
 
-                    // Only "Follow Us" column opens links in a new tab
                     if (isFollowCol && isExternal) {
                       return (
                         <a
@@ -185,20 +193,42 @@ export async function FooterSection({
                           href={link.href}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="body-sm text-text-secondary hover:underline inline-flex items-center"
+                          className="body-sm text-text-secondary hover:underline inline-flex items-center gap-2"
                         >
+                          {icon && (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={icon}
+                              alt={link.label.toLowerCase()}
+                              width={20}
+                              height={20}
+                              loading="lazy"
+                              style={{ color: "transparent" }}
+                            />
+                          )}
                           {link.label}
                         </a>
                       );
                     }
 
-                    // All other columns open in the same page
+                    // All other links
                     return (
                       <Link
                         key={linkKey}
                         href={link.href}
-                        className="body-sm text-text-secondary hover:underline inline-flex items-center"
+                        className="body-sm text-text-secondary hover:underline inline-flex items-center gap-2"
                       >
+                        {icon && (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={icon}
+                            alt={link.label.toLowerCase()}
+                            width={20}
+                            height={20}
+                            loading="lazy"
+                            style={{ color: "transparent" }}
+                          />
+                        )}
                         {link.label}
                       </Link>
                     );
@@ -207,31 +237,6 @@ export async function FooterSection({
               </div>
             );
           })}
-        </div>
-
-        {/* Social Links - Layout 2.2: Icon before text */}
-        <div className="flex flex-wrap gap-4 pb-8">
-          {socialLinks.map((social) => (
-            <a
-              key={social.name}
-              href={social.href}
-              target="_blank"
-
-              className="hover:underline transition-opacity inline-flex items-center gap-2"
-              aria-label={social.name}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={social.src}
-                alt={social.name.toLowerCase()}
-                width={24}
-                height={24}
-                loading="lazy"
-                style={{ color: "transparent" }}
-              />
-              <span className="body-sm text-text-secondary">{social.name}</span>
-            </a>
-          ))}
         </div>
 
         {/* Bottom Footer - Layout 2.3: Restructured copyright, policies, payment */}
