@@ -1,8 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronRight, Calendar, BookOpen } from "lucide-react";
+import { Calendar, BookOpen } from "lucide-react";
 import type { Blog } from "@/lib/api";
-import { formatDate, formatTimeRead, authorSlug, categorySlug } from "./blog-detail-helpers";
+import { formatDate, formatTimeRead, authorSlug } from "./blog-detail-helpers";
 import { SocialIconsCol, SocialIconsRow } from "./blog-social-icons";
 
 export function BlogArticleHeading({ blog, lang }: { blog: Blog; lang: string }) {
@@ -17,32 +17,6 @@ export function BlogArticleHeading({ blog, lang }: { blog: Blog; lang: string })
         <div className="mx-4 sm:mx-auto">
           <div className="container mx-auto">
             <div className="grid sm:gap-x-8 grid-cols-12 gap-y-8">
-              {/* Breadcrumb */}
-              <div className="col-span-12 lg:col-start-2 lg:col-span-10">
-                <div className="h-full w-full flex group/stack [&>div:empty]:hidden flex-row justify-start items-center gap-x-3">
-                  <div>
-                    <Link
-                      className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus text-secondary body-sm font-medium"
-                      href={`/${lang}/blog/`}
-                    >
-                      Blog
-                    </Link>
-                  </div>
-                  <div>
-                    <ChevronRight size={12} className="text-neutral-700" />
-                  </div>
-                  {category && (
-                    <div>
-                      <Link
-                        className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus text-secondary body-sm font-medium"
-                        href={`/${lang}/blog/category/${categorySlug(category)}/`}
-                      >
-                        {category}
-                      </Link>
-                    </div>
-                  )}
-                </div>
-              </div>
 
               {/* Title + Social Icons */}
               <div className="col-span-12 lg:col-start-2 lg:col-span-10">
@@ -134,7 +108,7 @@ export function BlogArticleHeading({ blog, lang }: { blog: Blog; lang: string })
                         width={968}
                         height={507}
                         style={{ color: "transparent" }}
-                        sizes="(min-width: 1200px) 968px, (min-width: 992px) 796px, (min-width: 768px) 738px, (min-width: 640px) 610px, 100vw"
+                        sizes="(min-width: 1168px) 968px, (min-width: 992px) 796px, (min-width: 768px) 738px, (min-width: 640px) 610px, 100vw"
                         src={blog.coverImage}
                       />
                     </div>

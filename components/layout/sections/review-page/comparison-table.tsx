@@ -17,7 +17,7 @@ interface CompanyLogo {
 }
 
 const companyLogos: CompanyLogo[] = [
-  { alt: "esim.vn logo", src: "/logo.png", width: 76, height: 26 },
+  { alt: "esim.vn logo", src: "/logo/logo_esimvn_white.png", width: 76, height: 26 },
   { alt: "Airalo logo", src: "https://sb.nordcdn.com/m/77cc5cef50c57f8b/original/airalo-logo.svg", width: 59, height: 64 },
   { alt: "Holafly logo", src: "https://sb.nordcdn.com/m/43e603916e183a9c/original/holafly-logo.svg", width: 91, height: 28 },
   { alt: "Nomad logo", src: "https://sb.nordcdn.com/m/5c39fbbb13daf567/original/nomad-logo.svg", width: 57, height: 48 },
@@ -28,14 +28,13 @@ type CellValue = "tick-dark" | "tick" | "x" | string;
 
 interface TableRow {
   label: string;
-  hasTooltip?: boolean;
+  tooltip?: string;
   values: CellValue[];
 }
 
 const tableRows: TableRow[] = [
   {
     label: "One eSIM for supported destinations",
-    hasTooltip: true,
     values: ["tick-dark", "x", "x", "x", "tick"],
   },
   {
@@ -44,7 +43,7 @@ const tableRows: TableRow[] = [
   },
   {
     label: "Refunds",
-    hasTooltip: true,
+    tooltip: "A general right to request a refund. Certain restrictions and conditions apply.",
     values: ["tick-dark", "tick", "tick", "tick", "tick"],
   },
   {
@@ -61,7 +60,7 @@ const tableRows: TableRow[] = [
   },
   {
     label: "Data saver (ad blocker)",
-    hasTooltip: true,
+    tooltip: "A feature that can save up to 28.6% of your data.",
     values: ["tick-dark", "x", "x", "x", "x"],
   },
 ];
@@ -90,6 +89,20 @@ function CellIcon({ value, isSaily }: { value: CellValue; isSaily: boolean }) {
     return <p className="body-md text-center text-primary-on-color scroll-mt-20 xl:scroll-mt-24">{value}</p>;
   }
   return <p className="body-md text-center scroll-mt-20 xl:scroll-mt-24">{value}</p>;
+}
+
+function TooltipIcon({ text }: { text: string }) {
+  return (
+    <span className="relative inline-block group">
+      <svg className="w-4 h-4 text-text-tertiary cursor-help" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <circle cx="12" cy="12" r="10" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 16v-4M12 8h.01" />
+      </svg>
+      <span className="absolute bottom-full left-1/2 px-3 py-2 rounded-md bg-gray-400 text-primary-on-color body-xs w-[200px] text-center opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all pointer-events-none z-20">
+        {text}
+      </span>
+    </span>
+  );
 }
 
 export function ReviewComparisonTable({ dict, lang }: ReviewComparisonTableProps) {
@@ -142,25 +155,17 @@ export function ReviewComparisonTable({ dict, lang }: ReviewComparisonTableProps
                         </thead>
                         <tbody>
                           {tableRows.map((row, rowIndex) => (
-                            <tr key={rowIndex}>
-                              <th className="align-center py-3 pr-3 md:pr-6 font-normal body-md break-words min-w-[150px] lg:min-w-[314px] w-[314px] border-neutral-200 border-b-md border-t-md">
-                                {row.hasTooltip ? (
-                                  <div className="h-full w-full flex [&>div:empty]:hidden flex-row items-center gap-x-2">
-                                    <div>
-                                      {row.label}{" "}
-                                      <span className="inline-block relative">
-                                        <i className="kitIcon text-center w-[1em] fa-circle-info fa-sharp fa-regular text-[16px] text-tertiary"></i>
-                                      </span>
-                                    </div>
-                                  </div>
-                                ) : (
-                                  row.label
-                                )}
+                            <tr key={rowIndex} className="border-b border-neutral-200">
+                              <th className="align-center py-3 pr-3 md:pr-6 font-normal body-md break-words min-w-[150px] lg:min-w-[314px] w-[314px]">
+                                <div className="flex items-center gap-x-2">
+                                  <span>{row.label}</span>
+                                  {row.tooltip && <TooltipIcon text={row.tooltip} />}
+                                </div>
                               </th>
                               {row.values.map((value, colIndex) => (
                                 <td
                                   key={colIndex}
-                                  className={`align-center p-6 [&_img]:mx-auto border-b-md border-t-md${colIndex === 0 ? " bg-dark border-neutral-200/20" : " border-neutral-200"}`}
+                                  className={`align-center p-6 [&_img]:mx-auto${colIndex === 0 ? " bg-dark border-neutral-200/20" : ""}`}
                                 >
                                   <CellIcon value={value} isSaily={colIndex === 0} />
                                 </td>
@@ -174,9 +179,9 @@ export function ReviewComparisonTable({ dict, lang }: ReviewComparisonTableProps
                             <th scope="col" className="align-center text-center px-3 py-4 md:p-5 [&_img]:mx-auto [&_a]:whitespace-nowrap bg-dark border-neutral-200/20 rounded-b-md">
                               <a
                                 role="button"
-                                className="max-md:w-full text-center inline-block text-primary bg-accent pointer-fine:hover:bg-accent-hover border-md border-accent pointer-fine:hover:border-accent-hover active:bg-accent-active! active:border-accent-active! box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7"
+                                className="max-md:w-full text-center inline-block text-primary bg-accent pointer-fine:hover:bg-accent-hover border-md border-bg-accent-hover pointer-fine:hover:border-accent-hover active:bg-accent-active! active:border-accent-active! box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7"
                                 data-ga-slug="View Plans"
-                                href={`/${lang}/destination`}
+                                href={`/${lang}/destinations`}
                               >
                                 View Plans
                               </a>
@@ -195,8 +200,8 @@ export function ReviewComparisonTable({ dict, lang }: ReviewComparisonTableProps
                       <div className="col-span-12 lg:col-span-9">
                         <p className="body-xs text-tertiary scroll-mt-20 xl:scroll-mt-24">
                           *This data was taken from competitors&apos; official English-language sites on August 22, 2025, and the West Coast Labs product comparison report. For additional info, contact{" "}
-                          <a className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus underline" href="mailto:support@saily.com">
-                            support@saily.com
+                          <a className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus underline" href="mailto:hotro@esim.com.vn ">
+                            hotro@esim.com.vn 
                           </a>.
                         </p>
                       </div>

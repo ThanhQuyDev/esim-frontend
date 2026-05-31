@@ -23,7 +23,7 @@ function slugify(text: string): string {
 }
 
 /**
- * Extract <h1> headings from the article HTML and ensure every heading has an id.
+ * Extract h1–h6 headings from the article HTML and ensure every heading has an id.
  * Returns the processed HTML (with ids injected where missing) plus the list of headings.
  */
 export function processBlogContent(html: string): {
@@ -34,8 +34,9 @@ export function processBlogContent(html: string): {
   const usedIds = new Set<string>();
 
   const processedHtml = html.replace(
-    /<h1([^>]*)>([\s\S]*?)<\/h1>/gi,
-    (_full, attrs: string, inner: string) => {
+    /<h([1-6])([^>]*)>([\s\S]*?)<\/h\1>/gi,
+    (_full, levelStr: string, attrs: string, inner: string) => {
+      const level = parseInt(levelStr, 10);
       const text = inner
         .replace(/<[^>]*>/g, "")
         .replace(/&nbsp;/g, " ")
@@ -55,7 +56,7 @@ export function processBlogContent(html: string): {
       usedIds.add(unique);
       id = unique;
 
-      headings.push({ id, text, level: 1 });
+      headings.push({ id, text, level });
 
       // Inject id (if missing) and append scroll-margin classes for native anchor jumps
       let newAttrs = idMatch
@@ -72,7 +73,7 @@ export function processBlogContent(html: string): {
         newAttrs = `${newAttrs} class="${scrollClass}"`;
       }
 
-      return `<h1${newAttrs}>${inner}</h1>`;
+      return `<h${level}${newAttrs}>${inner}</h${level}>`;
     }
   );
 

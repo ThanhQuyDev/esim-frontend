@@ -9,7 +9,7 @@ export const pressAreaTranslations: Record<string, PressAreaDict> = {
     whyChoose: {
       title: "Why travelers choose our eSIM service",
       description: "The Saily eSIM service makes it easy to stay connected wherever you go, with one simple app.",
-      linkText: "Saily eSIM service",
+      linkText: "esim.vn eSIM service",
       worldwideCoverage: "Worldwide coverage",
       worldwideCoverageDesc: "With eSIM plans in 200+ destinations, Saily keeps you connected worldwide, whether you're backpacking through Bangkok or closing business deals in Berlin.",
       noRoaming: "No roaming charges",
@@ -41,7 +41,7 @@ export const pressAreaTranslations: Record<string, PressAreaDict> = {
     pressResources: {
       title: "Press resources",
       contactTitle: "Contact us",
-      contactDesc: "For all press inquiries, drop us a note at press@saily.com, and our team will get back to you with the info you need.",
+      contactDesc: "For all press inquiries, drop us a note at ceo@esim.com.vn, and our team will get back to you with the info you need.",
       emailUs: "Email Us",
       mediaTitle: "Media assets",
       mediaDesc: "Download Saily logos and brand files. Use the black version when you can (white's for dark backgrounds only).",
@@ -49,7 +49,7 @@ export const pressAreaTranslations: Record<string, PressAreaDict> = {
     },
     banner: {
       title: "eSIM plans for nonprofit organizations",
-      description: "Saily offers free eSIM plans to nonprofits facing censorship or online privacy threats. If that's your organization, contact us at non-profit@saily.com.",
+      description: "Saily offers free eSIM plans to nonprofits facing censorship or online privacy threats. If that's your organization, contact us at non-ceo@esim.com.vn.",
       learnMore: "Learn More",
     },
     productFamily: {
@@ -61,13 +61,13 @@ export const pressAreaTranslations: Record<string, PressAreaDict> = {
     hero: {
       excellent: "Xuất sắc",
       rating: "4.7 trên 5",
-      title: "Khu vực báo chí Saily",
-      description: "Tìm tất cả tin tức mới nhất, thông tin nghiên cứu và tài sản thương hiệu cho dịch vụ eSIM Saily.",
+      title: "Khu vực báo chí esim.vn",
+      description: "Tìm tất cả tin tức mới nhất, thông tin nghiên cứu và tài nguyên thương hiệu của dịch vụ esim.vn",
     },
     whyChoose: {
       title: "Tại sao du khách chọn dịch vụ eSIM của chúng tôi",
-      description: "Dịch vụ eSIM Saily giúp bạn dễ dàng kết nối mọi nơi, chỉ với một ứng dụng đơn giản.",
-      linkText: "Dịch vụ eSIM Saily",
+      description: "Dịch vụ eSIM esim.vn giúp bạn dễ dàng kết nối mọi nơi, chỉ với một ứng dụng đơn giản.",
+      linkText: "Dịch vụ eSIM esim.vn",
       worldwideCoverage: "Phủ sóng toàn cầu",
       worldwideCoverageDesc: "Với gói eSIM tại hơn 200 điểm đến, Saily giữ bạn kết nối trên toàn thế giới, dù bạn đang du lịch bụi qua Bangkok hay đàm phán kinh doanh tại Berlin.",
       noRoaming: "Không phí chuyển vùng",
@@ -99,15 +99,15 @@ export const pressAreaTranslations: Record<string, PressAreaDict> = {
     pressResources: {
       title: "Tài nguyên báo chí",
       contactTitle: "Liên hệ chúng tôi",
-      contactDesc: "Đối với mọi yêu cầu báo chí, hãy gửi email cho chúng tôi tại press@saily.com, và đội ngũ của chúng tôi sẽ phản hồi với thông tin bạn cần.",
+      contactDesc: "Đối với mọi yêu cầu báo chí, hãy gửi email cho chúng tôi tại ceo@esim.com.vn, và đội ngũ của chúng tôi sẽ phản hồi với thông tin bạn cần.",
       emailUs: "Gửi Email",
-      mediaTitle: "Tài sản truyền thông",
+      mediaTitle: "Tài nguyên truyền thông",
       mediaDesc: "Tải logo và tệp thương hiệu Saily. Sử dụng phiên bản đen khi có thể (phiên bản trắng chỉ dành cho nền tối).",
-      downloadAssets: "Tải tài sản",
+      downloadAssets: "Tải về",
     },
     banner: {
       title: "Gói eSIM cho tổ chức phi lợi nhuận",
-      description: "Saily cung cấp gói eSIM miễn phí cho các tổ chức phi lợi nhuận đối mặt với kiểm duyệt hoặc đe dọa quyền riêng tư trực tuyến. Nếu đó là tổ chức của bạn, hãy liên hệ chúng tôi tại non-profit@saily.com.",
+      description: "Saily cung cấp gói eSIM miễn phí cho các tổ chức phi lợi nhuận đối mặt với kiểm duyệt hoặc đe dọa quyền riêng tư trực tuyến. Nếu đó là tổ chức của bạn, hãy liên hệ chúng tôi tại non-ceo@esim.com.vn.",
       learnMore: "Tìm hiểu thêm",
     },
     productFamily: {

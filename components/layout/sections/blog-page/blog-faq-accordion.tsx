@@ -20,18 +20,18 @@ export function BlogFaqAccordion({ faqs, lang = "vi" }: BlogFaqAccordionProps) {
 
   return (
     <div className="mt-8">
-      <h2 className="heading-md mb-4 scroll-mt-20 xl:scroll-mt-24">
+      <h2 className="text-[2.5rem] font-medium mb-4 scroll-mt-20 xl:scroll-mt-24">
         {heading}
       </h2>
       <Accordion type="single" collapsible className="w-full">
         {faqs.map((faq) => (
           <AccordionItem key={faq.id} value={faq.id}>
-            <AccordionTrigger className="text-left body-md-medium">
+            <AccordionTrigger className="text-left text-[1.25rem] font-medium">
               {faq.question}
             </AccordionTrigger>
             <AccordionContent>
               <div
-                className="prose prose-slate max-w-none body-sm text-secondary"
+                className="prose prose-slate max-w-none text-[1rem] leading-[1.5] text-secondary"
                 dangerouslySetInnerHTML={{ __html: faq.answer }}
               />
             </AccordionContent>

@@ -128,7 +128,7 @@ export function DestinationSearchModal({
     >
       <div className="w-full md:w-[640px] shadow-lg text-text-primary">
         <div
-          className="rounded-t-md md:rounded-md overflow-hidden py-6 md:py-8 max-h-[99dvh] md:max-h-[80vh] flex flex-col h-[99dvh] md:h-[554px] bg-bg-secondary"
+          className="rounded-t-md md:rounded-md overflow-hidden py-6 md:py-8 max-h-[99dvh] md:max-h-[80vh] flex flex-col h-[99dvh] md:h-[554px] bg-white"
           role="dialog"
           aria-modal="true"
           tabIndex={-1}
@@ -146,7 +146,7 @@ export function DestinationSearchModal({
               onClick={onClose}
             >
               <svg
-                className="w-4 h-4 text-text-primary"
+                className="w-6 h-6 text-text-primary"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -171,19 +171,44 @@ export function DestinationSearchModal({
                   lang === "vi" ? "Nhập điểm đến của bạn" : "Enter your destination"
                 }
                 autoComplete="off"
-                className="outline-hidden focus-visible:outline-none appearance-none w-full leading-md py-[11px] px-4 text-text-primary placeholder-text-tertiary border border-border-primary border-md hover:border-border-focus active:border-border-focus focus:border-border-focus transition rounded-sm"
+                className="outline-hidden focus-visible:outline-none appearance-none w-full leading-md py-[11px] px-4 pr-10 text-text-primary placeholder-text-tertiary border border-border-primary border-md hover:border-border-focus active:border-border-focus focus:border-border-focus transition rounded-sm"
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 name="search-input"
                 ref={inputRef}
               />
+              {query && (
+                <button
+                  type="button"
+                  aria-label="Clear search"
+                  className="absolute right-6 top-1/2 -translate-y-1/2 p-1 text-text-tertiary bg-bg-secondary rounded-full hover:text-text-primary transition-colors"
+                  onClick={() => {
+                    setQuery("");
+                    inputRef.current?.focus();
+                  }}
+                >
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              )}
             </div>
 
             {/* Results */}
             <div
               id="country-list-items"
-              className="grid gap-3 lg:gap-6 w-full md:grid-cols-2 lg:grid-cols-3 md:h-[363px] overflow-y-auto block"
+              className="grid gap-3 lg:gap-6 w-full md:grid-cols-2 lg:grid-cols-3 md:h-[363px] overflow-y-auto"
             >
               {isLoading ? (
                 <div className="col-span-full flex items-center justify-center py-12">
@@ -210,11 +235,22 @@ export function DestinationSearchModal({
                 </div>
               ) : hasSearch ? (
                 mergedResults.length === 0 ? (
-                  <p className="body-sm-medium text-text-secondary mb-2 md:mb-3 col-span-full scroll-mt-20 xl:scroll-mt-24">
-                    {lang === "vi"
-                      ? "Không tìm thấy điểm đến"
-                      : "No destinations found"}
-                  </p>
+                  <div className="col-span-full flex flex-col items-center justify-center py-12 gap-4">
+                    <p className="body-sm-medium text-text-secondary">
+                      {lang === "vi"
+                        ? "Không tìm thấy điểm đến"
+                        : "No destinations found"}
+                    </p>
+                    <a
+                      role="button"
+                      href={`/${lang}/destinations`}
+                      className="text-center inline-block text-primary pointer-fine:hover:bg-brand-black pointer-fine:hover:text-primary-on-color border-md border-black active:bg-brand-black active:text-primary-on-color box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7"
+                    >
+                      {lang === "vi"
+                        ? "Xem tất cả điểm đến"
+                        : "View all destinations"}
+                    </a>
+                  </div>
                 ) : (
                   mergedResults.map((item: any) => {
                     const isRegion = item._type === "region";
@@ -252,7 +288,7 @@ export function DestinationSearchModal({
                           }}
                         >
                           <div
-                            className="flex flex-col items-start text-left rtl:text-right gap-4 relative h-full bg-bg-secondary word-break-word transform-gpu border-none p-0 rounded-[8px] transition-colors duration-medium hover:bg-bg-primary active:bg-bg-primary"
+                            className="flex flex-col items-start text-left rtl:text-right gap-4 relative h-full bg-white word-break-word transform-gpu border-none p-0 rounded-[8px] transition-colors duration-medium hover:bg-bg-primary active:bg-bg-primary"
                             data-testid="destination-card-minified-undefined"
                           >
                             <div className="flex gap-3 items-center p-3">
@@ -358,7 +394,7 @@ export function DestinationSearchModal({
                           }}
                         >
                           <div
-                            className="flex flex-col items-start text-left rtl:text-right gap-4 relative h-full bg-bg-secondary word-break-word transform-gpu border-none p-0 rounded-[8px] transition-colors duration-medium hover:bg-bg-primary active:bg-bg-primary"
+                            className="flex flex-col items-start text-left rtl:text-right gap-4 relative h-full bg-white hover:bg-bg-secondary word-break-word transform-gpu border-none p-0 rounded-[8px] transition-colors duration-medium active:bg-bg-primary"
                             data-testid="destination-card-minified-undefined"
                           >
                             <div className="flex gap-3 items-center p-3">

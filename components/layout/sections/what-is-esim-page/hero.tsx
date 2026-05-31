@@ -19,7 +19,7 @@ export function EsimHero({ dict, lang }: EsimHeroProps) {
                   <div>
                     <Link
                       href={`/${lang}/`}
-                      className="max-md:w-full md:w-auto text-center inline-block text-text-primary bg-accent hover:bg-accent/90 border border-accent rounded-full transition-colors py-[11px] body-md-medium px-7"
+                      className="max-md:w-full md:w-auto text-center inline-block text-text-primary bg-accent hover:bg-accent-hover border border-bg-accent-hover rounded-full transition-colors py-[11px] body-md-medium px-7"
                     >
                       {dict.cta}
                     </Link>

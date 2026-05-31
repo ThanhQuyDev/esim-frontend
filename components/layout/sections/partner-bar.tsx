@@ -16,9 +16,9 @@ export function PartnerBar({ dict }: PartnerBarProps) {
     <div data-section="PartnerBar" data-testid="section-PartnerBar" className="relative scroll-mt-20 xl:scroll-mt-24">
       <div className="py-16">
         <div className="lg:container mx-auto">
-          <div className="lg:flex lg:justify-between lg:items-center lg:py-6 lg:pl-12 xl:pr-12 border-md border-border-secondary lg:rounded-full">
+          <div className="lg:flex lg:justify-between lg:items-center lg:py-6 lg:pl-12 xl:pr-12 border-none lg:border-md border-border-secondary lg:rounded-full">
             <div className="max-lg:container max-sm:px-4 sm:mx-auto lg:mx-0 max-lg:mb-4 lg:mr-16 lg:shrink-0">
-              <p className="text-text-primary body-sm-medium lg:body-md-medium scroll-mt-20 xl:scroll-mt-24">
+              <p className="text-black body-sm-medium lg:body-md-medium scroll-mt-20 xl:scroll-mt-24">
                 {dict.title}
               </p>
             </div>

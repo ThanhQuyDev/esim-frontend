@@ -119,7 +119,7 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
       // Persist orderId so the return page can poll status even if vpc_MerchTxnRef is missing.
       try {
         sessionStorage.setItem(
-          "saily_topup_pending",
+          "esim_topup_pending",
           JSON.stringify({
             orderId: res.orderId,
             iccid: esim.iccid,

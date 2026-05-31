@@ -18,12 +18,12 @@ export function ReviewHero({ dict, lang }: ReviewHeroProps) {
                     </h1>
                   </div>
                   <p className="body-md text-secondary scroll-mt-20 xl:scroll-mt-24">
-                    {dict.subtitle || "An affordable eSIM service from the creators of NordVPN"}
+                    {dict.subtitle || "An affordable eSIM service from the creators of esim.vn"}
                   </p>
                   <div>
                     <a
                       role="button"
-                      className="max-md:w-full text-center inline-block text-primary bg-accent pointer-fine:hover:bg-accent-hover border-md border-accent pointer-fine:hover:border-accent-hover active:bg-accent-active! active:border-accent-active! box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7"
+                      className="max-md:w-full text-center inline-block text-primary bg-accent pointer-fine:hover:bg-accent-hover border-md border-bg-accent-hover hover:bg-accent-hover active:bg-accent-active! active:border-accent-active! box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7"
                       data-ga-slug="View All Plans"
                       href={`/${lang}/destination`}
                     >

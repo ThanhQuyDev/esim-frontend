@@ -264,7 +264,7 @@ export function CalendarModal({
 
   // Bottom summary
   const totalVnd = days > 0 ? roundVndToThousands(unitVndPricePerDay * days * quantity) : 0;
-  const perDayVnd = days > 0 ? roundVndToThousands(totalVnd / days) : 0;
+  const perDayVnd = days > 0 ? Math.round(totalVnd / days) : 0;
 
   const summaryTitle = !selS
     ? askStartLabel

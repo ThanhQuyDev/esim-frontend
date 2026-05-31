@@ -28,7 +28,7 @@ type TabType = "top10" | "country" | "region" | "ultra";
 /* Fallback translations when dict is not provided */
 const FALLBACK: Record<string, DestinationDropdownDict> = {
   vi: {
-    subtitle: "Bạn đang đi du lịch đâu?",
+    subtitle: "Bạn đang đi du lịch đến đâu?",
     tabs: { country: "Quốc gia", region: "Khu vực", ultraPlan: "Ultra Plan" },
     from: "Từ",
     viewAllDestinations: "Xem tất cả điểm đến",
@@ -103,7 +103,7 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
   return (
     <div
       data-testid="destinations-dropdown"
-      className="header-dropdown absolute w-full px-6 top-full left-0 rounded-b-md bg-bg-secondary shadow-[0_8px_12px_-6px_rgba(149,157,165,0.2)] lg:block"
+      className="header-dropdown absolute w-full px-6 top-full left-0 rounded-b-md bg-white shadow-[0_8px_12px_-6px_rgba(149,157,165,0.2)] lg:block"
     >
       <div className="flex flex-col max-w-[1600px] mx-auto">
         <div className="w-full border-t border-border-secondary py-6">
@@ -114,7 +114,7 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
                 data-testid="search-input"
                 placeholder={t.subtitle || "Where are you travelling to?"}
                 autoComplete="off"
-                className="body-sm max-lg:body-md bg-primary outline-hidden appearance-none w-full leading-md py-[12.5px] pl-4 pr-12 text-text-primary placeholder-text-tertiary border border-border-primary active:border-border-focus focus:border-border-focus transition-colors rounded-full focus:bg-bg-secondary cursor-pointer"
+                className="body-sm max-lg:body-md bg-bg-secondary outline-hidden appearance-none w-full leading-md py-[12.5px] pl-4 pr-12 text-text-primary placeholder-text-tertiary border border-border-primary active:border-border-focus focus:border-border-focus transition-colors rounded-full focus:bg-white cursor-pointer"
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -135,8 +135,8 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
                       data-is-active={activeTab === tab.key}
                       onClick={() => setActiveTab(tab.key)}
                       className={`relative body-sm-medium whitespace-nowrap md:body-md-medium px-4 py-1 focus-visible:outline-hidden focus-visible:shadow-focus rounded-full transition-all duration-200 min-w-[60px] ${activeTab === tab.key
-                          ? "bg-bg-dark text-text-primary-on-color"
-                          : "text-text-primary hover:bg-bg-primary"
+                        ? "bg-bg-dark text-text-primary-on-color"
+                        : "text-text-primary hover:bg-bg-secondary"
                         }`}
                     >
                       {tab.badge ? (
@@ -342,9 +342,9 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
                                     <span className="whitespace-nowrap">
                                       {isRegionItem
                                         ? [
-                                            formatPrice(item.fromPrice) ? `${t.from} ${formatPrice(item.fromPrice)}` : null,
-                                            `${item.destinationCount} ${lang === "vi" ? "quốc gia" : (item.destinationCount === 1 ? "country" : "countries")}`
-                                          ].filter(Boolean).join(" · ")
+                                          formatPrice(item.fromPrice) ? `${t.from} ${formatPrice(item.fromPrice)}` : null,
+                                          `${item.destinationCount} ${lang === "vi" ? "quốc gia" : (item.destinationCount === 1 ? "country" : "countries")}`
+                                        ].filter(Boolean).join(" · ")
                                         : formatPrice(item.fromPrice)
                                           ? `${t.from} ${formatPrice(item.fromPrice)}`
                                           : ""

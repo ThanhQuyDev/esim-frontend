@@ -73,6 +73,7 @@ export interface Blog {
   slug: string;
   title: string;
   category: string | null;
+  parent?: string | null;
   timeRead: number | string | null;
   miniTag: BlogMiniTag | null;
   planIds: number[] | string[] | null;
@@ -109,6 +110,7 @@ export interface Region {
   destinations?: Destination[];
   destinationCount?: number;
   avatarUrl?: string;
+  iconUrl?: string;
   title?: string;
   titleVi?: string;
   description?: string;
@@ -501,6 +503,22 @@ export async function getBlogCategories(
   return res.json();
 }
 
+export async function getBlogParentsByCategory(
+  lang?: string
+): Promise<Record<string, string[]>> {
+  const headers: Record<string, string> = {};
+  if (lang) headers["x-custom-lang"] = lang;
+
+  const url = `${API_BASE_URL}/api/v1/blogs/parents`;
+  const res = await fetch(url, {
+    headers,
+    next: { revalidate: 300 },
+  });
+
+  if (!res.ok) return {};
+  return res.json();
+}
+
 export async function getBlogsByCategory(
   category: string,
   options: FetchOptions = {}
@@ -511,6 +529,22 @@ export async function getBlogsByCategory(
       limit: 6,
       ...options,
       filters: JSON.stringify({ category }),
+    },
+    120
+  );
+}
+
+export async function getBlogsByCategoryAndParent(
+  category: string,
+  parent: string,
+  options: FetchOptions = {}
+): Promise<PaginatedResponse<Blog>> {
+  return apiFetch<PaginatedResponse<Blog>>(
+    "/api/v1/blogs",
+    {
+      limit: 10,
+      ...options,
+      filters: JSON.stringify({ category, parent }),
     },
     120
   );

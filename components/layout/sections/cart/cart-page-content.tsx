@@ -43,12 +43,18 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
   const wt = walletTranslations[lang as "en" | "vi"];
 
   // Sync cart items from API or localStorage
+  // On mount: clear any stale coupon from previous checkout session
   useEffect(() => {
     if (isApiCart) {
-      setCart((prev) => ({ items: apiCartItems, appliedCoupon: prev.appliedCoupon }));
+      setCart({ items: apiCartItems, appliedCoupon: null });
       setSelectedIds((prev) => prev.size === 0 ? new Set(apiCartItems.map((i) => i.id)) : prev);
     } else {
       const c = getLocalCartData();
+      // Clear stale coupon — user must re-apply each session
+      if (c.appliedCoupon) {
+        removeCoupon();
+        c.appliedCoupon = null;
+      }
       setCart(c);
       setSelectedIds((prev) => prev.size === 0 ? new Set(c.items.map((i) => i.id)) : prev);
     }
@@ -56,7 +62,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
 
   // Auto-fill referral code from URL capture
   useEffect(() => {
-    const storedRef = localStorage.getItem("saily_referral_code");
+    const storedRef = localStorage.getItem("esim_referral_code");
     if (storedRef && !promoApplied) {
       setPromoInput(storedRef);
       // Only auto-validate via API if user is logged in
@@ -271,17 +277,17 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
     }
 
     // Store selected items & coupon for the checkout page
-    localStorage.setItem("saily_checkout_items", JSON.stringify(selectedItems));
+    localStorage.setItem("esim_checkout_items", JSON.stringify(selectedItems));
     if (cart.appliedCoupon) {
-      localStorage.setItem("saily_checkout_coupon", JSON.stringify(cart.appliedCoupon));
+      localStorage.setItem("esim_checkout_coupon", JSON.stringify(cart.appliedCoupon));
     } else {
-      localStorage.removeItem("saily_checkout_coupon");
+      localStorage.removeItem("esim_checkout_coupon");
     }
     // Persist referral code
     if (promoApplied?.type === "referral") {
-      localStorage.setItem("saily_checkout_referral", promoApplied.code);
+      localStorage.setItem("esim_checkout_referral", promoApplied.code);
     } else {
-      localStorage.removeItem("saily_checkout_referral");
+      localStorage.removeItem("esim_checkout_referral");
     }
     window.location.href = `/${lang}/checkout`;
   };
@@ -293,14 +299,14 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
       const timer = setTimeout(() => {
         const currentItems = cart.items.filter((i) => selectedIds.has(i.id));
         if (currentItems.length > 0) {
-          localStorage.setItem("saily_checkout_items", JSON.stringify(currentItems));
+          localStorage.setItem("esim_checkout_items", JSON.stringify(currentItems));
           if (cart.appliedCoupon) {
-            localStorage.setItem("saily_checkout_coupon", JSON.stringify(cart.appliedCoupon));
+            localStorage.setItem("esim_checkout_coupon", JSON.stringify(cart.appliedCoupon));
           } else {
-            localStorage.removeItem("saily_checkout_coupon");
+            localStorage.removeItem("esim_checkout_coupon");
           }
           if (promoApplied?.type === "referral") {
-            localStorage.setItem("saily_checkout_referral", promoApplied.code);
+            localStorage.setItem("esim_checkout_referral", promoApplied.code);
           }
         }
         window.location.href = `/${lang}/checkout`;
@@ -345,6 +351,17 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
     }
   };
 
+  const handleRemoveSelected = async () => {
+    const ids = Array.from(selectedIds);
+    for (const id of ids) {
+      await removeItem(id);
+    }
+    setSelectedIds(new Set());
+    if (!isApiCart) {
+      setCart(getLocalCartData());
+    }
+  };
+
   const formatPrice = (usd: number) => formatVnd(convertUsdToVnd(usd, usdToVndRate));
 
   const displaySubtotal = hasVndPricing
@@ -383,8 +400,8 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
       {/* Cart Items */}
       <div className="lg:col-span-2 space-y-4">
-        {/* Select All */}
-        <div className="flex items-center gap-3 pb-4 border-b border-border-primary">
+        {/* Select All + Delete Selected */}
+        <div className="flex items-center justify-between pb-4 border-b border-border-primary">
           <label className="flex items-center gap-3 cursor-pointer">
             <input
               type="checkbox"
@@ -396,6 +413,16 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
               {dict.selectAll || "Select all"} ({cart.items.length})
             </span>
           </label>
+          {selectedIds.size > 0 && (
+            <button
+              type="button"
+              onClick={handleRemoveSelected}
+              className="inline-flex items-center gap-1.5 text-sm text-red-600 hover:text-red-700 font-medium transition-colors"
+            >
+              <Trash2 className="w-4 h-4" />
+              {lang === "vi" ? `Xóa (${selectedIds.size})` : `Delete (${selectedIds.size})`}
+            </button>
+          )}
         </div>
 
         {/* Items List */}
@@ -445,7 +472,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
                 <div>
                   <div className="flex items-center gap-2">
                     {promoApplied.type === "referral" ? (
-                      <Gift className="h-4 w-4 text-blue-600" />
+                      <Gift className="h-4 w-4 text-green-600" />
                     ) : (
                       <Ticket className="h-4 w-4 text-green-600" />
                     )}
@@ -604,14 +631,14 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
           ) : wallet && wallet.status === "active" && wallet.availableBalanceVnd > 0 ? (
             <button
               onClick={() => {
-                localStorage.setItem("saily_checkout_items", JSON.stringify(selectedItems));
+                localStorage.setItem("esim_checkout_items", JSON.stringify(selectedItems));
                 if (cart.appliedCoupon) {
-                  localStorage.setItem("saily_checkout_coupon", JSON.stringify(cart.appliedCoupon));
+                  localStorage.setItem("esim_checkout_coupon", JSON.stringify(cart.appliedCoupon));
                 }
                 if (promoApplied?.type === "referral") {
-                  localStorage.setItem("saily_checkout_referral", promoApplied.code);
+                  localStorage.setItem("esim_checkout_referral", promoApplied.code);
                 }
-                localStorage.setItem("saily_checkout_use_exu", "true");
+                localStorage.setItem("esim_checkout_use_exu", "true");
                 window.location.href = `/${lang}/checkout`;
               }}
               className="flex w-full items-center justify-center gap-2 rounded-full bg-emerald-500 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-600 cursor-pointer"

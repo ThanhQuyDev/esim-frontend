@@ -35,7 +35,7 @@ const avatarImages: Record<string, string> = {
 
 function StarIcon() {
   return (
-    <svg className="w-3 h-3 text-warning-subtle fill-current" viewBox="0 0 20 20">
+    <svg className="w-3 h-3 text-[#fac900] fill-current" viewBox="0 0 20 20">
       <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
     </svg>
   );
@@ -116,7 +116,7 @@ function FeaturedCard({ review }: { review: Review }) {
 function UserReviewCard({ review }: { review: Review }) {
   const hasAvatar = review.avatar && review.name && avatarImages[review.name];
   return (
-    <div className="grid grid-rows-[min-content_1fr_min-content] gap-4 p-6 content-start bg-secondary rounded-sm">
+    <div className="grid grid-rows-[min-content_1fr_min-content] gap-4 p-6 content-start bg-white rounded-sm">
       <div className="flex flex-row gap-4 items-center justify-between">
         <div className="flex flex-row gap-2 items-center">
           {hasAvatar && <AvatarImage name={review.name!} />}
@@ -137,7 +137,7 @@ function UserReviewCard({ review }: { review: Review }) {
 /** Press review card (CyberNews / TechRadar) */
 function PressReviewCard({ review }: { review: Review }) {
   return (
-    <div className="grid grid-rows-[min-content_1fr_min-content] gap-4 p-6 content-start bg-secondary rounded-sm">
+    <div className="grid grid-rows-[min-content_1fr_min-content] gap-4 p-6 content-start bg-white rounded-sm">
       <div className="flex flex-row gap-4 items-center justify-between">
         <SourceLogo source={review.source} />
       </div>

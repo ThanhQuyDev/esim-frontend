@@ -147,7 +147,7 @@ export function BlogArticleFooter({ blog, lang }: { blog: Blog; lang: string }) 
                                 </div>
                               </div>
                             )}
-                            <address className="heading-sm sm:heading-md not-italic group-scroll-mt-20 xl:scroll-mt-24">
+                            <address className="!text-[1.6rem] sm:heading-md not-italic group-scroll-mt-20 xl:scroll-mt-24">
                               {authorName}
                             </address>
                           </div>

@@ -47,7 +47,7 @@ export function HowItWorksSection({ dict }: HowItWorksSectionProps) {
                         <div className="p-6 lg:pb-3">
                           {/* Step Number */}
                           <div className="pb-4 lg:pb-6">
-                            <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-secondary">
+                            <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-white">
                               <p className="body-md-medium text-primary scroll-mt-20 xl:scroll-mt-24">
                                 {step.number}
                               </p>

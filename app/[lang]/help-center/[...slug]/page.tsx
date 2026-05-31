@@ -13,6 +13,8 @@ import {
   fromUrlSlug,
   resolveCategoryKey,
   resolveParentKey,
+  toLocalizedCategorySlug,
+  toLocalizedParentSlug,
 } from "@/components/layout/sections/help-center/category-config";
 import type { Locale } from "@/lib/i18n-config";
 import type { Metadata } from "next";
@@ -22,8 +24,26 @@ export async function generateMetadata({
 }: {
   params: { lang: Locale; slug: string[] };
 }): Promise<Metadata> {
-  // Use the public (localized) URL for SEO lookup since the CMS stores public URLs
-  const publicUrl = `${localizedHref(params.lang, "help-center")}/${params.slug.join("/")}`;
+  // Build the public URL using localized category/parent slugs for SEO lookup
+  const [rawCategory, rawParent, titleSlug] = params.slug;
+  const basePath = localizedHref(params.lang, "help-center");
+
+  let publicUrl: string;
+  if (rawCategory && rawParent && titleSlug) {
+    const catKey = resolveCategoryKey(fromUrlSlug(rawCategory));
+    const parentKey = resolveParentKey(fromUrlSlug(rawParent));
+    publicUrl = `${basePath}/${toLocalizedCategorySlug(catKey, params.lang)}/${toLocalizedParentSlug(parentKey, params.lang)}/${titleSlug}`;
+  } else if (rawCategory && rawParent) {
+    const catKey = resolveCategoryKey(fromUrlSlug(rawCategory));
+    const parentKey = resolveParentKey(fromUrlSlug(rawParent));
+    publicUrl = `${basePath}/${toLocalizedCategorySlug(catKey, params.lang)}/${toLocalizedParentSlug(parentKey, params.lang)}`;
+  } else if (rawCategory) {
+    const catKey = resolveCategoryKey(fromUrlSlug(rawCategory));
+    publicUrl = `${basePath}/${toLocalizedCategorySlug(catKey, params.lang)}`;
+  } else {
+    publicUrl = basePath;
+  }
+
   return getSeoMetadata(publicUrl);
 }
 

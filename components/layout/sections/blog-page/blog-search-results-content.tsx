@@ -50,7 +50,7 @@ function CategoryBadge({ category, lang }: { category: string | null; lang: stri
   );
 }
 
-function BlogMeta({ date, timeRead }: { date: string | null; timeRead: string | null }) {
+function BlogMeta({ date, timeRead, lang }: { date: string | null; timeRead: string | null; lang?: string }) {
   return (
     <div className="h-full w-full flex flex-row justify-start flex-wrap items-center gap-x-4 gap-y-4">
       {date && (
@@ -64,7 +64,7 @@ function BlogMeta({ date, timeRead }: { date: string | null; timeRead: string | 
         <div>
           <div className="flex gap-2 items-center text-secondary">
             <BookOpen size={16} />
-            <p className="body-xs">{timeRead}</p>
+            <p className="body-xs">{timeRead} {lang === "vi" ? "phút" : "min"}</p>
           </div>
         </div>
       )}
@@ -128,7 +128,7 @@ function BlogCard({ blog, lang }: { blog: Blog; lang: string }) {
         <div>
           <div className="h-full w-full flex flex-col text-start items-start justify-start gap-y-2">
             <div>
-              <BlogMeta date={blog.publishedAt} timeRead={String(blog.timeRead || "")} />
+              <BlogMeta date={blog.publishedAt} timeRead={String(blog.timeRead || "")} lang={lang} />
             </div>
             <div>
               <h3 className="heading-sm">
@@ -176,40 +176,23 @@ export function BlogSearchResultsContent({ lang }: BlogSearchResultsContentProps
     try {
       const headers: Record<string, string> = { "x-custom-lang": lang };
       const params = new URLSearchParams({
-        q: query,
+        search: query,
         page: String(currentPage),
         limit: String(RESULTS_PER_PAGE),
       });
       const res = await fetch(
-        `${API_BASE_URL}/api/v1/blogs/search?${params.toString()}`,
+        `${API_BASE_URL}/api/v1/blogs?${params.toString()}`,
         { headers }
       );
       if (res.ok) {
-        const json: SearchResponse = await res.json();
-        setResults(json.data || []);
+        const json = await res.json();
+        const blogs: Blog[] = json.data || [];
+        setResults(blogs.filter((b) => b.isPublished));
         setHasNextPage(json.hasNextPage ?? false);
-        setTotal(json.total ?? null);
+        setTotal(json.totalCount ?? json.total ?? null);
       } else {
-        // Fallback: use the regular blogs endpoint with q param
-        const fallbackParams = new URLSearchParams({
-          q: query,
-          page: String(currentPage),
-          limit: String(RESULTS_PER_PAGE),
-        });
-        const fallbackRes = await fetch(
-          `${API_BASE_URL}/api/v1/blogs?${fallbackParams.toString()}`,
-          { headers }
-        );
-        if (fallbackRes.ok) {
-          const json = await fallbackRes.json();
-          const blogs: Blog[] = json.data || json.items || [];
-          setResults(blogs);
-          setHasNextPage(json.hasNextPage ?? false);
-          setTotal(json.total ?? null);
-        } else {
-          setResults([]);
-          setHasNextPage(false);
-        }
+        setResults([]);
+        setHasNextPage(false);
       }
     } catch {
       setResults([]);

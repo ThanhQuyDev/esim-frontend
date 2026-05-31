@@ -108,7 +108,7 @@ export default async function RegionPage({ params }: RegionPageProps) {
         planSource="region"
         initialRegion={region}
       />
-      <div className="max-w-[1200px] mx-auto px-6">
+      <div className="max-w-[1168px] mx-auto px-6">
         <LazyHowItWorksSection dict={dict.howItWorks} />
         <LazyFeaturesSection dict={dict.whyChoose} lang={params.lang} features={whyChooseUsRes.data} />
         <LazyEsimComparison dict={dict.whatIsEsimPage.comparison} />

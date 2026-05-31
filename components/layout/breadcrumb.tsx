@@ -55,7 +55,7 @@ export function Breadcrumb({ items, lang, className = "" }: BreadcrumbProps) {
         aria-label="Breadcrumb"
         className={`w-full py-3 ${className}`}
       >
-        <ol className="max-w-7xl mx-auto px-4 flex items-center flex-wrap gap-1 text-sm text-muted-foreground">
+        <ol className="max-w-7xl mx-auto z-50 px-4 flex items-center flex-wrap gap-1 text-sm text-muted-foreground">
           {allItems.map((item, index) => {
             const isLast = index === allItems.length - 1;
             const isFirst = index === 0;

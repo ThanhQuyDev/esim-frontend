@@ -13,7 +13,7 @@ export function ReferralCapture() {
   useEffect(() => {
     const ref = searchParams.get("ref");
     if (ref && ref.trim()) {
-      localStorage.setItem("saily_referral_code", ref.trim().toUpperCase());
+      localStorage.setItem("esim_referral_code", ref.trim().toUpperCase());
     }
   }, [searchParams]);
 

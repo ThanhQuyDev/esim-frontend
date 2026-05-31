@@ -95,8 +95,8 @@ export const KYC_STEPS: KycStep[] = [
 export const KYC_REGIONS: Record<KycRegionKey, KycRegionData> = {
   hk: {
     key: "hk",
-    flag: "🇭🇰",
-    tabLabel: "🇭🇰 Hong Kong",
+    flag: "https://cdn-revamp.airalo.com/images/e6694469-0a21-4019-9c14-8a4702a405ba.png",
+    tabLabel: "Hong Kong",
     name: "Hong Kong",
     url: KYC_REGISTER_URL,
     notes: [
@@ -120,8 +120,8 @@ export const KYC_REGIONS: Record<KycRegionKey, KycRegionData> = {
   },
   tw: {
     key: "tw",
-    flag: "🇹🇼",
-    tabLabel: "🇹🇼 Đài Loan",
+    flag: "https://cdn-revamp.airalo.com/images/5592454e-3d9a-40bc-aa0c-97895974ba34.png",
+    tabLabel: "Đài Loan",
     name: "Đài Loan (Taiwan)",
     url: KYC_REGISTER_URL,
     notes: [
@@ -142,8 +142,8 @@ export const KYC_REGIONS: Record<KycRegionKey, KycRegionData> = {
   },
   hkmo: {
     key: "hkmo",
-    flag: "🇭🇰🇲🇴",
-    tabLabel: "🇭🇰🇲🇴 HK / Macau",
+    flag: "https://cdn-revamp.airalo.com/images/cb8614ac-fd38-4ed4-9462-808eefe9858a.png",
+    tabLabel: "HK / Macau",
     name: "Hong Kong / Macau",
     url: KYC_REGISTER_URL,
     notes: [

@@ -40,7 +40,7 @@ export default async function DataCalculatorPage({
       />
       {/* Hero / Calculator Section */}
       <div className="relative">
-        <div className="max-sm:hidden absolute -top-[72px] bottom-0 w-full bg-[linear-gradient(#9FCFF2,#F7F7F8)]" />
+        <div className="max-sm:hidden absolute -top-[116px] bottom-0 w-full bg-[linear-gradient(#9FCFF2,#F7F7F8)]" />
         <div className="relative py-16 max-sm:pb-0">
           <div className="sm:mx-auto">
             <div className="container mx-auto">

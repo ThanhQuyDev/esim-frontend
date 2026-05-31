@@ -37,8 +37,8 @@ export interface Cart {
 
 // ===== Storage Keys =====
 
-const CART_KEY = "saily_cart";
-const COUPONS_KEY = "saily_saved_coupons";
+const CART_KEY = "esim_cart";
+const COUPONS_KEY = "esim_saved_coupons";
 
 // ===== Cart Operations =====
 

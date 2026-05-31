@@ -4,8 +4,8 @@ import { localizedHref } from "@/lib/route-mapping";
 
 export function BlogSidebarBanner({ lang }: { lang: string }) {
   return (
-    <div className="sticky top-[92px] shrink-0 hidden lg:block">
-      <div className="relative overflow-hidden isolate w-full h-full max-w-[216px] xl:max-w-[268px] rounded-md bg-brand-yellow">
+    <div className="sticky top-[142px] shrink-0 hidden lg:block">
+      <div className="relative overflow-hidden isolate w-full h-full max-w-[216px] xl:max-w-[268px] rounded-md bg-blue-100">
         <img
           alt=""
           loading="lazy"

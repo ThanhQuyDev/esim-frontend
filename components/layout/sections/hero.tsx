@@ -167,7 +167,7 @@ export function HeroSection({ dict, heroBanners = [], lang }: HeroSectionProps) 
                           <div>
                             <button
                               data-testid="destination-modal-button"
-                              className="inline-flex relative p-6 max-lg:py-4 pr-15 lg:pr-18 w-full md:max-w-[400px] bg-white text-tertiary body-md-regular rounded-md outline-hidden hover:bg-primary active:bg-primary focus:bg-primary transition-colors duration-medium"
+                              className="inline-flex relative p-6 max-lg:py-4 pr-15 lg:pr-18 w-full md:max-w-[400px] bg-white hover:bg-bg-secondary text-tertiary body-md-regular rounded-md outline-hidden active:bg-primary focus:bg-primary transition-colors duration-medium"
                               onClick={() => setModalOpen(true)}
                             >
                               {dict.ctaPrimary}

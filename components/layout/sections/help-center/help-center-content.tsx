@@ -10,7 +10,8 @@ import {
   getCategoryLabel,
   getParentLabel,
   resolveCategoryKey,
-  toUrlSlug,
+  toLocalizedCategorySlug,
+  toLocalizedParentSlug,
 } from "./category-config";
 
 const API_BASE_URL =
@@ -37,19 +38,6 @@ function getArticleSlug(article: { slug?: string; title: string }): string {
     .replace(/(^-|-$)/g, "");
 }
 
-function timeAgo(dateStr: string): string {
-  const now = new Date();
-  const date = new Date(dateStr);
-  const diffMs = now.getTime() - date.getTime();
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  if (diffDays < 1) return "today";
-  if (diffDays < 30) return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
-  const diffMonths = Math.floor(diffDays / 30);
-  if (diffMonths < 12) return `${diffMonths} month${diffMonths > 1 ? "s" : ""} ago`;
-  const diffYears = Math.floor(diffMonths / 12);
-  return `${diffYears} year${diffYears > 1 ? "s" : ""} ago`;
-}
-
 interface HelpCenterContentProps {
   lang: string;
   initialArticles?: HelpCenterArticle[];
@@ -70,11 +58,9 @@ export function HelpCenterContent({ lang, initialArticles }: HelpCenterContentPr
     return Array.from(keys);
   }, [articles]);
 
-  // Recent articles sorted by createdAt desc
-  const recentArticles = useMemo(() => {
-    return [...articles]
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-      .slice(0, 5);
+  // Popular/featured articles
+  const popularArticles = useMemo(() => {
+    return articles.filter((a) => a.isPopular).slice(0, 6);
   }, [articles]);
 
   // Search handler
@@ -114,7 +100,7 @@ export function HelpCenterContent({ lang, initialArticles }: HelpCenterContentPr
   return (
     <div>
       {/* HERO with Search */}
-      <div className="w-full min-h-[358px] bg-[url('/images/help-center-background.svg')] bg-cover bg-center flex items-center justify-center">
+      <div className="w-full min-h-[358px] -mt-16 bg-[url('/images/help-center-background.svg')] bg-cover bg-center flex items-center justify-center">
         <div className="max-w-7xl mx-auto w-full px-4 z-30 pb-6 lg:pt-6 lg:pb-8 pt-[72px]">
           <div className="my-6 text-center">
             <h1 className="text-4xl lg:text-5xl font-semibold text-white">
@@ -148,7 +134,7 @@ export function HelpCenterContent({ lang, initialArticles }: HelpCenterContentPr
               <button
                 type="submit"
                 disabled={!searchQuery.trim()}
-                className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-blue-600 text-white text-sm font-semibold shadow-lg hover:bg-blue-700 transition-colors disabled:bg-blue-400 disabled:cursor-not-allowed cursor-pointer whitespace-nowrap"
+                className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-black text-white text-sm font-semibold shadow-lg hover:bg-gray-600 transition-colors disabled:bg-gray-700 disabled:cursor-not-allowed cursor-pointer whitespace-nowrap"
                 aria-label={lang === "vi" ? "Tìm kiếm" : "Search"}
               >
                 <Search className="w-4 h-4" aria-hidden="true" />
@@ -161,7 +147,7 @@ export function HelpCenterContent({ lang, initialArticles }: HelpCenterContentPr
 
       {/* CATEGORIES */}
       <div className="bg-gray-50 py-8">
-        <div className="max-w-7xl mx-auto px-4 text-center">
+        <div className="max-w-[1386px] mx-auto px-8 text-center">
           <h2 className="inline-flex items-baseline mt-6 text-2xl font-semibold">
             {lang === "vi" ? "Chọn danh mục chính" : "Choose main category"}
           </h2>
@@ -173,13 +159,13 @@ export function HelpCenterContent({ lang, initialArticles }: HelpCenterContentPr
               return (
                 <li key={catKey}>
                   <Link
-                    href={`${localizedHref(lang, "help-center")}/${toUrlSlug(catKey)}`}
+                    href={`${localizedHref(lang, "help-center")}/${toLocalizedCategorySlug(catKey, lang)}`}
                     className="flex flex-col items-center justify-center bg-gray-100 border border-gray-200 rounded-md p-6 h-full transition no-underline hover:border-gray-400 hover:shadow-md group"
                   >
                     <div className="w-[80px] h-[80px] bg-blue-200 rounded-full flex items-center justify-center mb-3">
                       <Icon className="w-[40px] h-[40px] text-primary" strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-base font-semibold text-gray-900">
+                    <h3 className="text-[1.25rem] font-semibold text-gray-900">
                       {getCategoryLabel(catKey, lang)}
                     </h3>
                   </Link>
@@ -190,37 +176,35 @@ export function HelpCenterContent({ lang, initialArticles }: HelpCenterContentPr
         </div>
       </div>
 
-      {/* RECENT ACTIVITY */}
+      {/* POPULAR ARTICLES */}
       <div className="py-8">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-xl font-semibold mb-6">
-            {lang === "vi" ? "Hoạt động gần đây" : "Recent activity"}
+        <div className="max-w-[1386px] mx-auto px-8">
+          <h2 className="text-[1.4rem] font-semibold mb-6">
+            {lang === "vi" ? "Bài viết nổi bật" : "Popular articles"}
           </h2>
 
           {loading ? (
             <div className="text-center py-8 text-gray-500">Loading...</div>
+          ) : popularArticles.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              {lang === "vi" ? "Chưa có bài viết nổi bật." : "No popular articles yet."}
+            </div>
           ) : (
             <div
-              role="status"
-              aria-relevant="additions"
-              aria-atomic="false"
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
             >
-              {recentArticles.map((article) => (
+              {popularArticles.map((article) => (
                 <Link
                   key={article.id}
-                  href={`${localizedHref(lang, "help-center")}/${toUrlSlug(article.category)}/${toUrlSlug(article.parent)}/${getArticleSlug(article)}`}
+                  href={`${localizedHref(lang, "help-center")}/${toLocalizedCategorySlug(article.category, lang)}/${toLocalizedParentSlug(article.parent, lang)}/${getArticleSlug(article)}`}
                   className="block bg-gray-100 rounded-md p-5 hover:shadow-md transition no-underline"
                 >
                   <p className="text-sm text-gray-600 mb-2">
-                    {getCategoryLabel(article.category, lang)} › {article.parent.replace(/_/g, " ")}
+                    {getCategoryLabel(article.category, lang)} › {getParentLabel(article.parent, lang)}
                   </p>
                   <h3 className="text-base font-medium text-gray-900 mb-3">
                     {article.title}
                   </h3>
-                  <p className="text-sm text-gray-500">
-                    {lang === "vi" ? "Bài viết tạo " : "Article created "}{timeAgo(article.createdAt)}
-                  </p>
                 </Link>
               ))}
             </div>
@@ -232,7 +216,6 @@ export function HelpCenterContent({ lang, initialArticles }: HelpCenterContentPr
               className="text-gray-700 hover:text-gray-900 no-underline text-sm"
             >
               {lang === "vi" ? "Xem thêm" : "See more"}
-              <span className="sr-only"> {lang === "vi" ? "bài viết gần đây" : "items from recent activity"}</span>
             </Link>
           </div>
         </div>

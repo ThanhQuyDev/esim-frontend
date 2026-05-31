@@ -19,6 +19,7 @@ import {
   getDiscount,
   getTotal,
   getVndDiscount,
+  removeCoupon,
   type CartItem,
   type Coupon,
 } from "@/lib/cart";
@@ -78,10 +79,10 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
 
   useEffect(() => {
     try {
-      const storedItems = localStorage.getItem("saily_checkout_items");
-      const storedCoupon = localStorage.getItem("saily_checkout_coupon");
-      const storedReferral = localStorage.getItem("saily_checkout_referral") || localStorage.getItem("saily_referral_code");
-      const storedUseExu = localStorage.getItem("saily_checkout_use_exu");
+      const storedItems = localStorage.getItem("esim_checkout_items");
+      const storedCoupon = localStorage.getItem("esim_checkout_coupon");
+      const storedReferral = localStorage.getItem("esim_checkout_referral") || localStorage.getItem("esim_referral_code");
+      const storedUseExu = localStorage.getItem("esim_checkout_use_exu");
       if (storedItems) setItems(JSON.parse(storedItems));
       if (storedCoupon) setCoupon(JSON.parse(storedCoupon));
       if (storedReferral) {
@@ -90,7 +91,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
       }
       if (storedUseExu === "true") {
         setUseExu(true);
-        localStorage.removeItem("saily_checkout_use_exu");
+        localStorage.removeItem("esim_checkout_use_exu");
       }
     } catch {
       // ignore
@@ -222,7 +223,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
         onSuccess: (data) => {
           // Persist order info for the result page
           localStorage.setItem(
-            "saily_last_order",
+            "esim_last_order",
             JSON.stringify({
               orderNumber: data.orderNumber,
               items,
@@ -236,9 +237,16 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
               referralCode: referralApplied ? referralCode : null,
             })
           );
-          // Don't clear cart here — BE will clear it when order is completed
 
-          // Redirect to OnePay payment gateway
+          // Clear checkout-related localStorage to prevent stale data on next visit
+          localStorage.removeItem("esim_checkout_items");
+          localStorage.removeItem("esim_checkout_coupon");
+          localStorage.removeItem("esim_checkout_referral");
+          localStorage.removeItem("esim_checkout_use_exu");
+          localStorage.removeItem("esim_referral_code");
+          removeCoupon();
+
+          // Redirect to OnePay payment gateway (or result page for wallet-only)
           window.location.href = data.paymentUrl;
         },
         onError: (error) => {

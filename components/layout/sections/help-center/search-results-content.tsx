@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Search } from "lucide-react";
 import type { HelpCenterArticle } from "@/lib/api";
 import { localizedHref } from "@/lib/route-mapping";
-import { getCategoryLabel, getParentLabel, toUrlSlug } from "./category-config";
+import { getCategoryLabel, getParentLabel, toLocalizedCategorySlug, toLocalizedParentSlug } from "./category-config";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.saily.example.com";
@@ -136,7 +136,7 @@ export function SearchResultsContent({ lang }: SearchResultsContentProps) {
   return (
     <main role="main">
       {/* Main content */}
-      <div className="max-w-7xl mx-auto px-4">
+      <div className="max-w-[1386px] mx-auto px-8">
         <div className="mt-6 mb-8">
           <section>
             <header>
@@ -174,7 +174,7 @@ export function SearchResultsContent({ lang }: SearchResultsContentProps) {
                       <header>
                         <h3 className="text-lg font-semibold mb-2">
                           <Link
-                            href={`${localizedHref(lang, "help-center")}/${toUrlSlug(article.category)}/${toUrlSlug(article.parent)}/${getArticleSlug(article)}`}
+                            href={`${localizedHref(lang, "help-center")}/${toLocalizedCategorySlug(article.category, lang)}/${toLocalizedParentSlug(article.parent, lang)}/${getArticleSlug(article)}`}
                             className="text-blue-700 "
                           >
                             {article.title}
@@ -193,7 +193,7 @@ export function SearchResultsContent({ lang }: SearchResultsContentProps) {
                             <li className="text-gray-400">›</li>
                             <li>
                               <Link
-                                href={`${localizedHref(lang, "help-center")}/${toUrlSlug(article.category)}`}
+                                href={`${localizedHref(lang, "help-center")}/${toLocalizedCategorySlug(article.category, lang)}`}
                                 className="text-gray-500 "
                               >
                                 {getCategoryLabel(article.category, lang)}
@@ -202,7 +202,7 @@ export function SearchResultsContent({ lang }: SearchResultsContentProps) {
                             <li className="text-gray-400">›</li>
                             <li>
                               <Link
-                                href={`${localizedHref(lang, "help-center")}/${toUrlSlug(article.category)}/${toUrlSlug(article.parent)}`}
+                                href={`${localizedHref(lang, "help-center")}/${toLocalizedCategorySlug(article.category, lang)}/${toLocalizedParentSlug(article.parent, lang)}`}
                                 className="text-gray-500 "
                               >
                                 {getParentLabel(article.parent, lang)}

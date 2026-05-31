@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Tag } from "lucide-react";
+import { Tag, Copy, Check } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { fetchApiCoupons, type Coupon } from "@/lib/cart";
 
 interface CouponHeroProps {
   dict: Record<string, any>;
@@ -10,12 +12,19 @@ interface CouponHeroProps {
 
 export function CouponHero({ dict, lang }: CouponHeroProps) {
   const [copied, setCopied] = useState(false);
-  const couponCode = dict.couponCode || "Saily5";
+
+  const { data: coupons } = useQuery<Coupon[]>({
+    queryKey: ["coupons-latest"],
+    queryFn: fetchApiCoupons,
+  });
+
+  const latestCoupon = coupons?.[0];
+  const couponCode = latestCoupon?.code || dict.couponCode || "Saily5";
 
   const handleCopy = () => {
     navigator.clipboard.writeText(couponCode);
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    setTimeout(() => setCopied(false), 3000);
   };
 
   return (
@@ -30,7 +39,7 @@ export function CouponHero({ dict, lang }: CouponHeroProps) {
                     <div className="h-full w-full flex flex-col justify-center gap-y-4">
                       <div>
                         <div className="body-md-medium text-disabled">
-                          <p className="heading-sm text-primary scroll-mt-20 xl:scroll-mt-24">
+                          <p className="!text-[1.4rem] heading-sm text-primary scroll-mt-20 xl:scroll-mt-24">
                             {dict.activeDate || "Active from April 2026"}
                           </p>
                         </div>
@@ -48,20 +57,33 @@ export function CouponHero({ dict, lang }: CouponHeroProps) {
                             </p>
                           </div>
                           <div>
-                            <div className="h-full w-full flex flex-col justify-start gap-y-6">
+                            <div className="h-full w-full flex flex-col justify-start gap-y-4">
                               <div>
-                                <div className="body-md text-secondary">
-                                  <button
-                                    onClick={handleCopy}
-                                    className="max-md:w-full text-primary bg-accent pointer-fine:hover:bg-accent-hover border-md border-accent pointer-fine:hover:border-accent-hover active:bg-accent-active! active:border-accent-active! box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus inline-flex gap-2 text-start justify-center py-[11px] body-md-medium px-7 relative whitespace-nowrap"
-                                  >
-                                    <span className="flex items-center shrink-0">
-                                      <Tag className="w-6 h-6 mr-1" />
-                                    </span>
-                                    {copied ? (dict.copied || "Copied!") : (dict.cta || "Get the code")}
-                                  </button>
-                                </div>
+                                <button
+                                  onClick={handleCopy}
+                                  className="max-md:w-full text-primary bg-accent pointer-fine:hover:bg-accent-hover border-md border-bg-accent-hover pointer-fine:hover:border-accent-hover active:bg-accent-active! active:border-accent-active! box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus inline-flex gap-2 text-start justify-center items-center py-[11px] body-md-medium px-7 relative whitespace-nowrap"
+                                >
+                                  {copied ? (
+                                    <>
+                                      <Check className="w-5 h-5" />
+                                      <span>{couponCode}</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Tag className="w-5 h-5" />
+                                      <span>{dict.cta || "Get the code"}</span>
+                                    </>
+                                  )}
+                                </button>
                               </div>
+                              {copied && (
+                                <p className="body-sm text-text-secondary flex items-center gap-1.5">
+                                  <Copy className="w-4 h-4" />
+                                  {lang === "vi"
+                                    ? `Đã sao chép mã: ${couponCode}`
+                                    : `Copied: ${couponCode}`}
+                                </p>
+                              )}
                             </div>
                           </div>
                         </div>

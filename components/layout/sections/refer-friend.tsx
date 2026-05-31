@@ -32,7 +32,7 @@ export function ReferFriendBanner({ dict }: ReferFriendBannerProps) {
                     <div>
                       <a
                         role="button"
-                        className="max-md:w-full text-center inline-block text-primary pointer-fine:hover:bg-brand-black pointer-fine:hover:text-primary-on-color border-md border-black active:bg-brand-black active:text-primary-on-color box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7"
+                        className="max-md:w-full text-center inline-block text-primary hover:bg-black hover:text-white pointer-fine:hover:bg-brand-black pointer-fine:hover:text-primary-on-color border-md border-black active:bg-brand-black active:text-primary-on-color box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7"
                         href="/refer-a-friend/"
                         aria-label={`Learn more about ${dict.title}`}
                       >

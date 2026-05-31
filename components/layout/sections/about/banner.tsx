@@ -42,7 +42,6 @@ export function AboutBanner({ dict }: AboutBannerProps) {
                       <a
                         role="button"
                         className="max-md:w-full text-center inline-block text-text-primary bg-bg-secondary hover:bg-bg-tertiary border border-border-secondary hover:border-neutral-100 rounded-full transition-colors py-[11px] body-md-medium px-7"
-                        href={dict.ctaHref}
                         target="_blank"
                          
                       >

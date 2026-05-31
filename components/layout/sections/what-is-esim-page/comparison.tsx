@@ -25,7 +25,8 @@ export function EsimComparison({ dict }: EsimComparisonProps) {
         <div className="mx-4 sm:mx-auto">
           <div className="container mx-auto">
             <div className="flex flex-col gap-y-8">
-              <div className="relative overflow-x-auto rounded-md max-w-full shadow-[0_0_0_1px_#E2E2E4,0_0_1px_0_#E2E2E4]">
+              <div className="relative rounded-md max-w-full shadow-[0_0_0_1px_#E2E2E4,0_0_1px_0_#E2E2E4] overflow-hidden">
+                <div className="overflow-x-auto scrollbar-thin">
                 <table className="w-full text-left lg:table-fixed">
                   <thead className="body-md-medium text-text-tertiary">
                     <tr>
@@ -44,7 +45,7 @@ export function EsimComparison({ dict }: EsimComparisonProps) {
                     {dict.rows.map((row: any, i: number) => {
                       const Icon = rowIcons[i] || Phone;
                       return (
-                        <tr key={i} className="odd:bg-bg-primary even:bg-bg-secondary">
+                        <tr key={i} className="even:bg-bg-primary odd:bg-bg-secondary">
                           <th
                             scope="row"
                             className="align-top body-md font-normal whitespace-nowrap lg:whitespace-normal break-words p-6"
@@ -65,6 +66,7 @@ export function EsimComparison({ dict }: EsimComparisonProps) {
                     })}
                   </tbody>
                 </table>
+                </div>
               </div>
               {dict.footnote && <p>{dict.footnote}</p>}
             </div>

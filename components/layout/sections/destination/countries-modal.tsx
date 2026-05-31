@@ -177,8 +177,7 @@ export function CountriesModal({
                 )}
                 <div>
                   <div className="text-[15px] font-bold text-[#111] leading-tight">{row.name}</div>
-                  {row.carrier && <div className="text-xs text-[#6B7280] mt-0.5">{row.carrier}</div>}
-                </div>
+                  </div>
               </div>
             ))
           )}

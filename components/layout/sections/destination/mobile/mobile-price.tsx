@@ -70,7 +70,7 @@ export function MobilePrice({
   const savePercent =
     totalRetail > 0 ? Math.round(((totalRetail - totalPrice) / totalRetail) * 100) : 0;
   const totalDays = selectedPlan ? (isFixed ? selectedPlan.durationDays : days) : 0;
-  const perDayPrice = totalDays > 0 ? roundVndToThousands(totalPrice / totalDays) : 0;
+  const perDayPrice = totalDays > 0 ? Math.round(totalPrice / totalDays) : 0;
 
   const showInlineKyc = !!selectedPlan?.isKyc;
 

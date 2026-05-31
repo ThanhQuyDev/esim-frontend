@@ -5,7 +5,6 @@ import {
   MeetSpeakers,
   PressResources,
   NonprofitBanner,
-  ProductFamily,
 } from "@/components/layout/sections/press-area";
 import { pressAreaTranslations } from "@/components/layout/sections/press-area/translations";
 import { PartnerBar } from "@/components/layout/sections/partner-bar";
@@ -45,7 +44,6 @@ export default async function KhuVucBaoChiPage({
       <MeetSpeakers dict={t.speakers} />
       <PressResources dict={t.pressResources} />
       <NonprofitBanner dict={t.banner} />
-      <ProductFamily dict={t.productFamily} />
       <FooterSection dict={dict.footer} lang={params.lang} />
     </main>
   );

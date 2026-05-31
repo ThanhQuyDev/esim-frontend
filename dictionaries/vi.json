@@ -40,7 +40,7 @@
     "imageAlt": "Thẻ eSIM với gói dữ liệu đang hoạt động."
   },
   "destinations": {
-    "subtitle": "Bạn đang đi du lịch đâu?",
+    "subtitle": "Bạn đang đi du lịch đến đâu?",
     "title": "Chọn điểm đến du lịch của bạn",
     "description": "Chọn gói dữ liệu di động cho chuyến đi của bạn.",
     "tabs": {
@@ -128,26 +128,26 @@
     ]
   },
   "howItWorks": {
-    "subtitle": "Cách sử dụng dịch vụ eSIM esim.vn",
+    "subtitle": "Cách sử dụng dịch vụ esim.vn",
     "title": "esim.vn hoạt động như thế nào?",
-    "description": "Bạn chưa có ứng dụng esim.vn eSIM? Tải từ App Store hoặc Google Play.",
+    "description": "Nếu bạn đang cần tìm kiếm esim quốc tế để đi du lịch, hãy truy cập ngay website esim.vn",
     "steps": [
       {
         "number": "1",
-        "title": "Chọn gói dữ liệu esim.vn cho chuyến đi",
-        "description": "Chọn điểm đến và chọn gói dữ liệu eSIM du lịch của bạn.",
+        "title": "Chọn gói dữ liệu cho chuyến đi",
+        "description": "Chọn điểm đến và chọn gói dữ liệu eSIM phù hợp với chuyến du lịch của bạn.",
         "imageAlt": "Bước 1 cài đặt eSIM: Chọn gói dữ liệu."
       },
       {
         "number": "2",
-        "title": "Tải esim.vn và cài đặt eSIM",
-        "description": "Cài đặt eSIM trên thiết bị của bạn bằng cách làm theo hướng dẫn trong ứng dụng.",
+        "title": "Đặt mua và nhận eSIM ngay lập tức",
+        "description": "Cài đặt eSIM trên thiết bị theo hướng dẫn. Hãy nhớ thực hiện việc này trước khi cất cánh vì cần có kết nối internet.",
         "imageAlt": "Bước 2 cài đặt eSIM: Làm theo hướng dẫn cho đến khi cài đặt xong eSIM."
       },
       {
         "number": "3",
-        "title": "Tận hưởng kết nối liên tục!",
-        "description": "Gói của bạn sẽ kích hoạt khi bạn đến điểm đến hoặc 30 ngày sau khi mua.",
+        "title": "Tận hưởng kết nối liền mạch trong suốt chuyến đi!",
+        "description": "Gói cước của bạn sẽ tự động kích hoạt khi bạn đến điểm đến hoặc 180 ngày sau khi mua.",
         "imageAlt": "Bước 3 cài đặt eSIM: Gói của bạn sẽ tự động kích hoạt tại điểm đến."
       }
     ]
@@ -269,8 +269,8 @@
     ]
   },
   "referFriend": {
-    "title": "Giới thiệu bạn bè, cả hai cùng nhận US$5!",
-    "description": "Mời bạn bè sử dụng esim.vn và nhận US$5 tín dụng esim.vn trong khi họ được giảm giá US$5!",
+    "title": "Giới thiệu bạn bè, cả hai cùng nhận 10.000đ!",
+    "description": "Mời bạn bè mua esim du lịch từ esim.vn để bạn nhận ngay 10.000đ trong khi họ cũng được giảm giá 10.000đ!",
     "cta": "Tìm hiểu thêm",
     "imageAlt": "Một nhóm người vui vẻ nhận tín dụng US$5 từ esim.vn sau khi giới thiệu bạn bè."
   },
@@ -358,7 +358,7 @@
     "followUs": {
       "title": "Theo dõi",
       "links": [
-        { "label": "YouTube", "href": "https://www.youtube.com/@saily_service" },
+        { "label": "YouTube", "href": "https://www.youtube.com/@esim_service" },
         { "label": "Instagram", "href": "https://www.instagram.com/sailyworld" },
         { "label": "X (Twitter)", "href": "https://x.com/sailyworld" },
         { "label": "Facebook", "href": "https://www.facebook.com/sailyservice" },
@@ -843,7 +843,7 @@
     "notFound": "Không tìm thấy điểm đến",
     "notFoundDesc": "Điểm đến bạn tìm kiếm không tồn tại hoặc đã bị xóa.",
     "heroTag": "Kích hoạt tự động khi hạ cánh",
-    "viewCountries": "Xem danh sách các quốc gia và nhà mạng ({count})",
+    "viewCountries": "Gồm {count} quốc gia",
     "supportedCountries": "{count} quốc gia được hỗ trợ",
     "carriers": {
       "title": "Nhà mạng hỗ trợ",
@@ -911,7 +911,7 @@
       "line1UnlimitedHigh": "Không giới hạn data tốc độ <strong>{fupSpeed}</strong>",
       "line3": "Hỗ trợ truy cập TikTok, Chat GPT, Zalo, Facebook, YouTube…"
     },
-    "disclaimer": "Hãy đảm bảo thiết bị của bạn tương thích với eSIM trước khi thanh toán.",
+    "disclaimer": "Kiểm tra thiết bị tương thích trước khi thanh toán.",
     "disclaimerLink": "Xem danh sách thiết bị hỗ trợ eSIM →",
     "save": "–{percent}%",
     "perDay": "~ {amount}/ngày",
@@ -963,8 +963,8 @@
       "title": "esim.vn so với các nhà cung cấp eSIM khác"
     },
     "freeCredits": {
-      "title": "Nhận tín dụng esim.vn miễn phí",
-      "description": "Mời bạn bè và gia đình dùng thử esim.vn và nhận tín dụng esim.vn trị giá 5 USD cho mỗi lượt giới thiệu thành công.",
+      "title": "Nhận tiền vào ví eXU miễn phí",
+      "description": "Mời bạn bè và gia đình dùng thử esim.vn và nhận ngay 10.000đ vào ví eXU cho mỗi lượt giới thiệu thành công.",
       "cta": "Tìm hiểu thêm",
       "disclaimer": "Để biết thêm thông tin, hãy xem",
       "disclaimerLink": "điều khoản và điều kiện",
@@ -1004,7 +1004,7 @@
   "reviewPage": {
     "hero": {
       "title": "Đánh giá và xếp hạng esim.vn: Bạn có nên mua?",
-      "subtitle": "Dịch vụ eSIM giá cả phải chăng từ nhà sáng tạo NordVPN",
+      "subtitle": "Dịch vụ eSIM giá cả phải chăng từ esim.vn",
       "cta": "Xem Tất Cả Gói",
       "imageAlt": "Một phụ nữ vui vẻ nằm trên bãi biển sau khi đăng đánh giá esim.vn.",
       "imageUrl": "https://sb.nordcdn.com/m/7260eee2474e71e4/original/woman-stars-reviews-rating.png"
@@ -1130,5 +1130,74 @@
     "profile": "Tài khoản",
     "region": "Khu vực",
     "review": "Đánh giá"
+  },
+  "cart": {
+    "title": "Giỏ hàng",
+    "selectAll": "Chọn tất cả",
+    "orderSummary": "Tóm tắt đơn hàng",
+    "selectedItems": "Sản phẩm đã chọn",
+    "subtotal": "Tạm tính",
+    "discount": "Giảm giá",
+    "total": "Tổng cộng",
+    "coupon": "Mã giảm giá",
+    "enterCoupon": "Nhập mã giảm giá hoặc mã giới thiệu",
+    "apply": "Áp dụng",
+    "remove": "Xóa",
+    "removeItem": "Xóa sản phẩm",
+    "availableCoupons": "Mã giảm giá có sẵn",
+    "loadingCoupons": "Đang tải mã giảm giá...",
+    "noCoupons": "Không có mã giảm giá",
+    "minOrder": "Đơn tối thiểu",
+    "proceedToCheckout": "Thanh toán",
+    "emptyCart": "Giỏ hàng trống",
+    "emptyCartDescription": "Hãy khám phá các gói eSIM và thêm vào giỏ hàng.",
+    "browsePlans": "Xem các gói",
+    "day": "ngày",
+    "days": "ngày",
+    "unlimited": "Không giới hạn",
+    "decrease": "Giảm số lượng",
+    "increase": "Tăng số lượng",
+    "daysUnit": "ngày"
+  },
+  "checkout": {
+    "title": "Thanh toán",
+    "backToCart": "Quay lại giỏ hàng",
+    "contactInfo": "Thông tin liên hệ",
+    "contactInfoDescription": "Chúng tôi sẽ gửi xác nhận đơn hàng đến đây.",
+    "email": "Email",
+    "emailPlaceholder": "email@cuaban.com",
+    "emailRequired": "Vui lòng nhập email",
+    "emailInvalid": "Email không hợp lệ",
+    "phone": "Số điện thoại",
+    "phonePlaceholder": "+84 xxx xxx xxx",
+    "phoneInvalid": "Số điện thoại không hợp lệ",
+    "paymentMethod": "Phương thức thanh toán",
+    "onepayDescription": "Thanh toán bằng thẻ tín dụng/ghi nợ qua OnePay",
+    "bankTransfer": "Chuyển khoản ngân hàng",
+    "bankTransferDescription": "Chuyển khoản trực tiếp đến tài khoản ngân hàng",
+    "invoice": "Hóa đơn",
+    "wantInvoice": "Tôi muốn xuất hóa đơn",
+    "fillInvoiceInfo": "Điền thông tin hóa đơn",
+    "companyName": "Tên công ty",
+    "companyNamePlaceholder": "Tên công ty",
+    "companyRequired": "Vui lòng nhập tên công ty",
+    "taxCode": "Mã số thuế",
+    "taxCodePlaceholder": "Mã số thuế",
+    "taxCodeRequired": "Vui lòng nhập mã số thuế",
+    "address": "Địa chỉ",
+    "addressPlaceholder": "Địa chỉ công ty",
+    "addressRequired": "Vui lòng nhập địa chỉ",
+    "invoiceEmail": "Email nhận hóa đơn",
+    "invoiceEmailPlaceholder": "Email nhận hóa đơn",
+    "invoiceEmailRequired": "Vui lòng nhập email nhận hóa đơn",
+    "orderSummary": "Tóm tắt đơn hàng",
+    "subtotal": "Tạm tính",
+    "discount": "Giảm giá",
+    "total": "Tổng cộng",
+    "processing": "Đang xử lý...",
+    "completeOrder": "Hoàn tất đơn hàng",
+    "orderSuccess": "Đặt hàng thành công!",
+    "backToHome": "Về trang chủ",
+    "noItems": "Không có sản phẩm để thanh toán"
   }
 }

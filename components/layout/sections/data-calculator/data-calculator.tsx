@@ -12,6 +12,8 @@ import {
   Download,
   ChevronDown,
   RotateCcw,
+  Laptop,
+  SlidersHorizontal,
 } from "lucide-react";
 import Image from "next/image";
 import { ACTIVITIES, PROFILE_PRESETS, DATA_RATES } from "./calculator-data";
@@ -80,12 +82,12 @@ export function DataCalculator({ dict }: DataCalculatorProps) {
     <div className="flex flex-col lg:flex-row items-start lg:gap-8">
       {/* Left: Controls */}
       <div className="lg:max-w-[768px] w-full">
-        <div className="flex flex-col bg-bg-secondary rounded-sm max-sm:rounded-b-none p-6 max-md:px-4 gap-6">
+        <div className="flex flex-col bg-white rounded-sm max-sm:rounded-b-none p-6 max-md:px-4 gap-6">
           <p className="heading-md text-text-primary">{dict.estimateTitle}</p>
           <p className="body-md text-text-secondary">{dict.estimateSubtitle}</p>
 
           {/* Profile Cards */}
-          <div className="bg-bg-primary p-4 md:p-6 rounded-sm">
+          <div className="bg-bg-secondary p-4 md:p-6 rounded-sm">
             {/* Mobile dropdown */}
             <div className="md:hidden">
               <button
@@ -94,9 +96,8 @@ export function DataCalculator({ dict }: DataCalculatorProps) {
               >
                 {dict.pickProfile}
                 <ChevronDown
-                  className={`w-5 h-5 transition-transform ${
-                    mobileDropdownOpen ? "rotate-180" : ""
-                  }`}
+                  className={`w-5 h-5 transition-transform ${mobileDropdownOpen ? "rotate-180" : ""
+                    }`}
                 />
               </button>
               {mobileDropdownOpen && (
@@ -134,7 +135,7 @@ export function DataCalculator({ dict }: DataCalculatorProps) {
           </div>
 
           {/* Activity Controls */}
-          <p className="body-lg-medium text-text-primary">
+          <p className="body-lg-medium text-text-primary border-b pb-6">
             {dict.selectTime}
           </p>
 
@@ -155,7 +156,7 @@ export function DataCalculator({ dict }: DataCalculatorProps) {
       </div>
 
       {/* Right: Results sidebar (desktop) */}
-      <div className="hidden lg:flex flex-col items-start bg-bg-secondary rounded-sm p-6 flex-1 gap-6 w-full lg:w-auto lg:min-w-[320px] sticky top-24">
+      <div className="hidden lg:flex flex-col items-start bg-white rounded-sm p-6 flex-1 gap-6 w-full lg:w-auto lg:min-w-[320px] sticky top-24">
         <div className="flex flex-col gap-8 w-full">
           <p className="body-lg-medium text-text-primary">
             {dict.estimatedUsage}
@@ -197,11 +198,10 @@ function ProfileCardMobile({
 }) {
   return (
     <label
-      className={`flex items-center gap-3 p-3 overflow-hidden rounded-sm cursor-pointer bg-bg-secondary border-md transition-colors ${
-        selected
+      className={`flex items-center gap-3 p-3 overflow-hidden rounded-sm cursor-pointer bg-bg-secondary border-md transition-colors ${selected
           ? "border-border-focus"
           : "border-border-secondary hover:border-border-focus"
-      }`}
+        }`}
     >
       <div className="flex items-center justify-center shrink-0 w-12 h-12 rounded-sm bg-bg-blue-100">
         <ProfileIcon profileKey={profile.key} />
@@ -211,11 +211,10 @@ function ProfileCardMobile({
         <p className="body-sm text-text-tertiary">{dict.description}</p>
       </div>
       <span
-        className={`flex shrink-0 justify-center items-center w-5 h-5 rounded-full border-md transition-colors ${
-          selected
+        className={`flex shrink-0 justify-center items-center w-5 h-5 rounded-full border-md transition-colors ${selected
             ? "border-border-focus bg-bg-brand-yellow"
             : "border-border-secondary bg-[rgba(255,255,255,0.5)]"
-        }`}
+          }`}
       >
         {selected && <CheckIcon />}
       </span>
@@ -245,11 +244,10 @@ function ProfileCardDesktop({
   const imgSrc = PROFILE_IMAGES[profile.key];
   return (
     <label
-      className={`flex flex-col overflow-hidden rounded-sm cursor-pointer bg-bg-secondary border-md transition-colors ${
-        selected
+      className={`flex flex-col overflow-hidden rounded-sm cursor-pointer bg-bg-secondary border-md transition-colors ${selected
           ? "border-border-focus"
           : "border-border-secondary hover:border-border-focus"
-      }`}
+        }`}
     >
       {imgSrc && (
         <div className="hidden md:block">
@@ -319,11 +317,10 @@ function ActivityControl({
                 onPresetClick(h);
                 setShowCustom(false);
               }}
-              className={`inline-flex justify-center py-[6px] px-3 flex-1 basis-1/3 md:basis-1/5 border-md outline-hidden text-center rounded-full transition-colors body-sm-medium select-none whitespace-nowrap ${
-                value === h && !showCustom
+              className={`inline-flex justify-center py-[6px] px-3 flex-1 basis-1/3 md:basis-1/5 border-md outline-hidden text-center rounded-full transition-colors body-sm-medium select-none whitespace-nowrap ${value === h && !showCustom
                   ? "bg-bg-blue-100 border-bg-blue-100"
                   : "border-border-secondary hover:border-border-focus"
-              }`}
+                }`}
             >
               {h} h
             </button>
@@ -331,11 +328,10 @@ function ActivityControl({
           <button
             type="button"
             onClick={() => setShowCustom(true)}
-            className={`inline-flex justify-center py-[6px] px-3 flex-1 md:basis-1/5 border-md outline-hidden text-center rounded-full transition-colors body-sm-medium select-none whitespace-nowrap basis-full ${
-              showCustom || (!isPreset && value > 0)
+            className={`inline-flex justify-center py-[6px] px-3 flex-1 md:basis-1/5 border-md outline-hidden text-center rounded-full transition-colors body-sm-medium select-none whitespace-nowrap basis-full ${showCustom || (!isPreset && value > 0)
                 ? "bg-bg-blue-100 border-bg-blue-100"
                 : "border-border-secondary hover:border-border-focus"
-            }`}
+              }`}
           >
             {otherLabel}
           </button>
@@ -384,9 +380,8 @@ function MobileBottomBar({
     <>
       {/* Fixed bottom bar - mobile only */}
       <div
-        className={`fixed bottom-0 left-0 z-10 flex flex-col lg:hidden gap-3 w-full p-4 bg-bg-secondary border-t border-border-secondary transition-opacity ${
-          hasData ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
+        className={`fixed bottom-0 left-0 z-10 flex flex-col lg:hidden gap-3 w-full p-4 bg-bg-secondary border-t border-border-secondary transition-opacity ${hasData ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
       >
         <button
           onClick={() => setShowResults(true)}
@@ -441,8 +436,8 @@ function ProfileIcon({
 }) {
   const icons: Record<string, React.ElementType> = {
     casual_browser: Globe,
-    remote_worker: Smartphone,
-    individual: MessageCircle,
+    remote_worker: Laptop,
+    individual: SlidersHorizontal,
   };
   const Icon = icons[profileKey] || Globe;
   return <Icon className={`w-${size === 24 ? 6 : 5} h-${size === 24 ? 6 : 5} text-text-primary`} />;

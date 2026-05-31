@@ -98,7 +98,7 @@ function StarRating({ rating }: { rating: number }) {
 
 function UserCard({ item }: { item: UserReview }) {
   return (
-    <div className="grid grid-rows-[min-content_1fr_min-content] gap-4 p-6 content-start bg-secondary rounded-sm">
+    <div className="grid grid-rows-[min-content_1fr_min-content] gap-4 p-6 content-start bg-white rounded-sm">
       <div className="flex flex-row gap-4 items-center justify-between">
         <div className="flex flex-row gap-2 items-center">
           {item.avatar && (
@@ -185,7 +185,7 @@ function EditorialCard({ item, isLarge }: { item: EditorialReview; isLarge?: boo
   }
 
   return (
-    <div className="grid grid-rows-[min-content_1fr_min-content] gap-4 p-6 content-start bg-secondary rounded-sm">
+    <div className="grid grid-rows-[min-content_1fr_min-content] gap-4 p-6 content-start bg-white rounded-sm">
       <div className="flex flex-row gap-4 items-center justify-between">
         <div>
           {/* eslint-disable-next-line @next/next/no-img-element */}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import { DATA_RATES, CHART_COLORS } from "./calculator-data";
 
@@ -15,11 +16,14 @@ function formatGB(mb: number): string {
 }
 
 export function DonutChart({ values, dict }: DonutChartProps) {
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+
   const segments = Object.entries(values)
     .filter(([, hours]) => hours > 0)
     .map(([key, hours]) => ({
       key,
       name: dict.activities?.[key]?.title || key,
+      hours,
       value: hours * (DATA_RATES[key] || 0),
       color: CHART_COLORS[key] || "#E2E2E4",
     }));
@@ -31,9 +35,11 @@ export function DonutChart({ values, dict }: DonutChartProps) {
   const chartData =
     segments.length > 0 && totalDailyMB > 0
       ? segments
-      : [{ key: "empty", name: "Empty", value: 1, color: "#E2E2E4" }];
+      : [{ key: "empty", name: "Empty", hours: 0, value: 1, color: "#E2E2E4" }];
 
   const legendItems = segments.filter((s) => s.value > 0);
+
+  const activeSegment = activeIndex !== null ? chartData[activeIndex] : null;
 
   return (
     <div className="flex flex-col gap-6 w-full">
@@ -42,20 +48,34 @@ export function DonutChart({ values, dict }: DonutChartProps) {
           {/* Center label */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
             <div className="flex flex-col items-center">
-              <p className="body-xs text-text-tertiary">{dict.monthly}</p>
-              <p className="heading-xl text-text-primary">
-                {formatGB(totalMonthlyMB)}
-              </p>
+              {activeSegment && activeSegment.key !== "empty" ? (
+                <>
+                  <p className="body-xs text-text-tertiary">{activeSegment.name}</p>
+                  <p className="heading-xl text-text-primary">
+                    {activeSegment.hours}h
+                  </p>
+                  <p className="body-xs text-text-tertiary">
+                    {formatGB(activeSegment.value)}/day
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="body-xs text-text-tertiary">{dict.monthly}</p>
+                  <p className="heading-xl text-text-primary">
+                    {formatGB(totalMonthlyMB)}
+                  </p>
+                </>
+              )}
             </div>
           </div>
-          <ResponsiveContainer width="100%" height={272}>
+          <ResponsiveContainer width="100%" height={320}>
             <PieChart>
               <Pie
                 data={chartData}
                 cx="50%"
                 cy="50%"
-                innerRadius={104}
-                outerRadius={136}
+                innerRadius={125}
+                outerRadius={160}
                 dataKey="value"
                 startAngle={90}
                 endAngle={-270}
@@ -63,9 +83,16 @@ export function DonutChart({ values, dict }: DonutChartProps) {
                 animationDuration={800}
                 animationEasing="ease-out"
                 stroke="none"
+                onMouseEnter={(_, index) => setActiveIndex(index)}
+                onMouseLeave={() => setActiveIndex(null)}
               >
                 {chartData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={entry.color}
+                    opacity={activeIndex !== null && activeIndex !== index ? 0.5 : 1}
+                    style={{ cursor: "pointer", transition: "opacity 0.2s" }}
+                  />
                 ))}
               </Pie>
             </PieChart>

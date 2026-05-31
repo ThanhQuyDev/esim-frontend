@@ -24,15 +24,15 @@ interface FaqItem {
 }
 
 const COUNTRIES: EkycCountry[] = [
-  { flag: "🇭🇰", name: "Hong Kong", region: "hk" },
-  { flag: "🇹🇼", name: "Taiwan", region: "tw" },
-  { flag: "🇲🇴", name: "Macau", region: "hkmo" },
+  { flag: "https://cdn-revamp.airalo.com/images/e6694469-0a21-4019-9c14-8a4702a405ba.png", name: "Hong Kong", region: "hk" },
+  { flag: "https://cdn-revamp.airalo.com/images/5592454e-3d9a-40bc-aa0c-97895974ba34.png", name: "Taiwan", region: "tw" },
+  { flag: "https://cdn-revamp.airalo.com/images/cb8614ac-fd38-4ed4-9462-808eefe9858a.png", name: "Macau", region: "hkmo" },
 ];
 
 const COUNTRIES_EN: EkycCountry[] = [
-  { flag: "🇭🇰", name: "Hong Kong", region: "hk" },
-  { flag: "🇹🇼", name: "Taiwan", region: "tw" },
-  { flag: "🇲🇴", name: "Macau", region: "hkmo" },
+  { flag: "https://cdn-revamp.airalo.com/images/e6694469-0a21-4019-9c14-8a4702a405ba.png", name: "Hong Kong", region: "hk" },
+  { flag: "https://cdn-revamp.airalo.com/images/5592454e-3d9a-40bc-aa0c-97895974ba34.png", name: "Taiwan", region: "tw" },
+  { flag: "https://cdn-revamp.airalo.com/images/cb8614ac-fd38-4ed4-9462-808eefe9858a.png", name: "Macau", region: "hkmo" },
 ];
 
 const FAQ_VI: FaqItem[] = [
@@ -278,7 +278,7 @@ export function EkycModal({ open, onClose, lang }: EkycModalProps) {
                   e.currentTarget.style.transform = "none";
                 }}
               >
-                <div className="text-4xl leading-none">{c.flag}</div>
+                <div className="w-10 h-10 leading-none"><img src={c.flag} alt={c.name} className="w-10 h-10 rounded-full object-cover" /></div>
                 <div className="text-[13px] font-bold text-[#111] text-center leading-[1.4]">{c.name}</div>
                 <div
                   className="inline-flex items-center justify-center gap-[5px] px-3 py-1 rounded-full text-xs font-bold text-[#DC2626] mt-0.5"
@@ -330,7 +330,7 @@ export function EkycModal({ open, onClose, lang }: EkycModalProps) {
                       borderRadius: "50%",
                     }}
                   />
-                  <div className="text-3xl leading-none relative z-[1]">{c.flag}</div>
+                  <div className="w-8 h-8 leading-none relative z-[1]"><img src={c.flag} alt={c.name} className="w-8 h-8 rounded-full object-cover" /></div>
                   <div
                     className="text-xs font-bold text-center leading-[1.35] relative z-[1] flex-1 flex items-center justify-center"
                     style={{ color: "#991B1B" }}

@@ -45,11 +45,11 @@ const DEVICE_TYPE_CONFIG: {
   icon: typeof Smartphone;
   apiType: string;
 }[] = [
-  { key: "smartphones", icon: Smartphone, apiType: "Smart Phones" },
-  { key: "smartwatches", icon: Watch, apiType: "Smart Watches" },
-  { key: "tablets", icon: Tablet, apiType: "Tablets" },
-  { key: "laptops", icon: Laptop, apiType: "Laptops" },
-];
+    { key: "smartphones", icon: Smartphone, apiType: "Smart Phones" },
+    { key: "smartwatches", icon: Watch, apiType: "Smart Watches" },
+    { key: "tablets", icon: Tablet, apiType: "Tablets" },
+    { key: "laptops", icon: Laptop, apiType: "Laptops" },
+  ];
 
 interface SearchResultGroup {
   type: string;
@@ -265,7 +265,7 @@ export function DeviceList({ initialData, dict, lang }: DeviceListProps) {
         data-testid="section-header"
         className="relative scroll-mt-20 xl:scroll-mt-24 group/section"
       >
-        <div className="absolute top-0 group-first/section:-top-24 bottom-0 w-full">
+        <div className="absolute top-[-116px] group-first/section:-top-24 bottom-0 w-full">
           <div className="background w-full h-full bg-blue-100"></div>
         </div>
         <div className="relative">
@@ -300,7 +300,7 @@ export function DeviceList({ initialData, dict, lang }: DeviceListProps) {
                           ref={inputRef}
                           placeholder={dict.searchPlaceholder}
                           autoComplete="off"
-                          className="z-20 h-14 outline-none ring-0 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 appearance-none w-full leading-md py-4 pr-5 pl-14 text-base md:text-lg text-primary placeholder-primary border-input border-md hover:border-focus active:border-focus focus:border-focus rounded-full shadow-sm"
+                          className="z-20 h-14 outline-none ring-0 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 appearance-none w-full leading-md py-4 pr-12 pl-14 text-base md:text-lg text-primary placeholder-primary border-input border-md hover:border-focus active:border-focus focus:border-focus rounded-full shadow-sm"
                           data-testid="search-supported-devices-input"
                           name="search-input"
                           value={searchQuery}
@@ -315,6 +315,22 @@ export function DeviceList({ initialData, dict, lang }: DeviceListProps) {
                           <Loader2 className="w-6 h-6 z-30 absolute top-1/2 -translate-y-1/2 left-5 text-tertiary animate-spin" />
                         ) : (
                           <Search className="w-6 h-6 z-30 absolute top-1/2 -translate-y-1/2 left-5 text-tertiary" />
+                        )}
+                        {searchQuery && (
+                          <button
+                            type="button"
+                            aria-label="Clear search"
+                            className="absolute right-5 top-1/2 -translate-y-1/2 z-30 p-1 text-text-tertiary bg-bg-secondary rounded-full hover:text-text-primary transition-colors"
+                            onClick={() => {
+                              setSearchQuery("");
+                              setShowDropdown(false);
+                              inputRef.current?.focus();
+                            }}
+                          >
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
                         )}
                       </div>
 
@@ -395,7 +411,7 @@ export function DeviceList({ initialData, dict, lang }: DeviceListProps) {
                       className="-mx-4 sm:mx-0 px-4 sm:px-0 flex gap-1 pb-4 scrollbar-none overflow-x-auto justify-start"
                       data-testid="tabs-container"
                     >
-                      <div className="relative flex gap-1 w-fit p-1 border border-gray-200 bg-white rounded-full shadow-sm">
+                      <div className="relative flex items-center gap-1 w-fit p-1 border border-gray-200 bg-white rounded-full shadow-sm">
                         <div
                           aria-hidden="true"
                           className="absolute pointer-events-none z-0 bg-gray-900 rounded-full"
@@ -424,11 +440,10 @@ export function DeviceList({ initialData, dict, lang }: DeviceListProps) {
                               data-testid={`tabs-button-${idx + 1}`}
                               data-is-tab="true"
                               data-is-active={isActive}
-                              className={`relative z-10 inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-1.5 text-sm font-medium md:text-base transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900/10 ${
-                                isActive
+                              className={`relative z-10  inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-1.5 text-sm font-medium md:text-base transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900/10 ${isActive
                                   ? "text-white"
-                                  : "text-gray-700 hover:text-gray-900"
-                              }`}
+                                  : "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+                                }`}
                               aria-pressed={isActive}
                             >
                               <TabIcon className="w-4 h-4" />
@@ -478,7 +493,7 @@ export function DeviceList({ initialData, dict, lang }: DeviceListProps) {
                                           key={accordionId}
                                           value={accordionId}
                                           id={accordionId}
-                                          className="border-b border-gray-200"
+                                          className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
                                         >
                                           <AccordionPrimitive.Header className="flex">
                                             <AccordionPrimitive.Trigger className="flex w-full items-center justify-between py-4 font-medium transition-all outline-none group">
@@ -498,9 +513,9 @@ export function DeviceList({ initialData, dict, lang }: DeviceListProps) {
                                                       key={device.id}
                                                       className="flex items-center text-primary py-2"
                                                     >
-                                                      <span className="w-2 h-2 rounded-full bg-gray-400 shrink-0 mr-3" />
+                                                      <span className="w-1.5 h-1.5 rounded-full bg-gray-900 shrink-0 mr-3" />
                                                       {/* UI 6.2: bigger device font for easier scanning */}
-                                                      <p className="text-base md:text-lg">
+                                                      <p className="text-sm md:text-base">
                                                         {device.device}
                                                       </p>
                                                     </li>
@@ -509,7 +524,7 @@ export function DeviceList({ initialData, dict, lang }: DeviceListProps) {
                                               </ul>
                                               {dict.infoNote &&
                                                 manufacturer.manufacturer ===
-                                                  "iPhone" && (
+                                                "iPhone" && (
                                                   <div className="mt-3">
                                                     <div
                                                       data-testid="notification-neutral"

@@ -54,7 +54,7 @@ export function SecurityFeatures({ dict }: SecurityFeaturesProps) {
                     <div className="block sm:hidden">
                       <a
                         role="button"
-                        className="max-md:w-full text-center inline-block text-primary bg-accent hover:bg-accent-hover border-md border-accent hover:border-accent-hover active:bg-accent-active active:border-accent-active box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7"
+                        className="max-md:w-full text-center inline-block text-primary bg-accent hover:bg-accent-hover border-md border-bg-accent-hover hover:border-accent-hover active:bg-accent-active active:border-accent-active box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7"
                         href="/all-destinations/"
                       >
                         {dict.cta}
@@ -260,7 +260,7 @@ export function SecurityFeatures({ dict }: SecurityFeaturesProps) {
                                     <div>
                                       <a
                                         role="button"
-                                        className="max-md:w-full text-center inline-block text-primary hover:bg-brand-black hover:text-primary-on-color border-md border-reversed active:bg-brand-black active:text-primary-on-color box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7"
+                                        className="max-md:w-full text-center inline-block text-primary hover:bg-brand-black hover:text-primary-on-color border-md border-reversed active:bg-brand-black active:text-primary-on-color box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7 border-black"
                                         href="/security-features/"
                                         aria-label={`Learn more about ${dict.features[2].title}`}
                                       >
@@ -311,7 +311,7 @@ export function SecurityFeatures({ dict }: SecurityFeaturesProps) {
                                     <div>
                                       <a
                                         role="button"
-                                        className="max-md:w-full text-center inline-block text-primary hover:bg-brand-black hover:text-primary-on-color border-md border-reversed active:bg-brand-black active:text-primary-on-color box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7"
+                                        className="max-md:w-full text-center inline-block text-primary hover:bg-brand-black hover:text-primary-on-color border-md border-reversed active:bg-brand-black active:text-primary-on-color box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7 border-black"
                                         href="/security-features/"
                                         aria-label={`Learn more about ${dict.features[2].title}`}
                                       >

@@ -1,3 +1,4 @@
+import { SailyLogo } from "@/components/icons/saily-logo";
 import type { PressAreaDict } from "./translations";
 
 interface PressResourcesProps {
@@ -25,14 +26,14 @@ export function PressResources({ dict }: PressResourcesProps) {
                           <p className="heading-lg text-start scroll-mt-20 xl:scroll-mt-24">{dict.contactTitle}</p>
                         </div>
                         <p className="body-md text-text-secondary scroll-mt-20 xl:scroll-mt-24">
-                          {dict.contactDesc.split("press@saily.com")[0]}
-                          <a className="underline" href="mailto:press@saily.com">press@saily.com</a>
-                          {dict.contactDesc.split("press@saily.com")[1]}
+                          {dict.contactDesc.split("ceo@esim.com.vn")[0]}
+                          <a className="underline" href="mailto:ceo@esim.com.vn">ceo@esim.com.vn</a>
+                          {dict.contactDesc.split("ceo@esim.com.vn")[1]}
                         </p>
                         <a
                           role="button"
                           className="max-md:w-full text-center inline-block text-text-primary hover:text-white hover:bg-[var(--bg-dark)] border border-border-secondary active:bg-[var(--bg-dark)] active:text-white box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7"
-                          href="mailto:press@saily.com"
+                          href="mailto:ceo@esim.com.vn"
                         >
                           {dict.emailUs}
                         </a>
@@ -47,7 +48,7 @@ export function PressResources({ dict }: PressResourcesProps) {
                       <div className="md:p-10 px-6 py-8 w-full flex flex-col gap-6 lg:gap-8">
                         <div>
                           {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img alt="press area media asset saily icon" loading="lazy" width={48} height={48} decoding="async" style={{ color: "transparent" }} src="https://sb.nordcdn.com/m/bff76223fbf9b2ef/original/press-area-media-asset-saily-icon.svg" />
+                          <SailyLogo />
                         </div>
                         <div className="text-center lg:text-left">
                           <p className="heading-lg text-start scroll-mt-20 xl:scroll-mt-24">{dict.mediaTitle}</p>
@@ -56,7 +57,7 @@ export function PressResources({ dict }: PressResourcesProps) {
                         <a
                           role="button"
                           className="max-md:w-full text-center inline-block text-text-primary hover:text-white hover:bg-[var(--bg-dark)] border border-border-secondary active:bg-[var(--bg-dark)] active:text-white box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7"
-                           
+
                           target="_blank"
                           href="https://zeroheight.com/5c8b55fba/p/90ce90-who-we-are"
                         >

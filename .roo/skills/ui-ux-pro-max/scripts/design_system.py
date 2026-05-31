@@ -964,7 +964,7 @@ def _generate_intelligent_overrides(page_name: str, page_query: str, design_syst
             layout["Layout"] = "Single column, centered"
             spacing["Content Density"] = "Low — focus on clarity"
         else:
-            layout["Max Width"] = "1200px (standard)"
+            layout["Max Width"] = "1168px (standard)"
             layout["Layout"] = "Full-width sections, centered content"
         
         if effects:

@@ -26,13 +26,13 @@ export function NonprofitBanner({ dict }: NonprofitBannerProps) {
                       </div>
                       <div className="col-span-12 lg:col-start-3 lg:col-span-8 flex justify-center">
                         <p className="text-white text-center scroll-mt-20 xl:scroll-mt-24">
-                          {dict.description.split("non-profit@saily.com")[0]}
-                          <a className="underline" href="mailto:non-profit@saily.com">non-profit@saily.com</a>
-                          {dict.description.split("non-profit@saily.com")[1]}
+                          {dict.description.split("non-ceo@esim.com.vn")[0]}
+                          <a className="underline" href="mailto:non-ceo@esim.com.vn">non-ceo@esim.com.vn</a>
+                          {dict.description.split("non-ceo@esim.com.vn")[1]}
                         </p>
                       </div>
                       <div className="col-span-12 lg:col-start-3 lg:col-span-8 flex justify-center">
-                        <a role="button" className="max-md:w-full text-center inline-block text-text-primary bg-bg-secondary hover:bg-bg-secondary/80 border border-border-secondary box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7" href="/blog/saily-impact/" aria-label={`Learn more about ${dict.title}`}>
+                        <a role="button" className="max-md:w-full text-center inline-block text-text-primary bg-bg-secondary hover:bg-bg-secondary/80 border border-border-secondary box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7" href="/destinations" aria-label={`Learn more about ${dict.title}`}>
                           {dict.learnMore}
                         </a>
                       </div>

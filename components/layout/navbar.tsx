@@ -790,7 +790,7 @@ function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
                     )}
                     <ChevronDown
                       className={cn(
-                        "w-3 h-3 text-text-tertiary transition-transform duration-200",
+                        "w-4 h-4 text-text-tertiary transition-transform duration-200",
                         openDropdown === item && "rotate-180"
                       )}
                     />
@@ -805,7 +805,7 @@ function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
                   setOpenDropdown(null);
                 }}
                 className={cn(
-                  "hidden lg:flex items-center gap-2 px-6 py-[5.5px] text-text-primary border-md border-text-primary rounded-full body-sm-medium cursor-pointer transition-all duration-200 hover:bg-bg-dark hover:text-text-primary-on-color hover:border-bg-dark group",
+                  "hidden lg:flex items-center gap-2 px-6 py-[5.5px] text-text-primary border border-black rounded-full body-sm-medium cursor-pointer transition-all duration-200 hover:bg-bg-dark hover:text-text-primary-on-color hover:border-bg-dark group",
                   destinationsOpen && "bg-bg-dark text-text-primary-on-color border-bg-dark"
                 )}
               >
@@ -947,7 +947,7 @@ function MegaMenuDropdown({
   onClose: () => void;
 }) {
   return (
-    <div className="hidden lg:block absolute w-full px-6 top-full left-0 rounded-b-md bg-bg-secondary shadow-[0_8px_12px_-6px_rgba(149,157,165,0.2)] z-50 animate-fade-in">
+    <div className="hidden lg:block absolute w-full px-6 top-full left-0 rounded-b-md bg-white shadow-[0_8px_12px_-6px_rgba(149,157,165,0.2)] z-50 animate-fade-in">
       <div className="flex flex-col max-w-[1600px] mx-auto">
         {/* Main content */}
         <div className="flex gap-6 justify-between border-t border-border-secondary py-6">

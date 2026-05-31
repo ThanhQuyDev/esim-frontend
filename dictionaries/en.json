@@ -269,8 +269,8 @@
     ]
   },
   "referFriend": {
-    "title": "Refer a friend, and you'll both get US$5!",
-    "description": "Invite your friends to use esim.vn and get US$5 in esim.vn credits while they get a US$5 discount!",
+    "title": "Refer a friend, and you'll both get 10.000đ!",
+    "description": "Invite your friends to use esim.vn and get 10.000đ in esim.vn credits while they get a 10.000đ discount!",
     "cta": "Learn More",
     "imageAlt": "A group of people enjoying a US$5 esim.vn credit after referring a friend."
   },
@@ -358,7 +358,7 @@
     "followUs": {
       "title": "Follow us",
       "links": [
-        { "label": "YouTube", "href": "https://www.youtube.com/@saily_service" },
+        { "label": "YouTube", "href": "https://www.youtube.com/@esim_service" },
         { "label": "Instagram", "href": "https://www.instagram.com/sailyworld" },
         { "label": "X (Twitter)", "href": "https://x.com/sailyworld" },
         { "label": "Facebook", "href": "https://www.facebook.com/sailyservice" },
@@ -1004,7 +1004,7 @@
   "reviewPage": {
     "hero": {
       "title": "esim.vn review and rating: Should you get it?",
-      "subtitle": "An affordable eSIM service from the creators of NordVPN",
+      "subtitle": "An affordable eSIM service from the creators of esim.vn",
       "cta": "View All Plans",
       "imageAlt": "A happy woman lies on the beach after posting a esim.vn review.",
       "imageUrl": "https://sb.nordcdn.com/m/7260eee2474e71e4/original/woman-stars-reviews-rating.png"

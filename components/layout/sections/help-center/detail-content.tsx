@@ -8,7 +8,8 @@ import { localizedHref } from "@/lib/route-mapping";
 import {
   getCategoryLabel,
   getParentLabel,
-  toUrlSlug,
+  toLocalizedCategorySlug,
+  toLocalizedParentSlug,
   resolveCategoryKey,
   resolveParentKey,
 } from "./category-config";
@@ -239,11 +240,11 @@ export function DetailContent({
     return (
       <main role="main">
         <div className="bg-gray-200">
-          <div className="max-w-7xl mx-auto px-4">
+          <div className="max-w-[1386px] mx-auto px-8">
             <div className="flex items-center pt-4 pb-4" />
           </div>
         </div>
-        <div className="max-w-7xl mx-auto px-4 py-16 text-center text-gray-500">
+        <div className="max-w-[1386px] mx-auto px-8 py-16 text-center text-gray-500">
           Loading...
         </div>
       </main>
@@ -257,7 +258,7 @@ export function DetailContent({
 
       {/* Breadcrumb (Style 2.9) — merged: Trang chủ > Trung tâm trợ giúp > ... */}
       <div className="bg-gray-100">
-        <div className="max-w-7xl mx-auto px-4">
+        <div className="max-w-[1386px] mx-auto px-8">
           <div className="flex items-center pt-4 pb-4">
             <div className="text-sm">
               <nav aria-label="Breadcrumb">
@@ -276,7 +277,7 @@ export function DetailContent({
                   <li className="text-gray-400 mx-1">›</li>
                   <li>
                     {parent ? (
-                      <Link href={`${basePath}/${toUrlSlug(category)}`} className="text-gray-700 no-underline hover:text-gray-900 transition-colors">
+                      <Link href={`${basePath}/${toLocalizedCategorySlug(category, lang)}`} className="text-gray-700 no-underline hover:text-gray-900 transition-colors">
                         {getCategoryLabel(category, lang)}
                       </Link>
                     ) : (
@@ -288,7 +289,7 @@ export function DetailContent({
                       <li className="text-gray-400 mx-1">›</li>
                       <li>
                         {titleSlug ? (
-                          <Link href={`${basePath}/${toUrlSlug(category)}/${toUrlSlug(parent)}`} className="text-gray-700 no-underline hover:text-gray-900 transition-colors">
+                          <Link href={`${basePath}/${toLocalizedCategorySlug(category, lang)}/${toLocalizedParentSlug(parent, lang)}`} className="text-gray-700 no-underline hover:text-gray-900 transition-colors">
                             {getParentLabel(parent, lang)}
                           </Link>
                         ) : (
@@ -313,7 +314,7 @@ export function DetailContent({
       </div>
 
       {/* Page container (Layout 2.2: max-w-7xl) */}
-      <div className="max-w-7xl mx-auto px-4 flex-1" id="page-container">
+      <div className="max-w-[1386px] mx-auto px-8 flex-1" id="page-container">
         <div className="flex flex-col md:flex-row gap-8 lg:gap-10">
           {/* Sidebar navigation - LEFT (Navigation 2.5: 3-level tree) */}
           <aside className="w-full md:w-4/12 lg:w-3/12 flex-shrink-0 order-1">
@@ -332,15 +333,15 @@ export function DetailContent({
                         {/* Level 1: Category */}
                         <button
                           onClick={() => toggleCategory(catKey)}
-                          className={`w-full flex items-center justify-between px-3 py-2 text-left rounded transition-colors cursor-pointer ${
+                          className={`w-full flex items-center text-[1.2rem] justify-between px-3 py-2 text-left rounded transition-colors cursor-pointer ${
                             isCatActive
-                              ? "bg-gray-100 font-bold text-gray-900"
+                              ? "bg-gray-100 font-semibold text-gray-900"
                               : "text-gray-700 hover:bg-gray-50"
                           }`}
                           aria-expanded={isCatExpanded}
                         >
                           <Link
-                            href={`${basePath}/${toUrlSlug(catKey)}`}
+                            href={`${basePath}/${toLocalizedCategorySlug(catKey, lang)}`}
                             className="flex-1 text-inherit no-underline hover:text-inherit"
                             onClick={(e) => e.stopPropagation()}
                           >
@@ -364,7 +365,7 @@ export function DetailContent({
                                 <li key={parentKey} className="mb-0.5">
                                   <button
                                     onClick={() => toggleParent(catKey, parentKey)}
-                                    className={`w-full flex items-center justify-between px-3 py-1.5 text-sm text-left rounded transition-colors cursor-pointer ${
+                                    className={`w-full flex items-center justify-between px-3 py-1.5 text-base text-left rounded transition-colors cursor-pointer ${
                                       isParentActive
                                         ? "bg-gray-100 font-semibold text-gray-900"
                                         : "text-gray-600 hover:bg-gray-50"
@@ -372,7 +373,7 @@ export function DetailContent({
                                     aria-expanded={isParentExpanded}
                                   >
                                     <Link
-                                      href={`${basePath}/${toUrlSlug(catKey)}/${toUrlSlug(parentKey)}`}
+                                      href={`${basePath}/${toLocalizedCategorySlug(catKey, lang)}/${toLocalizedParentSlug(parentKey, lang)}`}
                                       className="flex-1 text-inherit no-underline hover:text-inherit"
                                       onClick={(e) => e.stopPropagation()}
                                     >
@@ -397,8 +398,8 @@ export function DetailContent({
                                         return (
                                           <li key={article.id}>
                                             <Link
-                                              href={`${basePath}/${toUrlSlug(catKey)}/${toUrlSlug(parentKey)}/${artSlug}`}
-                                              className={`block px-3 py-2 text-xs rounded transition-colors no-underline ${
+                                              href={`${basePath}/${toLocalizedCategorySlug(catKey, lang)}/${toLocalizedParentSlug(parentKey, lang)}/${artSlug}`}
+                                              className={`block px-3 py-2 text-[0.94rem] leading-[1.5] font-medium rounded transition-colors no-underline ${
                                                 isArticleActive
                                                   ? "bg-gray-100 font-medium text-gray-900 border-l-[3px] border-l-[#ffdc52]"
                                                   : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 border-l-[3px] border-l-transparent"
@@ -452,25 +453,15 @@ export function DetailContent({
                     [&_ul]:pl-6 [&_ul]:list-disc [&_ul]:mb-4
                     [&_ol]:pl-6 [&_ol]:list-decimal [&_ol]:mb-4
                     [&_li]:mb-1
-                    [&_table]:w-full [&_table]:border-collapse [&_table]:mb-4
-                    [&_th]:border [&_th]:border-gray-300 [&_th]:px-3 [&_th]:py-2 [&_th]:bg-gray-100 [&_th]:text-left [&_th]:font-semibold
-                    [&_td]:border [&_td]:border-gray-300 [&_td]:px-3 [&_td]:py-2
+                    [&_table]:!w-full [&_table]:!table-fixed [&_table]:!border-collapse [&_table]:!border [&_table]:!border-gray-300 [&_table]:!mb-4 [&_table]:!rounded-none
+                    [&_th]:!border [&_th]:!border-gray-300 [&_th]:!px-3 [&_th]:!py-2 [&_th]:!bg-gray-100 [&_th]:!text-left [&_th]:!font-semibold [&_th]:!rounded-none
+                    [&_td]:!border [&_td]:!border-gray-300 [&_td]:!px-3 [&_td]:!py-2 [&_td]:!rounded-none
                     [&_blockquote]:border-l-4 [&_blockquote]:border-gray-300 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-gray-600 [&_blockquote]:my-4
                     [&_a]:text-gray-700 [&_a]:no-underline [&_a]:hover:underline [&_a]:hover:text-gray-900
                     [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded
                     [&_pre]:bg-gray-100 [&_pre]:p-4 [&_pre]:rounded [&_pre]:overflow-x-auto
                     [&_code]:bg-gray-100 [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm"
                   dangerouslySetInnerHTML={{ __html: articleProcessed.html || selectedArticle.content }}
-                />
-
-                {/* Content 5.1: Support CTA + related articles (6 popular) */}
-                <ArticleFooter
-                  lang={lang}
-                  currentArticle={selectedArticle}
-                  popularArticles={popularArticles ?? []}
-                  buildHref={(a) =>
-                    `${basePath}/${toUrlSlug(a.category)}/${toUrlSlug(a.parent)}/${getArticleSlug(a)}`
-                  }
                 />
               </div>
             ) : /* === LEVEL 2: Parent section with article list === */
@@ -485,7 +476,7 @@ export function DetailContent({
                       <div className="relative flex items-baseline py-2">
                         <div className="flex-1">
                           <Link
-                            href={`${basePath}/${toUrlSlug(category)}/${toUrlSlug(parent!)}/${getArticleSlug(article)}`}
+                            href={`${basePath}/${toLocalizedCategorySlug(category, lang)}/${toLocalizedParentSlug(parent!, lang)}/${getArticleSlug(article)}`}
                             className="text-gray-800 hover:text-gray-900 no-underline transition-colors"
                           >
                             {article.title}
@@ -523,7 +514,7 @@ export function DetailContent({
                       >
                         <h2 className="text-xl font-semibold mb-2">
                           <Link
-                            href={`${basePath}/${toUrlSlug(category)}/${toUrlSlug(parentKey)}`}
+                            href={`${basePath}/${toLocalizedCategorySlug(category, lang)}/${toLocalizedParentSlug(parentKey, lang)}`}
                             className="text-gray-900 hover:text-gray-700 no-underline transition-colors"
                           >
                             {getParentLabel(parentKey, lang)}
@@ -536,7 +527,7 @@ export function DetailContent({
                               <div className="relative flex items-baseline py-2">
                                 <div className="flex-1">
                                   <Link
-                                    href={`${basePath}/${toUrlSlug(category)}/${toUrlSlug(parentKey)}/${getArticleSlug(article)}`}
+                                    href={`${basePath}/${toLocalizedCategorySlug(category, lang)}/${toLocalizedParentSlug(parentKey, lang)}/${getArticleSlug(article)}`}
                                     className="text-gray-800 hover:text-gray-900 no-underline transition-colors"
                                   >
                                     {article.title}
@@ -553,7 +544,7 @@ export function DetailContent({
                         {arts.length > 6 && (
                           <p className="mt-2">
                             <Link
-                              href={`${basePath}/${toUrlSlug(category)}/${toUrlSlug(parentKey)}`}
+                              href={`${basePath}/${toLocalizedCategorySlug(category, lang)}/${toLocalizedParentSlug(parentKey, lang)}`}
                               className="inline-block px-4 py-1.5 text-sm border border-gray-300 rounded hover:bg-gray-50 text-gray-800 no-underline transition-colors"
                             >
                               {lang === "vi" ? `Xem tất cả ${arts.length} bài viết` : `See all ${arts.length} articles`}
@@ -576,13 +567,27 @@ export function DetailContent({
 
           {/* TOC Sidebar - RIGHT (only on article detail, desktop only) */}
           {titleSlug && selectedArticle && articleProcessed.headings.length > 0 && (
-            <aside className="hidden lg:block w-56 xl:w-64 flex-shrink-0 order-3">
+            <aside className="hidden lg:block w-48 xl:w-52 flex-shrink-0 order-3">
               <div className="sticky top-[120px] pt-16">
                 <ArticleToc headings={articleProcessed.headings} lang={lang} />
               </div>
             </aside>
           )}
         </div>
+
+        {/* Article Footer — full width, outside the flex row so TOC doesn't constrain it */}
+        {titleSlug && selectedArticle && (
+          <div className="mt-4">
+            <ArticleFooter
+              lang={lang}
+              currentArticle={selectedArticle}
+              popularArticles={popularArticles ?? []}
+              buildHref={(a) =>
+                `${basePath}/${toLocalizedCategorySlug(a.category, lang)}/${toLocalizedParentSlug(a.parent, lang)}/${getArticleSlug(a)}`
+              }
+            />
+          </div>
+        )}
       </div>
 
       {/* Scroll to top button */}

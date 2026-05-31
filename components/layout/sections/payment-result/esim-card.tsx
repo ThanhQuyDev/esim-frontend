@@ -16,13 +16,31 @@ interface EsimCardProps {
   t: PaymentResultDict;
 }
 
+const ESIMVN_LOGO = 'https://res.cloudinary.com/drozbviwb/image/upload/v1780067058/logo_esimvn_zycejk.png';
+
 function LpaQrCode({ lpa, scanLabel }: { lpa: string; scanLabel: string }) {
   const [src, setSrc] = useState<string | null>(null);
 
   useEffect(() => {
     if (!lpa) return;
-    QRCodeLib.toDataURL(lpa, { width: 200, margin: 2 })
-      .then(setSrc)
+    QRCodeLib.toCanvas(lpa, { width: 200, margin: 2, errorCorrectionLevel: 'H' })
+      .then((canvas) => {
+        const ctx = canvas.getContext('2d');
+        if (!ctx) { setSrc(canvas.toDataURL()); return; }
+        const logo = new Image();
+        logo.crossOrigin = 'anonymous';
+        logo.onload = () => {
+          const logoSize = 40;
+          const x = (canvas.width - logoSize) / 2;
+          const y = (canvas.height - logoSize) / 2;
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(x - 2, y - 2, logoSize + 4, logoSize + 4);
+          ctx.drawImage(logo, x, y, logoSize, logoSize);
+          setSrc(canvas.toDataURL());
+        };
+        logo.onerror = () => setSrc(canvas.toDataURL());
+        logo.src = ESIMVN_LOGO;
+      })
       .catch(() => setSrc(null));
   }, [lpa]);
 

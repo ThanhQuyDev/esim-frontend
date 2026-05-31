@@ -6,6 +6,7 @@ import type { Blog, Faq } from "@/lib/api";
 import type { Locale } from "@/lib/i18n-config";
 import { BlogCategoryNav } from "./blog-category-nav";
 import { BlogArticleHeading } from "./blog-article-heading";
+import { BlogBreadcrumb } from "./blog-breadcrumb";
 import { BlogTableOfContents, processBlogContent } from "./blog-toc";
 import { BlogMiniTagWidget } from "./blog-mini-tag";
 import { BlogCountryPlansList } from "./blog-country-plans";
@@ -151,6 +152,9 @@ export function BlogDetailContent({ lang, slug, initialBlog }: BlogDetailContent
       {/* Category Navigation */}
       <BlogCategoryNav lang={lang} />
 
+      {/* Breadcrumb — below category nav */}
+      <BlogBreadcrumb blog={blog} lang={lang} />
+
       <div>
         {/* Article Heading with Last Updated (SEO 1.6) */}
         <BlogArticleHeading blog={blog} lang={lang} />
@@ -202,9 +206,9 @@ export function BlogDetailContent({ lang, slug, initialBlog }: BlogDetailContent
                   {/* Main content column */}
                   <div className="col-span-12 lg:odd:col-start-2 lg:odd:col-span-7 lg:col-span-3">
                     <div className="flex flex-col gap-12">
-                      {/* Article body - Bug 1.1: prose for rich text + Style 1.5: rounded images */}
+                      {/* Article body */}
                       <div
-                        className="prose prose-slate max-w-none prose-headings:font-bold prose-h2:text-2xl prose-h3:text-xl prose-h4:text-lg prose-table:border prose-table:border-gray-300 prose-th:border prose-th:border-gray-300 prose-th:p-2 prose-td:border prose-td:border-gray-300 prose-td:p-2 prose-blockquote:border-l-4 prose-blockquote:border-gray-300 prose-blockquote:pl-4 prose-img:rounded-lg prose-a:no-underline hover:prose-a:underline"
+                        className="prose prose-slate max-w-none prose-headings:font-bold prose-h2:text-2xl prose-h3:text-xl prose-h4:text-lg prose-blockquote:border-l-4 prose-blockquote:border-gray-300 prose-blockquote:pl-4 prose-img:rounded-lg prose-a:no-underline hover:prose-a:underline [&_table]:!w-full [&_table]:!table-fixed [&_table]:!border-collapse [&_table]:!border [&_table]:!border-gray-300 [&_table]:!my-4 [&_table]:!rounded-none [&_th]:!border [&_th]:!border-gray-300 [&_th]:!p-2 [&_th]:!bg-gray-100 [&_th]:!text-left [&_th]:!rounded-none [&_td]:!border [&_td]:!border-gray-300 [&_td]:!p-2 [&_td]:!rounded-none"
                         dangerouslySetInnerHTML={{ __html: processedContent }}
                       />
 
@@ -214,18 +218,13 @@ export function BlogDetailContent({ lang, slug, initialBlog }: BlogDetailContent
                       {/* Country Plans — only show if API returns plans */}
                       {hasPlans && <BlogCountryPlansList plans={blog.plans!} lang={lang} />}
 
-                      {/* FAQ Accordion - Feature 1.3 */}
+                      {/* FAQ Accordion */}
                       {faqs && faqs.length > 0 && (
                         <BlogFaqAccordion faqs={faqs} lang={lang} />
                       )}
 
-                      {/* Disclaimer - Feature 1.7 */}
+                      {/* Disclaimer */}
                       <BlogDisclaimer lang={lang} />
-
-                      {/* Related Posts - Feature 1.3 */}
-                      {relatedPosts && relatedPosts.length > 0 && (
-                        <BlogRelatedPosts posts={relatedPosts} lang={lang} />
-                      )}
                     </div>
                   </div>
 
@@ -241,6 +240,19 @@ export function BlogDetailContent({ lang, slug, initialBlog }: BlogDetailContent
 
         {/* Article Footer */}
         <BlogArticleFooter blog={blog} lang={lang} />
+
+        {/* Related Posts — below footer, inside main content column */}
+        {relatedPosts && relatedPosts.length > 0 && (
+          <div className="mx-4 sm:mx-auto">
+            <div className="container mx-auto">
+              <div className="grid sm:gap-x-8 grid-cols-12">
+                <div className="col-span-12 lg:col-start-2 lg:col-span-7">
+                  <BlogRelatedPosts posts={relatedPosts} lang={lang} />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Scroll to Top - Feature 1.2 */}

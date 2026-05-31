@@ -17,7 +17,7 @@ module.exports = {
         sm: "640px",
         md: "768px",
         lg: "1024px",
-        xl: "1200px",
+        xl: "1168px",
       },
     },
     extend: {
@@ -114,7 +114,7 @@ module.exports = {
         full: "var(--radius-full)",
       },
       maxWidth: {
-        "container": "1200px",
+        "container": "1168px",
         "header": "1600px",
       },
       keyframes: {

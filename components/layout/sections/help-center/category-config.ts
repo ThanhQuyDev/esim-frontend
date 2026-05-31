@@ -127,6 +127,34 @@ export function fromUrlSlug(slug: string): string {
   return slug.replace(/-/g, "_");
 }
 
+/**
+ * Get the localized URL slug for a category key.
+ * For Vietnamese: `getting_started` → `bat-dau`
+ * For English: `getting_started` → `getting-started`
+ */
+export function toLocalizedCategorySlug(key: string, lang = "en"): string {
+  const entry = getEntry(CATEGORY_INDEX, key);
+  if (entry) {
+    const localeKey = lang === "vi" ? entry.vi.key : entry.en.key;
+    return toUrlSlug(localeKey);
+  }
+  return toUrlSlug(key);
+}
+
+/**
+ * Get the localized URL slug for a parent key.
+ * For Vietnamese: `setting_up` → `cai-dat`
+ * For English: `setting_up` → `setting-up`
+ */
+export function toLocalizedParentSlug(key: string, lang = "en"): string {
+  const entry = getEntry(PARENT_INDEX, key);
+  if (entry) {
+    const localeKey = lang === "vi" ? entry.vi.key : entry.en.key;
+    return toUrlSlug(localeKey);
+  }
+  return toUrlSlug(key);
+}
+
 // ---------- Generic helpers ----------
 
 function fallbackLabel(key: string): string {

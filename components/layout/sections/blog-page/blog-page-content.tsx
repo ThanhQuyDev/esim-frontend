@@ -75,7 +75,7 @@ function CategoryBadge({ category, lang }: { category: string | null; lang: stri
   );
 }
 
-function BlogMeta({ date, timeRead }: { date: string | null; timeRead: string | null }) {
+function BlogMeta({ date, timeRead, lang }: { date: string | null; timeRead: string | null; lang?: string }) {
   return (
     <div className="h-full w-full flex flex-row justify-start flex-wrap items-center gap-x-4 gap-y-4">
       {date && (
@@ -89,7 +89,7 @@ function BlogMeta({ date, timeRead }: { date: string | null; timeRead: string | 
         <div>
           <div className="flex gap-2 items-center text-secondary">
             <BookOpen size={16} />
-            <p className="body-xs">{timeRead}</p>
+            <p className="body-xs">{timeRead} {lang === "vi" ? "phút" : "min"}</p>
           </div>
         </div>
       )}
@@ -153,13 +153,13 @@ function BlogCard({ blog, lang }: { blog: Blog; lang: string }) {
         <div>
           <div className="h-full w-full flex flex-col text-start items-start justify-start gap-y-2">
             <div>
-              <BlogMeta date={blog.publishedAt} timeRead={String(blog.timeRead)} />
+              <BlogMeta date={blog.publishedAt} timeRead={String(blog.timeRead)} lang={lang} />
             </div>
             <div>
               <h3 className="heading-sm">
                 <Link
                   href={`/${lang}/blog/${blog.slug}/`}
-                  className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus "
+                  className="!text-[1.4rem] font-medium align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus "
                 >
                   {blog.title}
                 </Link>
@@ -203,7 +203,7 @@ function CategoryNavBar({
                   <div className="w-6 h-[3px] bg-dark" />
                   <div className="w-6 h-[3px] bg-dark" />
                 </div>
-                <p className="body-md-medium">Show All Categories</p>
+                <p className="body-md-medium">{lang === "vi" ? "Hiển thị tất cả danh mục" : "Show All Categories"}</p>
               </div>
             </button>
             <div className="px-2">
@@ -220,9 +220,8 @@ function CategoryNavBar({
             </div>
           </div>
           <div
-            className={`bg-primary relative top-0 transition-all ease-in p-4 w-full border-t-md border-secondary overflow-hidden ${
-              mobileOpen ? "" : "hidden"
-            }`}
+            className={`bg-primary relative top-0 transition-all ease-in p-4 w-full border-t-md border-secondary overflow-hidden ${mobileOpen ? "" : "hidden"
+              }`}
           >
             <ul className="flex flex-col gap-4">
               {categories.map((cat) => (
@@ -246,7 +245,7 @@ function CategoryNavBar({
       </div>
 
       {/* Desktop */}
-      <div className="hidden sm:block mx-auto lg:px-16 bg-gray-200">
+      <div className="hidden sm:block mx-auto lg:px-16 bg-neutral-100">
         <ul className="flex container items-center gap-6 py-3 max-w-[1168px] mx-auto ">
           {categories.map((cat) => (
             <li key={cat} className="relative" aria-expanded="false" aria-haspopup="true">
@@ -297,15 +296,15 @@ function FeaturedArticle({ blog, lang }: { blog: Blog; lang: string }) {
                         href={`/${lang}/blog/${blog.slug}/`}
                         className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus "
                       >
-                        <h3 className="heading-xl">{blog.title}</h3>
+                        <h3 className="heading-xl !leading-[1.3]">{blog.title}</h3>
                       </Link>
                     </div>
                     {blog.excerpt && (
                       <div>
                         <div className="line-clamp-3">
                           <div className="flex flex-col gap-6 justify-center items-start text-start">
-                            <p className="body-md w-full min-h-6">
-                              <span style={{ color: "#000000" }}>{blog.excerpt}</span>
+                            <p className="body-md w-full min-h-6 line-clamp-3">
+                              <span style={{ color: "#000000" }} >{blog.excerpt}</span>
                             </p>
                           </div>
                         </div>
@@ -314,7 +313,7 @@ function FeaturedArticle({ blog, lang }: { blog: Blog; lang: string }) {
                   </div>
                 </div>
                 <div>
-                  <BlogMeta date={blog.publishedAt} timeRead={String(blog.timeRead)} />
+                  <BlogMeta date={blog.publishedAt} timeRead={String(blog.timeRead)} lang={lang} />
                 </div>
                 <div>
                   <AuthorLink author={blog.author} lang={lang} />
@@ -371,7 +370,7 @@ function ArticleGridSection({
           <div className="container grid sm:gap-x-8 grid-cols-12 mb-10 mx-auto">
             <div className="col-span-12 md:col-span-8">
               <div className="grid grid-cols-1 gap-y-6">
-                <h2 className="body-lg-medium">{title}</h2>
+                <h2 className="!text-[2rem] body-lg-medium">{title}</h2>
               </div>
             </div>
           </div>
@@ -411,10 +410,12 @@ function ChooseCategorySection({
         const parentRect = parent.getBoundingClientRect();
         const btnRect = btn.getBoundingClientRect();
         setIndicatorStyle({
+          left: 0,
           transform: `translateX(${btnRect.left - parentRect.left}px)`,
           width: `${btnRect.width}px`,
           height: `${btnRect.height}px`,
-          top: `${btnRect.top - parentRect.top}px`,
+          top: "50%",
+          marginTop: `${-(btnRect.height / 2)}px`,
           borderRadius: "1524px",
           transition: "transform 0.3s ease-in-out, width 0.3s ease-in-out",
         });
@@ -435,7 +436,7 @@ function ChooseCategorySection({
           <div className="container grid sm:gap-x-8 grid-cols-12 mb-10 mx-auto">
             <div className="col-span-12 md:col-span-8">
               <div className="grid grid-cols-1 gap-y-6">
-                <h2 className="body-lg-medium">Choose category</h2>
+                <h2 className="!text-[1.3rem] body-lg-medium">{(blogTranslations[lang] || blogTranslations.en).chooseCategory}</h2>
               </div>
             </div>
           </div>
@@ -445,9 +446,9 @@ function ChooseCategorySection({
             {/* Tabs */}
             <div className="container mx-auto">
               <div className="flex gap-1 pb-4 scrollbar-none overflow-auto">
-                <div className="relative flex gap-1 w-fit p-1 border-md border-secondary rounded-full">
+                <div className="relative flex items-center gap-1 w-fit p-1 border-md border-secondary rounded-full">
                   <div
-                    className="absolute inset-0 pointer-events-none z-[1] bg-dark"
+                    className="absolute pointer-events-none z-[1] bg-dark rounded-full"
                     style={indicatorStyle}
                   />
                   {categories.map((cat, i) => (
@@ -455,11 +456,10 @@ function ChooseCategorySection({
                       key={cat}
                       ref={(el) => { tabRefs.current[i] = el; }}
                       onClick={() => setActiveTab(i)}
-                      className={`relative z-[1] body-sm-medium whitespace-nowrap md:body-md-medium px-4 py-1 hover:text-primary focus-visible:outline-hidden focus-visible:shadow-focus rounded-full transition-[color] ${
-                        activeTab === i
-                          ? "text-white bg-transparent"
-                          : "text-primary hover:bg-primary bg-transparent"
-                      }`}
+                      className={`relative z-[1] body-sm-medium whitespace-nowrap md:text-[2rem] md:font-medium px-4 py-1.5 md:px-6 md:py-3 focus-visible:outline-hidden focus-visible:shadow-focus rounded-full transition-colors ${activeTab === i
+                          ? "text-white"
+                          : "text-primary hover:text-secondary"
+                        }`}
                     >
                       {cat}
                     </button>
@@ -513,7 +513,7 @@ function CategoryTabPanel({
           href={`/${lang}/blog/category/${categorySlug(category)}/`}
           className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus flex gap-2 items-center"
         >
-          View All
+          {(blogTranslations[lang] || blogTranslations.en).viewAll}
           <ChevronRight size={16} />
         </Link>
       </div>
@@ -528,7 +528,7 @@ function CategoryTabPanel({
           ))}
           {(!blogs || blogs.length === 0) && (
             <p className="body-md text-secondary col-span-3 text-center py-8">
-              No articles found in this category.
+              {(blogTranslations[lang] || blogTranslations.en).noArticles}
             </p>
           )}
         </div>
@@ -545,7 +545,27 @@ interface BlogPageContentProps {
   initialCategories?: string[];
 }
 
+const blogTranslations: Record<string, Record<string, string>> = {
+  en: {
+    popularArticles: "Popular articles",
+    recentArticles: "Recent articles",
+    chooseCategory: "Choose category",
+    viewAll: "View All",
+    showAllCategories: "Show All Categories",
+    noArticles: "No articles found in this category.",
+  },
+  vi: {
+    popularArticles: "Bài viết phổ biến",
+    recentArticles: "Bài viết mới nhất",
+    chooseCategory: "Chọn danh mục",
+    viewAll: "Xem tất cả",
+    showAllCategories: "Hiển thị tất cả danh mục",
+    noArticles: "Không tìm thấy bài viết trong danh mục này.",
+  },
+};
+
 export function BlogPageContent({ lang, initialBlogs, initialCategories }: BlogPageContentProps) {
+  const t = blogTranslations[lang] || blogTranslations.en;
   // Fetch categories
   const { data: categories } = useQuery({
     queryKey: ["blog-categories", lang],
@@ -603,7 +623,7 @@ export function BlogPageContent({ lang, initialBlogs, initialCategories }: BlogP
       {/* Popular Articles */}
       {popularBlogs.length > 0 && (
         <ArticleGridSection
-          title="Popular articles"
+          title={t.popularArticles}
           blogs={popularBlogs}
           lang={lang}
           testId="popular-articles"
@@ -613,7 +633,7 @@ export function BlogPageContent({ lang, initialBlogs, initialCategories }: BlogP
       {/* Recent Articles */}
       {recentBlogs.length > 0 && (
         <ArticleGridSection
-          title="Recent articles"
+          title={t.recentArticles}
           blogs={recentBlogs}
           lang={lang}
           testId="recent-articles"

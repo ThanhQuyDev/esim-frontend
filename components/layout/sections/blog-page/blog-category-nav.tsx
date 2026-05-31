@@ -17,6 +17,14 @@ async function fetchCategories(lang: string): Promise<string[]> {
   return res.json();
 }
 
+async function fetchParentsByCategory(lang: string): Promise<Record<string, string[]>> {
+  const res = await fetch(`${API_BASE_URL}/api/v1/blogs/parents`, {
+    headers: { "x-custom-lang": lang },
+  });
+  if (!res.ok) return {};
+  return res.json();
+}
+
 function categorySlug(cat: string): string {
   return cat.toLowerCase().replace(/\s+/g, "-");
 }
@@ -79,8 +87,17 @@ function BlogSearchInput({ lang }: { lang: string }) {
   );
 }
 
-function MobileCategoryNav({ categories, lang }: { categories: string[]; lang: string }) {
+function MobileCategoryNav({
+  categories,
+  parents,
+  lang,
+}: {
+  categories: string[];
+  parents: Record<string, string[]>;
+  lang: string;
+}) {
   const [open, setOpen] = useState(false);
+  const [expandedCat, setExpandedCat] = useState<string | null>(null);
 
   return (
     <div className="sm:hidden px-2 lg:px-11 bg-gray-200">
@@ -108,21 +125,49 @@ function MobileCategoryNav({ categories, lang }: { categories: string[]; lang: s
           className={`bg-primary relative top-0 transition-all ease-in p-4 w-full border-t-md border-secondary overflow-hidden ${open ? "" : "hidden"}`}
         >
           <ul className="flex flex-col gap-4">
-            {categories.map((cat) => (
-              <li key={cat} aria-expanded="false">
-                <div className="flex items-center">
-                  <Link
-                    className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus text-primary active:text-primary hover:text-secondary body-sm-medium"
-                    href={`/${lang}/blog/category/${categorySlug(cat)}/`}
-                  >
-                    {cat}
-                  </Link>
-                  <button className="flex justify-end flex-1 pl-3" aria-haspopup="true" aria-controls="menu">
-                    <ChevronDown size={20} />
-                  </button>
-                </div>
-              </li>
-            ))}
+            {categories.map((cat) => {
+              const catParents = parents[cat] ?? [];
+              const isExpanded = expandedCat === cat;
+
+              return (
+                <li key={cat}>
+                  <div className="flex items-center">
+                    <Link
+                      className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus text-primary active:text-primary hover:text-secondary body-sm-medium"
+                      href={`/${lang}/blog/category/${categorySlug(cat)}/`}
+                    >
+                      {cat}
+                    </Link>
+                    {catParents.length > 0 && (
+                      <button
+                        className="flex justify-end flex-1 pl-3"
+                        aria-expanded={isExpanded}
+                        onClick={() => setExpandedCat(isExpanded ? null : cat)}
+                      >
+                        <ChevronDown
+                          size={20}
+                          className={`transition-transform ${isExpanded ? "rotate-180" : ""}`}
+                        />
+                      </button>
+                    )}
+                  </div>
+                  {catParents.length > 0 && isExpanded && (
+                    <ul className="mt-2 ml-4 flex flex-col gap-2">
+                      {catParents.map((parent) => (
+                        <li key={parent}>
+                          <Link
+                            className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus text-secondary hover:text-primary body-sm"
+                            href={`/${lang}/blog/category/${categorySlug(cat)}/${categorySlug(parent)}/`}
+                          >
+                            {parent}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </div>
       </div>
@@ -130,21 +175,74 @@ function MobileCategoryNav({ categories, lang }: { categories: string[]; lang: s
   );
 }
 
-function DesktopCategoryNav({ categories, lang }: { categories: string[]; lang: string }) {
+function DesktopCategoryNav({
+  categories,
+  parents,
+  lang,
+}: {
+  categories: string[];
+  parents: Record<string, string[]>;
+  lang: string;
+}) {
+  const [openCat, setOpenCat] = useState<string | null>(null);
+  const navRef = useRef<HTMLUListElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
+        setOpenCat(null);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
-    <div className="hidden sm:block mx-auto lg:px-16 bg-gray-200">
-      <ul className="flex container items-center gap-6 py-[14px] max-w-[1168px] mx-auto">
-        {categories.map((cat) => (
-          <li key={cat} className="relative" aria-expanded="false" aria-haspopup="true" aria-controls="menu">
-            <Link
-              className="text=[18px] font-semibold align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus text-primary active:text-primary hover:text-secondary "
-              href={`/${lang}/blog/category/${categorySlug(cat)}/`}
-            >
-              {cat}
-            </Link>
-            <ChevronDown size={12} className="inline ml-2" />
-          </li>
-        ))}
+    <div className="hidden sm:block mx-auto lg:px-16 bg-neutral-100">
+      <ul ref={navRef} className="flex container items-center gap-6 py-[14px] max-w-[1168px] mx-auto">
+        {categories.map((cat) => {
+          const catParents = parents[cat] ?? [];
+          const isOpen = openCat === cat;
+
+          return (
+            <li key={cat} className="relative flex items-center" aria-haspopup="true">
+              <Link
+                className="!text-[17px] font-medium align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus text-primary active:text-primary hover:text-secondary "
+                href={`/${lang}/blog/category/${categorySlug(cat)}/`}
+              >
+                {cat}
+              </Link>
+              {catParents.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setOpenCat(isOpen ? null : cat)}
+                  className="inline-flex items-center ml-1 p-1 cursor-pointer"
+                  aria-expanded={isOpen}
+                >
+                  <ChevronDown
+                    size={16}
+                    className={`transition-transform ${isOpen ? "rotate-180" : ""}`}
+                  />
+                </button>
+              )}
+              {catParents.length > 0 && isOpen && (
+                <ul className="absolute left-0 top-full mt-1 bg-white shadow-lg rounded-sm py-2 min-w-[180px] z-50">
+                  {catParents.map((parent) => (
+                    <li key={parent}>
+                      <Link
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+                        href={`/${lang}/blog/category/${categorySlug(cat)}/${categorySlug(parent)}/`}
+                        onClick={() => setOpenCat(null)}
+                      >
+                        {parent}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          );
+        })}
         <li className="ml-auto">
           <BlogSearchInput lang={lang} />
         </li>
@@ -160,12 +258,19 @@ export function BlogCategoryNav({ lang }: { lang: string }) {
     staleTime: 10 * 60 * 1000,
   });
 
+  const { data: parents } = useQuery({
+    queryKey: ["blog-parents", lang],
+    queryFn: () => fetchParentsByCategory(lang),
+    staleTime: 10 * 60 * 1000,
+  });
+
   const cats = categories ?? [];
+  const parentMap = parents ?? {};
 
   return (
     <div className="bg-primary">
-      <MobileCategoryNav categories={cats} lang={lang} />
-      <DesktopCategoryNav categories={cats} lang={lang} />
+      <MobileCategoryNav categories={cats} parents={parentMap} lang={lang} />
+      <DesktopCategoryNav categories={cats} parents={parentMap} lang={lang} />
     </div>
   );
 }

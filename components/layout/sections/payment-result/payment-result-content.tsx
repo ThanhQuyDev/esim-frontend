@@ -92,7 +92,7 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
   // Load last order info for eXU/referral display
   useEffect(() => {
     try {
-      const raw = localStorage.getItem("saily_last_order");
+      const raw = localStorage.getItem("esim_last_order");
       if (raw) {
         const parsed = JSON.parse(raw);
         setLastOrderInfo({

@@ -1,3 +1,4 @@
+import { Signpost, Wallet, Rocket, ShieldCheck, Gem } from "lucide-react";
 import type { PressAreaDict } from "./translations";
 
 interface WhyChooseSailyProps {
@@ -23,6 +24,14 @@ const images = [
   },
 ];
 
+const ICON_MAP: Record<string, React.ElementType> = {
+  "fa-signs-post": Signpost,
+  "fa-wallet": Wallet,
+  "fa-rocket-launch": Rocket,
+  "fa-shield-check": ShieldCheck,
+  "fa-gem": Gem,
+};
+
 interface CardData {
   icon?: string;
   flagsImage?: boolean;
@@ -33,6 +42,7 @@ interface CardData {
 
 function FeatureCard({ card }: { card: CardData }) {
   const isPremium = card.isPremium;
+  const IconComp = card.icon ? ICON_MAP[card.icon] : null;
   return (
     <div className="bg-bg-secondary border border-border-secondary py-8 px-6 rounded-[var(--radius-md)] relative overflow-hidden">
       {isPremium && (
@@ -49,9 +59,9 @@ function FeatureCard({ card }: { card: CardData }) {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img alt="flags feature block" loading="lazy" width={168} height={24} decoding="async" style={{ color: "transparent" }} src="https://sb.nordcdn.com/m/138f37c5e6a9005d/original/flags-feature-block.svg" />
           </div>
-        ) : (
-          <i className={`text-center w-[1em] fa-sharp fa-regular text-[24px] ${card.icon} ${isPremium ? "text-yellow-400" : "text-text-primary"}`} />
-        )}
+        ) : IconComp ? (
+          <IconComp className={`w-6 h-6 ${isPremium ? "text-yellow-400" : "text-text-primary"}`} />
+        ) : null}
         <div className="flex flex-col gap-2">
           <p className={`body-lg-medium scroll-mt-20 xl:scroll-mt-24 ${isPremium ? "text-white" : ""}`}>{card.title}</p>
           <p className={`body-sm scroll-mt-20 xl:scroll-mt-24 ${isPremium ? "text-gray-300" : "text-text-secondary"}`}>{card.description}</p>
@@ -94,7 +104,7 @@ export function WhyChooseSaily({ dict }: WhyChooseSailyProps) {
                 <h2 className="heading-xl scroll-mt-20 xl:scroll-mt-24">{dict.title}</h2>
                 <p className="body-md text-text-secondary scroll-mt-20 xl:scroll-mt-24">
                   {dict.description.split(dict.linkText)[0]}
-                  <a className="underline" href="https://saily.com/">{dict.linkText}</a>
+                  <a className="underline" href="https://esim.vn/">{dict.linkText}</a>
                   {dict.description.split(dict.linkText)[1]}
                 </p>
               </div>

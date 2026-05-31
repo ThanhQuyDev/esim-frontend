@@ -49,7 +49,7 @@ export function PlanConfig({
   })();
 
   return (
-    <div className="my-5">
+    <div className="my-5 border-t border-[#e5e7eb] pt-5">
       {/* Step 2 label */}
       <div className="text-[15px] font-bold text-[#111] mb-2.5 flex items-center gap-2.5">
         <span className="inline-flex items-center justify-center w-6 h-6 bg-[#111] text-white rounded-full text-xs font-extrabold shrink-0">2</span>

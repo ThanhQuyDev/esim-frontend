@@ -84,7 +84,7 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
             >
               <a
                 role="button"
-                className="max-md:w-full text-center inline-block text-text-primary bg-bg-accent hover:bg-bg-accent-hover border border-bg-accent hover:border-bg-accent-hover active:bg-bg-accent-active active:border-bg-accent-active box-border !border-[#d1b700] touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7 w-full sm:w-auto"
+                className="max-md:w-full text-center inline-block text-text-primary bg-bg-accent hover:bg-bg-accent-hover border border-bg-accent hover:border-bg-accent-hover active:bg-bg-accent-active active:border-bg-accent-active box-border !border-[#d1b700] touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7 w-full sm:w-auto hover:bg-[#d1b700]"
                 data-testid="view-all-destinations-cta"
                 href={localizedHref(lang, "all-destinations")}
               >
@@ -109,7 +109,7 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
                       onClick={() => setActiveTab(tab.key)}
                       className={`relative body-sm-medium whitespace-nowrap md:body-md-medium px-4 py-1 focus-visible:outline-hidden focus-visible:shadow-focus rounded-full transition-all duration-200 ${activeTab === tab.key
                         ? "bg-bg-dark text-text-primary-on-color"
-                        : "text-text-primary hover:bg-bg-primary"
+                        : "text-text-primary hover:bg-bg-secondary"
                         }`}
                     >
                       {tab.badge ? (
@@ -153,20 +153,20 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
                         data-testid={item.code || item.slug || item.id}
                       >
                         <div
-                          className="flex flex-col items-start text-left gap-4 relative border-none p-4 h-full rounded-sm transition-colors hover:text-text-primary hover:bg-bg-tertiary bg-bg-primary"
+                          className="flex flex-col items-start text-left gap-4 relative border-none p-4 h-full rounded-sm transition-colors hover:text-text-primary hover:bg-gray-100 bg-gray-50"
                           data-testid={`${showRegions ? 'region' : 'destination'}-card-${item.code || item.slug || item.id}`}
                         >
                           <div className="w-full h-full flex gap-4 items-center">
                             {/* Flag/Avatar */}
                             <div className="w-[36px] h-[36px] relative overflow-hidden shrink-0 rounded-full">
-                              {(item.flagUrl || item.avatarUrl) ? (
+                              {(item.flagUrl || item.iconUrl) ? (
                                 <>
                                   <img
                                     alt={`${item.name} ${showRegions ? 'avatar' : 'flag'}`}
                                     loading="lazy"
                                     decoding="async"
                                     className="w-full h-full object-cover absolute inset-0"
-                                    src={item.flagUrl || item.avatarUrl}
+                                    src={item.flagUrl || item.iconUrl}
                                   />
                                   <div className="absolute inset-0 rounded-full pointer-events-none border border-[rgba(0,0,0,0.1)]" />
                                 </>
@@ -214,7 +214,7 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
             >
               <a
                 role="button"
-                className="max-md:w-full text-center inline-block text-text-primary bg-bg-accent hover:bg-bg-accent-hover border border-bg-accent hover:border-bg-accent-hover active:bg-bg-accent-active active:border-bg-accent-active box-border !border-[#d1b700] touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7 w-full sm:w-auto"
+                className="hover:bg-[#d1b700] max-md:w-full text-center inline-block text-text-primary bg-bg-accent hover:bg-bg-accent-hover border border-bg-accent hover:border-bg-accent-hover active:bg-bg-accent-active active:border-bg-accent-active box-border !border-[#d1b700] touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7 w-full sm:w-auto"
                 data-testid="view-all-destinations-cta"
                 href={localizedHref(lang, "all-destinations")}
               >

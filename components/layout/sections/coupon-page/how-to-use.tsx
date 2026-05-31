@@ -35,7 +35,7 @@ export function CouponHowToUse({ dict, lang }: CouponHowToUseProps) {
                   <div className="flex flex-col items-start text-left rtl:text-right relative h-full word-break-word transform-gpu border-none p-0 gap-0 overflow-hidden rounded-sm bg-blue-100">
                     <div className="p-6">
                       <div className="pb-4 lg:pb-6">
-                        <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-secondary">
+                        <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-white">
                           <p className="body-md-medium text-primary scroll-mt-20 xl:scroll-mt-24">
                             {index + 1}
                           </p>

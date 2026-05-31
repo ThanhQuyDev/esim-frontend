@@ -274,29 +274,14 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
   };
 
   return (
-    <div className="bg-[#F1F5F9] min-h-screen text-[#0F172A] overflow-x-hidden max-[640px]:text-[15px]" style={{ fontFamily: "'Google Sans', system-ui, sans-serif" }}>
-      {/* Top nav */}
-      <nav
-        className="bg-white px-12 max-[640px]:px-4 h-[58px] flex items-center justify-end sticky top-0 z-20"
-        style={{ borderBottom: "1.5px solid #E5E7EB" }}
-      >
-        <button
-          type="button"
-          onClick={() => router.back()}
-          className="flex items-center gap-1.5 px-[18px] py-2 rounded-full text-[13px] font-semibold text-[#374151] cursor-pointer bg-white transition-colors hover:bg-[#F3F4F6]"
-          style={{ border: "1.5px solid #E5E7EB" }}
-        >
-          <IconBackChevron />
-          Quay lại
-        </button>
-      </nav>
-
-      {/* Sticky tabs — horizontally scrollable on mobile */}
+    <div className="bg-[#F1F5F9] min-h-screen text-[#0F172A] overflow-clip max-[640px]:text-[15px]" style={{ fontFamily: "'Google Sans', system-ui, sans-serif" }}>
+      {/* Sticky tabs + back button */}
       <div
-        className="bg-white px-12 max-[640px]:px-2 sticky top-[58px] max-[640px]:top-[52px] z-[19] overflow-x-auto"
+        className="bg-white px-12 max-[640px]:px-2 sticky top-0 z-20 overflow-x-auto"
         style={{ borderBottom: "1.5px solid #E5E7EB", scrollbarWidth: "none" }}
       >
-        <div className="flex max-[640px]:gap-0.5">
+        <div className="flex w-full max-w-[832px] mx-auto justify-between">
+          <div className="flex items-center max-[640px]:gap-0.5">
           {REGION_KEYS.map((k) => {
             const r = KYC_REGIONS[k];
             const active = k === activeKey;
@@ -314,10 +299,21 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
                   borderBottom: active ? "2.5px solid #DC2626" : "2.5px solid transparent",
                 }}
               >
+                <img src={r.flag} alt={r.name} className="w-5 h-5 rounded-full object-cover" />
                 {r.tabLabel}
               </button>
             );
           })}
+          </div>
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="flex items-center gap-1.5 px-[14px] py-2 rounded-full text-[13px] font-semibold text-[#374151] cursor-pointer bg-white transition-colors hover:bg-[#F3F4F6] shrink-0 mr-3"
+            style={{ border: "1.5px solid #E5E7EB" }}
+          >
+            <IconBackChevron />
+            Quay lại
+          </button>
         </div>
       </div>
 
@@ -344,7 +340,7 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
             }}
           />
           <div className="flex items-start gap-[18px] mb-5 max-[640px]:gap-3 max-[640px]:mb-3.5 relative">
-            <div className="text-5xl max-[640px]:text-4xl leading-none shrink-0">{data.flag}</div>
+            <div className="shrink-0"><img src={data.flag} alt={data.name} className="w-12 h-12 max-[640px]:w-9 max-[640px]:h-9 rounded-full object-cover" /></div>
             <div>
               <div className="text-[26px] max-[640px]:text-[19px] font-extrabold text-white mb-2 max-[640px]:mb-[7px] leading-[1.2]">{data.name}</div>
               <span

@@ -1,7 +1,7 @@
 "use client";
 
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination } from "swiper/modules";
+import { Pagination, Autoplay } from "swiper/modules";
 import { Quote } from "lucide-react";
 
 interface AboutCrewProps {
@@ -17,7 +17,7 @@ const crewImages = [
 export function AboutCrew({ dict }: AboutCrewProps) {
   return (
     <section data-section="SailyCrew" className="relative scroll-mt-20 xl:scroll-mt-24">
-      <div className="bg-bg-dark">
+      <div>
         <div className="relative w-full max-w-[1600px] mx-auto">
           {/* Dark wave backgrounds */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -50,10 +50,14 @@ export function AboutCrew({ dict }: AboutCrewProps) {
             <div className="mx-4 sm:mx-auto">
               <div className="container mx-auto">
                 <Swiper
-                  modules={[Pagination]}
+                  modules={[Pagination, Autoplay]}
                   slidesPerView={1}
                   spaceBetween={24}
                   loop
+                  autoplay={{
+                    delay: 5000,
+                    disableOnInteraction: false,
+                  }}
                   pagination={{
                     clickable: true,
                     el: ".crew-pagination",
@@ -103,6 +107,6 @@ export function AboutCrew({ dict }: AboutCrewProps) {
           </div>
         </div>
       </div>
-    </section>
+    </section >
   );
 }

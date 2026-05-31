@@ -87,7 +87,7 @@ export function FAQSection({
                         <div className="grid grid-cols-1 gap-y-3">
                           {faqItems.map((item: any, i: number) => (
                             <div key={i}>
-                              <div className="flex flex-col items-start text-left gap-4 relative h-full break-words border-md transition-colors duration-300 p-0 rounded-sm bg-bg-secondary border-border-secondary hover:border-border-focus">
+                              <div className="flex flex-col items-start text-left gap-4 relative h-full break-words border-md transition-colors duration-300 p-0 rounded-sm bg-white border-border-secondary hover:border-border-focus">
                                 <li className="cursor-pointer p-4 lg:p-6 list-none w-full">
                                   <button
                                     onClick={() => toggle(i)}

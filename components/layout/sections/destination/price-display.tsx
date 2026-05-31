@@ -58,7 +58,7 @@ export function PriceDisplay({
 
   // Calculate per-day cost
   const totalDays = isFixed ? selectedPlan.durationDays : days;
-  const perDayPrice = totalDays > 0 ? roundVndToThousands(totalPrice / totalDays) : 0;
+  const perDayPrice = totalDays > 0 ? Math.round(totalPrice / totalDays) : 0;
 
   return (
     <div className="mb-2">

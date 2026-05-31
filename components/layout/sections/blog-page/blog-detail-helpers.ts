@@ -40,5 +40,5 @@ export const SOCIAL_LINKS = [
   { href: "https://x.com/sailyworld", alt: "original x svg", src: "https://sb.nordcdn.com/m/300bf91369291564/original/original-x-svg.svg", w: 24, h: 19 },
   { href: "https://www.facebook.com/sailyservice", alt: "original facebook svg", src: "https://sb.nordcdn.com/m/28723c26cd3497c4/original/original-facebook-svg.svg", w: 19, h: 24 },
   { href: "https://www.instagram.com/sailyworld", alt: "original instagram svg", src: "https://sb.nordcdn.com/m/2e4efabe94c552c4/original/original-instagram-svg.svg", w: 20, h: 24 },
-  { href: "https://www.youtube.com/@saily_service", alt: "original youtube svg", src: "https://sb.nordcdn.com/m/7eb40efe0d874018/original/original-youtube-svg.svg", w: 24, h: 24 },
+  { href: "https://www.youtube.com/@esim_service", alt: "original youtube svg", src: "https://sb.nordcdn.com/m/7eb40efe0d874018/original/original-youtube-svg.svg", w: 24, h: 24 },
 ];
