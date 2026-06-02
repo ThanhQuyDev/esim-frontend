@@ -10,14 +10,14 @@ import type { Metadata } from "next";
 export async function generateMetadata({
   params,
 }: {
-  params: { lang: Locale; slug: string };
+  params: { lang: Locale; slug: string[] };
 }): Promise<Metadata> {
-  const baseMeta = await getSeoMetadata(`/${params.lang}/blog/${params.slug}`);
-  const blog = await getBlogBySlug(params.slug, params.lang);
+  const articleSlug = params.slug[params.slug.length - 1];
+  const baseMeta = await getSeoMetadata(`/${params.lang}/blog/${params.slug.join("/")}`);
+  const blog = await getBlogBySlug(articleSlug, params.lang);
 
   if (!blog) return baseMeta;
 
-  // SEO Feature 1.6: Add article:modified_time for Google freshness signals
   const openGraph: Record<string, any> = {
     ...(baseMeta.openGraph || {}),
     type: "article",
@@ -45,11 +45,13 @@ export async function generateMetadata({
 export default async function BlogDetailPage({
   params,
 }: {
-  params: { lang: Locale; slug: string };
+  params: { lang: Locale; slug: string[] };
 }) {
+  const articleSlug = params.slug[params.slug.length - 1];
+
   const [dict, blog] = await Promise.all([
     getDictionary(params.lang),
-    getBlogBySlug(params.slug, params.lang),
+    getBlogBySlug(articleSlug, params.lang),
   ]);
 
   if (!blog) {
@@ -58,7 +60,7 @@ export default async function BlogDetailPage({
 
   return (
     <main role="main">
-      <BlogDetailContent lang={params.lang} slug={params.slug} initialBlog={blog} />
+      <BlogDetailContent lang={params.lang} slug={articleSlug} initialBlog={blog} />
       <FooterSection dict={dict.footer} lang={params.lang} />
     </main>
   );

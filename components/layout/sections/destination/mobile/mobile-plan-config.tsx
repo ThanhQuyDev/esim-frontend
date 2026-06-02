@@ -34,7 +34,6 @@ export function MobilePlanConfig({
   selectedPlan,
 }: MobilePlanConfigProps) {
   const [calOpen, setCalOpen] = useState(false);
-  const showDaysSelector = !isFixed;
   const dayOptions = isFlexibleDays ? QUICK_DAYS : availableDays;
 
   const unitVndPricePerDay = (() => {
@@ -56,30 +55,36 @@ export function MobilePlanConfig({
       </div>
 
       <div className="grid grid-cols-2 gap-3.5 mb-3.5">
-        {showDaysSelector && (
-          <div>
-            <div className="text-xs font-bold uppercase tracking-[0.07em] text-[#6b7280] mb-[9px]">
-              {dict.daysLabel}
-            </div>
-            <button
-              type="button"
-              onClick={() => isFlexibleDays && setCalOpen(true)}
-              disabled={!isFlexibleDays}
-              className="w-full flex items-center justify-between px-1 border-[1.5px] border-[#e5e7eb] rounded-[30px] h-[50px] cursor-pointer disabled:cursor-default"
-            >
-              <span className="w-[38px] shrink-0" />
-              <span className="flex-1 text-center text-[15px] font-semibold">
-                {days} {dict.daysUnit}
-              </span>
-              <span className="w-[38px] h-[38px] rounded-full flex items-center justify-center shrink-0">
-                <svg width="17" height="17" viewBox="0 0 16 16" fill="none">
-                  <rect x="1.5" y="3" width="13" height="11.5" rx="2" stroke="#374151" strokeWidth="1.4" />
-                  <path d="M5 1.5v3M11 1.5v3M1.5 7.5h13" stroke="#374151" strokeWidth="1.4" strokeLinecap="round" />
-                </svg>
-              </span>
-            </button>
+        <div>
+          <div className="text-xs font-bold uppercase tracking-[0.07em] text-[#6b7280] mb-[9px]">
+            {dict.daysLabel}
           </div>
-        )}
+          <button
+            type="button"
+            onClick={() => isFlexibleDays && setCalOpen(true)}
+            disabled={isFixed || !isFlexibleDays}
+            className={`w-full flex items-center justify-between px-1 border-[1.5px] rounded-[30px] h-[50px] ${
+              isFixed
+                ? "border-[#e5e7eb] bg-[#f9fafb] cursor-not-allowed opacity-60"
+                : isFlexibleDays
+                  ? "border-[#e5e7eb] cursor-pointer"
+                  : "border-[#e5e7eb] bg-[#f9fafb] cursor-default"
+            }`}
+          >
+            <span className="w-[38px] shrink-0" />
+            <span className="flex-1 text-center text-[15px] font-semibold">
+              {days} {dict.daysUnit}
+            </span>
+            <span className={`w-[38px] h-[38px] rounded-full flex items-center justify-center shrink-0 ${
+              isFixed || !isFlexibleDays ? "opacity-40" : ""
+            }`}>
+              <svg width="17" height="17" viewBox="0 0 16 16" fill="none">
+                <rect x="1.5" y="3" width="13" height="11.5" rx="2" stroke="#374151" strokeWidth="1.4" />
+                <path d="M5 1.5v3M11 1.5v3M1.5 7.5h13" stroke="#374151" strokeWidth="1.4" strokeLinecap="round" />
+              </svg>
+            </span>
+          </button>
+        </div>
 
         <div>
           <div className="text-xs font-bold uppercase tracking-[0.07em] text-[#6b7280] mb-[9px]">
@@ -107,7 +112,7 @@ export function MobilePlanConfig({
         </div>
       </div>
 
-      {showDaysSelector && dayOptions.length > 0 && (
+      {!isFixed && dayOptions.length > 0 && (
         <div className="flex gap-[7px] flex-wrap mb-5">
           {dayOptions.map((d) => (
             <button

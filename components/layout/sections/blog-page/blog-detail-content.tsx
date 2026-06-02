@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import type { Blog, Faq } from "@/lib/api";
+import type { Blog } from "@/lib/api";
 import type { Locale } from "@/lib/i18n-config";
 import { BlogCategoryNav } from "./blog-category-nav";
 import { BlogArticleHeading } from "./blog-article-heading";
@@ -30,19 +30,6 @@ async function fetchBlogDetail(
     signal,
   });
   if (!res.ok) throw new Error(`API error: ${res.status}`);
-  return res.json();
-}
-
-async function fetchFaqs(
-  blogId: string,
-  lang: string,
-  signal?: AbortSignal
-): Promise<Faq[]> {
-  const res = await fetch(
-    `${API_BASE_URL}/api/v1/faqs/by-context?blogId=${blogId}&language=${lang}&limit=6`,
-    { signal }
-  );
-  if (!res.ok) return [];
   return res.json();
 }
 
@@ -84,13 +71,6 @@ export function BlogDetailContent({ lang, slug, initialBlog }: BlogDetailContent
     queryFn: ({ signal }) => fetchBlogDetail(slug!, lang, signal),
     initialData: initialBlog ?? undefined,
     enabled: !!slug,
-  });
-
-  const { data: faqs } = useQuery<Faq[]>({
-    queryKey: ["blog-faqs", blog?.id, lang],
-    queryFn: ({ signal }) => fetchFaqs(blog!.id, lang, signal),
-    enabled: !!blog?.id,
-    staleTime: 5 * 60 * 1000,
   });
 
   const { data: relatedPosts } = useQuery<Blog[]>({
@@ -219,8 +199,8 @@ export function BlogDetailContent({ lang, slug, initialBlog }: BlogDetailContent
                       {hasPlans && <BlogCountryPlansList plans={blog.plans!} lang={lang} />}
 
                       {/* FAQ Accordion */}
-                      {faqs && faqs.length > 0 && (
-                        <BlogFaqAccordion faqs={faqs} lang={lang} />
+                      {blog.faqEnabled && blog.faqs && blog.faqs.length > 0 && (
+                        <BlogFaqAccordion faqs={blog.faqs} lang={lang} />
                       )}
 
                       {/* Disclaimer */}

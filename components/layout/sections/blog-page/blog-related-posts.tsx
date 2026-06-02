@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { BookOpen } from "lucide-react";
 import type { Blog } from "@/lib/api";
+import { blogDetailHref, categorySlug } from "./blog-detail-helpers";
 
 function formatDate(dateStr: string | null): string {
   if (!dateStr) return "";
@@ -39,7 +40,7 @@ export function BlogRelatedPosts({ posts, lang }: BlogRelatedPostsProps) {
           >
             {post.coverImage && (
               <Link
-                href={`/${lang}/blog/${post.slug}`}
+                href={blogDetailHref(post, lang)}
                 className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus hover:underline"
               >
                 <figure className="overflow-hidden rounded-sm">
@@ -59,7 +60,7 @@ export function BlogRelatedPosts({ posts, lang }: BlogRelatedPostsProps) {
               {post.category && (
                 <div>
                   <Link
-                    href={`/${lang}/blog/category/${post.category.toLowerCase()}`}
+                    href={`/${lang}/blog/category/${categorySlug(post.category)}`}
                     className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus"
                   >
                     <span className="text-center whitespace-nowrap rounded-full inline-block bg-tertiary text-primary py-0.5 px-2 body-2xs-medium hover:bg-neutral-300">
@@ -87,7 +88,7 @@ export function BlogRelatedPosts({ posts, lang }: BlogRelatedPostsProps) {
                 </div>
                 <p className="body-md-medium">
                   <Link
-                    href={`/${lang}/blog/${post.slug}`}
+                    href={blogDetailHref(post, lang)}
                     className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus hover:underline"
                   >
                     {post.title}

@@ -63,7 +63,7 @@ export const routeMap: RouteEntry[] = [
   },
   {
     internal: "help-center",
-    slugs: { vi: "tro-giup", en: "help" },
+    slugs: { vi: "tro-giup", en: "help-center" },
   },
 ];
 

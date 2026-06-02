@@ -408,7 +408,11 @@ export function ProductInfo({ destination, dict, lang, planSource = "destination
           </div>
           <div className="flex items-center justify-between py-[13px] gap-3">
             <span className="text-sm text-[#374151]">{dict.delivery.activationPeriod}</span>
-            <span className="text-sm font-bold">{dict.delivery.activationDesc}</span>
+            <span className="text-sm font-bold">
+              {selectedPlan?.provider === 'viettel'
+                ? (lang === "vi" ? "15 ngày kể từ ngày mua" : "15 days from purchase")
+                : dict.delivery.activationDesc}
+            </span>
           </div>
           {/* Warning note */}
           <div className="flex items-start gap-2.5 mt-2.5 p-3 bg-[#FFFBEB] border-[1.5px] border-[#FDE68A] rounded-lg">

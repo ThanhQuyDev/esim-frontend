@@ -342,7 +342,11 @@ export function ProductCard({
               </div>
               <div className="flex items-center justify-between py-[13px] border-b border-[#f3f4f6] gap-3">
                 <span className="text-sm text-[#374151]">{dict.delivery.activationPeriod}</span>
-                <span className="text-sm font-bold">{dict.delivery.activationDesc}</span>
+                <span className="text-sm font-bold">
+                  {selectedPlan?.provider === 'viettel'
+                    ? (lang === "vi" ? "15 ngày kể từ ngày mua" : "15 days from purchase")
+                    : dict.delivery.activationDesc}
+                </span>
               </div>
               <div className="flex items-start gap-2.5 mt-2.5 p-3 bg-[#FFFBEB] border-[1.5px] border-[#FDE68A] rounded-sm">
                 <WarnIcon />

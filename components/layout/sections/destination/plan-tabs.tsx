@@ -126,7 +126,17 @@ function GbSelector({
   const handleGbChange = (gb: number) => {
     onGbChange(gb);
     const best = findBestPlan(plans, gb, days);
-    if (best) onSelectPlan(best);
+    if (best) {
+      onSelectPlan(best);
+    } else {
+      const sameMb = plans.filter((p) => Number(p.dataMb) === Number(gb));
+      if (sameMb.length > 0) {
+        const closest = sameMb.reduce((prev, curr) =>
+          Math.abs(curr.durationDays - days) < Math.abs(prev.durationDays - days) ? curr : prev
+        );
+        onSelectPlan(closest);
+      }
+    }
   };
 
   if (uniqueGbs.length === 0) return null;

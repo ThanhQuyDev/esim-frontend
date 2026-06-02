@@ -1,4 +1,4 @@
-import type { Plan } from "@/lib/api";
+import type { Blog, Plan } from "@/lib/api";
 
 export function formatDate(dateStr: string | null): string {
   if (!dateStr) return "";
@@ -14,7 +14,23 @@ export function formatDate(dateStr: string | null): string {
 }
 
 export function categorySlug(cat: string): string {
-  return cat.toLowerCase().replace(/\s+/g, "-");
+  return cat
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+}
+
+export function blogDetailHref(blog: { slug: string; category?: string | null; parent?: string | null }, lang: string): string {
+  const articleSlug = (blog.slug || "").replace(/^\//, "");
+  const parts = [`/${lang}/blog`];
+  if (blog.category) parts.push(categorySlug(blog.category));
+  if (blog.parent) parts.push(categorySlug(blog.parent));
+  parts.push(articleSlug);
+  return parts.join("/");
 }
 
 export function authorSlug(name: string): string {

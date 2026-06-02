@@ -80,6 +80,9 @@ export interface Blog {
   plans: Plan[] | null;
   relatedBlogs?: Blog[] | null;
   isPopular?: boolean;
+  faqEnabled?: boolean;
+  faqIds?: string[];
+  faqs?: Faq[] | null;
   createdAt: string;
   updatedAt: string;
 }

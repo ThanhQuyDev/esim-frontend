@@ -2,6 +2,7 @@ import { FooterSection } from "@/components/layout/sections/footer";
 import { BlogCategoryNav } from "@/components/layout/sections/blog-page";
 import { getDictionary } from "@/lib/dictionaries";
 import { getBlogsByCategoryAndParent, getBlogCategories, getBlogParentsByCategory } from "@/lib/api";
+import { blogDetailHref } from "@/components/layout/sections/blog-page/blog-detail-helpers";
 import type { Locale } from "@/lib/i18n-config";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -84,7 +85,7 @@ export default async function BlogCategoryParentPage({
             {blogs.map((blog) => (
               <Link
                 key={blog.id}
-                href={`/${params.lang}/blog/${blog.slug?.replace(/^\//, "") || blog.id}/`}
+                href={blogDetailHref(blog, params.lang)}
                 className="group block"
               >
                 <article className="h-full flex flex-col rounded-lg overflow-hidden border border-gray-200 hover:shadow-md transition-shadow">

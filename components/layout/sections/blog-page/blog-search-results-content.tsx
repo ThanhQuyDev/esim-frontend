@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Search, BookOpen } from "lucide-react";
 import type { Blog } from "@/lib/api";
 import { BlogCategoryNav } from "./blog-category-nav";
+import { blogDetailHref } from "./blog-detail-helpers";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.saily.example.com";
@@ -33,7 +34,14 @@ function formatDate(dateStr: string | null): string {
 }
 
 function categorySlug(cat: string): string {
-  return cat.toLowerCase().replace(/\s+/g, "-");
+  return cat
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
 }
 
 function CategoryBadge({ category, lang }: { category: string | null; lang: string }) {
@@ -98,7 +106,7 @@ function BlogCard({ blog, lang }: { blog: Blog; lang: string }) {
   return (
     <article className="flex flex-col gap-4">
       <Link
-        href={`/${lang}/blog/${blog.slug}/`}
+        href={blogDetailHref(blog, lang)}
         className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus hover:underline"
       >
         <figure className="overflow-hidden rounded-sm">
@@ -133,7 +141,7 @@ function BlogCard({ blog, lang }: { blog: Blog; lang: string }) {
             <div>
               <h3 className="heading-sm">
                 <Link
-                  href={`/${lang}/blog/${blog.slug}/`}
+                  href={blogDetailHref(blog, lang)}
                   className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus hover:underline"
                 >
                   {blog.title}

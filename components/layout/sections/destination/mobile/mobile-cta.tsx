@@ -50,7 +50,7 @@ export function MobileCta({
       {
         id: String(selectedPlan.id),
         name: selectedPlan.name || `eSIM ${destination || ""}`.trim(),
-        description: `${selectedPlan.dataMb >= 1024 ? `${parseFloat((selectedPlan.dataMb / 1024).toFixed(1))} GB` : `${selectedPlan.dataMb} MB`} / ${displayDays} days`,
+        description: `${selectedPlan.type === 'unlimited' || selectedPlan.type === 'unlimited-reduce' ? 'Unlimited' : selectedPlan.dataMb >= 1024 ? `${parseFloat((selectedPlan.dataMb / 1024).toFixed(1))} GB` : `${selectedPlan.dataMb} MB`} / ${displayDays} days`,
         price: unitPrice,
         vndPrice: unitVndPrice,
         destination: destination,

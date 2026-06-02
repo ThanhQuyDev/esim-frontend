@@ -26,7 +26,14 @@ async function fetchParentsByCategory(lang: string): Promise<Record<string, stri
 }
 
 function categorySlug(cat: string): string {
-  return cat.toLowerCase().replace(/\s+/g, "-");
+  return cat
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
 }
 
 function BlogSearchInput({ lang }: { lang: string }) {

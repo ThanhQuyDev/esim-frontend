@@ -35,8 +35,9 @@ export function PlanConfig({
   selectedPlan,
 }: PlanConfigProps) {
   const [calOpen, setCalOpen] = useState(false);
-  const showDaysSelector = !isFixed;
-  const dayOptions = isFlexibleDays ? QUICK_DAYS : availableDays;
+  const dayOptions = isFlexibleDays
+    ? QUICK_DAYS
+    : availableDays;
 
   // Per-day VND used by the calendar modal's bottom summary.
   // For flexible (multidate) plans the price is per day already; otherwise we
@@ -58,28 +59,33 @@ export function PlanConfig({
 
       <div className="grid grid-cols-2 gap-5 items-start mb-3.5">
         {/* Days selector */}
-        {showDaysSelector && (
-          <div>
-            <label className="text-xs font-bold tracking-[0.07em] uppercase block mb-2">{dict.daysLabel}</label>
-            <button
-              type="button"
-              onClick={() => isFlexibleDays && setCalOpen(true)}
-              disabled={!isFlexibleDays}
-              className={`w-full flex items-center justify-between px-1 border-[1.5px] border-[#e5e7eb] rounded-[30px] bg-white h-[42px] transition-colors ${isFlexibleDays ? "cursor-pointer hover:border-[#9ca3af]" : "cursor-default"}`}
-            >
-              <span className="w-9 h-9 shrink-0" />
-              <span className="flex-1 text-center text-sm font-semibold">
-                {days} {dict.daysUnit}
-              </span>
-              <span className="w-9 h-9 rounded-full flex items-center justify-center cursor-pointer m-[3px] transition-colors hover:bg-[#e5e7eb] shrink-0">
-                <svg width="15" height="15" viewBox="0 0 14 14" fill="none">
-                  <rect x="1" y="3" width="12" height="10" rx="1.5" stroke="#111" strokeWidth="1.3" />
-                  <path d="M4 1v3M10 1v3M1 7h12" stroke="#111" strokeWidth="1.3" strokeLinecap="round" />
-                </svg>
-              </span>
-            </button>
-          </div>
-        )}
+        <div>
+          <label className="text-xs font-bold tracking-[0.07em] uppercase block mb-2">{dict.daysLabel}</label>
+          <button
+            type="button"
+            onClick={() => isFlexibleDays && setCalOpen(true)}
+            disabled={isFixed || !isFlexibleDays}
+            className={`w-full flex items-center justify-between px-1 border-[1.5px] rounded-[30px] h-[42px] transition-colors ${isFixed
+                ? "border-[#e5e7eb] bg-[#f9fafb] cursor-not-allowed opacity-60"
+                : isFlexibleDays
+                  ? "border-[#e5e7eb] bg-white cursor-pointer hover:border-[#9ca3af]"
+                  : "border-[#e5e7eb] bg-[#f9fafb] cursor-default"
+              }`}
+          >
+            <span className="w-9 h-9 shrink-0" />
+            <span className="flex-1 text-center text-sm font-semibold">
+              {days} {dict.daysUnit}
+            </span>
+            <span className={`w-9 h-9 rounded-full flex items-center justify-center m-[3px] shrink-0 transition-colors ${isFixed || !isFlexibleDays ? "opacity-40" : "cursor-pointer hover:bg-[#e5e7eb]"
+              }`}>
+              <svg width="15" height="15" viewBox="0 0 14 14" fill="none">
+                <rect x="1" y="3" width="12" height="10" rx="1.5" stroke="#111" strokeWidth="1.3" />
+                <path d="M4 1v3M10 1v3M1 7h12" stroke="#111" strokeWidth="1.3" strokeLinecap="round" />
+              </svg>
+            </span>
+          </button>
+        </div>
+
 
         {/* Quantity stepper */}
         <div>
@@ -107,18 +113,17 @@ export function PlanConfig({
       </div>
 
       {/* Day chips — below the grid */}
-      {showDaysSelector && (
+      {!isFixed && dayOptions.length > 0 && (
         <div className="flex gap-[7px] flex-wrap">
           {dayOptions.map((d) => (
             <button
               key={d}
               type="button"
               onClick={() => onDaysChange(d)}
-              className={`h-[34px] min-w-[34px] px-[11px] flex items-center justify-center border-[1.5px] rounded-full text-xs font-semibold cursor-pointer font-[inherit] transition-colors ${
-                days === d
+              className={`h-[34px] min-w-[34px] px-[11px] flex items-center justify-center border-[1.5px] rounded-full text-xs font-semibold cursor-pointer font-[inherit] transition-colors ${days === d
                   ? "border-[#F5C518] bg-[#FEF9E7] text-[#111]"
                   : "border-[#e5e7eb] bg-white text-[#374151] hover:border-[#111]"
-              }`}
+                }`}
             >
               {d}
             </button>

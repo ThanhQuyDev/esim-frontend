@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Smartphone, Globe, Wifi, Calendar, QrCode } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 import { CopyableField } from "./copyable-field";
 import type { EsimInfo } from "@/lib/hooks";
 import type { PaymentResultDict } from "./translations";
-import QRCodeLib from "qrcode";
 
 interface EsimCardProps {
   esim: EsimInfo;
@@ -19,37 +18,20 @@ interface EsimCardProps {
 const ESIMVN_LOGO = 'https://res.cloudinary.com/drozbviwb/image/upload/v1780067058/logo_esimvn_zycejk.png';
 
 function LpaQrCode({ lpa, scanLabel }: { lpa: string; scanLabel: string }) {
-  const [src, setSrc] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!lpa) return;
-    QRCodeLib.toCanvas(lpa, { width: 200, margin: 2, errorCorrectionLevel: 'H' })
-      .then((canvas) => {
-        const ctx = canvas.getContext('2d');
-        if (!ctx) { setSrc(canvas.toDataURL()); return; }
-        const logo = new Image();
-        logo.crossOrigin = 'anonymous';
-        logo.onload = () => {
-          const logoSize = 40;
-          const x = (canvas.width - logoSize) / 2;
-          const y = (canvas.height - logoSize) / 2;
-          ctx.fillStyle = '#ffffff';
-          ctx.fillRect(x - 2, y - 2, logoSize + 4, logoSize + 4);
-          ctx.drawImage(logo, x, y, logoSize, logoSize);
-          setSrc(canvas.toDataURL());
-        };
-        logo.onerror = () => setSrc(canvas.toDataURL());
-        logo.src = ESIMVN_LOGO;
-      })
-      .catch(() => setSrc(null));
-  }, [lpa]);
-
-  if (!src) return null;
-
   return (
     <div className="flex flex-col items-center py-5 mb-5 rounded-xl bg-gray-50 border border-gray-100">
       <QrCode className="w-6 h-6 text-gray-400 mb-3" />
-      <img src={src} alt="eSIM QR Code" className="w-48 h-48 rounded-lg" />
+      <QRCodeSVG
+        value={lpa}
+        size={192}
+        level="H"
+        imageSettings={{
+          src: ESIMVN_LOGO,
+          height: 24,
+          width: 116,
+          excavate: true,
+        }}
+      />
       <p className="text-xs text-gray-500 mt-3">{scanLabel}</p>
     </div>
   );
@@ -68,11 +50,10 @@ export function EsimCard({ esim, index, totalCount, copiedField, onCopy, t }: Es
             {t.esimDetails} {totalCount > 1 ? `#${index + 1}` : ""}
           </h3>
           {esim.status && (
-            <span className={`inline-block mt-1 text-xs font-medium px-2 py-0.5 rounded-full ${
-              esim.status === "available" ? "bg-emerald-100 text-emerald-700" :
-              esim.status === "active" ? "bg-blue-100 text-blue-700" :
-              "bg-gray-100 text-gray-600"
-            }`}>
+            <span className={`inline-block mt-1 text-xs font-medium px-2 py-0.5 rounded-full ${esim.status === "available" ? "bg-emerald-100 text-emerald-700" :
+                esim.status === "active" ? "bg-blue-100 text-blue-700" :
+                  "bg-gray-100 text-gray-600"
+              }`}>
               {esim.status}
             </span>
           )}

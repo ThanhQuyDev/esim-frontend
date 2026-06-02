@@ -144,9 +144,12 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
       const matching = plans.dailyUnlimited.filter((p) => p.fupSpeed === selectedPlan.fupSpeed);
       return Array.from(new Set(matching.map((p) => p.durationDays))).sort((a, b) => a - b);
     }
-    const allUnlimited = [...plans.slowUnlimited, ...plans.fastUnlimited];
-    if (allUnlimited.some((p) => p.id === selectedPlan.id)) {
-      const matching = allUnlimited.filter((p) => p.dataMb === selectedPlan.dataMb);
+    if (plans.fastUnlimited.some((p) => p.id === selectedPlan.id)) {
+      const matching = plans.fastUnlimited.filter((p) => p.dataMb === selectedPlan.dataMb && p.fupSpeed === selectedPlan.fupSpeed);
+      return Array.from(new Set(matching.map((p) => p.durationDays))).sort((a, b) => a - b);
+    }
+    if (plans.slowUnlimited.some((p) => p.id === selectedPlan.id)) {
+      const matching = plans.slowUnlimited.filter((p) => p.dataMb === selectedPlan.dataMb && p.fupSpeed === selectedPlan.fupSpeed);
       return Array.from(new Set(matching.map((p) => p.durationDays))).sort((a, b) => a - b);
     }
     return [];
@@ -194,7 +197,7 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
       );
       setDays(closest);
     }
-  }, [isFlexibleDays, availableDays]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isFlexibleDays, availableDays, days]);
 
   // Build price label
   const planLabel = useMemo(() => {

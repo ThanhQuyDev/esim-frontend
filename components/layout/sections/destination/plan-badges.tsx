@@ -65,11 +65,11 @@ export function PlanTagBadges({ tags, lang = "vi", className = "" }: PlanTagBadg
 }
 
 /**
- * Provider badge for plans with `isLocalInventory` — shows the provider name in a red label.
- * Default style matches the "VIETTEL" badge from the HTML reference.
+ * Provider badge for local inventory plans — shows the provider name in a red label.
+ * Shows for plans marked as isLocalInventory or with provider 'viettel'.
  */
 export function ProviderBadge({ plan }: { plan: Plan }) {
-  if (!plan.isLocalInventory) return null;
+  if (!plan.isLocalInventory && plan.provider !== 'viettel') return null;
   const provider = (plan.provider || "").toUpperCase();
   if (!provider) return null;
   return (

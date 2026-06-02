@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { BookOpen } from "lucide-react";
 import type { Blog } from "@/lib/api";
-import { formatDate, formatTimeRead, authorSlug, categorySlug } from "./blog-detail-helpers";
+import { formatDate, formatTimeRead, authorSlug, categorySlug, blogDetailHref } from "./blog-detail-helpers";
 import { SocialIconsRow } from "./blog-social-icons";
 
 function RelatedArticle({ article, lang }: { article: Blog; lang: string }) {
@@ -11,7 +11,7 @@ function RelatedArticle({ article, lang }: { article: Blog; lang: string }) {
       {article.coverImage && (
         <Link
           className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus "
-          href={`/${lang}/blog/${article.slug}`}
+          href={blogDetailHref(article, lang)}
         >
           <figure className="overflow-hidden rounded-sm">
             <div>
@@ -68,7 +68,7 @@ function RelatedArticle({ article, lang }: { article: Blog; lang: string }) {
               <p className="body-md-medium scroll-mt-20 xl:scroll-mt-24">
                 <Link
                   className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus "
-                  href={`/${lang}/blog/${article.slug}`}
+                  href={blogDetailHref(article, lang)}
                 >
                   {article.title}
                 </Link>

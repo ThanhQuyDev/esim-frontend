@@ -20,7 +20,7 @@ import {
 import type { MyEsim } from "@/lib/hooks";
 import { useEsimDataUsage } from "@/lib/hooks";
 import type { ProfileDict } from "./translations";
-import QRCode from "qrcode";
+import { QRCodeSVG } from "qrcode.react";
 import { TopupModal } from "./topup-modal";
 
 interface EsimCardListProps {
@@ -110,36 +110,19 @@ function CopyButton({ text, t }: { text: string; t: ProfileDict }) {
 }
 
 function QrCodeImage({ lpa }: { lpa: string }) {
-  const [src, setSrc] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!lpa) return;
-    QRCode.toCanvas(lpa, { width: 200, margin: 2, errorCorrectionLevel: 'H' })
-      .then((canvas) => {
-        const ctx = canvas.getContext('2d');
-        if (!ctx) { setSrc(canvas.toDataURL()); return; }
-        const logo = new Image();
-        logo.crossOrigin = 'anonymous';
-        logo.onload = () => {
-          const logoSize = 40;
-          const x = (canvas.width - logoSize) / 2;
-          const y = (canvas.height - logoSize) / 2;
-          ctx.fillStyle = '#ffffff';
-          ctx.fillRect(x - 2, y - 2, logoSize + 4, logoSize + 4);
-          ctx.drawImage(logo, x, y, logoSize, logoSize);
-          setSrc(canvas.toDataURL());
-        };
-        logo.onerror = () => setSrc(canvas.toDataURL());
-        logo.src = 'https://res.cloudinary.com/drozbviwb/image/upload/v1780067058/logo_esimvn_zycejk.png';
-      })
-      .catch(() => setSrc(null));
-  }, [lpa]);
-
-  if (!src) return null;
-
   return (
     <div className="flex flex-col items-center gap-2 py-3">
-      <img src={src} alt="eSIM QR Code" className="w-[180px] h-[180px] rounded-sm border border-gray-200" />
+      <QRCodeSVG
+        value={lpa}
+        size={180}
+        level="H"
+        imageSettings={{
+          src: 'https://res.cloudinary.com/drozbviwb/image/upload/v1780067058/logo_esimvn_zycejk.png',
+          height: 24,
+          width: 116,
+          excavate: true,
+        }}
+      />
       <p className="text-[13px] text-gray-400 text-center max-w-[200px] break-all leading-tight">
         {lpa}
       </p>
@@ -336,14 +319,11 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
     .map((s) => s.trim())
     .filter(Boolean);
 
-  // Activation validity: viettel uses expiresAt directly, others use 180 days from createdAt
+  // Activation validity: viettel uses 15 days, others use 180 days from createdAt
   const activationDeadline = (() => {
-    if (esim.provider === 'viettel' && esim.expiresAt) {
-      return new Date(esim.expiresAt);
-    }
     if (!esim.createdAt) return null;
     const deadline = new Date(esim.createdAt);
-    deadline.setDate(deadline.getDate() + 180);
+    deadline.setDate(deadline.getDate() + (esim.provider === 'viettel' ? 15 : 180));
     return deadline;
   })();
 
@@ -385,7 +365,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
           </div>
           <p className="text-xs text-gray-500">
             {lang === "vi" ? "Tạo ngày" : "Created"}: {formatDate(esim.createdAt, lang)}
-            {esim.expiresAt && (
+            {esim.expiresAt && esim.provider !== 'viettel' && (
               <> · {lang === "vi" ? "Hết hạn" : "Expires"}: {formatDate(esim.expiresAt, lang)}</>
             )}
           </p>
@@ -576,6 +556,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                         </span>
                       </div>
                     </div>
+                    {esim.provider !== 'viettel' && (
                     <div>
                       <p className="text-[13px] font-medium text-gray-400 uppercase tracking-wider mb-1">
                         {lang === "vi" ? "Hết hạn" : "Expires"}
@@ -586,6 +567,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                         </p>
                       </div>
                     </div>
+                    )}
                   </div>
 
                   {/* Apple Install Link */}
@@ -602,7 +584,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                   )}
 
                   {/* Top Up Button — only when the plan supports it */}
-                  {canTopup && (
+                  {/* {canTopup && (
                     <button
                       type="button"
                       onClick={() => setTopupOpen(true)}
@@ -611,7 +593,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                       <Zap className="w-4 h-4" />
                       {t.topup}
                     </button>
-                  )}
+                  )} */}
                 </div>
               </>
             ) : (

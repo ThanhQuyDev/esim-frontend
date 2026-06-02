@@ -56,7 +56,23 @@ function formatDate(dateStr: string | null): string {
 }
 
 function categorySlug(cat: string): string {
-  return cat.toLowerCase().replace(/\s+/g, "-");
+  return cat
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+}
+
+function blogDetailHref(blog: { slug: string; category?: string | null; parent?: string | null }, lang: string): string {
+  const articleSlug = (blog.slug || "").replace(/^\//, "");
+  const parts = [`/${lang}/blog`];
+  if (blog.category) parts.push(categorySlug(blog.category));
+  if (blog.parent) parts.push(categorySlug(blog.parent));
+  parts.push(articleSlug);
+  return parts.join("/");
 }
 
 // ===== Sub-components =====
@@ -123,7 +139,7 @@ function BlogCard({ blog, lang }: { blog: Blog; lang: string }) {
   return (
     <article className="flex flex-col gap-4">
       <Link
-        href={`/${lang}/blog/${blog.slug}/`}
+        href={blogDetailHref(blog, lang)}
         className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus "
       >
         <figure className="overflow-hidden rounded-sm">
@@ -158,7 +174,7 @@ function BlogCard({ blog, lang }: { blog: Blog; lang: string }) {
             <div>
               <h3 className="heading-sm">
                 <Link
-                  href={`/${lang}/blog/${blog.slug}/`}
+                  href={blogDetailHref(blog, lang)}
                   className="!text-[1.4rem] font-medium align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus "
                 >
                   {blog.title}
@@ -293,7 +309,7 @@ function FeaturedArticle({ blog, lang }: { blog: Blog; lang: string }) {
                   <div className="h-full w-full flex flex-col text-start items-start justify-start gap-y-2">
                     <div>
                       <Link
-                        href={`/${lang}/blog/${blog.slug}/`}
+                        href={blogDetailHref(blog, lang)}
                         className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus "
                       >
                         <h3 className="heading-xl !leading-[1.3]">{blog.title}</h3>
@@ -321,7 +337,7 @@ function FeaturedArticle({ blog, lang }: { blog: Blog; lang: string }) {
               </div>
               <figure className="overflow-hidden rounded-sm self-center">
                 <Link
-                  href={`/${lang}/blog/${blog.slug}/`}
+                  href={blogDetailHref(blog, lang)}
                   className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus"
                 >
                   <div>
