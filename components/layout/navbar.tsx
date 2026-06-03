@@ -884,7 +884,7 @@ function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
             </div>
 
             {/* Mobile Cart + Menu */}
-            <div className="flex items-center gap-3 ml-6 lg:hidden">
+            <div className="flex items-center gap-6 ml-6 lg:hidden">
               <Link
                 href={localizedHref(lang, "cart")}
                 className="relative flex items-center justify-center w-6 h-6"
@@ -1135,17 +1135,17 @@ function MobileSidebar({
 
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-[9998] bg-black/50 data-[state=open]:animate-fade-in" />
-        <Dialog.Content className="fixed top-0 right-0 h-dvh z-[9999] w-full bg-bg-secondary overflow-y-auto scrollbar-none focus:outline-none data-[state=open]:animate-fade-in">
+        <Dialog.Content className="fixed top-0 right-0 h-dvh z-[9999] w-full bg-white overflow-y-auto scrollbar-none focus:outline-none data-[state=open]:animate-fade-in">
           <div className="flex flex-col grow h-full justify-between">
             <div className="px-4">
               {/* Header */}
-              <div className="flex justify-between items-center mb-4 sticky top-0 z-50 py-4 bg-bg-secondary h-14">
+              <div className="flex justify-between items-center mb-4 sticky top-0 z-50 py-4 bg-white h-14">
                 <Link href={`/${lang}`} onClick={() => setOpen(false)}>
                   <SailyLogo />
                 </Link>
                 <Dialog.Close asChild>
                   <button className="w-6 h-6 flex items-center justify-center cursor-pointer" aria-label="Close">
-                    <X className="w-4 h-4" />
+                    <X className="w-6 h-6" />
                   </button>
                 </Dialog.Close>
               </div>
@@ -1154,7 +1154,7 @@ function MobileSidebar({
               <div className="relative w-full mb-8">
                 <input
                   placeholder={lang === "vi" ? "Bạn đang đi du lịch ở đâu?" : "Where are you travelling to?"}
-                  className="body-md bg-bg-primary outline-none appearance-none w-full leading-relaxed py-[12.5px] pl-4 pr-12 text-text-primary placeholder-text-tertiary border-md border-border-secondary focus:border-border-focus transition-colors rounded-full cursor-pointer"
+                  className="body-md bg-bg-secondary active:bg-white focus:border outline-none appearance-none w-full leading-relaxed py-[12.5px] pl-4 pr-12 text-text-primary placeholder-text-tertiary border-md border-border-secondary focus:border-border-focus transition-colors rounded-full cursor-pointer"
                   type="text"
                   readOnly
                   onClick={() => {
@@ -1172,7 +1172,7 @@ function MobileSidebar({
                 {NAV_ITEMS.map((item) => (
                   <button
                     key={item}
-                    className="flex items-center justify-between w-full px-4 py-3 body-md-medium text-text-primary rounded-lg cursor-pointer hover:bg-bg-primary transition-colors duration-200"
+                    className="flex items-center border-b justify-between w-full px-4 py-3 body-md-medium text-text-primary cursor-pointer hover:bg-bg-primary transition-colors duration-200"
                   >
                     <span className="flex items-center gap-2">
                       {dict[item]}
@@ -1210,7 +1210,7 @@ function MobileSidebar({
                 <>
                   <Link
                     href={localizedHref(lang, "profile")}
-                    className="flex items-center justify-center gap-2 w-full px-5 py-3 bg-bg-accent text-text-primary-on-color body-md-medium rounded-full cursor-pointer hover:bg-bg-accent-hover transition-colors"
+                    className="flex items-center justify-center gap-2 w-full px-5 py-3 bg-bg-dark text-white body-md-medium rounded-full cursor-pointer hover:bg-bg-accent-hover transition-colors"
                     onClick={() => setOpen(false)}
                   >
                     <User className="w-4 h-4" />
@@ -1228,7 +1228,7 @@ function MobileSidebar({
                 <>
                   <button
                     onClick={() => { openAuthModal(); setOpen(false); }}
-                    className="flex items-center justify-center gap-2 w-full px-5 py-3 bg-bg-accent text-text-primary-on-color body-md-medium rounded-full cursor-pointer hover:bg-bg-accent-hover transition-colors"
+                    className="flex items-center justify-center gap-2 w-full px-5 py-3 bg-bg-dark text-white body-md-medium rounded-full cursor-pointer hover:bg-bg-accent-hover transition-colors"
                   >
                     <User className="w-4 h-4" />
                     {lang === "vi" ? "Đăng nhập" : "Sign In"}

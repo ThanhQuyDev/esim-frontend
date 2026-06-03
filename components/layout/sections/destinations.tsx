@@ -84,7 +84,7 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
             >
               <a
                 role="button"
-                className="max-md:w-full text-center inline-block text-text-primary bg-bg-accent hover:bg-bg-accent-hover border border-bg-accent hover:border-bg-accent-hover active:bg-bg-accent-active active:border-bg-accent-active box-border !border-[#d1b700] touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7 w-full sm:w-auto hover:bg-[#d1b700]"
+                className="max-md:w-full text-center inline-block text-text-primary bg-bg-accent hover:bg-bg-accent-hover border border-bg-accent hover:border-bg-accent-hover active:bg-bg-accent-active active:border-bg-accent-active box-border !border-[#d1b700] touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7 w-full sm:w-auto"
                 data-testid="view-all-destinations-cta"
                 href={localizedHref(lang, "all-destinations")}
               >
@@ -178,7 +178,7 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
                             </div>
                             {/* Name + Info */}
                             <div className="flex flex-col gap-0.5">
-                              <p className="body-lg-medium">{item.name}</p>
+                              <p className="body-lg-medium"> {(lang === "vi" ? item.titleVi : item.title) || item.name}</p>
                               <p className="body-md text-text-tertiary">
                                 <span className="whitespace-nowrap">
                                   {showRegions
@@ -214,7 +214,7 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
             >
               <a
                 role="button"
-                className="hover:bg-[#d1b700] max-md:w-full text-center inline-block text-text-primary bg-bg-accent hover:bg-bg-accent-hover border border-bg-accent hover:border-bg-accent-hover active:bg-bg-accent-active active:border-bg-accent-active box-border !border-[#d1b700] touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7 w-full sm:w-auto"
+                className="max-md:w-full text-center inline-block text-text-primary bg-bg-accent hover:bg-bg-accent-hover border border-bg-accent hover:border-bg-accent-hover active:bg-bg-accent-active active:border-bg-accent-active box-border !border-[#d1b700] touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7 w-full sm:w-auto"
                 data-testid="view-all-destinations-cta"
                 href={localizedHref(lang, "all-destinations")}
               >

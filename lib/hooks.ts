@@ -35,9 +35,8 @@ async function clientFetch<T>(
   signal?: AbortSignal
 ): Promise<T> {
   const searchParams = new URLSearchParams(params);
-  const url = `${API_BASE_URL}${endpoint}${
-    searchParams.toString() ? `?${searchParams.toString()}` : ""
-  }`;
+  const url = `${API_BASE_URL}${endpoint}${searchParams.toString() ? `?${searchParams.toString()}` : ""
+    }`;
 
   const res = await fetch(url, { headers, signal });
   if (!res.ok) throw new Error(`API error: ${res.status}`);
@@ -254,6 +253,8 @@ export function useSearchRegions(query: string, enabled = true) {
         {
           limit: "20",
           filters: JSON.stringify({ search: query }),
+          orderBy: "name",
+          order: "ASC"
         },
         undefined,
         signal
@@ -877,6 +878,7 @@ interface ApiCartItemPlan {
   currency: string;
   discount?: number;
   isAbleMultidate?: boolean;
+  type?: string;
   destination?: {
     id: number;
     name: string;
@@ -984,7 +986,7 @@ export function useCart() {
         return {
           id: String(item.planId),
           name: item.plan?.name || `Plan #${item.planId}`,
-          description: `${item.plan?.dataMb ? dataLabel : "?"} / ${(item.periodNum ?? item.plan?.durationDays) || "?"} days`,
+          description: `${(item.plan.type === 'unlimited' || item.plan.type === 'unlimited-reduce') ? 'Unlimited' : item.plan?.dataMb ? dataLabel : "?"} / ${(item.periodNum ?? item.plan?.durationDays) || "?"} days`,
           price: 0,
           quantity: item.quantity,
           destination: item.plan?.destination?.name,

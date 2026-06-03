@@ -105,19 +105,19 @@ export function DestinationSearchModal({
   // Merge search results: destinations first, then regions
   const mergedResults = hasSearch
     ? [
-        ...searchDestinations.map((d: any) => ({
-          ...d,
-          _type: "destination" as const,
-        })),
-        ...searchRegions.map((r: any) => ({
-          ...r,
-          _type: "region" as const,
-          name: r.name,
-          slug: r.slug,
-          flagUrl: r.avatarUrl || r.flagUrl,
-          destinationCount: r.destinationCount,
-        })),
-      ]
+      ...searchDestinations.map((d: any) => ({
+        ...d,
+        _type: "destination" as const,
+      })),
+      ...searchRegions.map((r: any) => ({
+        ...r,
+        _type: "region" as const,
+        name: r.name,
+        slug: r.slug,
+        flagUrl: r.avatarUrl || r.flagUrl,
+        destinationCount: r.destinationCount,
+      })),
+    ]
     : [];
 
   return (
@@ -262,13 +262,12 @@ export function DestinationSearchModal({
                       : null;
                     const subtitle = isRegion
                       ? [
-                          `${item.destinationCount || 0} ${
-                            lang === "vi"
-                              ? "quốc gia"
-                              : (item.destinationCount === 1 ? "country" : "countries")
-                          }`,
-                          priceStr ? `${lang === "vi" ? "Từ" : "From"} ${priceStr}` : null,
-                        ].filter(Boolean).join(" · ")
+                        `${item.destinationCount || 0} ${lang === "vi"
+                          ? "quốc gia"
+                          : (item.destinationCount === 1 ? "country" : "countries")
+                        }`,
+                        priceStr ? `${lang === "vi" ? "Từ" : "From"} ${priceStr}` : null,
+                      ].filter(Boolean).join(" · ")
                       : priceStr
                         ? `${lang === "vi" ? "Từ" : "From"} ${priceStr}`
                         : null;
@@ -337,7 +336,7 @@ export function DestinationSearchModal({
                               </div>
                               <div className="flex flex-col">
                                 <p className="body-md-medium text-text-primary! scroll-mt-20 xl:scroll-mt-24">
-                                  {item.name}
+                                  {(lang === "vi" ? item.titleVi : item.title) || item.name}
                                 </p>
                                 {subtitle && (
                                   <p className="body-xs text-text-tertiary scroll-mt-20 xl:scroll-mt-24">
@@ -369,9 +368,9 @@ export function DestinationSearchModal({
                       : null;
                     const subtitle = isRegionItem
                       ? [
-                          `${item.destinationCount || 0} ${lang === "vi" ? "quốc gia" : (item.destinationCount === 1 ? "country" : "countries")}`,
-                          priceStr ? `${lang === "vi" ? "Từ" : "From"} ${priceStr}` : null,
-                        ].filter(Boolean).join(" · ")
+                        `${item.destinationCount || 0} ${lang === "vi" ? "quốc gia" : (item.destinationCount === 1 ? "country" : "countries")}`,
+                        priceStr ? `${lang === "vi" ? "Từ" : "From"} ${priceStr}` : null,
+                      ].filter(Boolean).join(" · ")
                       : priceStr
                         ? `${lang === "vi" ? "Từ" : "From"} ${priceStr}`
                         : null;
@@ -444,7 +443,7 @@ export function DestinationSearchModal({
                               <div className="flex flex-col">
                                 <div className="flex items-center gap-1.5">
                                   <p className="body-md-medium text-text-primary! scroll-mt-20 xl:scroll-mt-24">
-                                    {item.name}
+                                    {(lang === "vi" ? item.titleVi : item.title) || item.name}
                                   </p>
                                   {isRegionItem && (
                                     <span className="text-center whitespace-nowrap rounded-full inline-block bg-blue-100 text-blue-700 py-0 px-1.5 body-2xs-medium">

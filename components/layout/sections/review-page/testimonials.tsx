@@ -152,7 +152,7 @@ function UserCard({ item }: { item: UserReview }) {
 function EditorialCard({ item, isLarge }: { item: EditorialReview; isLarge?: boolean }) {
   if (isLarge) {
     return (
-      <div className="grid grid-rows-[min-content_1fr_min-content] p-6 content-start bg-secondary rounded-sm gap-6 lg:mt-8 lg:pt-[200px]">
+      <div className="grid grid-rows-[min-content_1fr_min-content] p-6 content-start bg-white rounded-sm gap-6 lg:mt-8 lg:pt-[200px]">
         <div className="flex flex-row gap-4 items-center justify-between">
           <div>
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -287,7 +287,7 @@ export function ReviewTestimonials({ dict, lang }: ReviewTestimonialsProps) {
                       </div>
                       <div className="grid grid-cols-[min-content_1fr_min-content] mt-6">
                         <button
-                          className="flex items-center justify-center h-8 w-8 rounded-full shrink-0 bg-secondary"
+                          className="flex items-center justify-center h-8 w-8 rounded-full shrink-0 bg-primary"
                           aria-label="Previous slide"
                           onClick={handlePrev}
                         >
@@ -299,7 +299,7 @@ export function ReviewTestimonials({ dict, lang }: ReviewTestimonialsProps) {
                           </p>
                         </div>
                         <button
-                          className="flex items-center justify-center h-8 w-8 rounded-full shrink-0 bg-secondary"
+                          className="flex items-center justify-center h-8 w-8 rounded-full shrink-0 bg-primary"
                           aria-label="Next slide"
                           onClick={handleNext}
                         >

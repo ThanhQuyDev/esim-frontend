@@ -93,7 +93,6 @@ export function AllDestinationsContent({
     { key: "all", label: dict.tabs.all },
     { key: "country", label: dict.tabs.country },
     { key: "region", label: dict.tabs.region },
-    { key: "ultra", label: dict.tabs.ultraPlan, badge: dict.new },
   ];
 
   return (
@@ -136,7 +135,7 @@ export function AllDestinationsContent({
                     }}
                     className={`relative z-[1] body-sm-medium whitespace-nowrap md:body-md-medium px-4 py-1 focus-visible:outline-hidden focus-visible:shadow-focus rounded-full min-w-[60px] bg-transparent transition-all duration-200 ${
                       activeTab === tab.key
-                        ? "text-text-primary-on-color! bg-bg-dark hover:bg-inherit transition-[color] delay-250 duration-[0]"
+                        ? "!text-text-primary-on-color !bg-bg-dark hover:bg-inherit transition-[color] delay-250 duration-[0]"
                         : "text-text-primary hover:text-text-primary hover:bg-bg-primary"
                     }`}
                   >
@@ -239,11 +238,11 @@ export function AllDestinationsContent({
                             {/* Name + Info */}
                             <div className="flex flex-col gap-0.5">
                               <p className="body-lg-medium scroll-mt-20 xl:scroll-mt-24">
-                                {item.name}
+                                {(lang === "vi" ? item.titleVi : item.title) || item.name}
                               </p>
                               <p className="body-md text-text-tertiary scroll-mt-20 xl:scroll-mt-24">
                                 <span className="whitespace-nowrap">
-                                  {dict.from} {Number(item.fromPrice).toLocaleString("vi-VN") || "20.000"} đ
+                                  {dict.from} {Number(item.fromPrice).toLocaleString("vi-VN") || "20.000"}đ
                                 </span>
                                 {item.destinationCount != null && (
                                   <>

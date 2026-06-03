@@ -97,7 +97,7 @@ export function DestinationSearch({
 
       {/* Modal */}
       <div className="relative mx-auto mt-20 w-full max-w-2xl px-4">
-        <div className="bg-bg-primary rounded-lg shadow-lg overflow-hidden animate-fade-in-up">
+        <div className="bg-bg-primary rounded-md shadow-lg overflow-hidden animate-fade-in-up">
           {/* Search Input */}
           <div className="p-4 border-b border-border-primary">
             <div className="relative">

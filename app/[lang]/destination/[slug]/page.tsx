@@ -88,7 +88,7 @@ export default async function DestinationPage({ params }: DestinationPageProps) 
         dict={dict.destinationPage}
         lang={params.lang}
       />
-      <div className="max-w-[1168px] mx-auto px-6">
+      <div className="max-w-[1168px] mx-auto px-0 md:px-6">
         <LazyHowItWorksSection dict={dict.howItWorks} />
         <LazyFeaturesSection dict={dict.whyChoose} lang={params.lang} features={whyChooseUsRes.data} />
         <LazyEsimComparison dict={dict.whatIsEsimPage.comparison} />

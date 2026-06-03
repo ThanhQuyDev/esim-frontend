@@ -57,9 +57,9 @@ export function DownloadAppSection({ dict }: DownloadAppSectionProps) {
                       <div>
                         <div className="h-full w-full flex group/stack [&>div:empty]:hidden flex-col justify-start gap-y-6">
                           <div>
-                            <h2 className="heading-xl text-primary scroll-mt-20 xl:scroll-mt-24">
+                            <h4 className="heading-xl text-primary scroll-mt-20 xl:scroll-mt-24">
                               {dict.title}
-                            </h2>
+                            </h4>
                           </div>
                           <div>
                             <p className="body-md text-secondary scroll-mt-20 xl:scroll-mt-24">
@@ -185,7 +185,7 @@ export function DownloadAppSection({ dict }: DownloadAppSectionProps) {
                             loading="lazy"
                             width={555}
                             height={555}
-                            src="https://sb.nordcdn.com/m/18f01ad59d199b85/original/download-asset-xs.png"
+                            src="https://sb.nordcdn.com/m/2116ba3676cc8b98/original/download-asset-xl.png"
                             style={{ color: "transparent" }}
                           />
                         </div>

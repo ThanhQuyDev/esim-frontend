@@ -88,10 +88,10 @@ export function CountriesModal({
   return (
     <Modal open={open} onClose={onClose} ariaLabel={lang === "vi" ? titleVi : titleEn}>
       <div
-        className="bg-white rounded-[20px] flex flex-col overflow-hidden"
+        className="bg-white rounded-t-[20px] flex flex-col overflow-hidden w-full"
         style={{
-          width: "min(560px, calc(100vw - 32px))",
-          height: "min(620px, calc(100vh - 32px))",
+          width: "min(560px, calc(100vw))",
+          height: "min(620px, calc(100vh - 180px))",
           boxShadow: "0 28px 80px rgba(0,0,0,0.22)",
         }}
         onClick={(e) => e.stopPropagation()}

@@ -92,7 +92,7 @@ function AvatarImage({ name }: { name: string }) {
 /** Featured card (Lonely Planet) */
 function FeaturedCard({ review }: { review: Review }) {
   return (
-    <div className="grid grid-rows-[min-content_1fr_min-content] p-6 content-start bg-secondary rounded-sm gap-6 lg:mt-8 lg:pt-[200px]">
+    <div className="grid grid-rows-[min-content_1fr_min-content] p-6 content-start bg-white rounded-sm gap-6 lg:mt-8 lg:pt-[200px]">
       <div className="flex flex-row gap-4 items-center justify-between">
         <SourceLogo source={review.source} />
       </div>
@@ -243,7 +243,7 @@ export function TestimonialsSection({ dict }: TestimonialsSectionProps) {
                       {/* Navigation */}
                       <div className="grid grid-cols-[min-content_1fr_min-content] mt-6">
                         <button
-                          className="flex items-center justify-center h-8 w-8 rounded-full shrink-0 bg-secondary"
+                          className="flex items-center justify-center h-8 w-8 rounded-full shrink-0 bg-primary"
                           aria-label="Previous slide"
                           onClick={goToPrev}
                         >
@@ -255,7 +255,7 @@ export function TestimonialsSection({ dict }: TestimonialsSectionProps) {
                           </p>
                         </div>
                         <button
-                          className="flex items-center justify-center h-8 w-8 rounded-full shrink-0 bg-secondary"
+                          className="flex items-center justify-center h-8 w-8 rounded-full shrink-0 bg-primary"
                           aria-label="Next slide"
                           onClick={goToNext}
                         >

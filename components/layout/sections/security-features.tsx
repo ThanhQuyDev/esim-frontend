@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { RocketIcon, ShieldCheck } from "lucide-react";
 
 interface SecurityFeaturesProps {
   dict: Record<string, any>;
@@ -211,6 +212,9 @@ export function SecurityFeatures({ dict }: SecurityFeaturesProps) {
                                   <div className="md:p-10 px-6 py-8 w-full flex flex-col gap-6 lg:gap-8">
                                     <div>
                                       <div className="h-full w-full flex flex-col gap-y-4">
+                                        <div className="bg-white w-10 h-10 flex items-center justify-center rounded-full">
+                                          <RocketIcon className="w-6 h-6" />
+                                        </div>
                                         <div>
                                           <h3 className="heading-lg scroll-mt-20 xl:scroll-mt-24">
                                             {dict.features[1].title}
@@ -247,6 +251,7 @@ export function SecurityFeatures({ dict }: SecurityFeaturesProps) {
                               <div className="md:p-16 px-6 py-8 w-full flex flex-col gap-6 lg:gap-8">
                                 <div>
                                   <div className="h-full w-full flex flex-col gap-y-4">
+
                                     <div>
                                       <h3 className="heading-lg scroll-mt-20 xl:scroll-mt-24">
                                         {dict.features[2].title}
@@ -298,6 +303,9 @@ export function SecurityFeatures({ dict }: SecurityFeaturesProps) {
                               <div className="md:p-16 px-6 py-8 w-full flex flex-col gap-6 lg:gap-8">
                                 <div>
                                   <div className="h-full w-full flex flex-col gap-y-4">
+                                    <div className="bg-bg-accent w-10 h-10 flex items-center justify-center rounded-sm">
+                                      <ShieldCheck className="w-6 h-6" />
+                                    </div>
                                     <div>
                                       <p className="heading-lg scroll-mt-20 xl:scroll-mt-24">
                                         {dict.features[2].title}

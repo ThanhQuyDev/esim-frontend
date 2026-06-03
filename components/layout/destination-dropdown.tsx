@@ -29,14 +29,14 @@ type TabType = "top10" | "country" | "region" | "ultra";
 const FALLBACK: Record<string, DestinationDropdownDict> = {
   vi: {
     subtitle: "Bạn đang đi du lịch đến đâu?",
-    tabs: { country: "Quốc gia", region: "Khu vực", ultraPlan: "Ultra Plan" },
+    tabs: { country: "Quốc gia", region: "Khu vực" },
     from: "Từ",
     viewAllDestinations: "Xem tất cả điểm đến",
     new: "Mới",
   },
   en: {
     subtitle: "Where are you travelling to?",
-    tabs: { country: "Country", region: "Region", ultraPlan: "Ultra Plan" },
+    tabs: { country: "Country", region: "Region" },
     from: "From",
     viewAllDestinations: "View All Destinations",
     new: "New",
@@ -90,7 +90,6 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
     { key: "top10" as const, label: "Top 10" },
     { key: "country" as const, label: t.tabs?.country || "Country" },
     { key: "region" as const, label: t.tabs?.region || "Region" },
-    { key: "ultra" as const, label: t.tabs?.ultraPlan || "Ultra Plan", badge: t.new || "New" },
   ];
 
   /* Format price with locale */
@@ -128,7 +127,7 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
             {!debouncedSearch && (
               <div className="hidden lg:block mb-6">
                 <div className="relative flex gap-1 w-fit p-1 border border-border-secondary rounded-full">
-                  {tabs.map((tab) => (
+                  {tabs.map((tab: any) => (
                     <button
                       key={tab.key}
                       data-is-tab="true"
@@ -200,7 +199,7 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
                                 </div>
                               </div>
                               <div className="flex flex-col gap-1">
-                                <p className="body-sm-medium text-text-primary text-left">{dest.name}</p>
+                                <p className="body-sm-medium text-text-primary text-left">{(lang === "vi" ? dest.titleVi : dest.title) || dest.name}</p>
                                 <p className="body-xs text-text-tertiary text-left">
                                   <span className="whitespace-nowrap">
                                     {t.from} {formatPrice(dest.minPrice || dest.fromPrice)}
@@ -250,7 +249,7 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
                                 </div>
                               </div>
                               <div className="flex flex-col gap-1">
-                                <p className="body-sm-medium text-text-primary text-left">{region.name}</p>
+                                <p className="body-sm-medium text-text-primary text-left">{(lang === "vi" ? region.titleVi : region.title) || region.name}</p>
                                 <p className="body-xs text-text-tertiary text-left">
                                   <span className="whitespace-nowrap">
                                     {[
@@ -331,7 +330,7 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
                                 </div>
                                 <div className="flex flex-col gap-1">
                                   <div className="flex items-center gap-1.5">
-                                    <p className="body-sm-medium text-text-primary text-left">{item.name}</p>
+                                    <p className="body-sm-medium text-text-primary text-left">{(lang === "vi" ? item.titleVi : item.title) || item.name}</p>
                                     {showTop10Tab && isRegionItem && (
                                       <span className="text-center whitespace-nowrap rounded-full inline-block bg-blue-100 text-blue-700 py-0 px-1.5 body-2xs-medium">
                                         {lang === "vi" ? "Khu vực" : "Region"}

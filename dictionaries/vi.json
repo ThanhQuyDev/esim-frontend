@@ -9,7 +9,7 @@
     "offers": "Ưu đãi",
     "help": "Trợ giúp",
     "login": "Đăng nhập",
-    "downloadApp": "Tải ứng dụng",
+    "downloadApp": "Xem tất cả điểm đến",
     "getStarted": "Dùng esim.vn",
     "searchPlaceholder": "Tìm kiếm quốc gia hoặc khu vực",
     "announcement": "Giảm 10% cho gói dữ liệu 10GB+!",
@@ -80,7 +80,7 @@
       {
         "icon": "circle-check",
         "title": "Dễ sử dụng",
-        "description": "Chỉ cần [tải ứng dụng esim.vn eSIM](/vi/what-is-esim), cài đặt eSIM và mua gói dữ liệu — nó sẽ tự động kích hoạt khi bạn đến điểm đến."
+        "description": "Chỉ cần [tải ứng dụng esim.vn](/vi/what-is-esim), cài đặt eSIM và mua gói dữ liệu — nó sẽ tự động kích hoạt khi bạn đến điểm đến."
       },
       {
         "icon": "ballot-check",
@@ -153,7 +153,7 @@
     ]
   },
   "downloadApp": {
-    "title": "Tải ứng dụng esim.vn eSIM",
+    "title": "Tải ứng dụng esim.vn",
     "subtitle": "Bạn có thể tải esim.vn trên Google Play và App Store hoặc quét mã QR.",
     "trustpilot": {
       "rating": "4.7",
@@ -713,7 +713,7 @@
           "appTitle": "Thiết lập eSIM trên iPhone với ứng dụng esim.vn",
           "steps": [
             { "title": "Chọn gói dữ liệu eSIM cho chuyến đi", "description": "Chọn quốc gia bạn sẽ đến và chọn một gói." },
-            { "title": "Tải ứng dụng esim.vn eSIM", "description": "Tải ứng dụng, nhấn \"Cài đặt eSIM\" và làm theo các bước trên màn hình." },
+            { "title": "Tải ứng dụng esim.vn", "description": "Tải ứng dụng, nhấn \"Cài đặt eSIM\" và làm theo các bước trên màn hình." },
             { "title": "Gói của bạn sẽ tự động kích hoạt", "description": "Sẵn sàng cho chuyến đi — gói của bạn sẽ kích hoạt khi bạn đến nơi." }
           ],
           "manualTitle": "Thiết lập eSIM thủ công trên iPhone",
@@ -730,7 +730,7 @@
           "appTitle": "Thiết lập eSIM trên Android với ứng dụng esim.vn",
           "steps": [
             { "title": "Chọn gói dữ liệu eSIM cho chuyến đi", "description": "Chọn quốc gia bạn sẽ đến và chọn một gói." },
-            { "title": "Tải ứng dụng esim.vn eSIM", "description": "Tải ứng dụng, nhấn \"Cài đặt eSIM\" và làm theo các bước trên màn hình để thiết lập." },
+            { "title": "Tải ứng dụng esim.vn", "description": "Tải ứng dụng, nhấn \"Cài đặt eSIM\" và làm theo các bước trên màn hình để thiết lập." },
             { "title": "Gói của bạn sẽ tự động kích hoạt", "description": "Sẵn sàng cho chuyến đi — gói của bạn sẽ kích hoạt khi bạn đến nơi." }
           ],
           "manualTitle": "Thiết lập eSIM thủ công trên Android",
