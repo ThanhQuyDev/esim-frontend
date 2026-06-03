@@ -200,8 +200,8 @@ export async function FooterSection({
                             <img
                               src={icon}
                               alt={link.label.toLowerCase()}
-                              width={20}
-                              height={20}
+                              width={16}
+                              height={16}
                               loading="lazy"
                               style={{ color: "transparent" }}
                             />
@@ -223,8 +223,8 @@ export async function FooterSection({
                           <img
                             src={icon}
                             alt={link.label.toLowerCase()}
-                            width={20}
-                            height={20}
+                            width={16}
+                            height={16}
                             loading="lazy"
                             style={{ color: "transparent" }}
                           />

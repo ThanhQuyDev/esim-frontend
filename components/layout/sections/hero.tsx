@@ -108,8 +108,11 @@ export function HeroSection({ dict, heroBanners = [], lang }: HeroSectionProps) 
 
                       {/* Title */}
                       <div>
-                        <h1 className="heading-2xl scroll-mt-20 xl:scroll-mt-24" style={{ whiteSpace: 'pre-line' }}>
-                         ESIM QUỐC TẾ {'\n'} Kết nối mọi lúc mọi nơi với mức giá phải chăng
+                        <h1
+                          className="heading-2xl scroll-mt-20 xl:scroll-mt-24"
+                          id=""
+                        >
+                          {title}
                         </h1>
                       </div>
 
