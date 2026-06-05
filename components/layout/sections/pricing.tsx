@@ -38,9 +38,9 @@ export const PricingSection = ({ dict }: PricingSectionProps) => {
         <div className="text-center max-w-2xl mx-auto mb-16 md:mb-20">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/[0.08] border border-accent/[0.15] mb-6">
             <Sparkles className="w-3.5 h-3.5 text-accent" />
-            <span className="text-sm text-accent font-medium">{dict.badge}</span>
+            <span className="text-base text-accent font-medium">{dict.badge}</span>
           </div>
-          <h2 className="font-display font-bold text-3xl md:text-4xl lg:text-5xl text-white mb-5 tracking-tight">
+          <h2 className="font-display font-medium text-3xl md:text-4xl lg:text-5xl text-white mb-5 tracking-tight">
             {dict.title}<span className="gradient-text-purple">{dict.titleHighlight}</span>
           </h2>
           <p className="text-lg text-muted-foreground leading-relaxed">{dict.subtitle}</p>
@@ -61,16 +61,16 @@ export const PricingSection = ({ dict }: PricingSectionProps) => {
                 style={{ transform: isPopular ? "scale(1.02)" : undefined }}
               >
                 {isPopular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full gradient-bg-green text-xs font-semibold text-white shadow-[0_4px_12px_hsla(160,84%,44%,0.3)]">
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full gradient-bg-green text-sm font-semibold text-white shadow-[0_4px_12px_hsla(160,84%,44%,0.3)]">
                     {dict.mostPopular}
                   </div>
                 )}
                 <div className="text-4xl mb-3">{plan.flag}</div>
                 <h3 className="font-display font-semibold text-lg text-white mb-1">{plan.region}</h3>
-                <p className="text-sm text-muted-foreground mb-5">{plan.data} · {plan.validity}</p>
+                <p className="text-base text-muted-foreground mb-5">{plan.data} · {plan.validity}</p>
                 <div className="mb-6">
-                  <span className="font-display font-bold text-3xl text-white">{formatVnd(priceVnd)}</span>
-                  <span className="text-sm text-muted-foreground ml-2">{pricePerGbVnd}</span>
+                  <span className="font-display font-medium text-3xl text-white">{formatVnd(priceVnd)}</span>
+                  <span className="text-base text-muted-foreground ml-2">{pricePerGbVnd}</span>
                 </div>
                 <Button
                   className={`w-full rounded-full font-semibold mt-auto h-11 transition-all duration-300 ${
@@ -89,7 +89,7 @@ export const PricingSection = ({ dict }: PricingSectionProps) => {
         <div className="glass-card p-8 md:p-12">
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div>
-              <h3 className="font-display font-bold text-2xl text-white mb-2">{dict.allPlansTitle}</h3>
+              <h3 className="font-display font-medium text-[1.7rem] text-white mb-2">{dict.allPlansTitle}</h3>
               <p className="text-muted-foreground leading-relaxed">{dict.allPlansSubtitle}</p>
             </div>
             <div className="grid sm:grid-cols-2 gap-3.5">
@@ -98,7 +98,7 @@ export const PricingSection = ({ dict }: PricingSectionProps) => {
                   <div className="w-5 h-5 rounded-full bg-primary/15 flex items-center justify-center flex-shrink-0">
                     <Check className="w-3 h-3 text-primary" />
                   </div>
-                  <span className="text-sm text-white/80">{benefit}</span>
+                  <span className="text-base text-white/80">{benefit}</span>
                 </div>
               ))}
             </div>

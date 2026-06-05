@@ -38,7 +38,7 @@ export function CategoryTabs({
           onClick={() => onCategoryChange(tab.key)}
           className={`flex-1 text-center py-2 px-3 text-[13.5px] font-medium cursor-pointer border-none rounded-full transition-all font-[inherit] whitespace-nowrap ${
             activeCategory === tab.key
-              ? "bg-[#111] text-white font-bold"
+              ? "bg-[#111] text-white font-medium"
               : "bg-transparent text-[#888] hover:bg-[#e0e0e0] hover:text-[#111]"
           }`}
         >

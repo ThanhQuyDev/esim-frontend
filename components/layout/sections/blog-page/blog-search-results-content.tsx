@@ -259,12 +259,12 @@ export function BlogSearchResultsContent({ lang }: BlogSearchResultsContentProps
                       ? "Tìm kiếm bài viết..."
                       : "Search blog posts..."
                   }
-                  className="w-full pl-12 pr-28 py-3 rounded-full text-base border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-12 pr-28 py-3 rounded-full text-xl border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   aria-label={lang === "vi" ? "Tìm kiếm blog" : "Search blog"}
                 />
                 <button
                   type="submit"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 px-5 py-2 bg-brand-black text-white text-sm font-medium rounded-full hover:opacity-80 transition-opacity"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 px-5 py-2 bg-brand-black text-white text-base font-medium rounded-full hover:opacity-80 transition-opacity"
                 >
                   {lang === "vi" ? "Tìm kiếm" : "Search"}
                 </button>
@@ -291,7 +291,7 @@ export function BlogSearchResultsContent({ lang }: BlogSearchResultsContentProps
                       ? "Không tìm thấy kết quả"
                       : "No results found"}
                   </p>
-                  <p className="text-sm">
+                  <p className="text-base">
                     {lang === "vi"
                       ? "Vui lòng thử từ khóa khác hoặc kiểm tra lại chính tả."
                       : "Please try a different keyword or check your spelling."}
@@ -348,13 +348,13 @@ export function BlogSearchResultsContent({ lang }: BlogSearchResultsContentProps
                   {currentPage > 1 && (
                     <Link
                       href={`/${lang}/blog/search?q=${encodeURIComponent(query)}&page=${currentPage - 1}`}
-                      className="px-4 py-2 text-sm border border-gray-300 rounded hover:bg-gray-50"
+                      className="px-4 py-2 text-base border border-gray-300 rounded hover:bg-gray-50"
                     >
                       ‹ {lang === "vi" ? "Trước" : "Previous"}
                     </Link>
                   )}
 
-                  <span className="text-sm text-gray-600">
+                  <span className="text-base text-gray-600">
                     {lang === "vi" ? "Trang" : "Page"} {currentPage}
                     {totalPages ? ` / ${totalPages}` : ""}
                   </span>
@@ -362,7 +362,7 @@ export function BlogSearchResultsContent({ lang }: BlogSearchResultsContentProps
                   {hasNextPage && (
                     <Link
                       href={`/${lang}/blog/search?q=${encodeURIComponent(query)}&page=${currentPage + 1}`}
-                      className="px-4 py-2 text-sm border border-gray-300 rounded hover:bg-gray-50"
+                      className="px-4 py-2 text-base border border-gray-300 rounded hover:bg-gray-50"
                     >
                       {lang === "vi" ? "Tiếp" : "Next"} ›
                     </Link>

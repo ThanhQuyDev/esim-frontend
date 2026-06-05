@@ -42,7 +42,7 @@ export function EsimList({ esims, t, lang }: EsimListProps) {
           </div>
           <div>
             <h2 className="text-lg font-semibold text-gray-900">{t.myEsims}</h2>
-            <p className="text-xs text-gray-500">{esims.length} eSIM{esims.length !== 1 ? "s" : ""}</p>
+            <p className="text-sm text-gray-500">{esims.length} eSIM{esims.length !== 1 ? "s" : ""}</p>
           </div>
         </div>
       </div>
@@ -57,7 +57,7 @@ export function EsimList({ esims, t, lang }: EsimListProps) {
             <p className="text-gray-500 mb-4">{t.noEsims}</p>
             <Link
               href={`/${lang}`}
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 text-base font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
             >
               <ShoppingBag className="w-4 h-4" />
               {t.goShopping}
@@ -76,19 +76,19 @@ export function EsimList({ esims, t, lang }: EsimListProps) {
                     <Smartphone className="w-5 h-5 text-white" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-semibold text-gray-900 truncate">{esim.planName}</p>
+                    <p className="text-base font-semibold text-gray-900 truncate">{esim.planName}</p>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <span className="inline-flex items-center gap-1 text-xs text-gray-500">
+                      <span className="inline-flex items-center gap-1 text-sm text-gray-500">
                         <Globe className="w-3 h-3" />
                         {esim.destination}
                       </span>
                       <span className="text-gray-300">·</span>
-                      <span className="inline-flex items-center gap-1 text-xs text-gray-500">
+                      <span className="inline-flex items-center gap-1 text-sm text-gray-500">
                         <Wifi className="w-3 h-3" />
                         {esim.dataMb >= 1024 ? `${parseFloat((esim.dataMb / 1024).toFixed(1))} GB` : `${esim.dataMb} MB`}
                       </span>
                       <span className="text-gray-300">·</span>
-                      <span className="inline-flex items-center gap-1 text-xs text-gray-500">
+                      <span className="inline-flex items-center gap-1 text-sm text-gray-500">
                         <Calendar className="w-3 h-3" />
                         {esim.durationDays} {t.days}
                       </span>
@@ -97,7 +97,7 @@ export function EsimList({ esims, t, lang }: EsimListProps) {
                 </div>
 
                 <div className="flex items-center gap-3 flex-shrink-0">
-                  <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${statusColors[esim.status]}`}>
+                  <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium border ${statusColors[esim.status]}`}>
                     {statusLabels[esim.status]}
                   </span>
                   {expandedId === esim.iccid ? (

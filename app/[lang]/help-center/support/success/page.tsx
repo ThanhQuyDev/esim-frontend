@@ -57,15 +57,15 @@ export default async function SupportSuccessPage({
                 aria-hidden="true"
               />
             </div>
-            <h1 className="text-2xl md:text-3xl font-semibold text-gray-900">
+            <h1 className="text-[1.7rem] md:text-3xl font-semibold text-gray-900">
               {successDict.title}
             </h1>
-            <p className="mx-auto mt-3 max-w-md text-sm md:text-base text-gray-600">
+            <p className="mx-auto mt-3 max-w-md text-base md:text-base text-gray-600">
               {successDict.description}
             </p>
 
             {ticketId && (
-              <p className="mt-5 inline-flex items-center gap-2 rounded-full bg-white px-4 py-1.5 text-sm font-medium text-gray-800 ring-1 ring-gray-200">
+              <p className="mt-5 inline-flex items-center gap-2 rounded-full bg-white px-4 py-1.5 text-base font-medium text-gray-800 ring-1 ring-gray-200">
                 <Mail className="h-4 w-4 text-gray-500" aria-hidden="true" />
                 {interpolate(successDict.ticketId, { id: ticketId })}
               </p>

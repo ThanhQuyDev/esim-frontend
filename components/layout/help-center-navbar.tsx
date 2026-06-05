@@ -148,14 +148,14 @@ export function HelpCenterNavbar({ lang }: HelpCenterNavbarProps) {
                 <button
                     type="button"
                     onClick={() => setIsOpen((v) => !v)}
-                    className={cn("ml-2 inline-flex items-center justify-center w-10 h-10 rounded-md transition-colors xl:hidden", hasScrolled ? "text-gray-700 hover:bg-gray-200" : "text-white hover:bg-white/10")}
+                    className="ml-2 inline-flex items-center justify-center w-10 h-10 rounded-md transition-colors xl:hidden text-gray-700 hover:bg-gray-200"
                     aria-expanded={isOpen}
                     aria-controls="help-center-menu"
                 >
                     {isOpen ? (
-                        <X className="w-5 h-5" aria-hidden="true" />
+                        <X className="w-6 h-6" aria-hidden="true" />
                     ) : (
-                        <Menu className="w-5 h-5" aria-hidden="true" />
+                        <Menu className="w-6 h-6" aria-hidden="true" />
                     )}
                     <span className="sr-only">
                         {isVi ? "Mở menu điều hướng" : "Toggle navigation menu"}
@@ -168,10 +168,8 @@ export function HelpCenterNavbar({ lang }: HelpCenterNavbarProps) {
                     className={cn(
                         // Desktop layout: aligned right, inline
                         "xl:flex xl:items-center xl:flex-1 xl:justify-end xl:gap-4",
-                        // Mobile layout: drawer below header
-                        hasScrolled
-                            ? "max-xl:absolute max-xl:left-0 max-xl:right-0 max-xl:top-full max-xl:bg-gray-100 max-xl:border-b max-xl:border-gray-200 max-xl:shadow-md max-xl:p-4 max-xl:flex-col max-xl:items-stretch max-xl:gap-3 max-xl:transition-opacity max-xl:duration-150"
-                            : "max-xl:absolute max-xl:left-0 max-xl:right-0 max-xl:top-full max-xl:bg-[rgba(0,0,0,0.6)] max-xl:backdrop-blur-[98px] max-xl:[-webkit-backdrop-filter:blur(98px)] max-xl:border-b max-xl:border-white/10 max-xl:shadow-md max-xl:p-4 max-xl:flex-col max-xl:items-stretch max-xl:gap-3 max-xl:transition-opacity max-xl:duration-150",
+                        // Mobile layout: drawer below header (always light background for readability)
+                        "max-xl:absolute max-xl:left-0 max-xl:right-0 max-xl:top-full max-xl:bg-white max-xl:border-b max-xl:border-gray-200 max-xl:shadow-lg max-xl:flex-col max-xl:items-start max-xl:gap-0 max-xl:transition-opacity max-xl:duration-150",
                         isOpen ? "max-xl:flex max-xl:opacity-100" : "max-xl:hidden"
                     )}
                 >
@@ -181,10 +179,10 @@ export function HelpCenterNavbar({ lang }: HelpCenterNavbarProps) {
                             role="search"
                             onSubmit={handleSearchSubmit}
                             action={`${helpCenterHome}/search`}
-                            className="flex items-center w-full xl:max-w-md xl:flex-1 xl:mx-4 relative"
+                            className="flex items-center w-full xl:max-w-md xl:flex-1 xl:mx-4 relative max-xl:px-4 max-xl:py-3 max-xl:border-b max-xl:border-gray-200"
                         >
                             <Search
-                                className={cn("absolute left-3 w-4 h-4 pointer-events-none", hasScrolled ? "text-gray-400" : "text-white/60")}
+                                className={cn("absolute left-7 w-4 h-4 pointer-events-none", "text-gray-400")}
                                 aria-hidden="true"
                             />
                             <input
@@ -202,12 +200,7 @@ export function HelpCenterNavbar({ lang }: HelpCenterNavbarProps) {
                                         ? "Nhập chủ đề, câu hỏi hoặc vấn đề"
                                         : "Type a topic, question or issue here"
                                 }
-                                className={cn(
-                                    "w-full pl-9 pr-3 py-2 text-sm rounded-md border focus:outline-none focus:ring-2",
-                                    hasScrolled
-                                        ? "text-gray-900 placeholder-gray-400 border-gray-300 bg-white focus:ring-blue-500 focus:border-blue-500"
-                                        : "text-white placeholder-white/50 border-white/30 bg-white/10 focus:ring-white/40 focus:border-white/50"
-                                )}
+                                className="w-full pl-9 pr-3 py-2 text-sm rounded-md border border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             />
                         </form>
                     )}
@@ -217,36 +210,38 @@ export function HelpCenterNavbar({ lang }: HelpCenterNavbarProps) {
                         <Link
                             key={link.href}
                             href={link.href}
-                            className={cn("inline-flex items-center justify-center px-3 py-2 text-[0.94rem] font-medium whitespace-nowrap", "text-gray-900 hover:text-gray-900")}
+                            className="w-full text-left px-4 py-3 text-[0.94rem] font-medium text-gray-900 hover:text-blue-600 hover:bg-gray-50 border-b border-gray-200 transition-colors"
                         >
                             {link.label}
                         </Link>
                     ))}
 
                     {/* LOCALIZATION */}
-                    <div className={cn("relative inline-flex items-center px-2 py-1 rounded-md border transition-colors","border-black bg-white/10 hover:border-white/50")}>
-                        <Globe
-                            className={cn("w-4 h-4 mr-1", "text-gray-600")}
-                            aria-hidden="true"
-                        />
-                        <span className={cn("text-sm font-medium uppercase min-w-5", "text-gray-700" )}>
-                            {lang}
-                        </span>
-                        <ChevronDown
-                            className={cn("w-3 h-3 ml-1",  "text-gray-500" )}
-                            aria-hidden="true"
-                        />
-                        <select
-                            name="lang"
-                            id="helpCenterLang"
-                            value={lang}
-                            onChange={(e) => handleLangChange(e.target.value)}
-                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                            aria-label={isVi ? "Chọn ngôn ngữ" : "Select language"}
-                        >
-                            <option value="en">English</option>
-                            <option value="vi">Tiếng Việt</option>
-                        </select>
+                    <div className="w-full px-4 py-3 border-b border-gray-200">
+                        <div className="relative inline-flex items-center px-2 py-1 rounded-md border border-gray-300 bg-white hover:border-gray-400 transition-colors">
+                            <Globe
+                                className="w-4 h-4 mr-1 text-gray-600"
+                                aria-hidden="true"
+                            />
+                            <span className="text-sm font-medium uppercase min-w-5 text-gray-700">
+                                {lang}
+                            </span>
+                            <ChevronDown
+                                className="w-3 h-3 ml-1 text-gray-500"
+                                aria-hidden="true"
+                            />
+                            <select
+                                name="lang"
+                                id="helpCenterLang"
+                                value={lang}
+                                onChange={(e) => handleLangChange(e.target.value)}
+                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                aria-label={isVi ? "Chọn ngôn ngữ" : "Select language"}
+                            >
+                                <option value="en">English</option>
+                                <option value="vi">Tiếng Việt</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </nav>

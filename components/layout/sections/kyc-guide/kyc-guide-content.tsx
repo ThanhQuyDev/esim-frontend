@@ -112,11 +112,6 @@ const IconBanSec = () => (
     <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
   </svg>
 );
-const IconBackChevron = () => (
-  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-    <polyline points="15 18 9 12 15 6" />
-  </svg>
-);
 
 /* ── Section card ── */
 function SectionCard({
@@ -275,12 +270,12 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
 
   return (
     <div className="bg-[#F1F5F9] min-h-screen text-[#0F172A] overflow-clip max-[640px]:text-[15px]" style={{ fontFamily: "'Google Sans', system-ui, sans-serif" }}>
-      {/* Sticky tabs + back button */}
+      {/* Sticky tabs */}
       <div
         className="bg-white px-12 max-[640px]:px-2 sticky top-0 z-20 overflow-x-auto"
         style={{ borderBottom: "1.5px solid #E5E7EB", scrollbarWidth: "none" }}
       >
-        <div className="flex w-full max-w-[832px] mx-auto justify-between">
+        <div className="flex w-full max-w-[832px] mx-auto">
           <div className="flex items-center max-[640px]:gap-0.5">
           {REGION_KEYS.map((k) => {
             const r = KYC_REGIONS[k];
@@ -305,15 +300,6 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
             );
           })}
           </div>
-          <button
-            type="button"
-            onClick={() => router.back()}
-            className="flex items-center gap-1.5 px-[14px] py-2 rounded-full text-[13px] font-semibold text-[#374151] cursor-pointer bg-white transition-colors hover:bg-[#F3F4F6] shrink-0 mr-3"
-            style={{ border: "1.5px solid #E5E7EB" }}
-          >
-            <IconBackChevron />
-            Quay lại
-          </button>
         </div>
       </div>
 

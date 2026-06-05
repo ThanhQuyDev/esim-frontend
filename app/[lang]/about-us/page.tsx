@@ -32,7 +32,7 @@ export default async function AboutUsPage({
   const about = dict.aboutUs;
 
   return (
-    <main role="main">
+    <main role="main" className="overflow-hidden">
       <Breadcrumb
         items={[{ label: dict.breadcrumb.aboutUs }]}
         lang={params.lang}

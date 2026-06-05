@@ -86,7 +86,7 @@ export function FaqTabsSection({ dict, lang }: FaqTabsSectionProps) {
                   {currentItems.map((item, i) => (
                     <div
                       key={i}
-                      className={`bg-bg-secondary rounded-sm border-md transition-colors ${
+                      className={`bg-primary rounded-sm border-md transition-colors ${
                         openIndex === i
                           ? "border-border-focus"
                           : "border-border-secondary hover:border-border-focus"

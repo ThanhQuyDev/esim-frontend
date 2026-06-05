@@ -79,22 +79,22 @@ export function BuyActions({ selectedPlan, days, quantity, isFixed, dict, lang, 
                   <path d="M20 6L9 17l-5-5" />
                 </svg>
               </div>
-              <h3 className="text-lg font-bold text-[#111]">
+              <h3 className="text-lg font-medium text-[#111]">
                 {lang === "vi" ? "Đã thêm vào giỏ hàng!" : "Added to cart!"}
               </h3>
-              <p className="text-sm text-[#6b7280]">
+              <p className="text-base text-[#6b7280]">
                 {selectedPlan?.name || "eSIM"} — {formatVnd(totalPrice)}
               </p>
               <div className="flex flex-col gap-2.5 w-full mt-2">
                 <button
                   onClick={() => router.push(`/${lang}/cart`)}
-                  className="w-full py-3 rounded-full bg-[#fff500] border border-[#d1b700] text-sm font-bold text-[#111] transition-all hover:bg-[#d1b700] cursor-pointer"
+                  className="w-full py-3 rounded-full bg-[#fff500] border border-[#d1b700] text-base font-medium text-[#111] transition-all hover:bg-[#d1b700] cursor-pointer"
                 >
                   {lang === "vi" ? "Thanh toán ngay" : "Checkout now"}
                 </button>
                 <button
                   onClick={() => setShowConfirm(false)}
-                  className="w-full py-3 rounded-full border border-[#e5e7eb] bg-white text-sm font-semibold text-[#111] transition-all hover:bg-gray-50 cursor-pointer"
+                  className="w-full py-3 rounded-full border border-[#e5e7eb] bg-white text-base font-semibold text-[#111] transition-all hover:bg-gray-50 cursor-pointer"
                 >
                   {lang === "vi" ? "Tiếp tục mua hàng" : "Continue shopping"}
                 </button>
@@ -119,7 +119,7 @@ export function BuyActions({ selectedPlan, days, quantity, isFixed, dict, lang, 
         </button>
         <button
           onClick={handleBuyNow}
-          className="flex items-center justify-center px-3 py-2.5 rounded-full border border-[#d1b700] bg-[#fff500] text-[13.5px] font-bold cursor-pointer font-[inherit] transition-all hover:bg-[#d1b700] whitespace-nowrap"
+          className="flex items-center justify-center px-3 py-2.5 rounded-full border border-[#d1b700] bg-[#fff500] text-[13.5px] font-medium cursor-pointer font-[inherit] transition-all hover:bg-[#d1b700] whitespace-nowrap"
         >
           {dict.buyNow} — {selectedPlan ? formatVnd(totalPrice) : "—"}
         </button>

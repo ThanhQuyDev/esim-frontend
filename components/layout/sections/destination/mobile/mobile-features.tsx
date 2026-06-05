@@ -210,12 +210,13 @@ export function MobileFeatures({
   const hasCalls = selectedPlan?.call != null && Number(selectedPlan.call) > 0;
   const hasLocalNumber = false; // eSIM typically doesn't provide local number
   const hasEkyc = !!selectedPlan?.isKyc;
-  const hasTopup = selectedPlan?.topUp ?? true;
+  const hasTopup = selectedPlan?.topUp ?? true
+  const operatorName = selectedPlan?.operatorName || null;
+  const speed = selectedPlan?.speed || null;;
 
   return (
     <>
-      {/* ── Device Checker Section (moved above Features) ── */}
-      <MobileDeviceChecker dict={dict} lang={lang} />
+
 
       {/* ── Features Section ── */}
       <div className="px-4 py-[18px] border-t-[7px] border-[#f3f4f6]">
@@ -228,7 +229,26 @@ export function MobileFeatures({
           </SectionIconBox>
           <span className="text-[15px] font-bold text-[#1a1a1a]">{dict.features.title}</span>
         </div>
-
+        {operatorName && (
+          <div className="flex items-center justify-between py-[13px] border-b border-[#f3f4f6] gap-3">
+            <span className="text-sm text-[#374151] shrink-0">{dict.carriers.domestic}</span>
+            <div className="flex flex-nowrap gap-[5px] flex-1 justify-end overflow-x-auto" style={{ scrollbarWidth: "none" }}>
+              <span className="px-2.5 py-1 border border-[#D1D5DB] rounded-md text-[13px] font-semibold whitespace-nowrap shrink-0">
+                {operatorName}
+              </span>
+            </div>
+          </div>
+        )}
+        {speed && (
+          <div className="flex items-center justify-between py-[13px] border-b border-[#f3f4f6] gap-3">
+            <span className="text-sm text-[#374151] shrink-0">{dict.carriers.speed}</span>
+            <div className="flex flex-nowrap gap-[5px] flex-1 justify-end overflow-x-auto" style={{ scrollbarWidth: "none" }}>
+              <span className="px-2.5 py-1 border border-[#D1D5DB] rounded-md text-[13px] font-semibold whitespace-nowrap shrink-0">
+                {speed}
+              </span>
+            </div>
+          </div>
+        )}
         {/* Hotspot — dynamic from plan.hotSpot / plan.hotSpotAllow */}
         <div className="flex items-center justify-between py-[13px] border-b border-[#f3f4f6] gap-3">
           <span className="text-sm text-[#374151]">{dict.features.hotspot}</span>
@@ -361,6 +381,9 @@ export function MobileFeatures({
         )}
       </div>
 
+      {/* ── Device Checker Section (moved above Features) ── */}
+      <MobileDeviceChecker dict={dict} lang={lang} />
+
       {/* ── Delivery Section ── */}
       <div className="px-4 py-[18px] border-t-[7px] border-[#f3f4f6]">
         <div className="flex items-center gap-2.5 mb-4">
@@ -410,14 +433,6 @@ export function MobileFeatures({
             <strong className="text-[#78350f]">{dict.note.title}:</strong> {dict.note.text}
           </p>
         </div>
-      </div>
-
-      {/* ── Disclaimer ── */}
-      <div className="px-4 py-4 text-[13px] text-[#6b7280] leading-normal">
-        {dict.disclaimer}{" "}
-        <a href={deviceLink} className="text-[#1a1a1a] font-semibold underline">
-          {dict.disclaimerLink}
-        </a>
       </div>
     </>
   );

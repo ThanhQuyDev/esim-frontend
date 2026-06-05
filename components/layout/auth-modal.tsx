@@ -165,10 +165,10 @@ export function AuthModal({ lang }: AuthModalProps) {
               <div className="mx-auto w-14 h-14 rounded-full bg-[var(--bg-accent)]/10 flex items-center justify-center mb-4">
                 <Mail className="w-7 h-7 text-[var(--bg-accent)]" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900">
+              <h2 className="text-[1.7rem] font-medium text-gray-900">
                 {t(lang, "Đăng nhập / Đăng ký", "Sign In / Sign Up")}
               </h2>
-              <p className="mt-2 text-sm text-gray-500">
+              <p className="mt-2 text-base text-gray-500">
                 {t(
                   lang,
                   "Nhập email để nhận mã xác thực OTP",
@@ -179,7 +179,7 @@ export function AuthModal({ lang }: AuthModalProps) {
 
             {/* Error */}
             {error && (
-              <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-sm text-red-600">
+              <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-base text-red-600">
                 {error}
               </div>
             )}
@@ -188,7 +188,7 @@ export function AuthModal({ lang }: AuthModalProps) {
             <div className="space-y-1.5">
               <label
                 htmlFor="auth-email"
-                className="text-sm font-medium text-gray-700"
+                className="text-base font-medium text-gray-700"
               >
                 Email
               </label>
@@ -202,7 +202,7 @@ export function AuthModal({ lang }: AuthModalProps) {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
-                  className="w-full rounded-xl border border-gray-200 pl-10 pr-4 py-3 text-sm outline-none transition-colors focus:border-[var(--bg-accent)] focus:ring-1 focus:ring-[var(--bg-accent)]"
+                  className="w-full rounded-xl border border-gray-200 pl-10 pr-4 py-3 text-base outline-none transition-colors focus:border-[var(--bg-accent)] focus:ring-1 focus:ring-[var(--bg-accent)]"
                 />
               </div>
             </div>
@@ -223,17 +223,17 @@ export function AuthModal({ lang }: AuthModalProps) {
             {/* Back button */}
             <button
               onClick={() => { setStep("email"); setError(""); setOtp(["", "", "", "", "", ""]); }}
-              className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 transition-colors cursor-pointer"
+              className="flex items-center gap-1 text-base text-gray-500 hover:text-gray-700 transition-colors cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
               {t(lang, "Quay lại", "Back")}
             </button>
 
             <div className="text-center">
-              <h2 className="text-2xl font-bold text-gray-900">
+              <h2 className="text-[1.7rem] font-medium text-gray-900">
                 {t(lang, "Nhập mã OTP", "Enter OTP")}
               </h2>
-              <p className="mt-2 text-sm text-gray-500">
+              <p className="mt-2 text-base text-gray-500">
                 {t(lang, "Mã xác thực đã được gửi đến", "A verification code was sent to")}
                 <br />
                 <span className="font-medium text-gray-900">{email}</span>
@@ -242,7 +242,7 @@ export function AuthModal({ lang }: AuthModalProps) {
 
             {/* Error */}
             {error && (
-              <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-sm text-red-600">
+              <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-base text-red-600">
                 {error}
               </div>
             )}
@@ -259,7 +259,7 @@ export function AuthModal({ lang }: AuthModalProps) {
                   value={digit}
                   onChange={(e) => handleOtpChange(i, e.target.value)}
                   onKeyDown={(e) => handleOtpKeyDown(i, e)}
-                  className="w-12 h-14 text-center text-xl font-bold rounded-xl border border-gray-200 outline-none transition-colors focus:border-[var(--bg-accent)] focus:ring-1 focus:ring-[var(--bg-accent)]"
+                  className="w-12 h-14 text-center text-2xl font-medium rounded-xl border border-gray-200 outline-none transition-colors focus:border-[var(--bg-accent)] focus:ring-1 focus:ring-[var(--bg-accent)]"
                   aria-label={`OTP digit ${i + 1}`}
                 />
               ))}
@@ -273,7 +273,7 @@ export function AuthModal({ lang }: AuthModalProps) {
             )}
 
             {/* Resend */}
-            <p className="text-center text-sm text-gray-500">
+            <p className="text-center text-base text-gray-500">
               {t(lang, "Không nhận được mã?", "Didn't receive the code?")}{" "}
               <button
                 type="button"

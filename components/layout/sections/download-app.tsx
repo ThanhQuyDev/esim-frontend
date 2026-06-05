@@ -194,7 +194,7 @@ export function DownloadAppSection({ dict }: DownloadAppSectionProps) {
                       <div className="hidden md:block">
                         <div>
                           <Image
-                            alt="A QR code to download the esim.vn eSIM app."
+                            alt="A QR code to download the esim.vn app."
                             loading="lazy"
                             width={555}
                             height={555}

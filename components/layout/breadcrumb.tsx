@@ -13,13 +13,14 @@ interface BreadcrumbProps {
   items: BreadcrumbItem[];
   lang: string;
   className?: string;
+  children?: React.ReactNode;
 }
 
 /**
  * Breadcrumb navigation component with JSON-LD structured data for SEO.
  * Follows shadcn/ui design patterns with Tailwind CSS.
  */
-export function Breadcrumb({ items, lang, className = "" }: BreadcrumbProps) {
+export function Breadcrumb({ items, lang, className = "", children }: BreadcrumbProps) {
   const pathname = usePathname();
 
   // Build full breadcrumb list with Home as first item
@@ -55,7 +56,8 @@ export function Breadcrumb({ items, lang, className = "" }: BreadcrumbProps) {
         aria-label="Breadcrumb"
         className={`w-full py-3 ${className}`}
       >
-        <ol className="max-w-7xl mx-auto z-50 px-4 flex items-center flex-wrap gap-1 text-sm text-muted-foreground">
+        <div className="max-w-7xl mx-auto px-4  flex items-center justify-between">
+        <ol className="z-50 flex items-center flex-wrap gap-1 text-sm text-muted-foreground">
           {allItems.map((item, index) => {
             const isLast = index === allItems.length - 1;
             const isFirst = index === 0;
@@ -78,13 +80,15 @@ export function Breadcrumb({ items, lang, className = "" }: BreadcrumbProps) {
                     className="hover:text-primary transition-colors flex items-center gap-1 whitespace-nowrap"
                   >
                     {isFirst && <Home className="h-3.5 w-3.5" />}
-                    <span className="hidden sm:inline">{item.label}</span>
+                    <span className={isFirst ? "hidden sm:inline" : "inline"}>{item.label}</span>
                   </Link>
                 )}
               </li>
             );
           })}
         </ol>
+        {children && <div className="flex items-center shrink-0">{children}</div>}
+        </div>
       </nav>
     </>
   );

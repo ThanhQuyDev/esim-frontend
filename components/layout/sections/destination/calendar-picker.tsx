@@ -105,14 +105,14 @@ export function CalendarPicker({
       </Popover.Trigger>
       <Popover.Portal>
         <Popover.Content
-          className="bg-white rounded-[14px] p-5 shadow-[0_20px_60px_rgba(0,0,0,0.15)] z-[300] w-[340px]"
+          className="bg-white rounded-[14px] p-5 shadow-[0_20px_60px_rgba(0,0,0,0.15)] z-[300] w-[340px] animate-slide-up"
           sideOffset={8}
           align="end"
         >
           {/* Step indicator */}
           <div className="flex items-center justify-center gap-2 mb-3">
             <span
-              className={`text-xs font-semibold px-2.5 py-1 rounded-full transition-colors ${
+              className={`text-sm font-semibold px-2.5 py-1 rounded-full transition-colors ${
                 step === "start"
                   ? "bg-[#111] text-white"
                   : "bg-[#f3f4f6] text-[#6b7280] cursor-pointer hover:bg-[#e5e7eb]"
@@ -125,7 +125,7 @@ export function CalendarPicker({
               <path d="M4 2l4 4-4 4" stroke="#9ca3af" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
             <span
-              className={`text-xs font-semibold px-2.5 py-1 rounded-full transition-colors ${
+              className={`text-sm font-semibold px-2.5 py-1 rounded-full transition-colors ${
                 step === "end"
                   ? "bg-[#111] text-white"
                   : "bg-[#f3f4f6] text-[#6b7280] cursor-pointer hover:bg-[#e5e7eb]"
@@ -175,7 +175,7 @@ export function CalendarPicker({
               weekday: { fontSize: "12px", fontWeight: 600, color: "#6b7280", padding: "4px 0" },
             }}
           />
-          <div className="text-xs text-[#6b7280] mt-2.5 text-center min-h-4">{rangeText}</div>
+          <div className="text-sm text-[#6b7280] mt-2.5 text-center min-h-4">{rangeText}</div>
           <div className="flex gap-2 mt-3.5 justify-end">
             <button
               onClick={() => setOpen(false)}

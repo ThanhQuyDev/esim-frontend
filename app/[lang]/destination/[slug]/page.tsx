@@ -78,7 +78,7 @@ export default async function DestinationPage({ params }: DestinationPageProps) 
       <Breadcrumb
         items={[
           { label: dict.breadcrumb.allDestinations, href: localizedHref(params.lang, "all-destinations") },
-          { label: destination.name },
+          { label: localizedName },
         ]}
         lang={params.lang}
       />

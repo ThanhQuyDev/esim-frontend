@@ -900,9 +900,9 @@
       "rating": "4.7",
       "ratingCount": "· hơn 97.400 đánh giá",
       "trustpilot": "Trustpilot",
-      "secure": "Đảm bảo thanh toán an toàn",
-      "support": "Hỗ trợ kỹ thuật 24/7",
-      "refund": "Cam kết hoàn tiền 100%"
+      "secure": "Thanh toán an toàn",
+      "support": "Hỗ trợ 24/7",
+      "refund": "Hoàn tiền 100%"
     },
     "greenBox": {
       "line1": "Data <strong>{data}</strong> tốc độ cao – Hết lưu lượng, hạ tốc độ {fupSpeed}",

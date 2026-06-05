@@ -380,7 +380,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
         <div className="flex h-20 w-20 items-center justify-center rounded-full bg-bg-secondary">
           <ShoppingCart className="h-10 w-10 text-text-tertiary" />
         </div>
-        <h2 className="text-xl font-semibold text-text-primary">
+        <h2 className="text-2xl font-semibold text-text-primary">
           {dict.emptyCart || "Your cart is empty"}
         </h2>
         <p className="text-text-secondary text-center max-w-md">
@@ -409,7 +409,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
               onChange={toggleSelectAll}
               className="h-5 w-5 rounded border-border-secondary accent-[var(--bg-accent)] cursor-pointer"
             />
-            <span className="text-sm font-medium text-text-primary">
+            <span className="text-base font-medium text-text-primary">
               {dict.selectAll || "Select all"} ({cart.items.length})
             </span>
           </label>
@@ -417,7 +417,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
             <button
               type="button"
               onClick={handleRemoveSelected}
-              className="inline-flex items-center gap-1.5 text-sm text-red-600 hover:text-red-700 font-medium transition-colors"
+              className="inline-flex items-center gap-1.5 text-base text-red-600 hover:text-red-700 font-medium transition-colors"
             >
               <Trash2 className="w-4 h-4" />
               {lang === "vi" ? `Xóa (${selectedIds.size})` : `Delete (${selectedIds.size})`}
@@ -443,17 +443,17 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
       {/* Order Summary Sidebar */}
       <div className="lg:col-span-1">
         <div className="sticky top-24 rounded-2xl border border-border-primary bg-white p-6 space-y-5">
-          <h3 className="text-lg font-bold text-text-primary">
+          <h3 className="text-lg font-medium text-text-primary">
             {dict.orderSummary || "Order Summary"}
           </h3>
 
           {/* Selected count */}
-          <div className="text-sm text-text-secondary">
+          <div className="text-base text-text-secondary">
             {dict.selectedItems || "Selected items"}: {selectedItems.length}
           </div>
 
           {/* Subtotal */}
-          <div className="flex justify-between text-sm">
+          <div className="flex justify-between text-base">
             <span className="text-text-secondary">{dict.subtotal || "Subtotal"}</span>
             <span className="font-medium text-text-primary">{displaySubtotal}</span>
           </div>
@@ -462,7 +462,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
           <div className="space-y-3 border-t border-border-primary pt-4">
             <div className="flex items-center gap-2">
               <Tag className="h-4 w-4 text-text-tertiary" />
-              <span className="text-sm font-medium text-text-primary">
+              <span className="text-base font-medium text-text-primary">
                 {dict.coupon || "Promo Code"}
               </span>
             </div>
@@ -476,11 +476,11 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
                     ) : (
                       <Ticket className="h-4 w-4 text-green-600" />
                     )}
-                    <span className="text-sm font-semibold text-green-700">
+                    <span className="text-base font-semibold text-green-700">
                       {promoApplied.code}
                     </span>
                   </div>
-                  <span className="text-xs text-green-600">
+                  <span className="text-sm text-green-600">
                     {promoApplied.type === "referral"
                       ? (lang === "vi" ? "Giảm 10.000₫" : "10,000₫ off")
                       : `-${cart.appliedCoupon?.discount}%`}
@@ -488,7 +488,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
                 </div>
                 <button
                   onClick={handleApplyPromo}
-                  className="text-xs text-red-500 hover:text-red-700 cursor-pointer"
+                  className="text-sm text-red-500 hover:text-red-700 cursor-pointer"
                 >
                   {dict.remove || "Remove"}
                 </button>
@@ -504,12 +504,12 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
                       setPromoError("");
                     }}
                     placeholder={dict.enterCoupon || "Enter promo or referral code"}
-                    className="flex-1 rounded-xl border border-border-primary px-4 py-2.5 text-sm outline-none focus:border-[var(--border-focus)] transition-colors"
+                    className="flex-1 rounded-xl border border-border-primary px-4 py-2.5 text-base outline-none focus:border-[var(--border-focus)] transition-colors"
                   />
                   <button
                     onClick={handleApplyPromo}
                     disabled={!promoInput.trim()}
-                    className="rounded-xl bg-bg-brand-black px-4 py-2.5 text-sm font-medium text-white transition-colors hover:opacity-90 disabled:opacity-50 cursor-pointer"
+                    className="rounded-xl bg-bg-brand-black px-4 py-2.5 text-base font-medium text-white transition-colors hover:opacity-90 disabled:opacity-50 cursor-pointer"
                   >
                     {dict.apply || "Apply"}
                   </button>
@@ -518,7 +518,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
                 {/* Available Coupons Toggle */}
                 <button
                   onClick={() => setShowCoupons(!showCoupons)}
-                  className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 cursor-pointer"
+                  className="flex items-center gap-2 text-base text-blue-600 hover:text-blue-700 cursor-pointer"
                 >
                   <Ticket className="h-4 w-4" />
                   {couponsLoading
@@ -533,7 +533,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
                         <div className="h-5 w-5 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
                       </div>
                     ) : availableCoupons.length === 0 ? (
-                      <p className="text-xs text-text-tertiary text-center py-2">
+                      <p className="text-sm text-text-tertiary text-center py-2">
                         {dict.noCoupons || "No coupons available"}
                       </p>
                     ) : availableCoupons.map((coupon) => (
@@ -546,14 +546,14 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
                         className="w-full flex items-center justify-between rounded-xl border border-dashed border-border-secondary p-3 text-left transition-colors hover:bg-bg-secondary cursor-pointer"
                       >
                         <div>
-                          <span className="text-sm font-semibold text-text-primary">
+                          <span className="text-base font-semibold text-text-primary">
                             {coupon.code}
                           </span>
-                          <p className="text-xs text-text-tertiary mt-0.5">
+                          <p className="text-sm text-text-tertiary mt-0.5">
                             {coupon.description}
                           </p>
                           {(coupon.minOrderAmountVnd || coupon.minAmount) ? (
-                            <p className="text-xs text-text-tertiary">
+                            <p className="text-sm text-text-tertiary">
                               {dict.minOrder || "Min order"}:{" "}
                               {coupon.minOrderAmountVnd
                                 ? `${coupon.minOrderAmountVnd.toLocaleString("vi-VN")}₫`
@@ -561,7 +561,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
                             </p>
                           ) : null}
                         </div>
-                        <span className="text-sm font-bold text-green-600">
+                        <span className="text-base font-medium text-green-600">
                           -{coupon.discount}%
                         </span>
                       </button>
@@ -572,7 +572,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
             )}
 
             {promoError && (
-              <p className="text-xs text-red-500 flex items-center gap-1">
+              <p className="text-sm text-red-500 flex items-center gap-1">
                 <AlertTriangle className="w-3 h-3 flex-shrink-0" />{promoError}
               </p>
             )}
@@ -580,7 +580,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
 
           {/* Coupon Discount */}
           {(hasVndPricing ? vndDiscountValue > 0 : discount > 0) && (
-            <div className="flex justify-between text-sm">
+            <div className="flex justify-between text-base">
               <span className="text-green-600">{dict.discount || "Discount"}</span>
               <span className="font-medium text-green-600">-{displayDiscount}</span>
             </div>
@@ -588,7 +588,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
 
           {/* Referral Discount */}
           {promoApplied?.type === "referral" && promoDiscountVnd > 0 && (
-            <div className="flex justify-between text-sm">
+            <div className="flex justify-between text-base">
               <span className="text-blue-600">{wt.referralDiscount}</span>
               <span className="font-medium text-blue-600">-{formatVnd(promoDiscountVnd)}</span>
             </div>
@@ -596,10 +596,10 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
 
           {/* Total */}
           <div className="flex justify-between border-t border-border-primary pt-4">
-            <span className="text-base font-bold text-text-primary">
+            <span className="text-xl font-medium text-text-primary">
               {dict.total || "Total"}
             </span>
-            <span className="text-xl font-bold text-text-primary">{displayTotal}</span>
+            <span className="text-2xl font-medium text-text-primary">{displayTotal}</span>
           </div>
 
           {/* eXU Cashback Preview */}
@@ -607,10 +607,10 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
             <div className="flex items-center gap-3 rounded-xl bg-emerald-50 border border-emerald-100 p-3">
               <Coins className="w-5 h-5 text-emerald-600 flex-shrink-0" />
               <div>
-                <p className="text-sm font-medium text-emerald-700">
+                <p className="text-base font-medium text-emerald-700">
                   {lang === "vi" ? "Nhận" : "Earn"} {formatExu(cashbackVnd)}
                 </p>
-                <p className="text-xs text-emerald-600">
+                <p className="text-sm text-emerald-600">
                   {lang === "vi"
                     ? "2% hoàn tiền vào ví eXU sau khi thanh toán"
                     : "2% cashback to your eXU wallet after payment"}
@@ -623,7 +623,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
           {!user ? (
             <button
               onClick={() => openAuthModal()}
-              className="flex w-full items-center justify-center gap-2 rounded-full bg-gray-100 py-3.5 text-base font-semibold text-gray-500 transition-colors hover:bg-gray-200 cursor-pointer"
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-gray-100 py-3.5 text-xl font-semibold text-gray-500 transition-colors hover:bg-gray-200 cursor-pointer"
             >
               <Wallet className="h-5 w-5" />
               {lang === "vi" ? "Bạn có eXU không?" : "Do you have eXU?"}
@@ -641,7 +641,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
                 localStorage.setItem("esim_checkout_use_exu", "true");
                 window.location.href = `/${lang}/checkout`;
               }}
-              className="flex w-full items-center justify-center gap-2 rounded-full bg-emerald-500 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-600 cursor-pointer"
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-emerald-500 py-3.5 text-base font-semibold text-white transition-colors hover:bg-emerald-600 cursor-pointer"
             >
               <Wallet className="h-5 w-5" />
               {lang === "vi"
@@ -654,7 +654,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
           <button
             onClick={handleCheckout}
             disabled={selectedItems.length === 0}
-            className={`flex w-full items-center justify-center gap-2 rounded-full py-3.5 text-base font-semibold transition-colors ${
+            className={`flex w-full items-center justify-center gap-2 rounded-full py-3.5 text-xl font-semibold transition-colors ${
               selectedItems.length > 0
                 ? "bg-bg-accent text-text-primary hover:bg-bg-accent-hover cursor-pointer"
                 : "bg-gray-200 text-gray-400 cursor-not-allowed"
@@ -727,20 +727,20 @@ function CartItemRow({
 
       {/* Product Info */}
       <div className="flex-1 min-w-0">
-        <h4 className="text-sm font-semibold text-text-primary truncate">{item.name}</h4>
-        <p className="text-xs text-text-tertiary mt-1 line-clamp-2">{item.description}</p>
+        <h4 className="text-base font-semibold text-text-primary truncate">{item.name}</h4>
+        <p className="text-sm text-text-tertiary mt-1 line-clamp-2">{item.description}</p>
         {item.destination && (
-          <span className="inline-flex items-center gap-1 mt-2 text-xs bg-bg-secondary rounded-full px-3 py-1 text-text-secondary">
+          <span className="inline-flex items-center gap-1 mt-2 text-sm bg-bg-secondary rounded-full px-3 py-1 text-text-secondary">
             {item.destination}
           </span>
         )}
         {item.dataMb && (
-          <span className="inline-block mt-2 ml-2 text-xs bg-blue-50 rounded-full px-3 py-1 text-blue-600">
+          <span className="inline-block mt-2 ml-2 text-sm bg-blue-50 rounded-full px-3 py-1 text-blue-600">
             {item.dataMb >= 9999999 ? dict.unlimited || "Unlimited" : item.dataMb >= 1024 ? `${parseFloat((item.dataMb / 1024).toFixed(1))} GB` : `${item.dataMb} MB`}
           </span>
         )}
         {item.durationDays && (
-          <span className="inline-block mt-2 ml-2 text-xs bg-green-50 rounded-full px-3 py-1 text-green-600">
+          <span className="inline-block mt-2 ml-2 text-sm bg-green-50 rounded-full px-3 py-1 text-green-600">
             {item.durationDays} {item.durationDays === 1 ? dict.day || "day" : dict.days || "days"}
           </span>
         )}
@@ -750,15 +750,15 @@ function CartItemRow({
       <div className="flex flex-col items-end gap-3 flex-shrink-0">
         <div className="flex flex-col items-end">
           {displayOriginalPrice && (
-            <span className="text-xs text-[#6b7280] line-through">
+            <span className="text-sm text-[#6b7280] line-through">
               {displayOriginalPrice}
             </span>
           )}
-          <span className="text-sm font-bold text-text-primary">
+          <span className="text-base font-medium text-text-primary">
             {displayPrice}
           </span>
           {hasItemDiscount && (
-            <span className="text-[12px] font-bold text-green-600 bg-green-50 px-1.5 py-0.5 rounded mt-0.5">
+            <span className="text-[12px] font-medium text-green-600 bg-green-50 px-1.5 py-0.5 rounded mt-0.5">
               -{item.discount}%
             </span>
           )}
@@ -772,7 +772,7 @@ function CartItemRow({
           >
             <Minus className="h-4 w-4" />
           </button>
-          <span className="w-8 text-center text-sm font-medium text-text-primary">
+          <span className="w-8 text-center text-base font-medium text-text-primary">
             {item.quantity}
           </span>
           <button
@@ -785,7 +785,7 @@ function CartItemRow({
         </div>
         <button
           onClick={onRemove}
-          className="text-xs text-red-400 hover:text-red-600 cursor-pointer transition-colors flex items-center gap-1"
+          className="text-sm text-red-400 hover:text-red-600 cursor-pointer transition-colors flex items-center gap-1"
           aria-label={dict.removeItem || "Remove item"}
         >
           <Trash2 className="h-3.5 w-3.5" />

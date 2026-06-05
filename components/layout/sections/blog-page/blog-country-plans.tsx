@@ -20,7 +20,7 @@ export function BlogCountryPlansList({ plans, lang }: { plans: Plan[]; lang: str
         {plans.map((plan, idx) => (
           <li
             key={plan.id}
-            className={`flex items-center gap-2 py-3 ${idx > 0 ? "border-t-md border-neutral-1000/[0.1]" : ""}`}
+            className={`flex items-center gap-2 py-3 ${idx > 0 ? "border-t" : ""}`}
           >
             <div className="w-[24px] h-[24px] relative overflow-hidden shrink-0 rounded-full">
               <Image

@@ -69,7 +69,7 @@ export function PaymentFailedState({
           <Icon className={`w-10 h-10 ${config.color}`} />
         </div>
 
-        <h1 className="font-bold text-2xl md:text-3xl text-gray-900 mb-2">
+        <h1 className="font-medium text-[1.7rem] md:text-3xl text-gray-900 mb-2">
           {config.label[lang]}
         </h1>
 
@@ -80,26 +80,26 @@ export function PaymentFailedState({
           <div className="space-y-3 mb-8 text-left">
             {orderId && (
               <div className="flex justify-between items-center py-2.5 border-b border-gray-100">
-                <span className="text-sm text-gray-500">
+                <span className="text-base text-gray-500">
                   {lang === "vi" ? "Mã đơn hàng" : "Order ID"}
                 </span>
-                <span className="text-sm font-medium text-gray-900 font-mono">{orderId}</span>
+                <span className="text-base font-medium text-gray-900 font-mono">{orderId}</span>
               </div>
             )}
             {transactionNo && (
               <div className="flex justify-between items-center py-2.5 border-b border-gray-100">
-                <span className="text-sm text-gray-500">
+                <span className="text-base text-gray-500">
                   {lang === "vi" ? "Mã giao dịch" : "Transaction No"}
                 </span>
-                <span className="text-sm font-medium text-gray-900 font-mono">{transactionNo}</span>
+                <span className="text-base font-medium text-gray-900 font-mono">{transactionNo}</span>
               </div>
             )}
             {amount > 0 && (
               <div className="flex justify-between items-center py-2.5 border-b border-gray-100">
-                <span className="text-sm text-gray-500">
+                <span className="text-base text-gray-500">
                   {lang === "vi" ? "Số tiền" : "Amount"}
                 </span>
-                <span className="text-sm font-bold text-gray-900">{formatAmount(amount)}</span>
+                <span className="text-base font-medium text-gray-900">{formatAmount(amount)}</span>
               </div>
             )}
           </div>
@@ -108,7 +108,7 @@ export function PaymentFailedState({
         {/* Hash validation warning */}
         {!isValid && (
           <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
-            <p className="text-sm text-red-700">
+            <p className="text-base text-red-700">
               {lang === "vi"
                 ? "⚠️ Chữ ký bảo mật không hợp lệ. Vui lòng liên hệ hỗ trợ."
                 : "⚠️ Security signature is invalid. Please contact support."}

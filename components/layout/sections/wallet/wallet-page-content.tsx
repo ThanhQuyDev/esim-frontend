@@ -132,11 +132,11 @@ export function WalletPageContent({ lang, embedded }: WalletPageContentProps) {
       <main className="min-h-screen bg-gray-50 pt-24 pb-16">
         <div className="max-w-lg mx-auto px-4 text-center py-20">
           <Wallet className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">{t.signInRequired}</h2>
+          <h2 className="text-2xl font-semibold text-gray-900 mb-2">{t.signInRequired}</h2>
           <p className="text-gray-500 mb-4">{t.signInPrompt}</p>
           <Link
             href={`/${lang}`}
-            className="inline-flex items-center px-6 py-2.5 bg-gray-900 text-white rounded-full text-sm font-medium hover:bg-gray-800 transition-colors"
+            className="inline-flex items-center px-6 py-2.5 bg-gray-900 text-white rounded-full text-base font-medium hover:bg-gray-800 transition-colors"
           >
             {t.goHome}
           </Link>
@@ -158,7 +158,7 @@ export function WalletPageContent({ lang, embedded }: WalletPageContentProps) {
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg transition-all ${
+            className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-base font-medium rounded-lg transition-all ${
               activeTab === tab.key
                 ? "bg-white text-gray-900 shadow-sm"
                 : "text-gray-500 hover:text-gray-700"
@@ -183,10 +183,10 @@ export function WalletPageContent({ lang, embedded }: WalletPageContentProps) {
       <div className="max-w-2xl mx-auto px-4 sm:px-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">{t.pageTitle}</h1>
+          <h1 className="text-[1.7rem] font-medium text-gray-900">{t.pageTitle}</h1>
           <button
             onClick={logout}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-base text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
           >
             <LogOut className="w-4 h-4" />
             {lang === "vi" ? "Đăng xuất" : "Sign Out"}
@@ -222,7 +222,7 @@ function WalletTab({ t, lang }: { t: WalletDict; lang: string }) {
         <p className="text-gray-500 mb-4">{t.errorLoading}</p>
         <button
           onClick={() => refetch()}
-          className="px-6 py-2 bg-gray-900 text-white rounded-full text-sm font-medium hover:bg-gray-800"
+          className="px-6 py-2 bg-gray-900 text-white rounded-full text-base font-medium hover:bg-gray-800"
         >
           {t.retry}
         </button>
@@ -245,11 +245,11 @@ function WalletTab({ t, lang }: { t: WalletDict; lang: string }) {
         <div className="bg-gradient-to-r from-emerald-500 to-teal-600 p-6 text-white">
           <div className="flex items-center gap-2 mb-1">
             <Wallet className="w-5 h-5 opacity-80" />
-            <span className="text-sm font-medium opacity-90">{t.balanceTitle}</span>
+            <span className="text-base font-medium opacity-90">{t.balanceTitle}</span>
           </div>
-          <p className="text-3xl font-bold tracking-tight">{formatVnd(wallet.balanceVnd)}</p>
+          <p className="text-3xl font-medium tracking-tight">{formatVnd(wallet.balanceVnd)}</p>
           {wallet.availableBalanceVnd !== wallet.balanceVnd && (
-            <p className="text-sm mt-1 opacity-80">
+            <p className="text-base mt-1 opacity-80">
               {t.availableBalance}: {formatVnd(wallet.availableBalanceVnd)}
             </p>
           )}
@@ -260,17 +260,17 @@ function WalletTab({ t, lang }: { t: WalletDict; lang: string }) {
           <div className="flex items-center gap-2">
             <Clock className="w-4 h-4 text-gray-400" />
             {daysLeft === null ? (
-              <span className="text-sm text-gray-400">{t.noExpiry}</span>
+              <span className="text-base text-gray-400">{t.noExpiry}</span>
             ) : daysLeft <= 0 ? (
-              <span className="text-sm text-gray-400">{t.expired}</span>
+              <span className="text-base text-gray-400">{t.expired}</span>
             ) : (
-              <span className={`text-sm font-medium ${expiryColor}`}>
+              <span className={`text-base font-medium ${expiryColor}`}>
                 {t.expiresIn} {daysLeft} {t.days}
               </span>
             )}
           </div>
           {daysLeft !== null && daysLeft > 0 && (
-            <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${expiryBg} ${expiryColor}`}>
+            <span className={`text-sm px-2.5 py-1 rounded-full font-medium ${expiryBg} ${expiryColor}`}>
               {daysLeft <= 7 ? "!" : ""}{daysLeft} {t.days}
             </span>
           )}
@@ -281,8 +281,8 @@ function WalletTab({ t, lang }: { t: WalletDict; lang: string }) {
           <div className="mx-6 mb-4 flex items-start gap-3 rounded-xl bg-red-50 border border-red-100 p-4">
             <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-medium text-red-700">{t.walletLocked}</p>
-              <p className="text-xs text-red-600 mt-1">{t.walletLockedDesc}</p>
+              <p className="text-base font-medium text-red-700">{t.walletLocked}</p>
+              <p className="text-sm text-red-600 mt-1">{t.walletLockedDesc}</p>
             </div>
           </div>
         )}
@@ -291,7 +291,7 @@ function WalletTab({ t, lang }: { t: WalletDict; lang: string }) {
         <div className="px-6 pb-4 flex gap-3">
           <Link
             href={localizedHref(lang, "cart")}
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-base font-medium transition-colors ${
               isLocked
                 ? "bg-gray-100 text-gray-400 cursor-not-allowed pointer-events-none"
                 : "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
@@ -305,7 +305,7 @@ function WalletTab({ t, lang }: { t: WalletDict; lang: string }) {
               const el = document.querySelector('[data-tab="referral"]') as HTMLElement;
               el?.click();
             }}
-            className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors"
+            className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-base font-medium bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors"
           >
             <Share2 className="w-4 h-4" />
             {t.shareReferral}
@@ -325,12 +325,12 @@ function WalletTab({ t, lang }: { t: WalletDict; lang: string }) {
           </div>
         ) : txError ? (
           <div className="text-center py-12">
-            <p className="text-gray-500 text-sm">{t.errorLoading}</p>
+            <p className="text-gray-500 text-base">{t.errorLoading}</p>
           </div>
         ) : !transactions || transactions.length === 0 ? (
           <div className="text-center py-12">
             <Coins className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-            <p className="text-gray-400 text-sm">{t.noTransactions}</p>
+            <p className="text-gray-400 text-base">{t.noTransactions}</p>
           </div>
         ) : (
           <div className="divide-y divide-gray-50">
@@ -346,19 +346,19 @@ function WalletTab({ t, lang }: { t: WalletDict; lang: string }) {
                     {getTxIcon(tx.type)}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">
+                    <p className="text-base font-medium text-gray-900 truncate">
                       {getTransactionLabel(tx.type, lang)}
                     </p>
                     {tx.reason && (
-                      <p className="text-xs text-gray-400 truncate">{tx.reason}</p>
+                      <p className="text-sm text-gray-400 truncate">{tx.reason}</p>
                     )}
-                    <p className="text-xs text-gray-400 mt-0.5">{formatDate(tx.createdAt)}</p>
+                    <p className="text-sm text-gray-400 mt-0.5">{formatDate(tx.createdAt)}</p>
                   </div>
                   <div className="text-right flex-shrink-0">
-                    <p className={`text-sm font-semibold ${credit ? "text-emerald-600" : "text-red-500"}`}>
+                    <p className={`text-base font-semibold ${credit ? "text-emerald-600" : "text-red-500"}`}>
                       {credit ? "+" : ""}{formatVnd(tx.amountVnd)}
                     </p>
-                    <p className="text-xs text-gray-400">
+                    <p className="text-sm text-gray-400">
                       {t.availableBalance}: {formatVnd(tx.balanceAfterVnd)}
                     </p>
                   </div>
@@ -435,7 +435,7 @@ function ReferralTab({ t, lang }: { t: WalletDict; lang: string }) {
         <p className="text-gray-500 mb-4">{t.errorLoading}</p>
         <button
           onClick={() => refetch()}
-          className="px-6 py-2 bg-gray-900 text-white rounded-full text-sm font-medium hover:bg-gray-800"
+          className="px-6 py-2 bg-gray-900 text-white rounded-full text-base font-medium hover:bg-gray-800"
         >
           {t.retry}
         </button>
@@ -454,15 +454,15 @@ function ReferralTab({ t, lang }: { t: WalletDict; lang: string }) {
         <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-6 text-white">
           <div className="flex items-center gap-2 mb-1">
             <Gift className="w-5 h-5 opacity-80" />
-            <span className="text-sm font-medium opacity-90">{t.referralTitle}</span>
+            <span className="text-base font-medium opacity-90">{t.referralTitle}</span>
           </div>
-          <p className="text-3xl font-bold tracking-tight mt-2">{referral.code}</p>
+          <p className="text-3xl font-medium tracking-tight mt-2">{referral.code}</p>
         </div>
 
         {!referral.isActive && (
           <div className="mx-6 mt-4 flex items-start gap-3 rounded-xl bg-amber-50 border border-amber-100 p-4">
             <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
-            <p className="text-sm text-amber-700">{t.referralInactive}</p>
+            <p className="text-base text-amber-700">{t.referralInactive}</p>
           </div>
         )}
 
@@ -471,7 +471,7 @@ function ReferralTab({ t, lang }: { t: WalletDict; lang: string }) {
           {editSuccess && (
             <div className="flex items-center gap-2 rounded-xl bg-emerald-50 border border-emerald-100 p-3">
               <Check className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-              <p className="text-sm text-emerald-700">{t.editReferralSuccess}</p>
+              <p className="text-base text-emerald-700">{t.editReferralSuccess}</p>
             </div>
           )}
 
@@ -479,12 +479,12 @@ function ReferralTab({ t, lang }: { t: WalletDict; lang: string }) {
           {!isEditing ? (
             <div className="flex items-center gap-3">
               <div className="flex-1 bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
-                <p className="text-xs text-gray-400 mb-0.5">{t.referralCode}</p>
-                <p className="text-sm font-mono font-medium text-gray-900">{referral.code}</p>
+                <p className="text-sm text-gray-400 mb-0.5">{t.referralCode}</p>
+                <p className="text-base font-mono font-medium text-gray-900">{referral.code}</p>
               </div>
               <button
                 onClick={() => copyToClipboard(referral.code, "code")}
-                className="flex items-center gap-1.5 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors flex-shrink-0"
+                className="flex items-center gap-1.5 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-base font-medium hover:bg-blue-700 transition-colors flex-shrink-0"
               >
                 {copied === "code" ? (
                   <>{t.copied}</>
@@ -502,7 +502,7 @@ function ReferralTab({ t, lang }: { t: WalletDict; lang: string }) {
                   setEditError("");
                   setEditSuccess(false);
                 }}
-                className="flex items-center gap-1.5 px-3 py-2.5 bg-gray-100 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-200 transition-colors flex-shrink-0"
+                className="flex items-center gap-1.5 px-3 py-2.5 bg-gray-100 text-gray-700 rounded-xl text-base font-medium hover:bg-gray-200 transition-colors flex-shrink-0"
                 title={t.editReferralCode}
               >
                 <Pencil className="w-3.5 h-3.5" />
@@ -511,8 +511,8 @@ function ReferralTab({ t, lang }: { t: WalletDict; lang: string }) {
           ) : (
             <div className="space-y-3">
               <div>
-                <p className="text-sm font-medium text-gray-700 mb-1">{t.editReferralCode}</p>
-                <p className="text-xs text-gray-500 mb-2">{t.editReferralCodeDesc}</p>
+                <p className="text-base font-medium text-gray-700 mb-1">{t.editReferralCode}</p>
+                <p className="text-sm text-gray-500 mb-2">{t.editReferralCodeDesc}</p>
               </div>
               <div className="flex items-center gap-2">
                 <input
@@ -525,14 +525,14 @@ function ReferralTab({ t, lang }: { t: WalletDict; lang: string }) {
                   }}
                   placeholder={t.editReferralPlaceholder}
                   maxLength={10}
-                  className={`flex-1 rounded-xl border px-4 py-2.5 text-sm font-mono outline-none transition-colors ${
+                  className={`flex-1 rounded-xl border px-4 py-2.5 text-base font-mono outline-none transition-colors ${
                     editError ? "border-red-400" : "border-border-primary focus:border-blue-400"
                   }`}
                 />
                 <button
                   onClick={handleSaveCode}
                   disabled={updateReferral.isPending || editCode.length !== 10}
-                  className="flex items-center gap-1.5 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 flex-shrink-0"
+                  className="flex items-center gap-1.5 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-base font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 flex-shrink-0"
                 >
                   {updateReferral.isPending ? (
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -547,18 +547,18 @@ function ReferralTab({ t, lang }: { t: WalletDict; lang: string }) {
                     setEditCode("");
                     setEditError("");
                   }}
-                  className="flex items-center gap-1.5 px-3 py-2.5 bg-gray-100 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-200 transition-colors flex-shrink-0"
+                  className="flex items-center gap-1.5 px-3 py-2.5 bg-gray-100 text-gray-700 rounded-xl text-base font-medium hover:bg-gray-200 transition-colors flex-shrink-0"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
               </div>
               <div className="flex items-center justify-between">
-                <span className={`text-xs ${editCode.length === 10 ? "text-emerald-600" : "text-gray-400"}`}>
+                <span className={`text-sm ${editCode.length === 10 ? "text-emerald-600" : "text-gray-400"}`}>
                   {editCode.length}/10
                 </span>
               </div>
               {editError && (
-                <p className="text-xs text-red-500 flex items-center gap-1">
+                <p className="text-sm text-red-500 flex items-center gap-1">
                   <AlertTriangle className="w-3 h-3 flex-shrink-0" />{editError}
                 </p>
               )}
@@ -568,12 +568,12 @@ function ReferralTab({ t, lang }: { t: WalletDict; lang: string }) {
           {/* Referral Link */}
           <div className="flex items-center gap-3">
             <div className="flex-1 bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
-              <p className="text-xs text-gray-400 mb-0.5">{t.referralLink}</p>
-              <p className="text-sm text-gray-600 truncate">{referralLink}</p>
+              <p className="text-sm text-gray-400 mb-0.5">{t.referralLink}</p>
+              <p className="text-base text-gray-600 truncate">{referralLink}</p>
             </div>
             <button
               onClick={() => copyToClipboard(referralLink, "link")}
-              className="flex items-center gap-1.5 px-4 py-2.5 bg-gray-100 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-200 transition-colors flex-shrink-0"
+              className="flex items-center gap-1.5 px-4 py-2.5 bg-gray-100 text-gray-700 rounded-xl text-base font-medium hover:bg-gray-200 transition-colors flex-shrink-0"
             >
               {copied === "link" ? (
                 t.copied
@@ -591,13 +591,13 @@ function ReferralTab({ t, lang }: { t: WalletDict; lang: string }) {
 
           {/* Share buttons */}
           <div>
-            <p className="text-xs text-gray-400 mb-2">{t.shareVia}</p>
+            <p className="text-sm text-gray-400 mb-2">{t.shareVia}</p>
             <div className="flex gap-2">
               <a
                 href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(referralLink)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 px-4 py-2 bg-[#1877F2] text-white rounded-xl text-sm font-medium hover:opacity-90 transition-opacity"
+                className="flex items-center gap-1.5 px-4 py-2 bg-[#1877F2] text-white rounded-xl text-base font-medium hover:opacity-90 transition-opacity"
               >
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
                 Facebook
@@ -606,7 +606,7 @@ function ReferralTab({ t, lang }: { t: WalletDict; lang: string }) {
                 href={`https://zalo.me/share?url=${encodeURIComponent(referralLink)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 px-4 py-2 bg-[#0068FF] text-white rounded-xl text-sm font-medium hover:opacity-90 transition-opacity"
+                className="flex items-center gap-1.5 px-4 py-2 bg-[#0068FF] text-white rounded-xl text-base font-medium hover:opacity-90 transition-opacity"
               >
                 <MessageCircle className="w-4 h-4" />
                 Zalo
@@ -620,7 +620,7 @@ function ReferralTab({ t, lang }: { t: WalletDict; lang: string }) {
       <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-100">
           <h2 className="text-lg font-semibold text-gray-900">{t.howItWorks}</h2>
-          <p className="text-sm text-gray-500 mt-1">{t.howItWorksDesc}</p>
+          <p className="text-base text-gray-500 mt-1">{t.howItWorksDesc}</p>
         </div>
         <div className="p-6 space-y-6">
           {[
@@ -633,8 +633,8 @@ function ReferralTab({ t, lang }: { t: WalletDict; lang: string }) {
                 {item.icon}
               </div>
               <div>
-                <p className="text-sm font-semibold text-gray-900">{item.title}</p>
-                <p className="text-sm text-gray-500 mt-0.5">{item.desc}</p>
+                <p className="text-base font-semibold text-gray-900">{item.title}</p>
+                <p className="text-base text-gray-500 mt-0.5">{item.desc}</p>
               </div>
             </div>
           ))}
@@ -675,7 +675,7 @@ function ReferralQrCode({ url }: { url: string }) {
           </div>
         </div>
       </div>
-      <p className="text-xs text-gray-400 mt-2 text-center">
+      <p className="text-sm text-gray-400 mt-2 text-center">
         {url}
       </p>
     </div>

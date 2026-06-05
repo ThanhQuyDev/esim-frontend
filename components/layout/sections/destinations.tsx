@@ -51,7 +51,6 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
   const tabs = [
     { key: "country" as const, label: dict.tabs.country, testId: "country-list-tab-chip-country" },
     { key: "region" as const, label: dict.tabs.region, testId: "country-list-tab-chip-region" },
-    { key: "ultra" as const, label: dict.tabs.ultraPlan, badge: dict.new, testId: "country-list-tab-chip-ultra" },
   ];
 
   const showRegions = activeTab === "region";
@@ -112,16 +111,9 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
                         : "text-text-primary hover:bg-bg-secondary"
                         }`}
                     >
-                      {tab.badge ? (
-                        <span className="flex items-center gap-2">
-                          {tab.label}
-                          <span className="text-center whitespace-nowrap rounded-full inline-block bg-bg-accent text-text-primary py-0.5 px-2 body-2xs-medium">
-                            {tab.badge}
-                          </span>
-                        </span>
-                      ) : (
-                        tab.label
-                      )}
+
+                      {tab.label}
+
                     </button>
                   ))}
                 </div>

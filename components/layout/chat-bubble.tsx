@@ -114,7 +114,7 @@ export function ChatBubble() {
             <MessageCircle className="h-6 w-6" />
             {/* Unread badge */}
             {unreadCount > 0 && (
-              <span className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[13px] font-bold text-white shadow-md">
+              <span className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[13px] font-medium text-white shadow-md">
                 {unreadCount > 99 ? "99+" : unreadCount}
               </span>
             )}
@@ -189,8 +189,8 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
         <div className="flex items-center gap-2">
           <MessageCircle className="h-5 w-5" />
           <div>
-            <p className="text-sm font-semibold leading-tight">Hỗ trợ</p>
-            <p className="text-xs text-gray-300">
+            <p className="text-base font-semibold leading-tight">Hỗ trợ</p>
+            <p className="text-sm text-gray-300">
               {connected ? "Đang kết nối" : "Đang kết nối lại…"}
             </p>
           </div>
@@ -208,7 +208,7 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
       <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 bg-gray-50">
         {messages.length === 0 && !error && (
           <div className="flex h-full items-center justify-center">
-            <p className="text-sm text-gray-400 text-center">
+            <p className="text-base text-gray-400 text-center">
               {connected
                 ? "Chào bạn! Hãy gửi tin nhắn để được hỗ trợ."
                 : "Đang kết nối…"}
@@ -217,7 +217,7 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
         )}
 
         {error && (
-          <div className="rounded-lg bg-red-50 px-3 py-2 text-xs text-red-600">
+          <div className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
             {error}
           </div>
         )}
@@ -263,7 +263,7 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Nhập tin nhắn…"
-          className="flex-1 rounded-full border border-gray-200 bg-gray-50 px-4 py-2 text-sm outline-none transition-colors focus:border-[#1a1a2e] focus:bg-white"
+          className="flex-1 rounded-full border border-gray-200 bg-gray-50 px-4 py-2 text-base outline-none transition-colors focus:border-[#1a1a2e] focus:bg-white"
           disabled={!connected}
           aria-label="Chat message input"
         />
@@ -314,7 +314,7 @@ function MessageBubble({
         </div>
       )}
       <div
-        className={`max-w-[75%] rounded-2xl text-sm leading-relaxed ${
+        className={`max-w-[75%] rounded-2xl text-base leading-relaxed ${
           hasImage && !hasTextContent
             ? "p-0 bg-transparent"
             : isOwn

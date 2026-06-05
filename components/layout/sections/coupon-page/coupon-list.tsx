@@ -126,7 +126,7 @@ export function CouponList({ dict, lang }: CouponListProps) {
                     </div>
                     <button
                       onClick={() => handleCopy(coupon.code, coupon.id)}
-                      className="inline-flex items-center gap-1 rounded-full bg-accent px-3 py-1.5 text-sm font-medium text-primary transition-colors hover:bg-accent-hover active:bg-accent-active"
+                      className="inline-flex items-center gap-1 rounded-full bg-accent px-3 py-1.5 text-base font-medium text-primary transition-colors hover:bg-accent-hover active:bg-accent-active"
                       aria-label={`Copy code ${coupon.code}`}
                     >
                       {copiedId === coupon.id ? (
@@ -144,7 +144,7 @@ export function CouponList({ dict, lang }: CouponListProps) {
                   </div>
 
                   {/* Details */}
-                  <div className="flex flex-col gap-2 text-sm text-secondary">
+                  <div className="flex flex-col gap-2 text-base text-secondary">
                     <div className="flex items-center gap-2">
                       <Clock className="w-4 h-4" />
                       <span>

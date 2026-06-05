@@ -268,7 +268,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
         <div className="flex h-20 w-20 items-center justify-center rounded-full bg-green-100">
           <CheckCircle2 className="h-10 w-10 text-green-600" />
         </div>
-        <h2 className="text-2xl font-bold text-text-primary">
+        <h2 className="text-[1.7rem] font-medium text-text-primary">
           {dict.orderSuccess || "Order placed successfully!"}
         </h2>
         <p className="text-text-secondary text-center max-w-md">
@@ -292,7 +292,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
         <div className="flex h-20 w-20 items-center justify-center rounded-full bg-bg-secondary">
           <ShoppingBag className="h-10 w-10 text-text-tertiary" />
         </div>
-        <h2 className="text-xl font-semibold text-text-primary">
+        <h2 className="text-2xl font-semibold text-text-primary">
           {dict.noItems || "No items to checkout"}
         </h2>
         <Link
@@ -313,7 +313,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
         {/* Back to cart */}
         <Link
           href={localizedHref(lang, "cart")}
-          className="inline-flex items-center gap-2 text-sm text-text-secondary hover:text-text-primary transition-colors"
+          className="inline-flex items-center gap-2 text-base text-text-secondary hover:text-text-primary transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
           {dict.backToCart || "Back to Cart"}
@@ -321,18 +321,18 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
 
         {/* Contact Info */}
         <div className="rounded-2xl border border-border-primary bg-white p-6 space-y-4">
-          <h3 className="text-lg font-bold text-text-primary flex items-center gap-2">
+          <h3 className="text-lg font-medium text-text-primary flex items-center gap-2">
             <Mail className="h-5 w-5 text-text-tertiary" />
             {dict.contactInfo || "Contact Information"}
           </h3>
-          <p className="text-sm text-text-tertiary">
+          <p className="text-base text-text-tertiary">
             {dict.contactInfoDescription || "We'll send your order confirmation here."}
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Email */}
             <div className="space-y-1.5">
-              <label htmlFor="email" className="text-sm font-medium text-text-primary">
+              <label htmlFor="email" className="text-base font-medium text-text-primary">
                 Email <span className="text-red-500">*</span>
               </label>
               <div className="relative">
@@ -346,16 +346,16 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
                     setErrors((prev) => ({ ...prev, email: "" }));
                   }}
                   placeholder={dict.emailPlaceholder || "your@email.com"}
-                  className={`w-full rounded-xl border pl-10 pr-4 py-2.5 text-sm outline-none transition-colors ${errors.email ? "border-red-400" : "border-border-primary focus:border-[var(--border-focus)]"
+                  className={`w-full rounded-xl border pl-10 pr-4 py-2.5 text-base outline-none transition-colors ${errors.email ? "border-red-400" : "border-border-primary focus:border-[var(--border-focus)]"
                     }`}
                 />
               </div>
-              {errors.email && <p className="text-xs text-red-500">{errors.email}</p>}
+              {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
             </div>
 
             {/* Phone */}
             <div className="space-y-1.5">
-              <label htmlFor="phone" className="text-sm font-medium text-text-primary">
+              <label htmlFor="phone" className="text-base font-medium text-text-primary">
                 {dict.phone || "Phone"}
               </label>
               <div className="relative">
@@ -369,11 +369,11 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
                     setErrors((prev) => ({ ...prev, phone: "" }));
                   }}
                   placeholder={dict.phonePlaceholder || "+84 xxx xxx xxx"}
-                  className={`w-full rounded-xl border pl-10 pr-4 py-2.5 text-sm outline-none transition-colors ${errors.phone ? "border-red-400" : "border-border-primary focus:border-[var(--border-focus)]"
+                  className={`w-full rounded-xl border pl-10 pr-4 py-2.5 text-base outline-none transition-colors ${errors.phone ? "border-red-400" : "border-border-primary focus:border-[var(--border-focus)]"
                     }`}
                 />
               </div>
-              {errors.phone && <p className="text-xs text-red-500">{errors.phone}</p>}
+              {errors.phone && <p className="text-sm text-red-500">{errors.phone}</p>}
             </div>
           </div>
         </div>
@@ -383,7 +383,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Wallet className="h-5 w-5 text-emerald-600" />
-                <h3 className="text-lg font-bold text-text-primary">{wt.useExuBalance}</h3>
+                <h3 className="text-lg font-medium text-text-primary">{wt.useExuBalance}</h3>
               </div>
               <label className="flex items-center gap-3 cursor-pointer">
                 <button
@@ -404,12 +404,12 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
                 </button>
               </label>
             </div>
-            <p className="text-sm text-text-tertiary">
+            <p className="text-base text-text-tertiary">
               {wt.useExuBalanceDesc} — <span className="font-medium text-emerald-600">{formatVnd(wallet.availableBalanceVnd)}</span>
             </p>
             {useExu && (
               <div className="space-y-2">
-                <label className="text-sm font-medium text-text-primary">{wt.enterExuAmount}</label>
+                <label className="text-base font-medium text-text-primary">{wt.enterExuAmount}</label>
                 <div className="relative">
                   <input
                     type="text"
@@ -422,11 +422,11 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
                       }
                     }}
                     placeholder={formatVnd(maxExuUsable)}
-                    className="w-full rounded-xl border border-border-primary px-4 py-2.5 text-sm outline-none focus:border-[var(--border-focus)] transition-colors"
+                    className="w-full rounded-xl border border-border-primary px-4 py-2.5 text-base outline-none focus:border-[var(--border-focus)] transition-colors"
                   />
-                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-text-tertiary">VND</span>
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-text-tertiary">VND</span>
                 </div>
-                <p className="text-xs text-text-tertiary">
+                <p className="text-sm text-text-tertiary">
                   {wt.exuBalance}: {formatVnd(wallet.availableBalanceVnd)} · {lang === "vi" ? "Tối đa" : "Max"}: {formatVnd(maxExuUsable)}
                 </p>
               </div>
@@ -435,7 +435,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
         )}
         {/* Payment Method */}
         <div className="rounded-2xl border border-border-primary bg-white p-6 space-y-4">
-          <h3 className="text-lg font-bold text-text-primary flex items-center gap-2">
+          <h3 className="text-lg font-medium text-text-primary flex items-center gap-2">
             <CreditCard className="h-5 w-5 text-text-tertiary" />
             {dict.paymentMethod || "Payment Method"}
           </h3>
@@ -461,8 +461,8 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
                   <CreditCard className="h-5 w-5 text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-text-primary">OnePay</p>
-                  <p className="text-xs text-text-tertiary">
+                  <p className="text-base font-semibold text-text-primary">OnePay</p>
+                  <p className="text-sm text-text-tertiary">
                     {dict.onepayDescription || "Pay with credit/debit card via OnePay"}
                   </p>
                 </div>
@@ -489,10 +489,10 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
                   <Building2 className="h-5 w-5 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-text-primary">
+                  <p className="text-base font-semibold text-text-primary">
                     {dict.bankTransfer || "Bank Transfer"}
                   </p>
-                  <p className="text-xs text-text-tertiary">
+                  <p className="text-sm text-text-tertiary">
                     {dict.bankTransferDescription || "Transfer directly to our bank account"}
                   </p>
                 </div>
@@ -506,12 +506,12 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
         {/* Invoice Option */}
         <div className="rounded-2xl border border-border-primary bg-white p-6 space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-bold text-text-primary flex items-center gap-2">
+            <h3 className="text-lg font-medium text-text-primary flex items-center gap-2">
               <FileText className="h-5 w-5 text-text-tertiary" />
               {dict.invoice || "Invoice"}
             </h3>
             <label className="flex items-center gap-3 cursor-pointer">
-              <span className="text-sm text-text-secondary">
+              <span className="text-base text-text-secondary">
                 {dict.wantInvoice || "I want an invoice"}
               </span>
               <button
@@ -537,7 +537,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
             <>
               <button
                 onClick={() => setShowInvoiceForm(!showInvoiceForm)}
-                className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 cursor-pointer"
+                className="flex items-center gap-2 text-base text-blue-600 hover:text-blue-700 cursor-pointer"
               >
                 {showInvoiceForm ? (
                   <ChevronUp className="h-4 w-4" />
@@ -551,7 +551,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                   {/* Company Name */}
                   <div className="space-y-1.5">
-                    <label htmlFor="companyName" className="text-sm font-medium text-text-primary">
+                    <label htmlFor="companyName" className="text-base font-medium text-text-primary">
                       {dict.companyName || "Company Name"} <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -563,15 +563,15 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
                         setErrors((prev) => ({ ...prev, companyName: "" }));
                       }}
                       placeholder={dict.companyNamePlaceholder || "Company name"}
-                      className={`w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition-colors ${errors.companyName ? "border-red-400" : "border-border-primary focus:border-[var(--border-focus)]"
+                      className={`w-full rounded-xl border px-4 py-2.5 text-base outline-none transition-colors ${errors.companyName ? "border-red-400" : "border-border-primary focus:border-[var(--border-focus)]"
                         }`}
                     />
-                    {errors.companyName && <p className="text-xs text-red-500">{errors.companyName}</p>}
+                    {errors.companyName && <p className="text-sm text-red-500">{errors.companyName}</p>}
                   </div>
 
                   {/* Tax Code */}
                   <div className="space-y-1.5">
-                    <label htmlFor="taxCode" className="text-sm font-medium text-text-primary">
+                    <label htmlFor="taxCode" className="text-base font-medium text-text-primary">
                       {dict.taxCode || "Tax Code"} <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -583,15 +583,15 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
                         setErrors((prev) => ({ ...prev, taxCode: "" }));
                       }}
                       placeholder={dict.taxCodePlaceholder || "Tax identification number"}
-                      className={`w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition-colors ${errors.taxCode ? "border-red-400" : "border-border-primary focus:border-[var(--border-focus)]"
+                      className={`w-full rounded-xl border px-4 py-2.5 text-base outline-none transition-colors ${errors.taxCode ? "border-red-400" : "border-border-primary focus:border-[var(--border-focus)]"
                         }`}
                     />
-                    {errors.taxCode && <p className="text-xs text-red-500">{errors.taxCode}</p>}
+                    {errors.taxCode && <p className="text-sm text-red-500">{errors.taxCode}</p>}
                   </div>
 
                   {/* Address */}
                   <div className="space-y-1.5 sm:col-span-2">
-                    <label htmlFor="invoiceAddress" className="text-sm font-medium text-text-primary">
+                    <label htmlFor="invoiceAddress" className="text-base font-medium text-text-primary">
                       {dict.address || "Address"} <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -603,15 +603,15 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
                         setErrors((prev) => ({ ...prev, invoiceAddress: "" }));
                       }}
                       placeholder={dict.addressPlaceholder || "Company address"}
-                      className={`w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition-colors ${errors.invoiceAddress ? "border-red-400" : "border-border-primary focus:border-[var(--border-focus)]"
+                      className={`w-full rounded-xl border px-4 py-2.5 text-base outline-none transition-colors ${errors.invoiceAddress ? "border-red-400" : "border-border-primary focus:border-[var(--border-focus)]"
                         }`}
                     />
-                    {errors.invoiceAddress && <p className="text-xs text-red-500">{errors.invoiceAddress}</p>}
+                    {errors.invoiceAddress && <p className="text-sm text-red-500">{errors.invoiceAddress}</p>}
                   </div>
 
                   {/* Invoice Email */}
                   <div className="space-y-1.5 sm:col-span-2">
-                    <label htmlFor="invoiceEmail" className="text-sm font-medium text-text-primary">
+                    <label htmlFor="invoiceEmail" className="text-base font-medium text-text-primary">
                       {dict.invoiceEmail || "Invoice Email"} <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -623,10 +623,10 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
                         setErrors((prev) => ({ ...prev, invoiceEmail: "" }));
                       }}
                       placeholder={dict.invoiceEmailPlaceholder || "Email to receive invoice"}
-                      className={`w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition-colors ${errors.invoiceEmail ? "border-red-400" : "border-border-primary focus:border-[var(--border-focus)]"
+                      className={`w-full rounded-xl border px-4 py-2.5 text-base outline-none transition-colors ${errors.invoiceEmail ? "border-red-400" : "border-border-primary focus:border-[var(--border-focus)]"
                         }`}
                     />
-                    {errors.invoiceEmail && <p className="text-xs text-red-500">{errors.invoiceEmail}</p>}
+                    {errors.invoiceEmail && <p className="text-sm text-red-500">{errors.invoiceEmail}</p>}
                   </div>
                 </div>
               )}
@@ -638,7 +638,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
       {/* Right: Order Summary */}
       <div className="lg:col-span-1">
         <div className="sticky top-24 rounded-2xl border border-border-primary bg-white p-6 space-y-5">
-          <h3 className="text-lg font-bold text-text-primary">
+          <h3 className="text-lg font-medium text-text-primary">
             {dict.orderSummary || "Order Summary"}
           </h3>
 
@@ -649,12 +649,12 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
                 ? `${(item.vndPrice * item.quantity).toLocaleString("vi-VN")}₫`
                 : formatPrice(item.price * item.quantity);
               return (
-                <div key={item.id} className="flex justify-between text-sm">
+                <div key={item.id} className="flex justify-between text-base">
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-text-primary truncate">
                       {item.destination ? `${item.destination} — ` : ""}{item.name}
                     </p>
-                    <p className="text-xs text-text-tertiary">x{item.quantity}</p>
+                    <p className="text-sm text-text-tertiary">x{item.quantity}</p>
                   </div>
                   <span className="font-medium text-text-primary ml-4 flex-shrink-0">
                     {itemPrice}
@@ -666,14 +666,14 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
 
           <div className="border-t border-border-primary pt-4 space-y-3">
             {/* Subtotal */}
-            <div className="flex justify-between text-sm">
+            <div className="flex justify-between text-base">
               <span className="text-text-secondary">{dict.subtotal || "Subtotal"}</span>
               <span className="font-medium text-text-primary">{checkoutDisplaySubtotal}</span>
             </div>
 
             {/* Discount */}
             {(hasVndPricing ? vndDiscount > 0 : discount > 0) && (
-              <div className="flex justify-between text-sm">
+              <div className="flex justify-between text-base">
                 <span className="text-green-600">
                   {dict.discount || "Discount"} ({coupon?.code})
                 </span>
@@ -683,7 +683,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
 
             {/* Referral Discount */}
             {referralApplied && (
-              <div className="flex justify-between text-sm">
+              <div className="flex justify-between text-base">
                 <span className="text-blue-600">{wt.referralDiscount}</span>
                 <span className="font-medium text-blue-600">-{formatVnd(referralDiscountAmount)}</span>
               </div>
@@ -691,7 +691,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
 
             {/* eXU Spent */}
             {actualExuUsed > 0 && (
-              <div className="flex justify-between text-sm">
+              <div className="flex justify-between text-base">
                 <span className="text-emerald-600">{wt.exuSpent}</span>
                 <span className="font-medium text-emerald-600">-{formatVnd(actualExuUsed)}</span>
               </div>
@@ -699,10 +699,10 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
 
             {/* Total */}
             <div className="flex justify-between border-t border-border-primary pt-3">
-              <span className="text-base font-bold text-text-primary">
+              <span className="text-xl font-medium text-text-primary">
                 {dict.total || "Total"}
               </span>
-              <span className="text-xl font-bold text-text-primary">{checkoutDisplayTotal}</span>
+              <span className="text-2xl font-medium text-text-primary">{checkoutDisplayTotal}</span>
             </div>
           </div>
 
@@ -710,7 +710,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
           <button
             onClick={handleSubmit}
             disabled={checkout.isPending}
-            className="flex w-full items-center justify-center gap-2 rounded-full bg-bg-accent py-3.5 text-base font-semibold text-text-primary transition-colors hover:bg-bg-accent-hover disabled:opacity-60 cursor-pointer"
+            className="flex w-full items-center justify-center gap-2 rounded-full bg-bg-accent py-3.5 text-xl font-semibold text-text-primary transition-colors hover:bg-bg-accent-hover disabled:opacity-60 cursor-pointer"
           >
             {checkout.isPending ? (
               <span className="flex items-center gap-2">
@@ -729,7 +729,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
           </button>
 
           {/* Payment note */}
-          <p className="text-xs text-text-tertiary text-center">
+          <p className="text-sm text-text-tertiary text-center">
             {dict.paymentNote ||
               "By completing your order, you agree to our Terms of Service and Privacy Policy."}
           </p>

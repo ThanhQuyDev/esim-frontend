@@ -197,14 +197,14 @@ export function FileUploadZone({
         )}
       >
         <UploadCloud className="mb-2 h-8 w-8" aria-hidden="true" />
-        <p className="text-sm font-medium">{labels.helpText}</p>
-        <p className="mt-1 text-xs text-gray-500">{labels.acceptText}</p>
-        <p className="mt-1 text-xs text-gray-400">
+        <p className="text-base font-medium">{labels.helpText}</p>
+        <p className="mt-1 text-sm text-gray-500">{labels.acceptText}</p>
+        <p className="mt-1 text-sm text-gray-400">
           {(MAX_FILE_SIZE_BYTES / (1024 * 1024)).toFixed(0)} MB · {MAX_ATTACHMENTS} files max
         </p>
         <span
           className={cn(
-            "mt-3 inline-flex items-center rounded-md border px-3 py-1.5 text-xs font-medium transition-colors",
+            "mt-3 inline-flex items-center rounded-md border px-3 py-1.5 text-sm font-medium transition-colors",
             disabled || atCapacity
               ? "border-gray-200 bg-gray-100 text-gray-400"
               : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"

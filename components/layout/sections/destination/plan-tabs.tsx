@@ -49,7 +49,7 @@ function PlanChip({
       {label}
       <PlanTagBadges tags={plan.tags as string[] | undefined} lang={lang} />
       {plan.discount != null && plan.discount > 0 && (
-        <span className="text-[11px] font-bold tracking-wide px-[5px] py-[2px] rounded leading-tight shrink-0 bg-[#DCFCE7] text-[#166534] border border-[#BBF7D0]">
+        <span className="text-[11px] font-medium tracking-wide px-[5px] py-[2px] rounded leading-tight shrink-0 bg-[#DCFCE7] text-[#166534] border border-[#BBF7D0]">
           –{Number(plan.discount).toFixed()}%
         </span>
       )}
@@ -84,7 +84,7 @@ function GbChip({
       {formatDataLabel(gb)}/{lang === "en" ? "day" : "ngày"}
       {bestPlan && <PlanTagBadges tags={bestPlan.tags as string[] | undefined} lang={lang} />}
       {bestPlan?.discount != null && bestPlan.discount > 0 && (
-        <span className="text-[11px] font-bold tracking-wide px-[5px] py-[2px] rounded leading-tight shrink-0 bg-[#DCFCE7] text-[#166534] border border-[#BBF7D0]">
+        <span className="text-[11px] font-medium tracking-wide px-[5px] py-[2px] rounded leading-tight shrink-0 bg-[#DCFCE7] text-[#166534] border border-[#BBF7D0]">
           –{Number(bestPlan.discount).toFixed()}%
         </span>
       )}
@@ -98,7 +98,7 @@ function PlanSectionLabel({ icon, label }: { icon: React.ReactNode; label: strin
   return (
     <div className="flex items-center gap-[7px] mb-[11px]">
       <span className="flex items-center text-[#6b7280]">{icon}</span>
-      <span className="text-xs font-bold text-[#6b7280] uppercase tracking-[0.07em]">{label}</span>
+      <span className="text-sm font-medium text-[#6b7280] uppercase tracking-[0.07em]">{label}</span>
     </div>
   );
 }
@@ -200,7 +200,7 @@ function UnlimitedPill({
           {firstTag ? (
             <PlanTagBadges tags={[firstTag]} lang={lang} />
           ) : (
-            <span className="text-[11px] font-bold tracking-wide px-[7px] py-[2px] rounded leading-snug bg-[#DCFCE7] text-[#166534] border border-[#BBF7D0]">
+            <span className="text-[11px] font-medium tracking-wide px-[7px] py-[2px] rounded leading-snug bg-[#DCFCE7] text-[#166534] border border-[#BBF7D0]">
               –{Number(plan.discount!).toFixed()}%
             </span>
           )}
@@ -301,8 +301,8 @@ export function PlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }: Plan
 
   /* Section label with step number */
   const StepLabel = () => (
-    <div className="text-[15px] font-bold text-[#111] mb-2.5 flex items-center gap-2.5">
-      <span className="inline-flex items-center justify-center w-6 h-6 bg-[#111] text-white rounded-full text-xs font-extrabold shrink-0">1</span>
+    <div className="text-[15px] font-medium text-[#111] mb-2.5 flex items-center gap-2.5">
+      <span className="inline-flex items-center justify-center w-6 h-6 bg-[#111] text-white rounded-full text-sm font-extrabold shrink-0">1</span>
       {lang === "en" ? "Pick a plan" : "Chọn gói cước"}
     </div>
   );
@@ -381,7 +381,7 @@ export function PlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }: Plan
                 type="button"
                 onClick={() => setSpeedTab("normal")}
                 className={`flex-1 text-center py-[7px] px-2.5 text-[13.5px] font-medium cursor-pointer border-none rounded-[30px] transition-all font-[inherit] ${speedTab === "normal"
-                  ? "bg-white text-[#111] font-bold shadow-[0_1px_4px_rgba(0,0,0,0.12)]"
+                  ? "bg-white text-[#111] font-medium shadow-[0_1px_4px_rgba(0,0,0,0.12)]"
                   : "bg-transparent text-[#6b7280] hover:bg-white hover:text-[#374151]"
                   }`}
               >
@@ -393,7 +393,7 @@ export function PlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }: Plan
                 type="button"
                 onClick={() => setSpeedTab("high")}
                 className={`flex-1 text-center py-[7px] px-2.5 text-[13.5px] font-medium cursor-pointer border-none rounded-[30px] transition-all font-[inherit] ${speedTab === "high"
-                  ? "bg-white text-[#111] font-bold shadow-[0_1px_4px_rgba(0,0,0,0.12)]"
+                  ? "bg-white text-[#111] font-medium shadow-[0_1px_4px_rgba(0,0,0,0.12)]"
                   : "bg-transparent text-[#6b7280] hover:bg-white hover:text-[#374151]"
                   }`}
               >

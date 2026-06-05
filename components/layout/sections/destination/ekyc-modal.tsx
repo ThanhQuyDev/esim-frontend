@@ -86,6 +86,7 @@ const TEXT = {
       "<strong>📌 Lưu ý:</strong> Bạn <strong>không cần xác thực</strong> nếu không dùng eSIM tại các quốc gia dưới đây. Thủ tục chỉ mất <strong>3–5 phút</strong> và hoàn toàn miễn phí.",
     countriesTitle: "Quốc gia bắt buộc xác thực",
     seeGuide: "Xem hướng dẫn",
+    seeGuideMobile: "Hướng dẫn",
     faqTitle: "Câu hỏi thường gặp",
     cta: "Đã hiểu, tiếp tục mua eSIM",
     footerNote: "Cần hỗ trợ? Liên hệ qua Chat hoặc email hotro@esim.com.vn",
@@ -102,6 +103,7 @@ const TEXT = {
       "<strong>📌 Note:</strong> You <strong>do not need to verify</strong> if you are not using the eSIM in the countries below. The procedure takes only <strong>3–5 minutes</strong> and is completely free.",
     countriesTitle: "Countries requiring verification",
     seeGuide: "See guide",
+    seeGuideMobile: "See guide",
     faqTitle: "Frequently asked questions",
     cta: "Got it, continue buying eSIM",
     footerNote: "Need help? Contact us via Chat or email hotro@esim.com.vn",
@@ -138,16 +140,14 @@ export function EkycModal({ open, onClose, lang }: EkycModalProps) {
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Mobile drag handle */}
-        <div className="hidden max-[640px]:flex justify-center pt-3 pb-1 shrink-0" style={{ background: "linear-gradient(to right, #C0392B, #922B21, #7B241C)" }}>
-          <span className="w-11 h-[5px] rounded-full" style={{ background: "rgba(255,255,255,0.35)" }} />
-        </div>
-
         {/* Hero header */}
         <div
           className="px-8 pt-6 pb-[22px] max-[640px]:px-5 max-[640px]:pt-3 max-[640px]:pb-4 shrink-0 relative overflow-hidden"
           style={{ background: "linear-gradient(to right, #C0392B, #922B21, #7B241C)" }}
         >
+          <div className="hidden max-[640px]:flex justify-center pb-3 shrink-0" style={{ background: "linear-gradient(to right, #C0392B, #922B21, #7B241C)" }}>
+            <span className="w-11 h-[5px] rounded-full" style={{ background: "rgba(255,255,255,0.35)" }} />
+          </div>
           {/* Decorative circle */}
           <div
             className="absolute pointer-events-none"
@@ -177,7 +177,7 @@ export function EkycModal({ open, onClose, lang }: EkycModalProps) {
               type="button"
               onClick={onClose}
               aria-label="Close"
-              className="w-9 h-9 rounded-full cursor-pointer flex items-center justify-center text-white shrink-0 transition-colors"
+              className="w-10 h-10 rounded-full cursor-pointer flex items-center justify-center text-white shrink-0 transition-colors"
               style={{
                 background: "rgba(255,255,255,0.15)",
                 border: "1.5px solid rgba(255,255,255,0.4)",
@@ -338,10 +338,19 @@ export function EkycModal({ open, onClose, lang }: EkycModalProps) {
                     {c.name}
                   </div>
                   <div
-                    className="inline-flex items-center justify-center gap-[3px] px-3 py-1 rounded-full text-[13px] font-bold text-white relative z-[1] whitespace-nowrap"
+                    className="items-center hidden md:inline-flex justify-center gap-[3px] px-3 py-1 rounded-full text-[13px] font-bold text-white relative z-[1] whitespace-nowrap"
                     style={{ background: "#DC2626" }}
                   >
                     {t.seeGuide}
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round">
+                      <polyline points="9 18 15 12 9 6" />
+                    </svg>
+                  </div>
+                  <div
+                    className="items-center md:hidden flex justify-center gap-[3px] px-3 py-0.5 rounded-full text-[11px] font-bold text-white relative z-[1] whitespace-nowrap"
+                    style={{ background: "#DC2626" }}
+                  >
+                    {t.seeGuideMobile}
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round">
                       <polyline points="9 18 15 12 9 6" />
                     </svg>

@@ -55,7 +55,7 @@ export function PlanTagBadges({ tags, lang = "vi", className = "" }: PlanTagBadg
       {normalized.map((tag) => (
         <span
           key={tag}
-          className={`text-[11px] font-bold tracking-wide px-[5px] py-[2px] rounded leading-tight shrink-0 whitespace-nowrap ${TAG_STYLES[tag]} ${className}`}
+          className={`text-[11px] font-medium tracking-wide px-[5px] py-[2px] rounded leading-tight shrink-0 whitespace-nowrap ${TAG_STYLES[tag]} ${className}`}
         >
           {labels[tag]}
         </span>
@@ -74,7 +74,7 @@ export function ProviderBadge({ plan }: { plan: Plan }) {
   if (!provider) return null;
   return (
     <span
-      className="text-[8.5px] font-bold tracking-[0.04em] uppercase px-[6px] py-[2px] rounded-[3px] leading-tight shrink-0 whitespace-nowrap text-white shadow-[0_1px_3px_rgba(192,0,0,0.3)]"
+      className="text-[8.5px] font-medium tracking-[0.04em] uppercase px-[6px] py-[2px] rounded-[3px] leading-tight shrink-0 whitespace-nowrap text-white shadow-[0_1px_3px_rgba(192,0,0,0.3)]"
       style={{ backgroundColor: "#C00000" }}
     >
       {provider}

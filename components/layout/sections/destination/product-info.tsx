@@ -60,12 +60,12 @@ const BigXIcon = () => (
 function FeatureRow({ label, value, yesText, noText }: { label: string; value: boolean; yesText: string; noText: string }) {
   return (
     <div className="flex items-center justify-between py-[13px] border-b border-[#f3f4f6] last:border-b-0 gap-3">
-      <span className="text-sm text-[#374151]">{label}</span>
+      <span className="text-base text-[#374151]">{label}</span>
       <div className="flex items-center gap-1">
         {value ? (
-          <span className="inline-flex items-center gap-1 text-sm font-semibold text-[#16A34A]"><CheckIcon />{yesText}</span>
+          <span className="inline-flex items-center gap-1 text-base font-semibold text-[#16A34A]"><CheckIcon />{yesText}</span>
         ) : (
-          <span className="inline-flex items-center gap-1 text-sm font-semibold text-[#DC2626]"><XIcon />{noText}</span>
+          <span className="inline-flex items-center gap-1 text-base font-semibold text-[#DC2626]"><XIcon />{noText}</span>
         )}
       </div>
     </div>
@@ -151,13 +151,13 @@ function DeviceChecker({ dict, lang }: { dict: DestinationDict; lang: string }) 
             <path d="M9 6h6" stroke="#111" strokeWidth="1.5" strokeLinecap="round" />
           </svg>
         </div>
-        <span className="text-[13px] font-bold tracking-[0.05em] uppercase text-[#111]">
+        <span className="text-[13px] font-medium tracking-[0.05em] uppercase text-[#111]">
           {dict.deviceCheck.title}
         </span>
       </div>
 
       <div className="px-4 pb-3.5">
-        <p className="text-sm text-[#6b7280] mb-2.5">{dict.deviceCheck.placeholder}</p>
+        <p className="text-base text-[#6b7280] mb-2.5">{dict.deviceCheck.placeholder}</p>
         {/* Search input */}
         <div className="flex gap-2 mb-2.5">
           <input
@@ -166,12 +166,12 @@ function DeviceChecker({ dict, lang }: { dict: DestinationDict; lang: string }) 
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="VD: iPhone 15, Samsung S24, …"
-            className="flex-1 px-3 py-[9px] border-[1.5px] border-[#e5e7eb] rounded-md text-sm text-[#111] placeholder:text-[#9ca3af] outline-none bg-white transition-colors focus:border-[#fff500] font-[inherit]"
+            className="flex-1 px-3 py-[9px] border-[1.5px] border-[#e5e7eb] rounded-md text-base text-[#111] placeholder:text-[#9ca3af] outline-none bg-white transition-colors focus:border-[#fff500] font-[inherit]"
           />
           <button
             onClick={handleCheck}
             disabled={isChecking || !query.trim()}
-            className="px-[18px] py-[9px] bg-[#111] text-white text-[13px] font-bold rounded-md border-none cursor-pointer font-[inherit] whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-[18px] py-[9px] bg-[#111] text-white text-[13px] font-medium rounded-md border-none cursor-pointer font-[inherit] whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isChecking ? dict.deviceCheck.checking : dict.deviceCheck.button}
           </button>
@@ -183,7 +183,7 @@ function DeviceChecker({ dict, lang }: { dict: DestinationDict; lang: string }) 
             {result.found ? (
               <div className="flex items-center gap-2.5 p-[9px_12px] bg-[#f0fdf4] border border-[#bbf7d0] rounded-md">
                 <BigCheckIcon />
-                <span className="text-sm font-medium text-[#15803d]">
+                <span className="text-base font-medium text-[#15803d]">
                   {dict.deviceCheck.supported.replace("{device}", result.deviceName)}
                 </span>
               </div>
@@ -191,13 +191,13 @@ function DeviceChecker({ dict, lang }: { dict: DestinationDict; lang: string }) 
               <div className="space-y-2">
                 <div className="flex items-center gap-2.5 p-[9px_12px] bg-[#fef2f2] border border-[#fecaca] rounded-md">
                   <BigXIcon />
-                  <span className="text-sm font-medium text-[#991b1b]">
+                  <span className="text-base font-medium text-[#991b1b]">
                     {dict.deviceCheck.notSupported.replace("{device}", result.deviceName)}
                   </span>
                 </div>
                 {result.similarDevices.length > 0 && (
                   <div className="p-3 bg-[#f9fafb] border border-[#e5e7eb] rounded-md">
-                    <p className="text-xs font-semibold text-[#6b7280] mb-2">
+                    <p className="text-sm font-semibold text-[#6b7280] mb-2">
                       {dict.deviceCheck.similarDevices}
                     </p>
                     <div className="flex flex-wrap gap-[5px]">
@@ -265,7 +265,7 @@ export function ProductInfo({ destination, dict, lang, planSource = "destination
             className="w-full flex items-center justify-between px-3.5 py-2.5 border-[1.5px] border-[#e5e7eb] rounded-lg bg-[#f9fafb] text-[13px] font-semibold text-[#111] cursor-pointer font-[inherit] transition-colors hover:bg-[#f0f0f0] hover:border-[#c1c7cf] mb-3"
           >
             <span className="flex items-center gap-2">
-              <span className="text-[13px] font-bold text-[#6b7280] border border-[#e5e7eb] rounded px-1.5 py-0.5 bg-white">
+              <span className="text-[13px] font-medium text-[#6b7280] border border-[#e5e7eb] rounded px-1.5 py-0.5 bg-white">
                 {regionDestinations.slice(0, 4).map((d) => d.countryCode || "").join(" ")}
               </span>
               {dict.viewCountries.replace("{count}", String(regionDestinations.length || region?.destinationCount || 0))}
@@ -277,7 +277,7 @@ export function ProductInfo({ destination, dict, lang, planSource = "destination
 
           {countriesOpen && regionDestinations.length > 0 && (
             <div className="bg-white border border-[#e5e7eb] rounded-lg mb-3 p-3.5">
-              <div className="text-[13px] font-bold text-[#9ca3af] uppercase tracking-wider mb-2.5">
+              <div className="text-[13px] font-medium text-[#9ca3af] uppercase tracking-wider mb-2.5">
                 {dict.supportedCountries.replace("{count}", String(regionDestinations.length))}
               </div>
               <div className="flex flex-wrap gap-1.5">
@@ -334,7 +334,7 @@ export function ProductInfo({ destination, dict, lang, planSource = "destination
           {/* Carriers row */}
           {operatorName && (
             <div className="flex items-center justify-between py-[13px] border-b border-[#f3f4f6] gap-3">
-              <span className="text-sm text-[#374151] shrink-0">{dict.carriers.domestic}</span>
+              <span className="text-base text-[#374151] shrink-0">{dict.carriers.domestic}</span>
               <div className="flex flex-nowrap gap-[5px] flex-1 justify-end overflow-x-auto" style={{ scrollbarWidth: "none" }}>
                 <span className="px-2.5 py-1 border border-[#D1D5DB] rounded-md text-[13px] font-semibold whitespace-nowrap shrink-0">
                   {operatorName}
@@ -344,7 +344,7 @@ export function ProductInfo({ destination, dict, lang, planSource = "destination
           )}
           {speed && (
             <div className="flex items-center justify-between py-[13px] border-b border-[#f3f4f6] gap-3">
-              <span className="text-sm text-[#374151] shrink-0">{dict.carriers.speed}</span>
+              <span className="text-base text-[#374151] shrink-0">{dict.carriers.speed}</span>
               <div className="flex flex-nowrap gap-[5px] flex-1 justify-end overflow-x-auto" style={{ scrollbarWidth: "none" }}>
                 <span className="px-2.5 py-1 border border-[#D1D5DB] rounded-md text-[13px] font-semibold whitespace-nowrap shrink-0">
                   {speed}
@@ -354,10 +354,10 @@ export function ProductInfo({ destination, dict, lang, planSource = "destination
           )}
           {/* Hotspot — dynamic from plan.hotSpot / plan.hotSpotAllow */}
           <div className="flex items-center justify-between py-[13px] border-b border-[#f3f4f6] gap-3">
-            <span className="text-sm text-[#374151]">{dict.features.hotspot}</span>
+            <span className="text-base text-[#374151]">{dict.features.hotspot}</span>
             {hasHotspot && hotSpotAllowGb ? (
               <span
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[13px] font-bold whitespace-nowrap"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[13px] font-medium whitespace-nowrap"
                 style={{ background: "#EFF6FF", color: "#1D4ED8", border: "1.5px solid #BFDBFE" }}
               >
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -370,7 +370,7 @@ export function ProductInfo({ destination, dict, lang, planSource = "destination
               </span>
             ) : hasHotspot ? (
               <span
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[13px] font-bold whitespace-nowrap"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[13px] font-medium whitespace-nowrap"
                 style={{ background: "#EFF6FF", color: "#1D4ED8", border: "1.5px solid #BFDBFE" }}
               >
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -382,7 +382,7 @@ export function ProductInfo({ destination, dict, lang, planSource = "destination
                 {dict.features.unlimited}
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[13px] font-bold" style={{ background: "#FEF2F2", color: "#B91C1C", border: "1.5px solid #FECACA" }}>
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[13px] font-medium" style={{ background: "#FEF2F2", color: "#B91C1C", border: "1.5px solid #FECACA" }}>
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#B91C1C" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
                 {dict.features.no}
               </span>
@@ -398,17 +398,17 @@ export function ProductInfo({ destination, dict, lang, planSource = "destination
       {activeTab === "delivery" && (
         <div className="pt-2">
           <div className="flex items-start justify-between py-[13px] border-b border-[#f3f4f6] gap-3">
-            <span className="text-sm text-[#374151]">{dict.delivery.deliveryTime}</span>
+            <span className="text-base text-[#374151]">{dict.delivery.deliveryTime}</span>
             <div className="flex flex-col items-end gap-1">
-              <span className="inline-flex items-center gap-[5px] px-3 py-[5px] bg-[#DCFCE7] border-[1.5px] border-[#86EFAC] rounded-[20px] text-[#15803D] text-[13px] font-bold">
+              <span className="inline-flex items-center gap-[5px] px-3 py-[5px] bg-[#DCFCE7] border-[1.5px] border-[#86EFAC] rounded-[20px] text-[#15803D] text-[13px] font-medium">
                 <ClockChip />{dict.delivery.instant}
               </span>
               <span className="text-[13px] text-[#6b7280]">{dict.delivery.instantDesc}</span>
             </div>
           </div>
           <div className="flex items-center justify-between py-[13px] gap-3">
-            <span className="text-sm text-[#374151]">{dict.delivery.activationPeriod}</span>
-            <span className="text-sm font-bold">
+            <span className="text-base text-[#374151]">{dict.delivery.activationPeriod}</span>
+            <span className="text-base font-medium">
               {selectedPlan?.provider === 'viettel'
                 ? (lang === "vi" ? "15 ngày kể từ ngày mua" : "15 days from purchase")
                 : dict.delivery.activationDesc}
@@ -417,7 +417,7 @@ export function ProductInfo({ destination, dict, lang, planSource = "destination
           {/* Warning note */}
           <div className="flex items-start gap-2.5 mt-2.5 p-3 bg-[#FFFBEB] border-[1.5px] border-[#FDE68A] rounded-lg">
             <WarnIcon />
-            <p className="text-sm text-[#92400E] leading-normal">
+            <p className="text-base text-[#92400E] leading-normal">
               <strong className="text-[#78350F]">{dict.note.title}</strong> {dict.note.text}
             </p>
           </div>

@@ -5,6 +5,7 @@ import {
   type Footer as ApiFooter,
 } from "@/lib/api";
 import type { Locale } from "@/lib/i18n-config";
+import { FooterColumns, type FooterColumn } from "./footer-columns";
 
 interface FooterLink {
   id?: string;
@@ -13,30 +14,10 @@ interface FooterLink {
   iconUrl?: string | null;
 }
 
-interface FooterColumn {
-  title: string;
-  links: FooterLink[];
-}
-
 interface FooterSectionProps {
   dict: Record<string, any>;
   footerLinks?: ApiFooter[];
   lang?: Locale;
-}
-
-const socialIconMap: Record<string, string> = {
-  facebook: "https://sb.nordcdn.com/m/73b0007dac464eb4/original/facebook.svg",
-  tiktok: "https://sb.nordcdn.com/m/3cffb132be50069/original/tiktok.svg",
-  "x (twitter)": "https://sb.nordcdn.com/m/3cffb132be50069/original/x-twitter.svg",
-  twitter: "https://sb.nordcdn.com/m/3cffb132be50069/original/x-twitter.svg",
-  instagram: "https://sb.nordcdn.com/m/327ee6481264b8e0/original/instagram.svg",
-  youtube: "https://sb.nordcdn.com/m/544926c91d4179c6/original/youtube.svg",
-  linkedin: "https://sb.nordcdn.com/m/7479eac8a4f6a155/original/linkedin.svg",
-  reddit: "https://sb.nordcdn.com/m/7e0fac0feb703767/original/Reddit.svg",
-};
-
-function getSocialIcon(name: string): string | undefined {
-  return socialIconMap[name.trim().toLowerCase()];
 }
 
 const paymentIcons = [
@@ -58,17 +39,6 @@ function getFallbackColumns(dict: Record<string, any>): FooterColumn[] {
     { title: dict.helpLinks.title, links: dict.helpLinks.links },
     { title: dict.followUs.title, links: dict.followUs.links },
   ];
-}
-
-function isFollowUsTitle(title: string): boolean {
-  const t = title.trim().toLowerCase();
-  return (
-    t === "follow us" ||
-    t === "theo dõi" ||
-    t === "theo doi" ||
-    t.includes("follow") ||
-    t.includes("theo dõi")
-  );
 }
 
 function getApiFooterColumns(
@@ -103,8 +73,8 @@ function getApiFooterColumns(
 
   // Always render the "Follow Us" / "Theo dõi" column at the end
   return [
-    ...columns.filter((c) => !isFollowUsTitle(c.title)),
-    ...columns.filter((c) => isFollowUsTitle(c.title)),
+    ...columns.filter((c) => c.title.trim().toLowerCase() !== "follow us" && c.title.trim().toLowerCase() !== "theo dõi" && c.title.trim().toLowerCase() !== "theo doi"),
+    ...columns.filter((c) => c.title.trim().toLowerCase() === "follow us" || c.title.trim().toLowerCase() === "theo dõi" || c.title.trim().toLowerCase() === "theo doi"),
   ];
 }
 
@@ -173,71 +143,8 @@ export async function FooterSection({
 
         <hr className="pb-8 border-border-primary" />
 
-        {/* Footer Columns - Style 2.1: Bold category titles */}
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-x-8 gap-y-6 md:gap-y-8 pb-8">
-          {columns.map((col, i) => {
-            const isFollowCol = isFollowUsTitle(col.title);
-            return (
-              <div key={i} className="flex flex-col">
-                <p className="font-bold text-text-primary mb-4">{col.title}</p>
-                <div className="flex flex-col gap-y-3">
-                  {col.links.map((link: FooterLink, j: number) => {
-                    const linkKey = link.id ?? `${link.href}-${j}`;
-                    const isExternal = link.href.startsWith("http");
-                    const icon = link.iconUrl || (isFollowCol ? getSocialIcon(link.label) : null);
-
-                    if (isFollowCol && isExternal) {
-                      return (
-                        <a
-                          key={linkKey}
-                          href={link.href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="body-sm text-text-secondary hover:underline inline-flex items-center gap-2"
-                        >
-                          {icon && (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img
-                              src={icon}
-                              alt={link.label.toLowerCase()}
-                              width={16}
-                              height={16}
-                              loading="lazy"
-                              style={{ color: "transparent" }}
-                            />
-                          )}
-                          {link.label}
-                        </a>
-                      );
-                    }
-
-                    // All other links
-                    return (
-                      <Link
-                        key={linkKey}
-                        href={link.href}
-                        className="body-sm text-text-secondary hover:underline inline-flex items-center gap-2"
-                      >
-                        {icon && (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            src={icon}
-                            alt={link.label.toLowerCase()}
-                            width={16}
-                            height={16}
-                            loading="lazy"
-                            style={{ color: "transparent" }}
-                          />
-                        )}
-                        {link.label}
-                      </Link>
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        {/* Footer Columns - Mobile: Accordion, Desktop: Grid */}
+        <FooterColumns columns={columns} />
 
         {/* Bottom Footer - Layout 2.3: Restructured copyright, policies, payment */}
         <div className="border-t border-border-primary pt-6">

@@ -3,7 +3,6 @@ export { BlogDetailContent } from "./blog-detail-content";
 export { BlogSearchResultsContent } from "./blog-search-results-content";
 export { BlogCategoryNav } from "./blog-category-nav";
 export { BlogArticleHeading } from "./blog-article-heading";
-export { BlogBreadcrumb } from "./blog-breadcrumb";
 export { BlogTableOfContents } from "./blog-toc";
 export { BlogMiniTagWidget } from "./blog-mini-tag";
 export { BlogCountryPlansList } from "./blog-country-plans";

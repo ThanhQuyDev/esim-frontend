@@ -72,7 +72,7 @@ export function ProductHero({ destination, dict, lang }: ProductHeroProps) {
             eSIM {(lang === "vi" ? destination.titleVi : destination.title) || dict.title.replace("{destination}", destination.name)}
           </h1>
         </div>
-        <p className="text-sm text-[#6b7280] leading-[1.6] mb-3">
+        <p className="text-base text-[#6b7280] leading-[1.6] mb-3">
           {(lang === "vi" ? destination.descriptionVi : destination.description) || dict.subtitle.replace("{destination}", destination.name)}
         </p>
       </div>

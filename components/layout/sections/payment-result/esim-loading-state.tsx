@@ -14,7 +14,7 @@ export function EsimLoadingState({ t }: EsimLoadingStateProps) {
         <Loader2 className="w-7 h-7 text-emerald-600 animate-spin" />
       </div>
       <p className="text-emerald-800 font-medium mb-2">{t.loadingEsim}</p>
-      <p className="text-sm text-emerald-600">{t.waitHere}</p>
+      <p className="text-base text-emerald-600">{t.waitHere}</p>
 
       {/* Animated dots */}
       <div className="flex items-center justify-center gap-1.5 mt-4">

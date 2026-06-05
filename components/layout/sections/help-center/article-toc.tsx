@@ -270,7 +270,7 @@ export function ArticleToc({ headings: headingsProp, content, lang = "en" }: Art
       aria-label="Table of contents"
       className="max-h-[calc(100vh-160px)] overflow-y-auto"
     >
-      <div className="text-base font-semibold text-gray-900 mb-4">{tocTitle}</div>
+      <div className="text-xl font-semibold text-gray-900 mb-4">{tocTitle}</div>
       <ul className="list-none p-0 m-0 space-y-2 border-l border-gray-200">
         {visibleHeadings.map((h) => {
           const isActive = activeId === h.id;
@@ -279,7 +279,7 @@ export function ArticleToc({ headings: headingsProp, content, lang = "en" }: Art
               <a
                 href={`#${h.id}`}
                 onClick={(e) => handleClick(e, h.id)}
-                className={`block -ml-px pl-3 py-1 text-sm border-l-2 transition-colors no-underline ${isActive
+                className={`block -ml-px pl-3 py-1 text-base border-l-2 transition-colors no-underline ${isActive
                     ? "border-[#ffdc52] !border-l-[4px] text-gray-900 font-medium"
                     : "border-l-transparent text-gray-600 hover:text-gray-900 hover:border-l-gray-300"
                   }`}
@@ -304,7 +304,7 @@ export function ArticleToc({ headings: headingsProp, content, lang = "en" }: Art
                       href={`#${h.id}`}
                       onClick={(e) => handleClick(e, h.id)}
                       tabIndex={expanded ? 0 : -1}
-                      className={`block -ml-px pl-3 py-1 text-sm border-l-2 transition-colors no-underline ${isActive
+                      className={`block -ml-px pl-3 py-1 text-base border-l-2 transition-colors no-underline ${isActive
                           ? "border-l-gray-900 text-gray-900 font-medium"
                           : "border-l-transparent text-gray-600 hover:text-gray-900 hover:border-l-gray-300"
                         }`}
@@ -323,7 +323,7 @@ export function ArticleToc({ headings: headingsProp, content, lang = "en" }: Art
           type="button"
           onClick={() => setExpanded((v) => !v)}
           aria-expanded={expanded}
-          className="mt-3 inline-flex items-center gap-1 pl-3 text-sm font-medium text-gray-700 hover:text-gray-900 cursor-pointer bg-transparent border-0"
+          className="mt-3 inline-flex items-center gap-1 pl-3 text-base font-medium text-gray-700 hover:text-gray-900 cursor-pointer bg-transparent border-0"
         >
           <span>{expanded ? showLessText : showAllText}</span>
           <span

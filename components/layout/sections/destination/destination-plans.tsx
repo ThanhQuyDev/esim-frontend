@@ -241,9 +241,9 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
   const showInlineKyc = !!selectedPlan?.isKyc;
 
   return (
-    <div className="bg-white overflow-x-hidden max-w-[100vw]">
+    <div className="bg-white max-w-[100vw]">
       {/* ── MOBILE VIEW (≤840px) ── */}
-      <div className="min-[841px]:hidden overflow-x-hidden max-w-full">
+      <div className="min-[841px]:hidden max-w-full">
         <MobileDestinationPlans
           destination={destinationData || destination}
           plans={plans}

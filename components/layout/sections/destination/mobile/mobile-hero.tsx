@@ -38,10 +38,10 @@ export function MobileHero({ destination, dict, lang, region, operatorName }: Mo
     !!region && ((region.destinations?.length ?? 0) > 0 || (region.destinationCount ?? 0) > 1);
   const previewCountries = isRegion
     ? (region?.destinations || []).slice(0, 4).map((d) => ({
-        url: d.flagUrl,
-        emoji: flagEmoji(d.countryCode),
-        name: d.name,
-      }))
+      url: d.flagUrl,
+      emoji: flagEmoji(d.countryCode),
+      name: d.name,
+    }))
     : [{ url: destination.flagUrl, emoji: flagEmoji(destination.countryCode), name: destination.name }];
   const countryCount = isRegion
     ? (region?.destinations?.length ?? region?.destinationCount ?? 0)
@@ -94,15 +94,21 @@ export function MobileHero({ destination, dict, lang, region, operatorName }: Mo
             </span>
           </div>
           <div className="text-[12.5px] text-white/[0.82] font-medium mb-[5px] truncate">
-            {dict.heroTag}
+            {lang === "vi" ? "eSIM du lịch tốt nhất" : "Best travel eSIM"} {(lang === "vi" ? destination.titleVi : destination.title) || destination.name}
           </div>
           <div className="flex items-center gap-[11px] min-w-0">
-            <div className="w-9 h-9 rounded-full bg-[#FFF500] flex items-center justify-center shrink-0">
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="2.2">
-                <circle cx="12" cy="12" r="10" />
-                <path d="M2 12h20M12 2a15 15 0 010 20M12 2a15 15 0 000 20" />
-              </svg>
-            </div>
+            {(region?.iconUrl || destination.flagUrl) ? (
+              <div className="w-[30px] h-[30px] rounded-full overflow-hidden shrink-0">
+                <Image src={region?.iconUrl ? region.iconUrl : (destination.flagUrl || region?.iconUrl || "")} alt={destination.name} width={30} height={30} className="w-full h-full object-cover" />
+              </div>
+            ) : (
+              <div className="w-[30px] h-[30px] bg-[#fff500] rounded-full flex items-center justify-center shrink-0">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M2 12h20M12 2a15 15 0 010 20M12 2a15 15 0 000 20" />
+                </svg>
+              </div>
+            )}
             <h1 className="text-[28px] font-extrabold text-white tracking-[-0.4px] leading-[1.15] min-w-0 break-words">
               {(lang === "vi" ? destination.titleVi : destination.title) || dict.title.replace("{destination}", destination.name)}
             </h1>
@@ -111,7 +117,7 @@ export function MobileHero({ destination, dict, lang, region, operatorName }: Mo
       </div>
 
       {/* Sheet - white card overlapping hero by 22px */}
-      <div className="relative z-10 bg-white rounded-t-[22px] -mt-[22px] pt-1.5 shadow-[0_-4px_20px_rgba(0,0,0,0.10)]">
+      <div className="relative z-10 bg-white rounded-t-[22px] -mt-[22px] pt-1.5 ">
         {/* Countries button — only meaningful for region pages (multi-country coverage) */}
         {isRegion && (
           <div className="px-4 pt-4 max-w-full">

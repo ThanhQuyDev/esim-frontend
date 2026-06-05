@@ -125,7 +125,7 @@ export function HelpCenterContent({ lang, initialArticles }: HelpCenterContentPr
                 <input
                   type="search"
                   placeholder={lang === "vi" ? "Nhập chủ đề, câu hỏi hoặc vấn đề" : "Type a topic, question or issue here"}
-                  className="w-full pl-12 pr-4 py-3 rounded-full text-base border-0 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-12 pr-4 py-3 rounded-full text-xl border-0 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   aria-label={lang === "vi" ? "Nhập chủ đề, câu hỏi hoặc vấn đề" : "Type a topic, question or issue here"}
@@ -134,7 +134,7 @@ export function HelpCenterContent({ lang, initialArticles }: HelpCenterContentPr
               <button
                 type="submit"
                 disabled={!searchQuery.trim()}
-                className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-black text-white text-sm font-semibold shadow-lg hover:bg-gray-600 transition-colors disabled:bg-gray-700 disabled:cursor-not-allowed cursor-pointer whitespace-nowrap"
+                className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-black text-white text-base font-semibold shadow-lg hover:bg-gray-600 transition-colors disabled:bg-gray-700 disabled:cursor-not-allowed cursor-pointer whitespace-nowrap"
                 aria-label={lang === "vi" ? "Tìm kiếm" : "Search"}
               >
                 <Search className="w-4 h-4" aria-hidden="true" />
@@ -148,7 +148,7 @@ export function HelpCenterContent({ lang, initialArticles }: HelpCenterContentPr
       {/* CATEGORIES */}
       <div className="bg-gray-50 py-8">
         <div className="max-w-[1386px] mx-auto px-8 text-center">
-          <h2 className="inline-flex items-baseline mt-6 text-2xl font-semibold">
+          <h2 className="inline-flex items-baseline mt-6 text-[1.7rem] font-semibold">
             {lang === "vi" ? "Chọn danh mục chính" : "Choose main category"}
           </h2>
 
@@ -199,10 +199,10 @@ export function HelpCenterContent({ lang, initialArticles }: HelpCenterContentPr
                   href={`${localizedHref(lang, "help-center")}/${toLocalizedCategorySlug(article.category, lang)}/${toLocalizedParentSlug(article.parent, lang)}/${getArticleSlug(article)}`}
                   className="block bg-gray-100 rounded-md p-5 hover:shadow-md transition no-underline"
                 >
-                  <p className="text-sm text-gray-600 mb-2">
+                  <p className="text-base text-gray-600 mb-2">
                     {getCategoryLabel(article.category, lang)} › {getParentLabel(article.parent, lang)}
                   </p>
-                  <h3 className="text-base font-medium text-gray-900 mb-3">
+                  <h3 className="text-xl font-medium text-gray-900 mb-3">
                     {article.title}
                   </h3>
                 </Link>
@@ -213,7 +213,7 @@ export function HelpCenterContent({ lang, initialArticles }: HelpCenterContentPr
           <div className="mt-6 text-center">
             <Link
               href={`${localizedHref(lang, "help-center")}/categories`}
-              className="text-gray-700 hover:text-gray-900 no-underline text-sm"
+              className="text-gray-700 hover:text-gray-900 no-underline text-base"
             >
               {lang === "vi" ? "Xem thêm" : "See more"}
             </Link>

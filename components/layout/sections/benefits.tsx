@@ -42,10 +42,10 @@ export const BenefitsSection = () => {
         <div>
           <h2 className="text-lg text-primary mb-2 tracking-wider">Benefits</h2>
 
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          <h2 className="text-3xl md:text-4xl font-medium mb-4">
             Your Shortcut to Success
           </h2>
-          <p className="text-xl text-muted-foreground mb-8">
+          <p className="text-2xl text-muted-foreground mb-8">
             Lorem ipsum dolor sit amet consectetur, adipisicing elit. Non
             ducimus reprehenderit architecto rerum similique facere odit
             deleniti necessitatibus quo quae.

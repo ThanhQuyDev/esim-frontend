@@ -57,7 +57,7 @@ export const SponsorsSection = () => {
           {sponsors.map(({ icon, name }) => (
             <div
               key={name}
-              className="flex items-center text-xl md:text-2xl font-medium"
+              className="flex items-center text-[1.7rem] md:text-2xl font-medium"
             >
               <Icon
                 name={icon as keyof typeof icons}

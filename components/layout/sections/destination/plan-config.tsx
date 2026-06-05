@@ -52,15 +52,15 @@ export function PlanConfig({
   return (
     <div className="my-5 border-t border-[#e5e7eb] pt-5">
       {/* Step 2 label */}
-      <div className="text-[15px] font-bold text-[#111] mb-2.5 flex items-center gap-2.5">
-        <span className="inline-flex items-center justify-center w-6 h-6 bg-[#111] text-white rounded-full text-xs font-extrabold shrink-0">2</span>
+      <div className="text-[15px] font-medium text-[#111] mb-2.5 flex items-center gap-2.5">
+        <span className="inline-flex items-center justify-center w-6 h-6 bg-[#111] text-white rounded-full text-sm font-extrabold shrink-0">2</span>
         {lang === "en" ? "Your options" : "Tùy chọn của bạn"}
       </div>
 
       <div className="grid grid-cols-2 gap-5 items-start mb-3.5">
         {/* Days selector */}
         <div>
-          <label className="text-xs font-bold tracking-[0.07em] uppercase block mb-2">{dict.daysLabel}</label>
+          <label className="text-sm font-medium tracking-[0.07em] uppercase block mb-2">{dict.daysLabel}</label>
           <button
             type="button"
             onClick={() => isFlexibleDays && setCalOpen(true)}
@@ -73,7 +73,7 @@ export function PlanConfig({
               }`}
           >
             <span className="w-9 h-9 shrink-0" />
-            <span className="flex-1 text-center text-sm font-semibold">
+            <span className="flex-1 text-center text-base font-semibold">
               {days} {dict.daysUnit}
             </span>
             <span className={`w-9 h-9 rounded-full flex items-center justify-center m-[3px] shrink-0 transition-colors ${isFixed || !isFlexibleDays ? "opacity-40" : "cursor-pointer hover:bg-[#e5e7eb]"
@@ -89,7 +89,7 @@ export function PlanConfig({
 
         {/* Quantity stepper */}
         <div>
-          <label className="text-xs font-bold tracking-[0.07em] uppercase block mb-2">{dict.quantity}</label>
+          <label className="text-sm font-medium tracking-[0.07em] uppercase block mb-2">{dict.quantity}</label>
           <div className="flex items-center border-[1.5px] border-[#e5e7eb] rounded-[30px] h-[42px]">
             <button
               type="button"
@@ -98,7 +98,7 @@ export function PlanConfig({
             >
               −
             </button>
-            <span className="text-sm font-semibold flex-1 text-center">
+            <span className="text-base font-semibold flex-1 text-center">
               {quantity} {dict.esimUnit}
             </span>
             <button
@@ -120,7 +120,7 @@ export function PlanConfig({
               key={d}
               type="button"
               onClick={() => onDaysChange(d)}
-              className={`h-[34px] min-w-[34px] px-[11px] flex items-center justify-center border-[1.5px] rounded-full text-xs font-semibold cursor-pointer font-[inherit] transition-colors ${days === d
+              className={`h-[34px] min-w-[34px] px-[11px] flex items-center justify-center border-[1.5px] rounded-full text-sm font-semibold cursor-pointer font-[inherit] transition-colors ${days === d
                   ? "border-[#F5C518] bg-[#FEF9E7] text-[#111]"
                   : "border-[#e5e7eb] bg-white text-[#374151] hover:border-[#111]"
                 }`}

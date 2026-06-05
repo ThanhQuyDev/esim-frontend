@@ -161,7 +161,7 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
                 <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-emerald-100 mb-6">
                   <CheckCircle className="w-10 h-10 text-emerald-600" />
                 </div>
-                <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+                <h1 className="text-[1.7rem] md:text-3xl font-medium text-gray-900 mb-3">
                   {t.topupSuccessTitle}
                 </h1>
                 <p className="text-gray-600 max-w-md mx-auto leading-relaxed">
@@ -173,7 +173,7 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
                 <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-amber-100 mb-6">
                   <AlertTriangle className="w-10 h-10 text-amber-600" />
                 </div>
-                <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+                <h1 className="text-[1.7rem] md:text-3xl font-medium text-gray-900 mb-3">
                   {t.topupManualTitle}
                 </h1>
                 <p className="text-gray-600 max-w-md mx-auto leading-relaxed">
@@ -185,7 +185,7 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
                 <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-red-100 mb-6">
                   <AlertTriangle className="w-10 h-10 text-red-600" />
                 </div>
-                <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+                <h1 className="text-[1.7rem] md:text-3xl font-medium text-gray-900 mb-3">
                   {t.topupFailedTitle}
                 </h1>
                 <p className="text-gray-600 max-w-md mx-auto leading-relaxed">
@@ -197,7 +197,7 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
                 <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-blue-100 mb-6">
                   <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
                 </div>
-                <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+                <h1 className="text-[1.7rem] md:text-3xl font-medium text-gray-900 mb-3">
                   {t.topupProcessingTitle}
                 </h1>
                 <p className="text-gray-600 max-w-md mx-auto leading-relaxed">
@@ -219,7 +219,7 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
           {isTopupAwaiting && !isTopupCompleted && !isTopupFailed && !isTopupManual && (
             <div className="rounded-2xl border border-blue-200 bg-blue-50/60 p-5 mb-6 flex items-center gap-3">
               <Clock className="w-5 h-5 text-blue-600 flex-shrink-0" />
-              <p className="text-sm text-blue-800">
+              <p className="text-base text-blue-800">
                 {lang === "vi"
                   ? "Đang đợi xác nhận từ nhà cung cấp. Trang sẽ tự động cập nhật."
                   : "Waiting for provider confirmation. This page will refresh automatically."}
@@ -263,13 +263,13 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-emerald-100 mb-6">
             <CheckCircle className="w-10 h-10 text-emerald-600" />
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+          <h1 className="text-[1.7rem] md:text-3xl font-medium text-gray-900 mb-3">
             {t.successTitle}
           </h1>
           <p className="text-gray-600 max-w-md mx-auto leading-relaxed">
             {t.successSubtitle}
           </p>
-          <p className="text-sm text-gray-500 mt-2">{t.checkProfile}</p>
+          <p className="text-base text-gray-500 mt-2">{t.checkProfile}</p>
         </div>
 
         {/* Order Info */}
@@ -288,10 +288,10 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
                 <Coins className="w-5 h-5 text-emerald-600" />
               </div>
               <div className="flex-1">
-                <p className="text-sm font-semibold text-emerald-800">
+                <p className="text-base font-semibold text-emerald-800">
                   {lang === "vi" ? "Bạn đã nhận được" : "You earned"} {formatVnd(cashbackAmount)} eXU!
                 </p>
-                <p className="text-sm text-emerald-600 mt-0.5">
+                <p className="text-base text-emerald-600 mt-0.5">
                   {lang === "vi"
                     ? "Số dư eXU sẽ được cộng vào ví của bạn."
                     : "eXU balance has been added to your wallet."}
@@ -322,7 +322,7 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
         {hasEsims && (
           <div className="flex items-center gap-3 rounded-xl bg-blue-50 border border-blue-100 p-4 mb-6">
             <Mail className="w-5 h-5 text-blue-600 flex-shrink-0" />
-            <p className="text-sm text-blue-800">{t.emailSent}</p>
+            <p className="text-base text-blue-800">{t.emailSent}</p>
           </div>
         )}
 
@@ -331,7 +331,7 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
           <div className="rounded-2xl border border-amber-200 bg-amber-50/50 p-6 mb-6 text-center">
             <Clock className="w-8 h-8 text-amber-500 mx-auto mb-3" />
             <p className="text-amber-800 font-medium mb-1">{t.esimProcessing}</p>
-            <p className="text-sm text-amber-600">{t.esimProcessingDesc}</p>
+            <p className="text-base text-amber-600">{t.esimProcessingDesc}</p>
           </div>
         )}
 

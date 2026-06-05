@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { Search, ChevronDown } from "lucide-react";
+import { Search, ChevronDown, X } from "lucide-react";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.saily.example.com";
@@ -116,11 +116,15 @@ function MobileCategoryNav({
             onClick={() => setOpen(!open)}
           >
             <div className="flex items-center gap-2">
-              <div className="space-y-1">
-                <div className="w-6 h-[3px] bg-dark" />
-                <div className="w-6 h-[3px] bg-dark" />
-                <div className="w-6 h-[3px] bg-dark" />
-              </div>
+              {open ? (
+                <X size={24} className="text-dark" />
+              ) : (
+                <div className="space-y-1">
+                  <div className="w-6 h-[3px] bg-dark" />
+                  <div className="w-6 h-[3px] bg-dark" />
+                  <div className="w-6 h-[3px] bg-dark" />
+                </div>
+              )}
               <p className="body-md-medium scroll-mt-20 xl:scroll-mt-24">Show All Categories</p>
             </div>
           </button>
@@ -129,7 +133,7 @@ function MobileCategoryNav({
           </div>
         </div>
         <div
-          className={`bg-primary relative top-0 transition-all ease-in p-4 w-full border-t-md border-secondary overflow-hidden ${open ? "" : "hidden"}`}
+          className={`bg-gray-200 sm:bg-primary relative top-0 transition-all ease-in p-4 w-full border-t-md border-secondary overflow-hidden ${open ? "" : "hidden"}`}
         >
           <ul className="flex flex-col gap-4">
             {categories.map((cat) => {

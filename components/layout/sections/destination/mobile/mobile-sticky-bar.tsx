@@ -6,6 +6,7 @@ import type { Plan } from "@/lib/api";
 import type { DestinationDict } from "../types";
 import { calcTotalPrice, calcTotalVndPrice, getFixedPrice, getFixedVndPrice } from "../types";
 import { formatVnd, useCart } from "@/lib/hooks";
+import Image from "next/image";
 
 interface MobileStickyBarProps {
   selectedPlan: Plan | null;
@@ -15,6 +16,8 @@ interface MobileStickyBarProps {
   dict: DestinationDict;
   lang: string;
   destination?: string;
+  destinationData: any;
+  region: any;
   planLabel: string;
   onQuantityChange: (q: number) => void;
   ctaRef: React.RefObject<HTMLDivElement | null>;
@@ -31,6 +34,8 @@ export function MobileStickyBar({
   lang,
   destination,
   planLabel,
+  region,
+  destinationData,
   onQuantityChange,
   ctaRef,
   onOpenEkyc,
@@ -101,12 +106,18 @@ export function MobileStickyBar({
       {/* Top row: plan info + price — slim variant for 390px */}
       <div className="flex items-center justify-between mb-[9px] gap-2 min-w-0">
         <div className="flex items-center gap-2 min-w-0 flex-1">
-          <div className="w-9 h-9 rounded-full bg-[#FFF500] flex items-center justify-center shrink-0">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="2">
-              <circle cx="12" cy="12" r="10" />
-              <path d="M2 12h20M12 2a15 15 0 010 20M12 2a15 15 0 000 20" />
-            </svg>
-          </div>
+          {(region?.iconUrl || destinationData?.flagUrl) ? (
+            <div className="w-[24px] h-[24px] rounded-full overflow-hidden shrink-0">
+              <Image src={region?.iconUrl ? region?.iconUrl : (destinationData?.flagUrl || region?.iconUrl || "")} alt={destinationData?.name || region.name} width={30} height={30} className="w-full h-full object-cover" />
+            </div>
+          ) : (
+            <div className="w-[24px] h-[24px] bg-[#fff500] rounded-full flex items-center justify-center shrink-0">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M2 12h20M12 2a15 15 0 010 20M12 2a15 15 0 000 20" />
+              </svg>
+            </div>
+          )}
           <div className="min-w-0 flex-1">
             <div className="text-[13px] text-[#6b7280] font-medium truncate">
               eSIM {destination || ""}
@@ -144,7 +155,8 @@ export function MobileStickyBar({
             </svg>
           </span>
           <span className="flex-1 text-[12.5px] font-bold text-[#991B1B] whitespace-nowrap overflow-hidden text-ellipsis">
-            {lang === "en" ? "⚠ Identity verification required" : "⚠ Bắt buộc xác thực danh tính"}
+            {lang === "en" ? "⚠ Identity verification required." : "⚠ Bắt buộc xác thực danh tính."}
+            <span className="text-[#991B1B] ml-2 underline">{lang === "en" ? "View details →" : "Xem chi tiết →"}</span>
           </span>
         </button>
       )}
@@ -174,7 +186,7 @@ export function MobileStickyBar({
         <button
           type="button"
           onClick={handleAddToCart}
-          className="w-[42px] h-[42px] flex items-center justify-center rounded-full border-[1.5px] border-[#1a1a1a] bg-white cursor-pointer shrink-0 transition-colors active:bg-[#1a1a1a] active:[&_svg]:stroke-white"
+          className="w-[100px] h-[42px] flex items-center justify-center rounded-full border-[1.5px] border-[#1a1a1a] bg-white cursor-pointer shrink-0 transition-colors active:bg-[#1a1a1a] active:[&_svg]:stroke-white"
           aria-label={dict.addToCart}
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

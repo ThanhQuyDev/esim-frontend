@@ -107,13 +107,13 @@ export function DeviceChecker({ dict, lang }: DeviceCheckerProps) {
             <path d="M9 6h6" stroke="#111" strokeWidth="1.5" strokeLinecap="round" />
           </svg>
         </div>
-        <span className="text-[13px] font-bold tracking-[0.05em] uppercase text-[#111]">
+        <span className="text-[13px] font-medium tracking-[0.05em] uppercase text-[#111]">
           {dict.deviceCheck.title}
         </span>
       </div>
 
       <div className="px-4 pb-3.5">
-        <p className="text-sm text-[#6b7280] mb-2.5">{dict.deviceCheck.placeholder}</p>
+        <p className="text-base text-[#6b7280] mb-2.5">{dict.deviceCheck.placeholder}</p>
         {/* Search input */}
         <div className="flex gap-2 mb-2.5">
           <input
@@ -122,12 +122,12 @@ export function DeviceChecker({ dict, lang }: DeviceCheckerProps) {
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder={lang === "en" ? "e.g. iPhone 15, Samsung S24, …" : "VD: iPhone 15, Samsung S24, …"}
-            className="flex-1 px-4 py-[9px] border-[1.5px] border-[#e5e7eb] rounded-full text-sm text-[#111] placeholder:text-[#9ca3af] outline-none bg-white transition-colors focus:border-[#fff500] font-[inherit]"
+            className="flex-1 px-4 py-[9px] border-[1.5px] border-[#e5e7eb] rounded-full text-base text-[#111] placeholder:text-[#9ca3af] outline-none bg-white transition-colors focus:border-[#fff500] font-[inherit]"
           />
           <button
             onClick={handleCheck}
             disabled={isChecking || !query.trim()}
-            className="px-5 py-[9px] bg-[#111] text-white text-[13px] font-bold rounded-full border-none cursor-pointer font-[inherit] whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-5 py-[9px] bg-[#111] text-white text-[13px] font-medium rounded-full border-none cursor-pointer font-[inherit] whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isChecking ? dict.deviceCheck.checking : dict.deviceCheck.button}
           </button>
@@ -139,7 +139,7 @@ export function DeviceChecker({ dict, lang }: DeviceCheckerProps) {
             {result.found ? (
               <div className="flex items-center gap-2.5 px-3 py-[9px] bg-[#f0fdf4] border border-[#bbf7d0] rounded-full">
                 <BigCheckIcon />
-                <span className="text-sm font-medium text-[#15803d]">
+                <span className="text-base font-medium text-[#15803d]">
                   {dict.deviceCheck.supported.replace("{device}", result.deviceName)}
                 </span>
               </div>
@@ -147,13 +147,13 @@ export function DeviceChecker({ dict, lang }: DeviceCheckerProps) {
               <div className="space-y-2">
                 <div className="flex items-center gap-2.5 px-3 py-[9px] bg-[#fef2f2] border border-[#fecaca] rounded-full">
                   <BigXIcon />
-                  <span className="text-sm font-medium text-[#991b1b]">
+                  <span className="text-base font-medium text-[#991b1b]">
                     {dict.deviceCheck.notSupported.replace("{device}", result.deviceName)}
                   </span>
                 </div>
                 {result.similarDevices.length > 0 && (
                   <div className="p-3 bg-[#f9fafb] border border-[#e5e7eb] rounded-md">
-                    <p className="text-xs font-semibold text-[#6b7280] mb-2">
+                    <p className="text-sm font-semibold text-[#6b7280] mb-2">
                       {dict.deviceCheck.similarDevices}
                     </p>
                     <div className="flex flex-wrap gap-[5px]">

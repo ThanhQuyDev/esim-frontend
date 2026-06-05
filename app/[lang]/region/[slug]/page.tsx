@@ -96,7 +96,7 @@ export default async function RegionPage({ params }: RegionPageProps) {
       <Breadcrumb
         items={[
           { label: dict.breadcrumb.allDestinations, href: localizedHref(params.lang, "all-destinations") },
-          { label: region.name },
+          { label: localizedName },
         ]}
         lang={params.lang}
       />

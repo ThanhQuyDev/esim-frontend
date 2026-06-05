@@ -88,7 +88,7 @@ export function CountriesModal({
   return (
     <Modal open={open} onClose={onClose} ariaLabel={lang === "vi" ? titleVi : titleEn}>
       <div
-        className="bg-white rounded-t-[20px] flex flex-col overflow-hidden w-full"
+        className="bg-white rounded-t-[20px] flex flex-col overflow-hidden w-full animate-slide-up"
         style={{
           width: "min(560px, calc(100vw))",
           height: "min(620px, calc(100vh - 180px))",
@@ -97,8 +97,8 @@ export function CountriesModal({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="px-7 pt-7 shrink-0">
-          <div className="flex items-start justify-between mb-[18px] gap-3">
+        <div className=" pt-7 shrink-0">
+          <div className="px-7 flex items-start justify-between mb-[18px] gap-3">
             <div>
               <h3 className="text-xl font-extrabold tracking-[-0.4px] text-[#111] mb-[3px]">
                 {lang === "vi" ? titleVi : titleEn}
@@ -119,7 +119,7 @@ export function CountriesModal({
           </div>
 
           {/* Search */}
-          <div className="flex items-center gap-2.5 px-3.5 h-12 rounded-full bg-[#F9FAFB] mb-4 border border-transparent transition-colors focus-within:bg-white focus-within:border-[#1a1a1a]">
+          <div className="flex items-center gap-2.5 px-3.5 h-12 border-b mb-4 transition-colors focus-within:bg-white focus-within:border-[#1a1a1a]">
             <span className="flex items-center text-[#9ca3af] shrink-0">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="11" cy="11" r="8" />
@@ -177,7 +177,7 @@ export function CountriesModal({
                 )}
                 <div>
                   <div className="text-[15px] font-bold text-[#111] leading-tight">{row.name}</div>
-                  </div>
+                </div>
               </div>
             ))
           )}

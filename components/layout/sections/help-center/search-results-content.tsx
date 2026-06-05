@@ -140,7 +140,7 @@ export function SearchResultsContent({ lang }: SearchResultsContentProps) {
         <div className="mt-6 mb-8">
           <section>
             <header>
-              <h1 className="text-xl font-semibold pb-3 border-b border-gray-200">
+              <h1 className="text-2xl font-semibold pb-3 border-b border-gray-200">
                 {loading ? (
                   <span className="text-gray-500">
                     {lang === "vi" ? "Đang tìm kiếm..." : "Searching..."}
@@ -181,7 +181,7 @@ export function SearchResultsContent({ lang }: SearchResultsContentProps) {
                           </Link>
                         </h3>
                         <nav>
-                          <ol className="flex items-center gap-1 text-sm text-gray-500 list-none p-0 m-0">
+                          <ol className="flex items-center gap-1 text-base text-gray-500 list-none p-0 m-0">
                             <li>
                               <Link
                                 href={localizedHref(lang, "help-center")}
@@ -210,7 +210,7 @@ export function SearchResultsContent({ lang }: SearchResultsContentProps) {
                             </li>
                           </ol>
                         </nav>
-                        <p className="text-sm text-gray-600 mt-2 leading-relaxed">
+                        <p className="text-base text-gray-600 mt-2 leading-relaxed">
                           {highlightQuery(getSnippet(article.content, query), query)}
                         </p>
                       </header>
@@ -239,13 +239,13 @@ export function SearchResultsContent({ lang }: SearchResultsContentProps) {
                 {currentPage > 1 && (
                   <Link
                     href={`${localizedHref(lang, "help-center")}/search?q=${encodeURIComponent(query)}&page=${currentPage - 1}`}
-                    className="px-4 py-2 text-sm border border-gray-300 rounded hover:bg-gray-50"
+                    className="px-4 py-2 text-base border border-gray-300 rounded hover:bg-gray-50"
                   >
                     ‹ {lang === "vi" ? "Trước" : "Previous"}
                   </Link>
                 )}
 
-                <span className="text-sm text-gray-600">
+                <span className="text-base text-gray-600">
                   {lang === "vi" ? "Trang" : "Page"} {currentPage}
                   {totalPages ? ` / ${totalPages}` : ""}
                 </span>
@@ -253,7 +253,7 @@ export function SearchResultsContent({ lang }: SearchResultsContentProps) {
                 {hasNextPage && (
                   <Link
                     href={`${localizedHref(lang, "help-center")}/search?q=${encodeURIComponent(query)}&page=${currentPage + 1}`}
-                    className="px-4 py-2 text-sm border border-gray-300 rounded hover:bg-gray-50"
+                    className="px-4 py-2 text-base border border-gray-300 rounded hover:bg-gray-50"
                   >
                     {lang === "vi" ? "Tiếp" : "Next"} ›
                   </Link>

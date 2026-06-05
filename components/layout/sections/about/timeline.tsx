@@ -60,7 +60,7 @@ export function AboutTimeline({ dict }: AboutTimelineProps) {
                   >
                     <div className="flex flex-col h-full group/timeline-slide">
                       {/* Card */}
-                      <div className="h-full relative mb-7 bg-bg-secondary rounded-sm shadow-[0px_8px_24px_0px_rgba(149,157,165,0.20)]">
+                      <div className="h-full relative mb-7 bg-primary rounded-sm shadow-[0px_8px_24px_0px_rgba(149,157,165,0.20)]">
                         <div className="rounded-t-md overflow-hidden">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
@@ -110,7 +110,7 @@ export function AboutTimeline({ dict }: AboutTimelineProps) {
                 <button
                   disabled={isEnd}
                   onClick={() => swiperRef.current?.slideNext()}
-                  className="border border-border-tertiary rounded-full p-0 h-12 w-12 flex justify-center items-center disabled:text-text-disabled disabled:cursor-not-allowed text-text-primary hover:bg-bg-dark hover:text-text-primary-on-color transition-colors"
+                  className="border border-border-tertiary rounded-full p-0 h-12 w-12 flex justify-center items-center disabled:text-text-disabled disabled:cursor-not-allowed text-text-primary sm:hover:bg-bg-dark sm:hover:text-text-primary-on-color transition-colors"
                   aria-label="Next"
                 >
                   <ArrowRight className="w-6 h-6" />

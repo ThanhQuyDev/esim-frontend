@@ -8,6 +8,7 @@ import { BookOpen, Search, ChevronDown, ChevronRight } from "lucide-react";
 import type { Blog, PaginatedResponse } from "@/lib/api";
 import type { Locale } from "@/lib/i18n-config";
 import { BlogCategoryNav } from "./blog-category-nav";
+import { Breadcrumb } from "@/components/layout/breadcrumb";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.saily.example.com";
@@ -386,7 +387,7 @@ function ArticleGridSection({
           <div className="container grid sm:gap-x-8 grid-cols-12 mb-10 mx-auto">
             <div className="col-span-12 md:col-span-8">
               <div className="grid grid-cols-1 gap-y-6">
-                <h2 className="!text-[2rem] body-lg-medium">{title}</h2>
+                <h2 className="sm:text-[2rem] text-[1.5rem]">{title}</h2>
               </div>
             </div>
           </div>
@@ -472,7 +473,7 @@ function ChooseCategorySection({
                       key={cat}
                       ref={(el) => { tabRefs.current[i] = el; }}
                       onClick={() => setActiveTab(i)}
-                      className={`relative z-[1] body-sm-medium whitespace-nowrap md:text-[2rem] md:font-medium px-4 py-1.5 md:px-6 md:py-3 focus-visible:outline-hidden focus-visible:shadow-focus rounded-full transition-colors ${activeTab === i
+                      className={`relative z-[1] body-sm-medium whitespace-nowrap md:text-[1rem] md:font-medium px-4 py-1.5 md:px-6 md:py-3 focus-visible:outline-hidden focus-visible:shadow-focus rounded-full transition-colors ${activeTab === i
                           ? "text-white"
                           : "text-primary hover:text-secondary"
                         }`}
@@ -632,6 +633,23 @@ export function BlogPageContent({ lang, initialBlogs, initialCategories }: BlogP
     <div>
       {/* Category Navigation Bar — uses shared BlogCategoryNav with working search */}
       <BlogCategoryNav lang={lang} />
+
+      {/* Breadcrumb */}
+      <div className="sm:hidden bg-primary">
+        <div className="mx-4 sm:mx-auto">
+          <div className="container mx-auto">
+            <Breadcrumb
+              items={[{ label: "Blog" }]}
+              lang={lang}
+            />
+          </div>
+        </div>
+      </div>
+      <Breadcrumb
+        items={[{ label: "Blog" }]}
+        lang={lang}
+        className="hidden sm:block"
+      />
 
       {/* Featured Article */}
       {featuredBlog && <FeaturedArticle blog={featuredBlog} lang={lang} />}
