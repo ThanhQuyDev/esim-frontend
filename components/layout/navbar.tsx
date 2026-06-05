@@ -544,7 +544,7 @@ export function Navbar(props: NavbarProps) {
 function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
   const pathname = usePathname();
   const isLandingPage = pathname === `/${lang}` || pathname === `/${lang}/`;
-  const isDestinationPage = pathname.includes("/destination/");
+  const isDestinationPage = pathname.match(/\/[a-z]{2}\/[a-z0-9-]+$/);
   const [announcementVisible, setAnnouncementVisible] = useState(true);
   const [hasScrolled, setHasScrolled] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -1173,11 +1173,11 @@ function MobileSidebar({
 
   /* Build destination href */
   const getDestinationHref = (dest: any) =>
-    `/${lang}/destination/${dest.slug || dest.code?.toLowerCase()}`;
+    `/${lang}/${dest.slug || dest.code?.toLowerCase()}`;
 
   /* Build region href */
   const getRegionHref = (region: any) =>
-    `/${lang}/region/${region.slug}`;
+    `/${lang}/${region.slug}`;
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>

@@ -175,7 +175,7 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
                             key={dest.id}
                             className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus rounded-sm w-full block group lg:p-3 lg:hover:bg-bg-primary"
                             data-testid={dest.code}
-                            href={`/${lang}/destination/${dest.slug || dest.code?.toLowerCase()}`}
+                            href={`/${lang}/${dest.slug || dest.code?.toLowerCase()}`}
                           >
                             <div className="flex flex-row gap-2">
                               <div className="flex items-center justify-center h-6 w-6 rounded-full shrink-0 text-text-primary">
@@ -225,7 +225,7 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
                             key={region.id}
                             className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus rounded-sm w-full block group lg:p-3 lg:hover:bg-bg-primary"
                             data-testid={region.slug}
-                            href={`/${lang}/region/${region.slug}`}
+                            href={`/${lang}/${region.slug}`}
                           >
                             <div className="flex flex-row gap-2">
                               <div className="flex items-center justify-center h-6 w-6 rounded-full shrink-0 text-text-primary">
@@ -301,11 +301,7 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
                               key={`${item._type || 'dest'}-${item.id}`}
                               className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus rounded-sm w-full block group lg:p-3 lg:hover:bg-bg-primary"
                               data-testid={item.code || item.slug}
-                              href={
-                                isRegionItem
-                                  ? `/${lang}/region/${item.slug}`
-                                  : `/${lang}/destination/${item.slug || item.code?.toLowerCase()}`
-                              }
+                              href={`/${lang}/${item.slug || item.code?.toLowerCase()}`}
                             >
                               <div className="flex flex-row gap-2">
                                 <div className="flex items-center justify-center h-6 w-6 rounded-full shrink-0 text-text-primary">

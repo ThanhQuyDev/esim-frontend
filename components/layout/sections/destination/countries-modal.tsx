@@ -88,7 +88,7 @@ export function CountriesModal({
   return (
     <Modal open={open} onClose={onClose} ariaLabel={lang === "vi" ? titleVi : titleEn}>
       <div
-        className="bg-white rounded-t-[20px] flex flex-col overflow-hidden w-full animate-slide-up"
+        className="bg-white rounded-t-[20px] sm:rounded-[20px] flex flex-col overflow-hidden w-full animate-slide-up"
         style={{
           width: "min(560px, calc(100vw))",
           height: "min(620px, calc(100vh - 180px))",

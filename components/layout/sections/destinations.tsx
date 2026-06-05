@@ -138,9 +138,7 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
                       <a
                         className="align-bottom focus-visible:outline-hidden focus-visible:shadow-focus text-text-primary active:text-text-primary block group ease-out h-full rounded-sm transition-colors hover:text-text-primary hover:bg-bg-tertiary bg-bg-primary"
                         href={
-                          showRegions
-                            ? `/${lang}/region/${item.slug}`
-                            : `/${lang}/destination/${item.slug || item.code?.toLowerCase()}`
+                          `/${lang}/${item.slug || item.code?.toLowerCase()}`
                         }
                         data-testid={item.code || item.slug || item.id}
                       >
