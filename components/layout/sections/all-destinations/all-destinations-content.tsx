@@ -206,9 +206,7 @@ export function AllDestinationsContent({
                         className="align-bottom focus-visible:outline-hidden focus-visible:shadow-focus text-text-primary active:text-text-primary block group ease-out h-full rounded-sm transition-colors hover:text-text-primary hover:bg-bg-tertiary bg-bg-secondary"
                         data-testid={item.countryCode || item.slug || item.id}
                         href={
-                          showRegions
-                            ? `/${lang}/region/${item.slug}`
-                            : `/${lang}/destination/${item.slug || item.countryCode?.toLowerCase()}`
+                          `/${lang}/${item.slug || item.countryCode?.toLowerCase()}`
                         }
                       >
                         <div

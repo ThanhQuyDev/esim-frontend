@@ -58,12 +58,12 @@ function flagEmoji(countryCode?: string): string {
 function FeatureRow({ label, value, yesText, noText }: { label: string; value: boolean; yesText: string; noText: string }) {
   return (
     <div className="flex items-center justify-between py-[13px] border-b border-[#f3f4f6] last:border-b-0 gap-3">
-      <span className="text-sm text-[#374151]">{label}</span>
+      <span className="text-base sm:text-sm  text-[#374151]">{label}</span>
       <div className="flex items-center gap-1">
         {value ? (
-          <span className="inline-flex items-center gap-1 text-sm font-semibold text-[#16A34A]"><CheckIcon />{yesText}</span>
+          <span className="inline-flex items-center gap-1 text-base sm:text-sm font-semibold text-[#16A34A]"><CheckIcon />{yesText}</span>
         ) : (
-          <span className="inline-flex items-center gap-1 text-sm font-semibold text-[#DC2626]"><XIcon />{noText}</span>
+          <span className="inline-flex items-center gap-1 text-base sm:text-sm font-semibold text-[#DC2626]"><XIcon />{noText}</span>
         )}
       </div>
     </div>
@@ -181,7 +181,7 @@ export function ProductCard({
               eSIM {(lang === "vi" ? destination.titleVi : destination.title) || dict.title.replace("{destination}", destination.name)}
             </h1>
           </div>
-          <p className="text-sm text-[#6b7280] leading-[1.6] mb-3">
+          <p className="text-base sm:text-sm text-[#6b7280] leading-[1.6] mb-3">
             {(lang === "vi" ? destination.descriptionVi : destination.description) || dict.subtitle.replace("{destination}", destination.name)}
           </p>
 
@@ -204,7 +204,7 @@ export function ProductCard({
                       loading="lazy"
                     />
                   ) : (
-                    <span key={i} className="text-sm leading-none">
+                    <span key={i} className="text-base sm:text-sm leading-none">
                       {c.emoji}
                     </span>
                   )
@@ -215,7 +215,7 @@ export function ProductCard({
                 {buttonLabel}
               </span>
               <span
-                className="inline-flex items-center gap-1.5 px-2.5 py-[3px] rounded-full text-[11.5px] font-bold text-white shrink-0"
+                className="inline-flex items-center gap-1.5 px-2.5 py-[3px] rounded-full text-[11.5px] font-medium text-white shrink-0"
                 style={{ background: "#111" }}
               >
                 {viewAllLabel}
@@ -265,7 +265,7 @@ export function ProductCard({
             <div className="pt-2">
               {operatorName && (
                 <div className="flex items-center justify-between py-[13px] border-b border-[#f3f4f6] gap-2 flex-nowrap overflow-hidden">
-                  <span className="text-sm text-[#374151] shrink-0">{dict.carriers.domestic}</span>
+                  <span className="text-base sm:text-sm text-[#374151] shrink-0">{dict.carriers.domestic}</span>
                   <div className="flex flex-nowrap gap-[5px] flex-1 justify-end overflow-x-auto" style={{ scrollbarWidth: "none" }}>
                     <span className="px-2.5 py-1 border border-[#D1D5DB] rounded-md text-[13px] font-semibold whitespace-nowrap shrink-0">
                       {operatorName}
@@ -275,7 +275,7 @@ export function ProductCard({
               )}
               {speed && (
                 <div className="flex items-center justify-between py-[13px] border-b border-[#f3f4f6] gap-2 flex-nowrap overflow-hidden">
-                  <span className="text-sm text-[#374151] shrink-0">{dict.carriers.speed}</span>
+                  <span className="text-base sm:text-sm text-[#374151] shrink-0">{dict.carriers.speed}</span>
                   <div className="flex flex-nowrap gap-[5px] flex-1 justify-end overflow-x-auto" style={{ scrollbarWidth: "none" }}>
                     <span className="px-2.5 py-1 border border-[#D1D5DB] rounded-md text-[13px] font-semibold whitespace-nowrap shrink-0">
                       {speed}
@@ -285,10 +285,10 @@ export function ProductCard({
               )}
               {/* Hotspot — dynamic from plan.hotSpot / plan.hotSpotAllow */}
               <div className="flex items-center justify-between py-[13px] border-b border-[#f3f4f6] gap-3">
-                <span className="text-sm text-[#374151]">{dict.features.hotspot}</span>
+                <span className="text-base sm:text-sm text-[#374151]">{dict.features.hotspot}</span>
                 {hasHotspot && hotSpotAllowGb ? (
                   <span
-                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[13px] font-bold whitespace-nowrap"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[13px] font-medium whitespace-nowrap"
                     style={{ background: "#EFF6FF", color: "#1D4ED8", border: "1.5px solid #BFDBFE" }}
                   >
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -301,7 +301,7 @@ export function ProductCard({
                   </span>
                 ) : hasHotspot ? (
                   <span
-                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[13px] font-bold whitespace-nowrap"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[13px] font-medium whitespace-nowrap"
                     style={{ background: "#EFF6FF", color: "#1D4ED8", border: "1.5px solid #BFDBFE" }}
                   >
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -313,7 +313,7 @@ export function ProductCard({
                     {dict.features.unlimited}
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[13px] font-bold" style={{ background: "#FEF2F2", color: "#B91C1C", border: "1.5px solid #FECACA" }}>
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[13px] font-medium" style={{ background: "#FEF2F2", color: "#B91C1C", border: "1.5px solid #FECACA" }}>
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#B91C1C" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
                     {dict.features.no}
                   </span>
@@ -332,17 +332,17 @@ export function ProductCard({
           {activeTab === "delivery" && (
             <div className="pt-2">
               <div className="flex items-start justify-between py-[13px] border-b border-[#f3f4f6] gap-3">
-                <span className="text-sm text-[#374151]">{dict.delivery.deliveryTime}</span>
+                <span className="text-base sm:text-sm text-[#374151]">{dict.delivery.deliveryTime}</span>
                 <div className="flex flex-col items-end gap-1">
-                  <span className="inline-flex items-center gap-[5px] px-3 py-[5px] bg-[#DCFCE7] border-[1.5px] border-[#86EFAC] rounded-[20px] text-[#15803D] text-[13px] font-bold">
+                  <span className="inline-flex items-center gap-[5px] px-3 py-[5px] bg-[#DCFCE7] border-[1.5px] border-[#86EFAC] rounded-[20px] text-[#15803D] text-[13px] font-medium">
                     <ClockChip />{dict.delivery.instant}
                   </span>
                   <span className="text-[13px] text-[#6b7280]">{dict.delivery.instantDesc}</span>
                 </div>
               </div>
               <div className="flex items-center justify-between py-[13px] border-b border-[#f3f4f6] gap-3">
-                <span className="text-sm text-[#374151]">{dict.delivery.activationPeriod}</span>
-                <span className="text-sm font-bold">
+                <span className="text-base sm:text-sm text-[#374151]">{dict.delivery.activationPeriod}</span>
+                <span className="text-base sm:text-sm font-medium">
                   {selectedPlan?.provider === 'viettel'
                     ? (lang === "vi" ? "15 ngày kể từ ngày mua" : "15 days from purchase")
                     : dict.delivery.activationDesc}
@@ -350,7 +350,7 @@ export function ProductCard({
               </div>
               <div className="flex items-start gap-2.5 mt-2.5 p-3 bg-[#FFFBEB] border-[1.5px] border-[#FDE68A] rounded-sm">
                 <WarnIcon />
-                <p className="text-sm text-[#92400E] leading-normal">
+                <p className="text-base sm:text-sm text-[#92400E] leading-normal">
                   <strong className="text-[#78350F]">{dict.note.title}</strong> {dict.note.text}
                 </p>
               </div>
@@ -436,7 +436,7 @@ export function ProductCard({
                   <button
                     type="button"
                     onClick={onOpenEkyc}
-                    className="flex items-center justify-center gap-2 w-[calc(100%-28px)] my-2.5 mb-3 mx-3.5 py-2.5 rounded-full text-[13px] font-bold text-white border-none cursor-pointer font-[inherit] transition-opacity hover:opacity-90"
+                    className="flex items-center justify-center gap-2 w-[calc(100%-28px)] my-2.5 mb-3 mx-3.5 py-2.5 rounded-full text-[13px] font-medium text-white border-none cursor-pointer font-[inherit] transition-opacity hover:opacity-90"
                     style={{
                       background: "linear-gradient(135deg, #DC2626, #B91C1C)",
                       boxShadow: "0 3px 10px rgba(220,38,38,0.3)",

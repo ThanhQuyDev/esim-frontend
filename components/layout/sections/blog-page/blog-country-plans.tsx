@@ -20,7 +20,7 @@ export function BlogCountryPlansList({ plans, lang }: { plans: Plan[]; lang: str
         {plans.map((plan, idx) => (
           <li
             key={plan.id}
-            className={`flex items-center gap-2 py-3 ${idx > 0 ? "border-t-md border-neutral-1000/[0.1]" : ""}`}
+            className={`flex items-center gap-2 py-3 ${idx > 0 ? "border-t" : ""}`}
           >
             <div className="w-[24px] h-[24px] relative overflow-hidden shrink-0 rounded-full">
               <Image
@@ -47,7 +47,7 @@ export function BlogCountryPlansList({ plans, lang }: { plans: Plan[]; lang: str
         <Link
           role="button"
           className="max-md:w-full text-center inline-block text-primary bg-accent pointer-fine:hover:bg-accent-hover border-md border-bg-accent-hover pointer-fine:hover:border-accent-hover active:bg-accent-active! active:border-accent-active! box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7"
-          href={`/${lang}/destination/${destinationSlug}/`}
+          href={`/${lang}/${destinationSlug}/`}
         >
           See All Data Plans
         </Link>

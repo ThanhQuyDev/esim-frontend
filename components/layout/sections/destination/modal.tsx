@@ -43,7 +43,7 @@ export function Modal({ open, onClose, children, zIndex = 600, ariaLabel }: Moda
       aria-label={ariaLabel}
       // Center on desktop, anchor to bottom on small screens so children styled as
       // bottom sheets sit flush against the bottom edge.
-      className="fixed inset-0 flex items-center justify-center max-[640px]:items-end"
+      className="fixed inset-0 flex items-center justify-center max-[640px]:items-end animate-fade-in"
       style={{ zIndex, background: "rgba(0,0,0,0.45)" }}
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();

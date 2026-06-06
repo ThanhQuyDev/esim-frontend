@@ -1,4 +1,4 @@
-import { KycGuideContent } from "@/components/layout/sections/kyc-guide";
+import { KycGuideContent, KycGuideBackButton } from "@/components/layout/sections/kyc-guide";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { getDictionary } from "@/lib/dictionaries";
 import type { KycRegionKey } from "@/components/layout/sections/kyc-guide";
@@ -39,7 +39,9 @@ export default async function KycGuidePage({ params, searchParams }: KycGuidePag
       <Breadcrumb
         items={[{ label: dict.breadcrumb.kycGuide }]}
         lang={params.lang}
-      />
+      >
+        <KycGuideBackButton />
+      </Breadcrumb>
       <KycGuideContent initialRegion={initialRegion} />
     </main>
   );

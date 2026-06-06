@@ -7,7 +7,7 @@ import type { Locale } from "@/lib/i18n-config";
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronRight } from "lucide-react";
+import { Breadcrumb } from "@/components/layout/breadcrumb";
 
 function nameFromSlug(slug: string, list: string[]): string {
   const found = list.find(
@@ -57,22 +57,19 @@ export default async function BlogCategoryParentPage({
     <main role="main">
       <BlogCategoryNav lang={params.lang} />
 
+      {/* Breadcrumb */}
+      <div className="bg-primary">
+        <Breadcrumb
+          items={[
+            { label: "Blog", href: `/${params.lang}/blog/` },
+            { label: categoryName, href: `/${params.lang}/blog/category/${slug}/` },
+            { label: parentName },
+          ]}
+          lang={params.lang}
+        />
+      </div>
+
       <div className="container mx-auto px-4 py-12 max-w-[1168px]">
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-2 mb-8 text-sm">
-          <Link href={`/${params.lang}/blog/`} className="text-secondary hover:text-primary transition-colors">
-            Blog
-          </Link>
-          <ChevronRight size={12} className="text-neutral-700" />
-          <Link
-            href={`/${params.lang}/blog/category/${slug}/`}
-            className="text-secondary hover:text-primary transition-colors"
-          >
-            {categoryName}
-          </Link>
-          <ChevronRight size={12} className="text-neutral-700" />
-          <span className="text-primary font-medium">{parentName}</span>
-        </div>
 
         <h1 className="heading-xl mb-8">{parentName}</h1>
 

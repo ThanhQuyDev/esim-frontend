@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { Modal } from "./modal";
 import { formatVnd } from "@/lib/hooks";
 import { roundVndToThousands } from "@/lib/utils";
@@ -8,48 +8,37 @@ import { roundVndToThousands } from "@/lib/utils";
 interface CalendarModalProps {
   open: boolean;
   onClose: () => void;
-  /** Current selected days, used to seed default end date when modal opens. */
   initialDays: number;
-  /** Called with the new days count after user confirms. */
   onConfirm: (days: number) => void;
-  /** Total price in VND for the current plan/quantity over `initialDays`. Used for per-day breakdown. */
   unitVndPricePerDay?: number;
-  /** Quantity of eSIMs (used in the bottom-summary total). */
   quantity: number;
   lang: string;
 }
 
 const VI_MONTH_NAMES = [
-  "Tháng 1",
-  "Tháng 2",
-  "Tháng 3",
-  "Tháng 4",
-  "Tháng 5",
-  "Tháng 6",
-  "Tháng 7",
-  "Tháng 8",
-  "Tháng 9",
-  "Tháng 10",
-  "Tháng 11",
-  "Tháng 12",
+  "Tháng 1","Tháng 2","Tháng 3","Tháng 4","Tháng 5","Tháng 6",
+  "Tháng 7","Tháng 8","Tháng 9","Tháng 10","Tháng 11","Tháng 12",
 ];
 const EN_MONTH_NAMES = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
+  "January","February","March","April","May","June",
+  "July","August","September","October","November","December",
 ];
 
 const VI_WEEKDAYS = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
 const EN_WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== "undefined" ? window.innerWidth < 768 : false
+  );
+  useEffect(() => {
+    const mql = window.matchMedia("(max-width: 767px)");
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
+  }, []);
+  return isMobile;
+}
 
 function startOfDay(d: Date): Date {
   const x = new Date(d);
@@ -66,9 +55,7 @@ function formatShortDate(d: Date, lang: string): string {
   const day = d.getDate();
   const month = d.getMonth() + 1;
   const year = d.getFullYear();
-  return lang === "en"
-    ? `${month}/${day}/${year}`
-    : `${day}/${month}/${year}`;
+  return lang === "en" ? `${month}/${day}/${year}` : `${day}/${month}/${year}`;
 }
 
 interface MonthGridProps {
@@ -105,26 +92,15 @@ function MonthGrid({ year, month, selS, selE, today, onPick, weekdays }: MonthGr
     if (past) {
       cls += " text-[#D1D5DB] pointer-events-none";
     } else if (isStart && isEnd) {
-      bgColor = "#1a1a1a";
-      textColor = "#fff";
-      cls += " font-bold";
+      bgColor = "#1a1a1a"; textColor = "#fff"; cls += " font-bold";
     } else if (isStart) {
-      bgColor = "#1a1a1a";
-      textColor = "#fff";
-      borderRadius = "50% 0 0 50%";
-      cls += " font-bold";
+      bgColor = "#1a1a1a"; textColor = "#fff"; borderRadius = "50% 0 0 50%"; cls += " font-bold";
     } else if (isEnd) {
-      bgColor = "#1a1a1a";
-      textColor = "#fff";
-      borderRadius = "0 50% 50% 0";
-      cls += " font-bold";
+      bgColor = "#1a1a1a"; textColor = "#fff"; borderRadius = "0 50% 50% 0"; cls += " font-bold";
     } else if (inRange) {
-      bgColor = "#DBEAFE";
-      textColor = "#1D4ED8";
-      borderRadius = "0";
+      bgColor = "#DBEAFE"; textColor = "#1D4ED8"; borderRadius = "0";
     } else if (isToday) {
-      textColor = "#d97706";
-      cls += " font-bold";
+      textColor = "#d97706"; cls += " font-bold";
     }
 
     cells.push({
@@ -166,10 +142,6 @@ function MonthGrid({ year, month, selS, selE, today, onPick, weekdays }: MonthGr
   );
 }
 
-/**
- * Two-month calendar modal with bottom price summary, matching the HTML reference.
- * User picks start, then end. Days delta is sent to onConfirm.
- */
 export function CalendarModal({
   open,
   onClose,
@@ -179,6 +151,7 @@ export function CalendarModal({
   quantity,
   lang,
 }: CalendarModalProps) {
+  const isMobile = useIsMobile();
   const today = useMemo(() => startOfDay(new Date()), []);
   const [base, setBase] = useState<Date>(() => {
     const d = new Date(today);
@@ -187,9 +160,8 @@ export function CalendarModal({
   });
   const [selS, setSelS] = useState<Date | null>(null);
   const [selE, setSelE] = useState<Date | null>(null);
-  const [step, setStep] = useState<0 | 1>(0); // 0 = picking start, 1 = picking end
+  const [step, setStep] = useState<0 | 1>(0);
 
-  // Reset state every time modal opens
   useEffect(() => {
     if (!open) return;
     const b = new Date(today);
@@ -219,6 +191,10 @@ export function CalendarModal({
   const t0Title = lang === "en" ? `${monthNames[m0.m]} ${m0.y}` : `${monthNames[m0.m]} năm ${m0.y}`;
   const t1Title = lang === "en" ? `${monthNames[m1.m]} ${m1.y}` : `${monthNames[m1.m]} năm ${m1.y}`;
 
+  // On mobile, the displayed month title follows `base` directly.
+  // On desktop we show both m0 and m1 as before.
+  const currentTitle = isMobile ? t0Title : t0Title;
+
   const headerTitle = lang === "en" ? "Pick the dates for your plan" : "Chọn ngày bạn muốn lên kế hoạch";
   const tipText = lang === "en"
     ? "Your plan starts when you arrive at your destination and activate the eSIM."
@@ -243,7 +219,6 @@ export function CalendarModal({
       setStep(1);
     } else {
       if (selS && d <= selS) {
-        // Reset start if user picks earlier date as end
         setSelE(selS);
         setSelS(d);
       } else {
@@ -262,7 +237,18 @@ export function CalendarModal({
     onClose();
   };
 
-  // Bottom summary
+  const goToPrev = useCallback(() => {
+    const next = new Date(base);
+    next.setMonth(next.getMonth() - 1);
+    setBase(next);
+  }, [base]);
+
+  const goToNext = useCallback(() => {
+    const next = new Date(base);
+    next.setMonth(next.getMonth() + 1);
+    setBase(next);
+  }, [base]);
+
   const totalVnd = days > 0 ? roundVndToThousands(unitVndPricePerDay * days * quantity) : 0;
   const perDayVnd = days > 0 ? Math.round(totalVnd / days) : 0;
 
@@ -272,20 +258,47 @@ export function CalendarModal({
     ? askEndLabel
     : `${planLabel}  |  ${formatShortDate(selS, lang)} – ${formatShortDate(selE, lang)}`;
 
+  // Nav buttons — shared between mobile and desktop
+  const prevBtn = (
+    <button
+      type="button"
+      disabled={!canPrev}
+      onClick={goToPrev}
+      className="w-[34px] h-[34px] rounded-full bg-[#1a1a1a] border-none cursor-pointer flex items-center justify-center text-white shrink-0 transition-colors hover:bg-[#333] disabled:opacity-25 disabled:pointer-events-none"
+      aria-label="Previous month"
+    >
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="15 18 9 12 15 6" />
+      </svg>
+    </button>
+  );
+
+  const nextBtn = (
+    <button
+      type="button"
+      onClick={goToNext}
+      className="w-[34px] h-[34px] rounded-full bg-[#1a1a1a] border-none cursor-pointer flex items-center justify-center text-white shrink-0 transition-colors hover:bg-[#333]"
+      aria-label="Next month"
+    >
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="9 18 15 12 9 6" />
+      </svg>
+    </button>
+  );
+
   return (
     <Modal open={open} onClose={onClose} zIndex={700} ariaLabel={headerTitle}>
       <div
-        className="bg-white flex flex-col overflow-hidden"
+        className="bg-white flex flex-col overflow-hidden rounded-t-[20px] sm:rounded-[20px]"
         style={{
-          width: "min(840px, calc(100vw - 32px))",
+          width: isMobile ? "min(420px, calc(100vw))" : "min(840px, calc(100vw - 32px))",
           height: "min(600px, calc(100vh - 32px))",
-          borderRadius: "20px",
           boxShadow: "0 28px 80px rgba(0,0,0,0.22)",
         }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="px-9 pt-[22px] pb-4 shrink-0">
+        <div className="px-6 md:px-9 pt-[22px] pb-4 shrink-0">
           <div className="flex items-center justify-between mb-3">
             <span className="text-xl font-extrabold tracking-[-0.4px] text-[#111]">{headerTitle}</span>
             <button
@@ -306,31 +319,14 @@ export function CalendarModal({
           </div>
         </div>
 
-        {/* Body — two months side by side */}
-        <div
-          className="grid flex-1 px-8 pt-1 min-h-0 overflow-hidden"
-          style={{ gridTemplateColumns: "1fr 48px 1fr" }}
-        >
-          {/* Left month */}
-          <div className="overflow-y-auto">
+        {/* Body */}
+        {isMobile ? (
+          /* ── Mobile: single month ── */
+          <div className="flex-1 px-4 pt-1 min-h-0 overflow-y-auto">
             <div className="flex items-center py-1.5 pb-2.5 gap-2">
-              <button
-                type="button"
-                disabled={!canPrev}
-                onClick={() => {
-                  const next = new Date(base);
-                  next.setMonth(next.getMonth() - 1);
-                  setBase(next);
-                }}
-                className="w-[34px] h-[34px] rounded-full bg-[#1a1a1a] border-none cursor-pointer flex items-center justify-center text-white shrink-0 transition-colors hover:bg-[#333] disabled:opacity-25 disabled:pointer-events-none"
-                aria-label="Previous month"
-              >
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="15 18 9 12 15 6" />
-                </svg>
-              </button>
-              <span className="flex-1 text-[15px] font-bold text-[#111] text-center">{t0Title}</span>
-              <div style={{ width: 34 }} />
+              {prevBtn}
+              <span className="flex-1 text-base font-bold text-[#111] text-center">{t0Title}</span>
+              {nextBtn}
             </div>
             <MonthGrid
               year={m0.y}
@@ -342,51 +338,62 @@ export function CalendarModal({
               weekdays={weekdays}
             />
           </div>
-
-          {/* Divider */}
-          <div className="flex items-stretch justify-center">
-            <div className="w-px bg-[#E5E7EB] my-2" />
-          </div>
-
-          {/* Right month */}
-          <div className="overflow-y-auto">
-            <div className="flex items-center py-1.5 pb-2.5 gap-2">
-              <div style={{ width: 34 }} />
-              <span className="flex-1 text-[15px] font-bold text-[#111] text-center">{t1Title}</span>
-              <button
-                type="button"
-                onClick={() => {
-                  const next = new Date(base);
-                  next.setMonth(next.getMonth() + 1);
-                  setBase(next);
-                }}
-                className="w-[34px] h-[34px] rounded-full bg-[#1a1a1a] border-none cursor-pointer flex items-center justify-center text-white shrink-0 transition-colors hover:bg-[#333]"
-                aria-label="Next month"
-              >
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="9 18 15 12 9 6" />
-                </svg>
-              </button>
+        ) : (
+          /* ── Desktop: two months side by side ── */
+          <div
+            className="grid flex-1 px-8 pt-1 min-h-0 overflow-hidden"
+            style={{ gridTemplateColumns: "1fr 48px 1fr" }}
+          >
+            {/* Left month */}
+            <div className="overflow-y-auto">
+              <div className="flex items-center py-1.5 pb-2.5 gap-2">
+                {prevBtn}
+                <span className="flex-1 text-base font-bold text-[#111] text-center">{t0Title}</span>
+                <div style={{ width: 34 }} />
+              </div>
+              <MonthGrid
+                year={m0.y}
+                month={m0.m}
+                selS={selS}
+                selE={selE}
+                today={today}
+                onPick={handlePick}
+                weekdays={weekdays}
+              />
             </div>
-            <MonthGrid
-              year={m1.y}
-              month={m1.m}
-              selS={selS}
-              selE={selE}
-              today={today}
-              onPick={handlePick}
-              weekdays={weekdays}
-            />
+
+            {/* Divider */}
+            <div className="flex items-stretch justify-center">
+              <div className="w-px bg-[#E5E7EB] my-2" />
+            </div>
+
+            {/* Right month */}
+            <div className="overflow-y-auto">
+              <div className="flex items-center py-1.5 pb-2.5 gap-2">
+                <div style={{ width: 34 }} />
+                <span className="flex-1 text-base font-bold text-[#111] text-center">{t1Title}</span>
+                {nextBtn}
+              </div>
+              <MonthGrid
+                year={m1.y}
+                month={m1.m}
+                selS={selS}
+                selE={selE}
+                today={today}
+                onPick={handlePick}
+                weekdays={weekdays}
+              />
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Footer */}
         <div
-          className="flex items-center justify-between px-9 py-3 pb-[22px] gap-5 shrink-0"
+          className="flex items-center justify-between px-6 md:px-9 py-3 pb-[22px] gap-5 shrink-0"
           style={{ borderTop: "1px solid #E5E7EB" }}
         >
           <div className="flex flex-col gap-[3px] min-w-0">
-            <div className="text-[15px] font-bold text-[#111] min-h-[22px]" dangerouslySetInnerHTML={{ __html: summaryTitle.replace(/\b(\d+)-day plan|Kế hoạch \d+ ngày/, (m) => `<strong>${m}</strong>`) }} />
+            <div className="text-base font-bold text-[#111] min-h-[22px]" dangerouslySetInnerHTML={{ __html: summaryTitle.replace(/\b(\d+)-day plan|Kế hoạch \d+ ngày/, (m) => `<strong>${m}</strong>`) }} />
             <div className="text-[13px] text-[#6B7280] min-h-[18px] flex items-center gap-1.5 flex-wrap">
               {selS && selE && days > 0 && unitVndPricePerDay > 0 && (
                 <>

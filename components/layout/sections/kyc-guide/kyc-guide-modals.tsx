@@ -12,7 +12,7 @@ const CloseButton = ({ onClick }: { onClick: () => void }) => (
     type="button"
     onClick={onClick}
     aria-label="Close"
-    className="w-[34px] h-[34px] rounded-full bg-[#F3F4F6] border-none cursor-pointer flex items-center justify-center transition-colors hover:bg-[#E5E7EB] shrink-0"
+    className="w-10 h-10 rounded-full bg-[#F3F4F6] border-none cursor-pointer flex items-center justify-center transition-colors hover:bg-[#E5E7EB] shrink-0"
   >
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6B7280" strokeWidth="2.5" strokeLinecap="round">
       <line x1="18" y1="6" x2="6" y2="18" />

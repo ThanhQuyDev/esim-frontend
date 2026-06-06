@@ -101,7 +101,7 @@ function CopyButton({ text, t }: { text: string; t: ProfileDict }) {
   return (
     <button
       onClick={handleCopy}
-      className="inline-flex items-center gap-1 px-2 py-1 text-xs text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors shrink-0"
+      className="inline-flex items-center gap-1 px-2 py-1 text-sm text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors shrink-0"
       title={copied ? t.copied : t.copy}
     >
       {copied ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
@@ -141,8 +141,8 @@ function DataUsageBar({ label, used, total, unit, isUnlimited }: {
     return (
       <div className="space-y-1.5">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-medium text-gray-600">{label}</span>
-          <span className="inline-flex items-center gap-1 text-xs font-semibold text-indigo-600">
+          <span className="text-sm font-medium text-gray-600">{label}</span>
+          <span className="inline-flex items-center gap-1 text-sm font-semibold text-indigo-600">
             <Infinity className="w-3.5 h-3.5" />
             Unlimited
           </span>
@@ -162,8 +162,8 @@ function DataUsageBar({ label, used, total, unit, isUnlimited }: {
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between">
-        <span className="text-xs font-medium text-gray-600">{label}</span>
-        <span className="text-xs font-semibold text-gray-900">
+        <span className="text-sm font-medium text-gray-600">{label}</span>
+        <span className="text-sm font-semibold text-gray-900">
           {remaining.toFixed(remaining < 100 ? 1 : 0)} {unit} left
         </span>
       </div>
@@ -188,7 +188,7 @@ function DataUsageSection({ esimId, lang }: { esimId: number; lang: string }) {
     return (
       <div className="flex items-center justify-center py-4">
         <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
-        <span className="ml-2 text-xs text-gray-400">
+        <span className="ml-2 text-sm text-gray-400">
           {lang === "vi" ? "Đang tải..." : "Loading..."}
         </span>
       </div>
@@ -198,7 +198,7 @@ function DataUsageSection({ esimId, lang }: { esimId: number; lang: string }) {
   if (isError || !usage) {
     return (
       <div className="text-center py-3">
-        <p className="text-xs text-gray-400">
+        <p className="text-sm text-gray-400">
           {lang === "vi" ? "Không thể tải dữ liệu sử dụng" : "Unable to load data usage"}
         </p>
       </div>
@@ -224,7 +224,7 @@ function DataUsageSection({ esimId, lang }: { esimId: number; lang: string }) {
   return (
     <div className="border-t border-gray-100 pt-4 mt-4 space-y-4">
       <div className="flex items-center justify-between">
-        <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">
           {lang === "vi" ? "Dữ liệu sử dụng" : "Data Usage"}
         </h4>
         <span className={`inline-flex items-center px-2 py-0.5 text-[13px] font-medium rounded-full ${statusColor[usage.status] || "bg-gray-100 text-gray-500"}`}>
@@ -247,7 +247,7 @@ function DataUsageSection({ esimId, lang }: { esimId: number; lang: string }) {
           <div className="flex items-center justify-center gap-1 mb-1">
             <Wifi className="w-3.5 h-3.5 text-blue-500" />
           </div>
-          <p className="text-lg font-bold text-blue-700">
+          <p className="text-lg font-medium text-blue-700">
             {usage.isUnlimited ? "∞" : `${remainingGb.toFixed(1)}`}
           </p>
           <p className="text-[13px] text-blue-500">
@@ -258,7 +258,7 @@ function DataUsageSection({ esimId, lang }: { esimId: number; lang: string }) {
           <div className="flex items-center justify-center gap-1 mb-1">
             <Calendar className="w-3.5 h-3.5 text-emerald-500" />
           </div>
-          <p className="text-lg font-bold text-emerald-700">
+          <p className="text-lg font-medium text-emerald-700">
             {daysRemaining !== null ? daysRemaining : "—"}
           </p>
           <p className="text-[13px] text-emerald-500">
@@ -356,14 +356,14 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-0.5">
-            <p className="text-sm font-semibold text-gray-900 truncate font-mono">
+            <p className="text-base sm:text-sm font-semibold text-gray-900 truncate font-mono">
               {esim.plan?.name}
             </p>
             <span className={`inline-flex items-center px-2 py-0.5 text-[13px] font-medium rounded-full ${getStatusStyle(esim.status)}`}>
               {getStatusLabel(esim.status, t)}
             </span>
           </div>
-          <p className="text-xs text-gray-500">
+          <p className="text-sm text-gray-500">
             {lang === "vi" ? "Tạo ngày" : "Created"}: {formatDate(esim.createdAt, lang)}
             {esim.expiresAt && esim.provider !== 'viettel' && (
               <> · {lang === "vi" ? "Hết hạn" : "Expires"}: {formatDate(esim.expiresAt, lang)}</>
@@ -384,7 +384,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
           <div className="flex border-b border-gray-100">
             <button
               onClick={() => setActiveTab("info")}
-              className={`flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 text-sm font-medium transition-colors ${activeTab === "info"
+              className={`flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 text-base sm:text-sm font-medium transition-colors ${activeTab === "info"
                   ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50/30"
                   : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
                 }`}
@@ -394,7 +394,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
             </button>
             <button
               onClick={() => setActiveTab("dataUsage")}
-              className={`flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 text-sm font-medium transition-colors ${activeTab === "dataUsage"
+              className={`flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 text-base sm:text-sm font-medium transition-colors ${activeTab === "dataUsage"
                   ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50/30"
                   : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
                 }`}
@@ -414,7 +414,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                       <div className="text-center">
                         <div className="flex items-center justify-center gap-1.5 mb-2">
                           <QrCode className="w-4 h-4 text-gray-400" />
-                          <span className="text-xs font-medium text-gray-500">
+                          <span className="text-sm font-medium text-gray-500">
                             {lang === "vi" ? "Quét mã QR để cài đặt" : "Scan QR to install"}
                           </span>
                         </div>
@@ -431,7 +431,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                           href={buildEsimAutoInstallUrl("apple", esim.lpa)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg bg-gray-900 text-white text-xs font-semibold hover:bg-gray-800 transition-colors"
+                          className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg bg-gray-900 text-white text-sm font-semibold hover:bg-gray-800 transition-colors"
                         >
                           <Apple className="w-4 h-4" />
                           {lang === "vi" ? "Cài cho iPhone" : "Install on iOS"}
@@ -440,7 +440,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                           href={buildEsimAutoInstallUrl("android", esim.lpa)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 transition-colors"
+                          className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition-colors"
                         >
                           <Smartphone className="w-4 h-4" />
                           {lang === "vi" ? "Cài cho Android" : "Install on Android"}
@@ -458,7 +458,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                         {label}
                       </p>
                       <div className="flex items-center gap-1 bg-gray-50 rounded-lg px-3 py-2">
-                        <p className="text-sm text-gray-900 font-mono break-all flex-1">
+                        <p className="text-base sm:text-sm text-gray-900 font-mono break-all flex-1">
                           {value || "—"}
                         </p>
                         {copyable && value && <CopyButton text={value} t={t} />}
@@ -477,7 +477,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                           {lang === "vi" ? "Loại gói" : "Plan Type"}
                         </p>
                         <div className="bg-gray-50 rounded-lg px-3 py-2">
-                          <p className="text-sm text-gray-900">{planTypeLabel}</p>
+                          <p className="text-base sm:text-sm text-gray-900">{planTypeLabel}</p>
                         </div>
                       </div>
                       <div>
@@ -497,7 +497,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                               ))}
                             </div>
                           ) : (
-                            <p className="text-sm text-gray-900">—</p>
+                            <p className="text-base sm:text-sm text-gray-900">—</p>
                           )}
                         </div>
                       </div>
@@ -518,7 +518,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                               ))}
                             </div>
                           ) : (
-                            <p className="text-sm text-gray-900">—</p>
+                            <p className="text-base sm:text-sm text-gray-900">—</p>
                           )}
                         </div>
                       </div>
@@ -528,7 +528,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                         </p>
                         <div className="bg-gray-50 rounded-lg px-3 py-2">
                           {activationDeadline ? (
-                            <p className={`text-sm ${activationDaysLeft !== null && activationDaysLeft <= 30 ? "text-amber-600 font-medium" : "text-gray-900"}`}>
+                            <p className={`text-base sm:text-sm ${activationDaysLeft !== null && activationDaysLeft <= 30 ? "text-amber-600 font-medium" : "text-gray-900"}`}>
                               {activationDaysLeft !== null && activationDaysLeft > 0
                                 ? `${activationDaysLeft} ${lang === "vi" ? "ngày còn lại" : "days left"}`
                                 : lang === "vi" ? "Đã hết hạn" : "Expired"}
@@ -537,7 +537,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                               </span>
                             </p>
                           ) : (
-                            <p className="text-sm text-gray-900">—</p>
+                            <p className="text-base sm:text-sm text-gray-900">—</p>
                           )}
                         </div>
                       </div>
@@ -551,7 +551,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                         {t.status}
                       </p>
                       <div className="bg-gray-50 rounded-lg px-3 py-2">
-                        <span className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full ${getStatusStyle(esim.status)}`}>
+                        <span className={`inline-flex items-center px-2 py-0.5 text-sm font-medium rounded-full ${getStatusStyle(esim.status)}`}>
                           {getStatusLabel(esim.status, t)}
                         </span>
                       </div>
@@ -562,7 +562,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                         {lang === "vi" ? "Hết hạn" : "Expires"}
                       </p>
                       <div className="bg-gray-50 rounded-lg px-3 py-2">
-                        <p className="text-sm text-gray-900">
+                        <p className="text-base sm:text-sm text-gray-900">
                           {formatDate(esim.expiresAt, lang)}
                         </p>
                       </div>
@@ -576,7 +576,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                       href={esim.directAppleInstallationUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
+                      className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-gray-900 text-white rounded-lg text-base sm:text-sm font-medium hover:bg-gray-800 transition-colors"
                     >
                       <ExternalLink className="w-4 h-4" />
                       {lang === "vi" ? "Cài đặt trên iPhone" : "Install on iPhone"}
@@ -588,7 +588,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                     <button
                       type="button"
                       onClick={() => setTopupOpen(true)}
-                      className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors shadow-sm"
+                      className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-blue-600 text-white rounded-lg text-base sm:text-sm font-semibold hover:bg-blue-700 transition-colors shadow-sm"
                     >
                       <Zap className="w-4 h-4" />
                       {t.topup}
@@ -632,7 +632,7 @@ export function EsimCardList({ esims, isLoading, t, lang }: EsimCardListProps) {
       {esims.length === 0 ? (
         <div className="text-center py-12">
           <Smartphone className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500 text-sm">{t.noEsims}</p>
+          <p className="text-gray-500 text-base sm:text-sm">{t.noEsims}</p>
         </div>
       ) : (
         <div className="space-y-3">

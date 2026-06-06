@@ -74,7 +74,7 @@ export function MobileCta({
         {/* Add to Cart */}
         <button
           onClick={handleAddToCart}
-          className="flex items-center justify-center gap-2 py-[15px] rounded-[30px] border-[1.5px] border-[#1a1a1a] bg-white text-sm font-semibold cursor-pointer text-[#1a1a1a] font-[inherit] transition-all active:bg-[#1a1a1a] active:text-white"
+          className="flex items-center justify-center gap-2 py-[15px] rounded-[30px] border-[1.5px] border-[#1a1a1a] bg-white text-base font-semibold cursor-pointer text-[#1a1a1a] font-[inherit] transition-all active:bg-[#1a1a1a] active:text-white"
         >
           <svg
             width="16"
@@ -96,7 +96,7 @@ export function MobileCta({
         {/* Buy Now */}
         <button
           onClick={handleBuyNow}
-          className="flex items-center justify-center py-[15px] rounded-[30px] border-[1.5px] border-[#D1B700] bg-[#FFF500] text-[14.5px] font-bold cursor-pointer font-[inherit] text-[#1a1a1a] transition-all active:bg-[#D1B700]"
+          className="flex items-center justify-center py-[15px] rounded-[30px] border-[1.5px] border-[#D1B700] bg-[#FFF500] text-[14.5px] font-medium cursor-pointer font-[inherit] text-[#1a1a1a] transition-all active:bg-[#D1B700]"
         >
           {dict.buyNow} — {selectedPlan ? formatVnd(totalPrice) : "—"}
         </button>
@@ -104,7 +104,7 @@ export function MobileCta({
 
       {/* Trust Row */}
       <div className="flex flex-wrap items-center justify-center gap-x-[10px] gap-y-1 py-3 border-t border-[#f3f4f6] mt-1">
-        <div className="flex items-center gap-1 text-xs text-[#374151] font-medium whitespace-nowrap">
+        <div className="flex items-center gap-1 text-sm text-[#374151] font-medium whitespace-nowrap">
           <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
             <path
               d="M8 1.5L2 4v4c0 3.5 2.5 6 6 6s6-2.5 6-6V4L8 1.5z"
@@ -122,14 +122,14 @@ export function MobileCta({
           </svg>
           {dict.trust.secure}
         </div>
-        <div className="flex items-center gap-1 text-xs text-[#374151] font-medium whitespace-nowrap">
+        <div className="flex items-center gap-1 text-sm text-[#374151] font-medium whitespace-nowrap">
           <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
             <circle cx="8" cy="8" r="6.5" stroke="#16a34a" strokeWidth="1.2" />
             <path d="M8 4.5v4l2.5 1.5" stroke="#16a34a" strokeWidth="1.3" strokeLinecap="round" />
           </svg>
           {dict.trust.support}
         </div>
-        <div className="flex items-center gap-1 text-xs text-[#374151] font-medium whitespace-nowrap">
+        <div className="flex items-center gap-1 text-sm text-[#374151] font-medium whitespace-nowrap">
           <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
             <path d="M2.5 8a5.5 5.5 0 1 0 1-3.1" stroke="#16a34a" strokeWidth="1.3" strokeLinecap="round" />
             <path

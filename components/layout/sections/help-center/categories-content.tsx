@@ -135,7 +135,7 @@ export function CategoriesContent({ lang }: CategoriesContentProps) {
               <input
                 type="search"
                 placeholder={lang === "vi" ? "Nhập chủ đề, câu hỏi hoặc vấn đề" : "Type a topic, question or issue here"}
-                className="w-full pl-10 pr-4 py-2.5 rounded-full text-sm border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2.5 rounded-full text-base sm:text-sm border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 aria-label={lang === "vi" ? "Tìm kiếm bài viết" : "Search articles"}
@@ -143,7 +143,7 @@ export function CategoriesContent({ lang }: CategoriesContentProps) {
               {searchQuery.trim() && (
                 <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-xl border border-gray-200 max-h-64 overflow-y-auto z-50">
                   {isSearching ? (
-                    <div className="p-3 text-center text-gray-500 text-sm">
+                    <div className="p-3 text-center text-gray-500 text-base sm:text-sm">
                       {lang === "vi" ? "Đang tìm kiếm..." : "Searching..."}
                     </div>
                   ) : searchResults.length > 0 ? (
@@ -154,8 +154,8 @@ export function CategoriesContent({ lang }: CategoriesContentProps) {
                             href={`${localizedHref(lang, "help-center")}/${toLocalizedCategorySlug(article.category, lang)}/${toLocalizedParentSlug(article.parent, lang)}/${getArticleSlug(article)}`}
                             className="block px-4 py-2.5 text-gray-900 no-underline hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
                           >
-                            <p className="text-sm font-medium">{article.title}</p>
-                            <p className="text-xs text-gray-500 mt-0.5">
+                            <p className="text-base sm:text-sm font-medium">{article.title}</p>
+                            <p className="text-sm text-gray-500 mt-0.5">
                               {getCategoryLabel(article.category, lang)} › {getParentLabel(article.parent, lang)}
                             </p>
                           </Link>
@@ -163,7 +163,7 @@ export function CategoriesContent({ lang }: CategoriesContentProps) {
                       ))}
                     </ul>
                   ) : (
-                    <div className="p-3 text-center text-gray-500 text-sm">
+                    <div className="p-3 text-center text-gray-500 text-base sm:text-sm">
                       {lang === "vi" ? "Không tìm thấy kết quả" : "No results found"}
                     </div>
                   )}
@@ -178,7 +178,7 @@ export function CategoriesContent({ lang }: CategoriesContentProps) {
           <div className="max-w-[1386px] mx-auto px-8">
             <div className="flex items-center pt-4 pb-4">
               <nav aria-label="Breadcrumb">
-                <ol className="flex items-center gap-1 list-none p-0 m-0 text-sm">
+                <ol className="flex items-center gap-1 list-none p-0 m-0 text-base sm:text-sm">
                   <li>
                     <Link href={localizedHref(lang, "help-center")} className="text-gray-700 no-underline hover:text-gray-900 transition-colors">
                       {lang === "vi" ? "Trung tâm trợ giúp" : "Help Center"}
@@ -202,7 +202,7 @@ export function CategoriesContent({ lang }: CategoriesContentProps) {
 
         <div className="max-w-[1386px] mx-auto px-8 py-8">
           <article>
-            <h1 className="text-2xl font-bold mb-4">{selectedArticle.title}</h1>
+            <h1 className="text-[1.7rem] sm:text-2xl font-medium mb-4">{selectedArticle.title}</h1>
             <div
               className="hc-article-body prose prose-sm max-w-none
                 [&_p]:mb-4
@@ -235,7 +235,7 @@ export function CategoriesContent({ lang }: CategoriesContentProps) {
             <input
               type="search"
               placeholder={lang === "vi" ? "Nhập chủ đề, câu hỏi hoặc vấn đề" : "Type a topic, question or issue here"}
-              className="w-full pl-10 pr-4 py-2.5 rounded-full text-sm border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2.5 rounded-full text-base sm:text-sm border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               aria-label={lang === "vi" ? "Tìm kiếm bài viết" : "Search articles"}
@@ -243,7 +243,7 @@ export function CategoriesContent({ lang }: CategoriesContentProps) {
             {searchQuery.trim() && (
               <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-xl border border-gray-200 max-h-64 overflow-y-auto z-50">
                 {isSearching ? (
-                  <div className="p-3 text-center text-gray-500 text-sm">
+                  <div className="p-3 text-center text-gray-500 text-base sm:text-sm">
                     {lang === "vi" ? "Đang tìm kiếm..." : "Searching..."}
                   </div>
                 ) : searchResults.length > 0 ? (
@@ -254,8 +254,8 @@ export function CategoriesContent({ lang }: CategoriesContentProps) {
                           href={`${localizedHref(lang, "help-center")}/${toLocalizedCategorySlug(article.category, lang)}/${toLocalizedParentSlug(article.parent, lang)}/${getArticleSlug(article)}`}
                           className="block px-4 py-2.5 text-gray-900 no-underline hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
                         >
-                          <p className="text-sm font-medium">{article.title}</p>
-                          <p className="text-xs text-gray-500 mt-0.5">
+                          <p className="text-base sm:text-sm font-medium">{article.title}</p>
+                          <p className="text-sm text-gray-500 mt-0.5">
                             {getCategoryLabel(article.category, lang)} › {getParentLabel(article.parent, lang)}
                           </p>
                         </Link>
@@ -263,7 +263,7 @@ export function CategoriesContent({ lang }: CategoriesContentProps) {
                     ))}
                   </ul>
                 ) : (
-                  <div className="p-3 text-center text-gray-500 text-sm">
+                  <div className="p-3 text-center text-gray-500 text-base sm:text-sm">
                     {lang === "vi" ? "Không tìm thấy kết quả" : "No results found"}
                   </div>
                 )}
@@ -278,7 +278,7 @@ export function CategoriesContent({ lang }: CategoriesContentProps) {
         <div className="max-w-[1386px] mx-auto px-8">
           <div className="flex items-center pt-4 pb-4">
             <nav aria-label="Breadcrumb">
-              <ol className="flex items-center gap-1 list-none p-0 m-0 text-sm">
+              <ol className="flex items-center gap-1 list-none p-0 m-0 text-base sm:text-sm">
                 <li>
                   <Link href={localizedHref(lang, "help-center")} className="text-gray-700 no-underline hover:text-gray-900 transition-colors">
                     {lang === "vi" ? "Trung tâm trợ giúp" : "Help Center"}

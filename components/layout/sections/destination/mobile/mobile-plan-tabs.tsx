@@ -41,7 +41,7 @@ function MobilePlanChip({
     <button
       type="button"
       onClick={onSelect}
-      className={`inline-flex items-center gap-[7px] px-[18px] py-2.5 rounded-[30px] text-sm font-medium border-[1.5px] cursor-pointer transition-colors whitespace-nowrap font-[inherit] ${
+      className={`inline-flex items-center gap-[7px] px-[18px] py-2.5 rounded-[30px] text-base font-medium border-[1.5px] cursor-pointer transition-colors whitespace-nowrap font-[inherit] ${
         isSelected
           ? "bg-white text-[#1a1a1a] border-[#1a1a1a] font-semibold shadow-[0_0_0_1px_#1a1a1a]"
           : "bg-white text-[#374151] border-[#e5e7eb] active:bg-[#f3f4f6]"
@@ -50,7 +50,7 @@ function MobilePlanChip({
       {label}
       <PlanTagBadges tags={plan.tags as string[] | undefined} lang={lang} />
       {plan.discount != null && plan.discount > 0 && (
-        <span className="text-[12px] font-bold px-[7px] py-[2px] rounded leading-[1.4] whitespace-nowrap bg-[#dcfce7] text-[#166534] border border-[#BBF7D0]">
+        <span className="text-[12px] font-medium px-[7px] py-[2px] rounded leading-[1.4] whitespace-nowrap bg-[#dcfce7] text-[#166534] border border-[#BBF7D0]">
           –{Number(plan.discount).toFixed()}%
         </span>
       )}
@@ -77,7 +77,7 @@ function MobileGbChip({
     <button
       type="button"
       onClick={onSelect}
-      className={`inline-flex items-center gap-[7px] px-[18px] py-2.5 rounded-[30px] text-sm font-medium border-[1.5px] cursor-pointer transition-colors whitespace-nowrap font-[inherit] ${
+      className={`inline-flex items-center gap-[7px] px-[18px] py-2.5 rounded-[30px] text-base font-medium border-[1.5px] cursor-pointer transition-colors whitespace-nowrap font-[inherit] ${
         isSelected
           ? "bg-white text-[#1a1a1a] border-[#1a1a1a] font-semibold shadow-[0_0_0_1px_#1a1a1a]"
           : "bg-white text-[#374151] border-[#e5e7eb] active:bg-[#f3f4f6]"
@@ -86,7 +86,7 @@ function MobileGbChip({
       {formatDataLabel(gb)}/{lang === "en" ? "day" : "ngày"}
       {bestPlan && <PlanTagBadges tags={bestPlan.tags as string[] | undefined} lang={lang} />}
       {bestPlan?.discount != null && bestPlan.discount > 0 && (
-        <span className="text-[12px] font-bold px-[7px] py-[2px] rounded leading-[1.4] whitespace-nowrap bg-[#dcfce7] text-[#166534] border border-[#BBF7D0]">
+        <span className="text-[12px] font-medium px-[7px] py-[2px] rounded leading-[1.4] whitespace-nowrap bg-[#dcfce7] text-[#166534] border border-[#BBF7D0]">
           –{Number(bestPlan.discount).toFixed()}%
         </span>
       )}
@@ -129,7 +129,7 @@ function MobileUnlimitedPill({
           {firstTag ? (
             <PlanTagBadges tags={[firstTag]} lang={lang} />
           ) : (
-            <span className="text-[12px] font-bold px-[9px] py-[3px] rounded-[5px] leading-[1.4] whitespace-nowrap bg-[#dcfce7] text-[#166534] border border-[#BBF7D0]">
+            <span className="text-[12px] font-medium px-[9px] py-[3px] rounded-[5px] leading-[1.4] whitespace-nowrap bg-[#dcfce7] text-[#166534] border border-[#BBF7D0]">
               –{Number(plan.discount!).toFixed()}%
             </span>
           )}
@@ -150,7 +150,7 @@ function MobileUnlimitedPill({
 
       {/* Two-line layout — main label on top, hint below — keeps everything within 390px */}
       <span className="flex flex-col items-start gap-0.5 min-w-0 flex-1 overflow-hidden">
-        <span className={`text-[13.5px] font-medium leading-tight truncate w-full ${isSelected ? "text-[#1a1a1a] font-semibold" : "text-[#374151]"}`}>
+        <span className={`text-[.875rem] font-medium leading-tight truncate w-full ${isSelected ? "text-[#1a1a1a] font-semibold" : "text-[#374151]"}`}>
           {mainLabel}
         </span>
         <span className="text-[13px] leading-tight text-[#6b7280] truncate w-full">
@@ -167,7 +167,7 @@ function PlanGroupHeader({ icon, label }: { icon: React.ReactNode; label: string
   return (
     <div className="flex items-center gap-[7px] mb-[11px]">
       <span className="flex items-center text-[#6b7280]">{icon}</span>
-      <span className="text-xs font-bold text-[#6b7280] uppercase tracking-[0.07em]">{label}</span>
+      <span className="text-sm font-medium text-[#6b7280] uppercase tracking-[0.07em]">{label}</span>
     </div>
   );
 }
@@ -240,10 +240,10 @@ export function MobilePlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }
   return (
     <div className="px-4 py-[18px] border-t-[7px] border-[#f3f4f6]">
       <div className="flex items-center gap-2.5 mb-4">
-        <span className="w-6 h-6 rounded-full bg-[#1a1a1a] text-white text-xs font-extrabold flex items-center justify-center shrink-0">
+        <span className="w-6 h-6 rounded-full bg-[#1a1a1a] text-white text-sm font-extrabold flex items-center justify-center shrink-0">
           1
         </span>
-        <span className="text-[15px] font-bold text-[#1a1a1a]">{lang === "en" ? "Pick a plan" : "Chọn gói cước"}</span>
+        <span className="text-base font-medium text-[#1a1a1a]">{lang === "en" ? "Pick a plan" : "Chọn gói cước"}</span>
       </div>
 
       {hasDataPlans && (
@@ -321,9 +321,9 @@ export function MobilePlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }
               <button
                 type="button"
                 onClick={() => setSpeedTab("normal")}
-                className={`flex-1 text-center py-[9px] px-1.5 text-sm font-medium cursor-pointer border-none rounded-[30px] transition-all font-[inherit] ${
+                className={`flex-1 text-center py-[9px] px-1.5 text-base font-medium cursor-pointer border-none rounded-[30px] transition-all font-[inherit] ${
                   speedTab === "normal"
-                    ? "bg-white text-[#1a1a1a] font-bold shadow-[0_1px_4px_rgba(0,0,0,0.1)]"
+                    ? "bg-white text-[#1a1a1a] font-medium shadow-[0_1px_4px_rgba(0,0,0,0.1)]"
                     : "bg-transparent text-[#6b7280]"
                 }`}
               >
@@ -334,9 +334,9 @@ export function MobilePlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }
               <button
                 type="button"
                 onClick={() => setSpeedTab("high")}
-                className={`flex-1 text-center py-[9px] px-1.5 text-sm font-medium cursor-pointer border-none rounded-[30px] transition-all font-[inherit] ${
+                className={`flex-1 text-center py-[9px] px-1.5 text-base font-medium cursor-pointer border-none rounded-[30px] transition-all font-[inherit] ${
                   speedTab === "high"
-                    ? "bg-white text-[#1a1a1a] font-bold shadow-[0_1px_4px_rgba(0,0,0,0.1)]"
+                    ? "bg-white text-[#1a1a1a] font-medium shadow-[0_1px_4px_rgba(0,0,0,0.1)]"
                     : "bg-transparent text-[#6b7280]"
                 }`}
               >

@@ -65,10 +65,10 @@ export function PersonalInfo({ t, lang }: PersonalInfoProps) {
           <User className="w-5 h-5 text-blue-500" />
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="text-base font-semibold text-gray-900">
+          <h3 className="text-xl sm:text-base sm:text-sm font-semibold text-gray-900">
             {t.personalInfo}
           </h3>
-          <p className="text-xs text-gray-500 mt-0.5">
+          <p className="text-sm text-gray-500 mt-0.5">
             {lang === "vi"
               ? "Cập nhật thông tin liên hệ để hỗ trợ tốt hơn."
               : "Keep your contact details up to date for faster support."}
@@ -88,7 +88,7 @@ export function PersonalInfo({ t, lang }: PersonalInfoProps) {
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               placeholder={lang === "vi" ? "Nguyễn" : "John"}
-              className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-colors"
+              className="w-full pl-9 pr-3 py-2 text-base sm:text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-colors"
             />
           </div>
         </label>
@@ -104,7 +104,7 @@ export function PersonalInfo({ t, lang }: PersonalInfoProps) {
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               placeholder={lang === "vi" ? "Văn A" : "Doe"}
-              className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-colors"
+              className="w-full pl-9 pr-3 py-2 text-base sm:text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-colors"
             />
           </div>
         </label>
@@ -120,7 +120,7 @@ export function PersonalInfo({ t, lang }: PersonalInfoProps) {
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder={lang === "vi" ? "0901 234 567" : "+1 555 123 4567"}
-              className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-colors"
+              className="w-full pl-9 pr-3 py-2 text-base sm:text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-colors"
             />
           </div>
         </label>
@@ -141,7 +141,7 @@ export function PersonalInfo({ t, lang }: PersonalInfoProps) {
         <button
           type="submit"
           disabled={saving}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-900 text-white text-xs font-medium rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-60"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-60"
         >
           {saving ? (
             <Loader2 className="w-3.5 h-3.5 animate-spin" />

@@ -6,7 +6,8 @@ import type { Blog } from "@/lib/api";
 import type { Locale } from "@/lib/i18n-config";
 import { BlogCategoryNav } from "./blog-category-nav";
 import { BlogArticleHeading } from "./blog-article-heading";
-import { BlogBreadcrumb } from "./blog-breadcrumb";
+import { Breadcrumb } from "@/components/layout/breadcrumb";
+import { categorySlug } from "./blog-detail-helpers";
 import { BlogTableOfContents, processBlogContent } from "./blog-toc";
 import { BlogMiniTagWidget } from "./blog-mini-tag";
 import { BlogCountryPlansList } from "./blog-country-plans";
@@ -87,6 +88,21 @@ export function BlogDetailContent({ lang, slug, initialBlog }: BlogDetailContent
     [blog?.content]
   );
 
+  // Breadcrumb items — moved before early returns to satisfy rules-of-hooks
+  const breadcrumbItems = useMemo(() => {
+    const items: { label: string; href?: string }[] = [{ label: "Blog", href: `/${lang}/blog/` }];
+    if (blog?.category) {
+      items.push({ label: blog.category, href: `/${lang}/blog/category/${categorySlug(blog.category)}/` });
+    }
+    if (blog?.parent) {
+      items.push({ label: blog.parent, href: `/${lang}/blog/category/${categorySlug(blog?.category || "")}/${categorySlug(blog.parent)}/` });
+    }
+    if (blog?.title) {
+      items.push({ label: blog.title });
+    }
+    return items;
+  }, [blog?.category, blog?.parent, blog?.title, lang]);
+
   if (isLoading) {
     return (
       <div>
@@ -133,7 +149,12 @@ export function BlogDetailContent({ lang, slug, initialBlog }: BlogDetailContent
       <BlogCategoryNav lang={lang} />
 
       {/* Breadcrumb — below category nav */}
-      <BlogBreadcrumb blog={blog} lang={lang} />
+      <div className="bg-primary">
+        <Breadcrumb
+          items={breadcrumbItems}
+          lang={lang}
+        />
+      </div>
 
       <div>
         {/* Article Heading with Last Updated (SEO 1.6) */}

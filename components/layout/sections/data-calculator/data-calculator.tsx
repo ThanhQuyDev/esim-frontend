@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import {
   Smartphone,
   Film,
@@ -198,12 +198,12 @@ function ProfileCardMobile({
 }) {
   return (
     <label
-      className={`flex items-center gap-3 p-3 overflow-hidden rounded-sm cursor-pointer bg-bg-secondary border-md transition-colors ${selected
+      className={`flex items-center gap-3 p-3 overflow-hidden rounded-sm cursor-pointer bg-primary border-md transition-colors ${selected
           ? "border-border-focus"
           : "border-border-secondary hover:border-border-focus"
         }`}
     >
-      <div className="flex items-center justify-center shrink-0 w-12 h-12 rounded-sm bg-bg-blue-100">
+      <div className="flex items-center justify-center shrink-0 w-12 h-12 rounded-sm bg-blue-300">
         <ProfileIcon profileKey={profile.key} />
       </div>
       <div className="flex flex-col flex-1">
@@ -370,11 +370,45 @@ function MobileBottomBar({
   onReset: () => void;
 }) {
   const [showResults, setShowResults] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
   const totalDailyMB = Object.entries(values).reduce(
     (sum, [key, hours]) => sum + hours * (DATA_RATES[key] || 0),
     0
   );
   const hasData = totalDailyMB > 0;
+
+  const isVisible = showResults || isClosing;
+
+  // Trigger enter animation on mount
+  useEffect(() => {
+    if (showResults && !isClosing) {
+      const raf = requestAnimationFrame(() => {
+        const el = document.getElementById("data-calc-modal-panel");
+        if (el) {
+          el.classList.remove("translate-y-full");
+          el.classList.add("translate-y-0");
+        }
+      });
+      return () => cancelAnimationFrame(raf);
+    }
+  }, [showResults, isClosing]);
+
+  const handleClose = () => {
+    setIsClosing(true);
+    const el = document.getElementById("data-calc-modal-panel");
+    if (el) {
+      el.classList.remove("translate-y-0");
+      el.classList.add("translate-y-full");
+    }
+    setTimeout(() => {
+      setShowResults(false);
+      setIsClosing(false);
+    }, 300);
+  };
+
+  const handleOpen = () => {
+    setShowResults(true);
+  };
 
   return (
     <>
@@ -384,8 +418,8 @@ function MobileBottomBar({
           }`}
       >
         <button
-          onClick={() => setShowResults(true)}
-          className="w-full text-center text-text-primary-on-color bg-bg-accent hover:bg-bg-accent-hover border-md border-bg-accent rounded-full transition-colors py-[5.5px] body-sm-medium px-6"
+          onClick={handleOpen}
+          className="w-full text-center text-primary bg-bg-accent hover:bg-bg-accent-hover border-md border-bg-accent rounded-full transition-colors py-[5.5px] body-sm-medium px-6"
         >
           {dict.calculateData}
         </button>
@@ -398,16 +432,24 @@ function MobileBottomBar({
         </button>
       </div>
 
-      {/* Mobile results modal */}
-      {showResults && (
-        <div className="fixed inset-0 z-50 lg:hidden bg-black/50 flex items-end">
-          <div className="w-full bg-bg-primary rounded-t-lg p-6 max-h-[80vh] overflow-y-auto">
+      {/* Mobile results modal with slide-up animation */}
+      {isVisible && (
+        <div
+          className={`fixed inset-0 z-50 lg:hidden flex items-end transition-opacity duration-300 ${showResults && !isClosing ? "bg-black/50" : "bg-transparent"
+            }`}
+          onClick={handleClose}
+        >
+          <div
+            id="data-calc-modal-panel"
+            className="w-full bg-bg-primary rounded-t-lg p-6 max-h-[80vh] overflow-y-auto translate-y-full transition-transform duration-300 ease-out"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex justify-between items-center mb-6">
               <p className="body-lg-medium text-text-primary">
                 {dict.estimatedUsage}
               </p>
               <button
-                onClick={() => setShowResults(false)}
+                onClick={handleClose}
                 className="text-text-tertiary body-md"
               >
                 ✕
@@ -415,8 +457,8 @@ function MobileBottomBar({
             </div>
             <DonutChart values={values} dict={dict} />
             <button
-              onClick={() => setShowResults(false)}
-              className="w-full mt-6 text-center text-text-primary-on-color bg-bg-accent hover:bg-bg-accent-hover rounded-full transition-colors py-3 body-md-medium"
+              onClick={handleClose}
+              className="w-full mt-6 text-center text-primary bg-bg-accent hover:bg-bg-accent-hover rounded-full transition-colors py-3 body-md-medium"
             >
               {dict.close || "Close"}
             </button>

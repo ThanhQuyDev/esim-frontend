@@ -32,7 +32,7 @@ function LpaQrCode({ lpa, scanLabel }: { lpa: string; scanLabel: string }) {
           excavate: true,
         }}
       />
-      <p className="text-xs text-gray-500 mt-3">{scanLabel}</p>
+      <p className="text-sm text-gray-500 mt-3">{scanLabel}</p>
     </div>
   );
 }
@@ -46,11 +46,11 @@ export function EsimCard({ esim, index, totalCount, copiedField, onCopy, t }: Es
           <Smartphone className="w-5 h-5 text-emerald-600" />
         </div>
         <div>
-          <h3 className="font-bold text-gray-900">
+          <h3 className="font-medium text-gray-900">
             {t.esimDetails} {totalCount > 1 ? `#${index + 1}` : ""}
           </h3>
           {esim.status && (
-            <span className={`inline-block mt-1 text-xs font-medium px-2 py-0.5 rounded-full ${esim.status === "available" ? "bg-emerald-100 text-emerald-700" :
+            <span className={`inline-block mt-1 text-sm font-medium px-2 py-0.5 rounded-full ${esim.status === "available" ? "bg-emerald-100 text-emerald-700" :
                 esim.status === "active" ? "bg-blue-100 text-blue-700" :
                   "bg-gray-100 text-gray-600"
               }`}>
@@ -64,13 +64,13 @@ export function EsimCard({ esim, index, totalCount, copiedField, onCopy, t }: Es
       {(esim.dataTotal || esim.dataUsed) && (
         <div className="flex flex-wrap gap-2 mb-5">
           {esim.dataTotal && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple-50 text-purple-700 text-xs font-medium">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple-50 text-purple-700 text-sm font-medium">
               <Wifi className="w-3.5 h-3.5" />
               {esim.dataTotal}
             </span>
           )}
           {esim.dataUsed && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 text-amber-700 text-xs font-medium">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 text-amber-700 text-sm font-medium">
               <Calendar className="w-3.5 h-3.5" />
               {t.data}: {esim.dataUsed}
             </span>

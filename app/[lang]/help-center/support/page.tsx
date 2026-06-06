@@ -44,7 +44,7 @@ export default async function SupportPage({
             <h1 className="text-3xl md:text-4xl font-semibold text-gray-900 tracking-tight">
               {formDict.pageTitle}
             </h1>
-            <p className="mt-3 text-base text-gray-600 max-w-xl mx-auto">
+            <p className="mt-3 text-xl sm:text-base text-gray-600 max-w-xl mx-auto">
               {formDict.pageSubtitle}
             </p>
           </div>

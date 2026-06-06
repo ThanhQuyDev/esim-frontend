@@ -26,14 +26,14 @@ function formatDataLabel(mb: number): string {
  */
 export function SimplePlanList({ plans, selectedPlan, onSelectPlan, dict }: SimplePlanListProps) {
   if (plans.length === 0) {
-    return <div className="py-8 text-center text-sm text-[#6b7280]">{dict.noPlans}</div>;
+    return <div className="py-8 text-center text-base sm:text-sm text-[#6b7280]">{dict.noPlans}</div>;
   }
   const lang = dict.daysUnit?.toLowerCase().startsWith("d") ? "en" : "vi";
 
   return (
     <div>
-      <div className="text-[15px] font-bold text-[#111] mb-2.5 flex items-center gap-2.5">
-        <span className="inline-flex items-center justify-center w-6 h-6 bg-[#111] text-white rounded-full text-xs font-extrabold shrink-0">1</span>
+      <div className="text-base font-medium text-[#111] mb-2.5 flex items-center gap-2.5">
+        <span className="inline-flex items-center justify-center w-6 h-6 bg-[#111] text-white rounded-full text-sm font-extrabold shrink-0">1</span>
         {lang === "en" ? "Pick a plan" : "Chọn gói cước"}
       </div>
       <div className="flex flex-wrap gap-2">
@@ -47,7 +47,7 @@ export function SimplePlanList({ plans, selectedPlan, onSelectPlan, dict }: Simp
               type="button"
               key={plan.id}
               onClick={() => onSelectPlan(plan)}
-              className={`inline-flex items-center gap-[7px] px-[15px] py-[9px] rounded-[30px] text-[13.5px] font-medium border-[1.5px] cursor-pointer transition-colors whitespace-nowrap font-[inherit] ${
+              className={`inline-flex items-center gap-[7px] px-[15px] py-[9px] rounded-[30px] text-[.875rem] font-medium border-[1.5px] cursor-pointer transition-colors whitespace-nowrap font-[inherit] ${
                 isSelected
                   ? "bg-white text-[#1a1a1a] border-[#1a1a1a] font-semibold shadow-[0_0_0_1px_#1a1a1a]"
                   : "bg-white text-[#374151] border-[#e5e7eb] hover:bg-[#f3f4f6] hover:border-[#9ca3af]"
@@ -56,17 +56,17 @@ export function SimplePlanList({ plans, selectedPlan, onSelectPlan, dict }: Simp
               {label}
               <PlanTagBadges tags={plan.tags as string[] | undefined} lang={lang} />
               {plan.sms != null && plan.sms > 0 && (
-                <span className="text-[11px] font-bold tracking-wide px-[5px] py-[2px] rounded leading-tight shrink-0 bg-[#dbeafe] text-[#1e40af]">
+                <span className="text-[11px] font-medium tracking-wide px-[5px] py-[2px] rounded leading-tight shrink-0 bg-[#dbeafe] text-[#1e40af]">
                   SMS
                 </span>
               )}
               {plan.call != null && plan.call > 0 && (
-                <span className="text-[11px] font-bold tracking-wide px-[5px] py-[2px] rounded leading-tight shrink-0 bg-[#ede9fe] text-[#5b21b6]">
+                <span className="text-[11px] font-medium tracking-wide px-[5px] py-[2px] rounded leading-tight shrink-0 bg-[#ede9fe] text-[#5b21b6]">
                   Call
                 </span>
               )}
               {plan.discount != null && plan.discount > 0 && (
-                <span className="text-[11px] font-bold tracking-wide px-[5px] py-[2px] rounded leading-tight shrink-0 bg-[#dcfce7] text-[#166534] border border-[#BBF7D0]">
+                <span className="text-[11px] font-medium tracking-wide px-[5px] py-[2px] rounded leading-tight shrink-0 bg-[#dcfce7] text-[#166534] border border-[#BBF7D0]">
                   –{Number(plan.discount).toFixed()}%
                 </span>
               )}

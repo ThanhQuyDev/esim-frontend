@@ -46,17 +46,17 @@ export function MobilePlanConfig({
   return (
     <div className="px-4 py-[18px] border-t-[7px] border-[#f3f4f6]">
       <div className="flex items-center gap-2.5 mb-4">
-        <span className="w-6 h-6 rounded-full bg-[#1a1a1a] text-white text-xs font-extrabold flex items-center justify-center shrink-0">
+        <span className="w-6 h-6 rounded-full bg-[#1a1a1a] text-white text-sm font-extrabold flex items-center justify-center shrink-0">
           2
         </span>
-        <span className="text-[15px] font-bold text-[#1a1a1a]">
+        <span className="text-base font-medium text-[#1a1a1a]">
           {lang === "en" ? "Your options" : "Tùy chọn của bạn"}
         </span>
       </div>
 
       <div className="grid grid-cols-2 gap-3.5 mb-3.5">
         <div>
-          <div className="text-xs font-bold uppercase tracking-[0.07em] text-[#6b7280] mb-[9px]">
+          <div className="text-sm font-medium uppercase tracking-[0.07em] text-[#6b7280] mb-[9px]">
             {dict.daysLabel}
           </div>
           <button
@@ -72,7 +72,7 @@ export function MobilePlanConfig({
             }`}
           >
             <span className="w-[38px] shrink-0" />
-            <span className="flex-1 text-center text-[15px] font-semibold">
+            <span className="flex-1 text-center text-base font-semibold">
               {days} {dict.daysUnit}
             </span>
             <span className={`w-[38px] h-[38px] rounded-full flex items-center justify-center shrink-0 ${
@@ -87,7 +87,7 @@ export function MobilePlanConfig({
         </div>
 
         <div>
-          <div className="text-xs font-bold uppercase tracking-[0.07em] text-[#6b7280] mb-[9px]">
+          <div className="text-sm font-medium uppercase tracking-[0.07em] text-[#6b7280] mb-[9px]">
             {dict.quantity}
           </div>
           <div className="flex items-center justify-between border-[1.5px] border-[#e5e7eb] rounded-[30px] h-[50px] px-1">
@@ -98,7 +98,7 @@ export function MobilePlanConfig({
             >
               −
             </button>
-            <span className="text-[15px] font-semibold flex-1 text-center">
+            <span className="text-base font-semibold flex-1 text-center">
               {quantity} {dict.esimUnit}
             </span>
             <button
@@ -119,7 +119,7 @@ export function MobilePlanConfig({
               key={d}
               type="button"
               onClick={() => onDaysChange(d)}
-              className={`h-[38px] min-w-[38px] px-[11px] flex items-center justify-center border-[1.5px] rounded-[30px] text-sm font-semibold cursor-pointer font-[inherit] transition-colors ${
+              className={`h-[38px] min-w-[38px] px-[11px] flex items-center justify-center border-[1.5px] rounded-[30px] text-base font-semibold cursor-pointer font-[inherit] transition-colors ${
                 days === d
                   ? "border-[#F5C518] bg-[#FEF9E7] text-[#1a1a1a]"
                   : "border-[#e5e7eb] bg-white text-[#374151] active:bg-[#fde68a] active:border-[#d97706]"

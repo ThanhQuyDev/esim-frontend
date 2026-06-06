@@ -27,7 +27,7 @@ export function PriceDisplay({
     return (
       <div className="mb-2">
         <div className="flex items-baseline gap-2.5 mb-2">
-          <span className="text-4xl font-extrabold text-[#111] tracking-[-1px]">—</span>
+          <span className="text-[2rem] font-extrabold text-[#111] tracking-[-1px]">—</span>
         </div>
         <span className="text-[13px] text-[#6b7280] block min-h-[22px]">{planLabel}</span>
       </div>
@@ -63,15 +63,15 @@ export function PriceDisplay({
   return (
     <div className="mb-2">
       <div className="flex items-baseline gap-2.5 mb-[5px]">
-        <span className="text-4xl font-extrabold text-[#111] tracking-[-1px]">
+        <span className="text-[2rem] font-extrabold text-[#111] tracking-[-1px]">
           {formatVnd(totalPrice)}
         </span>
         {totalRetail > totalPrice && (
           <>
-            <span className="text-base text-[#6b7280] line-through font-medium">
+            <span className="text-xl sm:text-base text-[#6b7280] line-through font-medium">
               {formatVnd(totalRetail)}
             </span>
-            <span className="px-[9px] py-[3px] bg-[#FEE2E2] text-[#dc2626] rounded-[5px] text-xs font-bold">
+            <span className="px-[9px] py-[3px] bg-[#FEE2E2] text-[#dc2626] rounded-[5px] text-sm font-medium">
               -{savePercent}%
             </span>
           </>
@@ -106,11 +106,11 @@ const GreenCheck = () => (
 export function GreenBox({ dict, line1Html }: GreenBoxProps) {
   return (
     <div className="bg-[#f0fdf4] border border-[#bbf7d0] rounded-xl px-3.5 py-[13px] mb-[18px] flex flex-col gap-[9px]">
-      <div className="flex items-start gap-[9px] text-sm text-[#166534] leading-normal">
+      <div className="flex items-start gap-[9px] text-base sm:text-sm text-[#166534] leading-normal">
         <GreenCheck />
         <span dangerouslySetInnerHTML={{ __html: line1Html }} />
       </div>
-      <div className="flex items-start gap-[9px] text-sm text-[#166534] leading-normal">
+      <div className="flex items-start gap-[9px] text-base sm:text-sm text-[#166534] leading-normal">
         <GreenCheck />
         <span>{dict.greenBox.line3}</span>
       </div>

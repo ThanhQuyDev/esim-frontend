@@ -135,7 +135,7 @@ function MobileDeviceChecker({ dict, lang }: { dict: DestinationDict; lang: stri
             <path d="M12 18h.01M9 6h6" />
           </svg>
         </SectionIconBox>
-        <span className="text-[15px] font-bold text-[#1a1a1a]">{dict.deviceCheck.title}</span>
+        <span className="text-base font-bold text-[#1a1a1a]">{dict.deviceCheck.title}</span>
       </div>
 
       <div className="flex flex-col gap-3">
@@ -148,7 +148,7 @@ function MobileDeviceChecker({ dict, lang }: { dict: DestinationDict; lang: stri
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="VD: iPhone 15, Samsung S24…"
-            className="flex-1 px-4 py-3 border-[1.5px] border-[#e5e7eb] rounded-[30px] text-[15px] font-[inherit] text-[#1a1a1a] outline-none bg-white focus:border-[#1a1a1a]"
+            className="flex-1 px-4 py-3 border-[1.5px] border-[#e5e7eb] rounded-[30px] text-base font-[inherit] text-[#1a1a1a] outline-none bg-white focus:border-[#1a1a1a]"
           />
           <button
             onClick={handleCheck}
@@ -210,12 +210,13 @@ export function MobileFeatures({
   const hasCalls = selectedPlan?.call != null && Number(selectedPlan.call) > 0;
   const hasLocalNumber = false; // eSIM typically doesn't provide local number
   const hasEkyc = !!selectedPlan?.isKyc;
-  const hasTopup = selectedPlan?.topUp ?? true;
+  const hasTopup = selectedPlan?.topUp ?? true
+  const operatorName = selectedPlan?.operatorName || null;
+  const speed = selectedPlan?.speed || null;;
 
   return (
     <>
-      {/* ── Device Checker Section (moved above Features) ── */}
-      <MobileDeviceChecker dict={dict} lang={lang} />
+
 
       {/* ── Features Section ── */}
       <div className="px-4 py-[18px] border-t-[7px] border-[#f3f4f6]">
@@ -226,9 +227,28 @@ export function MobileFeatures({
               <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
             </svg>
           </SectionIconBox>
-          <span className="text-[15px] font-bold text-[#1a1a1a]">{dict.features.title}</span>
+          <span className="text-base font-bold text-[#1a1a1a]">{dict.features.title}</span>
         </div>
-
+        {operatorName && (
+          <div className="flex items-center justify-between py-[13px] border-b border-[#f3f4f6] gap-3">
+            <span className="text-sm text-[#374151] shrink-0">{dict.carriers.domestic}</span>
+            <div className="flex flex-nowrap gap-[5px] flex-1 justify-end overflow-x-auto" style={{ scrollbarWidth: "none" }}>
+              <span className="px-2.5 py-1 border border-[#D1D5DB] rounded-md text-[13px] font-semibold whitespace-nowrap shrink-0">
+                {operatorName}
+              </span>
+            </div>
+          </div>
+        )}
+        {speed && (
+          <div className="flex items-center justify-between py-[13px] border-b border-[#f3f4f6] gap-3">
+            <span className="text-sm text-[#374151] shrink-0">{dict.carriers.speed}</span>
+            <div className="flex flex-nowrap gap-[5px] flex-1 justify-end overflow-x-auto" style={{ scrollbarWidth: "none" }}>
+              <span className="px-2.5 py-1 border border-[#D1D5DB] rounded-md text-[13px] font-semibold whitespace-nowrap shrink-0">
+                {speed}
+              </span>
+            </div>
+          </div>
+        )}
         {/* Hotspot — dynamic from plan.hotSpot / plan.hotSpotAllow */}
         <div className="flex items-center justify-between py-[13px] border-b border-[#f3f4f6] gap-3">
           <span className="text-sm text-[#374151]">{dict.features.hotspot}</span>
@@ -361,6 +381,9 @@ export function MobileFeatures({
         )}
       </div>
 
+      {/* ── Device Checker Section (moved above Features) ── */}
+      <MobileDeviceChecker dict={dict} lang={lang} />
+
       {/* ── Delivery Section ── */}
       <div className="px-4 py-[18px] border-t-[7px] border-[#f3f4f6]">
         <div className="flex items-center gap-2.5 mb-4">
@@ -371,14 +394,14 @@ export function MobileFeatures({
               <line x1="12" y1="22.08" x2="12" y2="12" />
             </svg>
           </SectionIconBox>
-          <span className="text-[15px] font-bold text-[#1a1a1a]">{dict.delivery.title}</span>
+          <span className="text-base font-bold text-[#1a1a1a]">{dict.delivery.title}</span>
         </div>
 
         {/* Delivery time row */}
         <div className="flex items-center justify-between py-[13px] border-b border-[#f3f4f6] gap-3">
           <span className="text-sm text-[#374151]">{dict.delivery.deliveryTime}</span>
           <div className="flex flex-col items-end gap-[5px]">
-            <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#DCFCE7] border-[1.5px] border-[#86EFAC] rounded-[20px] text-[13.5px] font-bold text-[#15803D] whitespace-nowrap">
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#DCFCE7] border-[1.5px] border-[#86EFAC] rounded-[20px] text-[.875rem] font-bold text-[#15803D] whitespace-nowrap">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                 <circle cx="12" cy="12" r="10" />
                 <polyline points="12 6 12 12 16 14" />
@@ -410,14 +433,6 @@ export function MobileFeatures({
             <strong className="text-[#78350f]">{dict.note.title}:</strong> {dict.note.text}
           </p>
         </div>
-      </div>
-
-      {/* ── Disclaimer ── */}
-      <div className="px-4 py-4 text-[13px] text-[#6b7280] leading-normal">
-        {dict.disclaimer}{" "}
-        <a href={deviceLink} className="text-[#1a1a1a] font-semibold underline">
-          {dict.disclaimerLink}
-        </a>
       </div>
     </>
   );

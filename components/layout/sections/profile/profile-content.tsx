@@ -71,7 +71,7 @@ export function ProfileContent({ lang }: ProfileContentProps) {
           </p>
           <Link
             href={`/${lang}`}
-            className="inline-flex items-center px-6 py-2.5 bg-gray-900 text-white rounded-full text-sm font-medium hover:bg-gray-800 transition-colors"
+            className="inline-flex items-center px-6 py-2.5 bg-gray-900 text-white rounded-full text-base sm:text-sm font-medium hover:bg-gray-800 transition-colors"
           >
             {lang === "vi" ? "Về trang chủ" : "Go Home"}
           </Link>
@@ -95,10 +95,10 @@ export function ProfileContent({ lang }: ProfileContentProps) {
       <div className="max-w-2xl mx-auto px-4 sm:px-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">{t.pageTitle}</h1>
+          <h1 className="text-[1.7rem] sm:text-2xl font-medium text-gray-900">{t.pageTitle}</h1>
           <button
             onClick={logout}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-base sm:text-sm text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
           >
             <LogOut className="w-4 h-4" />
             {lang === "vi" ? "Đăng xuất" : "Sign Out"}
@@ -111,7 +111,7 @@ export function ProfileContent({ lang }: ProfileContentProps) {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg transition-all ${
+              className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-base sm:text-sm font-medium rounded-lg transition-all ${
                 activeTab === tab.key
                   ? "bg-white text-gray-900 shadow-sm"
                   : "text-gray-500 hover:text-gray-700"
@@ -130,15 +130,15 @@ export function ProfileContent({ lang }: ProfileContentProps) {
             <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
               <div className="p-6">
                 <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-xl font-bold shadow-md">
+                  <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-2xl sm:text-xl font-medium shadow-md">
                     {user.email.charAt(0).toUpperCase()}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
+                    <div className="flex items-center gap-2 text-base sm:text-sm text-gray-500 mb-1">
                       <Mail className="w-3.5 h-3.5" />
                       {t.email}
                     </div>
-                    <p className="text-base font-medium text-gray-900 truncate">
+                    <p className="text-xl sm:text-base font-medium text-gray-900 truncate">
                       {user.email}
                     </p>
                   </div>
@@ -155,11 +155,11 @@ export function ProfileContent({ lang }: ProfileContentProps) {
                 <div className="bg-gradient-to-r from-emerald-500 to-teal-600 p-5 text-white">
                   <div className="flex items-center gap-2 mb-1">
                     <Wallet className="w-4 h-4 opacity-80" />
-                    <span className="text-sm font-medium opacity-90">{t.walletBalance}</span>
+                    <span className="text-base sm:text-sm font-medium opacity-90">{t.walletBalance}</span>
                   </div>
-                  <p className="text-2xl font-bold tracking-tight">{formatVnd(wallet.balanceVnd)}</p>
+                  <p className="text-[1.7rem] sm:text-2xl font-medium tracking-tight">{formatVnd(wallet.balanceVnd)}</p>
                   {wallet.availableBalanceVnd !== wallet.balanceVnd && (
-                    <p className="text-xs mt-1 opacity-80">
+                    <p className="text-sm mt-1 opacity-80">
                       {t.availableBalance}: {formatVnd(wallet.availableBalanceVnd)}
                     </p>
                   )}
@@ -168,30 +168,30 @@ export function ProfileContent({ lang }: ProfileContentProps) {
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4 text-gray-400" />
                     {daysLeft === null ? (
-                      <span className="text-sm text-gray-400">{t.noExpiry}</span>
+                      <span className="text-base sm:text-sm text-gray-400">{t.noExpiry}</span>
                     ) : daysLeft <= 0 ? (
-                      <span className="text-sm text-gray-400">{t.expired}</span>
+                      <span className="text-base sm:text-sm text-gray-400">{t.expired}</span>
                     ) : (
-                      <span className={`text-sm font-medium ${expiryColor}`}>
+                      <span className={`text-base sm:text-sm font-medium ${expiryColor}`}>
                         {t.expiresIn} {daysLeft} {t.days}
                       </span>
                     )}
                   </div>
                   {daysLeft !== null && daysLeft > 0 && (
-                    <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${expiryBg} ${expiryColor}`}>
+                    <span className={`text-sm px-2.5 py-1 rounded-full font-medium ${expiryBg} ${expiryColor}`}>
                       {daysLeft} {t.days}
                     </span>
                   )}
                 </div>
                 {wallet.status === "locked" && (
                   <div className="mx-5 mb-4 flex items-start gap-3 rounded-xl bg-red-50 border border-red-100 p-3">
-                    <span className="text-sm text-red-700">{t.walletLocked}</span>
+                    <span className="text-base sm:text-sm text-red-700">{t.walletLocked}</span>
                   </div>
                 )}
                 <div className="px-5 pb-4">
                   <button
                     onClick={() => setActiveTab("wallet")}
-                    className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-medium bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-colors cursor-pointer"
+                    className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-base sm:text-sm font-medium bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-colors cursor-pointer"
                   >
                     <Wallet className="w-4 h-4" />
                     {t.viewWallet}
@@ -207,19 +207,19 @@ export function ProfileContent({ lang }: ProfileContentProps) {
                 <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-5 text-white">
                   <div className="flex items-center gap-2 mb-1">
                     <Gift className="w-4 h-4 opacity-80" />
-                    <span className="text-sm font-medium opacity-90">{t.referralCode}</span>
+                    <span className="text-base sm:text-sm font-medium opacity-90">{t.referralCode}</span>
                   </div>
-                  <p className="text-2xl font-bold tracking-tight font-mono">{referral.code}</p>
+                  <p className="text-[1.7rem] sm:text-2xl font-medium tracking-tight font-mono">{referral.code}</p>
                 </div>
                 <div className="p-5 space-y-3">
                   <div className="flex items-center gap-3">
                     <div className="flex-1 bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
-                      <p className="text-xs text-gray-400 mb-0.5">{t.referralLink}</p>
-                      <p className="text-sm text-gray-600 truncate">{`https://esim.vn/?ref=${referral.code}`}</p>
+                      <p className="text-sm text-gray-400 mb-0.5">{t.referralLink}</p>
+                      <p className="text-base sm:text-sm text-gray-600 truncate">{`https://esim.vn/?ref=${referral.code}`}</p>
                     </div>
                     <button
                       onClick={() => copyReferralCode(referral.code)}
-                      className="flex items-center gap-1.5 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors flex-shrink-0"
+                      className="flex items-center gap-1.5 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-base sm:text-sm font-medium hover:bg-blue-700 transition-colors flex-shrink-0"
                     >
                       {referralCopied ? (
                         t.copied
@@ -233,12 +233,12 @@ export function ProfileContent({ lang }: ProfileContentProps) {
                   </div>
                   {!referral.isActive && (
                     <div className="flex items-start gap-2 rounded-xl bg-amber-50 border border-amber-100 p-3">
-                      <span className="text-sm text-amber-700">{t.referralInactive}</span>
+                      <span className="text-base sm:text-sm text-amber-700">{t.referralInactive}</span>
                     </div>
                   )}
                   <button
                     onClick={() => setActiveTab("wallet")}
-                    className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-medium bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors cursor-pointer"
+                    className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-base sm:text-sm font-medium bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors cursor-pointer"
                   >
                     <Gift className="w-4 h-4" />
                     {t.shareReferral}
@@ -251,7 +251,7 @@ export function ProfileContent({ lang }: ProfileContentProps) {
             {/* Order History */}
             <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
-                <h2 className="text-base font-semibold text-gray-900">{t.myOrders}</h2>
+                <h2 className="text-xl sm:text-base font-semibold text-gray-900">{t.myOrders}</h2>
               </div>
               <div className="p-4">
                 <OrderList
@@ -272,7 +272,7 @@ export function ProfileContent({ lang }: ProfileContentProps) {
         {activeTab === "sim" && (
           <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
-              <h2 className="text-base font-semibold text-gray-900">{t.myEsims}</h2>
+              <h2 className="text-xl sm:text-base font-semibold text-gray-900">{t.myEsims}</h2>
             </div>
             <div className="p-4">
               <EsimCardList

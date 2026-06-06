@@ -1,3 +1,7 @@
+"use client";
+
+import { useState, useRef, useCallback } from "react";
+
 interface ReviewFeaturesProps {
   dict: Record<string, any>;
   lang: string;
@@ -59,6 +63,67 @@ const defaultFeatures = [
 export function ReviewFeatures({ dict, lang }: ReviewFeaturesProps) {
   const features = dict.items || defaultFeatures;
 
+  // Mobile swiper state
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
+
+  const totalSlides = features.length;
+  const canGoPrev = currentSlide > 0;
+  const canGoNext = currentSlide < totalSlides - 1;
+
+  const scrollToSlide = useCallback((index: number) => {
+    const clamped = Math.max(0, Math.min(index, totalSlides - 1));
+    setCurrentSlide(clamped);
+    if (sliderRef.current) {
+      const slideWidth = sliderRef.current.offsetWidth * 0.87; // matches max-w-[87%]
+      const gap = 16; // matches mr-4
+      sliderRef.current.scrollTo({
+        left: clamped * (slideWidth + gap),
+        behavior: "smooth",
+      });
+    }
+  }, [totalSlides]);
+
+  const handlePrev = useCallback(() => {
+    scrollToSlide(currentSlide - 1);
+  }, [currentSlide, scrollToSlide]);
+
+  const handleNext = useCallback(() => {
+    scrollToSlide(currentSlide + 1);
+  }, [currentSlide, scrollToSlide]);
+
+  // Touch/swipe handlers
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    const diff = touchStartX.current - touchEndX.current;
+    const threshold = 50;
+    if (diff > threshold) {
+      scrollToSlide(currentSlide + 1);
+    } else if (diff < -threshold) {
+      scrollToSlide(currentSlide - 1);
+    }
+  }, [currentSlide, scrollToSlide]);
+
+  // Update slide index on manual scroll
+  const handleScroll = useCallback(() => {
+    if (!sliderRef.current) return;
+    const container = sliderRef.current;
+    const slideWidth = container.offsetWidth * 0.87 + 16;
+    const newIndex = Math.round(container.scrollLeft / slideWidth);
+    if (newIndex !== currentSlide && newIndex >= 0 && newIndex < totalSlides) {
+      setCurrentSlide(newIndex);
+    }
+  }, [currentSlide, totalSlides]);
+
   return (
     <div data-section="Features" data-testid="section-Features" className="relative scroll-mt-20 xl:scroll-mt-24">
       <div className="py-16">
@@ -104,32 +169,34 @@ export function ReviewFeatures({ dict, lang }: ReviewFeaturesProps) {
 
             {/* Mobile swiper */}
             <div className="md:hidden max-sm:-mx-4 max-sm:px-4 overflow-hidden">
-              <div className="swiper swiper-initialized swiper-horizontal overflow-visible!">
-                <div className="swiper-wrapper">
+              <div className="overflow-visible">
+                <div
+                  ref={sliderRef}
+                  className="flex overflow-x-auto scroll-smooth snap-x snap-mandatory scrollbar-none"
+                  onScroll={handleScroll}
+                  onTouchStart={handleTouchStart}
+                  onTouchMove={handleTouchMove}
+                  onTouchEnd={handleTouchEnd}
+                >
                   {features.map((feature: any, index: number) => {
                     const IconComponent = featureIcons[index] || WalletIcon;
-                    const slideClass = index === 0
-                      ? "swiper-slide swiper-slide-active"
-                      : index === 1
-                        ? "swiper-slide swiper-slide-next"
-                        : "swiper-slide";
+                    const isActive = index === currentSlide;
                     return (
                       <div
                         key={index}
-                        className={`${slideClass} h-auto! max-w-[87%] min-[480px]:max-w-[71%] sm:max-w-[62%] mr-4`}
-                        style={{ marginRight: "16px" }}
+                        className="flex-shrink-0 snap-start max-w-[87%] min-[480px]:max-w-[71%] sm:max-w-[62%] mr-4"
                       >
-                        <div className="h-full w-full flex [&>div:empty]:hidden flex-col justify-start gap-y-4">
+                        <div className={`h-full w-full flex flex-col justify-start gap-y-4 p-5 rounded-xl border transition-colors ${isActive ? "border-primary bg-primary/[0.04]" : "border-tertiary"}`}>
                           <div>
-                            <div className="h-full w-full flex [&>div:empty]:hidden flex-col text-start items-start justify-start gap-y-6">
+                            <div className="h-full w-full flex flex-col text-start items-start justify-start gap-y-6">
                               <div><IconComponent /></div>
                               <div>
-                                <p className="body-lg-medium text-primary scroll-mt-20 xl:scroll-mt-24" role="heading" aria-level={3}>{feature.title}</p>
+                                <p className="body-lg-medium text-primary" role="heading" aria-level={3}>{feature.title}</p>
                               </div>
                             </div>
                           </div>
                           <div>
-                            <p className="body-md text-secondary scroll-mt-20 xl:scroll-mt-24">{feature.description}</p>
+                            <p className="body-md text-secondary">{feature.description}</p>
                           </div>
                         </div>
                       </div>
@@ -137,23 +204,35 @@ export function ReviewFeatures({ dict, lang }: ReviewFeaturesProps) {
                   })}
                 </div>
                 <div className="flex justify-end gap-4 items-center mt-8">
-                  <button className="max-md:w-full cursor-not-allowed border-md border-tertiary text-disabled box-border touch-manipulation align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus inline-flex gap-2 text-start body-md-medium rounded-full p-0 h-12! w-12! justify-center items-center" disabled data-testid="swiper-prev-button">
-                    <span className="flex items-center shrink-0">
-                      <span className="flex items-center h-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor" className="w-6 h-6">
-                          <path d="M257.5 445.1l-22.2 22.2c-9.4 9.4-24.6 9.4-33.9 0L7 273c-9.4-9.4-9.4-24.6 0-33.9L201.4 44.7c9.4-9.4 24.6-9.4 33.9 0l22.2 22.2c9.5 9.5 9.3 25-.4 34.3L136.6 216H424c13.3 0 24 10.7 24 24v32c0 13.3-10.7 24-24 24H136.6l120.5 114.8c9.8 9.3 10 24.8.4 34.3z"/>
-                        </svg>
-                      </span>&#8204;
-                    </span>
+                  <button
+                    className={`w-12 h-12 rounded-full inline-flex items-center justify-center border-md transition-colors ${
+                      canGoPrev
+                        ? "text-primary border-tertiary hover:text-primary-on-color hover:bg-dark active:bg-dark active:text-primary-on-color"
+                        : "cursor-not-allowed border-tertiary text-disabled"
+                    }`}
+                    disabled={!canGoPrev}
+                    onClick={handlePrev}
+                    data-testid="swiper-prev-button"
+                    aria-label="Previous slide"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor" className="w-5 h-5">
+                      <path d="M257.5 445.1l-22.2 22.2c-9.4 9.4-24.6 9.4-33.9 0L7 273c-9.4-9.4-9.4-24.6 0-33.9L201.4 44.7c9.4-9.4 24.6-9.4 33.9 0l22.2 22.2c9.5 9.5 9.3 25-.4 34.3L136.6 216H424c13.3 0 24 10.7 24 24v32c0 13.3-10.7 24-24 24H136.6l120.5 114.8c9.8 9.3 10 24.8.4 34.3z"/>
+                    </svg>
                   </button>
-                  <button className="max-md:w-full text-primary pointer-fine:hover:text-primary-on-color pointer-fine:hover:bg-dark border-md border-tertiary active:bg-dark! active:text-primary-on-color! box-border touch-manipulation align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus inline-flex gap-2 text-start body-md-medium rounded-full p-0 h-12! w-12! justify-center items-center" data-testid="swiper-next-button">
-                    <span className="flex items-center shrink-0">
-                      <span className="flex items-center h-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor" className="w-6 h-6">
-                          <path d="M190.5 66.9l22.2-22.2c9.4-9.4 24.6-9.4 33.9 0L441 239c9.4 9.4 9.4 24.6 0 33.9L246.6 467.3c-9.4 9.4-24.6 9.4-33.9 0l-22.2-22.2c-9.5-9.5-9.3-25 .4-34.3L311.4 296H24c-13.3 0-24-10.7-24-24v-32c0-13.3 10.7-24 24-24h287.4L190.9 101.2c-9.8-9.3-10-24.8-.4-34.3z"/>
-                        </svg>
-                      </span>&#8204;
-                    </span>
+                  <button
+                    className={`w-12 h-12 rounded-full inline-flex items-center justify-center border-md transition-colors ${
+                      canGoNext
+                        ? "text-primary border-tertiary hover:text-primary-on-color hover:bg-dark active:bg-dark active:text-primary-on-color"
+                        : "cursor-not-allowed border-tertiary text-disabled"
+                    }`}
+                    disabled={!canGoNext}
+                    onClick={handleNext}
+                    data-testid="swiper-next-button"
+                    aria-label="Next slide"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor" className="w-5 h-5">
+                      <path d="M190.5 66.9l22.2-22.2c9.4-9.4 24.6-9.4 33.9 0L441 239c9.4 9.4 9.4 24.6 0 33.9L246.6 467.3c-9.4 9.4-24.6 9.4-33.9 0l-22.2-22.2c-9.5-9.5-9.3-25 .4-34.3L311.4 296H24c-13.3 0-24-10.7-24-24v-32c0-13.3 10.7-24 24-24h287.4L190.9 101.2c-9.8-9.3-10-24.8-.4-34.3z"/>
+                    </svg>
                   </button>
                 </div>
               </div>

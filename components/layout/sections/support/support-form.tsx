@@ -313,11 +313,11 @@ export function SupportForm({ lang, dict, successHref }: SupportFormProps) {
         <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100">
           <CheckCircle2 className="h-8 w-8 text-emerald-600" aria-hidden="true" />
         </div>
-        <h2 className="text-2xl font-semibold text-gray-900">{dict.success.title}</h2>
-        <p className="mx-auto mt-2 max-w-md text-sm text-gray-600">
+        <h2 className="text-[1.7rem] sm:text-2xl font-semibold text-gray-900">{dict.success.title}</h2>
+        <p className="mx-auto mt-2 max-w-md text-base sm:text-sm text-gray-600">
           {dict.success.description}
         </p>
-        <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-medium text-gray-700 ring-1 ring-gray-200">
+        <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-sm font-medium text-gray-700 ring-1 ring-gray-200">
           <Mail className="h-3.5 w-3.5" aria-hidden="true" />
           {interpolate(dict.success.ticketId, { id: String(submittedTicketId) })}
         </p>
@@ -365,9 +365,9 @@ export function SupportForm({ lang, dict, successHref }: SupportFormProps) {
                 <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-red-600" aria-hidden="true" />
               )}
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-semibold">{banner.title}</p>
+                <p className="text-base sm:text-sm font-semibold">{banner.title}</p>
                 {banner.description && (
-                  <p className="mt-1 text-sm opacity-90">{banner.description}</p>
+                  <p className="mt-1 text-base sm:text-sm opacity-90">{banner.description}</p>
                 )}
               </div>
             </div>
@@ -432,7 +432,7 @@ export function SupportForm({ lang, dict, successHref }: SupportFormProps) {
               <FormItem>
                 <FormLabel>
                   {dict.orderId}{" "}
-                  <span className="text-xs font-normal text-gray-400">
+                  <span className="text-sm font-normal text-gray-400">
                     ({dict.optional})
                   </span>
                 </FormLabel>
@@ -460,7 +460,7 @@ export function SupportForm({ lang, dict, successHref }: SupportFormProps) {
               <FormItem>
                 <FormLabel>
                   {dict.deviceModel}{" "}
-                  <span className="text-xs font-normal text-gray-400">
+                  <span className="text-sm font-normal text-gray-400">
                     ({dict.optional})
                   </span>
                 </FormLabel>
@@ -487,7 +487,7 @@ export function SupportForm({ lang, dict, successHref }: SupportFormProps) {
               <FormItem>
                 <FormLabel>
                   {dict.iccid}{" "}
-                  <span className="text-xs font-normal text-gray-400">
+                  <span className="text-sm font-normal text-gray-400">
                     ({dict.optional})
                   </span>
                 </FormLabel>
@@ -522,7 +522,7 @@ export function SupportForm({ lang, dict, successHref }: SupportFormProps) {
               <FormItem>
                 <FormLabel>
                   {dict.planDestination}{" "}
-                  <span className="text-xs font-normal text-gray-400">
+                  <span className="text-sm font-normal text-gray-400">
                     ({dict.optional})
                   </span>
                 </FormLabel>
@@ -565,7 +565,7 @@ export function SupportForm({ lang, dict, successHref }: SupportFormProps) {
                 <FormMessage />
                 <span
                   className={cn(
-                    "ml-auto text-xs tabular-nums",
+                    "ml-auto text-sm tabular-nums",
                     descriptionLength > 5000
                       ? "text-red-500"
                       : descriptionLength > 4500
@@ -587,9 +587,9 @@ export function SupportForm({ lang, dict, successHref }: SupportFormProps) {
         {/* Attachments */}
         <div className="space-y-2">
           <FormLabel asChild>
-            <p className="text-sm font-medium leading-none">
+            <p className="text-base sm:text-sm font-medium leading-none">
               {dict.attachments}{" "}
-              <span className="text-xs font-normal text-gray-400">
+              <span className="text-sm font-normal text-gray-400">
                 ({dict.optional})
               </span>
             </p>
@@ -639,7 +639,7 @@ export function SupportForm({ lang, dict, successHref }: SupportFormProps) {
               </>
             )}
           </Button>
-          <p className="text-xs text-gray-500">{dict.privacyNotice}</p>
+          <p className="text-sm text-gray-500">{dict.privacyNotice}</p>
         </div>
       </form>
     </Form>

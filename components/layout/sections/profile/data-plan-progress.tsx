@@ -40,8 +40,8 @@ export function DataPlanProgress({ label, used, total, unit, color, t }: DataPla
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-gray-700">{label}</span>
-        <span className={`text-sm font-semibold ${c.text}`}>
+        <span className="text-base sm:text-sm font-medium text-gray-700">{label}</span>
+        <span className={`text-base sm:text-sm font-semibold ${c.text}`}>
           {remaining} {unit} {t.remaining}
         </span>
       </div>
@@ -55,7 +55,7 @@ export function DataPlanProgress({ label, used, total, unit, color, t }: DataPla
       </div>
 
       {/* Legend */}
-      <div className="flex items-center justify-between text-xs text-gray-500">
+      <div className="flex items-center justify-between text-sm text-gray-500">
         <span>
           {t.used}: {used} {unit}
         </span>

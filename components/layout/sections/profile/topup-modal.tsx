@@ -155,10 +155,10 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
         {/* Header */}
         <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-gradient-to-r from-blue-50 to-indigo-50">
           <div className="min-w-0 flex-1">
-            <h2 className="text-base font-semibold text-gray-900 truncate">
+            <h2 className="text-xl sm:text-base font-semibold text-gray-900 truncate">
               {t.topupTitle}
             </h2>
-            <p className="text-xs text-gray-500 mt-0.5 truncate font-mono">
+            <p className="text-sm text-gray-500 mt-0.5 truncate font-mono">
               {esim.iccid}
               {provider && (
                 <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded bg-white border border-gray-200 text-[12px] text-gray-600 font-sans">
@@ -182,21 +182,21 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
           {packagesLoading ? (
             <div className="flex items-center justify-center py-16">
               <Loader2 className="w-6 h-6 animate-spin text-blue-500" />
-              <span className="ml-2 text-sm text-gray-500">
+              <span className="ml-2 text-base sm:text-sm text-gray-500">
                 {lang === "vi" ? "Đang tải gói cước..." : "Loading packages..."}
               </span>
             </div>
           ) : packagesError ? (
             <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-center">
               <AlertCircle className="w-6 h-6 text-red-500 mx-auto mb-2" />
-              <p className="text-sm text-red-700 mb-3">
+              <p className="text-base sm:text-sm text-red-700 mb-3">
                 {packagesErrorObj instanceof Error
                   ? mapTopupError(packagesErrorObj.message, t)
                   : t.topupErrorLoading}
               </p>
               <button
                 onClick={() => refetch()}
-                className="text-xs font-medium text-red-600 underline hover:text-red-800"
+                className="text-sm font-medium text-red-600 underline hover:text-red-800"
               >
                 {lang === "vi" ? "Thử lại" : "Retry"}
               </button>
@@ -204,11 +204,11 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
           ) : packages.length === 0 ? (
             <div className="text-center py-12">
               <Wifi className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-              <p className="text-sm text-gray-500">{t.topupNoPackages}</p>
+              <p className="text-base sm:text-sm text-gray-500">{t.topupNoPackages}</p>
             </div>
           ) : (
             <>
-              <p className="text-sm text-gray-500 mb-4">{t.topupSubtitle}</p>
+              <p className="text-base sm:text-sm text-gray-500 mb-4">{t.topupSubtitle}</p>
               <div className="space-y-2.5">
                 {packages.map((pkg) => (
                   <TopupPackageItem
@@ -234,21 +234,21 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
             {errorMessage && (
               <div className="flex items-start gap-2 rounded-lg bg-red-50 border border-red-100 p-2.5">
                 <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />
-                <p className="text-xs text-red-700 leading-relaxed">{errorMessage}</p>
+                <p className="text-sm text-red-700 leading-relaxed">{errorMessage}</p>
               </div>
             )}
             <div className="flex items-center gap-2">
               <button
                 onClick={onClose}
                 disabled={isCheckingOut}
-                className="px-4 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2.5 rounded-xl text-base sm:text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {t.topupCancel}
               </button>
               <button
                 onClick={handleConfirm}
                 disabled={!canConfirm}
-                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-blue-600 text-white hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-base sm:text-sm font-semibold bg-blue-600 text-white hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isCheckingOut ? (
                   <>
@@ -259,7 +259,7 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
                   <>
                     {t.topupConfirmButton}
                     {selectedPackage && (
-                      <span className="font-bold">
+                      <span className="font-medium">
                         {selectedPackage.vndPrice
                           ? `· ${formatVnd(selectedPackage.vndPrice)}`
                           : `· ${formatUsd(selectedPackage.retailPrice)}`}
@@ -303,22 +303,22 @@ function TopupPackageItem({ pkg, selected, onSelect, t, lang }: TopupPackageItem
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 mb-1.5">
             {pkg.isUnlimited ? (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 text-xs font-semibold">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 text-sm font-semibold">
                 <InfinityIcon className="w-3 h-3" />
                 {t.topupUnlimited}
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-sm font-semibold">
                 <Wifi className="w-3 h-3" />
                 {pkg.dataAmountText}
               </span>
             )}
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-xs font-medium">
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-sm font-medium">
               <Calendar className="w-3 h-3" />
               {pkg.durationDays} {t.topupDuration}
             </span>
           </div>
-          <p className="text-sm text-gray-700 leading-snug">{pkg.name}</p>
+          <p className="text-base sm:text-sm text-gray-700 leading-snug">{pkg.name}</p>
           {!pkg.vndPrice && (
             <p className="text-[13px] text-amber-600 mt-1">
               ⚠ {t.topupVndUnavailable}
@@ -326,7 +326,7 @@ function TopupPackageItem({ pkg, selected, onSelect, t, lang }: TopupPackageItem
           )}
         </div>
         <div className="flex flex-col items-end gap-1.5 shrink-0">
-          <span className="text-base font-bold text-gray-900">{priceLabel}</span>
+          <span className="text-xl sm:text-base font-medium text-gray-900">{priceLabel}</span>
           <span
             className={`flex items-center justify-center w-5 h-5 rounded-full border-2 transition-colors ${
               selected

@@ -28,7 +28,7 @@ export default async function CartPage({
         lang={params.lang}
       />
       <div className="container mx-auto px-4 py-8 min-h-[60vh]">
-        <h1 className="text-2xl font-bold text-text-primary mb-8">
+        <h1 className="text-[1.7rem] sm:text-2xl font-medium text-text-primary mb-8">
           {(dict as any).cart?.title || "Shopping Cart"}
         </h1>
         <CartPageContent dict={(dict as any).cart || {}} lang={params.lang} />

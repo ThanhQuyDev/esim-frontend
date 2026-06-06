@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { FreeMode } from "swiper/modules";
+import { useState, useRef, useCallback } from "react";
 import { Wallet, Users, ListChecks, Smartphone, ShieldCheck, Recycle } from "lucide-react";
 
 interface EsimAdvantagesProps {
@@ -14,6 +12,65 @@ const advantageIcons = [Wallet, Users, ListChecks, Smartphone, ShieldCheck, Recy
 export function EsimAdvantages({ dict }: EsimAdvantagesProps) {
   const [activeTab, setActiveTab] = useState(0);
   const tabLabels = [dict.advantagesLabel, dict.disadvantagesLabel];
+
+  // Mobile swiper state
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
+
+  const totalSlides = dict.advantages?.items?.length || 0;
+  const canGoPrev = currentSlide > 0;
+  const canGoNext = currentSlide < totalSlides - 1;
+
+  const scrollToSlide = useCallback((index: number) => {
+    const clamped = Math.max(0, Math.min(index, totalSlides - 1));
+    setCurrentSlide(clamped);
+    if (sliderRef.current) {
+      const slideWidth = sliderRef.current.offsetWidth * 0.87;
+      const gap = 16;
+      sliderRef.current.scrollTo({
+        left: clamped * (slideWidth + gap),
+        behavior: "smooth",
+      });
+    }
+  }, [totalSlides]);
+
+  const handlePrev = useCallback(() => {
+    scrollToSlide(currentSlide - 1);
+  }, [currentSlide, scrollToSlide]);
+
+  const handleNext = useCallback(() => {
+    scrollToSlide(currentSlide + 1);
+  }, [currentSlide, scrollToSlide]);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    const diff = touchStartX.current - touchEndX.current;
+    const threshold = 50;
+    if (diff > threshold) {
+      scrollToSlide(currentSlide + 1);
+    } else if (diff < -threshold) {
+      scrollToSlide(currentSlide - 1);
+    }
+  }, [currentSlide, scrollToSlide]);
+
+  const handleScroll = useCallback(() => {
+    if (!sliderRef.current) return;
+    const container = sliderRef.current;
+    const slideWidth = container.offsetWidth * 0.87 + 16;
+    const newIndex = Math.round(container.scrollLeft / slideWidth);
+    if (newIndex !== currentSlide && newIndex >= 0 && newIndex < totalSlides) {
+      setCurrentSlide(newIndex);
+    }
+  }, [currentSlide, totalSlides]);
 
   return (
     <section data-section="why-use-an-esim" className="relative scroll-mt-20 xl:scroll-mt-24">
@@ -66,30 +123,65 @@ export function EsimAdvantages({ dict }: EsimAdvantagesProps) {
 
                   {/* Mobile swiper */}
                   <div className="md:hidden max-sm:-mx-4 max-sm:px-4 overflow-hidden">
-                    <Swiper
-                      modules={[FreeMode]}
-                      slidesPerView="auto"
-                      spaceBetween={16}
-                      className="overflow-visible!"
-                    >
-                      {dict.advantages.items.map((item: any, i: number) => {
-                        const Icon = advantageIcons[i] || Wallet;
-                        return (
-                          <SwiperSlide
-                            key={i}
-                            className="!h-auto !max-w-[87%] min-[480px]:!max-w-[71%] sm:!max-w-[62%]"
-                          >
-                            <div className="h-full w-full flex flex-col justify-start gap-y-4">
-                              <div className="flex flex-col text-start items-start justify-start gap-y-6">
-                                <Icon className="lg:w-8 lg:h-8 w-6 h-6 text-text-primary" />
-                                <p className="body-lg-medium text-text-primary">{item.title}</p>
+                    <div className="overflow-visible">
+                      <div
+                        ref={sliderRef}
+                        className="flex overflow-x-auto scroll-smooth snap-x snap-mandatory scrollbar-none"
+                        onScroll={handleScroll}
+                        onTouchStart={handleTouchStart}
+                        onTouchMove={handleTouchMove}
+                        onTouchEnd={handleTouchEnd}
+                      >
+                        {dict.advantages.items.map((item: any, i: number) => {
+                          const Icon = advantageIcons[i] || Wallet;
+                          const isActive = i === currentSlide;
+                          return (
+                            <div
+                              key={i}
+                              className="flex-shrink-0 snap-start max-w-[87%] min-[480px]:max-w-[71%] sm:max-w-[62%] mr-4"
+                            >
+                              <div className={`h-full w-full flex flex-col justify-start gap-y-4 p-5 rounded-xl border transition-colors ${isActive ? "border-primary bg-primary/[0.04]" : "border-tertiary"}`}>
+                                <div className="flex flex-col text-start items-start justify-start gap-y-6">
+                                  <Icon className="lg:w-8 lg:h-8 w-6 h-6 text-text-primary" />
+                                  <p className="body-lg-medium text-text-primary">{item.title}</p>
+                                </div>
+                                <p className="body-md text-text-secondary">{item.description}</p>
                               </div>
-                              <p className="body-md text-text-secondary">{item.description}</p>
                             </div>
-                          </SwiperSlide>
-                        );
-                      })}
-                    </Swiper>
+                          );
+                        })}
+                      </div>
+                      <div className="flex justify-end gap-4 items-center mt-8">
+                        <button
+                          className={`w-12 h-12 rounded-full inline-flex items-center justify-center border-md transition-colors ${
+                            canGoPrev
+                              ? "text-primary border-tertiary hover:text-primary-on-color hover:bg-dark active:bg-dark active:text-primary-on-color"
+                              : "cursor-not-allowed border-tertiary text-disabled"
+                          }`}
+                          disabled={!canGoPrev}
+                          onClick={handlePrev}
+                          aria-label="Previous slide"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor" className="w-5 h-5">
+                            <path d="M257.5 445.1l-22.2 22.2c-9.4 9.4-24.6 9.4-33.9 0L7 273c-9.4-9.4-9.4-24.6 0-33.9L201.4 44.7c9.4-9.4 24.6-9.4 33.9 0l22.2 22.2c9.5 9.5 9.3 25-.4 34.3L136.6 216H424c13.3 0 24 10.7 24 24v32c0 13.3-10.7 24-24 24H136.6l120.5 114.8c9.8 9.3 10 24.8.4 34.3z"/>
+                          </svg>
+                        </button>
+                        <button
+                          className={`w-12 h-12 rounded-full inline-flex items-center justify-center border-md transition-colors ${
+                            canGoNext
+                              ? "text-primary border-tertiary hover:text-primary-on-color hover:bg-dark active:bg-dark active:text-primary-on-color"
+                              : "cursor-not-allowed border-tertiary text-disabled"
+                          }`}
+                          disabled={!canGoNext}
+                          onClick={handleNext}
+                          aria-label="Next slide"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor" className="w-5 h-5">
+                            <path d="M190.5 66.9l22.2-22.2c9.4-9.4 24.6-9.4 33.9 0L441 239c9.4 9.4 9.4 24.6 0 33.9L246.6 467.3c-9.4 9.4-24.6 9.4-33.9 0l-22.2-22.2c-9.5-9.5-9.3-25 .4-34.3L311.4 296H24c-13.3 0-24-10.7-24-24v-32c0-13.3 10.7-24 24-24h287.4L190.9 101.2c-9.8-9.3-10-24.8-.4-34.3z"/>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

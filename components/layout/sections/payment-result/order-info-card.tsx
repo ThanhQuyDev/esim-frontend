@@ -18,20 +18,20 @@ export function OrderInfoCard({ orderNumber, transactionNo, amount, t }: OrderIn
       <div className="space-y-3">
         {orderNumber && (
           <div className="flex justify-between items-center py-2 border-b border-gray-100">
-            <span className="text-sm text-gray-500">{t.orderId}</span>
-            <span className="text-sm font-mono font-medium text-gray-900">{orderNumber}</span>
+            <span className="text-base sm:text-sm text-gray-500">{t.orderId}</span>
+            <span className="text-base sm:text-sm font-mono font-medium text-gray-900">{orderNumber}</span>
           </div>
         )}
         {transactionNo && (
           <div className="flex justify-between items-center py-2 border-b border-gray-100">
-            <span className="text-sm text-gray-500">{t.transactionNo}</span>
-            <span className="text-sm font-mono font-medium text-gray-900">{transactionNo}</span>
+            <span className="text-base sm:text-sm text-gray-500">{t.transactionNo}</span>
+            <span className="text-base sm:text-sm font-mono font-medium text-gray-900">{transactionNo}</span>
           </div>
         )}
         {amount > 0 && (
           <div className="flex justify-between items-center py-2">
-            <span className="text-sm text-gray-500">{t.amount}</span>
-            <span className="text-sm font-bold text-gray-900">{formatAmount(amount)}</span>
+            <span className="text-base sm:text-sm text-gray-500">{t.amount}</span>
+            <span className="text-base sm:text-sm font-medium text-gray-900">{formatAmount(amount)}</span>
           </div>
         )}
       </div>

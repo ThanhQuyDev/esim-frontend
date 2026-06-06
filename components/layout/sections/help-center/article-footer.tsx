@@ -71,11 +71,11 @@ export function ArticleFooter({
           <div className="flex-1">
             <h3
               id="article-cta-title"
-              className="text-xl md:text-2xl font-semibold text-gray-900 mb-2"
+              className="text-[1.7rem] md:text-2xl font-semibold text-gray-900 mb-2"
             >
               {t.ctaTitle}
             </h3>
-            <p className="text-sm text-gray-600 leading-relaxed max-w-xl">
+            <p className="text-base sm:text-sm text-gray-600 leading-relaxed max-w-xl">
               {t.ctaSubtitle}
             </p>
           </div>
@@ -83,14 +83,14 @@ export function ArticleFooter({
             <button
               type="button"
               onClick={openChatBubble}
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-full hover:bg-gray-800 transition-colors shadow-sm"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gray-900 text-white text-base sm:text-sm font-semibold rounded-full hover:bg-gray-800 transition-colors shadow-sm"
             >
               <MessageCircle className="w-4 h-4" />
               {t.ctaChat}
             </button>
             <Link
               href={ticketHref}
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white text-gray-900 text-sm font-semibold rounded-full border border-gray-300 hover:bg-gray-50 transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white text-gray-900 text-base font-semibold rounded-full border border-gray-300 hover:bg-gray-50 transition-colors"
             >
               <Mail className="w-4 h-4" />
               {t.ctaTicket}
@@ -105,11 +105,11 @@ export function ArticleFooter({
           <div className="mb-5">
             <h3
               id="article-related-title"
-              className="text-xl md:text-2xl font-semibold text-gray-900 mb-1"
+              className="text-[1.7rem] md:text-2xl font-semibold text-gray-900 mb-1"
             >
               {t.relatedTitle}
             </h3>
-            <p className="text-sm text-gray-500">{t.relatedSubtitle}</p>
+            <p className="text-base text-gray-500">{t.relatedSubtitle}</p>
           </div>
           <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 list-none p-0 m-0">
             {related.map((article) => (
@@ -122,11 +122,11 @@ export function ArticleFooter({
                     <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-amber-100 shrink-0">
                       <FileText className="w-4 h-4 text-amber-700" />
                     </div>
-                    <p className="text-sm font-semibold text-gray-900 leading-snug line-clamp-3 group-hover:text-gray-700">
+                    <p className="text-base font-semibold text-gray-900 leading-snug line-clamp-3 group-hover:text-gray-700">
                       {article.title}
                     </p>
                   </div>
-                  <span className="mt-auto inline-flex items-center gap-1 text-xs font-medium text-gray-500 group-hover:text-gray-700">
+                  <span className="mt-auto inline-flex items-center gap-1 text-sm font-medium text-gray-500 group-hover:text-gray-700">
                     {t.readMore}
                     <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" />
                   </span>

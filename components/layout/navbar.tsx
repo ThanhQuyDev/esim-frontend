@@ -7,10 +7,10 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { cn } from "@/lib/utils";
 import { SailyLogo } from "@/components/icons/saily-logo";
 import { HelpCenterNavbar } from "@/components/layout/help-center-navbar";
-import { DestinationSearch } from "@/components/layout/destination-search";
 import { DestinationDropdown } from "@/components/layout/destination-dropdown";
 import { useAuth } from "@/lib/auth";
-import { useCart } from "@/lib/hooks";
+import { useCart, useTopDestinations, useSearchDestinations, useSearchRegions } from "@/lib/hooks";
+import { useDebounce } from "@/lib/use-debounce";
 import {
   ChevronDown,
   Search,
@@ -21,6 +21,9 @@ import {
   User,
   LogOut,
   ShoppingCart,
+  Loader2,
+  MapPin,
+  ChevronRight,
 } from "lucide-react";
 import type { Locale } from "@/lib/i18n-config";
 import { routeMap, localizedHref } from "@/lib/route-mapping";
@@ -33,7 +36,6 @@ import {
 // Swiper
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Autoplay, EffectFade } from "swiper/modules";
-import "swiper/css/effect-fade";
 
 /* ===== Types ===== */
 
@@ -542,7 +544,7 @@ export function Navbar(props: NavbarProps) {
 function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
   const pathname = usePathname();
   const isLandingPage = pathname === `/${lang}` || pathname === `/${lang}/`;
-  const [searchOpen, setSearchOpen] = useState(false);
+  const isDestinationPage = pathname.match(/\/[a-z]{2}\/[a-z0-9-]+$/);
   const [announcementVisible, setAnnouncementVisible] = useState(true);
   const [hasScrolled, setHasScrolled] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -628,7 +630,7 @@ function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
     <>
       <div className="sticky top-0 z-40">
       {/* ===== Announcement Bar (Carousel) ===== */}
-      {announcementVisible && hasAnnouncement && (
+      {announcementVisible && hasAnnouncement && !isDestinationPage && (
         <div className="relative bg-[#1a1a1a] text-text-primary-on-color overflow-hidden">
           <div className="px-6 min-w-full flex justify-between items-center md:gap-3">
             {topBars.length > 1 ? (
@@ -900,7 +902,6 @@ function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
               <MobileSidebar
                 lang={lang}
                 dict={dict}
-                onSearchOpen={() => setSearchOpen(true)}
                 onLangChange={handleLangChange}
               />
             </div>
@@ -926,13 +927,6 @@ function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
       </header>
       </div>
 
-      {/* Destination Search Modal */}
-      <DestinationSearch
-        lang={lang}
-        open={searchOpen}
-        onClose={() => setSearchOpen(false)}
-        placeholder={dict.searchPlaceholder}
-      />
     </>
   );
 }
@@ -1107,16 +1101,83 @@ function MenuLinkItem({
 function MobileSidebar({
   lang,
   dict,
-  onSearchOpen,
   onLangChange,
 }: {
   lang: Locale;
   dict: Record<string, any>;
-  onSearchOpen: () => void;
   onLangChange: (val: string) => void;
 }) {
   const [open, setOpen] = useState(false);
+  const [expandedItem, setExpandedItem] = useState<string | null>(null);
   const { user, openAuthModal, logout } = useAuth();
+
+  const menuData = getMenuData(lang);
+
+  // Inline search state
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showResults, setShowResults] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
+  const debouncedQuery = useDebounce(searchQuery, 300);
+
+  const { data: topDestinations = [], isLoading: isLoadingTop } =
+    useTopDestinations(10);
+
+  const { data: searchResults = [], isFetching: isSearchFetching } =
+    useSearchDestinations(
+      debouncedQuery,
+      debouncedQuery.trim().length > 0
+    );
+
+  const { data: searchRegions = [], isFetching: isSearchRegionsFetching } =
+    useSearchRegions(
+      debouncedQuery,
+      debouncedQuery.trim().length > 0
+    );
+
+  const isActiveSearch = debouncedQuery.trim().length > 0;
+  const displayDestinations = isActiveSearch ? searchResults : topDestinations;
+  const showLoading = isActiveSearch
+    ? (isSearchFetching || isSearchRegionsFetching)
+    : isLoadingTop;
+
+  // Clear search when sidebar closes
+  useEffect(() => {
+    if (!open) {
+      setSearchQuery("");
+      setShowResults(false);
+    }
+  }, [open]);
+
+  // Close search results on click outside
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (
+        showResults &&
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(e.target as Node)
+      ) {
+        setShowResults(false);
+      }
+    }
+    if (showResults) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showResults]);
+
+  const handleClearSearch = useCallback(() => {
+    setSearchQuery("");
+    inputRef.current?.focus();
+  }, []);
+
+  /* Build destination href */
+  const getDestinationHref = (dest: any) =>
+    `/${lang}/${dest.slug || dest.code?.toLowerCase()}`;
+
+  /* Build region href */
+  const getRegionHref = (region: any) =>
+    `/${lang}/${region.slug}`;
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
@@ -1151,40 +1212,327 @@ function MobileSidebar({
               </div>
 
               {/* Search */}
-              <div className="relative w-full mb-8">
-                <input
-                  placeholder={lang === "vi" ? "Bạn đang đi du lịch ở đâu?" : "Where are you travelling to?"}
-                  className="body-md bg-bg-secondary active:bg-white focus:border outline-none appearance-none w-full leading-relaxed py-[12.5px] pl-4 pr-12 text-text-primary placeholder-text-tertiary border-md border-border-secondary focus:border-border-focus transition-colors rounded-full cursor-pointer"
-                  type="text"
-                  readOnly
-                  onClick={() => {
-                    setOpen(false);
-                    setTimeout(() => onSearchOpen(), 200);
-                  }}
-                />
-                <div className="absolute top-1/2 -translate-y-1/2 right-2 flex items-center justify-center rounded-full h-8 w-8 bg-bg-dark">
-                  <Search className="w-3 h-3 text-text-primary-on-color" />
+              <div ref={searchContainerRef} className="relative w-full mb-4">
+                {/* Search input */}
+                <div className="relative">
+                  {showLoading && isActiveSearch ? (
+                    <Loader2 className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-tertiary animate-spin" />
+                  ) : (
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-tertiary" />
+                  )}
+                  <input
+                    ref={inputRef}
+                    placeholder={lang === "vi" ? "Bạn đang đi du lịch ở đâu?" : "Where are you travelling to?"}
+                    className="body-md bg-bg-secondary outline-none appearance-none w-full leading-relaxed py-[12.5px] pl-12 pr-12 text-text-primary placeholder-text-tertiary border-md border-border-secondary focus:border-border-focus transition-colors rounded-full"
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value);
+                      setShowResults(true);
+                    }}
+                    onFocus={() => setShowResults(true)}
+                  />
+                  {searchQuery ? (
+                    <button
+                      onClick={handleClearSearch}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-bg-secondary flex items-center justify-center text-text-tertiary hover:text-text-primary hover:bg-border-primary transition-colors"
+                      aria-label="Clear search"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  ) : (
+                    <div className="absolute top-1/2 -translate-y-1/2 right-2 flex items-center justify-center rounded-full h-8 w-8 bg-bg-dark">
+                      <Search className="w-3 h-3 text-text-primary-on-color" />
+                    </div>
+                  )}
                 </div>
+
+                {/* Inline search results dropdown */}
+                {showResults && (
+                  <div className="mt-2 rounded-md bg-white border border-border-primary shadow-lg overflow-hidden">
+                    <div className="max-h-[320px] overflow-y-auto">
+                      {showLoading && displayDestinations.length === 0 && !isActiveSearch ? (
+                        <div className="flex items-center justify-center py-8">
+                          <Loader2 className="w-5 h-5 text-text-tertiary animate-spin" />
+                        </div>
+                      ) : isActiveSearch ? (
+                        /* ===== Search Results: combined destinations + regions ===== */
+                        <div>
+                          {showLoading && searchResults.length === 0 && searchRegions.length === 0 ? (
+                            <div className="flex items-center justify-center py-8">
+                              <Loader2 className="w-5 h-5 text-text-tertiary animate-spin" />
+                            </div>
+                          ) : searchResults.length === 0 && searchRegions.length === 0 ? (
+                            <div className="text-center py-8">
+                              <MapPin className="w-6 h-6 text-text-disabled mx-auto mb-2" />
+                              <p className="body-sm text-text-tertiary">
+                                {lang === "vi" ? "Không tìm thấy kết quả" : "No results found"}
+                              </p>
+                            </div>
+                          ) : (
+                            <>
+                              {!isSearchFetching && !isSearchRegionsFetching && (
+                                <p className="px-4 pt-3 pb-1 body-xs text-text-tertiary">
+                                  {searchResults.length + searchRegions.length} {lang === "vi" ? "kết quả" : "results"}
+                                </p>
+                              )}
+                              {/* Destinations */}
+                              {searchResults.length > 0 && (
+                                <>
+                                  <p className="px-4 pt-2 pb-1 body-xs-medium text-text-tertiary uppercase tracking-wider">
+                                    {lang === "vi" ? "Điểm đến" : "Destinations"}
+                                  </p>
+                                  {searchResults.map((dest) => (
+                                    <Link
+                                      key={`dest-${dest.id}`}
+                                      href={getDestinationHref(dest)}
+                                      onClick={() => setOpen(false)}
+                                      className="w-full flex items-center gap-3 p-3 text-left hover:bg-bg-secondary transition-colors group"
+                                    >
+                                      <div className="w-8 h-6 rounded overflow-hidden flex-shrink-0 bg-bg-secondary">
+                                        {dest.flagUrl ? (
+                                          <img
+                                            src={dest.flagUrl}
+                                            alt={`${dest.name} flag`}
+                                            className="w-full h-full object-cover"
+                                          />
+                                        ) : (
+                                          <div className="w-full h-full flex items-center justify-center">
+                                            <MapPin className="w-4 h-4 text-text-tertiary" />
+                                          </div>
+                                        )}
+                                      </div>
+                                      <div className="flex-1 min-w-0">
+                                        <p className="body-md-medium text-text-primary truncate">
+                                          {(lang === "vi" ? dest.titleVi : dest.title) || dest.name}
+                                        </p>
+                                      </div>
+                                      <ChevronRight className="w-4 h-4 text-text-disabled group-hover:text-text-secondary transition-colors flex-shrink-0" />
+                                    </Link>
+                                  ))}
+                                </>
+                              )}
+                              {/* Regions */}
+                              {searchRegions.length > 0 && (
+                                <>
+                                  <p className="px-4 pt-2 pb-1 body-xs-medium text-text-tertiary uppercase tracking-wider">
+                                    {lang === "vi" ? "Khu vực" : "Regions"}
+                                  </p>
+                                  {searchRegions.map((region) => (
+                                    <Link
+                                      key={`region-${region.id}`}
+                                      href={getRegionHref(region)}
+                                      onClick={() => setOpen(false)}
+                                      className="w-full flex items-center gap-3 p-3 text-left hover:bg-bg-secondary transition-colors group"
+                                    >
+                                      <div className="w-8 h-6 rounded overflow-hidden flex-shrink-0 bg-bg-secondary">
+                                        {region.iconUrl ? (
+                                          <img
+                                            src={region.iconUrl}
+                                            alt={`${region.name} region`}
+                                            className="w-full h-full object-cover"
+                                          />
+                                        ) : (
+                                          <div className="w-full h-full flex items-center justify-center">
+                                            <MapPin className="w-4 h-4 text-text-tertiary" />
+                                          </div>
+                                        )}
+                                      </div>
+                                      <div className="flex-1 min-w-0">
+                                        <p className="body-md-medium text-text-primary truncate">
+                                          {(lang === "vi" ? region.titleVi : region.title) || region.name}
+                                        </p>
+                                      </div>
+                                      <ChevronRight className="w-4 h-4 text-text-disabled group-hover:text-text-secondary transition-colors flex-shrink-0" />
+                                    </Link>
+                                  ))}
+                                </>
+                              )}
+                            </>
+                          )}
+                        </div>
+                      ) : displayDestinations.length === 0 ? (
+                        <div className="text-center py-8">
+                          <MapPin className="w-6 h-6 text-text-disabled mx-auto mb-2" />
+                          <p className="body-sm text-text-tertiary">
+                            {lang === "vi" ? "Đang tải..." : "Loading destinations..."}
+                          </p>
+                        </div>
+                      ) : (
+                        /* ===== No search: Top Destinations ===== */
+                        <div>
+                          <p className="px-4 pt-3 pb-1 body-xs-medium text-text-tertiary uppercase tracking-wider">
+                            {lang === "vi" ? "Điểm đến hàng đầu" : "Top Destinations"}
+                          </p>
+                          {displayDestinations.map((dest) => (
+                            <Link
+                              key={dest.id}
+                              href={getDestinationHref(dest)}
+                              onClick={() => setOpen(false)}
+                              className="w-full flex items-center gap-3 p-3 text-left hover:bg-bg-secondary transition-colors group"
+                            >
+                              <div className="w-8 h-6 rounded overflow-hidden flex-shrink-0 bg-bg-secondary">
+                                {dest.flagUrl ? (
+                                  <img
+                                    src={dest.flagUrl}
+                                    alt={`${dest.name} flag`}
+                                    className="w-full h-full object-cover"
+                                  />
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center">
+                                    <MapPin className="w-4 h-4 text-text-tertiary" />
+                                  </div>
+                                )}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="body-md-medium text-text-primary truncate">
+                                  {dest.name}
+                                </p>
+                              </div>
+                              <ChevronRight className="w-4 h-4 text-text-disabled group-hover:text-text-secondary transition-colors flex-shrink-0" />
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {/* Nav Items */}
+              {/* Nav Items - Accordion */}
               <div className="space-y-1">
-                {NAV_ITEMS.map((item) => (
-                  <button
-                    key={item}
-                    className="flex items-center border-b justify-between w-full px-4 py-3 body-md-medium text-text-primary cursor-pointer hover:bg-bg-primary transition-colors duration-200"
-                  >
-                    <span className="flex items-center gap-2">
-                      {dict[item]}
-                      {item === "product" && (
-                        <span className="text-center whitespace-nowrap rounded-full inline-block border-md border-border-focus text-text-primary py-0.5 px-2 body-2xs-medium">
-                          {dict.new}
+                {NAV_ITEMS.map((item) => {
+                  const isExpanded = expandedItem === item;
+                  const data = menuData[item];
+                  return (
+                    <div key={item} className="border-b py-3">
+                      <button
+                        onClick={() =>
+                          setExpandedItem(isExpanded ? null : item)
+                        }
+                        className="flex items-center  justify-between w-full px-4 body-md-medium text-text-primary cursor-pointer hover:bg-bg-primary transition-colors duration-200"
+                      >
+                        <span className="flex items-center gap-2">
+                          {dict[item]}
+                          {item === "product" && (
+                            <span className="text-center whitespace-nowrap rounded-full inline-block border-md border-border-focus text-text-primary py-0.5 px-2 body-2xs-medium">
+                              {dict.new}
+                            </span>
+                          )}
                         </span>
+                        <ChevronDown
+                          className={cn(
+                            "w-4 h-4 text-text-tertiary transition-transform duration-200",
+                            isExpanded ? "rotate-0" : "-rotate-90"
+                          )}
+                        />
+                      </button>
+                      {/* Accordion content */}
+                      {isExpanded && data && (
+                        <div className="bg-bg-secondary rounded-sm mb-1 mt-2 overflow-hidden">
+                          <div className="p-4 flex flex-col gap-6">
+                            {/* Col1 */}
+                            <div className="flex flex-col gap-4">
+                              {data.col1Label && (
+                                <span className="body-xs-medium text-text-tertiary">
+                                  {data.col1Label}
+                                </span>
+                              )}
+                              {data.col1.map((link) => (
+                                <Link
+                                  key={link.title}
+                                  href={link.href}
+                                  onClick={() => setOpen(false)}
+                                  className="rounded-sm w-full block group hover:bg-bg-primary transition-colors duration-200"
+                                >
+                                  <div className="flex flex-row gap-2 items-center">
+                                    <div className="flex items-center justify-center h-6 w-6 rounded-full shrink-0 text-text-primary bg-bg-brand-yellow">
+                                      <svg
+                                        className="w-3 h-3"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                      >
+                                        <path d={ICON_SVG[link.icon] || ICON_SVG.globe} />
+                                      </svg>
+                                    </div>
+                                    <div className="flex flex-col gap-1">
+                                      <div className="flex flex-row items-center gap-2">
+                                        <p className="body-sm-medium text-text-primary text-left">
+                                          {link.title}
+                                        </p>
+                                        {link.badge && (
+                                          <span className="text-center whitespace-nowrap rounded-full inline-block border-md border-border-focus text-text-primary py-0.5 px-2 body-2xs-medium">
+                                            {link.badge}
+                                          </span>
+                                        )}
+                                      </div>
+                                      <p className="hidden sm:block body-xs text-text-tertiary text-left">
+                                        {link.desc}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </Link>
+                              ))}
+                            </div>
+                            {/* Col2 */}
+                            {data.col2.length > 0 && (
+                              <div className="flex flex-col gap-4">
+                                {data.col2Label && (
+                                  <span className="body-xs-medium text-text-tertiary">
+                                    {data.col2Label}
+                                  </span>
+                                )}
+                                {data.col2.map((link) => (
+                                  <Link
+                                    key={link.title}
+                                    href={link.href}
+                                    onClick={() => setOpen(false)}
+                                    className="rounded-sm w-full block group hover:bg-bg-primary transition-colors duration-200"
+                                  >
+                                    <div className="flex flex-row gap-2 items-center">
+                                      <div className="flex items-center justify-center h-6 w-6 rounded-full shrink-0 text-text-primary bg-bg-brand-yellow">
+                                        <svg
+                                          className="w-3 h-3"
+                                          viewBox="0 0 24 24"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          strokeWidth="2"
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                        >
+                                          <path d={ICON_SVG[link.icon] || ICON_SVG.globe} />
+                                        </svg>
+                                      </div>
+                                      <div className="flex flex-col gap-1">
+                                        <div className="flex flex-row items-center gap-2">
+                                          <p className="body-sm-medium text-text-primary text-left">
+                                            {link.title}
+                                          </p>
+                                          {link.badge && (
+                                            <span className="text-center whitespace-nowrap rounded-full inline-block border-md border-border-focus text-text-primary py-0.5 px-2 body-2xs-medium">
+                                              {link.badge}
+                                            </span>
+                                          )}
+                                        </div>
+                                        <p className="hidden sm:block body-xs text-text-tertiary text-left">
+                                          {link.desc}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </Link>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       )}
-                    </span>
-                    <ChevronDown className="w-4 h-4 -rotate-90 text-text-tertiary" />
-                  </button>
-                ))}
+                    </div>
+                  );
+                })}
               </div>
 
               {/* Language */}

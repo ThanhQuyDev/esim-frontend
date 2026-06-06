@@ -120,12 +120,12 @@ a {
 }
 .rdp-today .rdp-day_button {
   color: #d97706;
-  font-weight: 700;
+  font-weight: 500;
 }
 .rdp-selected .rdp-day_button {
   background-color: #1a1a1a;
   color: #fff;
-  font-weight: 700;
+  font-weight: 500;
 }
 .rdp-chevron {
   fill: #374151;
@@ -211,7 +211,7 @@ html {
 @layer utilities {
   /* Headings */
   .heading-2xl {
-    @apply text-[2rem] leading-[1.15] font-medium tracking-tight;
+    @apply text-[1.9rem] leading-[1.15] font-medium tracking-tight;
   }
   @screen md {
     .heading-2xl {
@@ -262,7 +262,7 @@ html {
 
   /* Body text */
   .body-lg {
-    @apply text-base leading-relaxed;
+    @apply text-xl leading-relaxed;
   }
   @screen lg {
     .body-lg {
@@ -271,7 +271,7 @@ html {
   }
 
   .body-lg-medium {
-    @apply text-base leading-relaxed font-medium;
+    @apply text-xl leading-relaxed font-medium;
   }
   @screen lg {
     .body-lg-medium {
@@ -280,16 +280,11 @@ html {
   }
 
   .body-md {
-    @apply text-sm leading-relaxed;
-  }
-  @screen lg {
-    .body-md {
-      @apply text-base;
-    }
+    @apply text-base leading-relaxed;
   }
 
   .body-md-medium {
-    @apply text-sm leading-relaxed font-medium;
+    @apply text-base leading-relaxed font-medium;
   }
   @screen lg {
     .body-md-medium {
@@ -298,7 +293,7 @@ html {
   }
 
   .body-sm {
-    @apply text-xs leading-relaxed;
+    @apply text-sm leading-relaxed;
   }
   @screen lg {
     .body-sm {
@@ -307,7 +302,7 @@ html {
   }
 
   .body-sm-medium {
-    @apply text-sm leading-relaxed font-medium;
+    @apply text-base leading-relaxed font-medium;
   }
   @screen lg {
     .body-sm-medium {
@@ -438,7 +433,7 @@ html {
 .dest-hero-img { width: 100%; height: 210px; border-radius: 12px; overflow: hidden; margin-bottom: 20px; background: #ffd9a8; position: relative }
 .dest-hero-img img { width: 100%; height: 100%; object-fit: cover; display: block }
 .dest-hero-tag { position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,.55); color: #fff; font-size: 11px; font-weight: 600; border-radius: 20px; padding: 4px 10px; display: flex; align-items: center; gap: 4px }
-.dest-prod-title { font-size: 22px; font-weight: 700; color: #1a1a1a; letter-spacing: -.3px; margin-bottom: 8px; line-height: 1.3 }
+.dest-prod-title { font-size: 22px; font-weight: 500; color: #1a1a1a; letter-spacing: -.3px; margin-bottom: 8px; line-height: 1.3 }
 .dest-desc { font-size: 15px; color: #4b5563; line-height: 1.7; margin-bottom: 16px }
 .dest-country-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 10px; cursor: pointer; transition: border-color .15s }
 .dest-country-row:hover { border-color: #bbb }
@@ -471,7 +466,7 @@ html {
 .dest-trust-top { display: flex; align-items: center; gap: 8px; padding-bottom: 12px; margin-bottom: 14px; border-bottom: 1px solid #f0f0f0 }
 .dest-tp-stars-sm { display: flex; gap: 2px }
 .dest-tp-stars-sm svg { width: 16px; height: 16px }
-.dest-tp-score-txt { font-size: 13px; font-weight: 700; color: #1a1a1a }
+.dest-tp-score-txt { font-size: 13px; font-weight: 500; color: #1a1a1a }
 .dest-tp-count-txt { font-size: 13px; color: #6b7280 }
 .dest-tp-logo-wrap { margin-left: auto; display: flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 600; color: #1a1a1a }
 .dest-price-header { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; flex-wrap: nowrap }
@@ -488,11 +483,11 @@ html {
 .dest-tab-bar { display: flex; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; background: #f3f4f6; padding: 3px; gap: 3px; margin-bottom: 18px }
 .dest-tab { flex: 1; text-align: center; padding: 9px 12px; font-size: 13.5px; font-weight: 500; cursor: pointer; color: #6b7280; background: transparent; border: none; border-radius: 6px; font-family: inherit; transition: all .18s; white-space: nowrap }
 .dest-tab:hover { color: #1a1a1a; background: rgba(255,255,255,.6) }
-.dest-tab.on { background: #fff; color: #1a1a1a; font-weight: 700; box-shadow: 0 1px 4px rgba(0,0,0,.1) }
+.dest-tab.on { background: #fff; color: #1a1a1a; font-weight: 500; box-shadow: 0 1px 4px rgba(0,0,0,.1) }
 
 /* Plan sections */
 .dest-plan-section { margin-bottom: 16px }
-.dest-plan-label { font-size: 14px; font-weight: 700; color: #1a1a1a; margin-bottom: 10px; display: flex; align-items: center; gap: 7px }
+.dest-plan-label { font-size: 14px; font-weight: 500; color: #1a1a1a; margin-bottom: 10px; display: flex; align-items: center; gap: 7px }
 .dest-plan-label::before { content: ''; width: 3px; height: 15px; background: #f59e0b; border-radius: 2px; display: inline-block }
 
 /* Pills */
@@ -500,7 +495,7 @@ html {
 .dest-pill { display: inline-flex; align-items: center; gap: 6px; padding: 7px 13px; border-radius: 20px; font-size: 13.5px; font-weight: 500; border: 1px solid #e5e7eb; color: #374151; cursor: pointer; background: #fff; transition: border-color .12s, background .12s; font-family: inherit; white-space: nowrap }
 .dest-pill:hover { border-color: #f5c400; background: #fffde7; color: #374151 }
 .dest-pill.on, .dest-pill.sel { background: #fff7d6; color: #854d0e; border-color: #f5c400; font-weight: 600 }
-.dest-pill-badge-inline { font-size: 9px; font-weight: 700; letter-spacing: .02em; padding: 2px 5px; border-radius: 4px; line-height: 1.3; flex-shrink: 0 }
+.dest-pill-badge-inline { font-size: 9px; font-weight: 500; letter-spacing: .02em; padding: 2px 5px; border-radius: 4px; line-height: 1.3; flex-shrink: 0 }
 .dest-pill-badge-inline.popular { background: #1a1a1a; color: #fff }
 .dest-pill-badge-inline.best-val { background: #ea580c; color: #fff }
 .dest-pill-badge-inline.discount { background: #b7f2c5; color: #075f3c }
@@ -513,7 +508,7 @@ html {
 .dest-pill-u { display: inline-flex; align-items: center; gap: 10px; padding: 10px 16px; border-radius: 10px; border: 1.5px solid #e5e7eb; color: #374151; background: #fff; cursor: pointer; transition: border-color .12s, background .12s, box-shadow .12s; font-family: inherit; white-space: nowrap; min-width: 190px; position: relative }
 .dest-pill-u:hover { border-color: #f5c400; background: #fffde7; color: #374151 }
 .dest-pill-u.on { background: #fffde7; border-color: #d1b700; color: #92400e; box-shadow: 0 0 0 2px rgba(251,191,36,.2) }
-.dest-pill-u-badge { position: absolute; top: -9px; right: 10px; font-size: 9px; font-weight: 700; letter-spacing: .03em; padding: 2px 7px; border-radius: 4px; line-height: 1.4; pointer-events: none }
+.dest-pill-u-badge { position: absolute; top: -9px; right: 10px; font-size: 9px; font-weight: 500; letter-spacing: .03em; padding: 2px 7px; border-radius: 4px; line-height: 1.4; pointer-events: none }
 .dest-pill-u-badge.popular { background: #1a1a1a; color: #fff }
 .dest-pill-u-badge.best-val { background: #ea580c; color: #fff }
 .dest-pill-u-badge.discount { background: #b7f2c5; color: #075f3c }
@@ -545,7 +540,7 @@ html {
 
 /* CTA buttons */
 .dest-btn-wrap { display: flex; flex-direction: column; gap: 10px }
-.dest-btn-buy { width: 100%; padding: 13px; border-radius: 30px; border: 1.5px solid #d1b700; background: #fff500; font-size: 15px; font-weight: 700; cursor: pointer; color: #000; font-family: inherit; transition: all .15s }
+.dest-btn-buy { width: 100%; padding: 13px; border-radius: 30px; border: 1.5px solid #d1b700; background: #fff500; font-size: 15px; font-weight: 500; cursor: pointer; color: #000; font-family: inherit; transition: all .15s }
 .dest-btn-buy:hover { background: #d1b700; border-color: #d1b700 }
 .dest-btn-cart { width: 100%; padding: 12px; border-radius: 30px; border: 1.5px solid #1a1a1a; background: #fff; font-size: 14px; font-weight: 600; cursor: pointer; color: #1a1a1a; font-family: inherit; transition: all .15s }
 .dest-btn-cart:hover { background: #1a1a1a; color: #fff }
@@ -562,7 +557,7 @@ html {
 .dest-cal-overlay.open { display: flex }
 .dest-cal-popup { background: #fff; border-radius: 14px; padding: 20px; box-shadow: 0 20px 60px rgba(0,0,0,.15); min-width: 300px; max-width: 340px; width: 100%; font-family: inherit }
 .dest-cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px }
-.dest-cal-title { font-size: 15px; font-weight: 700; color: #1a1a1a }
+.dest-cal-title { font-size: 15px; font-weight: 500; color: #1a1a1a }
 .dest-cal-nav { display: flex; gap: 4px }
 .dest-cal-nav button { width: 28px; height: 28px; border: 1px solid #e5e7eb; border-radius: 6px; background: #fff; cursor: pointer; font-size: 14px; color: #374151; display: flex; align-items: center; justify-content: center }
 .dest-cal-nav button:hover { background: #f3f4f6 }
@@ -571,8 +566,8 @@ html {
 .dest-cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px }
 .dest-cal-day { width: 36px; height: 36px; border-radius: 50%; border: none; background: transparent; font-size: 13px; font-weight: 500; color: #374151; cursor: pointer; display: flex; align-items: center; justify-content: center; margin: 0 auto; transition: background .12s, color .12s }
 .dest-cal-day:hover { background: #f0f0f0 }
-.dest-cal-day.today { color: #d97706; font-weight: 700 }
-.dest-cal-day.selected-start, .dest-cal-day.selected-end { background: #1a1a1a; color: #fff; font-weight: 700 }
+.dest-cal-day.today { color: #d97706; font-weight: 500 }
+.dest-cal-day.selected-start, .dest-cal-day.selected-end { background: #1a1a1a; color: #fff; font-weight: 500 }
 .dest-cal-day.in-range { background: #fef08a; color: #854d0e }
 .dest-cal-day.other-month { color: #d1d5db }
 .dest-cal-day.disabled { color: #e5e7eb; pointer-events: none }
@@ -612,7 +607,7 @@ html {
 .hc-hero__title h1 {
   font-size: 2rem;
   line-height: 1.2;
-  font-weight: 700;
+  font-weight: 500;
   color: #fff;
 }
 @media (min-width: 1024px) {
@@ -723,7 +718,7 @@ html {
   align-items: baseline;
   margin-top: 24px;
   margin-bottom: 0;
-  font-size: 1.5rem;
+  font-size: 1.7rem;
   font-weight: 600;
   color: #333;
 }
@@ -802,7 +797,7 @@ html {
   background: #fff;
 }
 .hc-recent-activity__header {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 600;
   color: #333;
   margin-bottom: 16px;
@@ -910,7 +905,7 @@ html {
 /* Category page title */
 .hc-cat-page__title {
   font-size: 1.75rem;
-  font-weight: 700;
+  font-weight: 500;
   color: #1a1a2e;
   margin: 0;
 }
@@ -924,7 +919,7 @@ html {
   overflow: hidden;
 }
 .hc-section-group__title {
-  font-size: 1rem;
+  font-size: 1.25rem;
   font-weight: 600;
   color: #333;
   padding: 16px 20px;
@@ -977,7 +972,7 @@ html {
 }
 .hc-article__title {
   font-size: 1.75rem;
-  font-weight: 700;
+  font-weight: 500;
   color: #1a1a2e;
   margin: 0 0 24px;
   line-height: 1.3;
@@ -988,7 +983,7 @@ html {
   line-height: 1.7;
 }
 .hc-article__body p { margin: 0 0 16px; }
-.hc-article__body h2 { font-size: 1.25rem; font-weight: 600; margin: 24px 0 12px; }
+.hc-article__body h2 { font-size: 1.5rem; font-weight: 600; margin: 24px 0 12px; }
 .hc-article__body h3 { font-size: 1.1rem; font-weight: 600; margin: 20px 0 10px; }
 .hc-article__body ul, .hc-article__body ol { padding-left: 24px; margin: 0 0 16px; }
 .hc-article__body li { margin-bottom: 6px; }
@@ -1161,14 +1156,14 @@ html {
 
 /* Headings */
 .hc-article-body h1 {
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-size: 1.7rem;
+  font-weight: 500;
   margin: 1.75rem 0 0.75rem;
   line-height: 1.3;
 }
 .hc-article-body h2 {
-  font-size: 1.25rem;
-  font-weight: 700;
+  font-size: 1.5rem;
+  font-weight: 500;
   margin: 1.5rem 0 0.75rem;
   line-height: 1.35;
 }
@@ -1181,7 +1176,7 @@ html {
 .hc-article-body h4,
 .hc-article-body h5,
 .hc-article-body h6 {
-  font-size: 1rem;
+  font-size: 1.25rem;
   font-weight: 600;
   margin: 1rem 0 0.5rem;
   line-height: 1.4;
@@ -1309,7 +1304,7 @@ html {
 }
 
 /* Inline emphasis */
-.hc-article-body strong, .hc-article-body b { font-weight: 700; color: #111827; }
+.hc-article-body strong, .hc-article-body b { font-weight: 500; color: #111827; }
 .hc-article-body em, .hc-article-body i { font-style: italic; }
 .hc-article-body mark {
   background-color: #fef08a;

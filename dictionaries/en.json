@@ -80,7 +80,7 @@
       {
         "icon": "circle-check",
         "title": "Easy to use",
-        "description": "Just [download the esim.vn eSIM app](/en/what-is-esim), install the eSIM, and buy an eSIM data plan — it will activate automatically the moment you reach your destination."
+        "description": "Just [download the esim.vn app](/en/what-is-esim), install the eSIM, and buy an eSIM data plan — it will activate automatically the moment you reach your destination."
       },
       {
         "icon": "ballot-check",
@@ -153,7 +153,7 @@
     ]
   },
   "downloadApp": {
-    "title": "Download the esim.vn eSIM app",
+    "title": "Download the esim.vn app",
     "subtitle": "You can get esim.vn on Google Play and the App Store or by scanning the QR code.",
     "trustpilot": {
       "rating": "4.7",
@@ -713,7 +713,7 @@
           "appTitle": "Set up an eSIM on your iPhone with the esim.vn app",
           "steps": [
             { "title": "Pick an eSIM data plan for your trip", "description": "Select the country you're heading to and choose a plan." },
-            { "title": "Download the esim.vn eSIM app", "description": "Get the app, tap \"Install eSIM,\" and follow the steps on the screen." },
+            { "title": "Download the esim.vn app", "description": "Get the app, tap \"Install eSIM,\" and follow the steps on the screen." },
             { "title": "Your plan will automatically activate", "description": "Get ready for your trip — your plan will activate when you arrive." }
           ],
           "manualTitle": "Set up an eSIM manually on your iPhone",
@@ -730,7 +730,7 @@
           "appTitle": "Set up an eSIM on your Android with the esim.vn app",
           "steps": [
             { "title": "Pick an eSIM data plan for your trip", "description": "Select the country you're heading to and choose a plan." },
-            { "title": "Download the esim.vn eSIM app", "description": "Get the app, tap \"Install eSIM,\" and follow the steps on the screen to set it up." },
+            { "title": "Download the esim.vn app", "description": "Get the app, tap \"Install eSIM,\" and follow the steps on the screen to set it up." },
             { "title": "Your plan will automatically activate", "description": "Get ready for your trip — your plan will activate when you arrive." }
           ],
           "manualTitle": "Set up an eSIM manually on your Android",
@@ -843,7 +843,7 @@
     "notFound": "Destination not found",
     "notFoundDesc": "The destination you're looking for doesn't exist or has been removed.",
     "heroTag": "Auto-activate on landing",
-    "viewCountries": "View supported countries & carriers ({count})",
+    "viewCountries": "Include ({count}) country",
     "supportedCountries": "{count} supported countries",
     "carriers": {
       "title": "Supported carriers",
@@ -963,8 +963,8 @@
       "title": "esim.vn vs. other eSIM service providers"
     },
     "freeCredits": {
-      "title": "Earn free esim.vn credit",
-      "description": "Invite your friends and family to try esim.vn and earn US$5 worth of esim.vn credits for every successful referral.",
+      "title": "Receive funds in your eXU wallet for free.",
+      "description": "Invite your friends and family to try esim.vn and earn 10,000 VND in your eXU wallet for every successful referral.",
       "cta": "Learn more",
       "disclaimer": "For more information, check out the",
       "disclaimerLink": "terms and conditions",

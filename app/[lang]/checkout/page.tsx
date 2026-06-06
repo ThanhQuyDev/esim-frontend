@@ -29,7 +29,7 @@ export default async function CheckoutPage({
         lang={params.lang}
       />
       <div className="container mx-auto px-4 py-8 min-h-[60vh]">
-        <h1 className="text-2xl font-bold text-text-primary mb-8">
+        <h1 className="text-[1.7rem] sm:text-2xl font-medium text-text-primary mb-8">
           {(dict as any).checkout?.title || "Checkout"}
         </h1>
         <Suspense fallback={<div className="flex justify-center py-20"><div className="animate-spin h-8 w-8 border-4 border-gray-300 border-t-gray-600 rounded-full" /></div>}>

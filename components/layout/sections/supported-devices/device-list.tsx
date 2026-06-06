@@ -511,7 +511,7 @@ export function DeviceList({ initialData, dict, lang }: DeviceListProps) {
                                                   (device) => (
                                                     <li
                                                       key={device.id}
-                                                      className="flex items-center text-primary py-2"
+                                                      className="flex items-center text-primary sm:py-2"
                                                     >
                                                       <span className="w-1.5 h-1.5 rounded-full bg-gray-900 shrink-0 mr-3" />
                                                       {/* UI 6.2: bigger device font for easier scanning */}

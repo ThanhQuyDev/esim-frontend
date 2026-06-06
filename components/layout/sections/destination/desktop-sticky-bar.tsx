@@ -147,17 +147,17 @@ export function DesktopStickyBar({
           </div>
           {/* Plan details */}
           <div className="min-w-0">
-            <div className="text-xs text-[#6b7280] font-medium">
+            <div className="text-sm text-[#6b7280] font-medium">
               eSIM {destination || ""}
             </div>
-            <div className="text-sm font-medium text-[#1a1a1a] whitespace-nowrap overflow-hidden text-ellipsis">
+            <div className="text-base sm:text-sm font-medium text-[#1a1a1a] whitespace-nowrap overflow-hidden text-ellipsis">
               {planLabel}
             </div>
           </div>
         </div>
 
         {/* Center: Price */}
-        <div className="text-xl font-extrabold text-[#1a1a1a] whitespace-nowrap shrink-0">
+        <div className="text-2xl sm:text-xl font-extrabold text-[#1a1a1a] whitespace-nowrap shrink-0">
           {formatVnd(totalPrice)}
         </div>
 
@@ -171,7 +171,7 @@ export function DesktopStickyBar({
             >
               −
             </button>
-            <span className="text-sm font-bold min-w-[20px] text-center px-1">{quantity}</span>
+            <span className="text-base sm:text-sm font-medium min-w-[20px] text-center px-1">{quantity}</span>
             <button
               onClick={() => onQuantityChange(quantity + 1)}
               className="w-8 h-8 border-none rounded-full bg-[#f9fafb] text-lg font-semibold cursor-pointer flex items-center justify-center text-[#1a1a1a] mx-[3px] shrink-0 transition-colors hover:bg-[#e5e7eb]"
@@ -183,7 +183,7 @@ export function DesktopStickyBar({
           {/* Add to Cart */}
           <button
             onClick={handleAddToCart}
-            className="flex items-center justify-center gap-2 px-5 h-[40px] rounded-[30px] border-[1.5px] border-[#1a1a1a] bg-white text-sm font-semibold cursor-pointer text-[#1a1a1a] transition-all hover:bg-[#1a1a1a] hover:text-white"
+            className="flex items-center justify-center gap-2 px-5 h-[40px] rounded-[30px] border-[1.5px] border-[#1a1a1a] bg-white text-base sm:text-sm font-semibold cursor-pointer text-[#1a1a1a] transition-all hover:bg-[#1a1a1a] hover:text-white"
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="9" cy="21" r="1" />
@@ -196,7 +196,7 @@ export function DesktopStickyBar({
           {/* Buy Now */}
           <button
             onClick={handleAddToCart}
-            className="flex items-center justify-center px-6 h-[40px] rounded-[30px] border-[1.5px] border-[#D1B700] bg-[#FFF500] text-sm font-bold cursor-pointer text-[#1a1a1a] transition-all hover:bg-[#D1B700]"
+            className="flex items-center justify-center px-6 h-[40px] rounded-[30px] border-[1.5px] border-[#D1B700] bg-[#FFF500] text-base sm:text-sm font-medium cursor-pointer text-[#1a1a1a] transition-all hover:bg-[#D1B700]"
           >
             {dict.buyNow}
           </button>

@@ -430,7 +430,7 @@ export function DetailContent({
             {/* === LEVEL 3: Article detail (Bug 2.4: Rich Text) === */}
             {titleSlug && selectedArticle ? (
               <div className="my-10">
-                <h1 className="text-2xl md:text-3xl font-bold mb-4">
+                <h1 className="text-[1.9rem] sm:text-2xl md:text-3xl font-medium mb-4">
                   {selectedArticle.title}
                   {selectedArticle.isPopular && (
                     <Star className="inline-block w-5 h-5 ml-2 text-yellow-400 fill-yellow-400" aria-label="Popular article" />
@@ -499,7 +499,7 @@ export function DetailContent({
               /* === LEVEL 1: Category overview with all sections === */
               <div>
                 <div className="mb-10">
-                  <h1 className="mt-10 text-2xl md:text-4xl font-medium">
+                  <h1 className="mt-10 text-[1.8rem] sm:text-2xl md:text-4xl font-medium">
                     {getCategoryLabel(category, lang)}
                   </h1>
                 </div>

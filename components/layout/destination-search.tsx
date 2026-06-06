@@ -118,10 +118,10 @@ export function DestinationSearch({
               {query ? (
                 <button
                   onClick={handleClear}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-bg-secondary flex items-center justify-center text-text-tertiary hover:text-text-primary hover:bg-border-primary transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-bg-secondary flex items-center justify-center text-text-tertiary hover:text-text-primary hover:bg-border-primary transition-colors"
                   aria-label="Clear search"
                 >
-                  <X className="w-3.5 h-3.5" />
+                  <X className="w-4 h-4" />
                 </button>
               ) : (
                 <button

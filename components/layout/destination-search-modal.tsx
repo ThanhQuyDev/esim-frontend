@@ -76,7 +76,7 @@ export function DestinationSearchModal({
     (slug: string) => {
       onClose();
       // Navigate to destination page
-      window.location.href = `/${lang}/destination/${slug}`;
+      window.location.href = `/${lang}/${slug}`;
     },
     [lang, onClose]
   );
@@ -84,7 +84,7 @@ export function DestinationSearchModal({
   const handleSelectRegion = useCallback(
     (slug: string) => {
       onClose();
-      window.location.href = `/${lang}/region/${slug}`;
+      window.location.href = `/${lang}/${slug}`;
     },
     [lang, onClose]
   );
@@ -254,9 +254,7 @@ export function DestinationSearchModal({
                 ) : (
                   mergedResults.map((item: any) => {
                     const isRegion = item._type === "region";
-                    const href = isRegion
-                      ? `/${lang}/region/${item.slug}`
-                      : `/${lang}/destination/${item.slug}`;
+                    const href = `/${lang}/${item.slug}`;
                     const priceStr = item.minPrice || item.fromPrice
                       ? formatPrice(item.minPrice || item.fromPrice)
                       : null;
@@ -374,9 +372,7 @@ export function DestinationSearchModal({
                       : priceStr
                         ? `${lang === "vi" ? "Từ" : "From"} ${priceStr}`
                         : null;
-                    const href = isRegionItem
-                      ? `/${lang}/region/${item.slug}`
-                      : `/${lang}/destination/${item.slug}`;
+                    const href = `/${lang}/${item.slug}`;
 
                     return (
                       <div key={`${item._type}-${item.id}`}>

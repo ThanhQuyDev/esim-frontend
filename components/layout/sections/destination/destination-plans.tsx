@@ -241,9 +241,9 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
   const showInlineKyc = !!selectedPlan?.isKyc;
 
   return (
-    <div className="bg-white overflow-x-hidden max-w-[100vw]">
+    <div className="bg-white max-w-[100vw]">
       {/* ── MOBILE VIEW (≤840px) ── */}
-      <div className="min-[841px]:hidden overflow-x-hidden max-w-full">
+      <div className="min-[841px]:hidden max-w-full">
         <MobileDestinationPlans
           destination={destinationData || destination}
           plans={plans}
@@ -337,7 +337,7 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
                   </svg>
                 </span>
                 <span className="flex-1">
-                  <span className="block text-[13.5px] font-extrabold text-[#991B1B]">
+                  <span className="block text-[.875rem] font-extrabold text-[#991B1B]">
                     {lang === "en"
                       ? "⚠ Identity verification required"
                       : "⚠ Bắt buộc xác thực danh tính"}

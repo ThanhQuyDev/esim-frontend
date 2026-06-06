@@ -40,7 +40,7 @@ export function AboutLife({ dict }: AboutLifeProps) {
                 setIsBeginning(s.isBeginning);
                 setIsEnd(s.isEnd);
               }}
-              className="overflow-x-clip! overflow-y-visible!"
+              className="overflow-visible overflow-y-visible"
             >
               {/* First slide: title + first perk */}
               <SwiperSlide className="!h-auto !w-auto group/gallery-slide">
@@ -100,7 +100,7 @@ export function AboutLife({ dict }: AboutLifeProps) {
                         </div>
                       </div>
                       <div className={`relative ${isEven ? "order-first" : ""}`}>
-                        <div className="rounded-lg overflow-hidden">
+                        <div className="rounded-lg overflow-visible">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             alt={perk.imageAlt}
@@ -108,9 +108,48 @@ export function AboutLife({ dict }: AboutLifeProps) {
                             width={400}
                             height={250}
                             src={lifeImages[i + 1]}
-                            className="w-full object-cover"
+                            className="w-full object-cover rounded-lg"
                           />
                         </div>
+                        {perk.title === "Work-life balance" && (
+                          <div className="absolute z-10" style={{ bottom: "-60px", right: "15px" }}>
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              alt="about us life at saily sticker trophy"
+                              loading="lazy"
+                              width={80}
+                              height={80}
+                              src="https://sb.nordcdn.com/m/2fdf52457e4e83ac/original/about-us-life-at-saily-sticker-trophy.svg"
+                              style={{ color: "transparent" }}
+                            />
+                          </div>
+                        )}
+                        {perk.title === "Autonomy and ownership" && (
+                          <div className="absolute z-10" style={{ top: "-30px", right: "20px" }}>
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              alt="about us life at saily sticker plane"
+                              loading="lazy"
+                              width={80}
+                              height={80}
+                              src="https://sb.nordcdn.com/m/452227169e641f28/original/about-us-life-at-saily-sticker-plane.svg"
+                              style={{ color: "transparent" }}
+                            />
+                          </div>
+                        )}
+                        {perk.title === "Curiosity-driven work" && (
+                          <div className="absolute z-10" style={{ top: "-48px", right: "-40px" }}>
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              alt="about us life at saily sticker rocket"
+                              loading="lazy"
+                              width={80}
+                              height={80}
+                              src="https://sb.nordcdn.com/m/e6c1106925e87de/original/about-us-life-at-saily-sticker-rocket.svg"
+                              style={{ color: "transparent" }}
+                            />
+                          </div>
+                        )}
                       </div>
                     </div>
                   </SwiperSlide>
@@ -123,7 +162,7 @@ export function AboutLife({ dict }: AboutLifeProps) {
               <button
                 disabled={isBeginning}
                 onClick={() => swiperRef.current?.slidePrev()}
-                className="border border-border-tertiary rounded-full p-0 h-12 w-12 flex justify-center items-center disabled:text-text-disabled disabled:cursor-not-allowed text-text-primary-on-color hover:bg-bg-secondary hover:text-text-primary transition-colors"
+                className="border border-border-tertiary rounded-full p-0 h-12 w-12 flex justify-center items-center disabled:text-text-disabled disabled:cursor-not-allowed text-text-primary-on-color sm:hover:bg-bg-secondary sm:hover:text-text-primary transition-colors"
                 aria-label="Previous"
               >
                 <ArrowLeft className="w-6 h-6" />
@@ -131,7 +170,7 @@ export function AboutLife({ dict }: AboutLifeProps) {
               <button
                 disabled={isEnd}
                 onClick={() => swiperRef.current?.slideNext()}
-                className="border border-border-tertiary rounded-full p-0 h-12 w-12 flex justify-center items-center disabled:text-text-disabled disabled:cursor-not-allowed text-text-primary-on-color hover:bg-bg-secondary hover:text-text-primary transition-colors"
+                className="border border-border-tertiary rounded-full p-0 h-12 w-12 flex justify-center items-center disabled:text-text-disabled disabled:cursor-not-allowed text-text-primary-on-color sm:hover:bg-bg-secondary sm:hover:text-text-primary transition-colors"
                 aria-label="Next"
               >
                 <ArrowRight className="w-6 h-6" />

@@ -50,14 +50,14 @@ export function BlogSection({ dict, lang }: BlogSectionProps) {
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-14 md:mb-16">
           <div className="max-w-xl">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/[0.08] border border-accent/[0.15] mb-6">
-              <span className="text-sm text-accent font-medium">{dict.badge}</span>
+              <span className="text-base sm:text-sm text-accent font-medium">{dict.badge}</span>
             </div>
-            <h2 className="font-display font-bold text-3xl md:text-4xl lg:text-5xl text-white mb-4 tracking-tight">
+            <h2 className="font-display font-medium text-3xl md:text-4xl lg:text-5xl text-white mb-4 tracking-tight">
               {dict.title}<span className="gradient-text-purple">{dict.titleHighlight}</span>
             </h2>
             <p className="text-lg text-muted-foreground leading-relaxed">{dict.subtitle}</p>
           </div>
-          <Link href="#" className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors font-medium group">
+          <Link href="#" className="inline-flex items-center gap-2 text-base sm:text-sm text-primary hover:text-primary/80 transition-colors font-medium group">
             {dict.viewAll}
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
           </Link>
@@ -89,7 +89,7 @@ export function BlogSection({ dict, lang }: BlogSectionProps) {
                 )}
               </div>
               <div className="p-6 flex flex-col flex-1">
-                <div className="flex items-center gap-3 text-xs text-muted-foreground mb-3">
+                <div className="flex items-center gap-3 text-sm text-muted-foreground mb-3">
                   {post.publishedAt && (
                     <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{formatDate(post.publishedAt)}</span>
                   )}
@@ -99,9 +99,9 @@ export function BlogSection({ dict, lang }: BlogSectionProps) {
                 </div>
                 <h3 className="font-display font-semibold text-lg text-white mb-2.5 line-clamp-2 group-hover:text-primary transition-colors duration-300">{post.title}</h3>
                 {post.excerpt && (
-                  <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3 mb-4 flex-1">{post.excerpt}</p>
+                  <p className="text-base sm:text-sm text-muted-foreground leading-relaxed line-clamp-3 mb-4 flex-1">{post.excerpt}</p>
                 )}
-                <Link href="#" className="inline-flex items-center gap-1.5 text-sm text-primary font-medium hover:text-primary/80 transition-colors mt-auto group/link">
+                <Link href="#" className="inline-flex items-center gap-1.5 text-base sm:text-sm text-primary font-medium hover:text-primary/80 transition-colors mt-auto group/link">
                   {dict.readMore}
                   <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover/link:translate-x-1" />
                 </Link>

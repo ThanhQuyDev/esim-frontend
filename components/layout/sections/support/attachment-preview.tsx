@@ -68,12 +68,12 @@ export function AttachmentPreview({ item, onRemove, removeLabel }: AttachmentPre
       {/* Meta */}
       <div className="min-w-0 flex-1">
         <p
-          className="truncate text-sm font-medium text-gray-900"
+          className="truncate text-base sm:text-sm font-medium text-gray-900"
           title={item.file.name}
         >
           {item.file.name}
         </p>
-        <p className="mt-0.5 flex items-center gap-2 text-xs text-gray-500">
+        <p className="mt-0.5 flex items-center gap-2 text-sm text-gray-500">
           <span>{formatBytes(item.file.size)}</span>
           {item.status === "uploading" && (
             <span className="inline-flex items-center gap-1 text-blue-600">

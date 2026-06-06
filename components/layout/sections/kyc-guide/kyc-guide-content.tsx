@@ -112,11 +112,6 @@ const IconBanSec = () => (
     <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
   </svg>
 );
-const IconBackChevron = () => (
-  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-    <polyline points="15 18 9 12 15 6" />
-  </svg>
-);
 
 /* ── Section card ── */
 function SectionCard({
@@ -135,7 +130,7 @@ function SectionCard({
     >
       <div className="flex items-center gap-3 mb-5 max-[640px]:gap-2.5 max-[640px]:mb-3.5">
         <div className="w-[38px] h-[38px] max-[640px]:w-8 max-[640px]:h-8 bg-[#FEE2E2] rounded-[10px] max-[640px]:rounded-[9px] flex items-center justify-center shrink-0">{icon}</div>
-        <div className="text-lg font-extrabold max-[640px]:text-[15px] max-[640px]:font-bold">{label}</div>
+        <div className="text-lg font-extrabold max-[640px]:text-base max-[640px]:font-bold">{label}</div>
         <div className="flex-1 h-px bg-[#E5E7EB]" />
       </div>
       {children}
@@ -175,7 +170,7 @@ function StepItem({ step, index, isLast }: { step: KycStep; index: number; isLas
   return (
     <div className={`flex gap-5 max-[640px]:gap-3 ${isLast ? "mb-0" : "mb-[30px] max-[640px]:mb-6"}`}>
       <div className="flex flex-col items-center shrink-0">
-        <div className="w-9 h-9 max-[640px]:w-[30px] max-[640px]:h-[30px] rounded-full bg-[#DC2626] text-white text-[15px] max-[640px]:text-[13.5px] font-bold flex items-center justify-center">
+        <div className="w-9 h-9 max-[640px]:w-[30px] max-[640px]:h-[30px] rounded-full bg-[#DC2626] text-white text-base max-[640px]:text-[.875rem] font-bold flex items-center justify-center">
           {index + 1}
         </div>
         {!isLast && (
@@ -188,7 +183,7 @@ function StepItem({ step, index, isLast }: { step: KycStep; index: number; isLas
       <div className="flex-1 pt-1 max-[640px]:pt-[3px] min-w-0">
         <div className="text-base max-[640px]:text-[14.5px] font-bold mb-[5px] max-[640px]:leading-[1.3]">{step.t}</div>
         <div
-          className="text-[15px] max-[640px]:text-[13.5px] text-[#4B5563] leading-[1.75] mb-2"
+          className="text-base max-[640px]:text-[.875rem] text-[#4B5563] leading-[1.75] mb-2"
           dangerouslySetInnerHTML={{ __html: step.d }}
         />
         {step.h && step.hc && (
@@ -274,13 +269,13 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
   };
 
   return (
-    <div className="bg-[#F1F5F9] min-h-screen text-[#0F172A] overflow-clip max-[640px]:text-[15px]" style={{ fontFamily: "'Google Sans', system-ui, sans-serif" }}>
-      {/* Sticky tabs + back button */}
+    <div className="bg-[#F1F5F9] min-h-screen text-[#0F172A] overflow-clip max-[640px]:text-base" style={{ fontFamily: "'Google Sans', system-ui, sans-serif" }}>
+      {/* Sticky tabs */}
       <div
         className="bg-white px-12 max-[640px]:px-2 sticky top-0 z-20 overflow-x-auto"
         style={{ borderBottom: "1.5px solid #E5E7EB", scrollbarWidth: "none" }}
       >
-        <div className="flex w-full max-w-[832px] mx-auto justify-between">
+        <div className="flex w-full max-w-[832px] mx-auto">
           <div className="flex items-center max-[640px]:gap-0.5">
           {REGION_KEYS.map((k) => {
             const r = KYC_REGIONS[k];
@@ -290,7 +285,7 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
                 key={k}
                 type="button"
                 onClick={() => handleTabClick(k)}
-                className={`px-[22px] py-3.5 max-[640px]:px-3.5 max-[640px]:py-2.5 text-sm max-[640px]:text-[13.5px] font-semibold cursor-pointer bg-none whitespace-nowrap flex items-center gap-1.5 transition-colors -mb-[1.5px] shrink-0 max-[640px]:min-h-[44px] ${
+                className={`px-[22px] py-3.5 max-[640px]:px-3.5 max-[640px]:py-2.5 text-sm max-[640px]:text-[.875rem] font-semibold cursor-pointer bg-none whitespace-nowrap flex items-center gap-1.5 transition-colors -mb-[1.5px] shrink-0 max-[640px]:min-h-[44px] ${
                   active ? "text-[#DC2626]" : "text-[#6B7280] hover:text-[#374151]"
                 }`}
                 style={{
@@ -305,15 +300,6 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
             );
           })}
           </div>
-          <button
-            type="button"
-            onClick={() => router.back()}
-            className="flex items-center gap-1.5 px-[14px] py-2 rounded-full text-[13px] font-semibold text-[#374151] cursor-pointer bg-white transition-colors hover:bg-[#F3F4F6] shrink-0 mr-3"
-            style={{ border: "1.5px solid #E5E7EB" }}
-          >
-            <IconBackChevron />
-            Quay lại
-          </button>
         </div>
       </div>
 
@@ -383,7 +369,7 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
         {/* Notice card */}
         <div className="bg-white rounded-2xl px-7 py-6 mb-5 max-[640px]:px-3.5 max-[640px]:py-4 max-[640px]:mb-3" style={{ border: "1.5px solid #E5E7EB" }}>
           <div
-            className="flex items-start gap-3 max-[640px]:gap-[9px] px-[18px] py-3.5 max-[640px]:px-[13px] max-[640px]:py-[11px] text-[15px] max-[640px]:text-[13.5px] font-semibold text-[#78350F] leading-[1.7] max-[640px]:leading-[1.65] mb-4 max-[640px]:mb-3.5"
+            className="flex items-start gap-3 max-[640px]:gap-[9px] px-[18px] py-3.5 max-[640px]:px-[13px] max-[640px]:py-[11px] text-base max-[640px]:text-[.875rem] font-semibold text-[#78350F] leading-[1.7] max-[640px]:leading-[1.65] mb-4 max-[640px]:mb-3.5"
             style={{
               background: "#FFFBEB",
               borderLeft: "4px solid #F59E0B",
@@ -395,7 +381,7 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
           </div>
           <div className="flex flex-col gap-2.5 mb-4 max-[640px]:gap-[9px] max-[640px]:mb-3.5">
             {data.notes.map((n, i) => (
-              <div key={i} className="flex items-start gap-2.5 max-[640px]:gap-[9px] text-[15px] max-[640px]:text-[13.5px] text-[#374151] leading-[1.65]">
+              <div key={i} className="flex items-start gap-2.5 max-[640px]:gap-[9px] text-base max-[640px]:text-[.875rem] text-[#374151] leading-[1.65]">
                 <div className="w-5 h-5 max-[640px]:w-[18px] max-[640px]:h-[18px] rounded-full bg-[#FEE2E2] flex items-center justify-center shrink-0 mt-[2px]">
                   <IconCheckRed />
                 </div>
@@ -406,7 +392,7 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
           <div className="h-px bg-[#E5E7EB] mb-4 max-[640px]:mb-3.5" />
           {/* Desktop: inline CTA. Mobile: text only — primary CTA lives in the sticky bottom bar. */}
           <div className="flex items-center justify-between gap-6 max-[640px]:gap-0">
-            <div className="text-[15px] max-[640px]:text-[12.5px] text-[#6B7280] leading-[1.6]">
+            <div className="text-base max-[640px]:text-[12.5px] text-[#6B7280] leading-[1.6]">
               Đã đọc và hiểu các lưu ý? <b className="text-[#374151]">Hoàn tất trong khoảng 3 phút.</b>{" "}
               <span className="max-[640px]:hidden">Bấm nút để bắt đầu đăng ký.</span>
               <span className="hidden max-[640px]:inline">Bấm nút bên dưới để bắt đầu.</span>
@@ -415,7 +401,7 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
               href={data.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#DC2626] text-white rounded-full text-[15px] font-bold whitespace-nowrap no-underline transition-opacity hover:opacity-90 max-[640px]:hidden"
+              className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#DC2626] text-white rounded-full text-base font-bold whitespace-nowrap no-underline transition-opacity hover:opacity-90 max-[640px]:hidden"
               style={{ border: "none" }}
             >
               Đăng ký xác thực ngay
@@ -436,7 +422,7 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
               <span className="w-8 h-8 rounded-full bg-[#FEE2E2] flex items-center justify-center shrink-0">
                 <IconPassportSec />
               </span>
-              <span className="text-[15px] max-[640px]:text-[13.5px] font-bold text-[#9F1239] max-[640px]:flex-1 max-[640px]:leading-[1.3]">Hộ chiếu còn hiệu lực</span>
+              <span className="text-base max-[640px]:text-[.875rem] font-bold text-[#9F1239] max-[640px]:flex-1 max-[640px]:leading-[1.3]">Hộ chiếu còn hiệu lực</span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FECACA" strokeWidth="2.5" strokeLinecap="round" className="hidden max-[640px]:block shrink-0">
                 <polyline points="9 18 15 12 9 6" />
               </svg>
@@ -450,7 +436,7 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
               <span className="w-8 h-8 rounded-full bg-[#FEE2E2] flex items-center justify-center shrink-0">
                 <IconPhoneSec />
               </span>
-              <span className="text-[15px] max-[640px]:text-[13.5px] font-bold text-[#9F1239] max-[640px]:flex-1 max-[640px]:leading-[1.3]">Mã ICCID của eSIM (19–20 số)</span>
+              <span className="text-base max-[640px]:text-[.875rem] font-bold text-[#9F1239] max-[640px]:flex-1 max-[640px]:leading-[1.3]">Mã ICCID của eSIM (19–20 số)</span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FECACA" strokeWidth="2.5" strokeLinecap="round" className="hidden max-[640px]:block shrink-0">
                 <polyline points="9 18 15 12 9 6" />
               </svg>
@@ -469,7 +455,7 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
         <SectionCard icon={<IconCamSec />} label="Lưu ý khi chụp ảnh hộ chiếu">
           <div className="flex flex-col gap-3 pl-2 max-[640px]:pl-1.5">
             {data.tips.map((t, i) => (
-              <div key={i} className="flex items-center gap-3 max-[640px]:gap-[11px] text-[15px] max-[640px]:text-[13.5px] leading-[1.65]">
+              <div key={i} className="flex items-center gap-3 max-[640px]:gap-[11px] text-base max-[640px]:text-[.875rem] leading-[1.65]">
                 <div className="w-5 h-5 rounded-full bg-[#DCFCE7] flex items-center justify-center shrink-0">
                   <IconCheckGreen />
                 </div>
@@ -483,7 +469,7 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
         <SectionCard icon={<IconBanSec />} label="Giấy tờ không được chấp nhận">
           <div className="flex flex-col gap-3 pl-2 max-[640px]:pl-1.5">
             {data.invalid.map((v, i) => (
-              <div key={i} className="flex items-center gap-3 max-[640px]:gap-[11px] text-[15px] max-[640px]:text-[13.5px] text-[#991B1B] leading-[1.65]">
+              <div key={i} className="flex items-center gap-3 max-[640px]:gap-[11px] text-base max-[640px]:text-[.875rem] text-[#991B1B] leading-[1.65]">
                 <div className="w-5 h-5 rounded-full bg-[#FEE2E2] flex items-center justify-center shrink-0">
                   <IconXRed />
                 </div>
@@ -502,9 +488,9 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
             <IconDoneCheck />
           </div>
           <div>
-            <div className="text-base max-[640px]:text-[15px] font-extrabold max-[640px]:font-bold text-[#14532D] mb-[5px]">Hoàn tất! 🎉</div>
+            <div className="text-base max-[640px]:text-base font-extrabold max-[640px]:font-bold text-[#14532D] mb-[5px]">Hoàn tất! 🎉</div>
             <div
-              className="text-[15px] max-[640px]:text-[13.5px] text-[#166534] leading-[1.75] max-[640px]:leading-[1.7]"
+              className="text-base max-[640px]:text-[.875rem] text-[#166534] leading-[1.75] max-[640px]:leading-[1.7]"
               dangerouslySetInnerHTML={{ __html: data.done }}
             />
           </div>
@@ -530,7 +516,7 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
             href={data.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#DC2626] text-white rounded-full text-[15px] font-bold whitespace-nowrap no-underline transition-opacity hover:opacity-90"
+            className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#DC2626] text-white rounded-full text-base font-bold whitespace-nowrap no-underline transition-opacity hover:opacity-90"
             style={{ border: "none" }}
           >
             Đăng ký ngay
@@ -540,7 +526,7 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
 
         {/* Support */}
         <div
-          className="flex items-center justify-center gap-6 p-4 max-[640px]:gap-5 max-[640px]:px-4 max-[640px]:py-[14px] max-[640px]:mt-1 text-sm max-[640px]:text-[13.5px] text-[#6B7280]"
+          className="flex items-center justify-center gap-6 p-4 max-[640px]:gap-5 max-[640px]:px-4 max-[640px]:py-[14px] max-[640px]:mt-1 text-sm max-[640px]:text-[.875rem] text-[#6B7280]"
           style={{ borderTop: "1.5px solid #E5E7EB" }}
         >
           <span className="max-[640px]:hidden">Cần hỗ trợ?</span>
