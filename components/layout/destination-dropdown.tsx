@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Info, MapPin, Loader2 } from "lucide-react";
+import { Search, X, Info, MapPin, Loader2 } from "lucide-react";
 import { useTopDestinations, useSearchDestinations, useRegions, useSearchRegions } from "@/lib/hooks";
 import { useDebounce } from "@/lib/use-debounce";
 import type { Locale } from "@/lib/i18n-config";
@@ -118,9 +118,20 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
-              <div className="absolute top-1/2 -translate-y-1/2 right-2 flex items-center justify-center rounded-full h-8 w-8 bg-brand-black">
-                <Search className="w-3 h-3 text-primary-on-color" />
-              </div>
+              {searchQuery ? (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery("")}
+                  className="absolute top-1/2 -translate-y-1/2 right-2 flex items-center justify-center rounded-full h-8 w-8 bg-brand-black hover:bg-neutral-800 transition-colors"
+                  aria-label="Clear search"
+                >
+                  <X className="w-3 h-3 text-primary-on-color" />
+                </button>
+              ) : (
+                <div className="absolute top-1/2 -translate-y-1/2 right-2 flex items-center justify-center rounded-full h-8 w-8 bg-brand-black">
+                  <Search className="w-3 h-3 text-primary-on-color" />
+                </div>
+              )}
             </div>
 
             {/* Tab Pills */}
@@ -173,7 +184,7 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
                         {searchDestinations.map((dest: any) => (
                           <a
                             key={dest.id}
-                            className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus rounded-sm w-full block group lg:p-3 lg:hover:bg-bg-primary"
+                            className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus rounded-sm w-full block group lg:p-3 lg:hover:bg-gray-100"
                             data-testid={dest.code}
                             href={`/${lang}/${dest.slug || dest.code?.toLowerCase()}`}
                           >
@@ -223,7 +234,7 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
                         {searchRegions.map((region: any) => (
                           <a
                             key={region.id}
-                            className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus rounded-sm w-full block group lg:p-3 lg:hover:bg-bg-primary"
+                            className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus rounded-sm w-full block group lg:p-3 lg:hover:bg-gray-100"
                             data-testid={region.slug}
                             href={`/${lang}/${region.slug}`}
                           >
@@ -299,7 +310,7 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
                           return (
                             <a
                               key={`${item._type || 'dest'}-${item.id}`}
-                              className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus rounded-sm w-full block group lg:p-3 lg:hover:bg-bg-primary"
+                              className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus rounded-sm w-full block group lg:p-3 lg:hover:bg-gray-100"
                               data-testid={item.code || item.slug}
                               href={`/${lang}/${item.slug || item.code?.toLowerCase()}`}
                             >

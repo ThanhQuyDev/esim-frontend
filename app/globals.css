@@ -243,7 +243,7 @@ html {
   }
   @screen lg {
     .heading-lg {
-      @apply text-[1.5rem];
+      @apply text-[2rem];
     }
   }
 

@@ -90,7 +90,7 @@
       {
         "icon": "sim-card",
         "title": "Một eSIM cho mọi chuyến đi",
-        "description": "Thêm điểm đến mới vào eSIM esim.vn hiện có — không cần cài đặt eSIM mới mỗi lần. Chỉ cần nạp thêm và kết nối!"
+        "description": "Thêm điểm đến mới vào esim.vn hiện có — không cần cài đặt eSIM mới mỗi lần. Chỉ cần nạp thêm và kết nối!"
       },
       {
         "icon": "bell-ring",
@@ -227,7 +227,7 @@
         "answer": "Có! esim.vn phát hiện điểm đến của bạn và tự động kích hoạt gói dữ liệu eSIM."
       },
       {
-        "question": "Tôi có giữ được số điện thoại khi dùng gói eSIM esim.vn không?",
+        "question": "Tôi có giữ được số điện thoại khi dùng gói esim.vn không?",
         "answer": "Có — các gói trên ứng dụng esim.vn chỉ cung cấp dữ liệu internet. Điều đó có nghĩa bạn giữ nguyên số hiện tại cho cuộc gọi và tin nhắn trong khi dùng eSIM làm nguồn dữ liệu di động chính. Dùng eSIM chỉ cho dữ liệu là cách tuyệt vời để giữ kết nối ở nước ngoài mà không phải lo lấy số mới! Bạn vẫn có thể gọi qua các ứng dụng VoIP như Facebook Messenger, WhatsApp và Signal."
       },
       {
@@ -239,12 +239,12 @@
         "answer": "eSIM du lịch là tên gọi khác của eSIM dành cho du lịch — một SIM kỹ thuật số cho phép bạn kết nối mạng di động ở các quốc gia khác mà không cần SIM vật lý. Để bắt đầu sử dụng eSIM, bạn cần một gói eSIM, có thể chỉ dữ liệu hoặc dữ liệu kèm cuộc gọi và tin nhắn. Bạn có thể thiết lập eSIM với hầu hết smartphone mới bằng vài thay đổi nhỏ trong cài đặt thiết bị."
       },
       {
-        "question": "Ứng dụng eSIM esim.vn có đáng tin không?",
+        "question": "Ứng dụng esim.vn có đáng tin không?",
         "answer": "Có, ứng dụng esim.vn hoàn toàn đáng tin! Được xây dựng bởi công ty đứng sau NordVPN (Nord Security), cung cấp mọi thứ bạn cần trong một ứng dụng — bảo mật vững chắc, kích hoạt dễ dàng và giao diện trực quan. Với gói dữ liệu tại 200+ điểm đến, esim.vn là lựa chọn tuyệt vời cho du khách!"
       },
       {
         "question": "Ứng dụng esim.vn có gói eSIM giá rẻ không?",
-        "answer": "Có, ứng dụng eSIM esim.vn cung cấp gói giá phải chăng, đặc biệt so với các nhà cung cấp lớn! Tuy nhiên, nếu bạn chỉ tìm eSIM rẻ nhất, có thể tìm được giá thấp hơn ở nơi khác. Với esim.vn, bạn còn được chất lượng vượt trội: hỗ trợ khách hàng 24/7, thiết lập nhanh chóng, ứng dụng dễ dùng và phủ sóng toàn cầu đáng tin cậy. Bạn còn có thêm tính năng bảo mật như chặn trang web độc hại và quảng cáo!"
+        "answer": "Có, ứng dụng esim.vn cung cấp gói giá phải chăng, đặc biệt so với các nhà cung cấp lớn! Tuy nhiên, nếu bạn chỉ tìm eSIM rẻ nhất, có thể tìm được giá thấp hơn ở nơi khác. Với esim.vn, bạn còn được chất lượng vượt trội: hỗ trợ khách hàng 24/7, thiết lập nhanh chóng, ứng dụng dễ dùng và phủ sóng toàn cầu đáng tin cậy. Bạn còn có thêm tính năng bảo mật như chặn trang web độc hại và quảng cáo!"
       },
       {
         "question": "esim.vn có hoạt động ở Mỹ không?",
@@ -263,8 +263,8 @@
         "answer": "esim.vn bắt nguồn từ từ \"sail\" (căng buồm) — chúng tôi muốn một cái tên gợi lên sự chuyển động, tự do và khám phá thế giới! esim.vn tò mò, năng động, dũng cảm, hòa nhập, vui vẻ và luôn sẵn sàng cho điều mới. Nếu là một người, esim.vn sẽ luôn di chuyển, gặp gỡ mọi người, theo đuổi phiêu lưu và giữ kết nối!"
       },
       {
-        "question": "Ai sở hữu dịch vụ eSIM esim.vn?",
-        "answer": "Nord Security, thương hiệu bảo mật và quyền riêng tư kỹ thuật số toàn cầu, sở hữu dịch vụ eSIM esim.vn. Đây cũng là công ty đứng sau các công cụ như NordVPN và NordPass, được hàng triệu người trên thế giới tin dùng."
+        "question": "Ai sở hữu dịch vụ esim.vn?",
+        "answer": "Nord Security, thương hiệu bảo mật và quyền riêng tư kỹ thuật số toàn cầu, sở hữu dịch vụ esim.vn. Đây cũng là công ty đứng sau các công cụ như NordVPN và NordPass, được hàng triệu người trên thế giới tin dùng."
       }
     ]
   },
@@ -637,7 +637,7 @@
       "title": "Câu chuyện esim.vn",
       "subtitle": "Chúng tôi hình dung một cách tốt hơn để du khách giữ kết nối trực tuyến. Ngày nay, chúng tôi đang biến tầm nhìn đó thành hiện thực cho hàng nghìn người trên toàn cầu. Đây là cách esim.vn đến được đây.",
       "milestones": [
-        { "date": "Tháng 11 năm 2023", "title": "Nơi tất cả bắt đầu", "description": "Ứng dụng eSIM esim.vn bắt đầu với một ý tưởng chung — loại bỏ thẻ SIM nhựa và đơn giản hóa kết nối di động." },
+        { "date": "Tháng 11 năm 2023", "title": "Nơi tất cả bắt đầu", "description": "Ứng dụng esim.vn bắt đầu với một ý tưởng chung — loại bỏ thẻ SIM nhựa và đơn giản hóa kết nối di động." },
         { "date": "Tháng 3 năm 2024", "title": "Lần ra mắt đầu tiên", "description": "Chúng tôi giới thiệu các gói eSIM đầu tiên phủ sóng hơn 160 quốc gia với truy cập di động tức thì và không rác thải nhựa." },
         { "date": "Tháng 12 năm 2024", "title": "Ưu tiên bảo mật", "description": "Chúng tôi đã thêm tính năng bảo mật tích hợp vào ứng dụng eSIM để bạn có thể duyệt web an toàn hơn khi du lịch." },
         { "date": "Tháng 2 năm 2025", "title": "Kết nối thế giới", "description": "Đầu năm, chúng tôi mở rộng phủ sóng đến hơn 200 điểm đến và tiếp cận nhiều người hơn bao giờ hết." },
@@ -941,7 +941,7 @@
     "hero": {
       "activeDate": "Có hiệu lực từ tháng 4 năm 2026",
       "title": "Mã giảm giá esim.vn",
-      "description": "Sử dụng mã giảm giá của chúng tôi khi thanh toán để được giảm giá cho gói eSIM esim.vn.",
+      "description": "Sử dụng mã giảm giá của chúng tôi khi thanh toán để được giảm giá cho gói esim.vn.",
       "cta": "Lấy mã",
       "copied": "Đã sao chép!",
       "couponCode": "Saily5",
@@ -960,7 +960,19 @@
       "title": "Khách hàng nói gì về esim.vn?"
     },
     "comparisonTable": {
-      "title": "esim.vn so với các nhà cung cấp eSIM khác"
+      "title": "esim.vn so với các nhà cung cấp eSIM khác",
+      "viewPlans": "Xem gói cước",
+      "rows": [
+        { "label": "Một eSIM cho mọi điểm đến được hỗ trợ" },
+        { "label": "Hỗ trợ chat trực tuyến 24/7" },
+        { "label": "Hoàn tiền", "tooltip": "Quyền yêu cầu hoàn tiền chung. Có một số hạn chế và điều kiện áp dụng." },
+        { "label": "Tính năng bảo mật" },
+        { "label": "Vị trí ảo" },
+        { "label": "Chặn URL độc hại" },
+        { "label": "Tiết kiệm dữ liệu (chặn quảng cáo)", "tooltip": "Tính năng giúp tiết kiệm đến 28,6% dữ liệu của bạn." }
+      ],
+      "footnote": "*Dữ liệu được lấy từ trang web tiếng Anh chính thức của các đối thủ vào ngày 22 tháng 8 năm 2025 và báo cáo so sánh sản phẩm của West Coast Labs. Để biết thêm thông tin, vui lòng liên hệ ",
+      "footnoteDisclaimer": "** esim.vn® không liên kết với các hàng hóa hoặc dịch vụ được so sánh."
     },
     "freeCredits": {
       "title": "Nhận tiền vào ví eXU miễn phí",
@@ -987,11 +999,11 @@
           "answer": "Điều này phụ thuộc vào nhiều yếu tố, như vị trí của bạn, mùa hiện tại, nhà cung cấp eSIM và các chương trình giảm giá hiện có. Tuy nhiên, tại esim.vn, chúng tôi luôn cố gắng cung cấp các gói eSIM giá cả phải chăng nhất quanh năm và luôn có mã giảm giá để giúp bạn tiết kiệm thêm."
         },
         {
-          "question": "Tôi có thể sử dụng cùng một mã giảm giá esim.vn eSIM nhiều lần không?",
+          "question": "Tôi có thể sử dụng cùng một mã giảm giá esim.vn nhiều lần không?",
           "answer": "Thông thường, mã giảm giá chỉ có thể sử dụng một lần cho mỗi tài khoản. Tuy nhiên, nếu bạn muốn biết chắc chắn, hãy kiểm tra trang điều khoản và điều kiện của chiến dịch cụ thể."
         },
         {
-          "question": "Tôi có thể sử dụng esim.vn eSIM miễn phí không?",
+          "question": "Tôi có thể sử dụng esim.vn miễn phí không?",
           "answer": "Mặc dù esim.vn là dịch vụ trả phí, bạn có thể hưởng lợi từ chương trình giới thiệu của chúng tôi. Mỗi người bạn giới thiệu sẽ giúp bạn nhận được 5 USD tín dụng esim.vn. Bằng cách mời bạn bè và gia đình đăng ký esim.vn qua liên kết giới thiệu, bạn có thể kiếm đủ tín dụng để không bao giờ phải trả tiền cho gói eSIM."
         }
       ]
@@ -1010,12 +1022,12 @@
       "imageUrl": "https://sb.nordcdn.com/m/7260eee2474e71e4/original/woman-stars-reviews-rating.png"
     },
     "features": {
-      "title": "Lý do nên mua thẻ eSIM esim.vn",
-      "description": "eSIM có thể giúp bạn tiết kiệm tiền và thời gian khi đi du lịch. Với eSIM esim.vn, mọi thứ còn dễ dàng hơn.",
+      "title": "Lý do nên mua thẻ esim.vn",
+      "description": "eSIM có thể giúp bạn tiết kiệm tiền và thời gian khi đi du lịch. Với esim.vn, mọi thứ còn dễ dàng hơn.",
       "items": [
         {
           "title": "Gói cước phải chăng",
-          "description": "Bạn có thể chọn từ hàng trăm gói cước tại hơn 200 quốc gia — tất cả đều với mức giá tốt nhất trên thị trường. Với eSIM esim.vn, bạn tiết kiệm mỗi lần đi du lịch."
+          "description": "Bạn có thể chọn từ hàng trăm gói cước tại hơn 200 quốc gia — tất cả đều với mức giá tốt nhất trên thị trường. Với esim.vn, bạn tiết kiệm mỗi lần đi du lịch."
         },
         {
           "title": "Nạp thêm eSIM",
@@ -1023,7 +1035,7 @@
         },
         {
           "title": "Một eSIM cho tất cả quốc gia",
-          "description": "esim.vn giúp quản lý eSIM dễ dàng hơn và tiết kiệm thời gian. Thay vì mua eSIM mới mỗi lần đi du lịch, bạn có thể sử dụng cùng một eSIM esim.vn cho bất kỳ quốc gia nào."
+          "description": "esim.vn giúp quản lý eSIM dễ dàng hơn và tiết kiệm thời gian. Thay vì mua eSIM mới mỗi lần đi du lịch, bạn có thể sử dụng cùng một esim.vn cho bất kỳ quốc gia nào."
         },
         {
           "title": "Hỗ trợ chat 24/7",
@@ -1035,7 +1047,19 @@
       "title": "Khách hàng nói gì về esim.vn?"
     },
     "comparisonTable": {
-      "title": "esim.vn so sánh với các nhà cung cấp eSIM khác như thế nào?"
+      "title": "esim.vn so sánh với các nhà cung cấp eSIM khác như thế nào?",
+      "viewPlans": "Xem gói cước",
+      "rows": [
+        { "label": "Một eSIM cho mọi điểm đến được hỗ trợ" },
+        { "label": "Hỗ trợ chat trực tuyến 24/7" },
+        { "label": "Hoàn tiền", "tooltip": "Quyền yêu cầu hoàn tiền chung. Có một số hạn chế và điều kiện áp dụng." },
+        { "label": "Tính năng bảo mật" },
+        { "label": "Vị trí ảo" },
+        { "label": "Chặn URL độc hại" },
+        { "label": "Tiết kiệm dữ liệu (chặn quảng cáo)", "tooltip": "Tính năng giúp tiết kiệm đến 28,6% dữ liệu của bạn." }
+      ],
+      "footnote": "*Dữ liệu được lấy từ trang web tiếng Anh chính thức của các đối thủ vào ngày 22 tháng 8 năm 2025 và báo cáo so sánh sản phẩm của West Coast Labs. Để biết thêm thông tin, vui lòng liên hệ ",
+      "footnoteDisclaimer": "** esim.vn® không liên kết với các hàng hóa hoặc dịch vụ được so sánh."
     }
   },
   "support": {
@@ -1198,6 +1222,7 @@
     "completeOrder": "Hoàn tất đơn hàng",
     "orderSuccess": "Đặt hàng thành công!",
     "backToHome": "Về trang chủ",
-    "noItems": "Không có sản phẩm để thanh toán"
+    "noItems": "Không có sản phẩm để thanh toán",
+    "paymentNote": "Bằng việc hoàn tất đơn hàng, bạn đồng ý với Điều khoản Dịch vụ và Chính sách Bảo mật của chúng tôi."
   }
 }

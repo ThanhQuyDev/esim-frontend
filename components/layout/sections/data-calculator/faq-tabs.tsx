@@ -102,7 +102,7 @@ export function FaqTabsSection({ dict, lang }: FaqTabsSectionProps) {
                         </h3>
                         <span className="ml-4 shrink-0">
                           <ChevronDown
-                            className={`w-3 h-3 text-text-primary transition-transform duration-200 ${
+                            className={`w-6 h-6 text-text-primary transition-transform duration-200 ${
                               openIndex === i ? "rotate-180" : ""
                             }`}
                           />

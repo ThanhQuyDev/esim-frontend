@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     const paymentUrl = buildPaymentUrl({
       orderId: String(orderId),
       amount: Number(amount),
-      orderInfo: orderInfo || `esim.vn eSIM Order ${orderId}`,
+      orderInfo: orderInfo || `esim.vn Order ${orderId}`,
       locale: locale === "vi" ? "vn" : "en",
       clientIp,
     });

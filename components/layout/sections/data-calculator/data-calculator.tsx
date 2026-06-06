@@ -244,7 +244,7 @@ function ProfileCardDesktop({
   const imgSrc = PROFILE_IMAGES[profile.key];
   return (
     <label
-      className={`flex flex-col overflow-hidden rounded-sm cursor-pointer bg-bg-secondary border-md transition-colors ${selected
+      className={`flex flex-col overflow-hidden rounded-sm cursor-pointer bg-primary border-md transition-colors ${selected
           ? "border-border-focus"
           : "border-border-secondary hover:border-border-focus"
         }`}

@@ -596,7 +596,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
 
           {/* Total */}
           <div className="flex justify-between border-t border-border-primary pt-4">
-            <span className="text-xl font-medium text-text-primary">
+            <span className="text-lg font-medium text-text-primary">
               {dict.total || "Total"}
             </span>
             <span className="text-2xl font-medium text-text-primary">{displayTotal}</span>
@@ -623,7 +623,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
           {!user ? (
             <button
               onClick={() => openAuthModal()}
-              className="flex w-full items-center justify-center gap-2 rounded-full bg-gray-100 py-3.5 text-xl font-semibold text-gray-500 transition-colors hover:bg-gray-200 cursor-pointer"
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-gray-100 py-3.5 text-lg font-semibold text-gray-500 transition-colors hover:bg-gray-200 cursor-pointer"
             >
               <Wallet className="h-5 w-5" />
               {lang === "vi" ? "Bạn có eXU không?" : "Do you have eXU?"}
@@ -654,7 +654,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
           <button
             onClick={handleCheckout}
             disabled={selectedItems.length === 0}
-            className={`flex w-full items-center justify-center gap-2 rounded-full py-3.5 text-xl font-semibold transition-colors ${
+            className={`flex w-full items-center justify-center gap-2 rounded-full py-3.5 text-lg font-semibold transition-colors ${
               selectedItems.length > 0
                 ? "bg-bg-accent text-text-primary hover:bg-bg-accent-hover cursor-pointer"
                 : "bg-gray-200 text-gray-400 cursor-not-allowed"

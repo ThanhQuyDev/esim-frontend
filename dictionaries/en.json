@@ -90,7 +90,7 @@
       {
         "icon": "sim-card",
         "title": "One eSIM for all your travels",
-        "description": "Add new destinations to your existing esim.vn eSIM — no need to install new eSIMs every time. Just top up and connect!"
+        "description": "Add new destinations to your existing esim.vn — no need to install new eSIMs every time. Just top up and connect!"
       },
       {
         "icon": "bell-ring",
@@ -128,9 +128,9 @@
     ]
   },
   "howItWorks": {
-    "subtitle": "How to use the esim.vn eSIM service",
+    "subtitle": "How to use the esim.vn service",
     "title": "How does esim.vn work?",
-    "description": "Don't have the esim.vn eSIM app yet? Download it from the App Store or Google Play.",
+    "description": "If you are looking for an international eSIM for your travels, visit esim.vn right away.",
     "steps": [
       {
         "number": "1",
@@ -227,7 +227,7 @@
         "answer": "Yes, it does! It detects your destination and then automatically activates your eSIM data plan."
       },
       {
-        "question": "Do I keep my number with a esim.vn eSIM data plan?",
+        "question": "Do I keep my number with a esim.vn data plan?",
         "answer": "Yes, you do — the plans available on the esim.vn app offer internet data only. That means you keep your existing number for calls and texts while using your eSIM as the main source of mobile data. Getting an eSIM for just data is a great way to stay connected abroad without the hassle of getting a local number you have to let everyone know about! And you can still make calls through VoIP apps like Facebook Messenger, WhatsApp, and Signal."
       },
       {
@@ -239,12 +239,12 @@
         "answer": "A tourist eSIM is another name for a travel eSIM — a digital SIM that lets you connect to mobile networks in other countries without a physical SIM card. To start using an eSIM, you'll need an eSIM plan, which can be data only or data plus calls and texts. You can set up eSIMs with most new smartphones by making a few small changes to your device's settings."
       },
       {
-        "question": "Is the esim.vn eSIM app legit?",
+        "question": "Is the esim.vn app legit?",
         "answer": "Yes, the esim.vn app is totally legit! It's built by the company behind NordVPN (Nord Security), and offers everything you may need in one app — solid security, easy activation, and an intuitive interface. With data plans in 200+ destinations, esim.vn is a great pick for travelers (even if we say so ourselves!)."
       },
       {
         "question": "Does the esim.vn app offer cheap eSIM options?",
-        "answer": "Yes, the esim.vn eSIM app offers affordable plans, especially compared to big-name providers! That said, if you're just hunting for the absolute cheapest eSIM, you might find lower prices elsewhere. With esim.vn, you're also getting solid quality: 24/7 customer support, quick and easy setup, easy-to-use app, and reliable global coverage. You even get extra security features like malicious site and ad blocking, so it's more about value than just price!"
+        "answer": "Yes, the esim.vn app offers affordable plans, especially compared to big-name providers! That said, if you're just hunting for the absolute cheapest eSIM, you might find lower prices elsewhere. With esim.vn, you're also getting solid quality: 24/7 customer support, quick and easy setup, easy-to-use app, and reliable global coverage. You even get extra security features like malicious site and ad blocking, so it's more about value than just price!"
       },
       {
         "question": "Does esim.vn work in the US?",
@@ -263,8 +263,8 @@
         "answer": "esim.vn comes from the word \"sail\" — we wanted a name that feels like movement, freedom, and exploring the world! esim.vn is curious, active, brave, inclusive, funny, and always up for something new. If it were a person, it would always be on the move, meeting people, chasing adventures, and staying connected!"
       },
       {
-        "question": "Who owns the esim.vn eSIM service?",
-        "answer": "Nord Security, a global digital security and privacy brand, owns the esim.vn eSIM service. It's also the company behind tools like NordVPN and NordPass, trusted by millions worldwide."
+        "question": "Who owns the esim.vn service?",
+        "answer": "Nord Security, a global digital security and privacy brand, owns the esim.vn service. It's also the company behind tools like NordVPN and NordPass, trusted by millions worldwide."
       }
     ]
   },
@@ -637,7 +637,7 @@
       "title": "The esim.vn tale",
       "subtitle": "We envisioned a better way for travelers to stay online. Today, we're making that vision a reality for thousands around the globe. Here's how esim.vn got here.",
       "milestones": [
-        { "date": "November 2023", "title": "Where it all began", "description": "The esim.vn eSIM app started with a shared idea — ditch plastic SIM cards and simplify mobile connectivity." },
+        { "date": "November 2023", "title": "Where it all began", "description": "The esim.vn app started with a shared idea — ditch plastic SIM cards and simplify mobile connectivity." },
         { "date": "March 2024", "title": "The first launch", "description": "We introduced our first eSIM plans that covered 160+ countries with instant mobile access and zero plastic waste." },
         { "date": "December 2024", "title": "Prioritizing security", "description": "We've added built-in security features to our eSIM app so you can browse more safely while you travel." },
         { "date": "February 2025", "title": "Connecting the world", "description": "At the start of the year, we expanded our coverage to 200+ destinations and reached more people than ever before." },
@@ -941,7 +941,7 @@
     "hero": {
       "activeDate": "Active from April 2026",
       "title": "esim.vn coupon codes",
-      "description": "Use our coupon code at checkout to get a discount on your esim.vn eSIM plan.",
+      "description": "Use our coupon code at checkout to get a discount on your esim.vn plan.",
       "cta": "Get the code",
       "copied": "Copied!",
       "couponCode": "Saily5",
@@ -960,7 +960,19 @@
       "title": "What do customers say about esim.vn?"
     },
     "comparisonTable": {
-      "title": "esim.vn vs. other eSIM service providers"
+      "title": "esim.vn vs. other eSIM service providers",
+      "viewPlans": "View Plans",
+      "rows": [
+        { "label": "One eSIM for supported destinations" },
+        { "label": "24/7 live chat support" },
+        { "label": "Refunds", "tooltip": "A general right to request a refund. Certain restrictions and conditions apply." },
+        { "label": "Security features" },
+        { "label": "Virtual locations" },
+        { "label": "Blocks malicious URLs" },
+        { "label": "Data saver (ad blocker)", "tooltip": "A feature that can save up to 28.6% of your data." }
+      ],
+      "footnote": "*This data was taken from competitors' official English-language sites on August 22, 2025, and the West Coast Labs product comparison report. For additional info, contact ",
+      "footnoteDisclaimer": "** esim.vn® is unaffiliated with the goods or services to which it is being compared."
     },
     "freeCredits": {
       "title": "Receive funds in your eXU wallet for free.",
@@ -987,11 +999,11 @@
           "answer": "It depends on a number of factors, such as your location, the current season, the eSIM provider, and the available discounts at that moment. However, at esim.vn, we strive to provide the most affordable eSIM plans year-round and we always have coupon codes to help you save even more."
         },
         {
-          "question": "Can I apply the same esim.vn eSIM coupon code more than once?",
+          "question": "Can I apply the same esim.vn coupon code more than once?",
           "answer": "Generally, discount codes can only be used once per account. However, if you want to know for sure, check the terms and conditions page of the particular campaign."
         },
         {
-          "question": "Can I use esim.vn eSIM for free?",
+          "question": "Can I use esim.vn for free?",
           "answer": "While esim.vn is a paid service, you can benefit from our referral program. Every person you refer will earn you a US$5 esim.vn credit. By inviting friends and family to sign up for esim.vn using your referral link, you can earn enough credits to never have to pay for your eSIM plans."
         }
       ]
@@ -1010,7 +1022,7 @@
       "imageUrl": "https://sb.nordcdn.com/m/7260eee2474e71e4/original/woman-stars-reviews-rating.png"
     },
     "features": {
-      "title": "Reasons to buy a esim.vn eSIM card",
+      "title": "Reasons to buy a esim.vn card",
       "description": "eSIMs can save you money and time when you're traveling. With a esim.vn eSIM, it becomes even easier.",
       "items": [
         {
@@ -1023,7 +1035,7 @@
         },
         {
           "title": "One eSIM for all countries",
-          "description": "esim.vn makes eSIM management easier and saves you more time. Instead of getting a new eSIM every time you travel, you can use the same esim.vn eSIM for any country."
+          "description": "esim.vn makes eSIM management easier and saves you more time. Instead of getting a new eSIM every time you travel, you can use the same esim.vn for any country."
         },
         {
           "title": "24/7 chat support",
@@ -1035,7 +1047,19 @@
       "title": "What do customers say about esim.vn?"
     },
     "comparisonTable": {
-      "title": "How does esim.vn compare with other eSIM providers?"
+      "title": "How does esim.vn compare with other eSIM providers?",
+      "viewPlans": "View Plans",
+      "rows": [
+        { "label": "One eSIM for supported destinations" },
+        { "label": "24/7 live chat support" },
+        { "label": "Refunds", "tooltip": "A general right to request a refund. Certain restrictions and conditions apply." },
+        { "label": "Security features" },
+        { "label": "Virtual locations" },
+        { "label": "Blocks malicious URLs" },
+        { "label": "Data saver (ad blocker)", "tooltip": "A feature that can save up to 28.6% of your data." }
+      ],
+      "footnote": "*This data was taken from competitors' official English-language sites on August 22, 2025, and the West Coast Labs product comparison report. For additional info, contact ",
+      "footnoteDisclaimer": "** esim.vn® is unaffiliated with the goods or services to which it is being compared."
     }
   },
   "support": {
@@ -1130,5 +1154,8 @@
     "profile": "My Account",
     "region": "Region",
     "review": "Reviews"
+  },
+  "checkout": {
+    "paymentNote": "By completing your order, you agree to our Terms of Service and Privacy Policy."
   }
 }

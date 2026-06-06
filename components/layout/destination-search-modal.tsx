@@ -285,7 +285,7 @@ export function DestinationSearchModal({
                           }}
                         >
                           <div
-                            className="flex flex-col items-start text-left rtl:text-right gap-4 relative h-full bg-white word-break-word transform-gpu border-none p-0 rounded-[8px] transition-colors duration-medium hover:bg-bg-primary active:bg-bg-primary"
+                            className="flex flex-col items-start text-left rtl:text-right gap-4 relative h-full bg-white word-break-word transform-gpu border-none p-0 rounded-[8px] transition-colors duration-medium hover:bg-bg-secondary active:bg-bg-primary"
                             data-testid="destination-card-minified-undefined"
                           >
                             <div className="flex gap-3 items-center p-3">

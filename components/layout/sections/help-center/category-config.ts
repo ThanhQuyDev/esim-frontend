@@ -55,7 +55,7 @@ const PARENTS: CategoryEntry[] = [
   {
     id: "using_esim",
     en: { key: "using_esim", label: "Using esim.vn eSIM" },
-    vi: { key: "su_dung_esim", label: "Sử dụng eSIM esim.vn" },
+    vi: { key: "su_dung_esim", label: "Sử dụng esim.vn" },
   },
   {
     id: "device_compatibility",

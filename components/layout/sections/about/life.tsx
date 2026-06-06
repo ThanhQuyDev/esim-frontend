@@ -1,9 +1,7 @@
 "use client";
 
-import { useState, useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FreeMode, Navigation } from "swiper/modules";
-import type { Swiper as SwiperType } from "swiper";
 import { ArrowLeft, ArrowRight, GraduationCap, Scale, Sprout, Compass, Microscope } from "lucide-react";
 
 interface AboutLifeProps {
@@ -21,9 +19,6 @@ const lifeImages = [
 ];
 
 export function AboutLife({ dict }: AboutLifeProps) {
-  const swiperRef = useRef<SwiperType | null>(null);
-  const [isBeginning, setIsBeginning] = useState(true);
-  const [isEnd, setIsEnd] = useState(false);
 
   return (
     <section data-section="SailyLife" className="relative scroll-mt-20 xl:scroll-mt-24">
@@ -35,10 +30,9 @@ export function AboutLife({ dict }: AboutLifeProps) {
               slidesPerView="auto"
               spaceBetween={24}
               freeMode
-              onSwiper={(s) => (swiperRef.current = s)}
-              onSlideChange={(s) => {
-                setIsBeginning(s.isBeginning);
-                setIsEnd(s.isEnd);
+              navigation={{
+                nextEl: ".life-button-next",
+                prevEl: ".life-button-previous",
               }}
               className="overflow-visible overflow-y-visible"
             >
@@ -160,17 +154,13 @@ export function AboutLife({ dict }: AboutLifeProps) {
             {/* Nav buttons */}
             <div className="flex justify-end gap-4 items-center mt-10">
               <button
-                disabled={isBeginning}
-                onClick={() => swiperRef.current?.slidePrev()}
-                className="border border-border-tertiary rounded-full p-0 h-12 w-12 flex justify-center items-center disabled:text-text-disabled disabled:cursor-not-allowed text-text-primary-on-color sm:hover:bg-bg-secondary sm:hover:text-text-primary transition-colors"
+                className="life-button-previous border border-border-tertiary rounded-full p-0 h-12 w-12 flex justify-center items-center disabled:text-text-disabled disabled:cursor-not-allowed text-text-primary-on-color sm:hover:bg-bg-secondary sm:hover:text-text-primary transition-colors"
                 aria-label="Previous"
               >
                 <ArrowLeft className="w-6 h-6" />
               </button>
               <button
-                disabled={isEnd}
-                onClick={() => swiperRef.current?.slideNext()}
-                className="border border-border-tertiary rounded-full p-0 h-12 w-12 flex justify-center items-center disabled:text-text-disabled disabled:cursor-not-allowed text-text-primary-on-color sm:hover:bg-bg-secondary sm:hover:text-text-primary transition-colors"
+                className="life-button-next border border-border-tertiary rounded-full p-0 h-12 w-12 flex justify-center items-center disabled:text-text-disabled disabled:cursor-not-allowed text-text-primary-on-color sm:hover:bg-bg-secondary sm:hover:text-text-primary transition-colors"
                 aria-label="Next"
               >
                 <ArrowRight className="w-6 h-6" />

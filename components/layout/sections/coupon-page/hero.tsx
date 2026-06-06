@@ -53,7 +53,7 @@ export function CouponHero({ dict, lang }: CouponHeroProps) {
                           </div>
                           <div>
                             <p className="body-lg text-primary text-start scroll-mt-20 xl:scroll-mt-24">
-                              {dict.description || "Use our coupon code at checkout to get a discount on your esim.vn eSIM plan."}
+                              {dict.description || "Use our coupon code at checkout to get a discount on your esim.vn plan."}
                             </p>
                           </div>
                           <div>
@@ -61,7 +61,7 @@ export function CouponHero({ dict, lang }: CouponHeroProps) {
                               <div>
                                 <button
                                   onClick={handleCopy}
-                                  className="max-md:w-full text-primary bg-accent pointer-fine:hover:bg-accent-hover border-md border-bg-accent-hover pointer-fine:hover:border-accent-hover active:bg-accent-active! active:border-accent-active! box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus inline-flex gap-2 text-start justify-center items-center py-[11px] body-md-medium px-7 relative whitespace-nowrap"
+                                  className="max-md:w-full text-primary bg-accent hover:bg-bg-accent-hover pointer-fine:hover:bg-accent-hover border-md border-bg-accent-hover pointer-fine:hover:border-accent-hover active:bg-accent-active! active:border-accent-active! box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus inline-flex gap-2 text-start justify-center items-center py-[11px] body-md-medium px-7 relative whitespace-nowrap"
                                 >
                                   {copied ? (
                                     <>

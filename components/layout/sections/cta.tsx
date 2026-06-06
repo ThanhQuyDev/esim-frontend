@@ -23,13 +23,13 @@ export const CTASection = ({ dict }: CTASectionProps) => {
           </h2>
           <p className="text-lg text-muted-foreground max-w-xl mx-auto mb-10 leading-relaxed relative">{dict.subtitle}</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center relative">
-            <Button asChild size="lg" className="gradient-bg-green text-white font-semibold rounded-full px-8 h-13 text-xl hover:opacity-90 transition-all duration-300 hover:shadow-[0_0_32px_hsla(160,84%,44%,0.35)]">
+            <Button asChild size="lg" className="gradient-bg-green text-white font-semibold rounded-full px-8 h-13 text-lg hover:opacity-90 transition-all duration-300 hover:shadow-[0_0_32px_hsla(160,84%,44%,0.35)]">
               <Link href="#pricing">
                 {dict.ctaPrimary}
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Link>
             </Button>
-            <Button variant="outline" size="lg" className="rounded-full px-8 h-13 text-xl border-white/[0.1] bg-white/[0.03] text-white hover:bg-white/[0.08] hover:text-white hover:border-white/[0.18] transition-all duration-300">
+            <Button variant="outline" size="lg" className="rounded-full px-8 h-13 text-lg border-white/[0.1] bg-white/[0.03] text-white hover:bg-white/[0.08] hover:text-white hover:border-white/[0.18] transition-all duration-300">
               <Download className="mr-2 w-5 h-5" />
               {dict.ctaSecondary}
             </Button>

@@ -101,7 +101,7 @@ export function WhyChooseSaily({ dict }: WhyChooseSailyProps) {
           <div className="container grid sm:gap-x-8 grid-cols-12 mb-10 mx-auto">
             <div className="col-span-12 md:col-span-8">
               <div className="grid grid-cols-1 gap-y-6">
-                <h2 className="heading-xl scroll-mt-20 xl:scroll-mt-24">{dict.title}</h2>
+                <h2 className="heading-xl scroll-mt-20 xl:scroll-mt-24 whitespace-nowrap">{dict.title}</h2>
                 <p className="body-md text-text-secondary scroll-mt-20 xl:scroll-mt-24">
                   {dict.description.split(dict.linkText)[0]}
                   <a className="underline" href="https://esim.vn/">{dict.linkText}</a>

@@ -164,7 +164,7 @@ export default async function UnifiedSlugPage({
           dict={dict.destinationPage}
           lang={params.lang}
         />
-        <div className="max-w-[1168px] mx-auto px-0 md:px-6">
+        <div className="max-w-[1168px] mx-auto">
           <LazyHowItWorksSection dict={dict.howItWorks} />
           <LazyFeaturesSection
             dict={dict.whyChoose}

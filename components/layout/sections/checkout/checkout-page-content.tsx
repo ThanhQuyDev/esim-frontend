@@ -710,7 +710,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
           <button
             onClick={handleSubmit}
             disabled={checkout.isPending}
-            className="flex w-full items-center justify-center gap-2 rounded-full bg-bg-accent py-3.5 text-xl font-semibold text-text-primary transition-colors hover:bg-bg-accent-hover disabled:opacity-60 cursor-pointer"
+            className="flex w-full items-center justify-center gap-2 rounded-full bg-bg-accent py-3.5 text-lg font-semibold text-text-primary transition-colors hover:bg-bg-accent-hover disabled:opacity-60 cursor-pointer"
           >
             {checkout.isPending ? (
               <span className="flex items-center gap-2">

@@ -1,9 +1,7 @@
 "use client";
 
-import { useState, useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
-import type { Swiper as SwiperType } from "swiper";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
 interface AboutTimelineProps {
@@ -19,10 +17,6 @@ const timelineImages = [
 ];
 
 export function AboutTimeline({ dict }: AboutTimelineProps) {
-  const swiperRef = useRef<SwiperType | null>(null);
-  const [isBeginning, setIsBeginning] = useState(true);
-  const [isEnd, setIsEnd] = useState(false);
-
   return (
     <section data-section="SailyTale" className="relative scroll-mt-20 xl:scroll-mt-24">
       <div className="py-16">
@@ -46,12 +40,11 @@ export function AboutTimeline({ dict }: AboutTimelineProps) {
                 modules={[Navigation]}
                 slidesPerView="auto"
                 spaceBetween={24}
-                onSwiper={(s) => (swiperRef.current = s)}
-                onSlideChange={(s) => {
-                  setIsBeginning(s.isBeginning);
-                  setIsEnd(s.isEnd);
+                navigation={{
+                  nextEl: ".button-next",
+                  prevEl: ".button-previous",
                 }}
-                className="overflow-visible!"
+                className="overflow-visible! ml-[-20px] pl-[20px]"
               >
                 {dict.milestones.map((milestone: any, i: number) => (
                   <SwiperSlide
@@ -96,26 +89,22 @@ export function AboutTimeline({ dict }: AboutTimelineProps) {
                   </SwiperSlide>
                 ))}
               </Swiper>
+            </div>
 
-              {/* Nav buttons */}
-              <div className="flex justify-end gap-4 items-center mt-10">
-                <button
-                  disabled={isBeginning}
-                  onClick={() => swiperRef.current?.slidePrev()}
-                  className="border border-border-tertiary rounded-full p-0 h-12 w-12 flex justify-center items-center disabled:text-text-disabled disabled:cursor-not-allowed text-text-primary hover:bg-bg-tertiary transition-colors"
-                  aria-label="Previous"
-                >
-                  <ArrowLeft className="w-6 h-6" />
-                </button>
-                <button
-                  disabled={isEnd}
-                  onClick={() => swiperRef.current?.slideNext()}
-                  className="border border-border-tertiary rounded-full p-0 h-12 w-12 flex justify-center items-center disabled:text-text-disabled disabled:cursor-not-allowed text-text-primary sm:hover:bg-bg-dark sm:hover:text-text-primary-on-color transition-colors"
-                  aria-label="Next"
-                >
-                  <ArrowRight className="w-6 h-6" />
-                </button>
-              </div>
+            {/* Nav buttons — outside overflow-hidden div, Swiper Navigation auto-disables at begin/end */}
+            <div className="flex justify-end gap-4 items-center mt-10">
+              <button
+                className="button-previous border border-border-tertiary rounded-full p-0 h-12 w-12 flex justify-center items-center disabled:text-text-disabled disabled:cursor-not-allowed text-text-primary hover:bg-bg-tertiary transition-colors"
+                aria-label="Previous"
+              >
+                <ArrowLeft className="w-6 h-6" />
+              </button>
+              <button
+                className="button-next border border-border-tertiary rounded-full p-0 h-12 w-12 flex justify-center items-center disabled:text-text-disabled disabled:cursor-not-allowed text-text-primary sm:hover:bg-bg-dark sm:hover:text-text-primary-on-color transition-colors"
+                aria-label="Next"
+              >
+                <ArrowRight className="w-6 h-6" />
+              </button>
             </div>
           </div>
         </div>

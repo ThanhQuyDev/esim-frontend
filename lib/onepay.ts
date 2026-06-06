@@ -104,7 +104,7 @@ export function buildPaymentUrl(params: CreatePaymentParams): string {
     vpc_Locale: params.locale || "vn",
     vpc_TicketNo: params.clientIp || "127.0.0.1",
     AgainLink: config.returnUrl,
-    Title: "esim.vn eSIM Payment",
+    Title: "esim.vn Payment",
   };
 
   // Generate secure hash

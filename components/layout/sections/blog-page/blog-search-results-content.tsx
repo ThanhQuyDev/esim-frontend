@@ -259,7 +259,7 @@ export function BlogSearchResultsContent({ lang }: BlogSearchResultsContentProps
                       ? "Tìm kiếm bài viết..."
                       : "Search blog posts..."
                   }
-                  className="w-full pl-12 pr-28 py-3 rounded-full text-xl border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-12 pr-28 py-3 rounded-full text-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   aria-label={lang === "vi" ? "Tìm kiếm blog" : "Search blog"}
                 />
                 <button

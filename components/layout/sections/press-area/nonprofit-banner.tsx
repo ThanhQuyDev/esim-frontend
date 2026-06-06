@@ -27,7 +27,7 @@ export function NonprofitBanner({ dict }: NonprofitBannerProps) {
                       <div className="col-span-12 lg:col-start-3 lg:col-span-8 flex justify-center">
                         <p className="text-white text-center scroll-mt-20 xl:scroll-mt-24">
                           {dict.description.split("non-ceo@esim.com.vn")[0]}
-                          <a className="underline" href="mailto:non-ceo@esim.com.vn">non-ceo@esim.com.vn</a>
+                          <a className="underline" href="mailto:non-ceo@esim.com.vn">ceo@esim.com.vn</a>
                           {dict.description.split("non-ceo@esim.com.vn")[1]}
                         </p>
                       </div>

@@ -125,7 +125,7 @@ export function HelpCenterContent({ lang, initialArticles }: HelpCenterContentPr
                 <input
                   type="search"
                   placeholder={lang === "vi" ? "Nhập chủ đề, câu hỏi hoặc vấn đề" : "Type a topic, question or issue here"}
-                  className="w-full pl-12 pr-4 py-3 rounded-full text-xl border-0 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-12 pr-4 py-3 rounded-full text-lg border-0 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   aria-label={lang === "vi" ? "Nhập chủ đề, câu hỏi hoặc vấn đề" : "Type a topic, question or issue here"}
