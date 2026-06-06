@@ -32,7 +32,7 @@ function RelatedArticle({ article, lang }: { article: Blog; lang: string }) {
           <div>
             <Link
               className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus"
-              href={`/${lang}/blog/category/${categorySlug(article.category)}/`}
+              href={`/${lang}/blog/${categorySlug(article.category)}/`}
             >
               <span className="text-center whitespace-nowrap rounded-full inline-block bg-tertiary text-primary py-0.5 px-2 body-2xs-medium hover:bg-neutral-300">
                 {article.category}

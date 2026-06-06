@@ -39,7 +39,7 @@ export default async function BlogSearchPage({
       />
       <Suspense
         fallback={
-          <div className="max-w-[1386px] mx-auto px-8 py-12 text-center text-gray-500">
+          <div className="container mx-auto px-8 py-12 text-center text-gray-500">
             {params.lang === "vi" ? "Đang tải..." : "Loading..."}
           </div>
         }

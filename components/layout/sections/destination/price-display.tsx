@@ -29,7 +29,7 @@ export function PriceDisplay({
         <div className="flex items-baseline gap-2.5 mb-2">
           <span className="text-[2rem] font-extrabold text-[#111] tracking-[-1px]">—</span>
         </div>
-        <span className="text-[13px] text-[#6b7280] block min-h-[22px]">{planLabel}</span>
+        <span className="text-sm text-[#6b7280] block min-h-[22px]">{planLabel}</span>
       </div>
     );
   }
@@ -78,12 +78,12 @@ export function PriceDisplay({
         )}
       </div>
       {perDayPrice > 0 && totalDays > 1 && (
-        <div className="flex items-center gap-2 text-[13px] text-[#374151] font-medium flex-wrap">
+        <div className="flex items-center gap-2 text-sm text-[#374151] font-medium flex-wrap">
           <span>≈ {formatVnd(perDayPrice)}/{dict.daysUnit.toLowerCase().charAt(0) === "d" ? "day" : "ngày"}</span>
           <span className="text-[#e5e7eb]">|</span>
           {/* Full info on PC, truncated on mobile */}
-          <span className="text-[#6b7280] text-[13px] hidden min-[841px]:inline">{planLabel}</span>
-          <span className="text-[#6b7280] text-[13px] min-[841px]:hidden">{planLabel.split("·").slice(0, 2).join("·").trim()}</span>
+          <span className="text-[#6b7280] text-sm hidden min-[841px]:inline">{planLabel}</span>
+          <span className="text-[#6b7280] text-sm min-[841px]:hidden">{planLabel.split("·").slice(0, 2).join("·").trim()}</span>
         </div>
       )}
     </div>

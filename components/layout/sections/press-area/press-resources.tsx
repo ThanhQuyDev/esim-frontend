@@ -1,5 +1,6 @@
 import { SailyLogo } from "@/components/icons/saily-logo";
 import type { PressAreaDict } from "./translations";
+import { MessageSquareMoreIcon } from "lucide-react";
 
 interface PressResourcesProps {
   dict: PressAreaDict["pressResources"];
@@ -21,7 +22,7 @@ export function PressResources({ dict }: PressResourcesProps) {
                   <div className="flex flex-col rounded-[var(--radius-sm)] md:rounded-[var(--radius-md)] lg:rounded-[var(--radius-lg)] h-full overflow-hidden" style={{ backgroundColor: "#EEF1F6" }}>
                     <div className="flex-1">
                       <div className="md:p-10 px-6 py-8 w-full flex flex-col gap-6 lg:gap-8">
-                        <i className="text-center w-[1em] fa-message-dots fa-sharp fa-regular lg:text-[48px] text-[32px]" />
+                        <MessageSquareMoreIcon width={32} height={32} className="lg:w-[48px] w-[32px]" />
                         <div className="text-center lg:text-left">
                           <p className="heading-lg text-start scroll-mt-20 xl:scroll-mt-24">{dict.contactTitle}</p>
                         </div>

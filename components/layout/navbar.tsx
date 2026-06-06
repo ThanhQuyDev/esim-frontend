@@ -433,7 +433,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           title: isVi ? "Bắt đầu" : "Getting Started",
           desc: isVi
             ? "Hướng dẫn nhanh sử dụng ứng dụng esim.vn eSIM."
-            : "A quick guide to using the esim.vn eSIM app.",
+            : "A quick guide to using the esim.vn app.",
           href: localizedHref(lang, "help-center"),
         },
         {
@@ -629,304 +629,315 @@ function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
   return (
     <>
       <div className="sticky top-0 z-40">
-      {/* ===== Announcement Bar (Carousel) ===== */}
-      {announcementVisible && hasAnnouncement && !isDestinationPage && (
-        <div className="relative bg-[#1a1a1a] text-text-primary-on-color overflow-hidden">
-          <div className="px-6 min-w-full flex justify-between items-center md:gap-3">
-            {topBars.length > 1 ? (
-              /* Multiple promotions — Animation 3.1: smooth cross-fade
-                 between announcements so the copy never snaps abruptly. */
-              <div className="flex-1 min-w-0 py-3">
-                <Swiper
-                  modules={[Autoplay, EffectFade]}
-                  effect="fade"
-                  fadeEffect={{ crossFade: true }}
-                  speed={700}
-                  spaceBetween={0}
-                  slidesPerView={1}
-                  loop
-                  allowTouchMove={false}
-                  autoplay={{
-                    delay: 4500,
-                    disableOnInteraction: false,
-                    pauseOnMouseEnter: true,
-                  }}
-                  className="w-full announcement-swiper"
-                >
-                  {topBars.map((bar, idx) => {
-                    const text = pickLocalizedTitle(bar, lang).trim();
-                    const cta = bar.buttonContent?.trim() || "";
-                    const href = bar.url?.trim() || "";
-                    const iconUrl = resolveFileUrl(bar.icon);
-                    const hasCta = Boolean(cta && href);
-                    if (!text) return null;
-                    return (
-                      <SwiperSlide key={bar.id || idx}>
-                        <div className="flex justify-center items-center w-full gap-3">
-                          <div className="hidden md:flex items-center gap-3">
-                            <AnnouncementIcon iconUrl={iconUrl} />
-                            <p className="body-sm text-text-primary-on-color">
-                              {text}
-                            </p>
-                            {hasCta && (
-                              <Link
-                                href={href}
-                                className="inline-block text-text-primary-on-color border-md border-[#FFFFFF] hover:bg-bg-secondary hover:text-text-primary rounded-full transition-colors body-sm-medium px-6 py-[5.5px]"
-                              >
-                                {cta}
-                              </Link>
-                            )}
-                          </div>
-                          <div className="flex md:hidden flex-col gap-2 w-full pr-8">
-                            <div className="flex items-center gap-2">
+        {/* ===== Announcement Bar (Carousel) ===== */}
+        {announcementVisible && hasAnnouncement && !isDestinationPage && (
+          <div className="relative bg-[#1a1a1a] text-text-primary-on-color overflow-hidden">
+            <div className="px-6 min-w-full flex justify-between items-center md:gap-3">
+              {topBars.length > 1 ? (
+                /* Multiple promotions — Animation 3.1: smooth cross-fade
+                   between announcements so the copy never snaps abruptly. */
+                <div className="flex-1 min-w-0 py-3">
+                  <Swiper
+                    modules={[Autoplay, EffectFade]}
+                    effect="fade"
+                    fadeEffect={{ crossFade: true }}
+                    speed={700}
+                    spaceBetween={0}
+                    slidesPerView={1}
+                    loop
+                    allowTouchMove={false}
+                    autoplay={{
+                      delay: 4500,
+                      disableOnInteraction: false,
+                      pauseOnMouseEnter: true,
+                    }}
+                    className="w-full announcement-swiper"
+                  >
+                    {topBars.map((bar, idx) => {
+                      const text = pickLocalizedTitle(bar, lang).trim();
+                      const cta = bar.buttonContent?.trim() || "";
+                      const href = bar.url?.trim() || "";
+                      const iconUrl = resolveFileUrl(bar.icon);
+                      const hasCta = Boolean(cta && href);
+                      if (!text) return null;
+                      return (
+                        <SwiperSlide key={bar.id || idx}>
+                          <div className="flex justify-center items-center w-full gap-3">
+                            <div className="hidden md:flex items-center gap-3">
                               <AnnouncementIcon iconUrl={iconUrl} />
                               <p className="body-sm text-text-primary-on-color">
                                 {text}
                               </p>
+                              {hasCta && (
+                                <Link
+                                  href={href}
+                                  className="inline-block text-text-primary-on-color border-md border-[#FFFFFF] hover:bg-bg-secondary hover:text-text-primary rounded-full transition-colors body-sm-medium px-6 py-[5.5px]"
+                                >
+                                  {cta}
+                                </Link>
+                              )}
                             </div>
-                            {hasCta && (
-                              <Link
-                                href={href}
-                                className="w-full text-center text-text-primary-on-color border-md border-[#FFFFFF] hover:bg-bg-secondary hover:text-text-primary rounded-full transition-colors body-sm-medium px-6 py-[5.5px]"
-                              >
-                                {cta}
-                              </Link>
-                            )}
+                            <div className="flex md:hidden flex-col gap-2 w-full pr-8">
+                              <div className="flex items-center gap-2">
+                                <AnnouncementIcon iconUrl={iconUrl} />
+                                <p className="body-sm text-text-primary-on-color">
+                                  {text}
+                                </p>
+                              </div>
+                              {hasCta && (
+                                <Link
+                                  href={href}
+                                  className="w-full text-center text-text-primary-on-color border-md border-[#FFFFFF] hover:bg-bg-secondary hover:text-text-primary rounded-full transition-colors body-sm-medium px-6 py-[5.5px]"
+                                >
+                                  {cta}
+                                </Link>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      </SwiperSlide>
-                    );
-                  })}
-                </Swiper>
-              </div>
-            ) : (
-              /* Single promotion */
-              <div className="flex py-3 md:justify-center items-center w-full md:gap-3">
-                <div className="hidden md:flex items-center gap-3">
-                  <AnnouncementIcon iconUrl={announcementIconUrl} />
-                  <p className="body-sm text-text-primary-on-color">
-                    {announcementText}
-                  </p>
-                  {hasAnnouncementCta && (
-                    <Link
-                      href={announcementHref}
-                      className="inline-block text-text-primary-on-color border-md border-[#FFFFFF] hover:bg-bg-secondary hover:text-text-primary rounded-full transition-colors body-sm-medium px-6 py-[5.5px]"
-                    >
-                      {announcementCta}
-                    </Link>
-                  )}
+                        </SwiperSlide>
+                      );
+                    })}
+                  </Swiper>
                 </div>
-                <div className="flex md:hidden flex-col gap-2 w-full pr-8">
-                  <div className="flex items-center gap-2">
+              ) : (
+                /* Single promotion */
+                <div className="flex py-3 md:justify-center items-center w-full md:gap-3">
+                  <div className="hidden md:flex items-center gap-3">
                     <AnnouncementIcon iconUrl={announcementIconUrl} />
                     <p className="body-sm text-text-primary-on-color">
                       {announcementText}
                     </p>
+                    {hasAnnouncementCta && (
+                      <Link
+                        href={announcementHref}
+                        className="inline-block text-text-primary-on-color border-md border-[#FFFFFF] hover:bg-bg-secondary hover:text-text-primary rounded-full transition-colors body-sm-medium px-6 py-[5.5px]"
+                      >
+                        {announcementCta}
+                      </Link>
+                    )}
                   </div>
-                  {hasAnnouncementCta && (
-                    <Link
-                      href={announcementHref}
-                      className="w-full text-center text-text-primary-on-color border-md border-[#FFFFFF] hover:bg-bg-secondary hover:text-text-primary rounded-full transition-colors body-sm-medium px-6 py-[5.5px]"
+                  <div className="flex md:hidden flex-col gap-2 w-full pr-8">
+                    <div className="flex items-center gap-2">
+                      <AnnouncementIcon iconUrl={announcementIconUrl} />
+                      <p className="body-sm text-text-primary-on-color">
+                        {announcementText}
+                      </p>
+                    </div>
+                    {hasAnnouncementCta && (
+                      <Link
+                        href={announcementHref}
+                        className="w-full text-center text-text-primary-on-color border-md border-[#FFFFFF] hover:bg-bg-secondary hover:text-text-primary rounded-full transition-colors body-sm-medium px-6 py-[5.5px]"
+                      >
+                        {announcementCta}
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              )}
+              <button
+                onClick={() => setAnnouncementVisible(false)}
+                className="flex h-5 md:h-6 ml-auto md:ml-0 max-md:absolute top-3 right-6 cursor-pointer"
+                aria-label="Close announcement"
+              >
+                <X className="w-5 h-5 md:w-6 md:h-6 text-[rgba(255,255,255,0.6)] hover:text-white transition-colors" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ===== Main Header ===== */}
+        <header
+          className={cn(
+            "relative transition-all duration-300",
+            destinationsOpen || openDropdown ? "bg-primary" :
+              hasScrolled
+                ? "bg-[rgba(255,255,255,0.1)] backdrop-blur-[98px] [-webkit-backdrop-filter:blur(98px)]"
+                : "bg-transparent backdrop-blur-0 [-webkit-backdrop-filter:blur(0px)]"
+          )}
+          id="header"
+          ref={dropdownRef}
+        >
+          <div className="p-4 lg:px-6 lg:py-5">
+            <nav
+              className="flex items-center justify-between max-w-[1600px] h-6 lg:h-8 mx-auto"
+              aria-label="Main navigation"
+            >
+              {/* Logo */}
+              <div className="pr-12">
+                <Link href={`/${lang}`} className="block">
+                  <SailyLogo />
+                  <span className="sr-only">esim.vn</span>
+                </Link>
+              </div>
+
+              {/* Desktop Nav */}
+              <div className="flex gap-4 items-center">
+                <div className="hidden lg:flex gap-1">
+                  {NAV_ITEMS.map((item) => (
+                    <button
+                      key={item}
+                      onClick={() =>
+                        setOpenDropdown(openDropdown === item ? null : item)
+                      }
+                      className={cn(
+                        "px-3 py-1.5 body-sm-medium text-text-primary bg-transparent rounded-md cursor-pointer flex gap-2 items-center transition-colors duration-200 hover:bg-[rgba(0,0,0,0.06)]",
+                        openDropdown === item && "bg-[rgba(0,0,0,0.06)]"
+                      )}
+                      aria-expanded={openDropdown === item}
                     >
-                      {announcementCta}
-                    </Link>
+                      {dict[item]}
+                      {item === "product" && (
+                        <span className="text-center whitespace-nowrap rounded-full inline-block border-md border-border-focus text-text-primary py-0.5 px-2 body-2xs-medium">
+                          {dict.new}
+                        </span>
+                      )}
+                      <ChevronDown
+                        className={cn(
+                          "w-4 h-4 text-text-tertiary transition-transform duration-200",
+                          openDropdown === item && "rotate-180"
+                        )}
+                      />
+                    </button>
+                  ))}
+                </div>
+
+                {/* Destinations Button */}
+                <button
+                  onClick={() => {
+                    setDestinationsOpen(!destinationsOpen);
+                    setOpenDropdown(null);
+                  }}
+                  className={cn(
+                    "hidden lg:flex items-center gap-2 px-6 py-[5.5px] text-text-primary border border-black rounded-full body-sm-medium cursor-pointer transition-all duration-200 hover:bg-bg-dark hover:text-text-primary-on-color hover:border-bg-dark group",
+                  )}
+                >
+                  <Search className={cn(
+                    "w-3 h-3 transition-colors group-hover:text-text-primary-on-color",
+                  )} />
+                  {lang === "vi" ? "Điểm đến" : "Destinations"}
+                </button>
+
+                {/* Cart Button */}
+                <Link
+                  href={localizedHref(lang, "cart")}
+                  className="hidden lg:flex relative items-center px-3 py-[7px] text-text-primary transition-colors rounded-lg cursor-pointer hover:bg-[rgba(0,0,0,0.06)]"
+                  aria-label={lang === "vi" ? "Giỏ hàng" : "Cart"}
+                >
+                  <ShoppingCart className="w-4 h-4" />
+                  {cartCount > 0 && (
+                    <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[12px] font-bold text-white bg-red-500 rounded-full">
+                      {cartCount > 99 ? "99+" : cartCount}
+                    </span>
+                  )}
+                </Link>
+
+                {/* Language Picker */}
+                <div className="hidden lg:flex">
+                  <div className="relative inline-flex items-center px-3 py-[7px] text-text-primary transition-colors rounded-lg cursor-pointer hover:bg-[rgba(0,0,0,0.06)]">
+                    <Globe className="w-4 h-4 mr-1" />
+                    <span className="body-sm-medium uppercase min-w-5">
+                      {lang}
+                    </span>
+                    <ChevronDown className="w-3 h-3 ml-1 text-text-tertiary" />
+                    <select
+                      className="w-full h-full absolute inset-0 cursor-pointer opacity-0"
+                      value={lang}
+                      onChange={(e) => handleLangChange(e.target.value)}
+                      aria-label="Select language"
+                    >
+                      <option value="en">English</option>
+                      <option value="vi">Tiếng Việt</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Auth Button */}
+                <div className="hidden lg:flex">
+                  {user ? (
+                    <div className="flex items-center gap-2">
+                      <Link
+                        href={localizedHref(lang, "profile")}
+                        className="flex items-center gap-2 px-3 py-[7px] text-text-primary transition-colors rounded-lg cursor-pointer hover:bg-[rgba(0,0,0,0.06)]"
+                      >
+                        <User className="w-4 h-4" />
+                        <span className="body-sm-medium max-w-[120px] truncate">
+                          {user.firstName || user.email}
+                        </span>
+                      </Link>
+                      <button
+                        onClick={logout}
+                        className="flex items-center gap-1 px-3 py-[7px] text-text-tertiary transition-colors rounded-lg cursor-pointer hover:bg-[rgba(0,0,0,0.06)] hover:text-text-primary"
+                        aria-label={lang === "vi" ? "Đăng xuất" : "Sign out"}
+                      >
+                        <LogOut className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={openAuthModal}
+                      className="flex items-center gap-2 px-5 py-[5.5px] text-text-primary-on-color bg-bg-dark hover:bg-gray-700 border-md border-bg-dark rounded-full transition-colors body-sm-medium cursor-pointer"
+                    >
+                      <User className="w-3.5 h-3.5" />
+                      {lang === "vi" ? "Đăng nhập" : "Sign In"}
+                    </button>
                   )}
                 </div>
               </div>
-            )}
-            <button
-              onClick={() => setAnnouncementVisible(false)}
-              className="flex h-5 md:h-6 ml-auto md:ml-0 max-md:absolute top-3 right-6 cursor-pointer"
-              aria-label="Close announcement"
-            >
-              <X className="w-5 h-5 md:w-6 md:h-6 text-[rgba(255,255,255,0.6)] hover:text-white transition-colors" />
-            </button>
+
+              {/* Mobile Cart + Menu */}
+              <div className="flex items-center gap-6 ml-6 lg:hidden">
+                <Link
+                  href={localizedHref(lang, "cart")}
+                  className="relative flex items-center justify-center w-6 h-6"
+                  aria-label={lang === "vi" ? "Giỏ hàng" : "Cart"}
+                >
+                  <ShoppingCart className="w-5 h-5 text-text-primary" />
+                  {cartCount > 0 && (
+                    <span className="absolute -top-1.5 -right-2 flex items-center justify-center min-w-[16px] h-[16px] px-0.5 text-[11px] font-bold text-white bg-red-500 rounded-full">
+                      {cartCount > 99 ? "99+" : cartCount}
+                    </span>
+                  )}
+                </Link>
+                <MobileSidebar
+                  lang={lang}
+                  dict={dict}
+                  onLangChange={handleLangChange}
+                />
+              </div>
+            </nav>
           </div>
-        </div>
+
+          {/* ===== Mega Menu Dropdown ===== */}
+          {openDropdown && menuData[openDropdown] && (
+            <MegaMenuDropdown
+              data={menuData[openDropdown]}
+              onClose={() => setOpenDropdown(null)}
+            />
+          )}
+
+          {/* ===== Destination Dropdown ===== */}
+          {destinationsOpen && (
+            <DestinationDropdown
+              lang={lang}
+              dict={dict.destinations}
+              onClose={() => setDestinationsOpen(false)}
+            />
+          )}
+        </header>
+
+      </div >
+
+      {/* ===== Dropdown Backdrop Overlay (outside sticky wrapper, below navbar) ===== */}
+      {(openDropdown || destinationsOpen) && (
+        <div
+          className="fixed inset-0 bg-[rgba(0,0,0,0.01)] backdrop-blur-[4px] z-30"
+          onClick={() => {
+            setOpenDropdown(null);
+            setDestinationsOpen(false);
+          }}
+          aria-hidden="true"
+        />
       )}
-
-      {/* ===== Main Header ===== */}
-      <header
-        className={cn(
-          "relative transition-all duration-300",
-          hasScrolled
-            ? "bg-[rgba(255,255,255,0.1)] backdrop-blur-[98px] [-webkit-backdrop-filter:blur(98px)]"
-            : "bg-transparent backdrop-blur-0 [-webkit-backdrop-filter:blur(0px)]"
-        )}
-        id="header"
-        ref={dropdownRef}
-      >
-        <div className="p-4 lg:px-6 lg:py-5">
-          <nav
-            className="flex items-center justify-between max-w-[1600px] h-6 lg:h-8 mx-auto"
-            aria-label="Main navigation"
-          >
-            {/* Logo */}
-            <div className="pr-12">
-              <Link href={`/${lang}`} className="block">
-                <SailyLogo />
-                <span className="sr-only">esim.vn</span>
-              </Link>
-            </div>
-
-            {/* Desktop Nav */}
-            <div className="flex gap-4 items-center">
-              <div className="hidden lg:flex gap-1">
-                {NAV_ITEMS.map((item) => (
-                  <button
-                    key={item}
-                    onClick={() =>
-                      setOpenDropdown(openDropdown === item ? null : item)
-                    }
-                    className={cn(
-                      "px-3 py-1.5 body-sm-medium text-text-primary bg-transparent rounded-md cursor-pointer flex gap-2 items-center transition-colors duration-200 hover:bg-[rgba(0,0,0,0.06)]",
-                      openDropdown === item && "bg-[rgba(0,0,0,0.06)]"
-                    )}
-                    aria-expanded={openDropdown === item}
-                  >
-                    {dict[item]}
-                    {item === "product" && (
-                      <span className="text-center whitespace-nowrap rounded-full inline-block border-md border-border-focus text-text-primary py-0.5 px-2 body-2xs-medium">
-                        {dict.new}
-                      </span>
-                    )}
-                    <ChevronDown
-                      className={cn(
-                        "w-4 h-4 text-text-tertiary transition-transform duration-200",
-                        openDropdown === item && "rotate-180"
-                      )}
-                    />
-                  </button>
-                ))}
-              </div>
-
-              {/* Destinations Button */}
-              <button
-                onClick={() => {
-                  setDestinationsOpen(!destinationsOpen);
-                  setOpenDropdown(null);
-                }}
-                className={cn(
-                  "hidden lg:flex items-center gap-2 px-6 py-[5.5px] text-text-primary border border-black rounded-full body-sm-medium cursor-pointer transition-all duration-200 hover:bg-bg-dark hover:text-text-primary-on-color hover:border-bg-dark group",
-                  destinationsOpen && "bg-bg-dark text-text-primary-on-color border-bg-dark"
-                )}
-              >
-                <Search className={cn(
-                  "w-3 h-3 transition-colors group-hover:text-text-primary-on-color",
-                  destinationsOpen && "text-text-primary-on-color"
-                )} />
-                {lang === "vi" ? "Điểm đến" : "Destinations"}
-              </button>
-
-              {/* Cart Button */}
-              <Link
-                href={localizedHref(lang, "cart")}
-                className="hidden lg:flex relative items-center px-3 py-[7px] text-text-primary transition-colors rounded-lg cursor-pointer hover:bg-[rgba(0,0,0,0.06)]"
-                aria-label={lang === "vi" ? "Giỏ hàng" : "Cart"}
-              >
-                <ShoppingCart className="w-4 h-4" />
-                {cartCount > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[12px] font-bold text-white bg-red-500 rounded-full">
-                    {cartCount > 99 ? "99+" : cartCount}
-                  </span>
-                )}
-              </Link>
-
-              {/* Language Picker */}
-              <div className="hidden lg:flex">
-                <div className="relative inline-flex items-center px-3 py-[7px] text-text-primary transition-colors rounded-lg cursor-pointer hover:bg-[rgba(0,0,0,0.06)]">
-                  <Globe className="w-4 h-4 mr-1" />
-                  <span className="body-sm-medium uppercase min-w-5">
-                    {lang}
-                  </span>
-                  <ChevronDown className="w-3 h-3 ml-1 text-text-tertiary" />
-                  <select
-                    className="w-full h-full absolute inset-0 cursor-pointer opacity-0"
-                    value={lang}
-                    onChange={(e) => handleLangChange(e.target.value)}
-                    aria-label="Select language"
-                  >
-                    <option value="en">English</option>
-                    <option value="vi">Tiếng Việt</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Auth Button */}
-              <div className="hidden lg:flex">
-                {user ? (
-                  <div className="flex items-center gap-2">
-                    <Link
-                      href={localizedHref(lang, "profile")}
-                      className="flex items-center gap-2 px-3 py-[7px] text-text-primary transition-colors rounded-lg cursor-pointer hover:bg-[rgba(0,0,0,0.06)]"
-                    >
-                      <User className="w-4 h-4" />
-                      <span className="body-sm-medium max-w-[120px] truncate">
-                        {user.firstName || user.email}
-                      </span>
-                    </Link>
-                    <button
-                      onClick={logout}
-                      className="flex items-center gap-1 px-3 py-[7px] text-text-tertiary transition-colors rounded-lg cursor-pointer hover:bg-[rgba(0,0,0,0.06)] hover:text-text-primary"
-                      aria-label={lang === "vi" ? "Đăng xuất" : "Sign out"}
-                    >
-                      <LogOut className="w-4 h-4" />
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    onClick={openAuthModal}
-                    className="flex items-center gap-2 px-5 py-[5.5px] text-text-primary-on-color bg-bg-dark hover:bg-bg-accent-hover border-md border-bg-dark rounded-full transition-colors body-sm-medium cursor-pointer"
-                  >
-                    <User className="w-3.5 h-3.5" />
-                    {lang === "vi" ? "Đăng nhập" : "Sign In"}
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Mobile Cart + Menu */}
-            <div className="flex items-center gap-6 ml-6 lg:hidden">
-              <Link
-                href={localizedHref(lang, "cart")}
-                className="relative flex items-center justify-center w-6 h-6"
-                aria-label={lang === "vi" ? "Giỏ hàng" : "Cart"}
-              >
-                <ShoppingCart className="w-5 h-5 text-text-primary" />
-                {cartCount > 0 && (
-                  <span className="absolute -top-1.5 -right-2 flex items-center justify-center min-w-[16px] h-[16px] px-0.5 text-[11px] font-bold text-white bg-red-500 rounded-full">
-                    {cartCount > 99 ? "99+" : cartCount}
-                  </span>
-                )}
-              </Link>
-              <MobileSidebar
-                lang={lang}
-                dict={dict}
-                onLangChange={handleLangChange}
-              />
-            </div>
-          </nav>
-        </div>
-
-        {/* ===== Mega Menu Dropdown ===== */}
-        {openDropdown && menuData[openDropdown] && (
-          <MegaMenuDropdown
-            data={menuData[openDropdown]}
-            onClose={() => setOpenDropdown(null)}
-          />
-        )}
-
-        {/* ===== Destination Dropdown ===== */}
-        {destinationsOpen && (
-          <DestinationDropdown
-            lang={lang}
-            dict={dict.destinations}
-            onClose={() => setDestinationsOpen(false)}
-          />
-        )}
-      </header>
-      </div>
-
     </>
   );
 }
@@ -941,7 +952,7 @@ function MegaMenuDropdown({
   onClose: () => void;
 }) {
   return (
-    <div className="hidden lg:block absolute w-full px-6 top-full left-0 rounded-b-md bg-white shadow-[0_8px_12px_-6px_rgba(149,157,165,0.2)] z-50 animate-fade-in">
+    <div className="hidden lg:block absolute w-full px-6 top-full left-0 rounded-b-md bg-white shadow-[0_8px_12px_-6px_rgba(149,157,165,0.2)] z-[60] animate-fade-in">
       <div className="flex flex-col max-w-[1600px] mx-auto">
         {/* Main content */}
         <div className="flex gap-6 justify-between border-t border-border-secondary py-6">
@@ -1039,7 +1050,7 @@ function MegaMenuDropdown({
           <Link
             href={data.bottomRight.href}
             onClick={onClose}
-            className="inline-block text-text-primary-on-color bg-bg-dark hover:bg-bg-accent-hover border-md border-bg-dark rounded-full transition-colors body-sm-medium px-6 py-[5.5px]"
+            className="inline-block text-text-primary-on-color bg-bg-dark hover:bg-gray-700 border-md border-bg-dark rounded-full transition-colors body-sm-medium px-6 py-[5.5px]"
           >
             {data.bottomRight.text}
           </Link>

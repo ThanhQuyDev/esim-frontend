@@ -9,7 +9,7 @@ export const pressAreaTranslations: Record<string, PressAreaDict> = {
     whyChoose: {
       title: "Why travelers choose our eSIM service",
       description: "The Saily eSIM service makes it easy to stay connected wherever you go, with one simple app.",
-      linkText: "esim.vn eSIM service",
+      linkText: "esim.vn service",
       worldwideCoverage: "Worldwide coverage",
       worldwideCoverageDesc: "With eSIM plans in 200+ destinations, Saily keeps you connected worldwide, whether you're backpacking through Bangkok or closing business deals in Berlin.",
       noRoaming: "No roaming charges",
@@ -66,8 +66,8 @@ export const pressAreaTranslations: Record<string, PressAreaDict> = {
     },
     whyChoose: {
       title: "Tại sao du khách chọn dịch vụ eSIM của chúng tôi",
-      description: "Dịch vụ eSIM esim.vn giúp bạn dễ dàng kết nối mọi nơi, chỉ với một ứng dụng đơn giản.",
-      linkText: "Dịch vụ eSIM esim.vn",
+      description: "Dịch vụ esim.vn giúp bạn dễ dàng kết nối mọi nơi, chỉ với một ứng dụng đơn giản.",
+      linkText: "Dịch vụ esim.vn",
       worldwideCoverage: "Phủ sóng toàn cầu",
       worldwideCoverageDesc: "Với gói eSIM tại hơn 200 điểm đến, Saily giữ bạn kết nối trên toàn thế giới, dù bạn đang du lịch bụi qua Bangkok hay đàm phán kinh doanh tại Berlin.",
       noRoaming: "Không phí chuyển vùng",
@@ -107,7 +107,7 @@ export const pressAreaTranslations: Record<string, PressAreaDict> = {
     },
     banner: {
       title: "Gói eSIM cho tổ chức phi lợi nhuận",
-      description: "Saily cung cấp gói eSIM miễn phí cho các tổ chức phi lợi nhuận đối mặt với kiểm duyệt hoặc đe dọa quyền riêng tư trực tuyến. Nếu đó là tổ chức của bạn, hãy liên hệ chúng tôi tại non-ceo@esim.com.vn.",
+      description: "esim.vn cung cấp gói eSIM miễn phí cho các tổ chức phi lợi nhuận đối mặt với kiểm duyệt hoặc đe dọa quyền riêng tư trực tuyến. Nếu đó là tổ chức của bạn, hãy liên hệ chúng tôi tại non-ceo@esim.com.vn.",
       learnMore: "Tìm hiểu thêm",
     },
     productFamily: {

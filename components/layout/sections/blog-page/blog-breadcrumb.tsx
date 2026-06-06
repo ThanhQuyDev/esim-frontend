@@ -27,7 +27,7 @@ export function BlogBreadcrumb({ blog, lang }: { blog: Blog; lang: string }) {
                 <div>
                   <Link
                     className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus text-secondary body-sm font-medium"
-                    href={`/${lang}/blog/category/${categorySlug(category)}/`}
+                    href={`/${lang}/blog/${categorySlug(category)}/`}
                   >
                     {category}
                   </Link>
@@ -41,7 +41,7 @@ export function BlogBreadcrumb({ blog, lang }: { blog: Blog; lang: string }) {
                   <div>
                     <Link
                       className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus text-secondary body-sm font-medium"
-                      href={`/${lang}/blog/category/${categorySlug(category || "")}/${categorySlug(blog.parent)}/`}
+                      href={`/${lang}/blog/${categorySlug(category || "")}/${categorySlug(blog.parent)}/`}
                     >
                       {blog.parent}
                     </Link>

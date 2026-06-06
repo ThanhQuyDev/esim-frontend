@@ -84,7 +84,7 @@ function MonthGrid({ year, month, selS, selE, today, onPick, weekdays }: MonthGr
     const inRange = !!(selS && selE && cur > selS && cur < selE);
     const isToday = isSameDay(cur, today);
 
-    let cls = "w-full aspect-square justify-self-center flex items-center justify-center text-[13px] font-medium border-none cursor-pointer transition-colors ";
+    let cls = "w-full aspect-square justify-self-center flex items-center justify-center text-sm font-medium border-none cursor-pointer transition-colors ";
     let bgColor = "transparent";
     let textColor = "#374151";
     let borderRadius = "50%";
@@ -313,7 +313,7 @@ export function CalendarModal({
               </svg>
             </button>
           </div>
-          <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-[10px] text-[13px]" style={{ background: "#FFFBEB", color: "#92400E" }}>
+          <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-[10px] text-sm" style={{ background: "#FFFBEB", color: "#92400E" }}>
             <span className="text-lg leading-none">👆</span>
             <span>{tipText}</span>
           </div>
@@ -394,7 +394,7 @@ export function CalendarModal({
         >
           <div className="flex flex-col gap-[3px] min-w-0">
             <div className="text-base font-bold text-[#111] min-h-[22px]" dangerouslySetInnerHTML={{ __html: summaryTitle.replace(/\b(\d+)-day plan|Kế hoạch \d+ ngày/, (m) => `<strong>${m}</strong>`) }} />
-            <div className="text-[13px] text-[#6B7280] min-h-[18px] flex items-center gap-1.5 flex-wrap">
+            <div className="text-sm text-[#6B7280] min-h-[18px] flex items-center gap-1.5 flex-wrap">
               {selS && selE && days > 0 && unitVndPricePerDay > 0 && (
                 <>
                   {totalLabel}{" "}

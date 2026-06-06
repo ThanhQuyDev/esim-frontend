@@ -26,11 +26,7 @@ export function categorySlug(cat: string): string {
 
 export function blogDetailHref(blog: { slug: string; category?: string | null; parent?: string | null }, lang: string): string {
   const articleSlug = (blog.slug || "").replace(/^\//, "");
-  const parts = [`/${lang}/blog`];
-  if (blog.category) parts.push(categorySlug(blog.category));
-  if (blog.parent) parts.push(categorySlug(blog.parent));
-  parts.push(articleSlug);
-  return parts.join("/");
+  return `/${lang}/blog/${encodeURIComponent(articleSlug)}`;
 }
 
 export function authorSlug(name: string): string {

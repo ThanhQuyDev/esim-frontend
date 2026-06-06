@@ -119,10 +119,10 @@ export function MobileStickyBar({
             </div>
           )}
           <div className="min-w-0 flex-1">
-            <div className="text-[13px] text-[#6b7280] font-medium truncate">
+            <div className="text-sm text-[#6b7280] font-medium truncate">
               eSIM {destination || ""}
             </div>
-            <div className="text-[13px] font-bold truncate">
+            <div className="text-sm font-bold truncate">
               {selectedPlan.name} {planLabel}
             </div>
           </div>
@@ -172,7 +172,7 @@ export function MobileStickyBar({
           >
             −
           </button>
-          <span className="text-[13px] font-bold min-w-[18px] text-center px-1">{quantity}</span>
+          <span className="text-sm font-bold min-w-[18px] text-center px-1">{quantity}</span>
           <button
             type="button"
             onClick={() => onQuantityChange(quantity + 1)}

@@ -493,7 +493,7 @@ export function DeviceList({ initialData, dict, lang }: DeviceListProps) {
                                           key={accordionId}
                                           value={accordionId}
                                           id={accordionId}
-                                          className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
+                                          className="border-b border-gray-200 transition-colors"
                                         >
                                           <AccordionPrimitive.Header className="flex">
                                             <AccordionPrimitive.Trigger className="flex w-full items-center justify-between py-4 font-medium transition-all outline-none group">
@@ -511,7 +511,7 @@ export function DeviceList({ initialData, dict, lang }: DeviceListProps) {
                                                   (device) => (
                                                     <li
                                                       key={device.id}
-                                                      className="flex items-center text-primary sm:py-2"
+                                                      className="flex items-center text-primary sm:py-1 pl-2"
                                                     >
                                                       <span className="w-1.5 h-1.5 rounded-full bg-gray-900 shrink-0 mr-3" />
                                                       {/* UI 6.2: bigger device font for easier scanning */}

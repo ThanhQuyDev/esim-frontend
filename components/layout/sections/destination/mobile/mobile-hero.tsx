@@ -89,7 +89,7 @@ export function MobileHero({ destination, dict, lang, region, operatorName }: Mo
               </span>
               <span className="text-xs text-white">★</span>
             </div>
-            <span className="text-[13px] text-white/[0.92] font-medium truncate">
+            <span className="text-sm text-white/[0.92] font-medium truncate">
               {dict.trust?.ratingCount || "97K+ đánh giá"}
             </span>
           </div>
@@ -144,7 +144,7 @@ export function MobileHero({ destination, dict, lang, region, operatorName }: Mo
                 )}
               </span>
               <span className="w-px h-[18px] bg-[#e5e7eb] mx-0.5 shrink-0" />
-              <span className="flex-1 min-w-0 text-[13px] font-semibold text-[#111] text-left truncate">
+              <span className="flex-1 min-w-0 text-sm font-semibold text-[#111] text-left truncate">
                 {buttonLabel}
               </span>
               <span

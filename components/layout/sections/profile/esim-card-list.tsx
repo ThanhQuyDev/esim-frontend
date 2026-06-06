@@ -123,7 +123,7 @@ function QrCodeImage({ lpa }: { lpa: string }) {
           excavate: true,
         }}
       />
-      <p className="text-[13px] text-gray-400 text-center max-w-[200px] break-all leading-tight">
+      <p className="text-sm text-gray-400 text-center max-w-[200px] break-all leading-tight">
         {lpa}
       </p>
     </div>
@@ -173,7 +173,7 @@ function DataUsageBar({ label, used, total, unit, isUnlimited }: {
           style={{ width: `${pct}%` }}
         />
       </div>
-      <div className="flex justify-between text-[13px] text-gray-400">
+      <div className="flex justify-between text-sm text-gray-400">
         <span>{used.toFixed(used < 100 ? 1 : 0)} {unit} used</span>
         <span>{total.toFixed(total < 100 ? 1 : 0)} {unit} total</span>
       </div>
@@ -227,7 +227,7 @@ function DataUsageSection({ esimId, lang }: { esimId: number; lang: string }) {
         <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">
           {lang === "vi" ? "Dữ liệu sử dụng" : "Data Usage"}
         </h4>
-        <span className={`inline-flex items-center px-2 py-0.5 text-[13px] font-medium rounded-full ${statusColor[usage.status] || "bg-gray-100 text-gray-500"}`}>
+        <span className={`inline-flex items-center px-2 py-0.5 text-sm font-medium rounded-full ${statusColor[usage.status] || "bg-gray-100 text-gray-500"}`}>
           {usage.status}
         </span>
       </div>
@@ -250,7 +250,7 @@ function DataUsageSection({ esimId, lang }: { esimId: number; lang: string }) {
           <p className="text-lg font-medium text-blue-700">
             {usage.isUnlimited ? "∞" : `${remainingGb.toFixed(1)}`}
           </p>
-          <p className="text-[13px] text-blue-500">
+          <p className="text-sm text-blue-500">
             {usage.isUnlimited ? "Unlimited" : `GB ${lang === "vi" ? "còn lại" : "remaining"}`}
           </p>
         </div>
@@ -261,7 +261,7 @@ function DataUsageSection({ esimId, lang }: { esimId: number; lang: string }) {
           <p className="text-lg font-medium text-emerald-700">
             {daysRemaining !== null ? daysRemaining : "—"}
           </p>
-          <p className="text-[13px] text-emerald-500">
+          <p className="text-sm text-emerald-500">
             {lang === "vi" ? "ngày còn lại" : "days left"}
           </p>
         </div>
@@ -269,7 +269,7 @@ function DataUsageSection({ esimId, lang }: { esimId: number; lang: string }) {
 
       {/* Expiry info */}
       {usage.expiredAt && (
-        <p className="text-[13px] text-gray-400 text-center">
+        <p className="text-sm text-gray-400 text-center">
           {lang === "vi" ? "Hết hạn:" : "Expires:"}{" "}
           {new Date(usage.expiredAt).toLocaleDateString(lang === "vi" ? "vi-VN" : "en-US", {
             year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
@@ -359,7 +359,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
             <p className="text-base sm:text-sm font-semibold text-gray-900 truncate font-mono">
               {esim.plan?.name}
             </p>
-            <span className={`inline-flex items-center px-2 py-0.5 text-[13px] font-medium rounded-full ${getStatusStyle(esim.status)}`}>
+            <span className={`inline-flex items-center px-2 py-0.5 text-sm font-medium rounded-full ${getStatusStyle(esim.status)}`}>
               {getStatusLabel(esim.status, t)}
             </span>
           </div>
@@ -423,7 +423,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                     </div>
 
                     <div>
-                      <p className="text-[13px] font-medium text-gray-400 uppercase tracking-wider mb-2 text-center">
+                      <p className="text-sm font-medium text-gray-400 uppercase tracking-wider mb-2 text-center">
                         {lang === "vi" ? "Hoặc cài đặt nhanh" : "Or install with one tap"}
                       </p>
                       <div className="grid grid-cols-2 gap-2">
@@ -454,7 +454,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                 <div className="space-y-3">
                   {fields.map(({ label, value, copyable }) => (
                     <div key={label}>
-                      <p className="text-[13px] font-medium text-gray-400 uppercase tracking-wider mb-1">
+                      <p className="text-sm font-medium text-gray-400 uppercase tracking-wider mb-1">
                         {label}
                       </p>
                       <div className="flex items-center gap-1 bg-gray-50 rounded-lg px-3 py-2">
@@ -468,12 +468,12 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
 
                   {/* Plan Info Section */}
                   <div className="border-t border-gray-100 pt-3 mt-3">
-                    <p className="text-[13px] font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                    <p className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
                       {lang === "vi" ? "Thông tin gói cước" : "Plan Info"}
                     </p>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <p className="text-[13px] font-medium text-gray-400 uppercase tracking-wider mb-1">
+                        <p className="text-sm font-medium text-gray-400 uppercase tracking-wider mb-1">
                           {lang === "vi" ? "Loại gói" : "Plan Type"}
                         </p>
                         <div className="bg-gray-50 rounded-lg px-3 py-2">
@@ -481,7 +481,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                         </div>
                       </div>
                       <div>
-                        <p className="text-[13px] font-medium text-gray-400 uppercase tracking-wider mb-1">
+                        <p className="text-sm font-medium text-gray-400 uppercase tracking-wider mb-1">
                           {lang === "vi" ? "Nhà mạng" : "Carrier"}
                         </p>
                         <div className="bg-gray-50 rounded-lg px-3 py-2">
@@ -490,7 +490,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                               {operatorNames.map((op) => (
                                 <span
                                   key={op}
-                                  className="inline-flex items-center px-2 py-0.5 text-[13px] font-medium rounded-full bg-indigo-50 text-indigo-700"
+                                  className="inline-flex items-center px-2 py-0.5 text-sm font-medium rounded-full bg-indigo-50 text-indigo-700"
                                 >
                                   {op}
                                 </span>
@@ -502,7 +502,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                         </div>
                       </div>
                       <div>
-                        <p className="text-[13px] font-medium text-gray-400 uppercase tracking-wider mb-1">
+                        <p className="text-sm font-medium text-gray-400 uppercase tracking-wider mb-1">
                           {lang === "vi" ? "Tốc độ mạng" : "Network Speed"}
                         </p>
                         <div className="bg-gray-50 rounded-lg px-3 py-2">
@@ -511,7 +511,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                               {speedTiers.map((s) => (
                                 <span
                                   key={s}
-                                  className="inline-flex items-center px-2 py-0.5 text-[13px] font-semibold rounded-full bg-emerald-50 text-emerald-700"
+                                  className="inline-flex items-center px-2 py-0.5 text-sm font-semibold rounded-full bg-emerald-50 text-emerald-700"
                                 >
                                   {s}
                                 </span>
@@ -523,7 +523,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                         </div>
                       </div>
                       <div>
-                        <p className="text-[13px] font-medium text-gray-400 uppercase tracking-wider mb-1">
+                        <p className="text-sm font-medium text-gray-400 uppercase tracking-wider mb-1">
                           {lang === "vi" ? "Thời hạn kích hoạt" : "Activation Validity"}
                         </p>
                         <div className="bg-gray-50 rounded-lg px-3 py-2">
@@ -532,7 +532,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                               {activationDaysLeft !== null && activationDaysLeft > 0
                                 ? `${activationDaysLeft} ${lang === "vi" ? "ngày còn lại" : "days left"}`
                                 : lang === "vi" ? "Đã hết hạn" : "Expired"}
-                              <span className="block text-[13px] text-gray-400 mt-0.5">
+                              <span className="block text-sm text-gray-400 mt-0.5">
                                 {formatDate(activationDeadline.toISOString(), lang)}
                               </span>
                             </p>
@@ -547,7 +547,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                   {/* Status & Dates */}
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <p className="text-[13px] font-medium text-gray-400 uppercase tracking-wider mb-1">
+                      <p className="text-sm font-medium text-gray-400 uppercase tracking-wider mb-1">
                         {t.status}
                       </p>
                       <div className="bg-gray-50 rounded-lg px-3 py-2">
@@ -558,7 +558,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                     </div>
                     {esim.provider !== 'viettel' && (
                     <div>
-                      <p className="text-[13px] font-medium text-gray-400 uppercase tracking-wider mb-1">
+                      <p className="text-sm font-medium text-gray-400 uppercase tracking-wider mb-1">
                         {lang === "vi" ? "Hết hạn" : "Expires"}
                       </p>
                       <div className="bg-gray-50 rounded-lg px-3 py-2">

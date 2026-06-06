@@ -77,6 +77,7 @@ export function DonutChart({ values, dict }: DonutChartProps) {
                 innerRadius={125}
                 outerRadius={160}
                 dataKey="value"
+                paddingAngle={1}
                 startAngle={90}
                 endAngle={-270}
                 animationBegin={0}

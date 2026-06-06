@@ -4,11 +4,12 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
-import { BookOpen, Search, ChevronDown, ChevronRight } from "lucide-react";
+import { Search, ChevronDown, ChevronRight } from "lucide-react";
 import type { Blog, PaginatedResponse } from "@/lib/api";
 import type { Locale } from "@/lib/i18n-config";
 import { BlogCategoryNav } from "./blog-category-nav";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
+import { BlogCard, CategoryBadge, BlogMeta, AuthorLink, blogDetailHref, categorySlug } from "./blog-card";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.saily.example.com";
@@ -41,155 +42,6 @@ async function fetchCategories(lang: string): Promise<string[]> {
   });
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   return res.json();
-}
-
-function formatDate(dateStr: string | null): string {
-  if (!dateStr) return "";
-  try {
-    return new Date(dateStr).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  } catch {
-    return "";
-  }
-}
-
-function categorySlug(cat: string): string {
-  return cat
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .replace(/đ/g, "d")
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-");
-}
-
-function blogDetailHref(blog: { slug: string; category?: string | null; parent?: string | null }, lang: string): string {
-  const articleSlug = (blog.slug || "").replace(/^\//, "");
-  const parts = [`/${lang}/blog`];
-  if (blog.category) parts.push(categorySlug(blog.category));
-  if (blog.parent) parts.push(categorySlug(blog.parent));
-  parts.push(articleSlug);
-  return parts.join("/");
-}
-
-// ===== Sub-components =====
-
-function CategoryBadge({ category, lang }: { category: string | null; lang: string }) {
-  if (!category) return null;
-  return (
-    <Link
-      href={`/${lang}/blog/category/${categorySlug(category)}/`}
-      className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus"
-    >
-      <span className="text-center whitespace-nowrap rounded-full inline-block bg-tertiary text-primary py-0.5 px-2 body-2xs-medium hover:bg-neutral-300">
-        {category}
-      </span>
-    </Link>
-  );
-}
-
-function BlogMeta({ date, timeRead, lang }: { date: string | null; timeRead: string | null; lang?: string }) {
-  return (
-    <div className="h-full w-full flex flex-row justify-start flex-wrap items-center gap-x-4 gap-y-4">
-      {date && (
-        <div>
-          <time dateTime={date} className="flex gap-2 items-center text-secondary">
-            <p className="body-xs">{formatDate(date)}</p>
-          </time>
-        </div>
-      )}
-      {timeRead && (
-        <div>
-          <div className="flex gap-2 items-center text-secondary">
-            <BookOpen size={16} />
-            <p className="body-xs">{timeRead} {lang === "vi" ? "phút" : "min"}</p>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function AuthorLink({ author, lang }: { author: string | null; lang: string }) {
-  if (!author) return null;
-  const authorSlug = author.toLowerCase().replace(/\s+/g, "-");
-  return (
-    <Link
-      href={`/${lang}/blog/author/${authorSlug}/`}
-      className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus "
-    >
-      <div className="flex flex-row items-center gap-3">
-        <div className="relative rounded-full overflow-hidden w-[24px] min-w-[24px] h-[24px] bg-tertiary">
-          <div className="relative overflow-hidden w-full h-full flex items-center justify-center">
-            <span className="text-[12px] text-secondary font-medium">
-              {author.charAt(0).toUpperCase()}
-            </span>
-          </div>
-        </div>
-        <address className="body-sm text-secondary not-italic">{author}</address>
-      </div>
-    </Link>
-  );
-}
-
-function BlogCard({ blog, lang }: { blog: Blog; lang: string }) {
-  return (
-    <article className="flex flex-col gap-4">
-      <Link
-        href={blogDetailHref(blog, lang)}
-        className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus "
-      >
-        <figure className="overflow-hidden rounded-sm">
-          <div>
-            {blog.coverImage ? (
-              <Image
-                alt={blog.title}
-                loading="lazy"
-                width={968}
-                height={507}
-                className="w-full h-auto"
-                style={{ color: "transparent" }}
-                src={blog.coverImage}
-              />
-            ) : (
-              <div className="w-full aspect-[968/507] bg-tertiary flex items-center justify-center">
-                <span className="text-4xl opacity-40">📝</span>
-              </div>
-            )}
-          </div>
-        </figure>
-      </Link>
-      <div className="h-full w-full flex flex-col text-start items-start justify-start gap-y-4">
-        <div>
-          <CategoryBadge category={blog.category} lang={lang} />
-        </div>
-        <div>
-          <div className="h-full w-full flex flex-col text-start items-start justify-start gap-y-2">
-            <div>
-              <BlogMeta date={blog.publishedAt} timeRead={String(blog.timeRead)} lang={lang} />
-            </div>
-            <div>
-              <h3 className="heading-sm">
-                <Link
-                  href={blogDetailHref(blog, lang)}
-                  className="!text-[1.4rem] font-medium align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus "
-                >
-                  {blog.title}
-                </Link>
-              </h3>
-            </div>
-          </div>
-        </div>
-        <div>
-          <AuthorLink author={blog.author} lang={lang} />
-        </div>
-      </div>
-    </article>
-  );
 }
 
 // ===== Section: Category Navigation Bar =====
@@ -245,7 +97,7 @@ function CategoryNavBar({
                 <li key={cat} aria-expanded="false">
                   <div className="flex items-center">
                     <Link
-                      href={`/${lang}/blog/category/${categorySlug(cat)}/`}
+                      href={`/${lang}/blog/${categorySlug(cat)}/`}
                       className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus text-primary active:text-primary hover:text-secondary body-sm-medium"
                     >
                       {cat}
@@ -267,7 +119,7 @@ function CategoryNavBar({
           {categories.map((cat) => (
             <li key={cat} className="relative" aria-expanded="false" aria-haspopup="true">
               <Link
-                href={`/${lang}/blog/category/${categorySlug(cat)}/`}
+                href={`/${lang}/blog/${categorySlug(cat)}/`}
                 className="text-[18px] font-semibold salign-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus text-primary active:text-primary hover:text-secondary "
               >
                 {cat}
@@ -313,7 +165,7 @@ function FeaturedArticle({ blog, lang }: { blog: Blog; lang: string }) {
                         href={blogDetailHref(blog, lang)}
                         className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus "
                       >
-                        <h3 className="heading-xl !leading-[1.3]">{blog.title}</h3>
+                        <h3 className="heading-xl !leading-[1.3] hover:underline">{blog.title}</h3>
                       </Link>
                     </div>
                     {blog.excerpt && (
@@ -330,10 +182,10 @@ function FeaturedArticle({ blog, lang }: { blog: Blog; lang: string }) {
                   </div>
                 </div>
                 <div>
-                  <BlogMeta date={blog.publishedAt} timeRead={String(blog.timeRead)} lang={lang} />
-                </div>
-                <div>
                   <AuthorLink author={blog.author} lang={lang} />
+                </div>
+                <div className="w-full">
+                  <BlogMeta date={blog.updatedAt} timeRead={String(blog.timeRead)} lang={lang} />
                 </div>
               </div>
               <figure className="overflow-hidden rounded-sm self-center">
@@ -527,8 +379,8 @@ function CategoryTabPanel({
       <div className="flex flex-col md:flex-row gap-4 md:justify-between md:items-center mb-10">
         <h3 className="heading-lg">{category}</h3>
         <Link
-          href={`/${lang}/blog/category/${categorySlug(category)}/`}
-          className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus flex gap-2 items-center"
+          href={`/${lang}/blog/${categorySlug(category)}/`}
+          className="align-bottom hover:underline transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus flex gap-2 items-center"
         >
           {(blogTranslations[lang] || blogTranslations.en).viewAll}
           <ChevronRight size={16} />

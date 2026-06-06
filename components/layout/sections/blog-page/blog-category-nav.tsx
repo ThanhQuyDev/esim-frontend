@@ -80,7 +80,7 @@ function BlogSearchInput({ lang }: { lang: string }) {
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
             placeholder={lang === "vi" ? "Tìm kiếm bài viết..." : "Search articles..."}
-            className="w-48 sm:w-64 px-3 py-1.5 border border-gray-300 rounded-l-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            className="w-48 sm:w-64 px-3 py-1.5 border border-gray-300 rounded-l-md text-sm focus:outline-none bg-white"
           />
           <button
             type="submit"
@@ -145,7 +145,7 @@ function MobileCategoryNav({
                   <div className="flex items-center">
                     <Link
                       className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus text-primary active:text-primary hover:text-secondary body-sm-medium"
-                      href={`/${lang}/blog/category/${categorySlug(cat)}/`}
+                      href={`/${lang}/blog/${categorySlug(cat)}/`}
                     >
                       {cat}
                     </Link>
@@ -168,7 +168,7 @@ function MobileCategoryNav({
                         <li key={parent}>
                           <Link
                             className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus text-secondary hover:text-primary body-sm"
-                            href={`/${lang}/blog/category/${categorySlug(cat)}/${categorySlug(parent)}/`}
+                            href={`/${lang}/blog/${categorySlug(cat)}/${categorySlug(parent)}/`}
                           >
                             {parent}
                           </Link>
@@ -209,8 +209,8 @@ function DesktopCategoryNav({
   }, []);
 
   return (
-    <div className="hidden sm:block mx-auto lg:px-16 bg-neutral-100">
-      <ul ref={navRef} className="flex container items-center gap-6 py-[14px] max-w-[1168px] mx-auto">
+    <div className="hidden sm:block mx-auto bg-neutral-100">
+      <ul ref={navRef} className="md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1168px] flex container items-center gap-6 py-[14px] max-w-[1168px] mx-auto">
         {categories.map((cat) => {
           const catParents = parents[cat] ?? [];
           const isOpen = openCat === cat;
@@ -218,8 +218,8 @@ function DesktopCategoryNav({
           return (
             <li key={cat} className="relative flex items-center" aria-haspopup="true">
               <Link
-                className="!text-[17px] font-medium align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus text-primary active:text-primary hover:text-secondary "
-                href={`/${lang}/blog/category/${categorySlug(cat)}/`}
+                className="text-sm hover:underline font-medium align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus text-primary active:text-primary hover:text-secondary "
+                href={`/${lang}/blog/${categorySlug(cat)}/`}
               >
                 {cat}
               </Link>
@@ -241,8 +241,8 @@ function DesktopCategoryNav({
                   {catParents.map((parent) => (
                     <li key={parent}>
                       <Link
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors"
-                        href={`/${lang}/blog/category/${categorySlug(cat)}/${categorySlug(parent)}/`}
+                        className="block px-4 py-2 text-sm text-primary hover:bg-gray-100 hover:text-gray-900 transition-colors"
+                        href={`/${lang}/blog/${categorySlug(cat)}/${categorySlug(parent)}/`}
                         onClick={() => setOpenCat(null)}
                       >
                         {parent}

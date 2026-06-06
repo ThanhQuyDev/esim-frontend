@@ -41,11 +41,10 @@ function MobilePlanChip({
     <button
       type="button"
       onClick={onSelect}
-      className={`inline-flex items-center gap-[7px] px-[18px] py-2.5 rounded-[30px] text-base font-medium border-[1.5px] cursor-pointer transition-colors whitespace-nowrap font-[inherit] ${
-        isSelected
+      className={`inline-flex items-center gap-[7px] px-[18px] py-2.5 rounded-[30px] text-base font-medium border-[1.5px] cursor-pointer transition-colors whitespace-nowrap font-[inherit] ${isSelected
           ? "bg-white text-[#1a1a1a] border-[#1a1a1a] font-semibold shadow-[0_0_0_1px_#1a1a1a]"
           : "bg-white text-[#374151] border-[#e5e7eb] active:bg-[#f3f4f6]"
-      }`}
+        }`}
     >
       {label}
       <PlanTagBadges tags={plan.tags as string[] | undefined} lang={lang} />
@@ -77,11 +76,10 @@ function MobileGbChip({
     <button
       type="button"
       onClick={onSelect}
-      className={`inline-flex items-center gap-[7px] px-[18px] py-2.5 rounded-[30px] text-base font-medium border-[1.5px] cursor-pointer transition-colors whitespace-nowrap font-[inherit] ${
-        isSelected
+      className={`inline-flex items-center gap-[7px] px-[18px] py-2.5 rounded-[30px] text-base font-medium border-[1.5px] cursor-pointer transition-colors whitespace-nowrap font-[inherit] ${isSelected
           ? "bg-white text-[#1a1a1a] border-[#1a1a1a] font-semibold shadow-[0_0_0_1px_#1a1a1a]"
           : "bg-white text-[#374151] border-[#e5e7eb] active:bg-[#f3f4f6]"
-      }`}
+        }`}
     >
       {formatDataLabel(gb)}/{lang === "en" ? "day" : "ngày"}
       {bestPlan && <PlanTagBadges tags={bestPlan.tags as string[] | undefined} lang={lang} />}
@@ -118,11 +116,10 @@ function MobileUnlimitedPill({
     <button
       type="button"
       onClick={onSelect}
-      className={`relative flex items-center w-full max-w-full min-w-0 px-3.5 py-3.5 rounded-[14px] border-[1.5px] cursor-pointer transition-all font-[inherit] overflow-hidden ${
-        isSelected
+      className={`relative flex items-center w-full max-w-full min-w-0 px-3.5 py-3.5 rounded-[14px] border-[1.5px] cursor-pointer transition-all font-[inherit] overflow-hidden ${isSelected
           ? "border-[#1a1a1a] shadow-[0_0_0_1px_#1a1a1a]"
           : "bg-white border-[#e5e7eb] active:border-[#9ca3af]"
-      }`}
+        }`}
     >
       {(firstTag || (plan.discount != null && plan.discount > 0)) && (
         <span className="absolute -top-[11px] right-3 z-[1] flex gap-1 items-center pointer-events-none">
@@ -153,7 +150,7 @@ function MobileUnlimitedPill({
         <span className={`text-[.875rem] font-medium leading-tight truncate w-full ${isSelected ? "text-[#1a1a1a] font-semibold" : "text-[#374151]"}`}>
           {mainLabel}
         </span>
-        <span className="text-[13px] leading-tight text-[#6b7280] truncate w-full">
+        <span className="text-sm leading-tight text-[#6b7280] truncate w-full">
           → {hintLabel}
         </span>
       </span>
@@ -321,11 +318,10 @@ export function MobilePlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }
               <button
                 type="button"
                 onClick={() => setSpeedTab("normal")}
-                className={`flex-1 text-center py-[9px] px-1.5 text-base font-medium cursor-pointer border-none rounded-[30px] transition-all font-[inherit] ${
-                  speedTab === "normal"
+                className={`flex-1 text-center py-[9px] px-1.5 text-base font-medium cursor-pointer border-none rounded-[30px] transition-all font-[inherit] ${speedTab === "normal"
                     ? "bg-white text-[#1a1a1a] font-medium shadow-[0_1px_4px_rgba(0,0,0,0.1)]"
                     : "bg-transparent text-[#6b7280]"
-                }`}
+                  }`}
               >
                 {dict.speed.normal}
               </button>
@@ -334,11 +330,10 @@ export function MobilePlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }
               <button
                 type="button"
                 onClick={() => setSpeedTab("high")}
-                className={`flex-1 text-center py-[9px] px-1.5 text-base font-medium cursor-pointer border-none rounded-[30px] transition-all font-[inherit] ${
-                  speedTab === "high"
+                className={`flex-1 text-center py-[9px] px-1.5 text-base font-medium cursor-pointer border-none rounded-[30px] transition-all font-[inherit] ${speedTab === "high"
                     ? "bg-white text-[#1a1a1a] font-medium shadow-[0_1px_4px_rgba(0,0,0,0.1)]"
                     : "bg-transparent text-[#6b7280]"
-                }`}
+                  }`}
               >
                 {dict.speed.high}
               </button>
@@ -390,7 +385,7 @@ export function MobilePlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }
             </div>
           )}
 
-          <p className="text-[13px] text-[#6b7280] mt-2.5 leading-normal">
+          <p className="text-sm text-[#6b7280] mt-2.5 leading-normal">
             {dict.unlimitedHint}
           </p>
         </div>

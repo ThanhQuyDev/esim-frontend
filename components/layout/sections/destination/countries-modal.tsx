@@ -103,7 +103,7 @@ export function CountriesModal({
               <h3 className="text-xl font-extrabold tracking-[-0.4px] text-[#111] mb-[3px]">
                 {lang === "vi" ? titleVi : titleEn}
               </h3>
-              <p className="text-[13px] text-[#6B7280]">{lang === "vi" ? subVi : subEn}</p>
+              <p className="text-sm text-[#6B7280]">{lang === "vi" ? subVi : subEn}</p>
             </div>
             <button
               type="button"

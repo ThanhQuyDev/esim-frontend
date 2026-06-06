@@ -48,7 +48,7 @@ function CategoryBadge({ category, lang }: { category: string | null; lang: stri
   if (!category) return null;
   return (
     <Link
-      href={`/${lang}/blog/category/${categorySlug(category)}/`}
+      href={`/${lang}/blog/${categorySlug(category)}/`}
       className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus"
     >
       <span className="text-center whitespace-nowrap rounded-full inline-block bg-tertiary text-primary py-0.5 px-2 body-2xs-medium hover:bg-neutral-300">
@@ -96,7 +96,7 @@ function AuthorLink({ author, lang }: { author: string | null; lang: string }) {
             </span>
           </div>
         </div>
-        <address className="body-sm text-secondary not-italic">{author}</address>
+        <address className="body-sm text-secondary not-italic hover:underline">{author}</address>
       </div>
     </Link>
   );

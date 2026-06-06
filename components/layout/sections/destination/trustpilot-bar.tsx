@@ -22,7 +22,7 @@ export function TrustpilotBar({ dict }: TrustpilotBarProps) {
         </svg>
       </div>
       <span className="text-base sm:text-sm font-medium text-[#111]">{dict.trust.rating}</span>
-      <span className="text-[13px] text-[#6b7280]">{dict.trust.ratingCount}</span>
+      <span className="text-sm text-[#6b7280]">{dict.trust.ratingCount}</span>
       <div className="ml-auto flex items-center gap-1.5 text-sm text-[#6b7280] font-medium">
         <span className="text-base sm:text-sm text-[#22C55E]">★</span>
         {dict.trust.trustpilot}

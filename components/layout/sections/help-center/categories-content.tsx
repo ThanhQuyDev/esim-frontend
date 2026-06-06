@@ -116,7 +116,7 @@ export function CategoriesContent({ lang }: CategoriesContentProps) {
   if (loading) {
     return (
       <main role="main" className="min-h-screen bg-gray-50">
-        <div className="max-w-[1386px] mx-auto px-8 py-32 text-center text-gray-500">
+        <div className="container mx-auto py-32 text-center text-gray-500">
           Loading...
         </div>
       </main>
@@ -129,7 +129,7 @@ export function CategoriesContent({ lang }: CategoriesContentProps) {
       <main role="main" className="min-h-screen bg-gray-50">
         {/* Search Box */}
         <div className="bg-white border-b border-gray-200">
-          <div className="max-w-[1386px] mx-auto px-8 py-3">
+          <div className="container mx-auto py-3">
             <form role="search" className="relative max-w-lg" onSubmit={(e) => e.preventDefault()}>
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
@@ -151,7 +151,7 @@ export function CategoriesContent({ lang }: CategoriesContentProps) {
                       {searchResults.map((article) => (
                         <li key={article.id}>
                           <Link
-                            href={`${localizedHref(lang, "help-center")}/${toLocalizedCategorySlug(article.category, lang)}/${toLocalizedParentSlug(article.parent, lang)}/${getArticleSlug(article)}`}
+                            href={`${localizedHref(lang, "help-center")}/${getArticleSlug(article)}`}
                             className="block px-4 py-2.5 text-gray-900 no-underline hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
                           >
                             <p className="text-base sm:text-sm font-medium">{article.title}</p>
@@ -175,7 +175,7 @@ export function CategoriesContent({ lang }: CategoriesContentProps) {
 
         {/* Breadcrumb */}
         <div className="bg-gray-200">
-          <div className="max-w-[1386px] mx-auto px-8">
+          <div className="container mx-auto">
             <div className="flex items-center pt-4 pb-4">
               <nav aria-label="Breadcrumb">
                 <ol className="flex items-center gap-1 list-none p-0 m-0 text-base sm:text-sm">
@@ -200,7 +200,7 @@ export function CategoriesContent({ lang }: CategoriesContentProps) {
           </div>
         </div>
 
-        <div className="max-w-[1386px] mx-auto px-8 py-8">
+        <div className="container mx-auto py-8">
           <article>
             <h1 className="text-[1.7rem] sm:text-2xl font-medium mb-4">{selectedArticle.title}</h1>
             <div
@@ -229,7 +229,7 @@ export function CategoriesContent({ lang }: CategoriesContentProps) {
     <main role="main" className="min-h-screen bg-gray-50">
       {/* Search Box */}
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-[1386px] mx-auto px-8 py-3">
+        <div className="container mx-auto py-3">
           <form role="search" className="relative max-w-lg" onSubmit={(e) => e.preventDefault()}>
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
@@ -251,7 +251,7 @@ export function CategoriesContent({ lang }: CategoriesContentProps) {
                     {searchResults.map((article) => (
                       <li key={article.id}>
                         <Link
-                          href={`${localizedHref(lang, "help-center")}/${toLocalizedCategorySlug(article.category, lang)}/${toLocalizedParentSlug(article.parent, lang)}/${getArticleSlug(article)}`}
+                          href={`${localizedHref(lang, "help-center")}/${getArticleSlug(article)}`}
                           className="block px-4 py-2.5 text-gray-900 no-underline hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
                         >
                           <p className="text-base sm:text-sm font-medium">{article.title}</p>
@@ -275,7 +275,7 @@ export function CategoriesContent({ lang }: CategoriesContentProps) {
 
       {/* Breadcrumb */}
       <div className="bg-gray-200">
-        <div className="max-w-[1386px] mx-auto px-8">
+        <div className="container mx-auto">
           <div className="flex items-center pt-4 pb-4">
             <nav aria-label="Breadcrumb">
               <ol className="flex items-center gap-1 list-none p-0 m-0 text-base sm:text-sm">
@@ -299,7 +299,7 @@ export function CategoriesContent({ lang }: CategoriesContentProps) {
       </div>
 
       {/* Content */}
-      <div className="max-w-[1386px] mx-auto px-8 py-8">
+      <div className="container mx-auto py-8">
         {Object.entries(grouped).map(([parentKey, arts]) => (
           <div key={parentKey} className="mb-8">
             <h2 className="text-lg font-semibold mb-3 text-gray-900">{getParentLabel(parentKey, lang)}</h2>
@@ -307,7 +307,7 @@ export function CategoriesContent({ lang }: CategoriesContentProps) {
               {arts.map((article) => (
                 <li key={article.id}>
                   <Link
-                    href={`${localizedHref(lang, "help-center")}/${toLocalizedCategorySlug(article.category, lang)}/${toLocalizedParentSlug(article.parent, lang)}/${getArticleSlug(article)}`}
+                    href={`${localizedHref(lang, "help-center")}/${getArticleSlug(article)}`}
                     className="block px-3 py-2 text-gray-800 no-underline hover:bg-gray-100 hover:text-gray-900 rounded transition-colors"
                   >
                     {article.title}

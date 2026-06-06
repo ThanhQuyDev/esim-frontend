@@ -14,9 +14,9 @@ export function BlogCountryPlansList({ plans, lang }: { plans: Plan[]; lang: str
   return (
     <div className="flex flex-col w-full gap-6 max-md:px-4 p-6 rounded-sm md:rounded-md bg-[linear-gradient(#EEF1F6,#C9D6E9)] CountryPlansList">
       <p className="heading-sm text-primary scroll-mt-20 xl:scroll-mt-24">
-        Need data in {destinationName}? Get an eSIM!
+        {lang === "vi" ? "Bạn cần dữ liệu khi đến" : "Need data in"} {destinationName}?  {lang === "vi" ? "Hãy dùng eSIM ngay!" : "Get an eSIM!"}
       </p>
-      <ul className="px-4 py-1 bg-secondary rounded-sm">
+      <ul className="px-4 py-1 bg-primary rounded-sm">
         {plans.map((plan, idx) => (
           <li
             key={plan.id}
@@ -36,7 +36,7 @@ export function BlogCountryPlansList({ plans, lang }: { plans: Plan[]; lang: str
             <div className="md:flex md:gap-2 items-center">
               <p className="body-md-medium scroll-mt-20 xl:scroll-mt-24">{formatDataMb(plan.dataMb)}</p>
               <p className="body-sm-medium text-secondary scroll-mt-20 xl:scroll-mt-24">
-                {plan.durationDays} days
+                {plan.durationDays} {lang === "vi" ? "ngày" : "days"}
               </p>
             </div>
             <p className="body-md-medium ml-auto scroll-mt-20 xl:scroll-mt-24">{formatPrice(plan)}</p>
@@ -46,10 +46,10 @@ export function BlogCountryPlansList({ plans, lang }: { plans: Plan[]; lang: str
       {destinationSlug && (
         <Link
           role="button"
-          className="max-md:w-full text-center inline-block text-primary bg-accent pointer-fine:hover:bg-accent-hover border-md border-bg-accent-hover pointer-fine:hover:border-accent-hover active:bg-accent-active! active:border-accent-active! box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7"
+          className="max-md:w-full text-center inline-block text-primary bg-accent hover:bg-bg-accent-hover pointer-fine:hover:bg-accent-hover border-md border-bg-accent-hover pointer-fine:hover:border-accent-hover active:bg-accent-active! active:border-accent-active! box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7"
           href={`/${lang}/${destinationSlug}/`}
         >
-          See All Data Plans
+          {lang === "vi" ? "Xem Tất Cả Gói Cước" : "See All Data Plans"}
         </Link>
       )}
     </div>

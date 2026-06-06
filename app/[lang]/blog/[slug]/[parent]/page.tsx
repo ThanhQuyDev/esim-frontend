@@ -2,17 +2,14 @@ import { FooterSection } from "@/components/layout/sections/footer";
 import { BlogCategoryNav } from "@/components/layout/sections/blog-page";
 import { getDictionary } from "@/lib/dictionaries";
 import { getBlogsByCategoryAndParent, getBlogCategories, getBlogParentsByCategory } from "@/lib/api";
-import { blogDetailHref } from "@/components/layout/sections/blog-page/blog-detail-helpers";
 import type { Locale } from "@/lib/i18n-config";
 import type { Metadata } from "next";
-import Link from "next/link";
-import Image from "next/image";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
+import { BlogCard } from "@/components/layout/sections/blog-page/blog-card";
+import { categorySlug } from "@/components/layout/sections/blog-page/blog-detail-helpers";
 
 function nameFromSlug(slug: string, list: string[]): string {
-  const found = list.find(
-    (item) => item.toLowerCase().replace(/\s+/g, "-") === slug
-  );
+  const found = list.find((item) => categorySlug(item) === slug);
   return found || slug;
 }
 
@@ -21,14 +18,12 @@ export async function generateMetadata({
 }: {
   params: { lang: Locale; slug: string; parent: string };
 }): Promise<Metadata> {
-  const slug = decodeURIComponent(params.slug);
-  const parent = decodeURIComponent(params.parent);
   return {
-    title: `Blog - ${slug} - ${parent}`,
+    title: `Blog - ${decodeURIComponent(params.slug)} - ${decodeURIComponent(params.parent)}`,
   };
 }
 
-export default async function BlogCategoryParentPage({
+export default async function BlogParentPage({
   params,
 }: {
   params: { lang: Locale; slug: string; parent: string };
@@ -57,12 +52,11 @@ export default async function BlogCategoryParentPage({
     <main role="main">
       <BlogCategoryNav lang={params.lang} />
 
-      {/* Breadcrumb */}
       <div className="bg-primary">
         <Breadcrumb
           items={[
             { label: "Blog", href: `/${params.lang}/blog/` },
-            { label: categoryName, href: `/${params.lang}/blog/category/${slug}/` },
+            { label: categoryName, href: `/${params.lang}/blog/${slug}/` },
             { label: parentName },
           ]}
           lang={params.lang}
@@ -70,7 +64,6 @@ export default async function BlogCategoryParentPage({
       </div>
 
       <div className="container mx-auto px-4 py-12 max-w-[1168px]">
-
         <h1 className="heading-xl mb-8">{parentName}</h1>
 
         {blogs.length === 0 ? (
@@ -78,35 +71,9 @@ export default async function BlogCategoryParentPage({
             {params.lang === "vi" ? "Chưa có bài viết nào." : "No articles found."}
           </p>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10 md:gap-y-12">
             {blogs.map((blog) => (
-              <Link
-                key={blog.id}
-                href={blogDetailHref(blog, params.lang)}
-                className="group block"
-              >
-                <article className="h-full flex flex-col rounded-lg overflow-hidden border border-gray-200 hover:shadow-md transition-shadow">
-                  {blog.coverImage && (
-                    <div className="relative w-full aspect-[16/9]">
-                      <Image
-                        src={blog.coverImage}
-                        alt={blog.title}
-                        fill
-                        className="object-cover"
-                        sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-                      />
-                    </div>
-                  )}
-                  <div className="flex flex-col flex-1 p-4">
-                    <h2 className="body-md-medium group-hover:text-blue-600 transition-colors line-clamp-2">
-                      {blog.title}
-                    </h2>
-                    {blog.excerpt && (
-                      <p className="body-sm text-secondary mt-2 line-clamp-2">{blog.excerpt}</p>
-                    )}
-                  </div>
-                </article>
-              </Link>
+              <BlogCard key={blog.id} blog={blog} lang={params.lang} />
             ))}
           </div>
         )}

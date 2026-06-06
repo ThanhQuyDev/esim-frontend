@@ -136,7 +136,7 @@ export function SearchResultsContent({ lang }: SearchResultsContentProps) {
   return (
     <main role="main">
       {/* Main content */}
-      <div className="max-w-[1386px] mx-auto px-8">
+      <div className="container mx-auto">
         <div className="mt-6 mb-8">
           <section>
             <header>
@@ -174,7 +174,7 @@ export function SearchResultsContent({ lang }: SearchResultsContentProps) {
                       <header>
                         <h3 className="text-lg font-semibold mb-2">
                           <Link
-                            href={`${localizedHref(lang, "help-center")}/${toLocalizedCategorySlug(article.category, lang)}/${toLocalizedParentSlug(article.parent, lang)}/${getArticleSlug(article)}`}
+                            href={`${localizedHref(lang, "help-center")}/${getArticleSlug(article)}`}
                             className="text-blue-700 "
                           >
                             {article.title}

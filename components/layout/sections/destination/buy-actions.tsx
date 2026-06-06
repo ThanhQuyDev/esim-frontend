@@ -152,7 +152,7 @@ export function BuyActions({ selectedPlan, days, quantity, isFixed, dict, lang, 
       </div>
 
       {/* Disclaimer */}
-      <div className="flex gap-1.5 items-start text-[13px] text-[#6b7280] leading-normal">
+      <div className="flex gap-1.5 items-start text-sm text-[#6b7280] leading-normal">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="shrink-0 mt-0.5">
           <circle cx="12" cy="12" r="10" />
           <path d="M12 16v-4M12 8h.01" />

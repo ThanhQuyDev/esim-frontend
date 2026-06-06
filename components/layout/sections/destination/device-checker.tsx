@@ -107,7 +107,7 @@ export function DeviceChecker({ dict, lang }: DeviceCheckerProps) {
             <path d="M9 6h6" stroke="#111" strokeWidth="1.5" strokeLinecap="round" />
           </svg>
         </div>
-        <span className="text-[13px] font-medium tracking-[0.05em] uppercase text-[#111]">
+        <span className="text-sm font-medium tracking-[0.05em] uppercase text-[#111]">
           {dict.deviceCheck.title}
         </span>
       </div>
@@ -127,7 +127,7 @@ export function DeviceChecker({ dict, lang }: DeviceCheckerProps) {
           <button
             onClick={handleCheck}
             disabled={isChecking || !query.trim()}
-            className="px-5 py-[9px] bg-[#111] text-white text-[13px] font-medium rounded-full border-none cursor-pointer font-[inherit] whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-5 py-[9px] bg-[#111] text-white text-sm font-medium rounded-full border-none cursor-pointer font-[inherit] whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isChecking ? dict.deviceCheck.checking : dict.deviceCheck.button}
           </button>
@@ -160,7 +160,7 @@ export function DeviceChecker({ dict, lang }: DeviceCheckerProps) {
                       {result.similarDevices.map((d) => (
                         <span
                           key={d}
-                          className="text-[13px] px-2.5 py-[3px] bg-white border border-[#e5e7eb] rounded-[20px] text-[#374151] cursor-pointer hover:bg-[#fef9e7] hover:border-[#F5C518] transition-colors"
+                          className="text-sm px-2.5 py-[3px] bg-white border border-[#e5e7eb] rounded-[20px] text-[#374151] cursor-pointer hover:bg-[#fef9e7] hover:border-[#F5C518] transition-colors"
                           onClick={() => setQuery(d)}
                         >
                           {d}
@@ -176,11 +176,11 @@ export function DeviceChecker({ dict, lang }: DeviceCheckerProps) {
 
         {/* Quick check chips */}
         <div className="flex flex-wrap gap-[5px] items-center">
-          <span className="text-[13px] text-[#6b7280]">{tryQuickLabel}</span>
+          <span className="text-sm text-[#6b7280]">{tryQuickLabel}</span>
           {["iPhone 15", "Samsung S24", "Pixel 8", "Nokia 6.1"].map((d) => (
             <span
               key={d}
-              className="text-[13px] px-2.5 py-[3px] bg-white border border-[#e5e7eb] rounded-[20px] text-[#374151] cursor-pointer hover:bg-[#fef9e7] hover:border-[#F5C518] transition-colors"
+              className="text-sm px-2.5 py-[3px] bg-white border border-[#e5e7eb] rounded-[20px] text-[#374151] cursor-pointer hover:bg-[#fef9e7] hover:border-[#F5C518] transition-colors"
               onClick={() => setQuery(d)}
             >
               {d}

@@ -240,11 +240,11 @@ export function DetailContent({
     return (
       <main role="main">
         <div className="bg-gray-200">
-          <div className="max-w-[1386px] mx-auto px-8">
+          <div className="container mx-auto">
             <div className="flex items-center pt-4 pb-4" />
           </div>
         </div>
-        <div className="max-w-[1386px] mx-auto px-8 py-16 text-center text-gray-500">
+        <div className="container mx-auto py-16 text-center text-gray-500">
           Loading...
         </div>
       </main>
@@ -258,7 +258,7 @@ export function DetailContent({
 
       {/* Breadcrumb (Style 2.9) — merged: Trang chủ > Trung tâm trợ giúp > ... */}
       <div className="bg-gray-100">
-        <div className="max-w-[1386px] mx-auto px-8">
+        <div className="container mx-auto">
           <div className="flex items-center pt-4 pb-4">
             <div className="text-sm">
               <nav aria-label="Breadcrumb">
@@ -314,7 +314,7 @@ export function DetailContent({
       </div>
 
       {/* Page container (Layout 2.2: max-w-7xl) */}
-      <div className="max-w-[1386px] mx-auto px-8 flex-1" id="page-container">
+      <div className="container mx-auto flex-1" id="page-container">
         <div className="flex flex-col md:flex-row gap-8 lg:gap-10">
           {/* Sidebar navigation - LEFT (Navigation 2.5: 3-level tree) */}
           <aside className="w-full md:w-4/12 lg:w-3/12 flex-shrink-0 order-1">
@@ -398,7 +398,7 @@ export function DetailContent({
                                         return (
                                           <li key={article.id}>
                                             <Link
-                                              href={`${basePath}/${toLocalizedCategorySlug(catKey, lang)}/${toLocalizedParentSlug(parentKey, lang)}/${artSlug}`}
+                                              href={`${basePath}/${artSlug}`}
                                               className={`block px-3 py-2 text-[0.94rem] leading-[1.5] font-medium rounded transition-colors no-underline ${
                                                 isArticleActive
                                                   ? "bg-gray-100 font-medium text-gray-900 border-l-[3px] border-l-[#ffdc52]"
@@ -445,7 +445,7 @@ export function DetailContent({
                 </div>
                 {/* Rich Text Content (Bug 2.4: full formatting with prose) */}
                 <div
-                  className="hc-article-body prose prose-sm max-w-none
+                  className="article-body hc-article-body prose prose-sm max-w-none
                     [&_p]:mb-4
                     [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:mt-6 [&_h2]:mb-3
                     [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:mt-5 [&_h3]:mb-2
@@ -476,7 +476,7 @@ export function DetailContent({
                       <div className="relative flex items-baseline py-2">
                         <div className="flex-1">
                           <Link
-                            href={`${basePath}/${toLocalizedCategorySlug(category, lang)}/${toLocalizedParentSlug(parent!, lang)}/${getArticleSlug(article)}`}
+                            href={`${basePath}/${getArticleSlug(article)}`}
                             className="text-gray-800 hover:text-gray-900 no-underline transition-colors"
                           >
                             {article.title}
@@ -527,7 +527,7 @@ export function DetailContent({
                               <div className="relative flex items-baseline py-2">
                                 <div className="flex-1">
                                   <Link
-                                    href={`${basePath}/${toLocalizedCategorySlug(category, lang)}/${toLocalizedParentSlug(parentKey, lang)}/${getArticleSlug(article)}`}
+                                    href={`${basePath}/${getArticleSlug(article)}`}
                                     className="text-gray-800 hover:text-gray-900 no-underline transition-colors"
                                   >
                                     {article.title}
@@ -583,7 +583,7 @@ export function DetailContent({
               currentArticle={selectedArticle}
               popularArticles={popularArticles ?? []}
               buildHref={(a) =>
-                `${basePath}/${toLocalizedCategorySlug(a.category, lang)}/${toLocalizedParentSlug(a.parent, lang)}/${getArticleSlug(a)}`
+                `${basePath}/${getArticleSlug(a)}`
               }
             />
           </div>

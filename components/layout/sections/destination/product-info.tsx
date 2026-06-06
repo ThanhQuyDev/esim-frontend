@@ -151,7 +151,7 @@ function DeviceChecker({ dict, lang }: { dict: DestinationDict; lang: string }) 
             <path d="M9 6h6" stroke="#111" strokeWidth="1.5" strokeLinecap="round" />
           </svg>
         </div>
-        <span className="text-[13px] font-medium tracking-[0.05em] uppercase text-[#111]">
+        <span className="text-sm font-medium tracking-[0.05em] uppercase text-[#111]">
           {dict.deviceCheck.title}
         </span>
       </div>
@@ -171,7 +171,7 @@ function DeviceChecker({ dict, lang }: { dict: DestinationDict; lang: string }) 
           <button
             onClick={handleCheck}
             disabled={isChecking || !query.trim()}
-            className="px-[18px] py-[9px] bg-[#111] text-white text-[13px] font-medium rounded-md border-none cursor-pointer font-[inherit] whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-[18px] py-[9px] bg-[#111] text-white text-sm font-medium rounded-md border-none cursor-pointer font-[inherit] whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isChecking ? dict.deviceCheck.checking : dict.deviceCheck.button}
           </button>
@@ -204,7 +204,7 @@ function DeviceChecker({ dict, lang }: { dict: DestinationDict; lang: string }) 
                       {result.similarDevices.map((d) => (
                         <span
                           key={d}
-                          className="text-[13px] px-2.5 py-[3px] bg-white border border-[#e5e7eb] rounded-[20px] text-[#374151] cursor-pointer hover:bg-[#fef9e7] hover:border-[#F5C518] transition-colors"
+                          className="text-sm px-2.5 py-[3px] bg-white border border-[#e5e7eb] rounded-[20px] text-[#374151] cursor-pointer hover:bg-[#fef9e7] hover:border-[#F5C518] transition-colors"
                           onClick={() => {
                             setQuery(d);
                           }}
@@ -222,11 +222,11 @@ function DeviceChecker({ dict, lang }: { dict: DestinationDict; lang: string }) 
 
         {/* Quick check chips */}
         <div className="flex flex-wrap gap-[5px] items-center">
-          <span className="text-[13px] text-[#6b7280]">Thử nhanh:</span>
+          <span className="text-sm text-[#6b7280]">Thử nhanh:</span>
           {["iPhone 15", "Samsung S24", "Pixel 8"].map((d) => (
             <span
               key={d}
-              className="text-[13px] px-2.5 py-[3px] bg-white border border-[#e5e7eb] rounded-[20px] text-[#374151] cursor-pointer hover:bg-[#fef9e7] hover:border-[#F5C518] transition-colors"
+              className="text-sm px-2.5 py-[3px] bg-white border border-[#e5e7eb] rounded-[20px] text-[#374151] cursor-pointer hover:bg-[#fef9e7] hover:border-[#F5C518] transition-colors"
               onClick={() => { setQuery(d); }}
             >
               {d}
@@ -262,10 +262,10 @@ export function ProductInfo({ destination, dict, lang, planSource = "destination
         <>
           <button
             onClick={() => setCountriesOpen(!countriesOpen)}
-            className="w-full flex items-center justify-between px-3.5 py-2.5 border-[1.5px] border-[#e5e7eb] rounded-lg bg-[#f9fafb] text-[13px] font-semibold text-[#111] cursor-pointer font-[inherit] transition-colors hover:bg-[#f0f0f0] hover:border-[#c1c7cf] mb-3"
+            className="w-full flex items-center justify-between px-3.5 py-2.5 border-[1.5px] border-[#e5e7eb] rounded-lg bg-[#f9fafb] text-sm font-semibold text-[#111] cursor-pointer font-[inherit] transition-colors hover:bg-[#f0f0f0] hover:border-[#c1c7cf] mb-3"
           >
             <span className="flex items-center gap-2">
-              <span className="text-[13px] font-medium text-[#6b7280] border border-[#e5e7eb] rounded px-1.5 py-0.5 bg-white">
+              <span className="text-sm font-medium text-[#6b7280] border border-[#e5e7eb] rounded px-1.5 py-0.5 bg-white">
                 {regionDestinations.slice(0, 4).map((d) => d.countryCode || "").join(" ")}
               </span>
               {dict.viewCountries.replace("{count}", String(regionDestinations.length || region?.destinationCount || 0))}
@@ -277,12 +277,12 @@ export function ProductInfo({ destination, dict, lang, planSource = "destination
 
           {countriesOpen && regionDestinations.length > 0 && (
             <div className="bg-white border border-[#e5e7eb] rounded-lg mb-3 p-3.5">
-              <div className="text-[13px] font-medium text-[#9ca3af] uppercase tracking-wider mb-2.5">
+              <div className="text-sm font-medium text-[#9ca3af] uppercase tracking-wider mb-2.5">
                 {dict.supportedCountries.replace("{count}", String(regionDestinations.length))}
               </div>
               <div className="flex flex-wrap gap-1.5">
                 {regionDestinations.map((d) => (
-                  <span key={d.id} className="inline-flex items-center gap-1 text-[13px] font-medium px-2.5 py-1 bg-[#f9fafb] border border-[#e5e7eb] rounded-full text-[#374151]">
+                  <span key={d.id} className="inline-flex items-center gap-1 text-sm font-medium px-2.5 py-1 bg-[#f9fafb] border border-[#e5e7eb] rounded-full text-[#374151]">
                     {d.flagUrl && <img src={d.flagUrl} alt="" className="w-4 h-3 rounded-sm object-cover" />}
                     {d.name}
                   </span>
@@ -297,7 +297,7 @@ export function ProductInfo({ destination, dict, lang, planSource = "destination
       <div className="grid grid-cols-2 border-b-[1.5px] border-[#e5e7eb] mt-3.5">
         <button
           onClick={() => setActiveTab("features")}
-          className={`py-[11px] px-2 text-[13px] font-semibold text-center flex items-center justify-center gap-1.5 transition-colors border-b-[2.5px] -mb-[1.5px] cursor-pointer bg-transparent font-[inherit] ${
+          className={`py-[11px] px-2 text-sm font-semibold text-center flex items-center justify-center gap-1.5 transition-colors border-b-[2.5px] -mb-[1.5px] cursor-pointer bg-transparent font-[inherit] ${
             activeTab === "features"
               ? "text-[#111] border-[#111]"
               : "text-[#6b7280] border-transparent"
@@ -311,7 +311,7 @@ export function ProductInfo({ destination, dict, lang, planSource = "destination
         </button>
         <button
           onClick={() => setActiveTab("delivery")}
-          className={`py-[11px] px-2 text-[13px] font-semibold text-center flex items-center justify-center gap-1.5 transition-colors border-b-[2.5px] -mb-[1.5px] cursor-pointer bg-transparent font-[inherit] ${
+          className={`py-[11px] px-2 text-sm font-semibold text-center flex items-center justify-center gap-1.5 transition-colors border-b-[2.5px] -mb-[1.5px] cursor-pointer bg-transparent font-[inherit] ${
             activeTab === "delivery"
               ? "text-[#111] border-[#111]"
               : "text-[#6b7280] border-transparent"
@@ -336,7 +336,7 @@ export function ProductInfo({ destination, dict, lang, planSource = "destination
             <div className="flex items-center justify-between py-[13px] border-b border-[#f3f4f6] gap-3">
               <span className="text-base sm:text-sm text-[#374151] shrink-0">{dict.carriers.domestic}</span>
               <div className="flex flex-nowrap gap-[5px] flex-1 justify-end overflow-x-auto" style={{ scrollbarWidth: "none" }}>
-                <span className="px-2.5 py-1 border border-[#D1D5DB] rounded-md text-[13px] font-semibold whitespace-nowrap shrink-0">
+                <span className="px-2.5 py-1 border border-[#D1D5DB] rounded-md text-sm font-semibold whitespace-nowrap shrink-0">
                   {operatorName}
                 </span>
               </div>
@@ -346,7 +346,7 @@ export function ProductInfo({ destination, dict, lang, planSource = "destination
             <div className="flex items-center justify-between py-[13px] border-b border-[#f3f4f6] gap-3">
               <span className="text-base sm:text-sm text-[#374151] shrink-0">{dict.carriers.speed}</span>
               <div className="flex flex-nowrap gap-[5px] flex-1 justify-end overflow-x-auto" style={{ scrollbarWidth: "none" }}>
-                <span className="px-2.5 py-1 border border-[#D1D5DB] rounded-md text-[13px] font-semibold whitespace-nowrap shrink-0">
+                <span className="px-2.5 py-1 border border-[#D1D5DB] rounded-md text-sm font-semibold whitespace-nowrap shrink-0">
                   {speed}
                 </span>
               </div>
@@ -357,7 +357,7 @@ export function ProductInfo({ destination, dict, lang, planSource = "destination
             <span className="text-base sm:text-sm text-[#374151]">{dict.features.hotspot}</span>
             {hasHotspot && hotSpotAllowGb ? (
               <span
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[13px] font-medium whitespace-nowrap"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap"
                 style={{ background: "#EFF6FF", color: "#1D4ED8", border: "1.5px solid #BFDBFE" }}
               >
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -370,7 +370,7 @@ export function ProductInfo({ destination, dict, lang, planSource = "destination
               </span>
             ) : hasHotspot ? (
               <span
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[13px] font-medium whitespace-nowrap"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap"
                 style={{ background: "#EFF6FF", color: "#1D4ED8", border: "1.5px solid #BFDBFE" }}
               >
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -382,7 +382,7 @@ export function ProductInfo({ destination, dict, lang, planSource = "destination
                 {dict.features.unlimited}
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[13px] font-medium" style={{ background: "#FEF2F2", color: "#B91C1C", border: "1.5px solid #FECACA" }}>
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-sm font-medium" style={{ background: "#FEF2F2", color: "#B91C1C", border: "1.5px solid #FECACA" }}>
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#B91C1C" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
                 {dict.features.no}
               </span>
@@ -400,10 +400,10 @@ export function ProductInfo({ destination, dict, lang, planSource = "destination
           <div className="flex items-start justify-between py-[13px] border-b border-[#f3f4f6] gap-3">
             <span className="text-base sm:text-sm text-[#374151]">{dict.delivery.deliveryTime}</span>
             <div className="flex flex-col items-end gap-1">
-              <span className="inline-flex items-center gap-[5px] px-3 py-[5px] bg-[#DCFCE7] border-[1.5px] border-[#86EFAC] rounded-[20px] text-[#15803D] text-[13px] font-medium">
+              <span className="inline-flex items-center gap-[5px] px-3 py-[5px] bg-[#DCFCE7] border-[1.5px] border-[#86EFAC] rounded-[20px] text-[#15803D] text-sm font-medium">
                 <ClockChip />{dict.delivery.instant}
               </span>
-              <span className="text-[13px] text-[#6b7280]">{dict.delivery.instantDesc}</span>
+              <span className="text-sm text-[#6b7280]">{dict.delivery.instantDesc}</span>
             </div>
           </div>
           <div className="flex items-center justify-between py-[13px] gap-3">

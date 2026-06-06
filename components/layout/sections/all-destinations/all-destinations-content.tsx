@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
-import { MapPin, Loader2 } from "lucide-react";
+import { MapPin, Loader2, X } from "lucide-react";
 import { useInfiniteDestinations } from "@/lib/hooks";
 import { useDebounce } from "@/lib/use-debounce";
 import type { Locale } from "@/lib/i18n-config";
@@ -110,7 +110,7 @@ export function AllDestinationsContent({
                 <h1 className="heading-xl scroll-mt-20 xl:scroll-mt-24">
                   {dict.title}
                 </h1>
-                <p className="body-md text-text-secondary scroll-mt-20 xl:scroll-mt-24">
+                <p className="body-md text-text-secondary scroll-mt-20 xl:scroll-mt-24 whitespace-nowrap">
                   {dict.description}
                 </p>
               </div>
@@ -160,7 +160,7 @@ export function AllDestinationsContent({
                 data-testid="search-input"
                 placeholder={dict.searchPlaceholder}
                 autoComplete="off"
-                className="outline-hidden appearance-none w-full leading-md py-[11px] px-4 text-text-primary placeholder-text-tertiary border border-border-secondary hover:border-border-focus active:border-border-focus focus:border-border-focus transition rounded-sm pl-12"
+                className="outline-hidden appearance-none w-full leading-md py-[11px] px-4 text-text-primary placeholder-text-tertiary border border-border-secondary hover:border-border-focus active:border-border-focus focus:border-border-focus transition rounded-sm pl-12 pr-10"
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -182,6 +182,16 @@ export function AllDestinationsContent({
                 <circle cx="11" cy="11" r="8" />
                 <path d="m21 21-4.3-4.3" />
               </svg>
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-text-tertiary hover:text-text-primary transition-colors"
+                  aria-label="Clear search"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
             </div>
 
             {/* Destination Grid */}
@@ -210,7 +220,7 @@ export function AllDestinationsContent({
                         }
                       >
                         <div
-                          className="flex flex-col items-start text-left gap-4 relative border-none p-4 h-full rounded-sm transition-colors hover:text-text-primary hover:bg-bg-tertiary bg-bg-secondary"
+                          className="flex flex-col items-start text-left gap-4 relative border-none p-4 h-full rounded-sm transition-colors hover:text-text-primary hover:bg-bg-tertiary bg-gray-50 hover:bg-bg-secondary"
                           data-testid={`destination-card-${item.countryCode || item.slug || item.id}`}
                         >
                           <div className="w-full h-full flex gap-4 items-center">

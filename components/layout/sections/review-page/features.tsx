@@ -52,7 +52,7 @@ const defaultFeatures = [
   },
   {
     title: "One eSIM for all countries",
-    description: "esim.vn makes eSIM management easier and saves you more time. Instead of getting a new eSIM every time you travel, you can use the same esim.vn eSIM for any country."
+    description: "esim.vn makes eSIM management easier and saves you more time. Instead of getting a new eSIM every time you travel, you can use the same esim.vn for any country."
   },
   {
     title: "24/7 chat support",
@@ -132,7 +132,7 @@ export function ReviewFeatures({ dict, lang }: ReviewFeaturesProps) {
             <div className="col-span-12 md:col-span-8">
               <div className="grid grid-cols-1 gap-y-6">
                 <h2 className="heading-xl text-primary scroll-mt-20 xl:scroll-mt-24">
-                  {dict.title || "Reasons to buy a esim.vn eSIM card"}
+                  {dict.title || "Reasons to buy a esim.vn card"}
                 </h2>
                 <p className="body-md text-secondary scroll-mt-20 xl:scroll-mt-24">
                   {dict.description || "eSIMs can save you money and time when you\u2019re traveling. With a esim.vn eSIM, it becomes even easier."}

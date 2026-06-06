@@ -92,10 +92,10 @@ export function BlogDetailContent({ lang, slug, initialBlog }: BlogDetailContent
   const breadcrumbItems = useMemo(() => {
     const items: { label: string; href?: string }[] = [{ label: "Blog", href: `/${lang}/blog/` }];
     if (blog?.category) {
-      items.push({ label: blog.category, href: `/${lang}/blog/category/${categorySlug(blog.category)}/` });
+      items.push({ label: blog.category, href: `/${lang}/blog/${categorySlug(blog.category)}/` });
     }
     if (blog?.parent) {
-      items.push({ label: blog.parent, href: `/${lang}/blog/category/${categorySlug(blog?.category || "")}/${categorySlug(blog.parent)}/` });
+      items.push({ label: blog.parent, href: `/${lang}/blog/${categorySlug(blog?.category || "")}/${categorySlug(blog.parent)}/` });
     }
     if (blog?.title) {
       items.push({ label: blog.title });
@@ -209,7 +209,7 @@ export function BlogDetailContent({ lang, slug, initialBlog }: BlogDetailContent
                     <div className="flex flex-col gap-12">
                       {/* Article body */}
                       <div
-                        className="prose prose-slate max-w-none prose-headings:font-bold prose-h2:text-2xl prose-h3:text-xl prose-h4:text-lg prose-blockquote:border-l-4 prose-blockquote:border-gray-300 prose-blockquote:pl-4 prose-img:rounded-lg prose-a:no-underline hover:prose-a:underline [&_table]:!w-full [&_table]:!table-fixed [&_table]:!border-collapse [&_table]:!border [&_table]:!border-gray-300 [&_table]:!my-4 [&_table]:!rounded-none [&_th]:!border [&_th]:!border-gray-300 [&_th]:!p-2 [&_th]:!bg-gray-100 [&_th]:!text-left [&_th]:!rounded-none [&_td]:!border [&_td]:!border-gray-300 [&_td]:!p-2 [&_td]:!rounded-none"
+                        className="article-body prose prose-slate max-w-none prose-headings:font-bold prose-h2:text-2xl prose-h3:text-xl prose-h4:text-lg prose-blockquote:border-l-4 prose-blockquote:border-gray-300 prose-blockquote:pl-4 prose-img:rounded-lg prose-a:no-underline hover:prose-a:underline [&_table]:!w-full [&_table]:!table-fixed [&_table]:!border-collapse [&_table]:!border [&_table]:!border-gray-300 [&_table]:!my-4 [&_table]:!rounded-none [&_th]:!border [&_th]:!border-gray-300 [&_th]:!p-2 [&_th]:!bg-gray-100 [&_th]:!text-left [&_th]:!rounded-none [&_td]:!border [&_td]:!border-gray-300 [&_td]:!p-2 [&_td]:!rounded-none"
                         dangerouslySetInnerHTML={{ __html: processedContent }}
                       />
 

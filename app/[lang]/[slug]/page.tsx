@@ -24,6 +24,7 @@ import {
 import type { Locale } from "@/lib/i18n-config";
 import type { Metadata } from "next";
 import type { Destination, Region } from "@/lib/api";
+import { PartnerBar } from "@/components/layout/sections/partner-bar";
 
 interface UnifiedSlugPageProps {
   params: { lang: Locale; slug: string };
@@ -164,7 +165,7 @@ export default async function UnifiedSlugPage({
           dict={dict.destinationPage}
           lang={params.lang}
         />
-        <div className="max-w-[1168px] mx-auto px-0 md:px-6">
+        <div className="max-w-[1168px] mx-auto">
           <LazyHowItWorksSection dict={dict.howItWorks} />
           <LazyFeaturesSection
             dict={dict.whyChoose}
@@ -172,6 +173,7 @@ export default async function UnifiedSlugPage({
             features={whyChooseUsRes.data}
           />
           <LazyEsimComparison dict={dict.whatIsEsimPage.comparison} />
+          <PartnerBar dict={dict.partnerBar} />
           <LazyTestimonialsSection dict={dict.testimonials} />
           <LazyDownloadAppSection dict={dict.downloadApp} />
           <LazyFAQSection

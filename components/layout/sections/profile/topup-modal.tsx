@@ -320,7 +320,7 @@ function TopupPackageItem({ pkg, selected, onSelect, t, lang }: TopupPackageItem
           </div>
           <p className="text-base sm:text-sm text-gray-700 leading-snug">{pkg.name}</p>
           {!pkg.vndPrice && (
-            <p className="text-[13px] text-amber-600 mt-1">
+            <p className="text-sm text-amber-600 mt-1">
               ⚠ {t.topupVndUnavailable}
             </p>
           )}

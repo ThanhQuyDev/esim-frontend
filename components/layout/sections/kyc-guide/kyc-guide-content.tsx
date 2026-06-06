@@ -144,7 +144,7 @@ function Illustration({ svg, caption }: { svg: string; caption: string }) {
     <div className="rounded-[14px] max-[640px]:rounded-xl overflow-hidden bg-[#F3F4F6] mt-3 max-[640px]:mt-2" style={{ border: "1.5px solid #E5E7EB" }}>
       <div className="block w-full" dangerouslySetInnerHTML={{ __html: svg }} />
       <div
-        className="text-xs max-[640px]:text-[13px] text-[#6B7280] text-center px-3 max-[640px]:px-2.5 py-2 max-[640px]:py-1.5 bg-white font-medium leading-[1.4]"
+        className="text-xs max-[640px]:text-sm text-[#6B7280] text-center px-3 max-[640px]:px-2.5 py-2 max-[640px]:py-1.5 bg-white font-medium leading-[1.4]"
         style={{ borderTop: "1px solid #E5E7EB" }}
       >
         {caption}
@@ -193,7 +193,7 @@ function StepItem({ step, index, isLast }: { step: KycStep; index: number; isLas
               "inline-flex max-[640px]:flex items-center gap-2 max-[640px]:gap-[9px]",
               "px-4 py-1.5 max-[640px]:px-[13px] max-[640px]:py-2.5",
               "rounded-full max-[640px]:rounded-[9px]",
-              "text-[13px] max-[640px]:text-[12.5px] font-semibold",
+              "text-sm max-[640px]:text-[12.5px] font-semibold",
               "mb-2.5 max-[640px]:mb-2.5 leading-[1.5]",
               hintClass,
             ].join(" ")}
@@ -216,7 +216,7 @@ function StepItem({ step, index, isLast }: { step: KycStep; index: number; isLas
               >
                 <div className="block w-full" dangerouslySetInnerHTML={{ __html: item.svg }} />
                 <div
-                  className="text-xs max-[640px]:text-[13px] text-[#6B7280] text-center px-3 max-[640px]:px-2.5 py-2 max-[640px]:py-1.5 bg-white font-medium leading-[1.4]"
+                  className="text-xs max-[640px]:text-sm text-[#6B7280] text-center px-3 max-[640px]:px-2.5 py-2 max-[640px]:py-1.5 bg-white font-medium leading-[1.4]"
                   style={{ borderTop: "1px solid #E5E7EB" }}
                 >
                   {item.caption}
@@ -272,10 +272,10 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
     <div className="bg-[#F1F5F9] min-h-screen text-[#0F172A] overflow-clip max-[640px]:text-base" style={{ fontFamily: "'Google Sans', system-ui, sans-serif" }}>
       {/* Sticky tabs */}
       <div
-        className="bg-white px-12 max-[640px]:px-2 sticky top-0 z-20 overflow-x-auto"
-        style={{ borderBottom: "1.5px solid #E5E7EB", scrollbarWidth: "none" }}
+        className="bg-white px-12 max-[640px]:px-2 sticky top-0 z-20 h-[52px] overflow-x-auto"
+        style={{ borderBottom: "1px solid #E5E7EB", scrollbarWidth: "none" }}
       >
-        <div className="flex w-full max-w-[832px] mx-auto">
+        <div className="flex w-full max-w-[880px] mx-auto">
           <div className="flex items-center max-[640px]:gap-0.5">
           {REGION_KEYS.map((k) => {
             const r = KYC_REGIONS[k];
@@ -360,7 +360,7 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
                 style={{ borderRight: i < 2 ? "1px solid rgba(255,255,255,0.1)" : "none" }}
               >
                 <div className="text-[21px] max-[640px]:text-[17px] font-extrabold text-white leading-none">{s.v}</div>
-                <div className="text-[13px] max-[640px]:text-[12px] mt-[3px] leading-[1.3]" style={{ color: "rgba(255,255,255,0.7)" }}>{s.l}</div>
+                <div className="text-sm max-[640px]:text-[12px] mt-[3px] leading-[1.3]" style={{ color: "rgba(255,255,255,0.7)" }}>{s.l}</div>
               </div>
             ))}
           </div>

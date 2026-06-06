@@ -274,7 +274,7 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
 
       {/* ── DESKTOP VIEW (>840px) ── */}
       <div className="hidden min-[841px]:block">
-        <div className="max-w-[1168px] mx-auto px-6 pb-[60px] grid grid-cols-[465px_minmax(0,1fr)] gap-8 items-start max-[1100px]:grid-cols-2 max-[1100px]:px-5 max-[1100px]:gap-6">
+        <div className="max-w-[1168px] mx-auto pb-[60px] grid grid-cols-[360px_minmax(0,1fr)] xl:grid-cols-[468px_minmax(0,1fr)] gap-8 items-start max-[1100px]:grid-cols-2 max-[1100px]:px-5 max-[1100px]:gap-6">
           {/* ── LEFT COLUMN — connected ProductCard + DeviceChecker ── */}
           <div className="flex flex-col gap-4 min-w-0">
             {isLoading ? (

@@ -78,7 +78,7 @@ export function PersonalInfo({ t, lang }: PersonalInfoProps) {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <label className="block">
-          <span className="text-[13px] font-medium text-gray-400 uppercase tracking-wider">
+          <span className="text-sm font-medium text-gray-400 uppercase tracking-wider">
             {lang === "vi" ? "Họ" : "First name"}
           </span>
           <div className="relative mt-1">
@@ -94,7 +94,7 @@ export function PersonalInfo({ t, lang }: PersonalInfoProps) {
         </label>
 
         <label className="block">
-          <span className="text-[13px] font-medium text-gray-400 uppercase tracking-wider">
+          <span className="text-sm font-medium text-gray-400 uppercase tracking-wider">
             {lang === "vi" ? "Tên" : "Last name"}
           </span>
           <div className="relative mt-1">
@@ -110,7 +110,7 @@ export function PersonalInfo({ t, lang }: PersonalInfoProps) {
         </label>
 
         <label className="block sm:col-span-2">
-          <span className="text-[13px] font-medium text-gray-400 uppercase tracking-wider">
+          <span className="text-sm font-medium text-gray-400 uppercase tracking-wider">
             {t.phone}
           </span>
           <div className="relative mt-1">
@@ -127,7 +127,7 @@ export function PersonalInfo({ t, lang }: PersonalInfoProps) {
       </div>
 
       <div className="mt-4 flex items-center justify-between">
-        <p className="text-[13px] text-gray-400">
+        <p className="text-sm text-gray-400">
           {error ? (
             <span className="text-red-500">{error}</span>
           ) : justSaved ? (

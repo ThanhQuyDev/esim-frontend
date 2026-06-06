@@ -109,7 +109,7 @@ export function ArticleFooter({
             >
               {t.relatedTitle}
             </h3>
-            <p className="text-base text-gray-500">{t.relatedSubtitle}</p>
+            <p className="text-base sm:text-sm text-gray-500">{t.relatedSubtitle}</p>
           </div>
           <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 list-none p-0 m-0">
             {related.map((article) => (

@@ -112,7 +112,7 @@ function MTag({ kind, children }: { kind: "ok" | "no"; children: React.ReactNode
 function MWarn({ children }: { children: React.ReactNode }) {
   return (
     <div
-      className="flex items-start gap-2.5 px-4 py-3 mt-2 text-[13px] text-[#78350F] leading-[1.65]"
+      className="flex items-start gap-2.5 px-4 py-3 mt-2 text-sm text-[#78350F] leading-[1.65]"
       style={{ background: "#FFFBEB", borderLeft: "3px solid #F59E0B", borderRadius: "0 10px 10px 0" }}
     >
       <WarnTriangle />

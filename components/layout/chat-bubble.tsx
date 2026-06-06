@@ -114,7 +114,7 @@ export function ChatBubble() {
             <MessageCircle className="h-6 w-6" />
             {/* Unread badge */}
             {unreadCount > 0 && (
-              <span className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[13px] font-medium text-white shadow-md">
+              <span className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-sm font-medium text-white shadow-md">
                 {unreadCount > 99 ? "99+" : unreadCount}
               </span>
             )}

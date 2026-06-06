@@ -211,7 +211,7 @@ export function ProductCard({
                 )}
               </span>
               <span className="w-px h-4 bg-[#e5e7eb] shrink-0" />
-              <span className="flex-1 text-[13px] font-semibold text-[#111] text-left overflow-hidden text-ellipsis">
+              <span className="flex-1 text-sm font-semibold text-[#111] text-left overflow-hidden text-ellipsis">
                 {buttonLabel}
               </span>
               <span
@@ -232,7 +232,7 @@ export function ProductCard({
             <button
               type="button"
               onClick={() => setActiveTab("features")}
-              className={`py-[11px] px-2 text-[13px] font-semibold text-center flex items-center justify-center gap-1.5 transition-colors border-b-[2.5px] -mb-[1.5px] cursor-pointer bg-transparent font-[inherit] ${activeTab === "features"
+              className={`py-[11px] px-2 text-sm font-semibold text-center flex items-center justify-center gap-1.5 transition-colors border-b-[2.5px] -mb-[1.5px] cursor-pointer bg-transparent font-[inherit] ${activeTab === "features"
                   ? "text-[#111] border-[#111]"
                   : "text-[#6b7280] border-transparent"
                 }`}
@@ -246,7 +246,7 @@ export function ProductCard({
             <button
               type="button"
               onClick={() => setActiveTab("delivery")}
-              className={`py-[11px] px-2 text-[13px] font-semibold text-center flex items-center justify-center gap-1.5 transition-colors border-b-[2.5px] -mb-[1.5px] cursor-pointer bg-transparent font-[inherit] ${activeTab === "delivery"
+              className={`py-[11px] px-2 text-sm font-semibold text-center flex items-center justify-center gap-1.5 transition-colors border-b-[2.5px] -mb-[1.5px] cursor-pointer bg-transparent font-[inherit] ${activeTab === "delivery"
                   ? "text-[#111] border-[#111]"
                   : "text-[#6b7280] border-transparent"
                 }`}
@@ -267,7 +267,7 @@ export function ProductCard({
                 <div className="flex items-center justify-between py-[13px] border-b border-[#f3f4f6] gap-2 flex-nowrap overflow-hidden">
                   <span className="text-base sm:text-sm text-[#374151] shrink-0">{dict.carriers.domestic}</span>
                   <div className="flex flex-nowrap gap-[5px] flex-1 justify-end overflow-x-auto" style={{ scrollbarWidth: "none" }}>
-                    <span className="px-2.5 py-1 border border-[#D1D5DB] rounded-md text-[13px] font-semibold whitespace-nowrap shrink-0">
+                    <span className="px-2.5 py-1 border border-[#D1D5DB] rounded-md text-sm font-semibold whitespace-nowrap shrink-0">
                       {operatorName}
                     </span>
                   </div>
@@ -277,7 +277,7 @@ export function ProductCard({
                 <div className="flex items-center justify-between py-[13px] border-b border-[#f3f4f6] gap-2 flex-nowrap overflow-hidden">
                   <span className="text-base sm:text-sm text-[#374151] shrink-0">{dict.carriers.speed}</span>
                   <div className="flex flex-nowrap gap-[5px] flex-1 justify-end overflow-x-auto" style={{ scrollbarWidth: "none" }}>
-                    <span className="px-2.5 py-1 border border-[#D1D5DB] rounded-md text-[13px] font-semibold whitespace-nowrap shrink-0">
+                    <span className="px-2.5 py-1 border border-[#D1D5DB] rounded-md text-sm font-semibold whitespace-nowrap shrink-0">
                       {speed}
                     </span>
                   </div>
@@ -288,7 +288,7 @@ export function ProductCard({
                 <span className="text-base sm:text-sm text-[#374151]">{dict.features.hotspot}</span>
                 {hasHotspot && hotSpotAllowGb ? (
                   <span
-                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[13px] font-medium whitespace-nowrap"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap"
                     style={{ background: "#EFF6FF", color: "#1D4ED8", border: "1.5px solid #BFDBFE" }}
                   >
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -301,7 +301,7 @@ export function ProductCard({
                   </span>
                 ) : hasHotspot ? (
                   <span
-                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[13px] font-medium whitespace-nowrap"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap"
                     style={{ background: "#EFF6FF", color: "#1D4ED8", border: "1.5px solid #BFDBFE" }}
                   >
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -313,7 +313,7 @@ export function ProductCard({
                     {dict.features.unlimited}
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[13px] font-medium" style={{ background: "#FEF2F2", color: "#B91C1C", border: "1.5px solid #FECACA" }}>
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-sm font-medium" style={{ background: "#FEF2F2", color: "#B91C1C", border: "1.5px solid #FECACA" }}>
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#B91C1C" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
                     {dict.features.no}
                   </span>
@@ -334,10 +334,10 @@ export function ProductCard({
               <div className="flex items-start justify-between py-[13px] border-b border-[#f3f4f6] gap-3">
                 <span className="text-base sm:text-sm text-[#374151]">{dict.delivery.deliveryTime}</span>
                 <div className="flex flex-col items-end gap-1">
-                  <span className="inline-flex items-center gap-[5px] px-3 py-[5px] bg-[#DCFCE7] border-[1.5px] border-[#86EFAC] rounded-[20px] text-[#15803D] text-[13px] font-medium">
+                  <span className="inline-flex items-center gap-[5px] px-3 py-[5px] bg-[#DCFCE7] border-[1.5px] border-[#86EFAC] rounded-[20px] text-[#15803D] text-sm font-medium">
                     <ClockChip />{dict.delivery.instant}
                   </span>
-                  <span className="text-[13px] text-[#6b7280]">{dict.delivery.instantDesc}</span>
+                  <span className="text-sm text-[#6b7280]">{dict.delivery.instantDesc}</span>
                 </div>
               </div>
               <div className="flex items-center justify-between py-[13px] border-b border-[#f3f4f6] gap-3">
@@ -385,7 +385,7 @@ export function ProductCard({
                     <path d="M16 8h3M16 12h3" />
                   </svg>
                 </span>
-                <span className="flex-1 text-[13px] font-extrabold text-[#991B1B]">
+                <span className="flex-1 text-sm font-extrabold text-[#991B1B]">
                   {lang === "en"
                     ? "⚠ This eSIM requires identity verification to use"
                     : "⚠ eSIM này cần xác thực danh tính để sử dụng"}
@@ -418,7 +418,7 @@ export function ProductCard({
                         >
                           {i + 1}
                         </span>
-                        <span className="text-[13px] leading-[1.5]" style={{ color: "#7F1D1D" }}>
+                        <span className="text-sm leading-[1.5]" style={{ color: "#7F1D1D" }}>
                           {i === 2 ? (
                             <>
                               <strong style={{ color: "#991B1B" }}>
@@ -436,7 +436,7 @@ export function ProductCard({
                   <button
                     type="button"
                     onClick={onOpenEkyc}
-                    className="flex items-center justify-center gap-2 w-[calc(100%-28px)] my-2.5 mb-3 mx-3.5 py-2.5 rounded-full text-[13px] font-medium text-white border-none cursor-pointer font-[inherit] transition-opacity hover:opacity-90"
+                    className="flex items-center justify-center gap-2 w-[calc(100%-28px)] my-2.5 mb-3 mx-3.5 py-2.5 rounded-full text-sm font-medium text-white border-none cursor-pointer font-[inherit] transition-opacity hover:opacity-90"
                     style={{
                       background: "linear-gradient(135deg, #DC2626, #B91C1C)",
                       boxShadow: "0 3px 10px rgba(220,38,38,0.3)",

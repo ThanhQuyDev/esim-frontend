@@ -60,7 +60,7 @@ export function BlogRelatedPosts({ posts, lang }: BlogRelatedPostsProps) {
               {post.category && (
                 <div>
                   <Link
-                    href={`/${lang}/blog/category/${categorySlug(post.category)}`}
+                    href={`/${lang}/blog/${categorySlug(post.category)}`}
                     className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus"
                   >
                     <span className="text-center whitespace-nowrap rounded-full inline-block bg-tertiary text-primary py-0.5 px-2 body-2xs-medium hover:bg-neutral-300">

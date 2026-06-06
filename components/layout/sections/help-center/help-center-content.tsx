@@ -146,8 +146,8 @@ export function HelpCenterContent({ lang, initialArticles }: HelpCenterContentPr
       </div>
 
       {/* CATEGORIES */}
-      <div className="bg-gray-50 py-8">
-        <div className="max-w-[1386px] mx-auto px-8 text-center">
+      <div className="bg-primary py-8">
+        <div className="container mx-auto text-center">
           <h2 className="inline-flex items-baseline mt-6 text-[1.7rem] sm:text-2xl font-semibold">
             {lang === "vi" ? "Chọn danh mục chính" : "Choose main category"}
           </h2>
@@ -178,7 +178,7 @@ export function HelpCenterContent({ lang, initialArticles }: HelpCenterContentPr
 
       {/* POPULAR ARTICLES */}
       <div className="py-8">
-        <div className="max-w-[1386px] mx-auto px-8">
+        <div className="container mx-auto">
           <h2 className="text-[1.4rem] font-semibold mb-6">
             {lang === "vi" ? "Bài viết nổi bật" : "Popular articles"}
           </h2>
@@ -196,7 +196,7 @@ export function HelpCenterContent({ lang, initialArticles }: HelpCenterContentPr
               {popularArticles.map((article) => (
                 <Link
                   key={article.id}
-                  href={`${localizedHref(lang, "help-center")}/${toLocalizedCategorySlug(article.category, lang)}/${toLocalizedParentSlug(article.parent, lang)}/${getArticleSlug(article)}`}
+                  href={`${localizedHref(lang, "help-center")}/${getArticleSlug(article)}`}
                   className="block bg-gray-100 rounded-md p-5 hover:shadow-md transition no-underline"
                 >
                   <p className="text-base sm:text-sm text-gray-600 mb-2">

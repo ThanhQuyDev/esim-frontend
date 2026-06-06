@@ -99,7 +99,7 @@ export function FAQSection({
                                     </h3>
                                     <span className="ml-4">
                                       <ChevronDown
-                                        className={`w-5 h-5 text-text-primary transition-transform duration-200 ${
+                                        className={`w-6 h-6 text-text-primary transition-transform duration-200 ${
                                           openIndex === i ? "-rotate-180" : ""
                                         }`}
                                       />

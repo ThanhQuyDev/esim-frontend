@@ -98,7 +98,7 @@ function PlanSectionLabel({ icon, label }: { icon: React.ReactNode; label: strin
   return (
     <div className="flex items-center gap-[7px] mb-[11px]">
       <span className="flex items-center text-[#6b7280]">{icon}</span>
-      <span className="text-sm font-medium text-[#6b7280] uppercase tracking-[0.07em]">{label}</span>
+      <span className="text-xs font-medium text-[#6b7280] uppercase tracking-[0.07em]">{label}</span>
     </div>
   );
 }
@@ -222,7 +222,7 @@ function UnlimitedPill({
         <span className={`text-[.875rem] font-semibold leading-tight ${isSelected ? "text-[#111]" : "text-[#374151]"}`}>
           {mainLabel}
         </span>
-        <span className={`text-[13px] leading-tight transition-colors ${isSelected ? "text-[#374151]" : "text-[#6b7280]"}`}>
+        <span className={`text-sm leading-tight transition-colors ${isSelected ? "text-[#374151]" : "text-[#6b7280]"}`}>
           {hintLabel}
         </span>
       </span>

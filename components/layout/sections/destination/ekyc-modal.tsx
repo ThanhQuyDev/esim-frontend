@@ -233,7 +233,7 @@ export function EkycModal({ open, onClose, lang }: EkycModalProps) {
                 style={{ borderRight: i < 2 ? "1px solid rgba(255,255,255,0.12)" : "none" }}
               >
                 <div className="text-white font-extrabold text-[17px]">{s.v}</div>
-                <div className="text-[13px] mt-px" style={{ color: "rgba(255,255,255,0.72)" }}>{s.l}</div>
+                <div className="text-sm mt-px" style={{ color: "rgba(255,255,255,0.72)" }}>{s.l}</div>
               </div>
             ))}
           </div>
@@ -242,7 +242,7 @@ export function EkycModal({ open, onClose, lang }: EkycModalProps) {
         {/* Body */}
         <div className="overflow-y-auto px-8 py-2 max-[640px]:px-5 flex-1" style={{ overscrollBehavior: "contain" }}>
           <div
-            className="rounded-xl mt-[18px] mb-4 px-4 py-3 text-[13px] leading-[1.6]"
+            className="rounded-xl mt-[18px] mb-4 px-4 py-3 text-sm leading-[1.6]"
             style={{ background: "#FFFBEB", border: "1.5px solid #FDE68A", color: "#92400E" }}
             dangerouslySetInnerHTML={{ __html: t.notice }}
           />
@@ -279,7 +279,7 @@ export function EkycModal({ open, onClose, lang }: EkycModalProps) {
                 }}
               >
                 <div className="w-10 h-10 leading-none"><img src={c.flag} alt={c.name} className="w-10 h-10 rounded-full object-cover" /></div>
-                <div className="text-[13px] font-bold text-[#111] text-center leading-[1.4]">{c.name}</div>
+                <div className="text-sm font-bold text-[#111] text-center leading-[1.4]">{c.name}</div>
                 <div
                   className="inline-flex items-center justify-center gap-[5px] px-3 py-1 rounded-full text-xs font-bold text-[#DC2626] mt-0.5"
                   style={{ background: "#FFF0EE", border: "1.5px solid #FECACA" }}
@@ -338,7 +338,7 @@ export function EkycModal({ open, onClose, lang }: EkycModalProps) {
                     {c.name}
                   </div>
                   <div
-                    className="items-center hidden md:inline-flex justify-center gap-[3px] px-3 py-1 rounded-full text-[13px] font-bold text-white relative z-[1] whitespace-nowrap"
+                    className="items-center hidden md:inline-flex justify-center gap-[3px] px-3 py-1 rounded-full text-sm font-bold text-white relative z-[1] whitespace-nowrap"
                     style={{ background: "#DC2626" }}
                   >
                     {t.seeGuide}
@@ -362,7 +362,7 @@ export function EkycModal({ open, onClose, lang }: EkycModalProps) {
 
           {/* FAQ */}
           <div className="mb-4">
-            <div className="text-[13px] font-extrabold text-[#111] mb-2.5 flex items-center gap-2">
+            <div className="text-sm font-extrabold text-[#111] mb-2.5 flex items-center gap-2">
               {t.faqTitle}
               <span className="flex-1 h-[1.5px] rounded bg-[#E5E7EB]" />
             </div>
@@ -377,7 +377,7 @@ export function EkycModal({ open, onClose, lang }: EkycModalProps) {
                   <button
                     type="button"
                     onClick={() => setOpenFaq(isOpen ? null : idx)}
-                    className="flex items-center justify-between w-full px-3.5 py-2.5 text-[13px] font-semibold text-[#111] bg-white gap-2 transition-colors hover:bg-[#F9FAFB] border-none cursor-pointer text-left"
+                    className="flex items-center justify-between w-full px-3.5 py-2.5 text-sm font-semibold text-[#111] bg-white gap-2 transition-colors hover:bg-[#F9FAFB] border-none cursor-pointer text-left"
                   >
                     <span className="flex-1">{item.q}</span>
                     <svg
@@ -395,7 +395,7 @@ export function EkycModal({ open, onClose, lang }: EkycModalProps) {
                     </svg>
                   </button>
                   {isOpen && (
-                    <div className="px-3.5 pb-3 text-[13px] text-[#6B7280] leading-[1.7]">{item.a}</div>
+                    <div className="px-3.5 pb-3 text-sm text-[#6B7280] leading-[1.7]">{item.a}</div>
                   )}
                 </div>
               );

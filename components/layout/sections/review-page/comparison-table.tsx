@@ -26,43 +26,14 @@ const companyLogos: CompanyLogo[] = [
 
 type CellValue = "tick-dark" | "tick" | "x" | string;
 
-interface TableRow {
-  label: string;
-  tooltip?: string;
-  values: CellValue[];
-}
-
-const tableRows: TableRow[] = [
-  {
-    label: "One eSIM for supported destinations",
-    values: ["tick-dark", "x", "x", "x", "tick"],
-  },
-  {
-    label: "24/7 live chat support",
-    values: ["tick-dark", "tick", "tick", "tick", "x"],
-  },
-  {
-    label: "Refunds",
-    tooltip: "A general right to request a refund. Certain restrictions and conditions apply.",
-    values: ["tick-dark", "tick", "tick", "tick", "tick"],
-  },
-  {
-    label: "Security features",
-    values: ["tick-dark", "x", "x", "x", "x"],
-  },
-  {
-    label: "Virtual locations",
-    values: ["115+", "0", "0", "0", "0"],
-  },
-  {
-    label: "Blocks malicious URLs",
-    values: ["tick-dark", "x", "x", "x", "x"],
-  },
-  {
-    label: "Data saver (ad blocker)",
-    tooltip: "A feature that can save up to 28.6% of your data.",
-    values: ["tick-dark", "x", "x", "x", "x"],
-  },
+const tableValues: CellValue[][] = [
+  ["tick-dark", "x", "x", "x", "tick"],
+  ["tick-dark", "tick", "tick", "tick", "x"],
+  ["tick-dark", "tick", "tick", "tick", "tick"],
+  ["tick-dark", "x", "x", "x", "x"],
+  ["115+", "0", "0", "0", "0"],
+  ["tick-dark", "x", "x", "x", "x"],
+  ["tick-dark", "x", "x", "x", "x"],
 ];
 
 function CellIcon({ value, isSaily }: { value: CellValue; isSaily: boolean }) {
@@ -106,6 +77,8 @@ function TooltipIcon({ text }: { text: string }) {
 }
 
 export function ReviewComparisonTable({ dict, lang }: ReviewComparisonTableProps) {
+  const rows = dict.rows || [];
+
   return (
     <div data-section="ComparisonTable" data-testid="section-ComparisonTable" className="relative scroll-mt-20 xl:scroll-mt-24">
       <div className="py-16">
@@ -114,7 +87,7 @@ export function ReviewComparisonTable({ dict, lang }: ReviewComparisonTableProps
             <div className="col-span-12 md:col-span-8">
               <div className="grid grid-cols-1 gap-y-6">
                 <h2 className="heading-xl scroll-mt-20 xl:scroll-mt-24">
-                  {dict.title || "How does esim.vn compare with other eSIM providers?"}
+                  {dict.title}
                 </h2>
               </div>
             </div>
@@ -130,12 +103,12 @@ export function ReviewComparisonTable({ dict, lang }: ReviewComparisonTableProps
                       <table className="w-full text-left rtl:text-right">
                         <thead>
                           <tr>
-                            <th className="min-w-[150px] lg:min-w-[314px] w-[314px]"></th>
+                            <th className="min-w-[150px] lg:min-w-[314px] w-[314px] border-b border-neutral-200"></th>
                             {companyLogos.map((logo, i) => (
                               <th
                                 key={i}
                                 scope="col"
-                                className={`align-center text-center px-3 py-4 md:p-5 [&_img]:mx-auto [&_a]:whitespace-nowrap${i === 0 ? " bg-dark border-neutral-200/20 rounded-t-md" : ""}`}
+                                className={`border-b border-neutral-200 align-center text-center px-3 py-4 md:p-5 [&_img]:mx-auto [&_a]:whitespace-nowrap${i === 0 ? " bg-dark border-neutral-200/20 rounded-t-md" : ""}`}
                               >
                                 <div>
                                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -154,18 +127,18 @@ export function ReviewComparisonTable({ dict, lang }: ReviewComparisonTableProps
                           </tr>
                         </thead>
                         <tbody>
-                          {tableRows.map((row, rowIndex) => (
-                            <tr key={rowIndex} className="border-b border-neutral-200">
-                              <th className="align-center py-3 pr-3 md:pr-6 font-normal body-md break-words min-w-[150px] lg:min-w-[314px] w-[314px]">
+                          {rows.map((row: { label: string; tooltip?: string }, rowIndex: number) => (
+                            <tr key={rowIndex}>
+                              <th className="align-center py-3 pr-3 md:pr-6 font-normal body-md break-words min-w-[150px] lg:min-w-[314px] w-[314px] border-b border-neutral-200">
                                 <div className="flex items-center gap-x-2">
                                   <span>{row.label}</span>
                                   {row.tooltip && <TooltipIcon text={row.tooltip} />}
                                 </div>
                               </th>
-                              {row.values.map((value, colIndex) => (
+                              {tableValues[rowIndex]?.map((value, colIndex) => (
                                 <td
                                   key={colIndex}
-                                  className={`align-center p-6 [&_img]:mx-auto${colIndex === 0 ? " bg-dark border-neutral-200/20" : ""}`}
+                                  className={`align-center p-6 [&_img]:mx-auto${colIndex === 0 ? " bg-dark border-b border-neutral-200/20" : " border-b border-neutral-200"}`}
                                 >
                                   <CellIcon value={value} isSaily={colIndex === 0} />
                                 </td>
@@ -183,7 +156,7 @@ export function ReviewComparisonTable({ dict, lang }: ReviewComparisonTableProps
                                 data-ga-slug="View Plans"
                                 href={`/${lang}/destinations`}
                               >
-                                View Plans
+                                {dict.viewPlans || "View Plans"}
                               </a>
                             </th>
                             <th scope="col" className="align-center text-center px-3 py-4 md:p-5 [&_img]:mx-auto [&_a]:whitespace-nowrap"></th>
@@ -199,7 +172,7 @@ export function ReviewComparisonTable({ dict, lang }: ReviewComparisonTableProps
                     <div className="grid sm:gap-x-8 grid-cols-12 gap-y-8">
                       <div className="col-span-12 lg:col-span-9">
                         <p className="body-xs text-tertiary scroll-mt-20 xl:scroll-mt-24">
-                          *This data was taken from competitors&apos; official English-language sites on August 22, 2025, and the West Coast Labs product comparison report. For additional info, contact{" "}
+                          {(dict.footnote || "") + " "}
                           <a className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus underline" href="mailto:hotro@esim.com.vn ">
                             hotro@esim.com.vn 
                           </a>.
@@ -207,7 +180,7 @@ export function ReviewComparisonTable({ dict, lang }: ReviewComparisonTableProps
                       </div>
                       <div className="col-span-12 lg:col-span-9">
                         <p className="body-xs text-tertiary scroll-mt-20 xl:scroll-mt-24">
-                          ** esim.vn® is unaffiliated with the goods or services to which it is being compared.
+                          {dict.footnoteDisclaimer || ""}
                         </p>
                       </div>
                     </div>

@@ -166,8 +166,8 @@ export function HelpCenterNavbar({ lang }: HelpCenterNavbarProps) {
                 <div
                     id="help-center-menu"
                     className={cn(
-                        // Desktop layout: aligned right, inline
-                        "xl:flex xl:items-center xl:flex-1 xl:justify-end xl:gap-4",
+                        // Desktop layout: compact, aligned right, inline (matches reference: nav menu menu-standard menu-links-right xl:flex xl:align-items-center xl:menu-expanded xl:justify-content-end)
+                        "xl:flex xl:items-center xl:justify-end xl:gap-1",
                         // Mobile layout: drawer below header (always light background for readability)
                         "max-xl:absolute max-xl:left-0 max-xl:right-0 max-xl:top-full max-xl:bg-white max-xl:border-b max-xl:border-gray-200 max-xl:shadow-lg max-xl:flex-col max-xl:items-start max-xl:gap-0 max-xl:transition-opacity max-xl:duration-150",
                         isOpen ? "max-xl:flex max-xl:opacity-100" : "max-xl:hidden"
@@ -179,10 +179,10 @@ export function HelpCenterNavbar({ lang }: HelpCenterNavbarProps) {
                             role="search"
                             onSubmit={handleSearchSubmit}
                             action={`${helpCenterHome}/search`}
-                            className="flex items-center w-full xl:max-w-md xl:flex-1 xl:mx-4 relative max-xl:px-4 max-xl:py-3 max-xl:border-b max-xl:border-gray-200"
+                            className="flex items-center w-full xl:w-64 xl:mx-4 relative max-xl:px-4 max-xl:py-3 max-xl:border-b max-xl:border-gray-200"
                         >
                             <Search
-                                className={cn("absolute left-7 w-4 h-4 pointer-events-none", "text-gray-400")}
+                                className={cn("absolute left-3 w-4 h-4 pointer-events-none", "text-gray-400")}
                                 aria-hidden="true"
                             />
                             <input
@@ -200,7 +200,7 @@ export function HelpCenterNavbar({ lang }: HelpCenterNavbarProps) {
                                         ? "Nhập chủ đề, câu hỏi hoặc vấn đề"
                                         : "Type a topic, question or issue here"
                                 }
-                                className="w-full pl-9 pr-3 py-2 text-sm rounded-md border border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                className="w-full pl-9 pr-3 py-2 text-sm rounded-md border border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:outline-none"
                             />
                         </form>
                     )}
@@ -210,14 +210,14 @@ export function HelpCenterNavbar({ lang }: HelpCenterNavbarProps) {
                         <Link
                             key={link.href}
                             href={link.href}
-                            className="w-full text-left px-4 py-3 text-[0.94rem] font-medium text-gray-900 hover:text-blue-600 hover:bg-gray-50 border-b border-gray-200 transition-colors"
+                            className="w-full text-left px-4 py-3 xl:w-auto xl:px-3 xl:py-2 text-[0.94rem] xl:text-base font-medium text-gray-900 hover:text-blue-600 hover:bg-gray-50 xl:hover:text-gray-700 xl:hover:bg-transparent border-b xl:border-b-0 border-gray-200 transition-colors"
                         >
                             {link.label}
                         </Link>
                     ))}
 
                     {/* LOCALIZATION */}
-                    <div className="w-full px-4 py-3 border-b border-gray-200">
+                    <div className="w-full px-4 py-3 xl:w-auto xl:px-0 xl:py-0 border-b xl:border-b-0 border-gray-200">
                         <div className="relative inline-flex items-center px-2 py-1 rounded-md border border-gray-300 bg-white hover:border-gray-400 transition-colors">
                             <Globe
                                 className="w-4 h-4 mr-1 text-gray-600"

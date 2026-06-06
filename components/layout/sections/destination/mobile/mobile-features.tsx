@@ -176,14 +176,14 @@ function MobileDeviceChecker({ dict, lang }: { dict: DestinationDict; lang: stri
 
         {/* Info note */}
         <div className="flex flex-col gap-[5px] mt-1">
-          <div className="flex items-start gap-[7px] text-[13px] text-[#6b7280] leading-[1.55]">
+          <div className="flex items-start gap-[7px] text-sm text-[#6b7280] leading-[1.55]">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="shrink-0 mt-0.5">
               <circle cx="12" cy="12" r="10" />
               <path d="M12 16v-4M12 8h.01" />
             </svg>
             <span>{dict.disclaimer}</span>
           </div>
-          <a href={deviceLink} className="text-[13px] text-[#1a1a1a] font-semibold underline pl-5">
+          <a href={deviceLink} className="text-sm text-[#1a1a1a] font-semibold underline pl-5">
             {dict.disclaimerLink}
           </a>
         </div>
@@ -233,7 +233,7 @@ export function MobileFeatures({
           <div className="flex items-center justify-between py-[13px] border-b border-[#f3f4f6] gap-3">
             <span className="text-sm text-[#374151] shrink-0">{dict.carriers.domestic}</span>
             <div className="flex flex-nowrap gap-[5px] flex-1 justify-end overflow-x-auto" style={{ scrollbarWidth: "none" }}>
-              <span className="px-2.5 py-1 border border-[#D1D5DB] rounded-md text-[13px] font-semibold whitespace-nowrap shrink-0">
+              <span className="px-2.5 py-1 border border-[#D1D5DB] rounded-md text-sm font-semibold whitespace-nowrap shrink-0">
                 {operatorName}
               </span>
             </div>
@@ -243,7 +243,7 @@ export function MobileFeatures({
           <div className="flex items-center justify-between py-[13px] border-b border-[#f3f4f6] gap-3">
             <span className="text-sm text-[#374151] shrink-0">{dict.carriers.speed}</span>
             <div className="flex flex-nowrap gap-[5px] flex-1 justify-end overflow-x-auto" style={{ scrollbarWidth: "none" }}>
-              <span className="px-2.5 py-1 border border-[#D1D5DB] rounded-md text-[13px] font-semibold whitespace-nowrap shrink-0">
+              <span className="px-2.5 py-1 border border-[#D1D5DB] rounded-md text-sm font-semibold whitespace-nowrap shrink-0">
                 {speed}
               </span>
             </div>
@@ -254,7 +254,7 @@ export function MobileFeatures({
           <span className="text-sm text-[#374151]">{dict.features.hotspot}</span>
           {hasHotspot && hotSpotAllowGb ? (
             <span
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[13px] font-bold whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-bold whitespace-nowrap"
               style={{ background: "#EFF6FF", color: "#1D4ED8", border: "1.5px solid #BFDBFE" }}
             >
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -267,7 +267,7 @@ export function MobileFeatures({
             </span>
           ) : hasHotspot ? (
             <span
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[13px] font-bold whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-bold whitespace-nowrap"
               style={{ background: "#EFF6FF", color: "#1D4ED8", border: "1.5px solid #BFDBFE" }}
             >
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -279,7 +279,7 @@ export function MobileFeatures({
               {dict.features.unlimited}
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[13px] font-bold" style={{ background: "#FEF2F2", color: "#B91C1C", border: "1.5px solid #FECACA" }}>
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-sm font-bold" style={{ background: "#FEF2F2", color: "#B91C1C", border: "1.5px solid #FECACA" }}>
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#B91C1C" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
               {dict.features.no}
             </span>
@@ -320,7 +320,7 @@ export function MobileFeatures({
                   <path d="M16 8h3M16 12h3" />
                 </svg>
               </span>
-              <span className="flex-1 text-[13px] font-extrabold text-[#991B1B]">
+              <span className="flex-1 text-sm font-extrabold text-[#991B1B]">
                 {lang === "en" ? "⚠ This eSIM requires identity verification" : "⚠ eSIM này cần xác thực danh tính"}
               </span>
               <span
@@ -349,7 +349,7 @@ export function MobileFeatures({
                       <span className="w-5 h-5 rounded-full bg-[#DC2626] text-white text-[12px] font-extrabold flex items-center justify-center shrink-0 mt-px">
                         {i + 1}
                       </span>
-                      <span className="text-[13px] leading-[1.5]" style={{ color: "#7F1D1D" }}>
+                      <span className="text-sm leading-[1.5]" style={{ color: "#7F1D1D" }}>
                         {step}
                       </span>
                     </div>
@@ -359,7 +359,7 @@ export function MobileFeatures({
                   <button
                     type="button"
                     onClick={onOpenEkyc}
-                    className="flex items-center justify-center gap-2 px-4 py-2.5 mx-3.5 mb-3.5 rounded-full text-[13px] font-bold text-white border-none cursor-pointer font-[inherit] w-[calc(100%-28px)] max-w-full"
+                    className="flex items-center justify-center gap-2 px-4 py-2.5 mx-3.5 mb-3.5 rounded-full text-sm font-bold text-white border-none cursor-pointer font-[inherit] w-[calc(100%-28px)] max-w-full"
                     style={{
                       background: "linear-gradient(135deg, #DC2626, #B91C1C)",
                       boxShadow: "0 3px 10px rgba(220,38,38,0.3)",
@@ -408,7 +408,7 @@ export function MobileFeatures({
               </svg>
               {dict.delivery.instant}
             </span>
-            <span className="text-[13px] text-[#6b7280]">{dict.delivery.instantDesc}</span>
+            <span className="text-sm text-[#6b7280]">{dict.delivery.instantDesc}</span>
           </div>
         </div>
 

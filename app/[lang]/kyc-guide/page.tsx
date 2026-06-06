@@ -39,6 +39,7 @@ export default async function KycGuidePage({ params, searchParams }: KycGuidePag
       <Breadcrumb
         items={[{ label: dict.breadcrumb.kycGuide }]}
         lang={params.lang}
+        className="max-w-[880px] mx-auto sm:px-6 px-4"
       >
         <KycGuideBackButton />
       </Breadcrumb>
