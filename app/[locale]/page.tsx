@@ -52,7 +52,7 @@ export default async function Home() {
         initialFaqs={faqsRes.data}
         url={homeUrl}
       />
-      <ReferFriendBanner dict={dict.referFriend} />
+      <ReferFriendBanner dict={dict.referFriend} lang={locale} />
       <FooterSection
         dict={dict.footer}
         footerLinks={footerLinks}

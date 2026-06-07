@@ -153,52 +153,42 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
 
   return {
     product: {
-      col1Label: "Features",
+      col1Label: isVi ? "Tính năng" : "Features",
       col1: [
         {
-          icon: "gem",
-          title: "Ultra Plan",
+          icon: "globe",
+          title: isVi ? "eSIM du lịch Việt Nam" : "eSIM for Vietnam Travel",
           desc: isVi
-            ? "Gói du lịch cao cấp tất cả trong một."
-            : "Your all-in-one premium travel plan.",
-          href: `/${lang}/all-destinations`,
-          badge: isVi ? "Mới" : "New",
+            ? "Gói dữ liệu eSIM cho khách du lịch tại Việt Nam."
+            : "Data plans for travelers in Vietnam.",
+          href: `/${lang}/viet-nam`,
         },
         {
-          icon: "briefcase",
-          title: isVi ? "eSIM cho Doanh nghiệp" : "eSIM for Business",
+          icon: "pen",
+          title: isVi ? "Dành cho nhà sáng tạo" : "For Creators",
           desc: isVi
-            ? "Quản lý gói dữ liệu đội nhóm trong một bảng điều khiển."
-            : "All team data plans in one dashboard.",
+            ? "Giải pháp eSIM dành riêng cho nhà sáng tạo nội dung."
+            : "eSIM solutions tailored for content creators.",
           href: `/${lang}/all-destinations`,
-          badge: isVi ? "Mới" : "New",
-        },
-        {
-          icon: "shield-check",
-          title: isVi ? "Tính năng bảo mật" : "Security Features",
-          desc: isVi
-            ? "Bảo vệ dữ liệu an toàn và riêng tư."
-            : "Keep your data safe and private.",
-          href: `/${lang}/all-destinations`,
-        },
-        {
-          icon: "mobile-check",
-          title: isVi ? "Tương thích eSIM" : "eSIM Compatibility",
-          desc: isVi
-            ? "Kiểm tra thiết bị có hỗ trợ eSIM không."
-            : "Find out if your device is eSIM compatible.",
-          href: isVi ? `/${lang}/thiet-bi-ho-tro-esim` : `/${lang}/esim-supported-devices`,
         },
       ],
-      col2Label: "Tools",
+      col2Label: isVi ? "Công cụ" : "Tools",
       col2: [
         {
           icon: "calculator",
-          title: isVi ? "Tính dữ liệu sử dụng" : "Data Usage Calculator",
+          title: isVi ? "Công cụ tính toán lượng data" : "Data Usage Calculator",
           desc: isVi
-            ? "Ước tính dữ liệu bạn cần."
-            : "Estimate your data usage.",
+            ? "Ước tính lượng dữ liệu bạn cần cho chuyến đi."
+            : "Estimate the data you'll need for your trip.",
           href: isVi ? `/${lang}/cong-cu-tinh-data` : `/${lang}/data-calculator`,
+        },
+        {
+          icon: "mobile-check",
+          title: isVi ? "Kiểm tra tương thích eSIM" : "eSIM Compatibility",
+          desc: isVi
+            ? "Kiểm tra thiết bị của bạn có hỗ trợ eSIM hay không."
+            : "Check if your device supports eSIM.",
+          href: isVi ? `/${lang}/thiet-bi-ho-tro-esim` : `/${lang}/esim-supported-devices`,
         },
       ],
       explore: [
@@ -270,39 +260,23 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
             : "Learn more about who we are and what we do.",
           href: isVi ? `/${lang}/gioi-thieu` : `/${lang}/about-us`,
         },
-        {
-          icon: "globe",
-          title: isVi ? "Báo chí" : "Press Area",
-          desc: isVi
-            ? "Tin tức mới nhất và tài nguyên thương hiệu."
-            : "The latest news, insights, and brand assets.",
-          href: isVi ? `/${lang}/khu-vuc-bao-chi` : `/${lang}/press-area`,
-        },
       ],
       col2: [
         {
-          icon: "network-wired",
-          title: isVi ? "Chương trình đối tác" : "Affiliate Program",
-          desc: isVi
-            ? "Hợp tác và kiếm thu nhập qua giới thiệu."
-            : "Partner with us and earn through referrals.",
-          href: `/${lang}/all-destinations`,
-        },
-        {
           icon: "message-dots",
-          title: isVi ? "Đánh giá esim.vn" : "esim.vn Reviews",
+          title: isVi ? "Đánh giá về esim.vn" : "esim.vn Reviews",
           desc: isVi
             ? "Xem mọi người nói gì về chúng tôi!"
             : "Find out what people are saying about us!",
           href: `/${lang}/review`,
         },
         {
-          icon: "seedling",
-          title: isVi ? "Tuyển dụng" : "Careers",
+          icon: "globe",
+          title: isVi ? "Khu vực Báo chí" : "Press Area",
           desc: isVi
-            ? "Khám phá vị trí tuyển dụng và gia nhập đội ngũ."
-            : "Explore open roles and join the team.",
-          href: isVi ? `/${lang}/gioi-thieu` : `/${lang}/about-us`,
+            ? "Tin tức mới nhất và tài nguyên thương hiệu."
+            : "The latest news, insights, and brand assets.",
+          href: isVi ? `/${lang}/khu-vuc-bao-chi` : `/${lang}/press-area`,
         },
       ],
       explore: [
@@ -359,30 +333,14 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
             : "Share esim.vn with friends and earn rewards.",
           href: `/${lang}/all-destinations`,
         },
-        {
-          icon: "badge-percent",
-          title: isVi ? "Giảm giá sinh viên" : "Student Discount",
-          desc: isVi
-            ? "Tiết kiệm hơn với giá đặc biệt cho sinh viên."
-            : "Save more with special pricing for students.",
-          href: `/${lang}/all-destinations`,
-        },
-        {
-          icon: "tag",
-          title: isVi ? "Mã giảm giá esim.vn" : "esim.vn Coupons",
-          desc: isVi
-            ? "Nhận ưu đãi tốt nhất và tiết kiệm dữ liệu eSIM!"
-            : "Get the best deals and save on eSIM data!",
-          href: isVi ? `/${lang}/ma-giam-gia` : `/${lang}/coupon`,
-        },
       ],
       col2: [
         {
-          icon: "ticket",
-          title: isVi ? "Voucher esim.vn" : "esim.vn vouchers",
+          icon: "tag",
+          title: isVi ? "Mã giảm giá" : "Coupons",
           desc: isVi
-            ? "Nhận voucher esim.vn, sử dụng trong 12 tháng."
-            : "Get a esim.vn voucher, use within 12 months.",
+            ? "Nhận ưu đãi tốt nhất và tiết kiệm dữ liệu eSIM!"
+            : "Get the best deals and save on eSIM data!",
           href: isVi ? `/${lang}/ma-giam-gia` : `/${lang}/coupon`,
         },
       ],
@@ -432,7 +390,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
       col1: [
         {
           icon: "help-circle",
-          title: isVi ? "Bắt đầu" : "Getting Started",
+          title: isVi ? "Bắt đầu sử dụng" : "Getting Started",
           desc: isVi
             ? "Hướng dẫn nhanh sử dụng ứng dụng esim.vn eSIM."
             : "A quick guide to using the esim.vn app.",
@@ -458,7 +416,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
       col2: [
         {
           icon: "message-dots",
-          title: "FAQ",
+          title: isVi ? "Câu hỏi thường gặp" : "FAQ",
           desc: isVi
             ? "Tìm câu trả lời cho các câu hỏi phổ biến nhất về esim.vn."
             : "Find answers to the most common questions about esim.vn.",

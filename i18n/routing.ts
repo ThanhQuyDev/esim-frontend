@@ -140,6 +140,12 @@ export const routing = defineRouting({
       vi: '/kyc-guide',
       en: '/kyc-guide',
     },
+
+    // Refer a Friend
+    '/refer-a-friend': {
+      vi: '/gioi-thieu-ban-be',
+      en: '/refer-a-friend',
+    },
   },
 });
 

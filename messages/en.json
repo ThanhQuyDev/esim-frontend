@@ -1062,6 +1062,144 @@
       "footnoteDisclaimer": "** esim.vn® is unaffiliated with the goods or services to which it is being compared."
     }
   },
+  "referFriendPage": {
+    "metadata": {
+      "title": "Refer a friend — esim.vn",
+      "description": "Share an esim.vn referral code and earn up to US$100 in gift cards and esim.vn credits!"
+    },
+    "hero": {
+      "badge": "Join the Rewards sprint",
+      "title": "Share an esim.vn referral code, earn up to US$100!",
+      "description": "For a limited time only, sharing esim.vn can earn you up to US$50 in gift cards and up to US$50 in esim.vn credits! Just join the Rewards sprint, start referring friends, and watch your rewards grow.",
+      "perks": [
+        "3 referrals = US$10 gift card",
+        "6 referrals = US$15 gift card",
+        "10 referrals = US$25 gift card"
+      ],
+      "termsPrefix": "Runs until August 14 or while rewards last. ",
+      "termsLink": "Terms apply",
+      "termsSuffix": ".",
+      "termsHref": "/legal/refer-a-friend-campaign/",
+      "imageAlt": "A happy couple enjoying the benefits of esim.vn's referral program.",
+      "appStoreAlt": "App Store",
+      "googlePlayAlt": "Google Play"
+    },
+    "whyJoin": {
+      "title": "Why join the esim.vn referral program?",
+      "paragraph1": "It's an easy way to earn rewards just for helping your friends stay connected abroad! While our regular referral program gives you US$5 in esim.vn credits per friend, our limited-time Rewards sprint offers up to US$50 in gift cards or prepaid cards on top of that!",
+      "noteLabel": "Note:",
+      "noteBody": " If you don't join the sprint in the app, you'll still earn the usual US$5 in credits for every referral — you'll just miss out on earning the bonus gift cards.",
+      "imageAlt": "A phone shows the esim.vn eSIM app and its supported destinations, while a plane travels the blue skies in the background."
+    },
+    "aboutSprint": {
+      "title": "What is the esim.vn Rewards sprint?",
+      "paragraphs": [
+        "The Rewards sprint is our first-ever exclusive, limited-time referral program. Referring just 3 friends earns you a US$10 gift card, with the gift card value increasing the more you refer!",
+        "When it's time to claim your rewards, you can redeem them as gift cards or prepaid cards to spend anywhere you want. Plus, every referral earns you US$5 in esim.vn credits — that's up to US$50 in extra value on top of your gift cards!",
+        "We have a limited pool of gift cards available on a first-come, first-served basis until August 14 (or until they run out). So don't wait too long — join the Rewards sprint now and start earning!"
+      ],
+      "imageAlt": "A phone shows the esim.vn eSIM app and its supported destinations, while a plane travels the blue skies in the background."
+    },
+    "howItWorks": {
+      "title": "How the esim.vn referral program works",
+      "tabs": {
+        "sprint": "Rewards sprint",
+        "regular": "Regular referral program"
+      },
+      "sprintSteps": [
+        {
+          "number": "1",
+          "title": "Join the sprint",
+          "description": "In the app, tap \"Refer and earn up to US$100!\", agree to the terms, then tap \"Start referring friends.\" Make sure you follow these steps to join the sprint!",
+          "imageAlt": "An esim.vn app screen showing \"Share your code\" with a referral code being generated.",
+          "image": "https://sb.nordcdn.com/asset/12e5801d-a071-4be0-a264-f2b1d66ecf63/1-step-Rewards-sprint.svg"
+        },
+        {
+          "number": "2",
+          "title": "Refer friends",
+          "description": "After joining, you'll get a unique referral code. Drop it in your group chats or share it with buddies planning their next trip. The more you share, the more you earn!",
+          "imageAlt": "An esim.vn app screen displaying a personalized referral code.",
+          "image": "https://sb.nordcdn.com/asset/8cc86d36-898f-422b-8e97-471376bea112/2-step-Rewards-sprint.svg"
+        },
+        {
+          "number": "3",
+          "title": "Earn rewards",
+          "description": "When anyone uses your code to buy their first esim.vn eSIM, it counts as a referral. Earn gift cards when you reach milestones — as well as US$5 in credits for each referral!",
+          "imageAlt": "An esim.vn app screen showing a US$50 credit balance with a yellow \"Cash out\" button.",
+          "image": "https://sb.nordcdn.com/asset/31cc1df5-2356-4116-ac52-3b84e8b63a45/3-step-Rewards-sprint.svg"
+        }
+      ],
+      "regularSteps": [
+        {
+          "number": "1",
+          "title": "Find your referral code",
+          "description": "Open the esim.vn app and tap on \"Credits\" to find your code.",
+          "imageAlt": "An esim.vn app screen showing \"Share your code\" with a referral code being generated.",
+          "image": "https://sb.nordcdn.com/asset/6476d4c2-a429-4097-9c23-befd37ac7bea/1-step-regular-referral-program.svg"
+        },
+        {
+          "number": "2",
+          "title": "Share it with your friends",
+          "description": "Tap on the \"Share\" button and send your code to a friend. Or two.",
+          "imageAlt": "An esim.vn app screen displaying a personalized referral code.",
+          "image": "https://sb.nordcdn.com/asset/2fbcf9c5-806a-4d71-b42f-15feb5b6415c/2-step-regular-referral-program.svg"
+        },
+        {
+          "number": "3",
+          "title": "Give US$5, get US$5",
+          "description": "Anyone using your referral code will get a US$5 discount, while you'll get US$5 in esim.vn credits.",
+          "termsLink": "Terms apply",
+          "termsHref": "/legal/referral-program-terms-and-conditions/",
+          "imageAlt": "An esim.vn app screen showing a US$50 credit balance with a yellow \"Cash out\" button.",
+          "image": "https://sb.nordcdn.com/asset/6225d311-b87a-4e4b-ac0a-cb6e4de6c3a4/3-step-regular-referral-program.svg"
+        }
+      ]
+    },
+    "downloadApp": {
+      "title": "Download the esim.vn app",
+      "subtitle": "Or scan the code with your phone to download the esim.vn app.",
+      "qrAlt": "A QR code to download the esim.vn eSIM app.",
+      "appStoreAlt": "App Store",
+      "googlePlayAlt": "Google Play"
+    },
+    "faq": {
+      "title": "Frequently asked questions",
+      "items": [
+        {
+          "question": "Does esim.vn have a referral program?",
+          "answer": "Yes! Right now, esim.vn's running a limited-time referral program (called the Rewards sprint) where you can earn: up to US$50 in gift cards and prepaid cards to spend anywhere you want, and up to US$50 in esim.vn credits to spend on data or travel perks. To participate and earn the gift cards, you must join the sprint via the esim.vn app. If you choose not to join, you will still earn our standard reward of US$5 in esim.vn credits per friend, but you will miss out on the bonus gift cards."
+        },
+        {
+          "question": "Can I use esim.vn for free?",
+          "answer": "To use esim.vn for free, all you need to do is refer friends. For every referral, you earn US$5 in esim.vn credits. The credits can then be spent on esim.vn eSIM plans, allowing you to use esim.vn for free."
+        },
+        {
+          "question": "Can I get an esim.vn discount for referring a friend?",
+          "answer": "Yes! Every successful referral earns you US$5 in esim.vn credits and gives your friend a US$5 discount on their first eSIM plan. You can use your credits to get a discount on your next plan, or save them up to get an eSIM plan for free."
+        },
+        {
+          "question": "How does esim.vn's referral program work?",
+          "answer": "It's simple — you invite your friends to try esim.vn, and we reward you both! Right now, our limited-time Rewards sprint lets you earn up to US$50 in gift cards and up to US$50 in esim.vn credits. To participate, just join the sprint via the esim.vn app and share your referral code with friends. Your rewards will grow based on how many friends you invite: 3 referrals = US$10 gift card, 6 referrals = US$15 gift card, 10 referrals = US$25 gift card. Plus, you'll still get our standard US$5 in esim.vn credits for every single friend who makes a purchase. Just a heads-up — our gift card pool is limited and available on a first-come, first-served basis. The Rewards sprint runs until August 14 (or until the rewards run out)."
+        },
+        {
+          "question": "What is an esim.vn referral code on Reddit?",
+          "answer": "Reddit doesn't have a single official esim.vn referral code. Instead, the esim.vn Reddit community runs a monthly referral code Megathread — a thread where users share their personal referral codes. If you're new to esim.vn, browse the comments in the latest megathread to grab a working code and get a discount on your first eSIM. If you're already a user, you can post your unique referral code in the thread once a month to share it with the community and earn rewards (just make sure to follow the subreddit's rules to keep it spam free)."
+        },
+        {
+          "question": "How can I get US$5 off esim.vn?",
+          "answer": "The easiest way to get US$5 off is by referring friends! Every time a friend uses your code to buy their first eSIM, you earn US$5 in esim.vn credits. You can stack these credits to grab your next travel eSIM for less (or even completely free!). Alternatively, you can use them to unlock premium travel perks like airport fast-track passes and lounge access."
+        },
+        {
+          "question": "How do I get a 15% discount on esim.vn?",
+          "answer": "The best way to get a 15% discount is to check for our seasonal sales, holiday promos, and partner campaigns before you travel. We also regularly drop exclusive 15% off promo codes through: our emails (subscribe in the app or on our site), our social media channels, authorized travel creators and partners. Be sure to take a quick look at our latest updates right before your next trip so you can grab a code and save at checkout!"
+        },
+        {
+          "question": "How do I get an esim.vn coupon?",
+          "answer": "The easiest way to get a discount code is on our official esim.vn coupons page. We keep it updated with active deals so you can always save on your next eSIM data plan."
+        }
+      ]
+    }
+  },
   "support": {
     "form": {
       "pageTitle": "Submit Support Request",
@@ -1153,7 +1291,8 @@
     "pressArea": "Press Area",
     "profile": "My Account",
     "region": "Region",
-    "review": "Reviews"
+    "review": "Reviews",
+    "referFriend": "Refer a friend"
   },
   "checkout": {
     "paymentNote": "By completing your order, you agree to our Terms of Service and Privacy Policy."

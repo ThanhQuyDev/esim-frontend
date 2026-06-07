@@ -1,4 +1,5 @@
 import { Info } from "lucide-react";
+import { localizedHref } from "@/lib/route-mapping";
 
 interface CouponFreeCreditsProps {
   dict: Record<string, any>;
@@ -35,7 +36,7 @@ export function CouponFreeCredits({ dict, lang }: CouponFreeCreditsProps) {
                                   <a
                                     role="button"
                                     className="max-md:w-full text-center inline-block text-primary bg-accent hover:bg-bg-accent-hover pointer-fine:hover:bg-accent-hover border-md border-bg-accent-hover pointer-fine:hover:border-accent-hover active:bg-accent-active! active:border-accent-active! box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7"
-                                    href={`/${lang}/refer-a-friend`}
+                                    href={localizedHref(lang, "refer-a-friend")}
                                   >
                                     {dict.cta || "Learn more"}
                                   </a>

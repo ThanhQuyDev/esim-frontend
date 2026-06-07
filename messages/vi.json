@@ -1062,6 +1062,144 @@
       "footnoteDisclaimer": "** esim.vn® không liên kết với các hàng hóa hoặc dịch vụ được so sánh."
     }
   },
+  "referFriendPage": {
+    "metadata": {
+      "title": "Giới thiệu bạn bè — esim.vn",
+      "description": "Chia sẻ mã giới thiệu esim.vn và nhận tới 200.000đ phần thưởng cùng tín dụng eSIM!"
+    },
+    "hero": {
+      "badge": "Tham gia Sprint thưởng",
+      "title": "Chia sẻ mã giới thiệu esim.vn, nhận tới 200.000đ!",
+      "description": "Trong thời gian giới hạn, chia sẻ esim.vn có thể giúp bạn nhận tới 100.000đ tiền thưởng và tới 100.000đ tín dụng esim.vn! Chỉ cần tham gia Sprint thưởng, bắt đầu giới thiệu bạn bè và xem phần thưởng tăng dần.",
+      "perks": [
+        "3 lượt giới thiệu = 20.000đ tiền thưởng",
+        "6 lượt giới thiệu = 30.000đ tiền thưởng",
+        "10 lượt giới thiệu = 50.000đ tiền thưởng"
+      ],
+      "termsPrefix": "Áp dụng đến hết 14/8 hoặc khi hết phần thưởng. ",
+      "termsLink": "Xem điều khoản",
+      "termsSuffix": ".",
+      "termsHref": "/legal/refer-a-friend-campaign/",
+      "imageAlt": "Một cặp đôi vui vẻ tận hưởng lợi ích từ chương trình giới thiệu của esim.vn.",
+      "appStoreAlt": "App Store",
+      "googlePlayAlt": "Google Play"
+    },
+    "whyJoin": {
+      "title": "Vì sao nên tham gia chương trình giới thiệu esim.vn?",
+      "paragraph1": "Đây là cách dễ dàng để nhận thưởng chỉ bằng việc giúp bạn bè giữ kết nối khi đi nước ngoài! Trong khi chương trình giới thiệu thông thường tặng bạn 10.000đ tín dụng esim.vn cho mỗi người bạn, Sprint thưởng giới hạn của chúng tôi còn tặng thêm tới 100.000đ tiền thưởng hoặc thẻ trả trước!",
+      "noteLabel": "Lưu ý:",
+      "noteBody": " Nếu bạn không tham gia Sprint trong ứng dụng, bạn vẫn nhận được 10.000đ tín dụng cho mỗi lượt giới thiệu — chỉ là sẽ không nhận được phần thưởng tiền thưởng bổ sung.",
+      "imageAlt": "Điện thoại hiển thị ứng dụng eSIM esim.vn và các điểm đến được hỗ trợ, trong khi một chiếc máy bay bay trên bầu trời xanh."
+    },
+    "aboutSprint": {
+      "title": "Sprint thưởng esim.vn là gì?",
+      "paragraphs": [
+        "Sprint thưởng là chương trình giới thiệu độc quyền và giới hạn thời gian đầu tiên của chúng tôi. Chỉ cần giới thiệu 3 người bạn là bạn đã nhận được 20.000đ tiền thưởng, và giá trị thưởng tăng dần khi bạn giới thiệu nhiều hơn!",
+        "Khi đến lúc nhận thưởng, bạn có thể đổi thành tiền thưởng hoặc thẻ trả trước để chi tiêu mọi nơi bạn muốn. Ngoài ra, mỗi lượt giới thiệu còn cho bạn 10.000đ tín dụng esim.vn — tổng cộng có thể lên tới 100.000đ giá trị thêm trên cả phần thưởng!",
+        "Quỹ phần thưởng có hạn và áp dụng theo nguyên tắc ai đến trước được trước, kéo dài đến hết 14/8 (hoặc đến khi hết). Đừng chần chừ — tham gia Sprint thưởng ngay và bắt đầu nhận thưởng!"
+      ],
+      "imageAlt": "Điện thoại hiển thị ứng dụng eSIM esim.vn và các điểm đến được hỗ trợ, trong khi một chiếc máy bay bay trên bầu trời xanh."
+    },
+    "howItWorks": {
+      "title": "Cách chương trình giới thiệu esim.vn hoạt động",
+      "tabs": {
+        "sprint": "Sprint thưởng",
+        "regular": "Chương trình giới thiệu thường"
+      },
+      "sprintSteps": [
+        {
+          "number": "1",
+          "title": "Tham gia Sprint",
+          "description": "Trong ứng dụng, nhấn \"Giới thiệu và nhận tới 200.000đ!\", đồng ý điều khoản, sau đó nhấn \"Bắt đầu giới thiệu bạn bè\". Hãy nhớ làm theo các bước này để tham gia Sprint!",
+          "imageAlt": "Màn hình ứng dụng esim.vn hiển thị \"Chia sẻ mã của bạn\" với mã giới thiệu đang được tạo.",
+          "image": "https://sb.nordcdn.com/asset/12e5801d-a071-4be0-a264-f2b1d66ecf63/1-step-Rewards-sprint.svg"
+        },
+        {
+          "number": "2",
+          "title": "Giới thiệu bạn bè",
+          "description": "Sau khi tham gia, bạn sẽ nhận được mã giới thiệu duy nhất. Gửi mã này vào nhóm chat hoặc chia sẻ với bạn bè đang lên kế hoạch cho chuyến đi tiếp theo. Càng chia sẻ nhiều, càng nhận thưởng nhiều!",
+          "imageAlt": "Màn hình ứng dụng esim.vn hiển thị mã giới thiệu cá nhân hóa.",
+          "image": "https://sb.nordcdn.com/asset/8cc86d36-898f-422b-8e97-471376bea112/2-step-Rewards-sprint.svg"
+        },
+        {
+          "number": "3",
+          "title": "Nhận thưởng",
+          "description": "Khi ai đó dùng mã của bạn để mua eSIM esim.vn đầu tiên, đó sẽ được tính là một lượt giới thiệu. Nhận tiền thưởng khi đạt các cột mốc — cùng với 10.000đ tín dụng cho mỗi lượt giới thiệu!",
+          "imageAlt": "Màn hình ứng dụng esim.vn hiển thị số dư 100.000đ với nút \"Rút thưởng\" màu vàng.",
+          "image": "https://sb.nordcdn.com/asset/31cc1df5-2356-4116-ac52-3b84e8b63a45/3-step-Rewards-sprint.svg"
+        }
+      ],
+      "regularSteps": [
+        {
+          "number": "1",
+          "title": "Tìm mã giới thiệu của bạn",
+          "description": "Mở ứng dụng esim.vn và nhấn vào \"Tín dụng\" để tìm mã giới thiệu.",
+          "imageAlt": "Màn hình ứng dụng esim.vn hiển thị \"Chia sẻ mã của bạn\" với mã giới thiệu đang được tạo.",
+          "image": "https://sb.nordcdn.com/asset/6476d4c2-a429-4097-9c23-befd37ac7bea/1-step-regular-referral-program.svg"
+        },
+        {
+          "number": "2",
+          "title": "Chia sẻ với bạn bè",
+          "description": "Nhấn nút \"Chia sẻ\" và gửi mã của bạn cho một (hoặc hai) người bạn.",
+          "imageAlt": "Màn hình ứng dụng esim.vn hiển thị mã giới thiệu cá nhân hóa.",
+          "image": "https://sb.nordcdn.com/asset/2fbcf9c5-806a-4d71-b42f-15feb5b6415c/2-step-regular-referral-program.svg"
+        },
+        {
+          "number": "3",
+          "title": "Tặng 10.000đ, nhận 10.000đ",
+          "description": "Bất kỳ ai dùng mã giới thiệu của bạn sẽ được giảm 10.000đ, còn bạn nhận được 10.000đ tín dụng esim.vn.",
+          "termsLink": "Xem điều khoản",
+          "termsHref": "/legal/referral-program-terms-and-conditions/",
+          "imageAlt": "Màn hình ứng dụng esim.vn hiển thị số dư 100.000đ với nút \"Rút thưởng\" màu vàng.",
+          "image": "https://sb.nordcdn.com/asset/6225d311-b87a-4e4b-ac0a-cb6e4de6c3a4/3-step-regular-referral-program.svg"
+        }
+      ]
+    },
+    "downloadApp": {
+      "title": "Tải ứng dụng esim.vn",
+      "subtitle": "Hoặc quét mã bằng điện thoại để tải ứng dụng esim.vn.",
+      "qrAlt": "Mã QR để tải ứng dụng eSIM esim.vn.",
+      "appStoreAlt": "App Store",
+      "googlePlayAlt": "Google Play"
+    },
+    "faq": {
+      "title": "Câu hỏi thường gặp",
+      "items": [
+        {
+          "question": "esim.vn có chương trình giới thiệu không?",
+          "answer": "Có! Hiện tại, esim.vn đang chạy chương trình giới thiệu giới hạn thời gian (gọi là Sprint thưởng) cho phép bạn nhận: tới 100.000đ tiền thưởng và thẻ trả trước có thể chi tiêu mọi nơi, cùng tới 100.000đ tín dụng esim.vn để dùng cho dữ liệu hoặc tiện ích du lịch. Để tham gia và nhận tiền thưởng, bạn phải tham gia Sprint qua ứng dụng esim.vn. Nếu không tham gia, bạn vẫn được nhận phần thưởng chuẩn 10.000đ tín dụng esim.vn cho mỗi người bạn, nhưng sẽ không nhận thêm tiền thưởng bổ sung."
+        },
+        {
+          "question": "Tôi có thể dùng esim.vn miễn phí không?",
+          "answer": "Để dùng esim.vn miễn phí, bạn chỉ cần giới thiệu bạn bè. Mỗi lượt giới thiệu cho bạn 10.000đ tín dụng esim.vn. Tín dụng này có thể dùng để mua các gói eSIM esim.vn, giúp bạn dùng esim.vn miễn phí."
+        },
+        {
+          "question": "Tôi có thể được giảm giá esim.vn khi giới thiệu bạn bè không?",
+          "answer": "Có! Mỗi lượt giới thiệu thành công cho bạn 10.000đ tín dụng esim.vn và tặng bạn của bạn 10.000đ giảm giá cho gói eSIM đầu tiên. Bạn có thể dùng tín dụng để giảm giá gói tiếp theo, hoặc tích lũy để có gói eSIM hoàn toàn miễn phí."
+        },
+        {
+          "question": "Chương trình giới thiệu của esim.vn hoạt động thế nào?",
+          "answer": "Đơn giản — bạn mời bạn bè dùng thử esim.vn và cả hai cùng được thưởng! Hiện tại, Sprint thưởng giới hạn thời gian cho phép bạn nhận tới 100.000đ tiền thưởng và tới 100.000đ tín dụng esim.vn. Để tham gia, hãy tham gia Sprint qua ứng dụng esim.vn và chia sẻ mã giới thiệu với bạn bè. Phần thưởng sẽ tăng theo số bạn bè bạn mời: 3 lượt = 20.000đ, 6 lượt = 30.000đ, 10 lượt = 50.000đ. Ngoài ra, bạn vẫn nhận 10.000đ tín dụng esim.vn cho mỗi người bạn mua hàng. Lưu ý — quỹ tiền thưởng có hạn và áp dụng nguyên tắc ai đến trước được trước. Sprint thưởng chạy đến 14/8 (hoặc đến khi hết phần thưởng)."
+        },
+        {
+          "question": "Mã giới thiệu esim.vn trên Reddit là gì?",
+          "answer": "Reddit không có mã giới thiệu esim.vn chính thức duy nhất. Thay vào đó, cộng đồng esim.vn trên Reddit có một Megathread mã giới thiệu hàng tháng — một chủ đề nơi người dùng chia sẻ mã giới thiệu cá nhân. Nếu bạn mới biết esim.vn, hãy tìm trong các bình luận của Megathread mới nhất để lấy mã hoạt động và nhận giảm giá cho eSIM đầu tiên. Nếu bạn đã là người dùng, bạn có thể đăng mã giới thiệu duy nhất của mình trong chủ đề này mỗi tháng một lần để chia sẻ với cộng đồng và nhận thưởng (hãy tuân thủ quy tắc của subreddit để tránh spam)."
+        },
+        {
+          "question": "Làm thế nào để được giảm 10.000đ với esim.vn?",
+          "answer": "Cách dễ nhất để được giảm 10.000đ là giới thiệu bạn bè! Mỗi lần một người bạn dùng mã của bạn để mua eSIM đầu tiên, bạn sẽ nhận được 10.000đ tín dụng esim.vn. Bạn có thể tích lũy tín dụng này để mua eSIM du lịch tiếp theo với giá rẻ hơn (hoặc thậm chí hoàn toàn miễn phí!). Hoặc bạn có thể dùng để mở khóa các tiện ích du lịch cao cấp như fast-track sân bay và truy cập phòng chờ."
+        },
+        {
+          "question": "Làm thế nào để được giảm 15% với esim.vn?",
+          "answer": "Cách tốt nhất để được giảm 15% là kiểm tra các đợt sale theo mùa, khuyến mãi ngày lễ và chiến dịch đối tác trước khi đi du lịch. Chúng tôi cũng thường xuyên phát hành mã giảm 15% độc quyền qua: email của chúng tôi (đăng ký trong ứng dụng hoặc trên trang web), các kênh mạng xã hội của chúng tôi, các creator du lịch và đối tác được ủy quyền. Đừng quên xem các cập nhật mới nhất ngay trước chuyến đi tiếp theo để có thể lấy mã và tiết kiệm khi thanh toán!"
+        },
+        {
+          "question": "Làm thế nào để có mã giảm giá esim.vn?",
+          "answer": "Cách dễ nhất để có mã giảm giá là truy cập trang mã giảm giá esim.vn chính thức của chúng tôi. Chúng tôi luôn cập nhật các ưu đãi đang hoạt động để bạn luôn có thể tiết kiệm cho gói dữ liệu eSIM tiếp theo."
+        }
+      ]
+    }
+  },
   "support": {
     "form": {
       "pageTitle": "Gửi yêu cầu hỗ trợ",
@@ -1153,7 +1291,8 @@
     "pressArea": "Khu vực báo chí",
     "profile": "Tài khoản",
     "region": "Khu vực",
-    "review": "Đánh giá"
+    "review": "Đánh giá",
+    "referFriend": "Giới thiệu bạn bè"
   },
   "cart": {
     "title": "Giỏ hàng",

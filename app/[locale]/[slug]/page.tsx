@@ -182,7 +182,7 @@ export default async function UnifiedSlugPage({
             url={pageUrl}
             templateVars={{ name: localizedName }}
           />
-          <LazyReferFriendBanner dict={dict.referFriend} />
+          <LazyReferFriendBanner dict={dict.referFriend} lang={locale} />
           <LazyFooterSection dict={dict.footer} lang={locale} />
         </div>
       </main>
@@ -249,7 +249,7 @@ export default async function UnifiedSlugPage({
           url={pageUrl}
           templateVars={{ name: localizedName }}
         />
-        <LazyReferFriendBanner dict={dict.referFriend} />
+        <LazyReferFriendBanner dict={dict.referFriend} lang={locale} />
         <LazyFooterSection dict={dict.footer} lang={locale} />
       </div>
     </main>

@@ -1,10 +1,13 @@
 import Image from "next/image";
+import { localizedHref } from "@/lib/route-mapping";
 
 interface ReferFriendBannerProps {
   dict: Record<string, any>;
+  lang?: string;
 }
 
-export function ReferFriendBanner({ dict }: ReferFriendBannerProps) {
+export function ReferFriendBanner({ dict, lang = "vi" }: ReferFriendBannerProps) {
+  const href = localizedHref(lang, "refer-a-friend");
   return (
     <div
       data-section="ReferFriendBanner"
@@ -33,7 +36,7 @@ export function ReferFriendBanner({ dict }: ReferFriendBannerProps) {
                       <a
                         role="button"
                         className="max-md:w-full text-center inline-block text-primary hover:bg-black hover:text-white pointer-fine:hover:bg-brand-black pointer-fine:hover:text-primary-on-color border-md border-black active:bg-brand-black active:text-primary-on-color box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7"
-                        href="/refer-a-friend/"
+                        href={href}
                         aria-label={`Learn more about ${dict.title}`}
                       >
                         {dict.cta}
