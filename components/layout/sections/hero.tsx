@@ -116,42 +116,6 @@ export function HeroSection({ dict, heroBanners = [], lang }: HeroSectionProps) 
                         </h1>
                       </div>
 
-                      {/* Promo items from API */}
-                      {hasPromoItems && (
-                        <div className="flex flex-col gap-y-2">
-                          {hasFirstItem && (
-                            <div className="flex flex-row items-center gap-x-2">
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img
-                                alt={activeBanner!.firstContent!}
-                                src={activeBanner!.firstIcon!}
-                                width={24}
-                                height={24}
-                                loading="lazy"
-                                style={{ color: "transparent" }}
-                              />
-                              <p className="body-md-bold text-text-primary">
-                                {activeBanner!.firstContent}
-                              </p>
-                            </div>
-                          )}
-                          {hasSecondItem && (
-                            <div className="flex flex-row gap-x-3">
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img
-                                alt={activeBanner!.secondContent!}
-                                src={activeBanner!.secondIcon!}
-                                width={20}
-                                height={20}
-                                className="max-w-fit"
-                                loading="lazy"
-                                style={{ color: "transparent", maxWidth: "20px", width: "20px" }}
-                              />
-                              <p>{activeBanner!.secondContent}</p>
-                            </div>
-                          )}
-                        </div>
-                      )}
 
                       {/* Search */}
                       <div>
@@ -190,6 +154,42 @@ export function HeroSection({ dict, heroBanners = [], lang }: HeroSectionProps) 
                           </div>
                         </div>
                       </div>
+                      {/* Promo items from API */}
+                      {hasPromoItems && (
+                        <div className="flex flex-col gap-y-2">
+                          {hasFirstItem && (
+                            <div className="flex flex-row items-center gap-x-2">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                alt={activeBanner!.firstContent!}
+                                src={activeBanner!.firstIcon!}
+                                width={24}
+                                height={24}
+                                loading="lazy"
+                                style={{ color: "transparent" }}
+                              />
+                              <p className="body-md-bold text-text-primary">
+                                {activeBanner!.firstContent}
+                              </p>
+                            </div>
+                          )}
+                          {hasSecondItem && (
+                            <div className="flex flex-row gap-x-3">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                alt={activeBanner!.secondContent!}
+                                src={activeBanner!.secondIcon!}
+                                width={20}
+                                height={20}
+                                className="max-w-fit"
+                                loading="lazy"
+                                style={{ color: "transparent", maxWidth: "20px", width: "20px" }}
+                              />
+                              <p>{activeBanner!.secondContent}</p>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
