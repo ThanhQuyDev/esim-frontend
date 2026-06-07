@@ -39,9 +39,7 @@ export function HelpCenterNavbar({ lang }: HelpCenterNavbarProps) {
     // route key, e.g. "/help-center" for both "/en/help-center" and "/ho-tro".
     // Sub-pages return "/help-center/[slug]", "/help-center/search", etc.
     // So we only hide the search bar when on the exact help-center root.
-    const isHelpCenterHome =
-        intlPathname === "/help-center" ||
-        intlPathname === "/help-center/";
+    const isHelpCenterHome = intlPathname === "/help-center";
     const showSearch = !isHelpCenterHome;
 
     // Close mobile menu on Escape (parity with `@keydown.escape="toggle"` in spec)
