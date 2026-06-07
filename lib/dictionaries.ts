@@ -1,12 +1,13 @@
 import type { Locale } from "./i18n-config";
 
 const dictionaries = {
-  en: () => import("../dictionaries/en.json").then((m) => m.default),
-  vi: () => import("../dictionaries/vi.json").then((m) => m.default),
+  en: () => import("../messages/en.json").then((m) => m.default),
+  vi: () => import("../messages/vi.json").then((m) => m.default),
 };
 
-export const getDictionary = async (locale: Locale) => {
-  return dictionaries[locale]?.() ?? dictionaries.en();
+export const getDictionary = async (locale: Locale | string) => {
+  const key = (locale as Locale) in dictionaries ? (locale as Locale) : "en";
+  return dictionaries[key]?.() ?? dictionaries.en();
 };
 
 export type Dictionary = Awaited<ReturnType<typeof getDictionary>>;

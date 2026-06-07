@@ -1,12 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { usePathname as useIntlPathname } from "@/i18n/navigation";
 import Link from "next/link";
 import { Menu, X, Search, Globe, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SailyLogo } from "@/components/icons/saily-logo";
-import { localizedHref, routeMap } from "@/lib/route-mapping";
+import { localizedHref } from "@/lib/route-mapping";
 import type { Locale } from "@/lib/i18n-config";
 
 interface HelpCenterNavbarProps {
@@ -26,7 +27,7 @@ interface HelpCenterNavbarProps {
  */
 export function HelpCenterNavbar({ lang }: HelpCenterNavbarProps) {
     const router = useRouter();
-    const pathname = usePathname();
+    const intlPathname = useIntlPathname();
     const [isOpen, setIsOpen] = useState(false);
     const [query, setQuery] = useState("");
     const [hasScrolled, setHasScrolled] = useState(false);
@@ -34,13 +35,13 @@ export function HelpCenterNavbar({ lang }: HelpCenterNavbarProps) {
     const isVi = lang === "vi";
     const helpCenterHome = localizedHref(lang, "help-center");
 
-    // The landing `/help-center` page already has its own hero search,
-    // so the inline navbar search is only shown on inner pages (categories, detail, etc.).
+    // intlPathname (from @/i18n/navigation usePathname) returns the internal
+    // route key, e.g. "/help-center" for both "/en/help-center" and "/ho-tro".
+    // Sub-pages return "/help-center/[slug]", "/help-center/search", etc.
+    // So we only hide the search bar when on the exact help-center root.
     const isHelpCenterHome =
-        pathname === helpCenterHome ||
-        pathname === `${helpCenterHome}/` ||
-        pathname === `/${lang}/help-center` ||
-        pathname === `/${lang}/help-center/`;
+        intlPathname === "/help-center" ||
+        intlPathname === "/help-center/";
     const showSearch = !isHelpCenterHome;
 
     // Close mobile menu on Escape (parity with `@keydown.escape="toggle"` in spec)
@@ -55,7 +56,7 @@ export function HelpCenterNavbar({ lang }: HelpCenterNavbarProps) {
     // Close mobile menu when route changes
     useEffect(() => {
         setIsOpen(false);
-    }, [pathname]);
+    }, [intlPathname]);
 
     // Track scroll for navbar background transition
     useEffect(() => {
@@ -66,22 +67,14 @@ export function HelpCenterNavbar({ lang }: HelpCenterNavbarProps) {
     }, []);
 
     const handleLangChange = useCallback(
-        (value: string) => {
-            const segments = pathname.split("/");
-            const currentLocale = segments[1];
-            const currentSlug = segments[2];
-            segments[1] = value;
-            if (currentSlug) {
-                for (const entry of routeMap) {
-                    if (entry.slugs[currentLocale] === currentSlug) {
-                        segments[2] = entry.slugs[value] || currentSlug;
-                        break;
-                    }
-                }
-            }
-            window.location.href = segments.join("/");
+        (newLocale: string) => {
+            // Always go to help-center home when switching language.
+            // Set NEXT_LOCALE cookie so middleware uses the target locale,
+            // then hard-navigate to the localized help-center root.
+            document.cookie = `NEXT_LOCALE=${newLocale};path=/;max-age=${60 * 60 * 24 * 365};samesite=lax`;
+            window.location.href = localizedHref(newLocale, "help-center");
         },
-        [pathname]
+        []
     );
 
     const handleSearchSubmit = useCallback(

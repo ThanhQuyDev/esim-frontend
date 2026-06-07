@@ -1,106 +1,64 @@
 /**
- * Route mapping: maps public-facing localized URL slugs to internal folder paths.
+ * Route mapping helpers — compatibility layer over next-intl pathnames.
  *
- * The app uses a single internal folder structure (e.g. `app/[lang]/all-destinations/page.tsx`)
- * but exposes different URL slugs per locale (e.g. `/vi/diem-den` vs `/en/destinations`).
+ * With next-intl, routing is handled by:
+ *   - middleware.ts (next-intl/middleware)
+ *   - i18n/routing.ts (defineRouting with pathnames)
  *
- * The middleware rewrites incoming localized URLs → internal paths.
- * The `localizedHref` helper generates outgoing links with the correct slug.
+ * This file provides a thin `localizedHref` for components that haven't yet
+ * migrated to `import { Link } from "@/i18n/navigation"` and `getPathname()`.
  */
 
+import { routing } from "@/i18n/routing";
+
+type PathnameKey = keyof typeof routing.pathnames;
+
+/**
+ * Build a localized href: `/${locale}/{localizedSlug}` for non-default locale,
+ * or `/{localizedSlug}` for default locale (vi).
+ *
+ * @param locale  Current locale string (e.g., "vi", "en")
+ * @param key     Internal pathname key without leading slash (e.g., "help-center", "cart")
+ */
+export function localizedHref(locale: string, key: string): string {
+  // Normalize: strip leading slash, add it back after resolution
+  const normalizedKey = key.startsWith("/") ? key : `/${key}`;
+
+  const pathnames = routing.pathnames as Record<string, Record<string, string> | string>;
+  const entry = pathnames[normalizedKey];
+
+  let publicPath: string;
+
+  if (typeof entry === "object" && entry !== null && locale in entry) {
+    publicPath = entry[locale];
+  } else if (typeof entry === "string") {
+    publicPath = entry;
+  } else {
+    // Fallback: use the key itself, strip leading slash for URL
+    publicPath = normalizedKey;
+  }
+
+  // Remove leading slash for concatenation
+  publicPath = publicPath.replace(/^\//, "");
+
+  if (locale === routing.defaultLocale) {
+    return `/${publicPath}`;
+  }
+  return `/${locale}/${publicPath}`;
+}
+
+// Keep legacy exports for backward compatibility
 export type RouteEntry = {
-  /** Internal folder path (without leading slash, without [lang]) */
   internal: string;
-  /** Public slug per locale (without leading slash) */
   slugs: Record<string, string>;
 };
 
-/**
- * Static route map based on url.md spec.
- * Dynamic routes (blog/[slug], destination/[slug], help-center/[...slug]) are excluded —
- * they keep their existing paths.
- */
-export const routeMap: RouteEntry[] = [
-  {
-    internal: "all-destinations",
-    slugs: { vi: "diem-den", en: "destinations" },
-  },
-  {
-    internal: "cart",
-    slugs: { vi: "gio-hang", en: "cart" },
-  },
-  {
-    internal: "checkout",
-    slugs: { vi: "thanh-toan", en: "checkout" },
-  },
-  {
-    internal: "thiet-bi-ho-tro-esim",
-    slugs: { vi: "thiet-bi-ho-tro-esim", en: "esim-supported-devices" },
-  },
-  {
-    internal: "review",
-    slugs: { vi: "danh-gia", en: "review" },
-  },
-  {
-    internal: "cong-cu-tinh-data",
-    slugs: { vi: "cong-cu-tinh-data", en: "data-usage-calculator" },
-  },
-  {
-    internal: "what-is-esim",
-    slugs: { vi: "huong-dan-cai-dat-esim", en: "how-to-install-esim" },
-  },
-  {
-    internal: "blog",
-    slugs: { vi: "blog", en: "blog" },
-  },
-  {
-    internal: "about-us",
-    slugs: { vi: "ve-chung-toi", en: "about-us" },
-  },
-  {
-    internal: "profile",
-    slugs: { vi: "tai-khoan", en: "my-account" },
-  },
-  {
-    internal: "help-center",
-    slugs: { vi: "tro-giup", en: "help-center" },
-  },
-];
+export const routeMap: RouteEntry[] = [];
 
-/**
- * Given a locale and a public slug, return the internal path (or null if no match).
- * Used by middleware to rewrite requests.
- */
-export function resolveInternalPath(
-  locale: string,
-  publicSlug: string
-): string | null {
-  for (const entry of routeMap) {
-    const expected = entry.slugs[locale];
-    if (expected && publicSlug === expected) {
-      return entry.internal;
-    }
-  }
+export function resolveInternalPath(_locale: string, _publicSlug: string): string | null {
   return null;
 }
 
-/**
- * Given a locale and an internal folder path, return the public slug.
- * Used to generate <Link href> values.
- */
-export function localizedSlug(locale: string, internal: string): string {
-  for (const entry of routeMap) {
-    if (entry.internal === internal) {
-      return entry.slugs[locale] || internal;
-    }
-  }
-  return internal;
-}
-
-/**
- * Build a full localized href: `/${locale}/${publicSlug}`
- */
-export function localizedHref(locale: string, internal: string): string {
-  const slug = localizedSlug(locale, internal);
-  return `/${locale}/${slug}`;
+export function localizedSlug(_locale: string, _internal: string): string {
+  return _internal;
 }

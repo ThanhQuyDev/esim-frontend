@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
-import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { usePathname as useNextPathname } from "next/navigation";
+import { usePathname as useIntlPathname, useRouter as useIntlRouter } from "@/i18n/navigation";
+import { resolveLangSwitchPath } from "@/i18n/lang-switch";
 import * as Dialog from "@radix-ui/react-dialog";
 import { cn } from "@/lib/utils";
 import { SailyLogo } from "@/components/icons/saily-logo";
@@ -26,7 +28,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import type { Locale } from "@/lib/i18n-config";
-import { routeMap, localizedHref } from "@/lib/route-mapping";
+import { localizedHref } from "@/lib/route-mapping";
 import {
   pickLocalizedTitle,
   resolveFileUrl,
@@ -520,21 +522,16 @@ const NAV_ITEMS = ["product", "resources", "offers", "help"] as const;
  * `react-hooks/rules-of-hooks`.
  */
 export function Navbar(props: NavbarProps) {
-  const pathname = usePathname();
+  const pathname = useNextPathname();
 
   // Help Center pages get a dedicated navbar (per Phần 7 spec).
-  // Match both internal path (`/help-center/...`) and localized public slugs
-  // (`/ho-tro/...` for vi, `/help/...` for en) since usePathname can return
-  // either depending on whether the request was rewritten by middleware.
-  const helpCenterEntry = routeMap.find((e) => e.internal === "help-center");
-  const helpCenterPrefixes = [
-    `/${props.lang}/help-center`,
-    helpCenterEntry ? `/${props.lang}/${helpCenterEntry.slugs[props.lang]}` : null,
-  ].filter(Boolean) as string[];
-  const isHelpCenterRoute = helpCenterPrefixes.some(
-    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
-  );
-
+  // Use localizedHref to correctly resolve the localized path for each locale:
+  // vi → /ho-tro, en → /en/help-center
+  const helpCenterPrefix = localizedHref(props.lang, "help-center");
+  const isHelpCenterRoute =
+    pathname === helpCenterPrefix ||
+    pathname === `${helpCenterPrefix}/` ||
+    pathname.startsWith(`${helpCenterPrefix}/`);
   if (isHelpCenterRoute) {
     return <HelpCenterNavbar lang={props.lang} />;
   }
@@ -542,7 +539,7 @@ export function Navbar(props: NavbarProps) {
 }
 
 function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
-  const pathname = usePathname();
+  const pathname = useNextPathname();
   const isLandingPage = pathname === `/${lang}` || pathname === `/${lang}/`;
   const isDestinationPage = pathname.match(/\/[a-z]{2}\/[a-z0-9-]+$/);
   const [announcementVisible, setAnnouncementVisible] = useState(true);
@@ -569,22 +566,16 @@ function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
   const hasAnnouncement = Boolean(firstTopBar && announcementText);
   const hasAnnouncementCta = Boolean(announcementCta && announcementHref);
 
-  const handleLangChange = useCallback((value: string) => {
-    const segments = pathname.split('/');
-    const currentLocale = segments[1];
-    const currentSlug = segments[2];
-    segments[1] = value;
-    // Translate the slug to the target locale if it's a mapped route
-    if (currentSlug) {
-      for (const entry of routeMap) {
-        if (entry.slugs[currentLocale] === currentSlug) {
-          segments[2] = entry.slugs[value] || currentSlug;
-          break;
-        }
-      }
-    }
-    window.location.href = segments.join('/');
-  }, [pathname]);
+  const intlRouter = useIntlRouter();
+  const intlPathname = useIntlPathname();
+
+  const handleLangChange = useCallback((newLocale: string) => {
+    // For dynamic routes (e.g. /blog/[slug]) next-intl needs route params to
+    // localize the URL. We don't have them here, so fall back to a safe parent
+    // path instead of throwing "Insufficient params provided for localized pathname".
+    const target = resolveLangSwitchPath(intlPathname);
+    intlRouter.replace(target as any, { locale: newLocale });
+  }, [intlRouter, intlPathname]);
 
   // Close dropdown on outside click
   useEffect(() => {
