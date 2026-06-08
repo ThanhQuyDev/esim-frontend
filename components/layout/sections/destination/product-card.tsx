@@ -105,6 +105,7 @@ export function ProductCard({
   const hasLocalNumber = false;
   const hasEkyc = !!selectedPlan?.isKyc;
   const hasTopup = selectedPlan ? selectedPlan.topUp : false;
+  const durations = selectedPlan ? selectedPlan?.durationDays : false
 
   const operatorName = selectedPlan?.operatorName || null;
   const speed = selectedPlan?.speed || null;
@@ -190,7 +191,7 @@ export function ProductCard({
             <button
               type="button"
               onClick={() => setCountriesOpen(true)}
-              className="w-full flex items-center gap-[9px] pl-3.5 pr-3 py-[9px] border-[1.5px] border-[#e5e7eb] rounded-[40px] bg-white cursor-pointer font-[inherit] transition-colors hover:bg-[#f9fafb] hover:border-[#9ca3af] whitespace-nowrap overflow-hidden"
+              className="w-full flex items-center gap-[9px] pl-3.5 pr-3 py-[9px] border border-[#e5e7eb] rounded-[40px] bg-white cursor-pointer font-[inherit] transition-colors hover:bg-[#f9fafb] hover:border-[#9ca3af] whitespace-nowrap overflow-hidden"
             >
               {/* Stacked flag images — falls back to emoji when flagUrl is missing */}
               <span className="flex gap-1 shrink-0">
@@ -233,8 +234,8 @@ export function ProductCard({
               type="button"
               onClick={() => setActiveTab("features")}
               className={`py-[11px] px-2 text-sm font-semibold text-center flex items-center justify-center gap-1.5 transition-colors border-b-[2.5px] -mb-[1.5px] cursor-pointer bg-transparent font-[inherit] ${activeTab === "features"
-                  ? "text-[#111] border-[#111]"
-                  : "text-[#6b7280] border-transparent"
+                ? "text-[#111] border-[#111]"
+                : "text-[#6b7280] border-transparent"
                 }`}
             >
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -247,8 +248,8 @@ export function ProductCard({
               type="button"
               onClick={() => setActiveTab("delivery")}
               className={`py-[11px] px-2 text-sm font-semibold text-center flex items-center justify-center gap-1.5 transition-colors border-b-[2.5px] -mb-[1.5px] cursor-pointer bg-transparent font-[inherit] ${activeTab === "delivery"
-                  ? "text-[#111] border-[#111]"
-                  : "text-[#6b7280] border-transparent"
+                ? "text-[#111] border-[#111]"
+                : "text-[#6b7280] border-transparent"
                 }`}
             >
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -297,7 +298,7 @@ export function ProductCard({
                       <path d="M8.53 16.11a6 6 0 016.95 0" />
                       <circle cx="12" cy="20" r="1" fill="#1D4ED8" />
                     </svg>
-                    {hotSpotAllowGb} GB / {lang === "en" ? "day" : "ngày"}
+                    {hotSpotAllowGb} / {durations} {lang === "en" ? "day" : "ngày"}
                   </span>
                 ) : hasHotspot ? (
                   <span
@@ -334,7 +335,7 @@ export function ProductCard({
               <div className="flex items-start justify-between py-[13px] border-b border-[#f3f4f6] gap-3">
                 <span className="text-base sm:text-sm text-[#374151]">{dict.delivery.deliveryTime}</span>
                 <div className="flex flex-col items-end gap-1">
-                  <span className="inline-flex items-center gap-[5px] px-3 py-[5px] bg-[#DCFCE7] border-[1.5px] border-[#86EFAC] rounded-[20px] text-[#15803D] text-sm font-medium">
+                  <span className="inline-flex items-center gap-[5px] px-3 py-[5px] bg-[#DCFCE7] border border-[#86EFAC] rounded-[20px] text-[#15803D] text-sm font-medium">
                     <ClockChip />{dict.delivery.instant}
                   </span>
                   <span className="text-sm text-[#6b7280]">{dict.delivery.instantDesc}</span>
@@ -348,7 +349,7 @@ export function ProductCard({
                     : dict.delivery.activationDesc}
                 </span>
               </div>
-              <div className="flex items-start gap-2.5 mt-2.5 p-3 bg-[#FFFBEB] border-[1.5px] border-[#FDE68A] rounded-sm">
+              <div className="flex items-start gap-2.5 mt-2.5 p-3 bg-[#FFFBEB] border border-[#FDE68A] rounded-sm">
                 <WarnIcon />
                 <p className="text-base sm:text-sm text-[#92400E] leading-normal">
                   <strong className="text-[#78350F]">{dict.note.title}</strong> {dict.note.text}

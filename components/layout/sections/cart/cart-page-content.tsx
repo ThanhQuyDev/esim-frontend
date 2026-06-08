@@ -116,8 +116,8 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
   const promoDiscountVnd = promoApplied && isReferralValid ? promoApplied.discountVnd : 0;
   const vndTotalValue = Math.max(0, vndTotalBeforePromo - promoDiscountVnd);
 
-  // Cashback: 2% of original product price (before any discount/coupon/eXU)
-  const cashbackVnd = Math.round(vndSubtotalValue * 0.02);
+  // Cashback: 2% after coupon + referral (eXU does not affect cashback)
+  const cashbackVnd = Math.round(vndTotalValue * 0.02);
 
   // Reactive referral validation: when selected items change, re-validate
   useEffect(() => {

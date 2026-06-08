@@ -42,7 +42,7 @@ export function CouponHowToUse({ dict, lang }: CouponHowToUseProps) {
                         </div>
                       </div>
                       <div className="flex flex-col gap-3 lg:gap-4 w-full h-full">
-                        <p className="body-lg-medium text-primary scroll-mt-20 xl:scroll-mt-24">
+                        <p className="!text-[1.25rem] body-lg-medium text-primary scroll-mt-20 xl:scroll-mt-24">
                           {step.text}
                         </p>
                       </div>

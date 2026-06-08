@@ -13,6 +13,7 @@ import {
   ShoppingBag,
   ArrowLeft,
   Wallet,
+  Coins,
 } from "lucide-react";
 import {
   getSubtotal,
@@ -146,6 +147,10 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
     ? `${finalVndTotal.toLocaleString("vi-VN")}₫`
     : formatPrice(total);
 
+  // Cashback: 2% after coupon + referral (eXU does not affect cashback)
+  const cashbackBaseVnd = Math.max(0, vndTotal - referralDiscountAmount);
+  const cashbackVnd = Math.round(cashbackBaseVnd * 0.02);
+
   const validate = (): boolean => {
     const newErrors: Record<string, string> = {};
 
@@ -204,6 +209,14 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
         couponCode: coupon?.code || "",
         referralCode: referralApplied ? referralCode : undefined,
         useWalletAmountVnd: actualExuUsed > 0 ? actualExuUsed : undefined,
+        // Pass the current locale and a locale-aware absolute return URL so
+        // OnePay redirects the buyer back to the result page in the same
+        // language they checked out in (vi has no prefix, en is /en/...).
+        locale: lang,
+        returnUrl:
+          typeof window !== "undefined"
+            ? `${window.location.origin}${localizedHref(lang, "payment/result")}`
+            : undefined,
         ...(phone.trim() ? { phoneNumber: phone.trim() } : {}),
         ...(email.trim() ? { email: email.trim() } : {}),
         // Only attach `invoice` when the user opted in. Backend rejects
@@ -704,6 +717,23 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
               </span>
               <span className="text-2xl sm:text-xl font-medium text-text-primary">{checkoutDisplayTotal}</span>
             </div>
+
+            {/* eXU Cashback Preview */}
+            {cashbackVnd > 0 && (
+              <div className="flex items-center gap-3 rounded-xl bg-emerald-50 border border-emerald-100 p-3">
+                <Coins className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-emerald-700">
+                    {lang === "vi" ? "Nhận" : "Earn"} {cashbackVnd.toLocaleString("vi-VN")} eXU
+                  </p>
+                  <p className="text-xs text-emerald-600">
+                    {lang === "vi"
+                      ? "2% hoàn tiền vào ví eXU sau khi thanh toán"
+                      : "2% cashback to your eXU wallet after payment"}
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Complete Order Button */}

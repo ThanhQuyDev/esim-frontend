@@ -166,7 +166,7 @@ function DeviceChecker({ dict, lang }: { dict: DestinationDict; lang: string }) 
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="VD: iPhone 15, Samsung S24, …"
-            className="flex-1 px-3 py-[9px] border-[1.5px] border-[#e5e7eb] rounded-md text-base sm:text-sm text-[#111] placeholder:text-[#9ca3af] outline-none bg-white transition-colors focus:border-[#fff500] font-[inherit]"
+            className="flex-1 px-3 py-[9px] border border-[#e5e7eb] rounded-md text-base sm:text-sm text-[#111] placeholder:text-[#9ca3af] outline-none bg-white transition-colors focus:border-[#fff500] font-[inherit]"
           />
           <button
             onClick={handleCheck}
@@ -254,6 +254,7 @@ export function ProductInfo({ destination, dict, lang, planSource = "destination
   const operatorName = selectedPlan?.operatorName || null;
   const regionDestinations = region?.destinations || [];
   const speed = selectedPlan?.speed || null;
+  const durations = selectedPlan ? selectedPlan?.durationDays : null
 
   return (
     <>
@@ -262,7 +263,7 @@ export function ProductInfo({ destination, dict, lang, planSource = "destination
         <>
           <button
             onClick={() => setCountriesOpen(!countriesOpen)}
-            className="w-full flex items-center justify-between px-3.5 py-2.5 border-[1.5px] border-[#e5e7eb] rounded-lg bg-[#f9fafb] text-sm font-semibold text-[#111] cursor-pointer font-[inherit] transition-colors hover:bg-[#f0f0f0] hover:border-[#c1c7cf] mb-3"
+            className="w-full flex items-center justify-between px-3.5 py-2.5 border border-[#e5e7eb] rounded-lg bg-[#f9fafb] text-sm font-semibold text-[#111] cursor-pointer font-[inherit] transition-colors hover:bg-[#f0f0f0] hover:border-[#c1c7cf] mb-3"
           >
             <span className="flex items-center gap-2">
               <span className="text-sm font-medium text-[#6b7280] border border-[#e5e7eb] rounded px-1.5 py-0.5 bg-white">
@@ -297,11 +298,10 @@ export function ProductInfo({ destination, dict, lang, planSource = "destination
       <div className="grid grid-cols-2 border-b-[1.5px] border-[#e5e7eb] mt-3.5">
         <button
           onClick={() => setActiveTab("features")}
-          className={`py-[11px] px-2 text-sm font-semibold text-center flex items-center justify-center gap-1.5 transition-colors border-b-[2.5px] -mb-[1.5px] cursor-pointer bg-transparent font-[inherit] ${
-            activeTab === "features"
+          className={`py-[11px] px-2 text-sm font-semibold text-center flex items-center justify-center gap-1.5 transition-colors border-b-[2.5px] -mb-[1.5px] cursor-pointer bg-transparent font-[inherit] ${activeTab === "features"
               ? "text-[#111] border-[#111]"
               : "text-[#6b7280] border-transparent"
-          }`}
+            }`}
         >
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
             <circle cx="12" cy="12" r="3" />
@@ -311,11 +311,10 @@ export function ProductInfo({ destination, dict, lang, planSource = "destination
         </button>
         <button
           onClick={() => setActiveTab("delivery")}
-          className={`py-[11px] px-2 text-sm font-semibold text-center flex items-center justify-center gap-1.5 transition-colors border-b-[2.5px] -mb-[1.5px] cursor-pointer bg-transparent font-[inherit] ${
-            activeTab === "delivery"
+          className={`py-[11px] px-2 text-sm font-semibold text-center flex items-center justify-center gap-1.5 transition-colors border-b-[2.5px] -mb-[1.5px] cursor-pointer bg-transparent font-[inherit] ${activeTab === "delivery"
               ? "text-[#111] border-[#111]"
               : "text-[#6b7280] border-transparent"
-          }`}
+            }`}
         >
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M12 2l9 4.5v9L12 22l-9-4.5v-9L12 2z" />
@@ -366,7 +365,7 @@ export function ProductInfo({ destination, dict, lang, planSource = "destination
                   <path d="M8.53 16.11a6 6 0 016.95 0" />
                   <circle cx="12" cy="20" r="1" fill="#1D4ED8" />
                 </svg>
-                {hotSpotAllowGb} GB / {lang === "en" ? "day" : "ngày"}
+                {hotSpotAllowGb} /  {durations} {lang === "en" ? "day" : "ngày"}
               </span>
             ) : hasHotspot ? (
               <span
@@ -392,7 +391,7 @@ export function ProductInfo({ destination, dict, lang, planSource = "destination
           <FeatureRow label={dict.features.localNumber} value={hasLocalNumber} yesText={dict.features.yes} noText={dict.features.no} />
           <FeatureRow label={dict.features.ekyc} value={hasEkyc} yesText={dict.features.yes} noText={dict.features.no} />
           <FeatureRow label={dict.features.topup} value={hasTopup} yesText={dict.features.yes} noText={dict.features.no} />
-      </div>
+        </div>
       )}
 
       {activeTab === "delivery" && (
@@ -400,7 +399,7 @@ export function ProductInfo({ destination, dict, lang, planSource = "destination
           <div className="flex items-start justify-between py-[13px] border-b border-[#f3f4f6] gap-3">
             <span className="text-base sm:text-sm text-[#374151]">{dict.delivery.deliveryTime}</span>
             <div className="flex flex-col items-end gap-1">
-              <span className="inline-flex items-center gap-[5px] px-3 py-[5px] bg-[#DCFCE7] border-[1.5px] border-[#86EFAC] rounded-[20px] text-[#15803D] text-sm font-medium">
+              <span className="inline-flex items-center gap-[5px] px-3 py-[5px] bg-[#DCFCE7] border border-[#86EFAC] rounded-[20px] text-[#15803D] text-sm font-medium">
                 <ClockChip />{dict.delivery.instant}
               </span>
               <span className="text-sm text-[#6b7280]">{dict.delivery.instantDesc}</span>
@@ -415,7 +414,7 @@ export function ProductInfo({ destination, dict, lang, planSource = "destination
             </span>
           </div>
           {/* Warning note */}
-          <div className="flex items-start gap-2.5 mt-2.5 p-3 bg-[#FFFBEB] border-[1.5px] border-[#FDE68A] rounded-lg">
+          <div className="flex items-start gap-2.5 mt-2.5 p-3 bg-[#FFFBEB] border border-[#FDE68A] rounded-lg">
             <WarnIcon />
             <p className="text-base sm:text-sm text-[#92400E] leading-normal">
               <strong className="text-[#78350F]">{dict.note.title}</strong> {dict.note.text}

@@ -74,7 +74,7 @@ export function MobileCta({
         {/* Add to Cart */}
         <button
           onClick={handleAddToCart}
-          className="flex items-center justify-center gap-2 py-[15px] rounded-[30px] border-[1.5px] border-[#1a1a1a] bg-white text-base font-semibold cursor-pointer text-[#1a1a1a] font-[inherit] transition-all active:bg-[#1a1a1a] active:text-white"
+          className="flex items-center justify-center gap-2 py-[15px] rounded-[30px] border border-[#1a1a1a] bg-white text-base font-semibold cursor-pointer text-[#1a1a1a] font-[inherit] transition-all active:bg-[#1a1a1a] active:text-white"
         >
           <svg
             width="16"
@@ -96,7 +96,7 @@ export function MobileCta({
         {/* Buy Now */}
         <button
           onClick={handleBuyNow}
-          className="flex items-center justify-center py-[15px] rounded-[30px] border-[1.5px] border-[#D1B700] bg-[#FFF500] text-[14.5px] font-medium cursor-pointer font-[inherit] text-[#1a1a1a] transition-all active:bg-[#D1B700]"
+          className="flex items-center justify-center py-[15px] rounded-[30px] border border-[#D1B700] bg-[#FFF500] text-[14.5px] font-semibold cursor-pointer font-[inherit] text-[#1a1a1a] transition-all active:bg-[#D1B700]"
         >
           {dict.buyNow} — {selectedPlan ? formatVnd(totalPrice) : "—"}
         </button>

@@ -60,12 +60,12 @@ export function PlanConfig({
       <div className="grid grid-cols-2 gap-5 items-start mb-3.5">
         {/* Days selector */}
         <div>
-          <label className="text-sm font-medium tracking-[0.07em] uppercase block mb-2">{dict.daysLabel}</label>
+          <label className="text-xs font-medium tracking-[0.07em] uppercase block mb-2">{dict.daysLabel}</label>
           <button
             type="button"
             onClick={() => isFlexibleDays && setCalOpen(true)}
             disabled={isFixed || !isFlexibleDays}
-            className={`w-full flex items-center justify-between px-1 border-[1.5px] rounded-[30px] h-[42px] transition-colors ${isFixed
+            className={`w-full flex items-center justify-between px-1 border rounded-[30px] h-[42px] transition-colors ${isFixed
                 ? "border-[#e5e7eb] bg-[#f9fafb] cursor-not-allowed opacity-60"
                 : isFlexibleDays
                   ? "border-[#e5e7eb] bg-white cursor-pointer hover:border-[#9ca3af]"
@@ -89,8 +89,8 @@ export function PlanConfig({
 
         {/* Quantity stepper */}
         <div>
-          <label className="text-sm font-medium tracking-[0.07em] uppercase block mb-2">{dict.quantity}</label>
-          <div className="flex items-center border-[1.5px] border-[#e5e7eb] rounded-[30px] h-[42px]">
+          <label className="text-xs font-medium tracking-[0.07em] uppercase block mb-2">{dict.quantity}</label>
+          <div className="flex items-center border border-[#e5e7eb] rounded-[30px] h-[42px]">
             <button
               type="button"
               onClick={() => onQuantityChange(Math.max(1, quantity - 1))}
@@ -113,14 +113,14 @@ export function PlanConfig({
       </div>
 
       {/* Day chips — below the grid */}
-      {!isFixed && dayOptions.length > 0 && (
+      {(!isFixed || selectedPlan?.isLocalInventory ) && dayOptions.length > 0 && (
         <div className="flex gap-[7px] flex-wrap">
           {dayOptions.map((d) => (
             <button
               key={d}
               type="button"
               onClick={() => onDaysChange(d)}
-              className={`h-[34px] min-w-[34px] px-[11px] flex items-center justify-center border-[1.5px] rounded-full text-sm font-semibold cursor-pointer font-[inherit] transition-colors ${days === d
+              className={`h-[34px] min-w-[34px] px-[11px] flex items-center justify-center border rounded-full text-sm font-semibold cursor-pointer font-[inherit] transition-colors ${days === d
                   ? "border-[#F5C518] bg-[#FEF9E7] text-[#111]"
                   : "border-[#e5e7eb] bg-white text-[#374151] hover:border-[#111]"
                 }`}

@@ -185,7 +185,7 @@ export function CalendarPicker({
             </button>
             <button
               onClick={handleConfirm}
-              className="px-4 py-2 rounded-lg text-sm font-semibold cursor-pointer bg-[#fff500] border-[1.5px] border-[#d1b700] text-black hover:bg-[#d1b700] transition-colors"
+              className="px-4 py-2 rounded-lg text-sm font-semibold cursor-pointer bg-[#fff500] border border-[#d1b700] text-black hover:bg-[#d1b700] transition-colors"
             >
               {dict.calConfirm} {selectedDays > 0 && `(${selectedDays} ${dict.daysUnit.toLowerCase()})`}
             </button>

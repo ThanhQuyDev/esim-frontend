@@ -108,7 +108,7 @@ export function BuyActions({ selectedPlan, days, quantity, isFixed, dict, lang, 
       <div className="grid grid-cols-[1fr_1.4fr] gap-2.5 mb-3">
         <button
           onClick={handleAddToCart}
-          className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-full border border-[#111] bg-white text-[.875rem] font-semibold cursor-pointer text-[#111] font-[inherit] transition-all hover:bg-[#111] hover:text-white whitespace-nowrap"
+          className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-full border border-[#111] bg-white text-base font-semibold cursor-pointer text-[#111] font-[inherit] transition-all hover:bg-[#111] hover:text-white whitespace-nowrap"
         >
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="9" cy="21" r="1" />
@@ -119,7 +119,7 @@ export function BuyActions({ selectedPlan, days, quantity, isFixed, dict, lang, 
         </button>
         <button
           onClick={handleBuyNow}
-          className="flex items-center justify-center px-3 py-2.5 rounded-full border border-[#d1b700] bg-[#fff500] text-[.875rem] font-medium cursor-pointer font-[inherit] transition-all hover:bg-[#d1b700] whitespace-nowrap"
+          className="flex items-center justify-center px-3 py-2.5 rounded-full border border-[#d1b700] bg-[#fff500] text-base font-semibold cursor-pointer font-[inherit] transition-all hover:bg-[#d1b700] whitespace-nowrap"
         >
           {dict.buyNow} — {selectedPlan ? formatVnd(totalPrice) : "—"}
         </button>

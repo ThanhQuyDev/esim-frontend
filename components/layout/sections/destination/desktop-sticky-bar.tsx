@@ -164,7 +164,7 @@ export function DesktopStickyBar({
         {/* Right: Quantity + Actions */}
         <div className="flex items-center gap-3 shrink-0">
           {/* Quantity stepper */}
-          <div className="flex items-center border-[1.5px] border-[#e5e7eb] rounded-[30px] h-[40px]">
+          <div className="flex items-center border border-[#e5e7eb] rounded-[30px] h-[40px]">
             <button
               onClick={() => onQuantityChange(Math.max(1, quantity - 1))}
               className="w-8 h-8 border-none rounded-full bg-[#f9fafb] text-lg font-semibold cursor-pointer flex items-center justify-center text-[#1a1a1a] mx-[3px] shrink-0 transition-colors hover:bg-[#e5e7eb]"
@@ -183,7 +183,7 @@ export function DesktopStickyBar({
           {/* Add to Cart */}
           <button
             onClick={handleAddToCart}
-            className="flex items-center justify-center gap-2 px-5 h-[40px] rounded-[30px] border-[1.5px] border-[#1a1a1a] bg-white text-base sm:text-sm font-semibold cursor-pointer text-[#1a1a1a] transition-all hover:bg-[#1a1a1a] hover:text-white"
+            className="flex items-center justify-center gap-2 px-5 h-[40px] rounded-[30px] border border-[#1a1a1a] bg-white text-base sm:text-sm font-semibold cursor-pointer text-[#1a1a1a] transition-all hover:bg-[#1a1a1a] hover:text-white"
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="9" cy="21" r="1" />
@@ -196,7 +196,7 @@ export function DesktopStickyBar({
           {/* Buy Now */}
           <button
             onClick={handleAddToCart}
-            className="flex items-center justify-center px-6 h-[40px] rounded-[30px] border-[1.5px] border-[#D1B700] bg-[#FFF500] text-base sm:text-sm font-medium cursor-pointer text-[#1a1a1a] transition-all hover:bg-[#D1B700]"
+            className="flex items-center justify-center px-6 h-[40px] rounded-[30px] border border-[#D1B700] bg-[#FFF500] text-base sm:text-sm font-medium cursor-pointer text-[#1a1a1a] transition-all hover:bg-[#D1B700]"
           >
             {dict.buyNow}
           </button>

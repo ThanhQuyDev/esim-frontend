@@ -41,7 +41,7 @@ function MobilePlanChip({
     <button
       type="button"
       onClick={onSelect}
-      className={`inline-flex items-center gap-[7px] px-[18px] py-2.5 rounded-[30px] text-base font-medium border-[1.5px] cursor-pointer transition-colors whitespace-nowrap font-[inherit] ${isSelected
+      className={`inline-flex items-center gap-[7px] px-[18px] py-2.5 rounded-[30px] text-base font-medium border cursor-pointer transition-colors whitespace-nowrap font-[inherit] ${isSelected
           ? "bg-white text-[#1a1a1a] border-[#1a1a1a] font-semibold shadow-[0_0_0_1px_#1a1a1a]"
           : "bg-white text-[#374151] border-[#e5e7eb] active:bg-[#f3f4f6]"
         }`}
@@ -76,7 +76,7 @@ function MobileGbChip({
     <button
       type="button"
       onClick={onSelect}
-      className={`inline-flex items-center gap-[7px] px-[18px] py-2.5 rounded-[30px] text-base font-medium border-[1.5px] cursor-pointer transition-colors whitespace-nowrap font-[inherit] ${isSelected
+      className={`inline-flex items-center gap-[7px] px-[18px] py-2.5 rounded-[30px] text-base font-medium border cursor-pointer transition-colors whitespace-nowrap font-[inherit] ${isSelected
           ? "bg-white text-[#1a1a1a] border-[#1a1a1a] font-semibold shadow-[0_0_0_1px_#1a1a1a]"
           : "bg-white text-[#374151] border-[#e5e7eb] active:bg-[#f3f4f6]"
         }`}
@@ -116,7 +116,7 @@ function MobileUnlimitedPill({
     <button
       type="button"
       onClick={onSelect}
-      className={`relative flex items-center w-full max-w-full min-w-0 px-3.5 py-3.5 rounded-[14px] border-[1.5px] cursor-pointer transition-all font-[inherit] overflow-hidden ${isSelected
+      className={`relative flex items-center w-full max-w-full min-w-0 px-3.5 py-3.5 rounded-[14px] border cursor-pointer transition-all font-[inherit] overflow-hidden ${isSelected
           ? "border-[#1a1a1a] shadow-[0_0_0_1px_#1a1a1a]"
           : "bg-white border-[#e5e7eb] active:border-[#9ca3af]"
         }`}
@@ -169,7 +169,7 @@ function PlanGroupHeader({ icon, label }: { icon: React.ReactNode; label: string
   );
 }
 
-type ActiveSection = "fixed" | "daily" | "unlimited";
+type ActiveSection = "local" | "fixed" | "daily" | "unlimited";
 
 export function MobilePlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }: MobilePlanTabsProps) {
   const [speedTab, setSpeedTab] = useState<"normal" | "high">("normal");
@@ -177,9 +177,16 @@ export function MobilePlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }
   const [dailyGb, setDailyGb] = useState<number>(0);
   const [normalGb, setNormalGb] = useState<number>(0);
   const [highSpeedFup, setHighSpeedFup] = useState<string>("");
+  const [localGb, setLocalGb] = useState<number>(0);
 
   const lang = dict.daysUnit?.toLowerCase().startsWith("d") ? "en" : "vi";
 
+  const localEsimPlans = plans.localEsim ?? [];
+  const hasLocalEsim = localEsimPlans.length > 0;
+  const localProviderLabel = useMemo(() => {
+    const first = localEsimPlans[0];
+    return (first?.provider || "").toUpperCase() || "LOCAL";
+  }, [localEsimPlans]);
   const hasDataPlans = plans.dataPlans.length > 0;
   const hasSlowUnlimited = plans.slowUnlimited.length > 0;
   const hasFastUnlimited = plans.fastUnlimited.length > 0;
@@ -197,6 +204,13 @@ export function MobilePlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }
   }, [hasSlowUnlimited, plans.slowUnlimited, dailyGb]);
 
   useEffect(() => {
+    if (hasLocalEsim && localGb === 0) {
+      const gbs = getUniqueDataMb(localEsimPlans);
+      if (gbs.length > 0) setLocalGb(gbs[0]);
+    }
+  }, [hasLocalEsim, localEsimPlans, localGb]);
+
+  useEffect(() => {
     if (hasFastUnlimited && normalGb === 0 && uniqueNormalGbs.length > 0) {
       setNormalGb(uniqueNormalGbs[0]);
     }
@@ -211,6 +225,9 @@ export function MobilePlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }
   useEffect(() => {
     if (activeSection === "daily" && hasSlowUnlimited && dailyGb > 0) {
       const best = findBestPlan(plans.slowUnlimited, dailyGb, days);
+      if (best) onSelectPlan(best);
+    } else if (activeSection === "local" && hasLocalEsim && localGb > 0) {
+      const best = findBestPlan(localEsimPlans, localGb, days);
       if (best) onSelectPlan(best);
     } else if (activeSection === "unlimited" && speedTab === "normal" && hasFastUnlimited && normalGb > 0) {
       const best = findBestPlan(plans.fastUnlimited, normalGb, days);
@@ -229,6 +246,10 @@ export function MobilePlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }
     setActiveSection("daily");
     onSelectPlan(plan);
   };
+  const handleSelectLocal = (plan: Plan) => {
+    setActiveSection("local");
+    onSelectPlan(plan);
+  };
   const handleSelectUnlimited = (plan: Plan) => {
     setActiveSection("unlimited");
     onSelectPlan(plan);
@@ -242,6 +263,38 @@ export function MobilePlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }
         </span>
         <span className="text-base font-medium text-[#1a1a1a]">{lang === "en" ? "Pick a plan" : "Chọn gói cước"}</span>
       </div>
+
+      {hasLocalEsim && (
+        <div className="mb-5">
+          <PlanGroupHeader
+            icon={
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2" strokeLinecap="round">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+            }
+            label={localProviderLabel}
+          />
+          <div className="flex flex-wrap gap-2">
+            {getUniqueDataMb(localEsimPlans).map((gb) => {
+              const best = findBestPlan(localEsimPlans, gb, days);
+              return (
+                <MobileGbChip
+                  key={gb}
+                  gb={gb}
+                  isSelected={activeSection === "local" && localGb === gb}
+                  bestPlan={best}
+                  lang={lang}
+                  onSelect={() => {
+                    setLocalGb(gb);
+                    if (best) handleSelectLocal(best);
+                  }}
+                />
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {hasDataPlans && (
         <div className="mb-5">
@@ -313,7 +366,7 @@ export function MobilePlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }
             label={dict.planSections.unlimited}
           />
 
-          <div className="flex border-[1.5px] border-[#e5e7eb] rounded-[30px] bg-[#f9fafb] p-[3px] gap-[3px] mb-[5px]">
+          <div className="flex border border-[#e5e7eb] rounded-[30px] bg-[#f9fafb] p-[3px] gap-[3px] mb-[5px]">
             {hasFastUnlimited && (
               <button
                 type="button"

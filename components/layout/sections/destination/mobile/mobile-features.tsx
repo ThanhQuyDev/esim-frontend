@@ -148,7 +148,7 @@ function MobileDeviceChecker({ dict, lang }: { dict: DestinationDict; lang: stri
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="VD: iPhone 15, Samsung S24…"
-            className="flex-1 px-4 py-3 border-[1.5px] border-[#e5e7eb] rounded-[30px] text-base font-[inherit] text-[#1a1a1a] outline-none bg-white focus:border-[#1a1a1a]"
+            className="flex-1 px-4 py-3 border border-[#e5e7eb] rounded-[30px] text-base font-[inherit] text-[#1a1a1a] outline-none bg-white focus:border-[#1a1a1a]"
           />
           <button
             onClick={handleCheck}
@@ -401,7 +401,7 @@ export function MobileFeatures({
         <div className="flex items-center justify-between py-[13px] border-b border-[#f3f4f6] gap-3">
           <span className="text-sm text-[#374151]">{dict.delivery.deliveryTime}</span>
           <div className="flex flex-col items-end gap-[5px]">
-            <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#DCFCE7] border-[1.5px] border-[#86EFAC] rounded-[20px] text-[.875rem] font-bold text-[#15803D] whitespace-nowrap">
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#DCFCE7] border border-[#86EFAC] rounded-[20px] text-[.875rem] font-bold text-[#15803D] whitespace-nowrap">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                 <circle cx="12" cy="12" r="10" />
                 <polyline points="12 6 12 12 16 14" />
@@ -423,7 +423,7 @@ export function MobileFeatures({
         </div>
 
         {/* Warning box */}
-        <div className="flex items-start gap-2.5 mt-[13px] p-[13px] bg-[#FFFBEB] border-[1.5px] border-[#FDE68A] rounded-sm">
+        <div className="flex items-start gap-2.5 mt-[13px] p-[13px] bg-[#FFFBEB] border border-[#FDE68A] rounded-sm">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#D97706" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 mt-px">
             <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
             <line x1="12" y1="9" x2="12" y2="13" />

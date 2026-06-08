@@ -47,7 +47,7 @@ export function SimplePlanList({ plans, selectedPlan, onSelectPlan, dict }: Simp
               type="button"
               key={plan.id}
               onClick={() => onSelectPlan(plan)}
-              className={`inline-flex items-center gap-[7px] px-[15px] py-[9px] rounded-[30px] text-[.875rem] font-medium border-[1.5px] cursor-pointer transition-colors whitespace-nowrap font-[inherit] ${
+              className={`inline-flex items-center gap-[7px] px-[15px] py-[9px] rounded-[30px] text-[.875rem] font-medium border cursor-pointer transition-colors whitespace-nowrap font-[inherit] ${
                 isSelected
                   ? "bg-white text-[#1a1a1a] border-[#1a1a1a] font-semibold shadow-[0_0_0_1px_#1a1a1a]"
                   : "bg-white text-[#374151] border-[#e5e7eb] hover:bg-[#f3f4f6] hover:border-[#9ca3af]"

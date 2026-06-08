@@ -453,13 +453,33 @@ export async function searchDestinations(
 }
 
 export async function getFaqs(
-  options: FetchOptions = {}
+  options: FetchOptions & { urls?: string[] } = {}
 ): Promise<PaginatedResponse<Faq>> {
-  // `/api/v1/faqs/by-context` filters by:
-  //   - `url`    : the current page URL/pathname
-  //   - `blogId` : the blog id (only on blog detail pages)
-  // Callers should supply `{ url }` (and optionally `{ blogId }`) so the
-  // backend returns only FAQs scoped to the current screen.
+  const { urls, ...rest } = options;
+
+  if (urls && urls.length > 0) {
+    const results = await Promise.all(
+      urls.map((u) =>
+        apiFetch<PaginatedResponse<Faq>>(
+          "/api/v1/faqs/by-context",
+          { limit: 6, ...rest, url: u },
+          300
+        ).catch(() => ({ data: [], hasNextPage: false }) as PaginatedResponse<Faq>)
+      )
+    );
+    const seen = new Set<string>();
+    const merged: Faq[] = [];
+    for (const res of results) {
+      for (const faq of normalizeListResponse<Faq>(res)) {
+        if (!seen.has(faq.id)) {
+          seen.add(faq.id);
+          merged.push(faq);
+        }
+      }
+    }
+    return { data: merged, hasNextPage: false };
+  }
+
   return apiFetch<PaginatedResponse<Faq>>(
     "/api/v1/faqs/by-context",
     { limit: 6, ...options },
@@ -814,20 +834,25 @@ export interface SeoConfig {
 // ===== SEO Config API =====
 
 export async function fetchSeoConfigByUrl(
-  url: string
+  url: string | string[]
 ): Promise<SeoConfig | null> {
-  try {
-    const encodedUrl = encodeURIComponent(url);
-    const res = await fetch(
-      `${API_BASE_URL}/api/v1/seo-configs/by-url?url=${encodedUrl}`,
-      { next: { revalidate: 300 } }
-    );
-    if (!res.ok) return null;
-    const data: SeoConfig = await res.json();
-    return data.isActive ? data : null;
-  } catch {
-    return null;
+  const urls = Array.isArray(url) ? url : [url];
+
+  for (const u of urls) {
+    try {
+      const encodedUrl = encodeURIComponent(u);
+      const res = await fetch(
+        `${API_BASE_URL}/api/v1/seo-configs/by-url?url=${encodedUrl}`,
+        { next: { revalidate: 300 } }
+      );
+      if (!res.ok) continue;
+      const data: SeoConfig = await res.json();
+      if (data.isActive) return data;
+    } catch {
+      continue;
+    }
   }
+  return null;
 }
 
 export interface HelpCenterResponse {

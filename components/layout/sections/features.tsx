@@ -97,9 +97,9 @@ export function FeaturesSection({ dict, lang, features = [] }: FeaturesSectionPr
                             <Image
                               src={feature.icon}
                               alt={feature.title}
-                              width={32}
-                              height={32}
-                              className="lg:w-8 lg:h-8 w-6 h-6"
+                              width={36}
+                              height={36}
+                              className="lg:w-9 lg:h-9 w-6 h-6"
                               unoptimized
                             />
                           ) : (

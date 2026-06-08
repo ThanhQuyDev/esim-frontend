@@ -124,7 +124,7 @@ export function MobileHero({ destination, dict, lang, region, operatorName }: Mo
             <button
               type="button"
               onClick={() => setCountriesOpen(true)}
-              className="w-full flex items-center gap-2 px-3 py-2.5 border-[1.5px] border-[#e5e7eb] rounded-[40px] bg-white cursor-pointer font-[inherit] active:bg-[#f9fafb] overflow-hidden"
+              className="w-full flex items-center gap-2 px-3 py-2.5 border border-[#e5e7eb] rounded-[40px] bg-white cursor-pointer font-[inherit] active:bg-[#f9fafb] overflow-hidden"
             >
               <span className="flex gap-1 shrink-0">
                 {previewCountries.map((c, i) =>

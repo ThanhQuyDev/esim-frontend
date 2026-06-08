@@ -4,7 +4,10 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import Link from "next/link";
 import { usePathname as useNextPathname } from "next/navigation";
 import { usePathname as useIntlPathname, useRouter as useIntlRouter } from "@/i18n/navigation";
-import { resolveLangSwitchPath } from "@/i18n/lang-switch";
+import {
+  resolveDynamicLangSwitchPath,
+  resolveLangSwitchPath,
+} from "@/i18n/lang-switch";
 import * as Dialog from "@radix-ui/react-dialog";
 import { cn } from "@/lib/utils";
 import { SailyLogo } from "@/components/icons/saily-logo";
@@ -161,7 +164,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Gói dữ liệu eSIM cho khách du lịch tại Việt Nam."
             : "Data plans for travelers in Vietnam.",
-          href: `/${lang}/viet-nam`,
+          href: isVi ? '/viet-nam' : `/${lang}/viet-nam`,
         },
         {
           icon: "pen",
@@ -169,7 +172,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Giải pháp eSIM dành riêng cho nhà sáng tạo nội dung."
             : "eSIM solutions tailored for content creators.",
-          href: `/${lang}/all-destinations`,
+          href: localizedHref(lang, 'all-destinations'),
         },
       ],
       col2Label: isVi ? "Công cụ" : "Tools",
@@ -180,7 +183,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Ước tính lượng dữ liệu bạn cần cho chuyến đi."
             : "Estimate the data you'll need for your trip.",
-          href: isVi ? `/${lang}/cong-cu-tinh-data` : `/${lang}/data-calculator`,
+          href: localizedHref(lang, 'data-calculator'),
         },
         {
           icon: "mobile-check",
@@ -188,7 +191,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Kiểm tra thiết bị của bạn có hỗ trợ eSIM hay không."
             : "Check if your device supports eSIM.",
-          href: isVi ? `/${lang}/thiet-bi-ho-tro-esim` : `/${lang}/esim-supported-devices`,
+          href: localizedHref(lang, 'esim-supported-devices'),
         },
       ],
       explore: [
@@ -197,7 +200,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Khám phá tính năng bảo vệ kỹ thuật số của esim.vn."
             : "Discover esim.vn's built-in digital protection.",
-          href: `/${lang}/all-destinations`,
+          href: localizedHref(lang, 'all-destinations'),
           image:
             "https://sb.nordcdn.com/m/7bf573d226cb4b2d/original/mega-menu-explore-security-features.png",
           imageAlt: "A man uses esim.vn's built-in digital protection.",
@@ -207,7 +210,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Quản lý tất cả gói eSIM của đội nhóm."
             : "Manage all your team's eSIM plans.",
-          href: `/${lang}/all-destinations`,
+          href: localizedHref(lang, 'all-destinations'),
           image:
             "https://sb.nordcdn.com/m/37ec43195ff7cbbd/original/mega-menu-explore-b2b-admin-panel.png",
           imageAlt:
@@ -218,7 +221,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Dữ liệu không giới hạn, hoàn 8% tín dụng và nhiều ưu đãi."
             : "Unlimited data, 8% back in credits, and extra perks.",
-          href: `/${lang}/all-destinations`,
+          href: localizedHref(lang, 'all-destinations'),
           image:
             "https://sb.nordcdn.com/m/681452996b3d756b/original/mega-menu-explore-ultra-plan.png",
           imageAlt: "The Ultra plan tab on the esim.vn app.",
@@ -227,11 +230,11 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
       bottomLeft: {
         icon: true,
         text: isVi ? "eSIM là gì?" : "What is an eSIM?",
-        href: isVi ? `/${lang}/esim-la-gi` : `/${lang}/what-is-esim`,
+        href: localizedHref(lang, 'what-is-esim'),
       },
       bottomRight: {
-        text: isVi ? "Tải ứng dụng" : "Download App",
-        href: `/${lang}/all-destinations`,
+        text: isVi ? "Tất cả điểm đến" : "All destinations",
+        href: localizedHref(lang, 'all-destinations'),
       },
     },
     resources: {
@@ -242,7 +245,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Tìm hiểu cách eSIM hoạt động và tại sao hữu ích."
             : "Discover how an eSIM works and why it's useful.",
-          href: isVi ? `/${lang}/esim-la-gi` : `/${lang}/what-is-esim`,
+          href: localizedHref(lang, 'what-is-esim'),
         },
         {
           icon: "pen",
@@ -250,7 +253,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Đọc bài viết, hướng dẫn và cập nhật sản phẩm."
             : "Read articles, guides, and product updates.",
-          href: `/${lang}/blog`,
+          href: localizedHref(lang, 'blog'),
         },
         {
           icon: "circle-user",
@@ -258,7 +261,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Tìm hiểu thêm về chúng tôi."
             : "Learn more about who we are and what we do.",
-          href: isVi ? `/${lang}/gioi-thieu` : `/${lang}/about-us`,
+          href: localizedHref(lang, 'about-us'),
         },
       ],
       col2: [
@@ -268,7 +271,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Xem mọi người nói gì về chúng tôi!"
             : "Find out what people are saying about us!",
-          href: `/${lang}/review`,
+          href: localizedHref(lang, 'review'),
         },
         {
           icon: "globe",
@@ -276,7 +279,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Tin tức mới nhất và tài nguyên thương hiệu."
             : "The latest news, insights, and brand assets.",
-          href: isVi ? `/${lang}/khu-vuc-bao-chi` : `/${lang}/press-area`,
+          href: localizedHref(lang, 'press-area'),
         },
       ],
       explore: [
@@ -285,7 +288,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Khám phá tính năng bảo vệ kỹ thuật số của esim.vn."
             : "Discover esim.vn's built-in digital protection.",
-          href: `/${lang}/all-destinations`,
+          href: localizedHref(lang, 'all-destinations'),
           image:
             "https://sb.nordcdn.com/m/7bf573d226cb4b2d/original/mega-menu-explore-security-features.png",
           imageAlt: "A man uses esim.vn's built-in digital protection.",
@@ -295,7 +298,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Tìm hiểu bạn cần bao nhiêu dữ liệu cho chuyến đi."
             : "Find out how much data you'll need on your trip.",
-          href: isVi ? `/${lang}/cong-cu-tinh-data` : `/${lang}/data-calculator`,
+          href: localizedHref(lang, 'data-calculator'),
           image:
             "https://sb.nordcdn.com/m/6c224dbf48f13441/original/mega-menu-explore-data-usage-calculator.png",
           imageAlt: "A woman uses esim.vn's data usage calculator.",
@@ -305,7 +308,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Dữ liệu không giới hạn, hoàn 8% tín dụng và nhiều ưu đãi."
             : "Unlimited data, 8% back in credits, and extra perks.",
-          href: `/${lang}/all-destinations`,
+          href: localizedHref(lang, 'all-destinations'),
           image:
             "https://sb.nordcdn.com/m/681452996b3d756b/original/mega-menu-explore-ultra-plan.png",
           imageAlt: "The Ultra plan tab on the esim.vn app.",
@@ -316,11 +319,11 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
         text: isVi
           ? "Thiết bị của bạn có tương thích eSIM không?"
           : "Is your device eSIM compatible?",
-        href: isVi ? `/${lang}/thiet-bi-ho-tro-esim` : `/${lang}/esim-supported-devices`,
+        href: localizedHref(lang, 'esim-supported-devices'),
       },
       bottomRight: {
         text: isVi ? "Tải ứng dụng" : "Download App",
-        href: `/${lang}/all-destinations`,
+        href: localizedHref(lang, 'all-destinations'),
       },
     },
     offers: {
@@ -331,7 +334,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Chia sẻ esim.vn với bạn bè và nhận thưởng."
             : "Share esim.vn with friends and earn rewards.",
-          href: `/${lang}/all-destinations`,
+          href: localizedHref(lang, 'refer-a-friend'),
         },
       ],
       col2: [
@@ -341,7 +344,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Nhận ưu đãi tốt nhất và tiết kiệm dữ liệu eSIM!"
             : "Get the best deals and save on eSIM data!",
-          href: isVi ? `/${lang}/ma-giam-gia` : `/${lang}/coupon`,
+          href: localizedHref(lang, 'coupon'),
         },
       ],
       explore: [
@@ -350,7 +353,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Khám phá tính năng bảo vệ kỹ thuật số của esim.vn."
             : "Discover esim.vn's built-in digital protection.",
-          href: `/${lang}/all-destinations`,
+          href: localizedHref(lang, 'all-destinations'),
           image:
             "https://sb.nordcdn.com/m/7bf573d226cb4b2d/original/mega-menu-explore-security-features.png",
           imageAlt: "A man uses esim.vn's built-in digital protection.",
@@ -360,7 +363,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Tìm hiểu bạn cần bao nhiêu dữ liệu cho chuyến đi."
             : "Find out how much data you'll need on your trip.",
-          href: isVi ? `/${lang}/cong-cu-tinh-data` : `/${lang}/data-calculator`,
+          href: localizedHref(lang, 'data-calculator'),
           image:
             "https://sb.nordcdn.com/m/6c224dbf48f13441/original/mega-menu-explore-data-usage-calculator.png",
           imageAlt: "A woman uses esim.vn's data usage calculator.",
@@ -370,7 +373,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Dữ liệu không giới hạn, hoàn 8% tín dụng và nhiều ưu đãi."
             : "Unlimited data, 8% back in credits, and extra perks.",
-          href: `/${lang}/all-destinations`,
+          href: localizedHref(lang, 'all-destinations'),
           image:
             "https://sb.nordcdn.com/m/681452996b3d756b/original/mega-menu-explore-ultra-plan.png",
           imageAlt: "The Ultra plan tab on the esim.vn app.",
@@ -379,11 +382,11 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
       bottomLeft: {
         icon: true,
         text: isVi ? "eSIM là gì?" : "What is an eSIM?",
-        href: isVi ? `/${lang}/esim-la-gi` : `/${lang}/what-is-esim`,
+        href: localizedHref(lang, 'what-is-esim'),
       },
       bottomRight: {
         text: isVi ? "Tải ứng dụng" : "Download App",
-        href: `/${lang}/all-destinations`,
+        href: localizedHref(lang, 'all-destinations'),
       },
     },
     help: {
@@ -429,7 +432,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Khám phá tính năng bảo vệ kỹ thuật số của esim.vn."
             : "Discover esim.vn's built-in digital protection.",
-          href: `/${lang}/all-destinations`,
+          href: localizedHref(lang, 'all-destinations'),
           image:
             "https://sb.nordcdn.com/m/7bf573d226cb4b2d/original/mega-menu-explore-security-features.png",
           imageAlt: "A man uses esim.vn's built-in digital protection.",
@@ -439,7 +442,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Tìm hiểu bạn cần bao nhiêu dữ liệu cho chuyến đi."
             : "Find out how much data you'll need on your trip.",
-          href: isVi ? `/${lang}/cong-cu-tinh-data` : `/${lang}/data-calculator`,
+          href: localizedHref(lang, 'data-calculator'),
           image:
             "https://sb.nordcdn.com/m/6c224dbf48f13441/original/mega-menu-explore-data-usage-calculator.png",
           imageAlt: "A woman uses esim.vn's data usage calculator.",
@@ -449,7 +452,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Dữ liệu không giới hạn, hoàn 8% tín dụng và nhiều ưu đãi."
             : "Unlimited data, 8% back in credits, and extra perks.",
-          href: `/${lang}/all-destinations`,
+          href: localizedHref(lang, 'all-destinations'),
           image:
             "https://sb.nordcdn.com/m/681452996b3d756b/original/mega-menu-explore-ultra-plan.png",
           imageAlt: "The Ultra plan tab on the esim.vn app.",
@@ -458,17 +461,21 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
       bottomLeft: {
         icon: true,
         text: isVi ? "eSIM là gì?" : "What is an eSIM?",
-        href: isVi ? `/${lang}/esim-la-gi` : `/${lang}/what-is-esim`,
+        href: localizedHref(lang, 'what-is-esim'),
       },
       bottomRight: {
         text: isVi ? "Tải ứng dụng" : "Download App",
-        href: `/${lang}/all-destinations`,
+        href: localizedHref(lang, 'all-destinations'),
       },
     },
   };
 }
 
 const NAV_ITEMS = ["product", "resources", "offers", "help"] as const;
+
+// localStorage key remembering that the user closed the promo/announcement bar
+// so it stays hidden across reloads until cleared.
+const ANNOUNCEMENT_DISMISSED_KEY = "esim_announcement_dismissed";
 
 /* ===== Main Navbar ===== */
 
@@ -498,9 +505,18 @@ export function Navbar(props: NavbarProps) {
 
 function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
   const pathname = useNextPathname();
-  const isLandingPage = pathname === `/${lang}` || pathname === `/${lang}/`;
-  const isDestinationPage = pathname.match(/\/[a-z]{2}\/[a-z0-9-]+$/);
+  const isVi = lang === 'vi';
+  const homeHref = isVi ? '/' : `/${lang}`;
+  const isLandingPage = pathname === homeHref || pathname === `${homeHref}/`;
   const [announcementVisible, setAnnouncementVisible] = useState(true);
+  const dismissAnnouncement = useCallback(() => {
+    setAnnouncementVisible(false);
+    try {
+      localStorage.setItem(ANNOUNCEMENT_DISMISSED_KEY, "true");
+    } catch {
+      // localStorage unavailable — dismissal just won't persist.
+    }
+  }, []);
   const [hasScrolled, setHasScrolled] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [destinationsOpen, setDestinationsOpen] = useState(false);
@@ -528,12 +544,27 @@ function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
   const intlPathname = useIntlPathname();
 
   const handleLangChange = useCallback((newLocale: string) => {
-    // For dynamic routes (e.g. /blog/[slug]) next-intl needs route params to
-    // localize the URL. We don't have them here, so fall back to a safe parent
-    // path instead of throwing "Insufficient params provided for localized pathname".
+    // Destination/region pages (`/[slug]`) use the same public slug in both
+    // locales, so keep the current slug and only add/remove the locale prefix
+    // (e.g. /thailand → /en/thailand). Other dynamic routes still fall back to
+    // safe parent paths to avoid missing next-intl params.
+    if (intlPathname === "/[slug]") {
+      // Persist the target locale in the NEXT_LOCALE cookie before the hard
+      // navigation. Otherwise next-intl's middleware reads the stale cookie and
+      // redirects the prefix-less default-locale path (e.g. /thailand) back to
+      // the previous locale (e.g. /en/thailand), so the switch never happens.
+      document.cookie = `NEXT_LOCALE=${newLocale};path=/;max-age=${60 * 60 * 24 * 365};samesite=lax`;
+      window.location.href = resolveDynamicLangSwitchPath(
+        pathname,
+        lang,
+        newLocale
+      );
+      return;
+    }
+
     const target = resolveLangSwitchPath(intlPathname);
     intlRouter.replace(target as any, { locale: newLocale });
-  }, [intlRouter, intlPathname]);
+  }, [intlRouter, intlPathname, lang, pathname]);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -575,11 +606,24 @@ function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Restore the dismissed state after mount so a closed announcement stays
+  // hidden across reloads. Reading in an effect (not useState initializer)
+  // keeps server and first client render in sync to avoid hydration mismatch.
+  useEffect(() => {
+    try {
+      if (localStorage.getItem(ANNOUNCEMENT_DISMISSED_KEY) === "true") {
+        setAnnouncementVisible(false);
+      }
+    } catch {
+      // localStorage unavailable — keep default visible.
+    }
+  }, []);
+
   return (
     <>
       <div className="sticky top-0 z-40">
         {/* ===== Announcement Bar (Carousel) ===== */}
-        {announcementVisible && hasAnnouncement && !isDestinationPage && (
+        {announcementVisible && hasAnnouncement && isLandingPage && (
           <div className="relative bg-[#1a1a1a] text-text-primary-on-color overflow-hidden">
             <div className="px-6 min-w-full flex justify-between items-center md:gap-3">
               {topBars.length > 1 ? (
@@ -684,8 +728,8 @@ function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
                 </div>
               )}
               <button
-                onClick={() => setAnnouncementVisible(false)}
-                className="flex h-5 md:h-6 ml-auto md:ml-0 max-md:absolute top-3 right-6 cursor-pointer"
+                onClick={dismissAnnouncement}
+                className="z-10 flex h-5 md:h-6 ml-auto md:ml-0 max-md:absolute top-3 right-6 cursor-pointer"
                 aria-label="Close announcement"
               >
                 <X className="w-5 h-5 md:w-6 md:h-6 text-[rgba(255,255,255,0.6)] hover:text-white transition-colors" />
@@ -713,7 +757,7 @@ function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
             >
               {/* Logo */}
               <div className="pr-12">
-                <Link href={`/${lang}`} className="block">
+                <Link href={homeHref} className="block">
                   <SailyLogo />
                   <span className="sr-only">esim.vn</span>
                 </Link>
@@ -1072,6 +1116,9 @@ function MobileSidebar({
   const { user, openAuthModal, logout } = useAuth();
 
   const menuData = getMenuData(lang);
+  const isVi = lang === 'vi';
+  const homeHref = isVi ? '/' : `/${lang}`;
+  const localePrefix = isVi ? '' : `/${lang}`;
 
   // Inline search state
   const [searchQuery, setSearchQuery] = useState("");
@@ -1133,11 +1180,11 @@ function MobileSidebar({
 
   /* Build destination href */
   const getDestinationHref = (dest: any) =>
-    `/${lang}/${dest.slug || dest.code?.toLowerCase()}`;
+    `${localePrefix}/${dest.slug || dest.code?.toLowerCase()}`;
 
   /* Build region href */
   const getRegionHref = (region: any) =>
-    `/${lang}/${region.slug}`;
+    `${localePrefix}/${region.slug}`;
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
@@ -1161,7 +1208,7 @@ function MobileSidebar({
             <div className="px-4">
               {/* Header */}
               <div className="flex justify-between items-center mb-4 sticky top-0 z-50 py-4 bg-white h-14">
-                <Link href={`/${lang}`} onClick={() => setOpen(false)}>
+                <Link href={homeHref} onClick={() => setOpen(false)}>
                   <SailyLogo />
                 </Link>
                 <Dialog.Close asChild>

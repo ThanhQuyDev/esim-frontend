@@ -19,6 +19,11 @@ interface FAQSectionProps {
    */
   url?: string;
   /**
+   * Multiple slugs to query in priority order. First slug's results take
+   * precedence over later ones.
+   */
+  urls?: string[];
+  /**
    * Blog id — pass when the FAQ block is rendered inside a blog detail page
    * so the API returns FAQs attached to that post.
    */
@@ -37,6 +42,7 @@ export function FAQSection({
   lang,
   initialFaqs,
   url,
+  urls,
   blogId,
   templateVars,
 }: FAQSectionProps) {
@@ -45,13 +51,14 @@ export function FAQSection({
   const resolvedUrl = url ?? pathname ?? "";
   const { data: apiFaqs } = useFaqs(lang, initialFaqs, {
     url: resolvedUrl,
+    urls,
     blogId,
   });
 
-  const rawItems =
-    apiFaqs && apiFaqs.length > 0
-      ? apiFaqs.map((f: any) => ({ question: f.question, answer: f.answer }))
-      : dict.items;
+  const rawItems = (apiFaqs ?? []).map((f: any) => ({
+    question: f.question,
+    answer: f.answer,
+  }));
 
   const faqItems = templateVars
     ? rawItems.map((item: any) => ({
@@ -63,6 +70,10 @@ export function FAQSection({
   const toggle = (i: number) => {
     setOpenIndex(openIndex === i ? null : i);
   };
+
+  if (faqItems.length === 0) {
+    return null;
+  }
 
   return (
     <div

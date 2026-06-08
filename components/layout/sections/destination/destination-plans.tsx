@@ -27,57 +27,6 @@ const EMPTY_PLANS: PlansByDestinationResponse = {
   localEsim: [],
 };
 
-/**
- * Merge `localEsim` plans (if any) into the standard plan groups so they appear
- * alongside non-local plans. The groups are picked by plan shape:
- * - Plans with sms/call → smsCallEsim
- * - Plans with `isAbleMultidate` and a fupSpeed (Mbps) → slowUnlimited / fastUnlimited
- * - Daily-unlimited plans (fupSpeed only) → dailyUnlimited
- * - Otherwise → dataPlans (fixed)
- *
- * The `isLocalInventory` flag is preserved so chips render the provider badge.
- */
-function mergeLocalInventory(plans: PlansByDestinationResponse): PlansByDestinationResponse {
-  const localPool = (plans.localEsim ?? []).map((p) => ({ ...p, isLocalInventory: true }));
-  if (localPool.length === 0) return plans;
-
-  const dataPlans = [...plans.dataPlans];
-  const slowUnlimited = [...plans.slowUnlimited];
-  const fastUnlimited = [...plans.fastUnlimited];
-  const dailyUnlimited = [...plans.dailyUnlimited];
-  const smsCallEsim = [...(plans.smsCallEsim ?? [])];
-
-  for (const plan of localPool) {
-    const hasCallOrSms = Number(plan.call ?? 0) > 0 || Number(plan.sms ?? 0) > 0;
-    if (hasCallOrSms) {
-      smsCallEsim.push(plan);
-      continue;
-    }
-    if (plan.isAbleMultidate) {
-      // daily/unlimited bucket — pick by speed semantics if present
-      const fup = (plan.fupSpeed || "").toLowerCase();
-      if (fup.includes("mbps")) {
-        if (Number(plan.dataMb) > 0) fastUnlimited.push(plan);
-        else dailyUnlimited.push(plan);
-      } else {
-        slowUnlimited.push(plan);
-      }
-      continue;
-    }
-    dataPlans.push(plan);
-  }
-
-  return {
-    dataPlans,
-    slowUnlimited,
-    fastUnlimited,
-    dailyUnlimited,
-    smsCallEsim,
-    // localEsim no longer used as a tab; keep it empty so consumers don't double-render
-    localEsim: [],
-  };
-}
-
 export function DestinationPlans({ destination, slug, dict, lang, planSource = "destination", initialPlans, initialRegion }: DestinationPlansProps) {
   const destQuery = usePlansBySlug(
     planSource === "destination" ? slug : "",
@@ -89,10 +38,7 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
     lang,
     planSource === "region" ? (initialPlans ?? undefined) : undefined
   );
-  const { data: rawPlans = EMPTY_PLANS, isLoading } = planSource === "region" ? regionQuery : destQuery;
-
-  // Local-inventory plans are folded into the standard groups (with provider badge).
-  const plans = useMemo(() => mergeLocalInventory(rawPlans), [rawPlans]);
+  const { data: plans = EMPTY_PLANS, isLoading } = planSource === "region" ? regionQuery : destQuery;
 
   // Server already sends the initial entity. Avoid duplicate detail fetches on first load.
   const regionDetailQuery = useRegionBySlug("", lang);
@@ -110,11 +56,13 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
 
   const hasSmsCallPlans = (plans.smsCallEsim?.length ?? 0) > 0;
 
-  // Determine if the selected plan is a fixed-duration plan (dataPlans) — hides day selector
+  // Determine if the selected plan is a fixed-duration plan (dataPlans or localEsim) — hides day selector
   const isFixed = useMemo(() => {
     if (!selectedPlan) return false;
     if (activeCategory !== "data") return true;
-    return plans.dataPlans.some((p) => p.id === selectedPlan.id);
+    if (plans.dataPlans.some((p) => p.id === selectedPlan.id)) return true;
+    if ((plans.localEsim ?? []).some((p) => p.id === selectedPlan.id)) return true;
+    return false;
   }, [selectedPlan, plans, activeCategory]);
 
   // Flexible days when the selected GB group has any isAbleMultidate plan
@@ -140,6 +88,10 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
       const matching = plans.dataPlans.filter((p) => p.dataMb === selectedPlan.dataMb);
       return Array.from(new Set(matching.map((p) => p.durationDays))).sort((a, b) => a - b);
     }
+    if ((plans.localEsim ?? []).some((p) => p.id === selectedPlan.id)) {
+      const matching = (plans.localEsim ?? []).filter((p) => p.dataMb === selectedPlan.dataMb);
+      return Array.from(new Set(matching.map((p) => p.durationDays))).sort((a, b) => a - b);
+    }
     if (plans.dailyUnlimited.some((p) => p.id === selectedPlan.id)) {
       const matching = plans.dailyUnlimited.filter((p) => p.fupSpeed === selectedPlan.fupSpeed);
       return Array.from(new Set(matching.map((p) => p.durationDays))).sort((a, b) => a - b);
@@ -159,7 +111,7 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
   useEffect(() => {
     if (activeCategory === "data") {
       if (!selectedPlan && plans) {
-        const first = plans.dataPlans[0] || plans.fastUnlimited[0] || plans.slowUnlimited[0] || plans.dailyUnlimited[0];
+        const first = (plans.localEsim ?? [])[0] || plans.dataPlans[0] || plans.fastUnlimited[0] || plans.slowUnlimited[0] || plans.dailyUnlimited[0];
         if (first) setSelectedPlan(first);
       }
     } else if (activeCategory === "smsCall") {
@@ -316,7 +268,7 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
               <button
                 type="button"
                 onClick={() => setEkycModalOpen(true)}
-                className="flex items-center gap-3 px-4 py-3 mb-[18px] w-full rounded-xl cursor-pointer transition-all hover:-translate-y-px hover:shadow-[0_4px_16px_rgba(220,38,38,0.18)] font-[inherit] text-left border-[1.5px]"
+                className="flex items-center gap-3 px-4 py-3 mb-[18px] w-full rounded-xl cursor-pointer transition-all hover:-translate-y-px hover:shadow-[0_4px_16px_rgba(220,38,38,0.18)] font-[inherit] text-left border"
                 style={{
                   background: "linear-gradient(135deg, #FFF1F2, #FFF7ED)",
                   borderColor: "#FCA5A5",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   CheckCircle,
@@ -18,7 +18,8 @@ import Link from "next/link";
 import { localizedHref } from "@/lib/route-mapping";
 import { Button } from "@/components/ui/button";
 import { getResponseCodeMessage } from "@/lib/onepay";
-import { useOrderByNumber } from "@/lib/hooks";
+import { useOrderByNumber, useCart } from "@/lib/hooks";
+import { clearCart as clearLocalCart } from "@/lib/cart";
 import { OrderInfoCard } from "./order-info-card";
 import { EsimLoadingState } from "./esim-loading-state";
 import { EsimCard } from "./esim-card";
@@ -46,6 +47,8 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
     referralCode?: string | null;
   } | null>(null);
   const t = paymentResultTranslations[lang];
+  const { isApiCart, clear: clearApiCart } = useCart();
+  const cartClearedRef = useRef(false);
 
   // Parse OnePay callback query params
   const responseCode = searchParams.get("vpc_TxnResponseCode") || "";
@@ -105,6 +108,21 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
       // ignore
     }
   }, []);
+
+  // Clear the cart once payment is confirmed successful. Top-ups don't touch
+  // the cart, so skip them. The backend already empties the server-side cart on
+  // paid orders, but the navbar badge and cart pages read a cached copy — we
+  // clear here (API cache + guest localStorage) so the UI updates without a
+  // manual refresh. Guarded by a ref so it only runs once per visit.
+  useEffect(() => {
+    if (!showSuccess || isTopup || cartClearedRef.current) return;
+    cartClearedRef.current = true;
+    if (isApiCart) {
+      clearApiCart();
+    } else {
+      clearLocalCart();
+    }
+  }, [showSuccess, isTopup, isApiCart, clearApiCart]);
 
   // Calculate cashback (2% of payable amount)
   const orderVndPrice = orderData?.vndPrice || 0;
@@ -349,7 +367,7 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
           <Button
             asChild
             variant="outline"
-            className="flex-1 h-12 rounded-full border-gray-200 text-gray-700 font-semibold hover:bg-gray-50 transition-colors cursor-pointer"
+            className="flex-1 h-12 rounded-full border-gray-200 text-gray-700 font-semibold hover:bg-gray-50 hover:text-gray-700 transition-colors cursor-pointer"
           >
             <Link href={localizedHref(lang, "profile")}>
               <User className="w-4 h-4 mr-2" />
@@ -359,7 +377,7 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
           <Button
             asChild
             variant="outline"
-            className="flex-1 h-12 rounded-full border-emerald-200 text-emerald-700 font-semibold hover:bg-emerald-50 transition-colors cursor-pointer"
+            className="flex-1 h-12 rounded-full border-emerald-200 text-emerald-700 font-semibold hover:bg-emerald-50 hover:text-emerald-700 transition-colors cursor-pointer"
           >
             <Link href={localizedHref(lang, "profile")}>
               <Wallet className="w-4 h-4 mr-2" />

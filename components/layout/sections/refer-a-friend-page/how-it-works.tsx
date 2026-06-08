@@ -29,7 +29,7 @@ function StepCard({ step }: { step: Step }) {
             </div>
           </div>
           <div className="flex flex-col gap-3 lg:gap-4 w-full h-full">
-            <h3 className="body-lg-medium text-primary scroll-mt-20 xl:scroll-mt-24">
+            <h3 className="!text-[1.25rem] body-lg-medium text-primary scroll-mt-20 xl:scroll-mt-24">
               {step.title}
             </h3>
             <p className="body-md text-secondary scroll-mt-20 xl:scroll-mt-24">

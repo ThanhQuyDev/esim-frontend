@@ -3,6 +3,7 @@ import { FooterSection } from "@/components/layout/sections/footer";
 import { BlogCategoryNav } from "@/components/layout/sections/blog-page";
 import { getDictionary } from "@/lib/dictionaries";
 import { getBlogsByCategory, getBlogCategories, getBlogBySlug } from "@/lib/api";
+import { getSeoMetadata } from "@/lib/seo";
 import { categorySlug } from "@/components/layout/sections/blog-page/blog-detail-helpers";
 import { notFound } from "next/navigation";
 import { getLocale } from "next-intl/server";
@@ -19,10 +20,11 @@ export async function generateMetadata({
   const locale = await getLocale();
   const slug = decodeURIComponent(params.slug);
   const dict = await getDictionary(locale as Locale);
-  return {
+  const seoUrl = locale === "vi" ? `/blog/${slug}` : `/${locale}/blog/${slug}`;
+  return getSeoMetadata(seoUrl, {
     title: dict.metadata.title,
     description: dict.metadata.description,
-  };
+  });
 }
 
 export default async function BlogSlugPage({

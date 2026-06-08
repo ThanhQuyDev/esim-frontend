@@ -6,6 +6,7 @@ import {
   getDestinations,
   getRegions,
 } from "@/lib/api";
+import { getSeoMetadata } from "@/lib/seo";
 import { getDictionary } from "@/lib/dictionaries";
 import { getLocale } from "next-intl/server";
 import { DestinationPlans } from "@/components/layout/sections/destination";
@@ -74,20 +75,23 @@ export async function generateMetadata({
   }
 
   const localizedName = pickLocalizedName(entity.data, locale);
-  const title = dict.destinationPage.title.replace(
+  const fallbackTitle = dict.destinationPage.title.replace(
     "{destination}",
     localizedName
   );
-  const description = dict.destinationPage.subtitle.replace(
+  const fallbackDescription = dict.destinationPage.subtitle.replace(
     "{destination}",
     localizedName
   );
 
-  return {
-    title,
-    description,
-    openGraph: { title, description },
-  };
+  const genericSlug = entity.type === "destination" ? "/destination" : "/region";
+  const seoSlugs = [`/${params.slug}`, genericSlug];
+
+  return getSeoMetadata(
+    seoSlugs,
+    { title: fallbackTitle, description: fallbackDescription },
+    { name: localizedName }
+  );
 }
 
 /**
@@ -138,9 +142,9 @@ export default async function UnifiedSlugPage({
   }
 
   const localizedName = pickLocalizedName(entity.data, locale);
-  const pageUrl = `/${locale}/${params.slug}`;
 
   if (entity.type === "destination") {
+    const faqSlugs = [`/${params.slug}`, "/destination"];
     const destination = entity.data;
     const whyChooseUsRes = await getWhyChooseUs({
       lang: locale,
@@ -179,7 +183,8 @@ export default async function UnifiedSlugPage({
           <LazyFAQSection
             dict={dict.faq}
             lang={locale}
-            url={pageUrl}
+            url={faqSlugs[0]}
+            urls={faqSlugs}
             templateVars={{ name: localizedName }}
           />
           <LazyReferFriendBanner dict={dict.referFriend} lang={locale} />
@@ -190,6 +195,7 @@ export default async function UnifiedSlugPage({
   }
 
   // Region
+  const faqSlugs = [`/${params.slug}`, "/region"];
   const region = entity.data;
   const whyChooseUsRes = await getWhyChooseUs({
     lang: locale,
@@ -246,7 +252,8 @@ export default async function UnifiedSlugPage({
         <LazyFAQSection
           dict={dict.faq}
           lang={locale}
-          url={pageUrl}
+          url={faqSlugs[0]}
+          urls={faqSlugs}
           templateVars={{ name: localizedName }}
         />
         <LazyReferFriendBanner dict={dict.referFriend} lang={locale} />

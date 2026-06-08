@@ -63,7 +63,7 @@ export function MobilePlanConfig({
             type="button"
             onClick={() => isFlexibleDays && setCalOpen(true)}
             disabled={isFixed || !isFlexibleDays}
-            className={`w-full flex items-center justify-between px-1 border-[1.5px] rounded-[30px] h-[50px] ${
+            className={`w-full flex items-center justify-between px-1 border rounded-[30px] h-[50px] ${
               isFixed
                 ? "border-[#e5e7eb] bg-[#f9fafb] cursor-not-allowed opacity-60"
                 : isFlexibleDays
@@ -90,7 +90,7 @@ export function MobilePlanConfig({
           <div className="text-sm font-medium uppercase tracking-[0.07em] text-[#6b7280] mb-[9px]">
             {dict.quantity}
           </div>
-          <div className="flex items-center justify-between border-[1.5px] border-[#e5e7eb] rounded-[30px] h-[50px] px-1">
+          <div className="flex items-center justify-between border border-[#e5e7eb] rounded-[30px] h-[50px] px-1">
             <button
               type="button"
               onClick={() => onQuantityChange(Math.max(1, quantity - 1))}
@@ -112,14 +112,14 @@ export function MobilePlanConfig({
         </div>
       </div>
 
-      {!isFixed && dayOptions.length > 0 && (
+      {(!isFixed || availableDays.length > 1) && dayOptions.length > 0 && (
         <div className="flex gap-[7px] flex-wrap mb-5">
           {dayOptions.map((d) => (
             <button
               key={d}
               type="button"
               onClick={() => onDaysChange(d)}
-              className={`h-[38px] min-w-[38px] px-[11px] flex items-center justify-center border-[1.5px] rounded-[30px] text-base font-semibold cursor-pointer font-[inherit] transition-colors ${
+              className={`h-[38px] min-w-[38px] px-[11px] flex items-center justify-center border rounded-[30px] text-base font-semibold cursor-pointer font-[inherit] transition-colors ${
                 days === d
                   ? "border-[#F5C518] bg-[#FEF9E7] text-[#1a1a1a]"
                   : "border-[#e5e7eb] bg-white text-[#374151] active:bg-[#fde68a] active:border-[#d97706]"

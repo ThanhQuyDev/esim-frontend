@@ -269,6 +269,8 @@ export function useSearchRegions(query: string, enabled = true) {
 interface UseFaqsOptions {
   /** Current page URL/pathname so the backend scopes FAQs to this page. */
   url?: string;
+  /** Multiple slugs ordered by priority (specific first, generic second). */
+  urls?: string[];
   /** Blog id — pass when on a blog detail page. */
   blogId?: string;
 }
@@ -288,18 +290,44 @@ export function useFaqs(
   initialData?: Faq[],
   options?: UseFaqsOptions
 ) {
-  const url = options?.url || "";
+  const urls = options?.urls && options.urls.length > 0 ? options.urls : options?.url ? [options.url] : [];
   const blogId = options?.blogId || "";
-  const cacheKey = blogId || url || "all";
+  const cacheKey = blogId || urls.join(",") || "all";
 
   return useQuery({
     queryKey: [...queryKeys.faqs.list(lang), "by-context", cacheKey],
     queryFn: async ({ signal }) => {
+      if (urls.length > 0 && !blogId) {
+        const results = await Promise.all(
+          urls.map((u) => {
+            const params: Record<string, string> = { language: lang, limit: "6", url: u };
+            return clientFetch<PaginatedResponse<Faq> | Faq[]>(
+              "/api/v1/faqs/by-context",
+              params,
+              { "x-custom-lang": lang },
+              signal
+            ).catch(() => [] as Faq[]);
+          })
+        );
+        const seen = new Set<string>();
+        const merged: Faq[] = [];
+        for (const res of results) {
+          const items = Array.isArray(res) ? res : Array.isArray(res?.data) ? res.data : [];
+          for (const faq of items) {
+            if (!seen.has(faq.id)) {
+              seen.add(faq.id);
+              merged.push(faq);
+            }
+          }
+        }
+        return { data: merged, hasNextPage: false } as PaginatedResponse<Faq>;
+      }
+
       const params: Record<string, string> = {
         language: lang,
         limit: "6",
       };
-      if (url) params.url = url;
+      if (urls.length > 0) params.url = urls[0];
       if (blogId) params.blogId = blogId;
 
       try {
@@ -309,7 +337,6 @@ export function useFaqs(
           { "x-custom-lang": lang },
           signal
         );
-        // Endpoint may return either a paginated envelope or a bare array.
         if (Array.isArray(res)) {
           return { data: res, hasNextPage: false } as PaginatedResponse<Faq>;
         }
@@ -698,6 +725,17 @@ export interface CheckoutPayload {
    * user does not want an invoice.
    */
   invoice?: InvoicePayload;
+  /**
+   * UI locale at checkout ("vi" | "en"). Controls the OnePay gateway language
+   * and which localized result page the buyer is redirected back to.
+   */
+  locale?: string;
+  /**
+   * Absolute URL OnePay redirects to after payment. Built locale-aware on the
+   * client so the buyer lands on the result page in their current language.
+   * Backend validates it against the configured frontend domain.
+   */
+  returnUrl?: string;
 }
 
 export interface CheckoutResponse {

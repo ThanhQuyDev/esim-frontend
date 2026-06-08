@@ -59,6 +59,7 @@ export default async function LocaleLayout({
           href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@300;400;500;600;700&family=Google+Sans+Text:wght@400;500;600;700&display=swap"
           crossOrigin="anonymous"
         />
+        <PageStructuredData />
       </head>
       <body
         className={cn(
@@ -68,7 +69,6 @@ export default async function LocaleLayout({
         <NextIntlClientProvider messages={messages}>
           <QueryProvider>
             <AuthProvider>
-              <PageStructuredData />
               <Navbar lang={locale} dict={dict.nav} topBars={topBars} />
               {children}
               <LayoutClientWidgets lang={locale} />

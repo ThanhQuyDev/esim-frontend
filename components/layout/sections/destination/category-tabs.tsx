@@ -30,7 +30,7 @@ export function CategoryTabs({
   if (visibleTabs.length <= 1) return null;
 
   return (
-    <div className="flex border-[1.5px] border-[#EFEFEF] rounded-full bg-[#F7F7F7] p-[3px] gap-[3px] mb-5">
+    <div className="flex border border-[#EFEFEF] rounded-full bg-[#F7F7F7] p-[3px] gap-[3px] mb-5">
       {visibleTabs.map((tab) => (
         <button
           key={tab.key}

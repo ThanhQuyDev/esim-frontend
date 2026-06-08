@@ -1,35 +1,30 @@
-import Script from 'next/script';
-
 /**
- * Renders structured data (JSON-LD, schema scripts) in the document head.
- * Supports both raw JSON-LD content and full <script> tags from CMS.
+ * Renders structured data (JSON-LD) into the document <head>.
+ * Supports both raw JSON-LD content and full <script> tags from the CMS.
+ *
+ * Uses a plain <script> tag (not next/script) so it is emitted server-side
+ * inside <head> when this component is placed there.
  */
 export function StructuredData({ data }: { data: string | null }) {
   if (!data) return null;
 
   const trimmed = data.trim();
 
-  // If content contains <script> tags, strip them and render just the inner content
-  if (trimmed.toLowerCase().includes('<script')) {
-    const innerContent = trimmed.replace(/<script[^>]*>/gi, '').replace(/<\/script>/gi, '').trim();
-    if (!innerContent) return null;
-    return (
-      <Script
-        id='structured-data'
-        type='application/ld+json'
-        strategy='beforeInteractive'
-        dangerouslySetInnerHTML={{ __html: innerContent }}
-      />
-    );
-  }
+  // If content is wrapped in <script> tags (CMS often stores the full tag),
+  // strip the wrapper and keep only the inner JSON-LD.
+  const innerContent = trimmed.toLowerCase().includes('<script')
+    ? trimmed
+        .replace(/<script[^>]*>/gi, '')
+        .replace(/<\/script>/gi, '')
+        .trim()
+    : trimmed;
 
-  // Raw JSON-LD content without script wrapper
+  if (!innerContent) return null;
+
   return (
-    <Script
-      id='structured-data'
+    <script
       type='application/ld+json'
-      strategy='beforeInteractive'
-      dangerouslySetInnerHTML={{ __html: trimmed }}
+      dangerouslySetInnerHTML={{ __html: innerContent }}
     />
   );
 }

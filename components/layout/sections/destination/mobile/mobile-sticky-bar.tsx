@@ -164,7 +164,7 @@ export function MobileStickyBar({
       {/* Bottom row: quantity + cart + buy — tighter on small screens to fit 390px width */}
       <div className="flex items-center gap-2">
         {/* Quantity stepper — slim variant */}
-        <div className="flex items-center border-[1.5px] border-[#e5e7eb] rounded-[30px] h-[42px] shrink-0 px-0.5">
+        <div className="flex items-center border border-[#e5e7eb] rounded-[30px] h-[42px] shrink-0 px-0.5">
           <button
             type="button"
             onClick={() => onQuantityChange(Math.max(1, quantity - 1))}
@@ -186,7 +186,7 @@ export function MobileStickyBar({
         <button
           type="button"
           onClick={handleAddToCart}
-          className="w-[100px] h-[42px] flex items-center justify-center rounded-full border-[1.5px] border-[#1a1a1a] bg-white cursor-pointer shrink-0 transition-colors active:bg-[#1a1a1a] active:[&_svg]:stroke-white"
+          className="w-[100px] h-[42px] flex items-center justify-center rounded-full border border-[#1a1a1a] bg-white cursor-pointer shrink-0 transition-colors active:bg-[#1a1a1a] active:[&_svg]:stroke-white"
           aria-label={dict.addToCart}
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -200,7 +200,7 @@ export function MobileStickyBar({
         <button
           type="button"
           onClick={handleBuyNow}
-          className="flex-1 min-w-0 h-[42px] px-3 rounded-[30px] border-[1.5px] border-[#D1B700] bg-[#FFF500] text-[.875rem] font-bold cursor-pointer text-[#1a1a1a] transition-colors active:bg-[#D1B700] truncate"
+          className="flex-1 min-w-0 h-[42px] px-3 rounded-[30px] border border-[#D1B700] bg-[#FFF500] text-[.875rem] font-bold cursor-pointer text-[#1a1a1a] transition-colors active:bg-[#D1B700] truncate"
         >
           {dict.buyNow}
         </button>

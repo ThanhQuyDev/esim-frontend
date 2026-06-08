@@ -25,7 +25,7 @@ function applyVars(value: string | undefined | null, vars?: TemplateVars): strin
  * `"eSIM for ${name}"`) with the page-specific value.
  */
 export async function getSeoMetadata(
-  pageUrl: string,
+  pageUrl: string | string[],
   fallback?: { title?: string; description?: string },
   templateVars?: TemplateVars
 ): Promise<Metadata> {

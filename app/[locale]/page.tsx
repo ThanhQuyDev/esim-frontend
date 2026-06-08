@@ -11,6 +11,7 @@ import { FAQSection } from "@/components/layout/sections/faq";
 import { ReferFriendBanner } from "@/components/layout/sections/refer-friend";
 import { FooterSection } from "@/components/layout/sections/footer";
 import { getFooters, getHeroBanners, getFaqs, getWhyChooseUs } from "@/lib/api";
+import { getSeoMetadata } from "@/lib/seo";
 import { getDictionary } from "@/lib/dictionaries";
 import { getLocale } from "next-intl/server";
 import type { Locale } from "@/lib/i18n-config";
@@ -18,20 +19,21 @@ import type { Locale } from "@/lib/i18n-config";
 export async function generateMetadata() {
   const locale = await getLocale();
   const dict = await getDictionary(locale as Locale);
-  return {
-    title: dict.metadata.title,
-    description: dict.metadata.description,
-  };
+  const homeSlug = locale === "vi" ? "/home" : `/${locale}/home`;
+  return getSeoMetadata(
+    homeSlug,
+    { title: dict.metadata.title, description: dict.metadata.description }
+  );
 }
 
 export default async function Home() {
   const locale = (await getLocale()) as Locale;
   const dict = await getDictionary(locale);
-  const homeUrl = `/${locale}`;
+  const homeSlug = locale === "vi" ? "/home" : `/${locale}/home`;
   const [heroBanners, footerLinks, faqsRes, whyChooseUsRes] = await Promise.all([
     getHeroBanners({ lang: locale }),
     getFooters({ lang: locale }),
-    getFaqs({ lang: locale, url: homeUrl }),
+    getFaqs({ lang: locale, urls: [homeSlug] }),
     getWhyChooseUs({ lang: locale, type: "trang_chu" }),
   ]);
 
@@ -50,7 +52,7 @@ export default async function Home() {
         dict={dict.faq}
         lang={locale}
         initialFaqs={faqsRes.data}
-        url={homeUrl}
+        url={homeSlug}
       />
       <ReferFriendBanner dict={dict.referFriend} lang={locale} />
       <FooterSection

@@ -83,7 +83,7 @@ export function EsimSetup({ dict }: EsimSetupProps) {
                             </div>
                           </div>
                           <div className="flex flex-col gap-3 lg:gap-4 w-full h-full">
-                            <span className="body-lg-medium text-text-primary">{step.title}</span>
+                            <span className="!text-[1.25rem] body-lg-medium text-text-primary">{step.title}</span>
                             <p className="body-md text-text-secondary">{step.description}</p>
                           </div>
                         </div>
