@@ -2,10 +2,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { Calendar, BookOpen } from "lucide-react";
 import type { Blog } from "@/lib/api";
-import { formatDate, formatTimeRead, authorSlug } from "./blog-detail-helpers";
+import { formatDate, formatTimeRead, authorSlug, type SocialLink } from "./blog-detail-helpers";
 import { SocialIconsCol, SocialIconsRow } from "./blog-social-icons";
 
-export function BlogArticleHeading({ blog, lang }: { blog: Blog; lang: string }) {
+export function BlogArticleHeading({ blog, lang, socialLinks = [] }: { blog: Blog; lang: string; socialLinks?: SocialLink[] }) {
   const category = blog.category;
   const authorName = blog.author || "Unknown";
   const authorAvatarUrl = blog.authorAvatar || "";
@@ -38,7 +38,7 @@ export function BlogArticleHeading({ blog, lang }: { blog: Blog; lang: string })
                     </div>
                   </div>
                   <div>
-                    <SocialIconsCol />
+                    <SocialIconsCol links={socialLinks} />
                   </div>
                 </div>
               </div>
@@ -47,7 +47,7 @@ export function BlogArticleHeading({ blog, lang }: { blog: Blog; lang: string })
               <div className="col-span-12 lg:col-start-2 lg:col-span-10">
                 <div className="flex flex-col-reverse sm:flex-row justify-between w-full h-full">
                   {/* Mobile social icons */}
-                  <SocialIconsRow className="sm:hidden mt-6" />
+                  <SocialIconsRow links={socialLinks} className="sm:hidden mt-6" />
 
                   {/* Author */}
                   <div className="flex">

@@ -26,7 +26,6 @@ const paymentIcons = [
   { name: "Visa", src: "https://sb.nordcdn.com/m/7053db2e1118cc8/original/visa.svg", width: 36 },
   { name: "Mastercard", src: "https://sb.nordcdn.com/m/7f0ece0e4ee50365/original/mastercard.svg", width: 29 },
   { name: "Amex", src: "https://sb.nordcdn.com/m/7f041c7528221650/original/amex.svg", width: 25 },
-  { name: "Discover", src: "https://sb.nordcdn.com/m/669348c02827ab8f/original/16.svg", width: 44 },
   { name: "UnionPay", src: "https://sb.nordcdn.com/m/7fee670fbbf9292b/original/union-pay.svg", width: 38 },
   { name: "JCB", src: "https://sb.nordcdn.com/m/783f5e58e6359300/original/jcb.svg", width: 31 },
 ];
@@ -88,7 +87,7 @@ export async function FooterSection({
   const columns = apiColumns.length > 0 ? apiColumns : getFallbackColumns(dict);
 
   return (
-    <footer className="px-4 lg:px-16 bg-white text-text-secondary">
+    <footer className="bg-white text-text-secondary">
       <div className="max-w-[1168px] mx-auto py-12">
         {/* Logo & App Store */}
         <div className="flex flex-wrap flex-col md:flex-row gap-8 justify-between items-start pb-8">
@@ -107,9 +106,6 @@ export async function FooterSection({
           </div>
           <div className="flex flex-row justify-center flex-wrap gap-x-3 gap-y-3">
             <a
-              href="https://saily.onelink.me/ymzx/appstore"
-              target="_blank"
-
               className="inline-block"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -123,9 +119,6 @@ export async function FooterSection({
               />
             </a>
             <a
-              href="https://saily.onelink.me/ymzx/android"
-              target="_blank"
-
               className="inline-block"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -177,12 +170,6 @@ export async function FooterSection({
                 >
                   {lang === "vi" ? "Điều khoản dịch vụ" : "Terms of Service"}
                 </a>
-                <button
-                  className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus  hover:underline inline-block text-text-tertiary"
-                  data-ga-slug="Cookie Preference"
-                >
-                  {lang === "vi" ? "Quản lý Cookie" : "Cookie Preference"}
-                </button>
               </span>
             </p>
             <div>

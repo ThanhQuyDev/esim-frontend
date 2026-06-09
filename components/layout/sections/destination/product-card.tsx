@@ -167,7 +167,7 @@ export function ProductCard({
           {/* Title row with flag/icon */}
           <div className="flex items-center gap-2.5 mb-2">
             {(region?.iconUrl || destination.flagUrl) ? (
-              <div className="w-[30px] h-[30px] rounded-full overflow-hidden shrink-0">
+              <div className="w-[30px] h-[30px] rounded-full overflow-hidden shrink-0 border">
                 <Image src={(planSource === "region" && region?.iconUrl) ? region.iconUrl : (destination.flagUrl || region?.iconUrl || "")} alt={destination.name} width={30} height={30} className="w-full h-full object-cover" />
               </div>
             ) : (

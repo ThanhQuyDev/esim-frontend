@@ -20,7 +20,7 @@ export function BlogFaqAccordion({ faqs, lang = "vi" }: BlogFaqAccordionProps) {
 
   return (
     <div className="mt-8">
-      <h2 className="text-[2.5rem] font-medium mb-4 scroll-mt-20 xl:scroll-mt-24">
+      <h2 className="text-[2.25rem] font-medium mb-4 scroll-mt-20 xl:scroll-mt-24">
         {heading}
       </h2>
       <Accordion type="single" collapsible className="w-full">

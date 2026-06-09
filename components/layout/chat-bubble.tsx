@@ -103,7 +103,7 @@ export function ChatBubble() {
             handleOpen();
           }
         }}
-        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#1a1a2e] text-white shadow-lg transition-transform hover:scale-105 active:scale-95"
+        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#1a1a1a] text-white shadow-lg transition-transform hover:scale-105 active:scale-95"
         aria-label={open ? "Close chat" : "Open support chat"}
         id="chat-bubble-toggle"
       >
@@ -185,7 +185,7 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
       aria-label="Support chat"
     >
       {/* Header */}
-      <div className="flex items-center justify-between bg-[#1a1a2e] px-4 py-3 text-white">
+      <div className="flex items-center justify-between bg-[#1a1a1a] px-4 py-3 text-white">
         <div className="flex items-center gap-2">
           <MessageCircle className="h-5 w-5" />
           <div>
@@ -263,14 +263,14 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Nhập tin nhắn…"
-          className="flex-1 rounded-full border border-gray-200 bg-gray-50 px-4 py-2 text-base sm:text-sm outline-none transition-colors focus:border-[#1a1a2e] focus:bg-white"
+          className="flex-1 rounded-full border border-gray-200 bg-gray-50 px-4 py-2 text-base sm:text-sm outline-none transition-colors focus:border-[#1a1a1a] focus:bg-white"
           disabled={!connected}
           aria-label="Chat message input"
         />
         <button
           type="submit"
           disabled={!connected || (!input.trim() && !uploading)}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1a1a2e] text-white transition-opacity disabled:opacity-40"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1a1a1a] text-white transition-opacity disabled:opacity-40"
           aria-label="Send message"
         >
           {!connected ? (

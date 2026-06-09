@@ -99,7 +99,7 @@ export function FeaturesSection({ dict, lang, features = [] }: FeaturesSectionPr
                               alt={feature.title}
                               width={36}
                               height={36}
-                              className="lg:w-9 lg:h-9 w-6 h-6"
+                              className="lg:w-[38px] lg:h-[38px] w-6 h-6"
                               unoptimized
                             />
                           ) : (
@@ -107,7 +107,7 @@ export function FeaturesSection({ dict, lang, features = [] }: FeaturesSectionPr
                           )}
                         </div>
                         <div>
-                          <h3 className="body-lg-medium text-primary">
+                          <h3 className="sm:text-[1.25rem] body-lg-medium text-primary">
                             {feature.title}
                           </h3>
                         </div>

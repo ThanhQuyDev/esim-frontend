@@ -135,7 +135,7 @@ export function DesktopStickyBar({
       className="fixed bottom-0 left-0 right-0 z-[300] bg-white border-t border-[#e5e7eb] shadow-[0_-4px_24px_rgba(0,0,0,0.08)] transition-transform duration-[280ms] ease-[cubic-bezier(.4,0,.2,1)] hidden min-[841px]:block"
       style={{ transform: isVisible ? "translateY(0)" : "translateY(110%)" }}
     >
-      <div className="max-w-[1168px] mx-auto px-6 py-3 flex items-center justify-between gap-6">
+      <div className="max-w-[1168px] mx-auto py-3 flex items-center justify-between gap-6">
         {/* Left: Plan info */}
         <div className="flex items-center gap-3 min-w-0 flex-1">
           {/* Globe icon */}

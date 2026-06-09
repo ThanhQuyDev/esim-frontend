@@ -333,10 +333,10 @@ export function DetailContent({
                         {/* Level 1: Category */}
                         <button
                           onClick={() => toggleCategory(catKey)}
-                          className={`w-full flex items-center text-[1.2rem] justify-between px-3 py-2 text-left rounded transition-colors cursor-pointer ${
+                          className={`w-full flex text-primary items-center text-[1.125rem] font-semibold justify-between px-3 py-2 text-left rounded transition-colors cursor-pointer ${
                             isCatActive
-                              ? "bg-gray-100 font-semibold text-gray-900"
-                              : "text-gray-700 hover:bg-gray-50"
+                              ? "bg-gray-100 "
+                              : "hover:bg-gray-50"
                           }`}
                           aria-expanded={isCatExpanded}
                         >

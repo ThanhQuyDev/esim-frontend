@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { Blog } from "@/lib/api";
 import type { Locale } from "@/lib/i18n-config";
+import { getSocialLinks } from "./blog-detail-helpers";
 import { BlogCategoryNav } from "./blog-category-nav";
 import { BlogArticleHeading } from "./blog-article-heading";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
@@ -78,6 +79,14 @@ export function BlogDetailContent({ lang, slug, initialBlog }: BlogDetailContent
     queryKey: ["blog-related-random", blog?.id, lang],
     queryFn: ({ signal }) => fetchRandomRelatedPosts(blog!.id, lang, signal),
     enabled: !!blog?.id,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // Social links sourced from the footer "Follow us" / "Theo dõi" category,
+  // so blog and footer stay in sync from a single data source.
+  const { data: socialLinks } = useQuery({
+    queryKey: ["footer-social-links", lang],
+    queryFn: () => getSocialLinks(lang),
     staleTime: 5 * 60 * 1000,
   });
 
@@ -158,7 +167,7 @@ export function BlogDetailContent({ lang, slug, initialBlog }: BlogDetailContent
 
       <div>
         {/* Article Heading with Last Updated (SEO 1.6) */}
-        <BlogArticleHeading blog={blog} lang={lang} />
+        <BlogArticleHeading blog={blog} lang={lang} socialLinks={socialLinks ?? []} />
 
         {/* Table of Contents — placed right below the hero image */}
         {tocHeadings.length > 0 && (
@@ -240,7 +249,7 @@ export function BlogDetailContent({ lang, slug, initialBlog }: BlogDetailContent
         </div>
 
         {/* Article Footer */}
-        <BlogArticleFooter blog={blog} lang={lang} />
+        <BlogArticleFooter blog={blog} lang={lang} socialLinks={socialLinks ?? []} />
 
         {/* Related Posts — below footer, inside main content column */}
         {relatedPosts && relatedPosts.length > 0 && (

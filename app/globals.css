@@ -31,6 +31,10 @@
   padding: 10px 14px;
   border: none;
   border-bottom: 1px solid #e5e7eb;
+  /* Force long content (URLs, unbroken strings) to wrap instead of
+     overflowing into adjacent cells. */
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .prose table tbody tr:last-child td {
@@ -77,6 +81,10 @@
   padding: 10px 14px;
   border: none;
   border-bottom: 1px solid #e5e7eb;
+  /* Force long content (URLs, unbroken strings) to wrap instead of
+     overflowing into adjacent cells. */
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .hc-article-body table tbody tr:last-child td {
@@ -166,7 +174,7 @@ html {
 @layer base {
   :root {
     /* Saily Light Theme - Color Tokens */
-    --color-primary: #1a1a2e;
+    --color-primary: #1a1a1a;
     --color-secondary: #4d4e56;
     --color-tertiary: #6b6b7b;
     --color-disabled: #b1b1b4;
@@ -180,13 +188,13 @@ html {
     --bg-accent-hover: #d1b700;
     --bg-blue-100: #eef1f6;
     --bg-brand-yellow: #fff500;
-    --bg-brand-black: #1a1a2e;
+    --bg-brand-black: #1a1a1a;
     --bg-dark: #0d0d1a;
 
     /* Borders */
     --border-primary: #e5e5ea;
     --border-secondary: #d1d1d6;
-    --border-focus: #1a1a2e;
+    --border-focus: #1a1a1a;
 
     /* Shadows */
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
@@ -252,7 +260,7 @@ html {
 
   @screen lg {
     .heading-2xl {
-      @apply text-[3rem];
+      @apply text-[2.75rem] leading-[1.25]; 
     }
   }
 
@@ -1950,7 +1958,7 @@ html {
 .hc-cat-page__title {
   font-size: 1.75rem;
   font-weight: 500;
-  color: #1a1a2e;
+  color: #1a1a1a;
   margin: 0;
 }
 
@@ -2027,7 +2035,7 @@ html {
 .hc-article__title {
   font-size: 1.75rem;
   font-weight: 500;
-  color: #1a1a2e;
+  color: #1a1a1a;
   margin: 0 0 24px;
   line-height: 1.3;
 }

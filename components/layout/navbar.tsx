@@ -322,7 +322,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
         href: localizedHref(lang, 'esim-supported-devices'),
       },
       bottomRight: {
-        text: isVi ? "Tải ứng dụng" : "Download App",
+        text: isVi ? "Tất cả điểm đến" : "All destinations",
         href: localizedHref(lang, 'all-destinations'),
       },
     },
@@ -385,7 +385,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
         href: localizedHref(lang, 'what-is-esim'),
       },
       bottomRight: {
-        text: isVi ? "Tải ứng dụng" : "Download App",
+       text: isVi ? "Tất cả điểm đến" : "All destinations",
         href: localizedHref(lang, 'all-destinations'),
       },
     },
@@ -464,7 +464,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
         href: localizedHref(lang, 'what-is-esim'),
       },
       bottomRight: {
-        text: isVi ? "Tải ứng dụng" : "Download App",
+        text: isVi ? "Tất cả điểm đến" : "All destinations",
         href: localizedHref(lang, 'all-destinations'),
       },
     },
@@ -508,6 +508,9 @@ function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
   const isVi = lang === 'vi';
   const homeHref = isVi ? '/' : `/${lang}`;
   const isLandingPage = pathname === homeHref || pathname === `${homeHref}/`;
+  // About Us page (localized: /gioi-thieu in vi, /about-us in en) gets a solid
+  // white navbar background instead of the default transparent/blur header.
+  const isAboutUsPage = /(?:^|\/)(?:gioi-thieu|about-us)\/?$/.test(pathname);
   const [announcementVisible, setAnnouncementVisible] = useState(true);
   const dismissAnnouncement = useCallback(() => {
     setAnnouncementVisible(false);
@@ -743,9 +746,11 @@ function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
           className={cn(
             "relative transition-all duration-300",
             destinationsOpen || openDropdown ? "bg-primary" :
-              hasScrolled
-                ? "bg-[rgba(255,255,255,0.1)] backdrop-blur-[98px] [-webkit-backdrop-filter:blur(98px)]"
-                : "bg-transparent backdrop-blur-0 [-webkit-backdrop-filter:blur(0px)]"
+              isAboutUsPage
+                ? "bg-white"
+                : hasScrolled
+                  ? "bg-[rgba(255,255,255,0.1)] backdrop-blur-[98px] [-webkit-backdrop-filter:blur(98px)]"
+                  : "bg-transparent backdrop-blur-0 [-webkit-backdrop-filter:blur(0px)]"
           )}
           id="header"
           ref={dropdownRef}
@@ -1066,7 +1071,7 @@ function MenuLinkItem({
     <Link
       href={item.href}
       onClick={onClose}
-      className="rounded-sm w-full block group p-3 hover:bg-bg-primary transition-colors duration-200"
+      className="rounded-sm w-full block group p-3 hover:bg-bg-secondary transition-colors duration-200"
     >
       <div className="flex flex-row gap-2">
         <div className="flex items-center justify-center h-6 w-6 rounded-full shrink-0 text-text-primary bg-bg-brand-yellow">

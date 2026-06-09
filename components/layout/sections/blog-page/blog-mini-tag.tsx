@@ -9,7 +9,7 @@ export function BlogMiniTagWidget({ miniTag }: { miniTag: BlogMiniTag }) {
         <figure className="flex justify-center items-center w-[120px] min-w-[120px] h-[120px] [&_img]:max-w-none rounded-sm overflow-hidden">
           <div>
             <Image
-              alt={miniTag.title || "Save on mobile data with the Saily app"}
+              alt={miniTag.title || "Save on mobile data with the esim.vn app"}
               loading="lazy"
               width={120}
               height={120}

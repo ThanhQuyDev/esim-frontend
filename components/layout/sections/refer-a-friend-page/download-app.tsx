@@ -27,9 +27,6 @@ export function ReferDownloadApp({ dict }: ReferDownloadAppProps) {
                       <div className="h-full w-full flex flex-row flex-wrap gap-x-3 gap-y-3">
                         <a
                           className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus"
-                          rel="noopener noreferrer nofollow"
-                          target="_blank"
-                          href="https://saily.onelink.me/ymzx/appstore"
                         >
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
@@ -44,9 +41,6 @@ export function ReferDownloadApp({ dict }: ReferDownloadAppProps) {
                         </a>
                         <a
                           className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus"
-                          rel="noopener noreferrer nofollow"
-                          target="_blank"
-                          href="https://saily.onelink.me/ymzx/android"
                         >
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
@@ -74,9 +68,6 @@ export function ReferDownloadApp({ dict }: ReferDownloadAppProps) {
                     <div className="h-full w-full flex flex-row justify-center gap-x-3">
                       <a
                         className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus"
-                        rel="noopener noreferrer nofollow"
-                        target="_blank"
-                        href="https://saily.onelink.me/ymzx/appstore"
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
@@ -91,9 +82,6 @@ export function ReferDownloadApp({ dict }: ReferDownloadAppProps) {
                       </a>
                       <a
                         className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus"
-                        rel="noopener noreferrer nofollow"
-                        target="_blank"
-                        href="https://saily.onelink.me/ymzx/android"
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img

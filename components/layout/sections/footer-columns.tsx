@@ -19,21 +19,6 @@ export interface FooterColumn {
   links: FooterLink[];
 }
 
-const socialIconMap: Record<string, string> = {
-  facebook: "https://sb.nordcdn.com/m/73b0007dac464eb4/original/facebook.svg",
-  tiktok: "https://sb.nordcdn.com/m/3cffb132be50069/original/tiktok.svg",
-  "x (twitter)": "https://sb.nordcdn.com/m/3cffb132be50069/original/x-twitter.svg",
-  twitter: "https://sb.nordcdn.com/m/3cffb132be50069/original/x-twitter.svg",
-  instagram: "https://sb.nordcdn.com/m/327ee6481264b8e0/original/instagram.svg",
-  youtube: "https://sb.nordcdn.com/m/544926c91d4179c6/original/youtube.svg",
-  linkedin: "https://sb.nordcdn.com/m/7479eac8a4f6a155/original/linkedin.svg",
-  reddit: "https://sb.nordcdn.com/m/7e0fac0feb703767/original/Reddit.svg",
-};
-
-function getSocialIcon(name: string): string | undefined {
-  return socialIconMap[name.trim().toLowerCase()];
-}
-
 function isFollowUsTitle(title: string): boolean {
   const t = title.trim().toLowerCase();
   return (
@@ -54,7 +39,7 @@ function FooterLinkItem({
 }) {
   const isExternal = link.href.startsWith("http");
   const icon =
-    link.iconUrl || (isFollowCol ? getSocialIcon(link.label) : null);
+    link.iconUrl || null
 
   if (isFollowCol && isExternal) {
     return (

@@ -67,7 +67,7 @@ export function BlogMeta({
   lang?: string;
 }) {
   return (
-    <div className="h-full w-full flex flex-row justify-end flex-wrap items-center gap-x-4 gap-y-4">
+    <div className="h-full flex flex-row justify-end flex-wrap items-center gap-x-4 gap-y-4">
       {date && (
         <div>
           <time dateTime={date} className="flex gap-2 items-center text-secondary">

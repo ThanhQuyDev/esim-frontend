@@ -41,7 +41,7 @@ export function BlogRelatedPosts({ posts, lang }: BlogRelatedPostsProps) {
             {post.coverImage && (
               <Link
                 href={blogDetailHref(post, lang)}
-                className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus hover:underline"
+                className="align-bottom min-w-[240px] transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus hover:underline"
               >
                 <figure className="overflow-hidden rounded-sm">
                   <Image

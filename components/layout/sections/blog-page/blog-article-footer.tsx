@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { BookOpen } from "lucide-react";
 import type { Blog } from "@/lib/api";
-import { formatDate, formatTimeRead, authorSlug, categorySlug, blogDetailHref } from "./blog-detail-helpers";
+import { formatDate, formatTimeRead, authorSlug, categorySlug, blogDetailHref, type SocialLink } from "./blog-detail-helpers";
 import { SocialIconsRow } from "./blog-social-icons";
 
 function RelatedArticle({ article, lang }: { article: Blog; lang: string }) {
@@ -81,7 +81,7 @@ function RelatedArticle({ article, lang }: { article: Blog; lang: string }) {
   );
 }
 
-export function BlogArticleFooter({ blog, lang }: { blog: Blog; lang: string }) {
+export function BlogArticleFooter({ blog, lang, socialLinks }: { blog: Blog; lang: string; socialLinks: SocialLink[] }) {
   const authorName = blog.author || "Unknown";
   const authorAvatarUrl = blog.authorAvatar || "";
   const relatedBlogs = blog.relatedBlogs || [];
@@ -100,7 +100,7 @@ export function BlogArticleFooter({ blog, lang }: { blog: Blog; lang: string }) 
                 <div className="h-full w-full group/stack [&>div:empty]:hidden flex-col text-start items-start justify-start gap-y-6 grid grid-cols-1">
                   {/* Social Icons */}
                   <div>
-                    <SocialIconsRow />
+                    <SocialIconsRow links={socialLinks} />
                   </div>
 
                   {/* Divider */}

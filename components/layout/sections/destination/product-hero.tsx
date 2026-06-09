@@ -57,7 +57,7 @@ export function ProductHero({ destination, dict, lang }: ProductHeroProps) {
         {/* Title row with globe icon */}
         <div className="flex items-center gap-2.5 mb-2">
           {destination.flagUrl ? (
-            <div className="w-[30px] h-[30px] rounded-full overflow-hidden shrink-0">
+            <div className="w-[30px] h-[30px] rounded-full overflow-hidden shrink-0 border">
               <Image src={destination.flagUrl} alt={destination.name} width={30} height={30} className="w-full h-full object-cover" />
             </div>
           ) : (

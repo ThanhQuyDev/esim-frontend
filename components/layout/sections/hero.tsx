@@ -81,7 +81,7 @@ export function HeroSection({ dict, heroBanners = [], lang }: HeroSectionProps) 
         <div className="absolute bottom-0 min-w-[1038px] md:min-w-[1153px] lg:min-w-[1372px] xl:min-w-[1716px] md:translate-x-[18%] lg:translate-x-[21%] xl:translate-x-[23%]">
           <div>
             <HeroImage
-              alt="The Saily international eSIM app."
+              alt="The esim.vn international eSIM app."
               apiImageUrl={heroImageUrl}
               fallbackSrc={HERO_IMAGE_URL}
               width={1716}

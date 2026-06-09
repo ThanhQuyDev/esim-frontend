@@ -35,10 +35,11 @@ export function DeviceChecker({ dict, lang }: DeviceCheckerProps) {
     similarDevices: string[];
   } | null>(null);
 
-  const handleCheck = useCallback(async () => {
-    const trimmed = query.trim();
+  const handleCheck = useCallback(async (searchTerm?: string) => {
+    const trimmed = (searchTerm ?? query).trim();
     if (!trimmed) return;
 
+    setQuery(trimmed);
     setIsChecking(true);
     setResult(null);
 
@@ -122,10 +123,10 @@ export function DeviceChecker({ dict, lang }: DeviceCheckerProps) {
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder={lang === "en" ? "e.g. iPhone 15, Samsung S24, …" : "VD: iPhone 15, Samsung S24, …"}
-            className="flex-1 px-4 py-[9px] border border-[#e5e7eb] rounded-full text-base sm:text-sm text-[#111] placeholder:text-[#9ca3af] outline-none bg-white transition-colors focus:border-[#fff500] font-[inherit]"
+            className="flex-1 px-4 py-[9px] border border-[#e5e7eb] rounded-full text-base sm:text-sm text-[#111] placeholder:text-[#9ca3af] outline-none bg-white transition-colors focus:border-gray-700 font-[inherit]"
           />
           <button
-            onClick={handleCheck}
+            onClick={() => handleCheck()}
             disabled={isChecking || !query.trim()}
             className="px-5 py-[9px] bg-[#111] text-white text-sm font-medium rounded-full border-none cursor-pointer font-[inherit] whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
           >
@@ -145,7 +146,7 @@ export function DeviceChecker({ dict, lang }: DeviceCheckerProps) {
               </div>
             ) : (
               <div className="space-y-2">
-                <div className="flex items-center gap-2.5 px-3 py-[9px] bg-[#fef2f2] border border-[#fecaca] rounded-full">
+                <div className="flex items-center gap-2.5 px-3 py-[9px] bg-[#fef2f2] border border-[#fecaca] rounded-sm">
                   <BigXIcon />
                   <span className="text-base sm:text-sm font-medium text-[#991b1b]">
                     {dict.deviceCheck.notSupported.replace("{device}", result.deviceName)}
@@ -161,7 +162,7 @@ export function DeviceChecker({ dict, lang }: DeviceCheckerProps) {
                         <span
                           key={d}
                           className="text-sm px-2.5 py-[3px] bg-white border border-[#e5e7eb] rounded-[20px] text-[#374151] cursor-pointer hover:bg-[#fef9e7] hover:border-[#F5C518] transition-colors"
-                          onClick={() => setQuery(d)}
+                          onClick={() => handleCheck(d)}
                         >
                           {d}
                         </span>
@@ -181,7 +182,7 @@ export function DeviceChecker({ dict, lang }: DeviceCheckerProps) {
             <span
               key={d}
               className="text-sm px-2.5 py-[3px] bg-white border border-[#e5e7eb] rounded-[20px] text-[#374151] cursor-pointer hover:bg-[#fef9e7] hover:border-[#F5C518] transition-colors"
-              onClick={() => setQuery(d)}
+              onClick={() => handleCheck(d)}
             >
               {d}
             </span>

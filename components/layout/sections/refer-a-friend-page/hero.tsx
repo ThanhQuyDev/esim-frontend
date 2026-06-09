@@ -50,9 +50,6 @@ export function ReferHero({ dict }: ReferHeroProps) {
                       <div className="flex flex-row gap-x-4">
                         <a
                           className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus"
-                          rel="noopener noreferrer nofollow"
-                          target="_blank"
-                          href="https://saily.onelink.me/ymzx/appstore"
                         >
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
@@ -67,9 +64,6 @@ export function ReferHero({ dict }: ReferHeroProps) {
                         </a>
                         <a
                           className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus"
-                          rel="noopener noreferrer nofollow"
-                          target="_blank"
-                          href="https://saily.onelink.me/ymzx/android"
                         >
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img

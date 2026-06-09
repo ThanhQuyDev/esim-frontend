@@ -1,4 +1,5 @@
-import type { Blog, Plan } from "@/lib/api";
+import { getFooters, pickLocalizedTitle, type Blog, type Plan } from "@/lib/api";
+import type { Locale } from "@/lib/i18n-config";
 
 export function formatDate(dateStr: string | null): string {
   if (!dateStr) return "";
@@ -47,10 +48,39 @@ export function formatPrice(plan: Plan): string {
   return `${plan.vndPrice.toLocaleString('vi-VN')} đ`;
 }
 
-export const SOCIAL_LINKS = [
-  { href: "https://www.tiktok.com/@sailyworld", alt: "original tiktok svg", src: "https://sb.nordcdn.com/m/440c12ed5253587d/original/original-tiktok-svg.svg", w: 24, h: 24 },
-  { href: "https://x.com/sailyworld", alt: "original x svg", src: "https://sb.nordcdn.com/m/300bf91369291564/original/original-x-svg.svg", w: 24, h: 19 },
-  { href: "https://www.facebook.com/sailyservice", alt: "original facebook svg", src: "https://sb.nordcdn.com/m/28723c26cd3497c4/original/original-facebook-svg.svg", w: 19, h: 24 },
-  { href: "https://www.instagram.com/sailyworld", alt: "original instagram svg", src: "https://sb.nordcdn.com/m/2e4efabe94c552c4/original/original-instagram-svg.svg", w: 20, h: 24 },
-  { href: "https://www.youtube.com/@esim_service", alt: "original youtube svg", src: "https://sb.nordcdn.com/m/7eb40efe0d874018/original/original-youtube-svg.svg", w: 24, h: 24 },
-];
+export interface SocialLink {
+  href: string;
+  alt: string;
+  src: string;
+}
+
+function isFollowUsCategory(category: string | null | undefined): boolean {
+  const t = (category ?? "").trim().toLowerCase();
+  return (
+    t === "follow us" ||
+    t === "theo dõi" ||
+    t === "theo doi" ||
+    t.includes("follow") ||
+    t.includes("theo dõi")
+  );
+}
+
+/**
+ * Fetch social links from the footer "Follow us" / "Theo dõi" category.
+ * Mirrors the data the footer renders, so blog and footer stay in sync.
+ * Only links that have an icon (iconUrl) are returned.
+ */
+export async function getSocialLinks(lang: Locale = "en"): Promise<SocialLink[]> {
+  try {
+    const footers = await getFooters({ lang });
+    return footers
+      .filter((f) => isFollowUsCategory(f.categories) && f.url?.trim() && f.iconUrl?.trim())
+      .map((f) => ({
+        href: f.url.trim(),
+        alt: pickLocalizedTitle(f, lang).trim().toLowerCase() || "social",
+        src: (f.iconUrl as string).trim(),
+      }));
+  } catch {
+    return [];
+  }
+}

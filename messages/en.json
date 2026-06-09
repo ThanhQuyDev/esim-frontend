@@ -1294,6 +1294,34 @@
     "review": "Reviews",
     "referFriend": "Refer a friend"
   },
+  "cart": {
+    "title": "Shopping Cart",
+    "selectAll": "Select all",
+    "orderSummary": "Order summary",
+    "selectedItems": "Selected items",
+    "subtotal": "Subtotal",
+    "discount": "Discount",
+    "total": "Total",
+    "coupon": "Coupon",
+    "enterCoupon": "Enter coupon or referral code",
+    "apply": "Apply",
+    "remove": "Remove",
+    "removeItem": "Remove item",
+    "availableCoupons": "Available coupons",
+    "loadingCoupons": "Loading coupons...",
+    "noCoupons": "No coupons available",
+    "minOrder": "Minimum order",
+    "proceedToCheckout": "Proceed to checkout",
+    "emptyCart": "Your cart is empty",
+    "emptyCartDescription": "Explore our eSIM plans and add them to your cart.",
+    "browsePlans": "Browse plans",
+    "day": "day",
+    "days": "days",
+    "unlimited": "Unlimited",
+    "decrease": "Decrease quantity",
+    "increase": "Increase quantity",
+    "daysUnit": "days"
+  },
   "checkout": {
     "paymentNote": "By completing your order, you agree to our Terms of Service and Privacy Policy."
   }

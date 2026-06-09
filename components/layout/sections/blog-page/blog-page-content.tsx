@@ -181,10 +181,8 @@ function FeaturedArticle({ blog, lang }: { blog: Blog; lang: string }) {
                     )}
                   </div>
                 </div>
-                <div>
+                <div className="flex justify-between w-full">
                   <AuthorLink author={blog.author} lang={lang} />
-                </div>
-                <div className="w-full">
                   <BlogMeta date={blog.updatedAt} timeRead={String(blog.timeRead)} lang={lang} />
                 </div>
               </div>
@@ -327,7 +325,7 @@ function ChooseCategorySection({
                       onClick={() => setActiveTab(i)}
                       className={`relative z-[1] body-sm-medium whitespace-nowrap md:text-[1rem] md:font-medium px-4 py-1.5 md:px-6 md:py-3 focus-visible:outline-hidden focus-visible:shadow-focus rounded-full transition-colors ${activeTab === i
                           ? "text-white"
-                          : "text-primary hover:text-secondary"
+                          : "text-primary hover:bg-bg-secondary"
                         }`}
                     >
                       {cat}
@@ -377,7 +375,7 @@ function CategoryTabPanel({
   return (
     <div className={`pt-6 ${isActive ? "" : "hidden"}`}>
       <div className="flex flex-col md:flex-row gap-4 md:justify-between md:items-center mb-10">
-        <h3 className="heading-lg">{category}</h3>
+        <h3 className="sm:text-[2rem] heading-lg">{category}</h3>
         <Link
           href={`/${lang}/blog/${categorySlug(category)}/`}
           className="align-bottom hover:underline transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus flex gap-2 items-center"
@@ -502,6 +500,18 @@ export function BlogPageContent({ lang, initialBlogs, initialCategories }: BlogP
         lang={lang}
         className="hidden sm:block"
       />
+
+      {/* Page Title (H1) */}
+      <div className="mx-4 sm:mx-auto">
+        <div className="container mx-auto">
+          <h1
+            className="pt-4 pb-2"
+            style={{ fontSize: "2.75rem", fontWeight: 500 }}
+          >
+            {lang === "vi" ? "Blog eSIM" : "eSIM Blog"}
+          </h1>
+        </div>
+      </div>
 
       {/* Featured Article */}
       {featuredBlog && <FeaturedArticle blog={featuredBlog} lang={lang} />}

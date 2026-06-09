@@ -118,11 +118,15 @@ export function DeviceList({ initialData, dict, lang }: DeviceListProps) {
     if (!parent) return;
     const parentRect = parent.getBoundingClientRect();
     const targetRect = target.getBoundingClientRect();
+    // getBoundingClientRect() is measured from the parent's border box, but an
+    // absolutely positioned child is offset from the parent's padding box
+    // (inside the border). Subtract the parent border (clientTop/clientLeft)
+    // so the highlight isn't pushed down/right by the 1px border.
     setSliderStyle({
       width: targetRect.width,
       height: targetRect.height,
-      top: targetRect.top - parentRect.top,
-      transform: `translateX(${targetRect.left - parentRect.left}px)`,
+      top: targetRect.top - parentRect.top - parent.clientTop,
+      transform: `translateX(${targetRect.left - parentRect.left - parent.clientLeft}px)`,
     });
   }, [activeTab]);
 

@@ -11,7 +11,7 @@ const images = [
     src: "https://sb.nordcdn.com/m/6ff5ac1a5fc98440/original/benefit-section-one-sim.png",
   },
   {
-    alt: "A phone screen showing Saily's global coverage and security features.",
+    alt: "A phone screen showing esim.vn's global coverage and security features.",
     src: "https://sb.nordcdn.com/m/4a18c3a25c9f5a26/original/benefit-section-security-features.png",
   },
   {
@@ -19,7 +19,7 @@ const images = [
     src: "https://sb.nordcdn.com/m/643e08f767581cea/original/ultra_plan_featureblock_v2.png",
   },
   {
-    alt: "A phone screen showing the Saily Ultra plan.",
+    alt: "A phone screen showing the esim.vn Ultra plan.",
     src: "https://sb.nordcdn.com/m/490d72ea0ed85194/original/benefit-section-ultra-plan.png",
   },
 ];
