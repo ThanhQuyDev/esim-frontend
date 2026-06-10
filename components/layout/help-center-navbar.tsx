@@ -103,10 +103,7 @@ export function HelpCenterNavbar({ lang }: HelpCenterNavbarProps) {
     return (
         <header
             className={cn(
-                "sticky top-0 z-40 w-full transition-all duration-300",
-                hasScrolled
-                    ? "bg-gray-100 shadow-sm"
-                    : "bg-transparent"
+                "sticky top-0 z-40 w-full transition-all duration-300 bg-white shadow-sm",
             )}
             role="banner"
         >
@@ -121,7 +118,7 @@ export function HelpCenterNavbar({ lang }: HelpCenterNavbarProps) {
                         className="flex items-center shrink-0"
                         aria-label={isVi ? "Về trang chủ esim.vn" : "Back to esim.vn home"}
                     >
-                        <SailyLogo className="w-[57px] lg:w-[120px]" />
+                        <SailyLogo className="w-[100px] lg:w-[140px]" />
                     </Link>
                     <span
                         className={cn("hidden sm:inline-block h-6 w-px", "bg-black")}
@@ -139,7 +136,7 @@ export function HelpCenterNavbar({ lang }: HelpCenterNavbarProps) {
                 <button
                     type="button"
                     onClick={() => setIsOpen((v) => !v)}
-                    className="ml-2 inline-flex items-center justify-center w-10 h-10 rounded-md transition-colors xl:hidden text-gray-700 hover:bg-gray-200"
+                    className="ml-2 inline-flex items-center justify-center w-10 h-10 rounded-md transition-colors xl:hidden text-gray-700 sm:hover:bg-gray-200"
                     aria-expanded={isOpen}
                     aria-controls="help-center-menu"
                 >
@@ -173,11 +170,11 @@ export function HelpCenterNavbar({ lang }: HelpCenterNavbarProps) {
                             className="flex items-center w-full xl:w-64 xl:mx-4 relative max-xl:px-4 max-xl:py-3 max-xl:border-b max-xl:border-gray-200"
                         >
                             <Search
-                                className={cn("absolute left-3 w-4 h-4 pointer-events-none", "text-gray-400")}
+                                className={cn("absolute left-7  w-4 h-4 pointer-events-none", "text-gray-400")}
                                 aria-hidden="true"
                             />
                             <input
-                                type="search"
+                                type="text"
                                 name="q"
                                 value={query}
                                 onChange={(e) => setQuery(e.target.value)}
@@ -191,8 +188,18 @@ export function HelpCenterNavbar({ lang }: HelpCenterNavbarProps) {
                                         ? "Nhập chủ đề, câu hỏi hoặc vấn đề"
                                         : "Type a topic, question or issue here"
                                 }
-                                className="w-full pl-9 pr-3 py-2 text-sm rounded-md border border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:outline-none"
+                                className="w-full pl-9 pr-8 py-3 text-base focus:border-gray-900 rounded-md border border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:outline-none"
                             />
+                            {query && (
+                                <button
+                                    type="button"
+                                    onClick={() => setQuery("")}
+                                    className="absolute right-7 top-1/2 -translate-y-1/2 flex items-center justify-center w-5 h-5 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-500 hover:text-gray-700  transition-colors cursor-pointer"
+                                    aria-label={isVi ? "Xóa tìm kiếm" : "Clear search"}
+                                >
+                                    <X className="w-3 h-3" />
+                                </button>
+                            )}
                         </form>
                     )}
 

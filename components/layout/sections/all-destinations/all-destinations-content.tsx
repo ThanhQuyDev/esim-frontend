@@ -160,7 +160,7 @@ export function AllDestinationsContent({
                 data-testid="search-input"
                 placeholder={dict.searchPlaceholder}
                 autoComplete="off"
-                className="outline-hidden appearance-none w-full leading-md py-[11px] px-4 text-text-primary placeholder-text-tertiary border border-border-secondary hover:border-border-focus active:border-border-focus focus:border-border-focus transition rounded-sm pl-12 pr-10"
+                className="outline-hidden appearance-none w-full leading-md py-[11px] px-4 text-text-primary placeholder-text-tertiary border border-border-secondary hover:border-border-focus focus-visible:outline-none transition rounded-sm pl-12 pr-10"
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -186,7 +186,7 @@ export function AllDestinationsContent({
                 <button
                   type="button"
                   onClick={() => setSearchQuery("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-text-tertiary hover:text-text-primary transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 bg-bg-secondary rounded-full text-text-tertiary hover:text-text-primary transition-colors"
                   aria-label="Clear search"
                 >
                   <X className="w-4 h-4" />

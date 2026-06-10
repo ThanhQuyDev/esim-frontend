@@ -113,7 +113,7 @@ export function PlanConfig({
       </div>
 
       {/* Day chips — below the grid */}
-      {(!isFixed || selectedPlan?.isLocalInventory ) && dayOptions.length > 0 && (
+      {(!isFixed || selectedPlan?.isLocalInventory) && dayOptions.length > 0 && (
         <div className="flex gap-[7px] flex-wrap">
           {dayOptions.map((d) => (
             <button

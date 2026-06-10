@@ -381,7 +381,7 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
           </div>
           <div className="flex flex-col gap-2.5 mb-4 max-[640px]:gap-[9px] max-[640px]:mb-3.5">
             {data.notes.map((n, i) => (
-              <div key={i} className="flex items-start gap-2.5 max-[640px]:gap-[9px] text-base max-[640px]:text-[.875rem] text-[#374151] leading-[1.65]">
+              <div key={i} className="flex items-center gap-2.5 max-[640px]:gap-[9px] text-base max-[640px]:text-[.875rem] text-[#374151] leading-[1.65]">
                 <div className="w-5 h-5 max-[640px]:w-[18px] max-[640px]:h-[18px] rounded-full bg-[#FEE2E2] flex items-center justify-center shrink-0 mt-[2px]">
                   <IconCheckRed />
                 </div>

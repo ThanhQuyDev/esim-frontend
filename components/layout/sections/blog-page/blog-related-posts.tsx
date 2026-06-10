@@ -71,12 +71,12 @@ export function BlogRelatedPosts({ posts, lang }: BlogRelatedPostsProps) {
               )}
               <div className="flex flex-col text-start items-start justify-start gap-y-2">
                 <div className="flex flex-row justify-start flex-wrap items-center gap-x-4">
-                  {post.publishedAt && (
+                  {post.updatedAt && (
                     <time
-                      dateTime={post.publishedAt}
+                      dateTime={post.updatedAt}
                       className="flex gap-2 items-center text-secondary"
                     >
-                      <p className="body-xs">{formatDate(post.publishedAt)}</p>
+                      <p className="body-xs">{formatDate(post.updatedAt)}</p>
                     </time>
                   )}
                   {post.timeRead != null && (

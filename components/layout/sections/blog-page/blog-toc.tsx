@@ -34,7 +34,7 @@ export function processBlogContent(html: string): {
   const usedIds = new Set<string>();
 
   const processedHtml = html.replace(
-    /<h([1-6])([^>]*)>([\s\S]*?)<\/h\1>/gi,
+    /<h([2-6])([^>]*)>([\s\S]*?)<\/h\1>/gi,
     (_full, levelStr: string, attrs: string, inner: string) => {
       const level = parseInt(levelStr, 10);
       const text = inner
@@ -77,16 +77,23 @@ export function processBlogContent(html: string): {
     }
   );
 
-  return { headings, html: processedHtml };
+  // Wrap tables in scrollable containers so they scroll independently
+  const wrappedHtml = processedHtml.replace(
+    /<table([^>]*)>([\s\S]*?)<\/table>/gi,
+    '<div class="table-scroll-wrap overflow-x-auto w-full"><table$1>$2</table></div>'
+  );
+
+  return { headings, html: wrappedHtml };
 }
 
 interface BlogTableOfContentsProps {
   /** Either pass raw content (will be parsed) or a pre-extracted headings list */
   content?: string;
   headings?: TocItem[];
+  lang?: string;
 }
 
-export function BlogTableOfContents({ content, headings: headingsProp }: BlogTableOfContentsProps) {
+export function BlogTableOfContents({ content, headings: headingsProp, lang = "vi" }: BlogTableOfContentsProps) {
   const [expanded, setExpanded] = useState(false);
   const hiddenRef = useRef<HTMLDivElement | null>(null);
   const [hiddenHeight, setHiddenHeight] = useState(0);
@@ -133,14 +140,14 @@ export function BlogTableOfContents({ content, headings: headingsProp }: BlogTab
   };
 
   return (
-    <div className="flex flex-col gap-4 p-6 bg-secondary border-secondary border-md rounded-md pb-6">
-      <p className="body-lg-medium scroll-mt-20 xl:scroll-mt-24">Table of Contents</p>
+    <div className="flex flex-col gap-4 p-6 bg-white border-secondary border-md rounded-md pb-6">
+      <p className="body-lg-medium scroll-mt-20 xl:scroll-mt-24">{lang === "vi" ? "Mục lục" : "Table of Contents"}</p>
       <ul>
         {visibleHeadings.map((h) => (
           <li
             key={h.id}
             className="relative pt-2"
-            style={{ paddingLeft: `calc(${(h.level - 1) * 1}rem)` }}
+            style={{ paddingLeft: `calc(${(h.level - 2) * 0.5}rem)` }}
           >
             <a
               href={`#${h.id}`}
@@ -185,7 +192,7 @@ export function BlogTableOfContents({ content, headings: headingsProp }: BlogTab
           className="max-md:w-full text-secondary pointer-fine:hover:text-neutral-800 border-md border-transparent active:text-neutral-1000! box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus inline-flex gap-2 text-start justify-center py-[11px] body-md-medium px-0 self-center"
         >
           <span>
-            {expanded ? "Close" : "Show All"}
+            {expanded ? (lang === "vi" ? "Thu gọn" : "Close") : (lang === "vi" ? "Hiện tất cả" : "Show All")}
             <span className="whitespace-nowrap ms-2">
               ⁠
               <span className="inline-flex items-center align-bottom">

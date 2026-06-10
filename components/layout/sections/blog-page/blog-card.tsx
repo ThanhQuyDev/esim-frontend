@@ -163,7 +163,7 @@ export function BlogCard({ blog, lang }: { blog: Blog; lang: string }) {
               <h3 className="heading-sm">
                 <Link
                   href={blogDetailHref(blog, lang)}
-                  className="!text-[1.4rem] hover:underline font-medium align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus"
+                  className="text-[1.25rem] sm:text-[1.4rem] hover:underline font-medium align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus"
                 >
                   {blog.title}
                 </Link>

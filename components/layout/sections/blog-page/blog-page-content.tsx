@@ -10,6 +10,7 @@ import type { Locale } from "@/lib/i18n-config";
 import { BlogCategoryNav } from "./blog-category-nav";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { BlogCard, CategoryBadge, BlogMeta, AuthorLink, blogDetailHref, categorySlug } from "./blog-card";
+import { ScrollToTop } from "./scroll-to-top";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.saily.example.com";
@@ -150,7 +151,7 @@ function CategoryNavBar({
 function FeaturedArticle({ blog, lang }: { blog: Blog; lang: string }) {
   return (
     <div data-section="featured-article" className="relative">
-      <div className="py-16">
+      <div className="py-8 sm:py-16">
         <div className="mx-4 sm:mx-auto">
           <div className="container mx-auto">
             <article className="flex flex-col lg:flex-row gap-8">
@@ -237,7 +238,7 @@ function ArticleGridSection({
           <div className="container grid sm:gap-x-8 grid-cols-12 mb-10 mx-auto">
             <div className="col-span-12 md:col-span-8">
               <div className="grid grid-cols-1 gap-y-6">
-                <h2 className="sm:text-[2rem] text-[1.5rem]">{title}</h2>
+                <h2 className="sm:text-[2rem] text-[1.625em]">{title}</h2>
               </div>
             </div>
           </div>
@@ -323,7 +324,7 @@ function ChooseCategorySection({
                       key={cat}
                       ref={(el) => { tabRefs.current[i] = el; }}
                       onClick={() => setActiveTab(i)}
-                      className={`relative z-[1] body-sm-medium whitespace-nowrap md:text-[1rem] md:font-medium px-4 py-1.5 md:px-6 md:py-3 focus-visible:outline-hidden focus-visible:shadow-focus rounded-full transition-colors ${activeTab === i
+                      className={`relative z-[1] body-sm-medium whitespace-nowrap md:body-md-medium px-4 py-1 focus-visible:outline-hidden focus-visible:shadow-focus rounded-full min-w-[60px] bg-transparent transition-all duration-200 ${activeTab === i
                           ? "text-white"
                           : "text-primary hover:bg-bg-secondary"
                         }`}
@@ -375,7 +376,7 @@ function CategoryTabPanel({
   return (
     <div className={`pt-6 ${isActive ? "" : "hidden"}`}>
       <div className="flex flex-col md:flex-row gap-4 md:justify-between md:items-center mb-10">
-        <h3 className="sm:text-[2rem] heading-lg">{category}</h3>
+        <h3 className="sm:text-[2rem] text-[1.625rem] font-medium">{category}</h3>
         <Link
           href={`/${lang}/blog/${categorySlug(category)}/`}
           className="align-bottom hover:underline transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus flex gap-2 items-center"
@@ -486,8 +487,8 @@ export function BlogPageContent({ lang, initialBlogs, initialCategories }: BlogP
 
       {/* Breadcrumb */}
       <div className="sm:hidden bg-primary">
-        <div className="mx-4 sm:mx-auto">
-          <div className="container mx-auto">
+        <div className="sm:mx-auto">
+          <div className="container mt-4 sm:mx-auto">
             <Breadcrumb
               items={[{ label: "Blog" }]}
               lang={lang}
@@ -505,8 +506,7 @@ export function BlogPageContent({ lang, initialBlogs, initialCategories }: BlogP
       <div className="mx-4 sm:mx-auto">
         <div className="container mx-auto">
           <h1
-            className="pt-4 pb-2"
-            style={{ fontSize: "2.75rem", fontWeight: 500 }}
+            className="pt-4 pb-2 text-[1.75rem] sm:text-[2.75rem] font-medium"
           >
             {lang === "vi" ? "Blog eSIM" : "eSIM Blog"}
           </h1>
@@ -540,6 +540,9 @@ export function BlogPageContent({ lang, initialBlogs, initialCategories }: BlogP
       {cats.length > 0 && (
         <ChooseCategorySection categories={cats} lang={lang} />
       )}
+
+      {/* Scroll to top */}
+      <ScrollToTop />
     </div>
   );
 }

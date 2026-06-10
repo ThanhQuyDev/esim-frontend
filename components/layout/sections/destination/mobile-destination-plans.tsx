@@ -71,6 +71,7 @@ export function MobileDestinationPlans({
   const resolvedDestination = destinationData || destination;
 
   const hasAnyPlans =
+    (plans.localEsim?.length ?? 0) > 0 ||
     plans.dataPlans.length > 0 ||
     plans.slowUnlimited.length > 0 ||
     plans.fastUnlimited.length > 0 ||
@@ -150,6 +151,7 @@ export function MobileDestinationPlans({
                   isFlexibleDays={isFlexibleDays}
                   availableDays={availableDays}
                   isFixed={isFixed}
+                  selectedPlan={selectedPlan}
                 />
               </>
             )}
@@ -174,6 +176,7 @@ export function MobileDestinationPlans({
                   isFlexibleDays={false}
                   availableDays={[]}
                   isFixed={true}
+                  selectedPlan={selectedPlan}
                 />
               </>
             )}

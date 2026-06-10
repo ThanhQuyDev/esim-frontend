@@ -1210,7 +1210,9 @@ function MobileSidebar({
         <Dialog.Overlay className="fixed inset-0 z-[9998] bg-black/50 data-[state=open]:animate-fade-in" />
         <Dialog.Content className="fixed top-0 right-0 h-dvh z-[9999] w-full bg-white overflow-y-auto scrollbar-none focus:outline-none data-[state=open]:animate-fade-in">
           <div className="flex flex-col grow h-full justify-between">
-            <div className="px-4">
+            {/* pb-44 reserves space for the fixed bottom CTA bar so the last
+                nav items / language selector can scroll clear of it. */}
+            <div className="px-4 pb-44">
               {/* Header */}
               <div className="flex justify-between items-center mb-4 sticky top-0 z-50 py-4 bg-white h-14">
                 <Link href={homeHref} onClick={() => setOpen(false)}>
@@ -1235,7 +1237,7 @@ function MobileSidebar({
                   <input
                     ref={inputRef}
                     placeholder={lang === "vi" ? "Bạn đang đi du lịch ở đâu?" : "Where are you travelling to?"}
-                    className="body-md bg-bg-secondary outline-none appearance-none w-full leading-relaxed py-[12.5px] pl-12 pr-12 text-text-primary placeholder-text-tertiary border-md border-border-secondary focus:border-border-focus transition-colors rounded-full"
+                    className="body-md bg-bg-secondary outline-none appearance-none w-full leading-relaxed py-[12.5px] pl-12 pr-12 text-text-primary placeholder-text-tertiary focus:border focus:border-border-focus transition-colors rounded-full"
                     type="text"
                     value={searchQuery}
                     onChange={(e) => {
@@ -1247,7 +1249,7 @@ function MobileSidebar({
                   {searchQuery ? (
                     <button
                       onClick={handleClearSearch}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-bg-secondary flex items-center justify-center text-text-tertiary hover:text-text-primary hover:bg-border-primary transition-colors"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-text-tertiary hover:text-text-primary hover:bg-border-primary transition-colors"
                       aria-label="Clear search"
                     >
                       <X className="w-3.5 h-3.5" />
@@ -1422,7 +1424,7 @@ function MobileSidebar({
                         onClick={() =>
                           setExpandedItem(isExpanded ? null : item)
                         }
-                        className="flex items-center  justify-between w-full px-4 body-md-medium text-text-primary cursor-pointer hover:bg-bg-primary transition-colors duration-200"
+                        className="flex items-center  justify-between w-full body-md-medium text-text-primary cursor-pointer hover:bg-bg-primary transition-colors duration-200"
                       >
                         <span className="flex items-center gap-2">
                           {dict[item]}
@@ -1442,7 +1444,7 @@ function MobileSidebar({
                       {/* Accordion content */}
                       {isExpanded && data && (
                         <div className="bg-bg-secondary rounded-sm mb-1 mt-2 overflow-hidden">
-                          <div className="p-4 flex flex-col gap-6">
+                          <div className="p-4 flex flex-col gap-4 md:gap-6">
                             {/* Col1 */}
                             <div className="flex flex-col gap-4">
                               {data.col1Label && (
@@ -1548,7 +1550,7 @@ function MobileSidebar({
               </div>
 
               {/* Language */}
-              <div className="relative mt-4 px-4 py-3 rounded-lg cursor-pointer hover:bg-bg-primary transition-colors">
+              <div className="relative mt-4 py-3 rounded-lg cursor-pointer hover:bg-bg-primary transition-colors">
                 <div className="flex items-center gap-2">
                   <Globe className="w-4 h-4" />
                   <span className="body-md-medium">{lang === "en" ? "English" : "Tiếng Việt"}</span>
@@ -1565,7 +1567,7 @@ function MobileSidebar({
             </div>
 
             {/* Bottom CTAs */}
-            <div className="p-4 space-y-3 border-t border-border-primary mt-auto">
+            <div className="fixed w-full bg-white bottom-0 p-4 space-y-3 border-t border-border-primary mt-auto">
               {user ? (
                 <>
                   <Link

@@ -112,12 +112,16 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
     if (activeCategory === "data") {
       if (!selectedPlan && plans) {
         const first = (plans.localEsim ?? [])[0] || plans.dataPlans[0] || plans.fastUnlimited[0] || plans.slowUnlimited[0] || plans.dailyUnlimited[0];
-        if (first) setSelectedPlan(first);
+        if (first) {
+          setSelectedPlan(first);
+          if (!first.isAbleMultidate) setDays(first.durationDays);
+        }
       }
     } else if (activeCategory === "smsCall") {
       const smsPlans = plans.smsCallEsim ?? [];
       if (smsPlans.length > 0) {
         setSelectedPlan(smsPlans[0]);
+        if (!smsPlans[0].isAbleMultidate) setDays(smsPlans[0].durationDays);
       }
     }
   }, [activeCategory, plans]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -135,6 +139,7 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
   };
 
   const hasAnyPlans =
+    (plans.localEsim?.length ?? 0) > 0 ||
     plans.dataPlans.length > 0 ||
     plans.fastUnlimited.length > 0 ||
     plans.slowUnlimited.length > 0 ||

@@ -89,7 +89,7 @@ export function DesktopStickyBar({
         chatBtn.style.bottom = "80px"; // Push above sticky bar
       } else {
         chatBtn.style.transition = "bottom 0.28s cubic-bezier(.4,0,.2,1)";
-        chatBtn.style.bottom = "24px"; // Default position (bottom-6 = 1.5rem = 24px)
+        chatBtn.style.bottom = "0px"; 
       }
     }
   }, [isVisible]);

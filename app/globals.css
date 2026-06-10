@@ -14,8 +14,34 @@
   width: 100%;
 }
 
+/* Table scroll wrapper — tables scroll horizontally inside their own container
+   without affecting the outer layout. Applied via processBlogContent / processArticleContent
+   which wraps each <table> in <div class="table-scroll-wrap …"> */
+.table-scroll-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+  margin-bottom: 1em;
+}
+.table-scroll-wrap table {
+  width: max-content !important;
+  min-width: 100%;
+  table-layout: auto !important;
+  display: table !important;
+}
+
+/* Mobile: tables inside scroll wrapper scroll independently */
+@media (max-width: 640px) {
+  .table-scroll-wrap table {
+    width: max-content !important;
+    min-width: 100%;
+    table-layout: auto !important;
+    display: table !important;
+  }
+}
+
 .prose table thead tr {
-  background-color: #f3f4f6;
+  background-color: white;
 }
 
 .prose table tbody tr:nth-child(odd) {
@@ -23,7 +49,7 @@
 }
 
 .prose table tbody tr:nth-child(even) {
-  background-color: #f9fafb;
+  background-color: #f3f4f6;
 }
 
 .prose table th,
@@ -49,7 +75,6 @@
 
 .prose li {
   &::marker {
-    font-size: 18px;
     color: #444;
   }
 }
@@ -281,7 +306,7 @@ html {
   }
 
   .heading-lg {
-    @apply text-[1.5rem] leading-[1.25] font-medium;
+    @apply text-[1.3rem] leading-[1.25] font-medium;
   }
 
   @screen lg {
@@ -316,7 +341,7 @@ html {
   }
 
   .body-lg-medium {
-    @apply text-xl leading-relaxed font-medium;
+    @apply text-xl leading-6 font-medium;
   }
 
   @screen lg {
@@ -330,7 +355,7 @@ html {
   }
 
   .body-md-medium {
-    @apply text-base leading-relaxed font-medium;
+    @apply text-base font-medium;
   }
 
   @screen lg {
@@ -360,13 +385,7 @@ html {
   }
 
   .body-xs {
-    @apply text-[0.6875rem] leading-relaxed;
-  }
-
-  @screen lg {
-    .body-xs {
-      @apply text-xs;
-    }
+    @apply text-xs leading-relaxed;
   }
 
   .body-xs-medium {
@@ -2401,7 +2420,7 @@ html {
 }
 
 .hc-article-body th {
-  background-color: #f3f4f6;
+  background-color: white;
   font-weight: 600;
   color: #111827;
 }
@@ -2514,4 +2533,11 @@ html {
 .article-body {
   color: #4d4e56;
   line-height: 1.6;
-}
+}  
+/* Push chat bubble above mobile sticky bar */  
+@media (max-width: 767px) {  
+  body.mobile-sticky-bar-visible #chat-bubble-toggle {  
+    bottom: 140px !important;  
+    transition: bottom 280ms cubic-bezier(.4, 0, .2, 1);  
+  }  
+} 

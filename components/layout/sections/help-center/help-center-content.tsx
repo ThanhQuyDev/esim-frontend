@@ -3,9 +3,10 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { RocketIcon, CreditCardIcon, Pickaxe, MessageCircleQuestionIcon, Search } from "lucide-react";
+import { RocketIcon, CreditCardIcon, Pickaxe, MessageCircleQuestionIcon, Search, X } from "lucide-react";
 import type { HelpCenterArticle } from "@/lib/api";
 import { localizedHref } from "@/lib/route-mapping";
+import { ScrollToTop } from "./scroll-to-top";
 import {
   getCategoryLabel,
   getParentLabel,
@@ -121,20 +122,30 @@ export function HelpCenterContent({ lang, initialArticles }: HelpCenterContentPr
               }}
             >
               <div className="relative flex-1">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
                 <input
-                  type="search"
+                  type="text"
                   placeholder={lang === "vi" ? "Nhập chủ đề, câu hỏi hoặc vấn đề" : "Type a topic, question or issue here"}
-                  className="w-full pl-12 pr-4 py-3 rounded-full text-xl sm:text-base border-0 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-12 pr-10 py-3 rounded-full text-sm sm:text-base border-0 border-black focus:border-[0.5px] focus:py-[11.5px] shadow-lg focus:outline-none"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   aria-label={lang === "vi" ? "Nhập chủ đề, câu hỏi hoặc vấn đề" : "Type a topic, question or issue here"}
                 />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => { setSearchQuery(""); setSearchResults([]); setIsSearching(false); }}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-6 h-6 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-500 hover:text-gray-700 transition-colors cursor-pointer"
+                    aria-label={lang === "vi" ? "Xóa tìm kiếm" : "Clear search"}
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
               </div>
               <button
                 type="submit"
                 disabled={!searchQuery.trim()}
-                className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-black text-white text-base sm:text-sm font-semibold shadow-lg hover:bg-gray-600 transition-colors disabled:bg-gray-700 disabled:cursor-not-allowed cursor-pointer whitespace-nowrap"
+                className="inline-flex items-center justify-center gap-2 px-3 py-3 rounded-full bg-black text-white text-base sm:text-sm font-semibold shadow-lg hover:bg-gray-600 transition-colors disabled:bg-gray-700 disabled:cursor-not-allowed cursor-pointer whitespace-nowrap"
                 aria-label={lang === "vi" ? "Tìm kiếm" : "Search"}
               >
                 <Search className="w-4 h-4" aria-hidden="true" />
@@ -147,7 +158,7 @@ export function HelpCenterContent({ lang, initialArticles }: HelpCenterContentPr
 
       {/* CATEGORIES */}
       <div className="bg-primary py-8">
-        <div className="container mx-auto text-center">
+        <div className="container sm:px-0 px-4 text-center">
           <h2 className="inline-flex items-baseline mt-6 text-[1.7rem] sm:text-2xl font-semibold">
             {lang === "vi" ? "Chọn danh mục chính" : "Choose main category"}
           </h2>
@@ -178,7 +189,7 @@ export function HelpCenterContent({ lang, initialArticles }: HelpCenterContentPr
 
       {/* POPULAR ARTICLES */}
       <div className="py-8">
-        <div className="container mx-auto">
+        <div className="container px-4 sm:px-0">
           <h2 className="text-[1.4rem] font-semibold mb-6">
             {lang === "vi" ? "Bài viết nổi bật" : "Popular articles"}
           </h2>
@@ -220,6 +231,9 @@ export function HelpCenterContent({ lang, initialArticles }: HelpCenterContentPr
           </div>
         </div>
       </div>
+
+      {/* Scroll to top */}
+      <ScrollToTop />
     </div>
   );
 }

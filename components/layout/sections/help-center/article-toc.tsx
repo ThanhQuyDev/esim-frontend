@@ -74,7 +74,13 @@ export function processArticleContent(html: string): {
     }
   );
 
-  return { headings, html: processedHtml };
+  // Wrap tables in scrollable containers so they scroll independently
+  const wrappedHtml = processedHtml.replace(
+    /<table([^>]*)>([\s\S]*?)<\/table>/gi,
+    '<div class="table-scroll-wrap overflow-x-auto w-full"><table$1>$2</table></div>'
+  );
+
+  return { headings, html: wrappedHtml };
 }
 
 interface ArticleTocProps {

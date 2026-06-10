@@ -243,7 +243,7 @@ export function PlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }: Plan
 
   const lang = (dict.daysUnit?.toLowerCase().startsWith("d") ? "en" : "vi");
 
-  const localEsimPlans = plans.localEsim ?? [];
+  const localEsimPlans = useMemo(() => plans.localEsim ?? [], [plans.localEsim]);
   const hasLocalEsim = localEsimPlans.length > 0;
   const localProviderLabel = useMemo(() => {
     const first = localEsimPlans[0];
@@ -284,6 +284,44 @@ export function PlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }: Plan
       setHighSpeedFup(uniqueHighFupSpeeds[0]);
     }
   }, [hasDailyUnlimited, uniqueHighFupSpeeds, highSpeedFup]);
+
+  // Keep the visual active section in sync with the externally selected plan.
+  // This is required for the initial auto-selected local eSIM (Viettel) plan:
+  // parent state already points to a local plan, while this component's local
+  // activeSection state previously still defaulted to "fixed".
+  useEffect(() => {
+    if (!selectedPlan) return;
+
+    if (localEsimPlans.some((p) => p.id === selectedPlan.id)) {
+      setActiveSection("local");
+      setLocalGb(Number(selectedPlan.dataMb));
+      return;
+    }
+
+    if (plans.dataPlans.some((p) => p.id === selectedPlan.id)) {
+      setActiveSection("fixed");
+      return;
+    }
+
+    if (plans.slowUnlimited.some((p) => p.id === selectedPlan.id)) {
+      setActiveSection("daily");
+      setDailyGb(Number(selectedPlan.dataMb));
+      return;
+    }
+
+    if (plans.fastUnlimited.some((p) => p.id === selectedPlan.id)) {
+      setActiveSection("unlimited");
+      setSpeedTab("normal");
+      setNormalGb(Number(selectedPlan.dataMb));
+      return;
+    }
+
+    if (plans.dailyUnlimited.some((p) => p.id === selectedPlan.id)) {
+      setActiveSection("unlimited");
+      setSpeedTab("high");
+      setHighSpeedFup(selectedPlan.fupSpeed || "");
+    }
+  }, [selectedPlan, localEsimPlans, plans.dataPlans, plans.slowUnlimited, plans.fastUnlimited, plans.dailyUnlimited]);
 
   // When days change externally, re-pick best plan for active section
   useEffect(() => {

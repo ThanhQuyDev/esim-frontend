@@ -712,10 +712,10 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
 
             {/* Total */}
             <div className="flex justify-between border-t border-border-primary pt-3">
-              <span className="text-xl sm:text-base font-medium text-text-primary">
+              <span className="text-lg sm:text-base font-medium text-text-primary">
                 {dict.total || "Total"}
               </span>
-              <span className="text-2xl sm:text-xl font-medium text-text-primary">{checkoutDisplayTotal}</span>
+              <span className="text-xl font-medium text-text-primary">{checkoutDisplayTotal}</span>
             </div>
 
             {/* eXU Cashback Preview */}
@@ -740,7 +740,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
           <button
             onClick={handleSubmit}
             disabled={checkout.isPending}
-            className="flex w-full items-center justify-center gap-2 rounded-full bg-bg-accent py-3.5 text-xl sm:text-base font-semibold text-text-primary transition-colors hover:bg-bg-accent-hover disabled:opacity-60 cursor-pointer"
+            className="flex w-full items-center justify-center gap-2 rounded-full bg-bg-accent py-3.5 text-base font-semibold text-text-primary transition-colors hover:bg-bg-accent-hover disabled:opacity-60 cursor-pointer"
           >
             {checkout.isPending ? (
               <span className="flex items-center gap-2">

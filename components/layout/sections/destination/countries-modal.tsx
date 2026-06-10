@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import type { Destination, Region } from "@/lib/api";
 import { Modal } from "./modal";
 import type { DestinationDict } from "./types";
+import Image from "next/image";
 
 interface CountriesModalProps {
   open: boolean;
@@ -78,8 +79,8 @@ export function CountriesModal({
   }, [rows, query]);
 
   const total = rows.length;
-  const titleVi = "🌏 Quốc gia & Nhà mạng";
-  const titleEn = "🌏 Countries & Carriers";
+  const titleVi = "Quốc gia & Nhà mạng";
+  const titleEn = "Countries & Carriers";
   const subVi = `${total} điểm đến được hỗ trợ`;
   const subEn = `${total} supported destinations`;
   const placeholder = lang === "vi" ? "Tìm quốc gia hoặc nhà mạng…" : "Search country or carrier…";
@@ -100,16 +101,19 @@ export function CountriesModal({
         <div className=" pt-7 shrink-0">
           <div className="px-7 flex items-start justify-between mb-[18px] gap-3">
             <div>
-              <h3 className="text-xl font-extrabold tracking-[-0.4px] text-[#111] mb-[3px]">
+              <div className="flex items-center gap-3">
+              {region?.iconUrl && <Image src={region?.iconUrl} alt={region.name} width={40} height={40}/>}
+              <h3 className="text-base font-extrabold tracking-[-0.4px] text-[#111] mb-[3px]">
                 {lang === "vi" ? titleVi : titleEn}
               </h3>
+              </div>
               <p className="text-sm text-[#6B7280]">{lang === "vi" ? subVi : subEn}</p>
             </div>
             <button
               type="button"
               onClick={onClose}
               aria-label="Close"
-              className="w-9 h-9 border border-[#E5E7EB] rounded-full bg-[#F9FAFB] cursor-pointer flex items-center justify-center text-[#374151] transition-colors hover:bg-[#1a1a1a] hover:border-[#1a1a1a] hover:text-white shrink-0"
+              className="w-9 h-9  border-[#E5E7EB] rounded-full bg-[#F9FAFB] cursor-pointer flex items-center justify-center text-[#374151] transition-colors hover:bg-[#1a1a1a] hover:border-[#1a1a1a] hover:text-white shrink-0"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                 <line x1="18" y1="6" x2="6" y2="18" />
@@ -163,7 +167,7 @@ export function CountriesModal({
             filtered.map((row, i) => (
               <div
                 key={`${row.name}-${i}`}
-                className="flex items-center gap-3.5 px-3.5 py-3 rounded-xl transition-colors hover:bg-[#F9FAFB]"
+                className="flex items-center gap-3.5 px-3.5 py-3 border-b-[0.5px] transition-colors hover:bg-[#F9FAFB]"
               >
                 {row.flagUrl ? (
                   <img

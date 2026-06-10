@@ -158,7 +158,7 @@ export function BlogDetailContent({ lang, slug, initialBlog }: BlogDetailContent
       <BlogCategoryNav lang={lang} />
 
       {/* Breadcrumb — below category nav */}
-      <div className="bg-primary">
+      <div className="bg-primary sm:mx-0 mt-4">
         <Breadcrumb
           items={breadcrumbItems}
           lang={lang}
@@ -168,23 +168,9 @@ export function BlogDetailContent({ lang, slug, initialBlog }: BlogDetailContent
       <div>
         {/* Article Heading with Last Updated (SEO 1.6) */}
         <BlogArticleHeading blog={blog} lang={lang} socialLinks={socialLinks ?? []} />
-
-        {/* Table of Contents — placed right below the hero image */}
-        {tocHeadings.length > 0 && (
-          <div className="mx-4 sm:mx-auto">
-            <div className="container mx-auto">
-              <div className="grid sm:gap-x-8 grid-cols-12">
-                <div className="col-span-12 lg:col-start-2 lg:col-span-7 -mt-8 mb-8">
-                  <BlogTableOfContents headings={tocHeadings} />
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* Last Updated meta info */}
         {blog.updatedAt && blog.updatedAt !== blog.createdAt && (
-          <div className="mx-4 sm:mx-auto">
+          <div className="mx-4 mb-8 sm:mx-auto">
             <div className="container mx-auto">
               <div className="grid sm:gap-x-8 grid-cols-12">
                 <div className="col-span-12 lg:col-start-2 lg:col-span-10">
@@ -202,6 +188,20 @@ export function BlogDetailContent({ lang, slug, initialBlog }: BlogDetailContent
             </div>
           </div>
         )}
+        {/* Table of Contents — placed right below the hero image */}
+        {tocHeadings.length > 0 && (
+          <div className="mx-4 sm:mx-auto">
+            <div className="container mx-auto">
+              <div className="grid sm:gap-x-8 grid-cols-12">
+                <div className="col-span-12 lg:col-start-2 lg:col-span-7 -mt-8 mb-8">
+                  <BlogTableOfContents headings={tocHeadings} lang={lang} />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+
 
         {/* Article Content */}
         <div
@@ -218,7 +218,7 @@ export function BlogDetailContent({ lang, slug, initialBlog }: BlogDetailContent
                     <div className="flex flex-col gap-12">
                       {/* Article body */}
                       <div
-                        className="article-body prose prose-slate max-w-none prose-headings:font-bold prose-h2:text-2xl prose-h3:text-xl prose-h4:text-lg prose-blockquote:border-l-4 prose-blockquote:border-gray-300 prose-blockquote:pl-4 prose-img:rounded-lg prose-a:no-underline hover:prose-a:underline [&_table]:!w-full [&_table]:!table-fixed [&_table]:!border-collapse [&_table]:!border [&_table]:!border-gray-300 [&_table]:!my-4 [&_table]:!rounded-none [&_th]:!border [&_th]:!border-gray-300 [&_th]:!p-2 [&_th]:!bg-gray-100 [&_th]:!text-left [&_th]:!rounded-none [&_td]:!border [&_td]:!border-gray-300 [&_td]:!p-2 [&_td]:!rounded-none"
+                        className="article-body prose prose-slate max-w-[800px] prose-headings:font-bold prose-h2:text-2xl prose-h3:text-xl prose-h4:text-lg prose-blockquote:border-l-4 prose-blockquote:border-gray-300 prose-blockquote:pl-4 prose-img:rounded-lg prose-a:no-underline hover:prose-a:underline [&_p]:text-base [&_p]:leading-[1.625] [&_table]:!border-collapse [&_table]:!border [&_table]:!border-gray-300 [&_table]:!my-4 [&_table]:!rounded-none [&_th]:!border [&_th]:!border-gray-300 [&_th]:!p-2 [&_th]:!text-left [&_th]:!rounded-none [&_td]:!border [&_td]:!border-gray-300 [&_td]:!p-2 [&_td]:!rounded-none"
                         dangerouslySetInnerHTML={{ __html: processedContent }}
                       />
 

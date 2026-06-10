@@ -88,7 +88,7 @@ export async function FooterSection({
 
   return (
     <footer className="bg-white text-text-secondary">
-      <div className="max-w-[1168px] mx-auto py-12">
+      <div className="max-w-[1168px] mx-auto py-12 px-4 sm:px-0">
         {/* Logo & App Store */}
         <div className="flex flex-wrap flex-col md:flex-row gap-8 justify-between items-start pb-8">
           <div>

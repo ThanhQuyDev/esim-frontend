@@ -443,7 +443,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
       {/* Order Summary Sidebar */}
       <div className="lg:col-span-1">
         <div className="sticky top-24 rounded-2xl border border-border-primary bg-white p-6 space-y-5">
-          <h3 className="text-lg font-medium text-text-primary">
+          <h3 className="text-xl sm:text-lg font-medium text-text-primary">
             {dict.orderSummary || "Order Summary"}
           </h3>
 
@@ -596,10 +596,10 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
 
           {/* Total */}
           <div className="flex justify-between border-t border-border-primary pt-4">
-            <span className="text-xl sm:text-base font-medium text-text-primary">
+            <span className="text-lg sm:text-base font-medium text-text-primary">
               {dict.total || "Total"}
             </span>
-            <span className="text-2xl sm:text-xl font-medium text-text-primary">{displayTotal}</span>
+            <span className="text-xl font-medium text-text-primary">{displayTotal}</span>
           </div>
 
           {/* eXU Cashback Preview */}
@@ -654,7 +654,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
           <button
             onClick={handleCheckout}
             disabled={selectedItems.length === 0}
-            className={`flex w-full items-center justify-center gap-2 rounded-full py-3.5 text-xl sm:text-base font-semibold transition-colors ${
+            className={`flex w-full items-center justify-center gap-2 rounded-full py-3.5 text-base font-semibold transition-colors ${
               selectedItems.length > 0
                 ? "bg-bg-accent text-text-primary hover:bg-bg-accent-hover cursor-pointer"
                 : "bg-gray-200 text-gray-400 cursor-not-allowed"

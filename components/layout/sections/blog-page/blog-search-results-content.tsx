@@ -8,6 +8,7 @@ import { Search, BookOpen } from "lucide-react";
 import type { Blog } from "@/lib/api";
 import { BlogCategoryNav } from "./blog-category-nav";
 import { blogDetailHref } from "./blog-detail-helpers";
+import { ScrollToTop } from "./scroll-to-top";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.saily.example.com";
@@ -136,7 +137,7 @@ function BlogCard({ blog, lang }: { blog: Blog; lang: string }) {
         <div>
           <div className="h-full w-full flex flex-col text-start items-start justify-start gap-y-2">
             <div>
-              <BlogMeta date={blog.publishedAt} timeRead={String(blog.timeRead || "")} lang={lang} />
+              <BlogMeta date={blog.updatedAt} timeRead={String(blog.timeRead || "")} lang={lang} />
             </div>
             <div>
               <h3 className="heading-sm">
@@ -373,6 +374,8 @@ export function BlogSearchResultsContent({ lang }: BlogSearchResultsContentProps
           </div>
         </div>
       </div>
+      {/* Scroll to top */}
+      <ScrollToTop />
     </div>
   );
 }

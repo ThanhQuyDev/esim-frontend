@@ -120,7 +120,7 @@ export function EkycModal({ open, onClose, lang }: EkycModalProps) {
 
   const goToGuide = (region: KycRegionKey) => {
     onClose();
-    router.push(`/${lang}/kyc-guide?region=${region}`);
+    window.open(`/${lang}/kyc-guide?region=${region}`,'_blank')
   };
 
   return (

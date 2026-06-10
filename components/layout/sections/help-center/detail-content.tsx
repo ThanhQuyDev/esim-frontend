@@ -84,6 +84,7 @@ export function DetailContent({
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<HelpCenterArticle[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set([category]));
   const [expandedParents, setExpandedParents] = useState<Set<string>>(
     new Set(parent ? [`${category}/${parent}`] : [])
@@ -239,8 +240,8 @@ export function DetailContent({
   if (loading) {
     return (
       <main role="main">
-        <div className="bg-gray-200">
-          <div className="container mx-auto">
+        <div className="bg-gray-100">
+          <div className="container mx-auto px-4 sm:px-0">
             <div className="flex items-center pt-4 pb-4" />
           </div>
         </div>
@@ -258,7 +259,7 @@ export function DetailContent({
 
       {/* Breadcrumb (Style 2.9) — merged: Trang chủ > Trung tâm trợ giúp > ... */}
       <div className="bg-gray-100">
-        <div className="container mx-auto">
+        <div className="container mx-auto px-4 sm:px-0">
           <div className="flex items-center pt-4 pb-4">
             <div className="text-sm">
               <nav aria-label="Breadcrumb">
@@ -314,116 +315,9 @@ export function DetailContent({
       </div>
 
       {/* Page container (Layout 2.2: max-w-7xl) */}
-      <div className="container mx-auto flex-1" id="page-container">
+      <div className="container mx-auto px-4 sm:px-0 flex-1" id="page-container">
         <div className="flex flex-col md:flex-row gap-8 lg:gap-10">
-          {/* Sidebar navigation - LEFT (Navigation 2.5: 3-level tree) */}
-          <aside className="w-full md:w-4/12 lg:w-3/12 flex-shrink-0 order-1">
-            <div className="mt-6 border-t border-b md:border rounded-sm md:py-4 md:px-4 md:my-10">
-              <h3 className="flex items-center justify-between my-4 text-lg font-semibold cursor-pointer lg:hidden">
-                {lang === "vi" ? "Menu điều hướng" : "Toggle navigation menu"}
-              </h3>
-
-              <nav className="hidden lg:flex lg:flex-col" id="sidebar-navigation" aria-label="Help Center navigation">
-                <ul className="list-none m-0 py-2 p-0">
-                  {Object.entries(grouped).map(([catKey, parents]) => {
-                    const isCatActive = catKey === category;
-                    const isCatExpanded = expandedCategories.has(catKey);
-                    return (
-                      <li key={catKey} className="mb-1">
-                        {/* Level 1: Category */}
-                        <button
-                          onClick={() => toggleCategory(catKey)}
-                          className={`w-full flex text-primary items-center text-[1.125rem] font-semibold justify-between px-3 py-2 text-left rounded transition-colors cursor-pointer ${
-                            isCatActive
-                              ? "bg-gray-100 "
-                              : "hover:bg-gray-50"
-                          }`}
-                          aria-expanded={isCatExpanded}
-                        >
-                          <Link
-                            href={`${basePath}/${toLocalizedCategorySlug(catKey, lang)}`}
-                            className="flex-1 text-inherit no-underline hover:text-inherit"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            {getCategoryLabel(catKey, lang)}
-                          </Link>
-                          {isCatExpanded ? (
-                            <ChevronDown className="w-4 h-4 text-gray-400 shrink-0" />
-                          ) : (
-                            <ChevronRight className="w-4 h-4 text-gray-400 shrink-0" />
-                          )}
-                        </button>
-
-                        {/* Level 2: Parents/Sections */}
-                        {isCatExpanded && (
-                          <ul className="list-none p-0 m-0 ml-3 mt-1">
-                            {Object.entries(parents).map(([parentKey, arts]) => {
-                              const isParentActive = catKey === category && parentKey === parent;
-                              const parentExpandKey = `${catKey}/${parentKey}`;
-                              const isParentExpanded = expandedParents.has(parentExpandKey);
-                              return (
-                                <li key={parentKey} className="mb-0.5">
-                                  <button
-                                    onClick={() => toggleParent(catKey, parentKey)}
-                                    className={`w-full flex items-center justify-between px-3 py-1.5 text-base text-left rounded transition-colors cursor-pointer ${
-                                      isParentActive
-                                        ? "bg-gray-100 font-semibold text-gray-900"
-                                        : "text-gray-600 hover:bg-gray-50"
-                                    }`}
-                                    aria-expanded={isParentExpanded}
-                                  >
-                                    <Link
-                                      href={`${basePath}/${toLocalizedCategorySlug(catKey, lang)}/${toLocalizedParentSlug(parentKey, lang)}`}
-                                      className="flex-1 text-inherit no-underline hover:text-inherit"
-                                      onClick={(e) => e.stopPropagation()}
-                                    >
-                                      {getParentLabel(parentKey, lang)}
-                                    </Link>
-                                    {isParentExpanded ? (
-                                      <ChevronDown className="w-3 h-3 text-gray-400 shrink-0" />
-                                    ) : (
-                                      <ChevronRight className="w-3 h-3 text-gray-400 shrink-0" />
-                                    )}
-                                  </button>
-
-                                  {/* Level 3: Articles (UX 2.11: active state) */}
-                                  {isParentExpanded && (
-                                    <ul className="list-none p-0 m-0 ml-3 mt-0.5">
-                                      {arts.map((article) => {
-                                        const artSlug = getArticleSlug(article);
-                                        const isArticleActive =
-                                          catKey === category &&
-                                          parentKey === parent &&
-                                          artSlug === activeArticleSlug;
-                                        return (
-                                          <li key={article.id}>
-                                            <Link
-                                              href={`${basePath}/${artSlug}`}
-                                              className={`block px-3 py-2 text-[0.94rem] leading-[1.5] font-medium rounded transition-colors no-underline ${
-                                                isArticleActive
-                                                  ? "bg-gray-100 font-medium text-gray-900 border-l-[3px] border-l-[#ffdc52]"
-                                                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 border-l-[3px] border-l-transparent"
-                                              }`}
-                                            >
-                                              {article.title}
-                                            </Link>
-                                          </li>
-                                        );
-                                      })}
-                                    </ul>
-                                  )}
-                                </li>
-                              );
-                            })}
-                          </ul>
-                        )}
-                      </li>
-                    );
-                  })}
-                </ul>
-              </nav>
-            </div>
-          </aside>
+        
 
           {/* Main content - CENTER */}
           <div className="flex-1 order-2 min-w-0">
@@ -443,17 +337,23 @@ export function DetailContent({
                     { year: "numeric", month: "long", day: "numeric" }
                   )}
                 </div>
+                {/* Mobile TOC — visible only below lg, desktop uses right sidebar */}
+                {articleProcessed.headings.length > 0 && (
+                  <div className="lg:hidden mb-8">
+                    <ArticleToc headings={articleProcessed.headings} lang={lang} />
+                  </div>
+                )}
                 {/* Rich Text Content (Bug 2.4: full formatting with prose) */}
                 <div
-                  className="article-body hc-article-body prose prose-sm max-w-none
-                    [&_p]:mb-4
+                  className="article-body hc-article-body prose prose-sm max-w-[800px]
+                    [&_p]:text-base [&_p]:leading-[1.625] [&_p]:mb-4
                     [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:mt-6 [&_h2]:mb-3
                     [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:mt-5 [&_h3]:mb-2
                     [&_h4]:text-base [&_h4]:font-semibold [&_h4]:mt-4 [&_h4]:mb-2
                     [&_ul]:pl-6 [&_ul]:list-disc [&_ul]:mb-4
                     [&_ol]:pl-6 [&_ol]:list-decimal [&_ol]:mb-4
                     [&_li]:mb-1
-                    [&_table]:!w-full [&_table]:!table-fixed [&_table]:!border-collapse [&_table]:!border [&_table]:!border-gray-300 [&_table]:!mb-4 [&_table]:!rounded-none
+                    [&_table]:!border-collapse [&_table]:!border [&_table]:!border-gray-300 [&_table]:!mb-4 [&_table]:!rounded-none sm:[&_table]:!w-full sm:[&_table]:!table-fixed
                     [&_th]:!border [&_th]:!border-gray-300 [&_th]:!px-3 [&_th]:!py-2 [&_th]:!bg-gray-100 [&_th]:!text-left [&_th]:!font-semibold [&_th]:!rounded-none
                     [&_td]:!border [&_td]:!border-gray-300 [&_td]:!px-3 [&_td]:!py-2 [&_td]:!rounded-none
                     [&_blockquote]:border-l-4 [&_blockquote]:border-gray-300 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-gray-600 [&_blockquote]:my-4
@@ -467,7 +367,7 @@ export function DetailContent({
             ) : /* === LEVEL 2: Parent section with article list === */
             parent ? (
               <div className="my-10">
-                <h1 className="text-2xl md:text-4xl font-medium mb-8">
+                <h1 className="text-[1.8rem] md:text-4xl font-medium mb-8">
                   {getParentLabel(parent, lang)}
                 </h1>
                 <ul className="list-none p-0 m-0">
@@ -512,10 +412,10 @@ export function DetailContent({
                         key={parentKey}
                         className={`mb-6 pb-8 ${!isLast ? "border-b border-gray-200" : ""}`}
                       >
-                        <h2 className="text-xl font-semibold mb-2">
+                        <h2 className="text-2xl font-semibold mb-2">
                           <Link
                             href={`${basePath}/${toLocalizedCategorySlug(category, lang)}/${toLocalizedParentSlug(parentKey, lang)}`}
-                            className="text-gray-900 hover:text-gray-700 no-underline transition-colors"
+                            className="hover:text-gray-700 no-underline transition-colors"
                           >
                             {getParentLabel(parentKey, lang)}
                           </Link>

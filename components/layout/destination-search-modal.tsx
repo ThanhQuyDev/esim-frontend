@@ -337,7 +337,7 @@ export function DestinationSearchModal({
                                   {(lang === "vi" ? item.titleVi : item.title) || item.name}
                                 </p>
                                 {subtitle && (
-                                  <p className="body-xs text-text-tertiary scroll-mt-20 xl:scroll-mt-24">
+                                  <p className="text-xs text-text-tertiary scroll-mt-20 xl:scroll-mt-24">
                                     <span className="whitespace-normal">
                                       {subtitle}
                                     </span>

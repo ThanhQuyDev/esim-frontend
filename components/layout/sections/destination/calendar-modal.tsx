@@ -16,12 +16,12 @@ interface CalendarModalProps {
 }
 
 const VI_MONTH_NAMES = [
-  "Tháng 1","Tháng 2","Tháng 3","Tháng 4","Tháng 5","Tháng 6",
-  "Tháng 7","Tháng 8","Tháng 9","Tháng 10","Tháng 11","Tháng 12",
+  "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6",
+  "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12",
 ];
 const EN_MONTH_NAMES = [
-  "January","February","March","April","May","June",
-  "July","August","September","October","November","December",
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
 ];
 
 const VI_WEEKDAYS = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
@@ -255,9 +255,9 @@ export function CalendarModal({
   const summaryTitle = !selS
     ? askStartLabel
     : !selE
-    ? askEndLabel
-    : `${planLabel}  |  ${formatShortDate(selS, lang)} – ${formatShortDate(selE, lang)}`;
-
+      ? askEndLabel
+      : `${planLabel}  |  `;
+  const dueDays = selS && selE ? `${formatShortDate(selS, lang)} – ${formatShortDate(selE, lang)}` : null
   // Nav buttons — shared between mobile and desktop
   const prevBtn = (
     <button
@@ -300,7 +300,7 @@ export function CalendarModal({
         {/* Header */}
         <div className="px-6 md:px-9 pt-[22px] pb-4 shrink-0">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xl font-extrabold tracking-[-0.4px] text-[#111]">{headerTitle}</span>
+            <span className="text-base font-extrabold tracking-[-0.4px] text-[#111]">{headerTitle}</span>
             <button
               type="button"
               onClick={onClose}
@@ -313,8 +313,7 @@ export function CalendarModal({
               </svg>
             </button>
           </div>
-          <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-[10px] text-sm" style={{ background: "#FFFBEB", color: "#92400E" }}>
-            <span className="text-lg leading-none">👆</span>
+          <div className="flex items-center gap-2.5 px-2 py-2.5 rounded-[10px] text-sm" style={{ background: "#FFFBEB", color: "#92400E" }}>
             <span>{tipText}</span>
           </div>
         </div>
@@ -389,18 +388,19 @@ export function CalendarModal({
 
         {/* Footer */}
         <div
-          className="flex items-center justify-between px-6 md:px-9 py-3 pb-[22px] gap-5 shrink-0"
+          className="flex items-center justify-between px-2 md:px-9 py-3 pb-[22px] gap-5 shrink-0"
           style={{ borderTop: "1px solid #E5E7EB" }}
         >
           <div className="flex flex-col gap-[3px] min-w-0">
-            <div className="text-base font-bold text-[#111] min-h-[22px]" dangerouslySetInnerHTML={{ __html: summaryTitle.replace(/\b(\d+)-day plan|Kế hoạch \d+ ngày/, (m) => `<strong>${m}</strong>`) }} />
-            <div className="text-sm text-[#6B7280] min-h-[18px] flex items-center gap-1.5 flex-wrap">
+            <div className="flex gap-1">
+            <div className="text-xs sm:text-sm whitespace-nowrap font-bold text-[#111] min-h-[22px]" dangerouslySetInnerHTML={{ __html: summaryTitle.replace(/\b(\d+)-day plan|Kế hoạch \d+ ngày/, (m) => `<strong>${m}</strong>`) }} />
+            <div className="text-xs sm:text-sm whitespace-nowrap"> {dueDays}</div>
+            </div>
+            <div className="text-xs sm:text-sm text-[#6B7280] min-h-[18px] flex items-center gap-1.5 flex-wrap">
               {selS && selE && days > 0 && unitVndPricePerDay > 0 && (
                 <>
                   {totalLabel}{" "}
-                  <span className="font-bold text-[#111]">{formatVnd(totalVnd)}</span>
-                  {" ÷ "}
-                  {days} {dayUnit}{" = "}
+                  <span className="font-bold text-[#111]">{formatVnd(totalVnd)} =</span>
                   <span className="font-bold text-[#16A34A]">{formatVnd(perDayVnd)}/{dayUnit}</span>
                 </>
               )}

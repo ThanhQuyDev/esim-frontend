@@ -43,6 +43,7 @@ export function MobileStickyBar({
   const router = useRouter();
   const { addItem } = useCart();
   const [visible, setVisible] = useState(false);
+  const [nearFooter, setNearFooter] = useState(false);
 
   // Show sticky bar when CTA buttons scroll out of view
   useEffect(() => {
@@ -56,6 +57,50 @@ export function MobileStickyBar({
     observer.observe(ctaRef.current);
     return () => observer.disconnect();
   }, [ctaRef]);
+
+  // Hide sticky bar when FAQ section has scrolled out of view — footer is now visible
+  useEffect(() => {
+    let observer: IntersectionObserver | null = null;
+    let retryTimer: ReturnType<typeof setTimeout>;
+    let attempts = 0;
+
+    const setupObserver = () => {
+      const faqSection = document.querySelector('[data-section="FAQ"]');
+      if (!faqSection) {
+        attempts++;
+        if (attempts < 20) {
+          retryTimer = setTimeout(setupObserver, 500);
+        }
+        return;
+      }
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          setNearFooter(!entry.isIntersecting);
+        },
+        { threshold: 0 }
+      );
+      observer.observe(faqSection);
+    };
+
+    setupObserver();
+    return () => {
+      observer?.disconnect();
+      clearTimeout(retryTimer);
+    };
+  }, []);
+
+  // Toggle body class so chat bubble can adjust its position
+  const stickyVisible = visible && !nearFooter;
+  useEffect(() => {
+    if (stickyVisible) {
+      document.body.classList.add("mobile-sticky-bar-visible");
+    } else {
+      document.body.classList.remove("mobile-sticky-bar-visible");
+    }
+    return () => {
+      document.body.classList.remove("mobile-sticky-bar-visible");
+    };
+  }, [stickyVisible]);
 
   let totalPrice = 0;
   if (selectedPlan) {
@@ -101,13 +146,13 @@ export function MobileStickyBar({
   return (
     <div
       className="fixed bottom-0 left-0 right-0 z-[300] bg-white border-t border-[#e5e7eb] px-4 pt-[10px] pb-5 shadow-[0_-4px_24px_rgba(0,0,0,0.1)] transition-transform duration-[280ms] ease-[cubic-bezier(.4,0,.2,1)]"
-      style={{ transform: visible ? "translateY(0)" : "translateY(110%)" }}
+      style={{ transform: stickyVisible ? "translateY(0)" : "translateY(110%)" }}
     >
       {/* Top row: plan info + price — slim variant for 390px */}
       <div className="flex items-center justify-between mb-[9px] gap-2 min-w-0">
         <div className="flex items-center gap-2 min-w-0 flex-1">
           {(region?.iconUrl || destinationData?.flagUrl) ? (
-            <div className="w-[24px] h-[24px] rounded-full overflow-hidden shrink-0">
+            <div className="w-[24px] h-[24px] border rounded-full overflow-hidden shrink-0">
               <Image src={region?.iconUrl ? region?.iconUrl : (destinationData?.flagUrl || region?.iconUrl || "")} alt={destinationData?.name || region.name} width={30} height={30} className="w-full h-full object-cover" />
             </div>
           ) : (

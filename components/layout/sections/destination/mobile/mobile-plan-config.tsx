@@ -35,6 +35,7 @@ export function MobilePlanConfig({
 }: MobilePlanConfigProps) {
   const [calOpen, setCalOpen] = useState(false);
   const dayOptions = isFlexibleDays ? QUICK_DAYS : availableDays;
+  const isLocalEsim = selectedPlan?.isLocalInventory 
 
   const unitVndPricePerDay = (() => {
     if (!selectedPlan) return 0;
@@ -112,7 +113,7 @@ export function MobilePlanConfig({
         </div>
       </div>
 
-      {(!isFixed || availableDays.length > 1) && dayOptions.length > 0 && (
+      {(!isFixed || isLocalEsim) && dayOptions.length > 0 && (
         <div className="flex gap-[7px] flex-wrap mb-5">
           {dayOptions.map((d) => (
             <button

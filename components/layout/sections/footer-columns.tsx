@@ -104,7 +104,7 @@ export function FooterColumns({ columns }: FooterColumnsProps) {
               <AccordionPrimitive.Item
                 key={i}
                 value={`footer-col-${i}`}
-                className="border-0 bg-transparent"
+                className="border-0 bg-transparent border-b border-dashed"
               >
                 <AccordionPrimitive.Header className="flex">
                   <AccordionPrimitive.Trigger
@@ -114,7 +114,7 @@ export function FooterColumns({ columns }: FooterColumnsProps) {
                     )}
                   >
                     {col.title}
-                    <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />
+                    <ChevronDown className="h-6 w-6 shrink-0 transition-transform duration-200" />
                   </AccordionPrimitive.Trigger>
                 </AccordionPrimitive.Header>
                 <AccordionPrimitive.Content className="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">

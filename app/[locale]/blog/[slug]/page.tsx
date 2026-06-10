@@ -68,7 +68,7 @@ export default async function BlogSlugPage({
         </div>
 
         <div className="container mx-auto px-4 py-12 max-w-[1168px]">
-          <h1 className="heading-xl mb-8">{categoryName}</h1>
+          <h1 className="text-[1.625rem] sm:text-[2rem] mb-8">{categoryName}</h1>
 
           {blogs.length === 0 ? (
             <p className="text-secondary body-md">

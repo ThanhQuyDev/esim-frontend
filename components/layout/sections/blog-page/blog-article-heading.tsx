@@ -24,7 +24,7 @@ export function BlogArticleHeading({ blog, lang, socialLinks = [] }: { blog: Blo
                   <div>
                     <div className="h-full w-full flex group/stack [&>div:empty]:hidden flex-col text-start items-start justify-start gap-y-6">
                       <div>
-                        <h1 className="heading-2xl scroll-mt-20 xl:scroll-mt-24">{blog.title}</h1>
+                        <h1 className="heading-2xl leading-6 scroll-mt-20 xl:scroll-mt-24">{blog.title}</h1>
                       </div>
                       {blog.excerpt && (
                         <div>
@@ -70,7 +70,7 @@ export function BlogArticleHeading({ blog, lang, socialLinks = [] }: { blog: Blo
                             </div>
                           </div>
                         )}
-                        <address className="body-md text-secondary not-italic scroll-mt-20 xl:scroll-mt-24">
+                        <address className="text-[1.25rem] sm:text-base font-medium text-secondary not-italic scroll-mt-20 xl:scroll-mt-24">
                           {authorName}
                         </address>
                       </div>

@@ -36,7 +36,7 @@ function categorySlug(cat: string): string {
     .replace(/-+/g, "-");
 }
 
-function BlogSearchInput({ lang }: { lang: string }) {
+function BlogSearchInput({ lang, mobile }: { lang: string; mobile?: boolean }) {
   const [open, setOpen] = useState(false);
   const [keyword, setKeyword] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -55,6 +55,63 @@ function BlogSearchInput({ lang }: { lang: string }) {
     }
   }
 
+  // Mobile: dropdown panel below the navbar
+  if (mobile) {
+    return (
+      <div className="relative">
+        <button
+          data-testid="toggle-blog-search"
+          aria-label="Toggle on/off blog search"
+          aria-haspopup="true"
+          aria-controls="blog-search"
+          aria-expanded={open}
+          onClick={() => setOpen(!open)}
+          className="flex justify-center items-center rounded-full transition-colors hover:bg-neutral-1000/[.08] w-9 h-9"
+        >
+          {open ? <X size={20} /> : <Search size={20} />}
+        </button>
+        {open && (
+          <>
+            {/* Backdrop overlay */}
+            <div
+              className="fixed inset-0 bg-black/40 z-40"
+              onClick={() => setOpen(false)}
+            />
+            {/* Search dropdown panel */}
+            <form
+              id="blog-search"
+              role="search"
+              onSubmit={handleSearch}
+              className="absolute mt-2 right-0 z-50 flex flex-col gap-3 w-[calc(100vw-32px)] md:w-[300px] dropdown-box bg-white rounded-sm shadow-lg border border-gray-200 p-3"
+            >
+              <input
+                ref={inputRef}
+                role="searchbox"
+                data-testid="blog-search-input"
+                type="text"
+                name="blog-search"
+                autoComplete="off"
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+                placeholder={lang === "vi" ? "Tìm kiếm bài viết..." : "Search articles..."}
+                className="outline-hidden appearance-none w-full leading-md py-[11px] px-4 text-primary placeholder-primary border-input border-md hover:border-focus active:border-focus focus-visible:outline-none transition-colors rounded-sm"
+              />
+              <button
+                type="submit"
+                data-testid="blog-search-submit"
+                disabled={!keyword.trim()}
+                className="max-md:w-full text-center border-md border-secondary bg-tertiary text-tertiary box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[5.5px] body-sm-medium px-6 hover:opacity-80 cursor-pointer disabled:cursor-not-allowed"
+              >
+                {lang === "vi" ? "Tìm kiếm" : "Search"}
+              </button>
+            </form>
+          </>
+        )}
+      </div>
+    );
+  }
+
+  // Desktop: inline form to the right
   return (
     <div className="relative flex items-center">
       <button
@@ -107,9 +164,9 @@ function MobileCategoryNav({
   const [expandedCat, setExpandedCat] = useState<string | null>(null);
 
   return (
-    <div className="sm:hidden px-2 lg:px-11 bg-gray-200">
+    <div className="sm:hidden px-2 lg:px-11 bg-gray-50">
       <div className="relative inline-block w-full">
-        <div className="flex justify-between items-center">
+        <div className={`flex justify-between items-center ${open ? 'border-b border-gray-400':''}`}>
           <button
             className="py-3 px-2 cursor-pointer"
             aria-expanded={open}
@@ -125,11 +182,15 @@ function MobileCategoryNav({
                   <div className="w-6 h-[3px] bg-dark" />
                 </div>
               )}
-              <p className="body-md-medium scroll-mt-20 xl:scroll-mt-24">Show All Categories</p>
+              <p className="body-md-medium scroll-mt-20 xl:scroll-mt-24">
+                {open
+                  ? (lang === "vi" ? "Ẩn danh mục" : "Hide All Categories")
+                  : (lang === "vi" ? "Xem danh mục" : "Show All Categories")}
+              </p>
             </div>
           </button>
           <div className="px-2">
-            <BlogSearchInput lang={lang} />
+            <BlogSearchInput lang={lang} mobile />
           </div>
         </div>
         <div
@@ -142,7 +203,7 @@ function MobileCategoryNav({
 
               return (
                 <li key={cat}>
-                  <div className="flex items-center">
+                  <div className="flex items-center ">
                     <Link
                       className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus text-primary active:text-primary hover:text-secondary body-sm-medium"
                       href={`/${lang}/blog/${categorySlug(cat)}/`}
@@ -167,7 +228,7 @@ function MobileCategoryNav({
                       {catParents.map((parent) => (
                         <li key={parent}>
                           <Link
-                            className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus text-secondary hover:text-primary body-sm"
+                            className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus text-primary hover:text-primary body-sm"
                             href={`/${lang}/blog/${categorySlug(cat)}/${categorySlug(parent)}/`}
                           >
                             {parent}

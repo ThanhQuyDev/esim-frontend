@@ -110,7 +110,7 @@ export function MobileHero({ destination, dict, lang, region, operatorName }: Mo
               </div>
             )}
             <h1 className="text-[28px] font-extrabold text-white tracking-[-0.4px] leading-[1.15] min-w-0 break-words">
-              {(lang === "vi" ? destination.titleVi : destination.title) || dict.title.replace("{destination}", destination.name)}
+              eSIM {(lang === "vi" ? destination.titleVi : destination.title) || dict.title.replace("{destination}", destination.name)}
             </h1>
           </div>
         </div>
