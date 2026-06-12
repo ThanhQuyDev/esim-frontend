@@ -7,6 +7,7 @@ import { usePathname as useIntlPathname, useRouter as useIntlRouter } from "@/i1
 import {
   resolveDynamicLangSwitchPath,
   resolveLangSwitchPath,
+  resolveLegalLangSwitchPath,
 } from "@/i18n/lang-switch";
 import * as Dialog from "@radix-ui/react-dialog";
 import { cn } from "@/lib/utils";
@@ -164,7 +165,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Gói dữ liệu eSIM cho khách du lịch tại Việt Nam."
             : "Data plans for travelers in Vietnam.",
-          href: isVi ? '/viet-nam' : `/${lang}/viet-nam`,
+          href: isVi ? '/esim-viet-nam' : `/${lang}/esim-viet-nam`,
         },
         {
           icon: "pen",
@@ -549,19 +550,19 @@ function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
   const handleLangChange = useCallback((newLocale: string) => {
     // Destination/region pages (`/[slug]`) use the same public slug in both
     // locales, so keep the current slug and only add/remove the locale prefix
-    // (e.g. /thailand → /en/thailand). Other dynamic routes still fall back to
-    // safe parent paths to avoid missing next-intl params.
-    if (intlPathname === "/[slug]") {
+    // (e.g. /thailand → /en/thailand). Legal pages (`/legal/[slug]`) use a
+    // different slug per locale, so map it explicitly. Other dynamic routes
+    // still fall back to safe parent paths to avoid missing next-intl params.
+    if (intlPathname === "/[slug]" || intlPathname === "/legal/[slug]") {
       // Persist the target locale in the NEXT_LOCALE cookie before the hard
       // navigation. Otherwise next-intl's middleware reads the stale cookie and
       // redirects the prefix-less default-locale path (e.g. /thailand) back to
       // the previous locale (e.g. /en/thailand), so the switch never happens.
       document.cookie = `NEXT_LOCALE=${newLocale};path=/;max-age=${60 * 60 * 24 * 365};samesite=lax`;
-      window.location.href = resolveDynamicLangSwitchPath(
-        pathname,
-        lang,
-        newLocale
-      );
+      window.location.href =
+        intlPathname === "/legal/[slug]"
+          ? resolveLegalLangSwitchPath(pathname, newLocale)
+          : resolveDynamicLangSwitchPath(pathname, lang, newLocale);
       return;
     }
 

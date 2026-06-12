@@ -18,8 +18,16 @@ export function CouponHero({ dict, lang }: CouponHeroProps) {
     queryFn: fetchApiCoupons,
   });
 
-  const latestCoupon = coupons?.[0];
-  const couponCode = latestCoupon?.code || dict.couponCode || "Saily5";
+  // Prefer the coupon flagged as popular in the CMS; fall back to the first one.
+  const featuredCoupon = coupons?.find((c) => c.isPopular) ?? coupons?.[0];
+  const couponCode = featuredCoupon?.code || dict.couponCode || "Saily5";
+
+  // Real-time month + year (e.g. "Áp dụng từ tháng 6 năm 2026" / "Active from June 2026").
+  const now = new Date();
+  const activeDate =
+    lang === "vi"
+      ? `Áp dụng từ tháng ${now.getMonth() + 1} năm ${now.getFullYear()}`
+      : `Active from ${now.toLocaleDateString("en-US", { month: "long" })} ${now.getFullYear()}`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(couponCode);
@@ -40,7 +48,7 @@ export function CouponHero({ dict, lang }: CouponHeroProps) {
                       <div>
                         <div className="body-md-medium text-disabled">
                           <p className="!text-[1.4rem] heading-sm text-primary scroll-mt-20 xl:scroll-mt-24">
-                            {dict.activeDate || "Active from April 2026"}
+                            {activeDate}
                           </p>
                         </div>
                       </div>

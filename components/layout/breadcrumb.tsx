@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronRight, Home } from "lucide-react";
+import { routing } from "@/i18n/routing";
 
 export interface BreadcrumbItem {
   label: string;
@@ -23,10 +24,24 @@ interface BreadcrumbProps {
 export function Breadcrumb({ items, lang, className = "", children }: BreadcrumbProps) {
   const pathname = usePathname();
 
+  // Default locale (vi) has no prefix under localePrefix: 'as-needed'.
+  // Strip a leading `/${defaultLocale}` segment from any href so the default
+  // locale never shows `/vi` in breadcrumb links (pages still pass `/${locale}/...`).
+  const normalizeHref = (href?: string): string | undefined => {
+    if (!href) return href;
+    if (lang !== routing.defaultLocale) return href;
+    const prefix = `/${routing.defaultLocale}`;
+    if (href === prefix) return "/";
+    if (href.startsWith(`${prefix}/`)) return href.slice(prefix.length);
+    return href;
+  };
+
+  const homeHref = lang === routing.defaultLocale ? "/" : `/${lang}`;
+
   // Build full breadcrumb list with Home as first item
   const allItems: BreadcrumbItem[] = [
-    { label: lang === "vi" ? "Trang chủ" : "Home", href: `/${lang}` },
-    ...items,
+    { label: lang === "vi" ? "Trang chủ" : "Home", href: homeHref },
+    ...items.map((item) => ({ ...item, href: normalizeHref(item.href) })),
   ];
 
   // JSON-LD structured data for SEO
@@ -76,7 +91,7 @@ export function Breadcrumb({ items, lang, className = "", children }: Breadcrumb
                   </span>
                 ) : (
                   <Link
-                    href={item.href || `/${lang}`}
+                    href={item.href || homeHref}
                     className="hover:text-primary transition-colors flex items-center gap-1 whitespace-nowrap"
                   >
                     {isFirst && <Home className="h-3.5 w-3.5" />}

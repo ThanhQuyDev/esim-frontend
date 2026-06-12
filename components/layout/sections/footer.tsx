@@ -6,6 +6,7 @@ import {
 } from "@/lib/api";
 import type { Locale } from "@/lib/i18n-config";
 import { FooterColumns, type FooterColumn } from "./footer-columns";
+import { LEGAL_POLICIES, getPolicyHref } from "./legal";
 
 interface FooterLink {
   id?: string;
@@ -152,24 +153,16 @@ export async function FooterSection({
                   : "Content responsibility: Nguyễn Đức Thọ"}
               </span>
               <span className="flex flex-wrap gap-6 items-center">
-                <a
-                  className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus hover:underline inline-block text-text-tertiary"
-
-                  data-ga-slug="Privacy Policy"
-                  target="_blank"
-                  href="/legal/privacy-policy/"
-                >
-                  {lang === "vi" ? "Chính sách bảo mật" : "Privacy Policy"}
-                </a>
-                <a
-                  className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus  hover:underline inline-block text-text-tertiary"
-
-                  data-ga-slug="Terms of Service"
-                  target="_blank"
-                  href="/legal/terms-of-service/"
-                >
-                  {lang === "vi" ? "Điều khoản dịch vụ" : "Terms of Service"}
-                </a>
+                {LEGAL_POLICIES.map((policy) => (
+                  <Link
+                    key={policy.slug}
+                    className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus hover:underline inline-block text-text-tertiary"
+                    data-ga-slug={policy.navLabel.en}
+                    href={getPolicyHref(policy, lang ?? "vi")}
+                  >
+                    {policy.navLabel[lang ?? "vi"]}
+                  </Link>
+                ))}
               </span>
             </p>
             <div>

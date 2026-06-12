@@ -52,7 +52,7 @@ function formatAmount(order: MyOrder) {
   if (order.vndPrice > 0) {
     return new Intl.NumberFormat("vi-VN").format(order.vndPrice) + "₫";
   }
-  return "$" + order.totalAmount.toFixed(2);
+  return "0₫";
 }
 
 /**

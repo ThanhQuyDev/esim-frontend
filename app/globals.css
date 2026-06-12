@@ -2535,9 +2535,30 @@ html {
   line-height: 1.6;
 }  
 /* Push chat bubble above mobile sticky bar */  
-@media (max-width: 767px) {  
-  body.mobile-sticky-bar-visible #chat-bubble-toggle {  
-    bottom: 140px !important;  
-    transition: bottom 280ms cubic-bezier(.4, 0, .2, 1);  
-  }  
-} 
+@media (max-width: 767px) {
+  body.mobile-sticky-bar-visible #chat-bubble-toggle {
+    bottom: 140px !important;
+    transition: bottom 280ms cubic-bezier(.4, 0, .2, 1);
+  }
+}
+
+/* Legal pages (terms-of-service) hierarchical numbered lists.
+   Reproduces Saily-style auto-numbering: 1, 1.1, 1.1.1 using nested
+   CSS counters. Each ol.numbered-list opens a counter level and each
+   li is prefixed with the full dotted path. */
+.numbered-list {
+  list-style: none;
+  counter-reset: legal-counter;
+}
+
+.numbered-list > li {
+  counter-increment: legal-counter;
+  position: relative;
+}
+
+.numbered-list > li::before {
+  content: counters(legal-counter, ".") ". ";
+  position: absolute;
+  left: -1.75rem;
+  color: inherit;
+}

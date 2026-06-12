@@ -146,6 +146,18 @@ export const routing = defineRouting({
       vi: '/gioi-thieu-ban-be',
       en: '/refer-a-friend',
     },
+
+    // Terms of Service
+    '/terms-of-service': {
+      vi: '/dieu-khoan-dich-vu',
+      en: '/terms-of-service',
+    },
+
+    // Legal policies (refund, delivery, terms, privacy)
+    '/legal/[slug]': {
+      vi: '/phap-ly/[slug]',
+      en: '/legal/[slug]',
+    },
   },
 });
 

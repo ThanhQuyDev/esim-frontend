@@ -28,6 +28,7 @@ export interface Coupon {
   expiresAt?: string;
   minAmount?: number;
   minOrderAmountVnd?: number; // VND min order from API
+  isPopular?: boolean;
 }
 
 export interface Cart {
@@ -200,6 +201,7 @@ export async function fetchApiCoupons(): Promise<Coupon[]> {
         expiresAt: c.expiresAt,
         minAmount: c.minOrderAmount || 0,
         minOrderAmountVnd: c.minOrderAmount || 0,
+        isPopular: !!c.isPopular,
       }));
   } catch (err) {
     console.warn("Failed to fetch API coupons, falling back to saved:", err);

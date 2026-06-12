@@ -1,5 +1,6 @@
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getLocale } from 'next-intl/server';
+import { headers } from 'next/headers';
 import { routing } from '@/i18n/routing';
 import { notFound } from 'next/navigation';
 import { Navbar } from "@/components/layout/navbar";
@@ -9,6 +10,7 @@ import { QueryProvider } from "@/lib/query-provider";
 import { AuthProvider } from "@/lib/auth";
 import { getTopBars } from "@/lib/api";
 import { getDictionary } from "@/lib/dictionaries";
+import { buildLanguageAlternates, SITE_BASE_URL } from "@/lib/hreflang";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n-config";
 import type { Metadata } from "next";
@@ -22,9 +24,17 @@ export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
   const dict = await getDictionary(locale as Locale);
 
+  const pathname = (await headers()).get("x-pathname") ?? "/";
+  const { canonical, languages } = buildLanguageAlternates(pathname);
+
   return {
+    metadataBase: new URL(SITE_BASE_URL),
     title: dict.metadata.title,
     description: dict.metadata.description,
+    alternates: {
+      canonical,
+      languages,
+    },
     icons: {
       icon: "/favicon.ico",
       shortcut: "/favicon.ico",

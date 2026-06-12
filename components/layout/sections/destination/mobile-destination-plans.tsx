@@ -110,9 +110,27 @@ export function MobileDestinationPlans({
         {isLoading ? (
           <div className="py-4 px-4 space-y-4">
             {/* Full-area skeleton for plan tabs + config */}
-            <div className="h-[200px] bg-gray-100 rounded-xl animate-pulse" />
+            <div className="h-[200px] bg-gray-100 rounded-xl animate-pulse p-4 flex flex-col gap-4">
+              <div className="flex gap-3">
+                <div className="h-9 w-28 rounded-full bg-gray-200" />
+                <div className="h-9 w-28 rounded-full bg-gray-200" />
+              </div>
+              <div className="space-y-3">
+                <div className="h-12 w-full rounded-lg bg-gray-200" />
+                <div className="h-12 w-full rounded-lg bg-gray-200" />
+              </div>
+            </div>
             {/* Skeleton for eSIM info / features */}
-            <div className="h-[300px] bg-gray-100 rounded-xl animate-pulse" />
+            <div className="h-[300px] bg-gray-100 rounded-xl animate-pulse p-4 flex flex-col gap-3">
+              <div className="h-4 w-1/2 rounded-md bg-gray-200" />
+              <div className="h-3 w-full rounded-md bg-gray-200" />
+              <div className="h-3 w-5/6 rounded-md bg-gray-200" />
+              <div className="h-3 w-4/6 rounded-md bg-gray-200" />
+              <div className="mt-auto space-y-3">
+                <div className="h-10 w-full rounded-lg bg-gray-200" />
+                <div className="h-10 w-full rounded-lg bg-gray-200" />
+              </div>
+            </div>
           </div>
         ) : !hasAnyPlans ? (
           <div className="py-8 text-center text-sm text-[#6b7280]">{dict.noPlans}</div>

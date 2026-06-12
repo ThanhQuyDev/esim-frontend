@@ -103,6 +103,24 @@ function PlanSectionLabel({ icon, label }: { icon: React.ReactNode; label: strin
   );
 }
 
+/* ── Closest-duration plan of the same GB (used as a fallback for badges/selection
+   when no plan matches the globally selected `days`) ── */
+function closestPlanByGb(plans: Plan[], gb: number, days: number): Plan | null {
+  const sameMb = plans.filter((p) => Number(p.dataMb) === Number(gb));
+  if (sameMb.length === 0) return null;
+  return sameMb.reduce((prev, curr) =>
+    Math.abs(curr.durationDays - days) < Math.abs(prev.durationDays - days) ? curr : prev
+  );
+}
+
+/* ── Smallest-duration plan of the same GB — fallback when switching speed tabs
+   and the other tab's selected `days` has no matching plan here. ── */
+function smallestDaysPlanByGb(plans: Plan[], gb: number): Plan | null {
+  const sameMb = plans.filter((p) => Number(p.dataMb) === Number(gb));
+  if (sameMb.length === 0) return null;
+  return sameMb.reduce((prev, curr) => (curr.durationDays < prev.durationDays ? curr : prev));
+}
+
 /* ── GB-only selector (days come from shared PlanConfig) ── */
 function GbSelector({
   plans,
@@ -129,11 +147,8 @@ function GbSelector({
     if (best) {
       onSelectPlan(best);
     } else {
-      const sameMb = plans.filter((p) => Number(p.dataMb) === Number(gb));
-      if (sameMb.length > 0) {
-        const closest = sameMb.reduce((prev, curr) =>
-          Math.abs(curr.durationDays - days) < Math.abs(prev.durationDays - days) ? curr : prev
-        );
+      const closest = closestPlanByGb(plans, gb, days);
+      if (closest) {
         onSelectPlan(closest);
       }
     }
@@ -145,7 +160,10 @@ function GbSelector({
     <div>
       <div className="flex flex-wrap gap-2">
         {uniqueGbs.map((gb) => {
-          const best = findBestPlan(plans, gb, days);
+          // Badge plan falls back to the closest-duration plan of the same GB so
+          // provider labels (e.g. Viettel) stay visible even when the globally
+          // selected `days` has no exact match for this provider.
+          const best = findBestPlan(plans, gb, days) ?? closestPlanByGb(plans, gb, days);
           return (
             <GbChip
               key={gb}
@@ -501,7 +519,7 @@ export function PlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }: Plan
                     }
                     onSelect={() => {
                       setNormalGb(gb);
-                      const p = findBestPlan(plans.fastUnlimited, gb, days);
+                      const p = findBestPlan(plans.fastUnlimited, gb, days) ?? smallestDaysPlanByGb(plans.fastUnlimited, gb);
                       if (p) handleSelectUnlimited(p);
                     }}
                     mainLabel={`${formatDataLabel(gb)}/${lang === "en" ? "day" : "ngày"} ${dict.speed.high.toLowerCase()}`}

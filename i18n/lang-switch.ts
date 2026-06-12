@@ -25,6 +25,7 @@ export const DYNAMIC_ROUTE_FALLBACKS: Record<string, string> = {
   '/blog/[slug]/[parent]': '/blog',
   '/help-center/[slug]': '/help-center',
   '/help-center/[slug]/[parent]': '/help-center',
+  '/legal/[slug]': '/',
 };
 
 /**
@@ -66,4 +67,49 @@ export function resolveDynamicLangSwitchPath(
   }
 
   return pathname === "/" ? `/${targetLocale}` : `/${targetLocale}${pathname}`;
+}
+
+/**
+ * Legal policy slug pairs, keyed by canonical id. The legal route uses a
+ * different slug per locale (vi keeps the Vietnamese slug, en uses an English
+ * one), so a plain prefix swap is not enough — we map vi↔en explicitly.
+ *
+ * Kept in sync with `components/layout/sections/legal/content/*` `urlSlug`.
+ * Duplicated here (rather than imported) to keep the heavy policy content out
+ * of the client bundle that the navbar/lang-switcher ship on every page.
+ */
+const LEGAL_SLUG_PAIRS: Array<{ vi: string; en: string }> = [
+  { vi: "chinh-sach-hoan-tien", en: "refund-policy" },
+  { vi: "chinh-sach-giao-hang", en: "delivery-policy" },
+  { vi: "dieu-khoan-dieu-kien", en: "terms-of-service" },
+  { vi: "chinh-sach-bao-mat", en: "privacy-policy" },
+];
+
+/**
+ * Resolve the target path when switching locale on a legal policy page.
+ *
+ * Extracts the current slug from the public pathname (`/phap-ly/{slug}` for vi,
+ * `/en/legal/{slug}` for en), maps it to the target locale's slug, and rebuilds
+ * the localized path. Falls back to the legal section root if the slug is
+ * unknown.
+ */
+export function resolveLegalLangSwitchPath(
+  currentPublicPathname: string,
+  targetLocale: string
+): string {
+  const segments = (currentPublicPathname || "").split("/").filter(Boolean);
+  const currentSlug = segments[segments.length - 1] ?? "";
+
+  const pair = LEGAL_SLUG_PAIRS.find(
+    (p) => p.vi === currentSlug || p.en === currentSlug
+  );
+
+  if (!pair) {
+    // Unknown slug — go to a safe locale-appropriate landing.
+    return targetLocale === routing.defaultLocale ? "/" : `/${targetLocale}`;
+  }
+
+  return targetLocale === "en"
+    ? `/en/legal/${pair.en}`
+    : `/phap-ly/${pair.vi}`;
 }

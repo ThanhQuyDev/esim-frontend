@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Destination, Region } from "@/lib/api";
 import { Modal } from "./modal";
 import type { DestinationDict } from "./types";
@@ -36,6 +36,17 @@ function flagEmoji(countryCode?: string): string {
   return String.fromCodePoint(...codePoints);
 }
 
+/**
+ * Normalise a string for search: lowercase + strip diacritics.
+ * "Việt Nam" → "viet nam", "Thái Lan" → "thai lan".
+ */
+function normalise(str: string): string {
+  return str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
 /** Modal listing all countries / carriers covered by a region or destination plan. */
 export function CountriesModal({
   open,
@@ -47,6 +58,19 @@ export function CountriesModal({
   lang,
 }: CountriesModalProps) {
   const [query, setQuery] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Reset search & auto-focus whenever the modal opens
+  useEffect(() => {
+    if (open) {
+      setQuery("");
+      // Defer focus so the portal content is mounted first
+      requestAnimationFrame(() => {
+        inputRef.current?.focus();
+      });
+    }
+  }, [open]);
+
 
   const rows: CountryRow[] = useMemo(() => {
     if (region?.destinations && region.destinations.length > 0) {
@@ -70,13 +94,21 @@ export function CountriesModal({
     return [];
   }, [region, destination, defaultCarrier]);
 
+  const listRef = useRef<HTMLDivElement>(null);
+
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return rows;
-    return rows.filter(
-      (r) => r.name.toLowerCase().includes(q) || r.carrier.toLowerCase().includes(q)
-    );
+    const q = normalise(query);
+    if (!query.trim()) return rows;
+    // Match on country name only. The carrier (defaultCarrier) is identical for
+    // every row and isn't displayed, so including it caused false "show all"
+    // matches — e.g. searching "nor" matches the carrier "Telenor" on every row.
+    return rows.filter((r) => normalise(r.name).includes(q));
   }, [rows, query]);
+
+  // Scroll list back to top whenever the filter changes
+  useEffect(() => {
+    listRef.current?.scrollTo(0, 0);
+  }, [filtered]);
 
   const total = rows.length;
   const titleVi = "Quốc gia & Nhà mạng";
@@ -131,6 +163,7 @@ export function CountriesModal({
               </svg>
             </span>
             <input
+              ref={inputRef}
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -154,7 +187,7 @@ export function CountriesModal({
         </div>
 
         {/* List */}
-        <div className="flex-1 overflow-y-auto px-4 pb-4 min-h-0">
+        <div ref={listRef} className="flex-1 overflow-y-auto px-4 pb-4 min-h-0">
           {filtered.length === 0 ? (
             <div className="py-12 px-7 text-center">
               <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" strokeWidth="1.5" className="mx-auto">

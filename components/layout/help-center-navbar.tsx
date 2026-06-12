@@ -108,7 +108,7 @@ export function HelpCenterNavbar({ lang }: HelpCenterNavbarProps) {
             role="banner"
         >
             <nav
-                className="container mx-auto flex items-center justify-between px-4 lg:px-6 h-16"
+                className="container mx-auto flex items-center justify-between px-4 sm:px-0 h-16"
                 aria-label="Help Center navigation"
             >
                 {/* LEFT: Brand logo (goes to site home) + Help Center context label */}
@@ -170,7 +170,7 @@ export function HelpCenterNavbar({ lang }: HelpCenterNavbarProps) {
                             className="flex items-center w-full xl:w-64 xl:mx-4 relative max-xl:px-4 max-xl:py-3 max-xl:border-b max-xl:border-gray-200"
                         >
                             <Search
-                                className={cn("absolute left-7  w-4 h-4 pointer-events-none", "text-gray-400")}
+                                className={cn("absolute left-7 sm:left-3  w-4 h-4 pointer-events-none", "text-gray-400")}
                                 aria-hidden="true"
                             />
                             <input
@@ -188,7 +188,7 @@ export function HelpCenterNavbar({ lang }: HelpCenterNavbarProps) {
                                         ? "Nhập chủ đề, câu hỏi hoặc vấn đề"
                                         : "Type a topic, question or issue here"
                                 }
-                                className="w-full pl-9 pr-8 py-3 text-base focus:border-gray-900 rounded-md border border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:outline-none"
+                                className="w-full pl-9 pr-8 py-3 sm:py-1 text-base focus:border-gray-900 rounded-md border border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:outline-none"
                             />
                             {query && (
                                 <button

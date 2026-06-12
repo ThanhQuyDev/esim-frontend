@@ -91,10 +91,12 @@ export function ProductCard({
   const [bannerOpen, setBannerOpen] = useState(false);
 
   const isRegion = planSource === "region";
+  // Request a 2x (retina) Cloudinary transform with higher quality so the hero
+  // stays sharp on high-DPR screens — it renders at ~465px CSS width.
   const heroSrc = getCloudinaryTransformedUrl(destination.avatarUrl, {
-    width: 520,
-    height: 260,
-    quality: "auto:eco",
+    width: 1040,
+    height: 520,
+    quality: "auto:good",
     gravity: "center",
   });
 
@@ -142,6 +144,8 @@ export function ProductCard({
               sizes="(min-width: 841px) 465px, 100vw"
               priority
               fetchPriority="high"
+              quality={90}
+              unoptimized
               className="w-full h-full object-cover object-[center_30%] block"
             />
           ) : (

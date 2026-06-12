@@ -2,7 +2,7 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import { MapPin, Loader2, X } from "lucide-react";
-import { useInfiniteDestinations } from "@/lib/hooks";
+import { useInfiniteDestinations, useRegions } from "@/lib/hooks";
 import { useDebounce } from "@/lib/use-debounce";
 import type { Locale } from "@/lib/i18n-config";
 
@@ -41,6 +41,82 @@ function SearchIcon({ className }: { className?: string }) {
 
 type TabKey = "all" | "country" | "region" | "ultra";
 
+function DestinationCard({
+  item,
+  lang,
+  dict,
+  isRegion,
+}: {
+  item: any;
+  lang: Locale;
+  dict: Record<string, any>;
+  isRegion: boolean;
+}) {
+  return (
+    <div>
+      <a
+        className="align-bottom focus-visible:outline-hidden focus-visible:shadow-focus text-text-primary active:text-text-primary block group ease-out h-full rounded-sm transition-colors hover:text-text-primary hover:bg-bg-tertiary bg-bg-secondary"
+        data-testid={item.countryCode || item.slug || item.id}
+        href={`/${lang}/${item.slug || item.countryCode?.toLowerCase()}`}
+      >
+        <div
+          className="flex flex-col items-start text-left gap-4 relative border-none p-4 h-full rounded-sm transition-colors hover:text-text-primary hover:bg-bg-tertiary bg-gray-50 hover:bg-bg-secondary"
+          data-testid={`destination-card-${item.countryCode || item.slug || item.id}`}
+        >
+          <div className="w-full h-full flex gap-4 items-center">
+            {/* Flag/Avatar */}
+            <div className="w-[36px] h-[36px] relative overflow-hidden shrink-0 rounded-full">
+              {item.flagUrl || item.iconUrl ? (
+                <>
+                  <img
+                    alt={`${item.countryCode || item.slug} ${isRegion ? "globe icon" : "flag"}`}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover absolute inset-0"
+                    src={item.flagUrl || item.iconUrl}
+                  />
+                  <div className="absolute inset-0 rounded-full pointer-events-none border border-[rgba(0,0,0,0.1)]" />
+                </>
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-bg-secondary">
+                  <MapPin className="w-4 h-4 text-text-tertiary" />
+                </div>
+              )}
+            </div>
+            {/* Name + Info */}
+            <div className="flex flex-col gap-0.5">
+              <p className="body-lg-medium scroll-mt-20 xl:scroll-mt-24">
+                {(lang === "vi" ? item.titleVi : item.title) || item.name}
+              </p>
+              <p className="body-md text-text-tertiary scroll-mt-20 xl:scroll-mt-24">
+                <span className="whitespace-nowrap">
+                  {dict.from} {Number(item.fromPrice).toLocaleString("vi-VN") || "20.000"}đ
+                </span>
+                {item.destinationCount != null && (
+                  <>
+                    {" "}
+                    •{" "}
+                    <span className="whitespace-nowrap">
+                      {item.destinationCount}{" "}
+                      {item.destinationCount === 1
+                        ? dict.country
+                        : dict.countries}
+                    </span>
+                  </>
+                )}
+              </p>
+            </div>
+            {/* Chevron */}
+            <div className="ml-auto">
+              <ChevronRightIcon className="mt-1 -rotate-90 pointer-events-none text-text-tertiary" />
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+  );
+}
+
 export function AllDestinationsContent({
   dict,
   lang,
@@ -49,7 +125,10 @@ export function AllDestinationsContent({
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebounce(searchQuery, 300);
 
-  // Map tab to the hook's tab param
+  // On the "all" tab, show both regions and countries as separate sections.
+  const isAllTab = activeTab === "all";
+
+  // Map tab to the hook's tab param for the (infinite) destination list.
   const hookTab = activeTab === "region" ? "region" : "country";
 
   const {
@@ -59,6 +138,18 @@ export function AllDestinationsContent({
     isFetchingNextPage,
     isLoading,
   } = useInfiniteDestinations(hookTab, debouncedSearch);
+
+  // Regions for the "all" tab (and the dedicated "region" tab keeps using the
+  // infinite list above). useRegions returns the full active region list.
+  const regionsFilter =
+    debouncedSearch && debouncedSearch.trim()
+      ? JSON.stringify({ search: debouncedSearch.trim() })
+      : undefined;
+  const { data: regions, isLoading: isLoadingRegions } = useRegions(
+    regionsFilter,
+    "name",
+    "ASC"
+  );
 
   // Intersection observer for infinite scroll
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -86,6 +177,8 @@ export function AllDestinationsContent({
   }, [handleObserver]);
 
   const allItems = data?.pages.flatMap((page) => page.data) ?? [];
+
+  const regionItems = (regions ?? []).filter((r: any) => r.isActive);
 
   const showRegions = activeTab === "region";
 
@@ -195,15 +288,66 @@ export function AllDestinationsContent({
             </div>
 
             {/* Destination Grid */}
-            {isLoading ? (
+            {isLoading || (isAllTab && isLoadingRegions) ? (
               <div className="flex items-center justify-center py-16">
                 <Loader2 className="w-8 h-8 text-text-tertiary animate-spin" />
               </div>
-            ) : allItems.length === 0 ? (
+            ) : allItems.length === 0 &&
+              (!isAllTab || regionItems.length === 0) ? (
               <div className="flex flex-col items-center justify-center py-16 text-text-tertiary">
                 <MapPin className="w-12 h-12 mb-4" />
                 <p className="body-lg-medium">{dict.noResults}</p>
               </div>
+            ) : isAllTab ? (
+              <>
+                {/* Regions section */}
+                {regionItems.length > 0 && (
+                  <div className="mb-10">
+                    <h2 className="heading-sm mb-4">{dict.sectionRegions}</h2>
+                    <div className="grid gap-3 lg:gap-6 w-full md:grid-cols-2 lg:grid-cols-3">
+                      {regionItems.map((item: any) => (
+                        <DestinationCard
+                          key={`region-${item.id}`}
+                          item={item}
+                          lang={lang}
+                          dict={dict}
+                          isRegion
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Countries section */}
+                {allItems.length > 0 && (
+                  <div>
+                    <h2 className="heading-sm mb-4">{dict.sectionCountries}</h2>
+                    <div
+                      id="country-list-items"
+                      className="grid gap-3 lg:gap-6 w-full md:grid-cols-2 lg:grid-cols-3"
+                    >
+                      {allItems.map((item: any) => (
+                        <DestinationCard
+                          key={`country-${item.id}`}
+                          item={item}
+                          lang={lang}
+                          dict={dict}
+                          isRegion={false}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Sentinel for infinite scroll */}
+                <div ref={sentinelRef} className="h-1" />
+
+                {isFetchingNextPage && (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="w-6 h-6 text-text-tertiary animate-spin" />
+                  </div>
+                )}
+              </>
             ) : (
               <>
                 <div
@@ -211,69 +355,13 @@ export function AllDestinationsContent({
                   className="grid gap-3 lg:gap-6 w-full md:grid-cols-2 lg:grid-cols-3"
                 >
                   {allItems.map((item: any) => (
-                    <div key={item.id}>
-                      <a
-                        className="align-bottom focus-visible:outline-hidden focus-visible:shadow-focus text-text-primary active:text-text-primary block group ease-out h-full rounded-sm transition-colors hover:text-text-primary hover:bg-bg-tertiary bg-bg-secondary"
-                        data-testid={item.countryCode || item.slug || item.id}
-                        href={
-                          `/${lang}/${item.slug || item.countryCode?.toLowerCase()}`
-                        }
-                      >
-                        <div
-                          className="flex flex-col items-start text-left gap-4 relative border-none p-4 h-full rounded-sm transition-colors hover:text-text-primary hover:bg-bg-tertiary bg-gray-50 hover:bg-bg-secondary"
-                          data-testid={`destination-card-${item.countryCode || item.slug || item.id}`}
-                        >
-                          <div className="w-full h-full flex gap-4 items-center">
-                            {/* Flag/Avatar */}
-                            <div className="w-[36px] h-[36px] relative overflow-hidden shrink-0 rounded-full">
-                              {item.flagUrl || item.iconUrl ? (
-                                <>
-                                  <img
-                                    alt={`${item.countryCode || item.slug} ${showRegions ? "globe icon" : "flag"}`}
-                                    loading="lazy"
-                                    decoding="async"
-                                    className="w-full h-full object-cover absolute inset-0"
-                                    src={item.flagUrl || item.iconUrl}
-                                  />
-                                  <div className="absolute inset-0 rounded-full pointer-events-none border border-[rgba(0,0,0,0.1)]" />
-                                </>
-                              ) : (
-                                <div className="w-full h-full flex items-center justify-center bg-bg-secondary">
-                                  <MapPin className="w-4 h-4 text-text-tertiary" />
-                                </div>
-                              )}
-                            </div>
-                            {/* Name + Info */}
-                            <div className="flex flex-col gap-0.5">
-                              <p className="body-lg-medium scroll-mt-20 xl:scroll-mt-24">
-                                {(lang === "vi" ? item.titleVi : item.title) || item.name}
-                              </p>
-                              <p className="body-md text-text-tertiary scroll-mt-20 xl:scroll-mt-24">
-                                <span className="whitespace-nowrap">
-                                  {dict.from} {Number(item.fromPrice).toLocaleString("vi-VN") || "20.000"}đ
-                                </span>
-                                {item.destinationCount != null && (
-                                  <>
-                                    {" "}
-                                    •{" "}
-                                    <span className="whitespace-nowrap">
-                                      {item.destinationCount}{" "}
-                                      {item.destinationCount === 1
-                                        ? dict.country
-                                        : dict.countries}
-                                    </span>
-                                  </>
-                                )}
-                              </p>
-                            </div>
-                            {/* Chevron */}
-                            <div className="ml-auto">
-                              <ChevronRightIcon className="mt-1 -rotate-90 pointer-events-none text-text-tertiary" />
-                            </div>
-                          </div>
-                        </div>
-                      </a>
-                    </div>
+                    <DestinationCard
+                      key={item.id}
+                      item={item}
+                      lang={lang}
+                      dict={dict}
+                      isRegion={showRegions}
+                    />
                   ))}
                 </div>
 

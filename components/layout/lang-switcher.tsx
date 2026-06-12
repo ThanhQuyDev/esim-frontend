@@ -7,6 +7,7 @@ import { routing } from '@/i18n/routing';
 import {
   resolveDynamicLangSwitchPath,
   resolveLangSwitchPath,
+  resolveLegalLangSwitchPath,
 } from '@/i18n/lang-switch';
 
 export default function LangSwitcher() {
@@ -16,17 +17,16 @@ export default function LangSwitcher() {
   const publicPathname = useNextPathname();
 
   const switchLocale = (newLocale: string) => {
-    if (pathname === '/[slug]') {
+    if (pathname === '/[slug]' || pathname === '/legal/[slug]') {
       // Persist the target locale in the NEXT_LOCALE cookie before the hard
       // navigation. Otherwise next-intl's middleware reads the stale cookie and
       // redirects the prefix-less default-locale path (e.g. /thailand) back to
       // the previous locale (e.g. /en/thailand), so the switch never happens.
       document.cookie = `NEXT_LOCALE=${newLocale};path=/;max-age=${60 * 60 * 24 * 365};samesite=lax`;
-      window.location.href = resolveDynamicLangSwitchPath(
-        publicPathname,
-        locale,
-        newLocale
-      );
+      window.location.href =
+        pathname === '/legal/[slug]'
+          ? resolveLegalLangSwitchPath(publicPathname, newLocale)
+          : resolveDynamicLangSwitchPath(publicPathname, locale, newLocale);
       return;
     }
 

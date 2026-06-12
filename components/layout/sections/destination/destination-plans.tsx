@@ -236,8 +236,32 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
           <div className="flex flex-col gap-4 min-w-0">
             {isLoading ? (
               <>
-                <div className="h-[400px] bg-gray-100 rounded-xl animate-pulse" />
-                <div className="h-[180px] bg-gray-100 rounded-xl animate-pulse" />
+                {/* ProductCard skeleton */}
+                <div className="h-[400px] bg-gray-100 rounded-xl animate-pulse p-5 flex flex-col gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="h-12 w-12 rounded-full bg-gray-200" />
+                    <div className="flex-1 space-y-2">
+                      <div className="h-4 w-2/3 rounded-md bg-gray-200" />
+                      <div className="h-3 w-1/3 rounded-md bg-gray-200" />
+                    </div>
+                  </div>
+                  <div className="h-px w-full bg-gray-200" />
+                  <div className="space-y-3">
+                    <div className="h-3 w-full rounded-md bg-gray-200" />
+                    <div className="h-3 w-5/6 rounded-md bg-gray-200" />
+                    <div className="h-3 w-4/6 rounded-md bg-gray-200" />
+                  </div>
+                  <div className="mt-auto space-y-3">
+                    <div className="h-10 w-full rounded-lg bg-gray-200" />
+                    <div className="h-10 w-full rounded-lg bg-gray-200" />
+                  </div>
+                </div>
+                {/* DeviceChecker skeleton */}
+                <div className="h-[180px] bg-gray-100 rounded-xl animate-pulse p-5 flex flex-col gap-3">
+                  <div className="h-4 w-1/2 rounded-md bg-gray-200" />
+                  <div className="h-3 w-3/4 rounded-md bg-gray-200" />
+                  <div className="mt-auto h-10 w-full rounded-lg bg-gray-200" />
+                </div>
               </>
             ) : (
               <>
@@ -315,7 +339,19 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
 
             {isLoading ? (
               <div className="py-4">
-                <div className="h-[280px] bg-gray-100 rounded-xl animate-pulse" />
+                <div className="h-[280px] bg-gray-100 rounded-xl animate-pulse p-5 flex flex-col gap-4">
+                  {/* Tab row */}
+                  <div className="flex gap-3">
+                    <div className="h-9 w-28 rounded-full bg-gray-200" />
+                    <div className="h-9 w-28 rounded-full bg-gray-200" />
+                  </div>
+                  {/* Plan rows */}
+                  <div className="space-y-3">
+                    <div className="h-14 w-full rounded-lg bg-gray-200" />
+                    <div className="h-14 w-full rounded-lg bg-gray-200" />
+                    <div className="h-14 w-full rounded-lg bg-gray-200" />
+                  </div>
+                </div>
               </div>
             ) : !hasAnyPlans ? (
               <div className="py-8 text-center text-sm text-[#6b7280]">{dict.noPlans}</div>

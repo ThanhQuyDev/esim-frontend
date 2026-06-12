@@ -66,6 +66,8 @@
     "new": "Mới",
     "country": "quốc gia",
     "countries": "quốc gia",
+    "sectionRegions": "Khu vực",
+    "sectionCountries": "Quốc gia",
     "noResults": "Không tìm thấy điểm đến nào"
   },
   "whyChoose": {
@@ -1292,7 +1294,9 @@
     "profile": "Tài khoản",
     "region": "Khu vực",
     "review": "Đánh giá",
-    "referFriend": "Giới thiệu bạn bè"
+    "referFriend": "Giới thiệu bạn bè",
+    "termsOfService": "Điều khoản dịch vụ",
+    "legal": "Pháp lý"
   },
   "cart": {
     "title": "Giỏ hàng",

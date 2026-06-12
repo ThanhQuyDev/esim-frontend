@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 
 interface ModalProps {
@@ -18,20 +18,26 @@ interface ModalProps {
  * Renders to <body> via React portals for proper stacking above sticky bars.
  */
 export function Modal({ open, onClose, children, zIndex = 600, ariaLabel }: ModalProps) {
+  // Keep onClose in a ref so the effect below only re-runs when `open` changes.
+  // This prevents the body overflow from flickering when the parent re-renders
+  // (e.g. when it passes an inline arrow function for onClose).
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
+
   // Lock body scroll while open
   useEffect(() => {
     if (!open) return;
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") onCloseRef.current();
     };
     window.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = previous;
       window.removeEventListener("keydown", onKey);
     };
-  }, [open, onClose]);
+  }, [open]);
 
   if (!open) return null;
   if (typeof document === "undefined") return null;

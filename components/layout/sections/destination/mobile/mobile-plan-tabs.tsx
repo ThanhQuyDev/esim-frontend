@@ -58,6 +58,24 @@ function MobilePlanChip({
   );
 }
 
+/* ── Closest-duration plan of the same GB (fallback for badges/selection when
+   no plan matches the globally selected `days`) ── */
+function closestPlanByGb(plans: Plan[], gb: number, days: number): Plan | null {
+  const sameMb = plans.filter((p) => Number(p.dataMb) === Number(gb));
+  if (sameMb.length === 0) return null;
+  return sameMb.reduce((prev, curr) =>
+    Math.abs(curr.durationDays - days) < Math.abs(prev.durationDays - days) ? curr : prev
+  );
+}
+
+/* ── Smallest-duration plan of the same GB — fallback when switching speed tabs
+   and the other tab's selected `days` has no matching plan here. ── */
+function smallestDaysPlanByGb(plans: Plan[], gb: number): Plan | null {
+  const sameMb = plans.filter((p) => Number(p.dataMb) === Number(gb));
+  if (sameMb.length === 0) return null;
+  return sameMb.reduce((prev, curr) => (curr.durationDays < prev.durationDays ? curr : prev));
+}
+
 /* ── GB chip (daily plans) — with tag + provider badges from the best matching plan ── */
 function MobileGbChip({
   gb,
@@ -315,16 +333,18 @@ export function MobilePlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }
           <div className="flex flex-wrap gap-2">
             {getUniqueDataMb(localEsimPlans).map((gb) => {
               const best = findBestPlan(localEsimPlans, gb, days);
+              const badgePlan = best ?? closestPlanByGb(localEsimPlans, gb, days);
               return (
                 <MobileGbChip
                   key={gb}
                   gb={gb}
                   isSelected={activeSection === "local" && localGb === gb}
-                  bestPlan={best}
+                  bestPlan={badgePlan}
                   lang={lang}
                   onSelect={() => {
                     setLocalGb(gb);
-                    if (best) handleSelectLocal(best);
+                    const pick = best ?? closestPlanByGb(localEsimPlans, gb, days);
+                    if (pick) handleSelectLocal(pick);
                   }}
                 />
               );
@@ -441,7 +461,7 @@ export function MobilePlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }
                     isSelected={activeSection === "unlimited" && normalGb === gb}
                     onSelect={() => {
                       setNormalGb(gb);
-                      const p = findBestPlan(plans.fastUnlimited, gb, days);
+                      const p = findBestPlan(plans.fastUnlimited, gb, days) ?? smallestDaysPlanByGb(plans.fastUnlimited, gb);
                       if (p) handleSelectUnlimited(p);
                     }}
                     mainLabel={`${formatDataLabel(gb)}/${lang === "en" ? "day" : "ngày"} ${dict.speed.high.toLowerCase()}`}

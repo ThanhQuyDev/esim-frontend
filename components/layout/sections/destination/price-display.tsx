@@ -46,7 +46,7 @@ export function PriceDisplay({
     } else {
       const price = Number(selectedPlan.price);
       const retailPrice = Number(selectedPlan.retailPrice);
-      const vndRetail = price > 0 ? roundVndToThousands((Number(selectedPlan.vndPrice) * retailPrice) / price) : 0;
+      const vndRetail = price > 0 ? (selectedPlan.isLocalInventory ? selectedPlan.retailPrice : roundVndToThousands((Number(selectedPlan.vndPrice) * retailPrice) / price)) : 0;
       totalRetail = vndRetail * quantity;
     }
   } else {
