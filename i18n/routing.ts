@@ -16,7 +16,7 @@ export const routing = defineRouting({
     },
 
     // Destinations
-    '/all-destinations': {
+    '/destinations': {
       vi: '/diem-den',
       en: '/destinations',
     },

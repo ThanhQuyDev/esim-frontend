@@ -284,9 +284,27 @@
     "viewAll": "Xem tất cả bài viết",
     "readMore": "Đọc thêm",
     "fallback": [
-      { "title": "Cách giữ kết nối khi du lịch nước ngoài", "slug": "stay-connected-abroad", "excerpt": "Tìm hiểu cách tốt nhất để giữ điện thoại kết nối khi du lịch quốc tế.", "author": "Đội ngũ esim.vn", "tags": "Du lịch,eSIM" },
-      { "title": "eSIM vs SIM vật lý: Cái nào tốt hơn?", "slug": "esim-vs-physical-sim", "excerpt": "So sánh chi tiết giữa eSIM và thẻ SIM truyền thống cho du khách.", "author": "Đội ngũ esim.vn", "tags": "eSIM,Hướng dẫn" },
-      { "title": "Top 10 điểm đến du lịch năm 2025", "slug": "top-destinations-2025", "excerpt": "Khám phá những điểm đến du lịch phổ biến nhất và cách giữ kết nối tại đó.", "author": "Đội ngũ esim.vn", "tags": "Du lịch,Điểm đến" }
+      {
+        "title": "Cách giữ kết nối khi du lịch nước ngoài",
+        "slug": "stay-connected-abroad",
+        "excerpt": "Tìm hiểu cách tốt nhất để giữ điện thoại kết nối khi du lịch quốc tế.",
+        "author": "Đội ngũ esim.vn",
+        "tags": "Du lịch,eSIM"
+      },
+      {
+        "title": "eSIM vs SIM vật lý: Cái nào tốt hơn?",
+        "slug": "esim-vs-physical-sim",
+        "excerpt": "So sánh chi tiết giữa eSIM và thẻ SIM truyền thống cho du khách.",
+        "author": "Đội ngũ esim.vn",
+        "tags": "eSIM,Hướng dẫn"
+      },
+      {
+        "title": "Top 10 điểm đến du lịch năm 2025",
+        "slug": "top-destinations-2025",
+        "excerpt": "Khám phá những điểm đến du lịch phổ biến nhất và cách giữ kết nối tại đó.",
+        "author": "Đội ngũ esim.vn",
+        "tags": "Du lịch,Điểm đến"
+      }
     ]
   },
   "cta": {
@@ -305,77 +323,232 @@
     "subtitle": "Chọn từ các gói dữ liệu tại hơn 150 quốc gia. Không hợp đồng, không phí ẩn.",
     "mostPopular": "Phổ biến nhất",
     "plans": [
-      { "flag": "🇪🇺", "region": "Châu Âu", "data": "5GB", "validity": "30 ngày", "price": "$8.99", "pricePerGB": "$1.80/GB", "cta": "Mua gói", "features": ["Phủ sóng 5G/LTE", "Kích hoạt tức thì", "Hỗ trợ 24/7"] },
-      { "flag": "🇺🇸", "region": "Hoa Kỳ", "data": "10GB", "validity": "30 ngày", "price": "$11.99", "pricePerGB": "$1.20/GB", "cta": "Mua gói", "features": ["Phủ sóng 5G/LTE", "Kích hoạt tức thì", "Hỗ trợ 24/7"] },
-      { "flag": "🌏", "region": "Châu Á", "data": "10GB", "validity": "30 ngày", "price": "$9.99", "pricePerGB": "$1.00/GB", "cta": "Mua gói", "features": ["Phủ sóng 5G/LTE", "Kích hoạt tức thì", "Hỗ trợ 24/7"] },
-      { "flag": "🇯🇵", "region": "Nhật Bản", "data": "3GB", "validity": "7 ngày", "price": "$4.99", "pricePerGB": "$1.66/GB", "cta": "Mua gói", "features": ["Phủ sóng 5G/LTE", "Kích hoạt tức thì", "Hỗ trợ 24/7"] }
+      {
+        "flag": "🇪🇺",
+        "region": "Châu Âu",
+        "data": "5GB",
+        "validity": "30 ngày",
+        "price": "$8.99",
+        "pricePerGB": "$1.80/GB",
+        "cta": "Mua gói",
+        "features": [
+          "Phủ sóng 5G/LTE",
+          "Kích hoạt tức thì",
+          "Hỗ trợ 24/7"
+        ]
+      },
+      {
+        "flag": "🇺🇸",
+        "region": "Hoa Kỳ",
+        "data": "10GB",
+        "validity": "30 ngày",
+        "price": "$11.99",
+        "pricePerGB": "$1.20/GB",
+        "cta": "Mua gói",
+        "features": [
+          "Phủ sóng 5G/LTE",
+          "Kích hoạt tức thì",
+          "Hỗ trợ 24/7"
+        ]
+      },
+      {
+        "flag": "🌏",
+        "region": "Châu Á",
+        "data": "10GB",
+        "validity": "30 ngày",
+        "price": "$9.99",
+        "pricePerGB": "$1.00/GB",
+        "cta": "Mua gói",
+        "features": [
+          "Phủ sóng 5G/LTE",
+          "Kích hoạt tức thì",
+          "Hỗ trợ 24/7"
+        ]
+      },
+      {
+        "flag": "🇯🇵",
+        "region": "Nhật Bản",
+        "data": "3GB",
+        "validity": "7 ngày",
+        "price": "$4.99",
+        "pricePerGB": "$1.66/GB",
+        "cta": "Mua gói",
+        "features": [
+          "Phủ sóng 5G/LTE",
+          "Kích hoạt tức thì",
+          "Hỗ trợ 24/7"
+        ]
+      }
     ],
     "getPlan": "Mua gói",
     "allPlansTitle": "Tất cả gói bao gồm",
     "allPlansSubtitle": "Mọi gói esim.vn đều đi kèm các tính năng này, bất kể bạn chọn điểm đến nào.",
-    "benefits": ["Kích hoạt tức thì", "Tốc độ 5G/LTE", "Hỗ trợ 24/7", "Không hợp đồng", "Thiết lập dễ dàng", "Phủ sóng toàn cầu"]
+    "benefits": [
+      "Kích hoạt tức thì",
+      "Tốc độ 5G/LTE",
+      "Hỗ trợ 24/7",
+      "Không hợp đồng",
+      "Thiết lập dễ dàng",
+      "Phủ sóng toàn cầu"
+    ]
   },
   "footer": {
     "popularDestinations": {
       "title": "Điểm đến phổ biến",
       "links": [
-        { "label": "eSIM Nhật Bản", "href": "/vi/destination/japan" },
-        { "label": "eSIM Hoa Kỳ", "href": "/vi/destination/united-states" },
-        { "label": "eSIM Thổ Nhĩ Kỳ", "href": "/vi/destination/turkey" },
-        { "label": "eSIM Vương quốc Anh", "href": "/vi/destination/united-kingdom" },
-        { "label": "eSIM Châu Âu", "href": "/vi/region/europe" },
-        { "label": "eSIM Thái Lan", "href": "/vi/destination/thailand" },
-        { "label": "eSIM Hàn Quốc", "href": "/vi/destination/south-korea" },
-        { "label": "eSIM Tây Ban Nha", "href": "/vi/destination/spain" },
-        { "label": "eSIM Ý", "href": "/vi/destination/italy" },
-        { "label": "eSIM Pháp", "href": "/vi/destination/france" }
+        {
+          "label": "eSIM Nhật Bản",
+          "href": "/vi/destination/japan"
+        },
+        {
+          "label": "eSIM Hoa Kỳ",
+          "href": "/vi/destination/united-states"
+        },
+        {
+          "label": "eSIM Thổ Nhĩ Kỳ",
+          "href": "/vi/destination/turkey"
+        },
+        {
+          "label": "eSIM Vương quốc Anh",
+          "href": "/vi/destination/united-kingdom"
+        },
+        {
+          "label": "eSIM Châu Âu",
+          "href": "/vi/region/europe"
+        },
+        {
+          "label": "eSIM Thái Lan",
+          "href": "/vi/destination/thailand"
+        },
+        {
+          "label": "eSIM Hàn Quốc",
+          "href": "/vi/destination/south-korea"
+        },
+        {
+          "label": "eSIM Tây Ban Nha",
+          "href": "/vi/destination/spain"
+        },
+        {
+          "label": "eSIM Ý",
+          "href": "/vi/destination/italy"
+        },
+        {
+          "label": "eSIM Pháp",
+          "href": "/vi/destination/france"
+        }
       ]
     },
     "saily": {
       "title": "esim.vn",
       "links": [
-        { "label": "Về chúng tôi", "href": "/vi/gioi-thieu" },
-        { "label": "Blog", "href": "/vi/blog" },
-        { "label": "Khu vực báo chí", "href": "/vi/khu-vuc-bao-chi" },
-        { "label": "Đánh giá", "href": "/vi/review" }
+        {
+          "label": "Về chúng tôi",
+          "href": "/vi/gioi-thieu"
+        },
+        {
+          "label": "Blog",
+          "href": "/vi/blog"
+        },
+        {
+          "label": "Khu vực báo chí",
+          "href": "/vi/khu-vuc-bao-chi"
+        },
+        {
+          "label": "Đánh giá",
+          "href": "/vi/review"
+        }
       ]
     },
     "esim": {
       "title": "eSIM",
       "links": [
-        { "label": "Thiết bị tương thích eSIM", "href": "/vi/thiet-bi-ho-tro-esim" },
-        { "label": "eSIM là gì?", "href": "/vi/esim-la-gi" },
-        { "label": "Công cụ tính data", "href": "/vi/cong-cu-tinh-data" },
-        { "label": "Tất cả điểm đến", "href": "/vi/all-destinations" }
+        {
+          "label": "Thiết bị tương thích eSIM",
+          "href": "/vi/thiet-bi-ho-tro-esim"
+        },
+        {
+          "label": "eSIM là gì?",
+          "href": "/vi/esim-la-gi"
+        },
+        {
+          "label": "Công cụ tính data",
+          "href": "/vi/cong-cu-tinh-data"
+        },
+        {
+          "label": "Tất cả điểm đến",
+          "href": "/vi/destinations"
+        }
       ]
     },
     "helpLinks": {
       "title": "Trợ giúp",
       "links": [
-        { "label": "Trung tâm trợ giúp", "href": "/vi/help-center" },
-        { "label": "Mã giảm giá", "href": "/vi/ma-giam-gia" },
-        { "label": "Tất cả điểm đến", "href": "/vi/all-destinations" }
+        {
+          "label": "Trung tâm trợ giúp",
+          "href": "/vi/help-center"
+        },
+        {
+          "label": "Mã giảm giá",
+          "href": "/vi/ma-giam-gia"
+        },
+        {
+          "label": "Tất cả điểm đến",
+          "href": "/vi/destinations"
+        }
       ]
     },
     "followUs": {
       "title": "Theo dõi",
       "links": [
-        { "label": "YouTube", "href": "https://www.youtube.com/@esim_service" },
-        { "label": "Instagram", "href": "https://www.instagram.com/sailyworld" },
-        { "label": "X (Twitter)", "href": "https://x.com/sailyworld" },
-        { "label": "Facebook", "href": "https://www.facebook.com/sailyservice" },
-        { "label": "TikTok", "href": "https://www.tiktok.com/@sailyworld" }
+        {
+          "label": "YouTube",
+          "href": "https://www.youtube.com/@esim_service"
+        },
+        {
+          "label": "Instagram",
+          "href": "https://www.instagram.com/sailyworld"
+        },
+        {
+          "label": "X (Twitter)",
+          "href": "https://x.com/sailyworld"
+        },
+        {
+          "label": "Facebook",
+          "href": "https://www.facebook.com/sailyservice"
+        },
+        {
+          "label": "TikTok",
+          "href": "https://www.tiktok.com/@sailyworld"
+        }
       ]
     },
     "legal": {
       "copyright": "© 2024 esim.vn. Bảo lưu mọi quyền.",
       "links": [
-        { "label": "Chính sách bảo mật", "href": "/vi/help-center" },
-        { "label": "Điều khoản dịch vụ", "href": "/vi/help-center" },
-        { "label": "Chính sách hoàn tiền", "href": "/vi/help-center" }
+        {
+          "label": "Chính sách bảo mật",
+          "href": "/vi/help-center"
+        },
+        {
+          "label": "Điều khoản dịch vụ",
+          "href": "/vi/help-center"
+        },
+        {
+          "label": "Chính sách hoàn tiền",
+          "href": "/vi/help-center"
+        }
       ]
     },
-    "paymentMethods": ["Apple Pay", "Google Pay", "Visa", "Mastercard", "Amex", "Discover", "UnionPay", "JCB"]
+    "paymentMethods": [
+      "Apple Pay",
+      "Google Pay",
+      "Visa",
+      "Mastercard",
+      "Amex",
+      "Discover",
+      "UnionPay",
+      "JCB"
+    ]
   },
   "dataCalculator": {
     "metadata": {
@@ -627,23 +800,61 @@
       "title": "Những giá trị dẫn lối chúng tôi",
       "subtitle": "Giá trị của chúng tôi không chỉ là những lời truyền cảm hứng treo trên tường — chúng tôi sống với chúng trong mọi thứ chúng tôi xây dựng.",
       "items": [
-        { "title": "Tự do khám phá", "description": "Chúng tôi đang thay thế thẻ SIM nhựa bằng giải pháp dễ dàng và thân thiện với môi trường, hoạt động tại hơn 200 điểm đến." },
-        { "title": "Giữ cho đơn giản", "description": "Không thuật ngữ kỹ thuật. Không lộn xộn. Chúng tôi xây dựng ứng dụng eSIM sạch sẽ, trực quan và dễ điều hướng." },
-        { "title": "Ưu tiên con người", "description": "Chúng tôi quan tâm đến con người, không chỉ quy trình cứng nhắc. Mỗi thành viên và người dùng đều được đối xử với sự đồng cảm và tôn trọng." },
-        { "title": "Luôn cải thiện", "description": "Chúng tôi không theo đuổi sự hoàn hảo — chúng tôi theo đuổi tiến bộ. Chúng tôi tin rằng những chiến thắng nhỏ tạo nên thay đổi lớn." },
-        { "title": "Suy nghĩ như du khách", "description": "Chúng tôi luôn tò mò, linh hoạt và cởi mở với điều chưa biết, giống như những nhà thám hiểm mà chúng tôi xây dựng esim.vn cho họ." },
-        { "title": "Tạo ra điều có ý nghĩa", "description": "Chúng tôi ở đây để tạo ra sự khác biệt, vì vậy chúng tôi tập trung vào điều thực sự quan trọng — người dùng, đội ngũ và thế giới xung quanh." }
+        {
+          "title": "Tự do khám phá",
+          "description": "Chúng tôi đang thay thế thẻ SIM nhựa bằng giải pháp dễ dàng và thân thiện với môi trường, hoạt động tại hơn 200 điểm đến."
+        },
+        {
+          "title": "Giữ cho đơn giản",
+          "description": "Không thuật ngữ kỹ thuật. Không lộn xộn. Chúng tôi xây dựng ứng dụng eSIM sạch sẽ, trực quan và dễ điều hướng."
+        },
+        {
+          "title": "Ưu tiên con người",
+          "description": "Chúng tôi quan tâm đến con người, không chỉ quy trình cứng nhắc. Mỗi thành viên và người dùng đều được đối xử với sự đồng cảm và tôn trọng."
+        },
+        {
+          "title": "Luôn cải thiện",
+          "description": "Chúng tôi không theo đuổi sự hoàn hảo — chúng tôi theo đuổi tiến bộ. Chúng tôi tin rằng những chiến thắng nhỏ tạo nên thay đổi lớn."
+        },
+        {
+          "title": "Suy nghĩ như du khách",
+          "description": "Chúng tôi luôn tò mò, linh hoạt và cởi mở với điều chưa biết, giống như những nhà thám hiểm mà chúng tôi xây dựng esim.vn cho họ."
+        },
+        {
+          "title": "Tạo ra điều có ý nghĩa",
+          "description": "Chúng tôi ở đây để tạo ra sự khác biệt, vì vậy chúng tôi tập trung vào điều thực sự quan trọng — người dùng, đội ngũ và thế giới xung quanh."
+        }
       ]
     },
     "timeline": {
       "title": "Câu chuyện esim.vn",
       "subtitle": "Chúng tôi hình dung một cách tốt hơn để du khách giữ kết nối trực tuyến. Ngày nay, chúng tôi đang biến tầm nhìn đó thành hiện thực cho hàng nghìn người trên toàn cầu. Đây là cách esim.vn đến được đây.",
       "milestones": [
-        { "date": "Tháng 11 năm 2023", "title": "Nơi tất cả bắt đầu", "description": "Ứng dụng esim.vn bắt đầu với một ý tưởng chung — loại bỏ thẻ SIM nhựa và đơn giản hóa kết nối di động." },
-        { "date": "Tháng 3 năm 2024", "title": "Lần ra mắt đầu tiên", "description": "Chúng tôi giới thiệu các gói eSIM đầu tiên phủ sóng hơn 160 quốc gia với truy cập di động tức thì và không rác thải nhựa." },
-        { "date": "Tháng 12 năm 2024", "title": "Ưu tiên bảo mật", "description": "Chúng tôi đã thêm tính năng bảo mật tích hợp vào ứng dụng eSIM để bạn có thể duyệt web an toàn hơn khi du lịch." },
-        { "date": "Tháng 2 năm 2025", "title": "Kết nối thế giới", "description": "Đầu năm, chúng tôi mở rộng phủ sóng đến hơn 200 điểm đến và tiếp cận nhiều người hơn bao giờ hết." },
-        { "date": "2025", "title": "Hành trình tiếp tục", "description": "Chúng tôi tập trung mở rộng phủ sóng, cải thiện trải nghiệm esim.vn và giữ bạn kết nối 24/7." }
+        {
+          "date": "Tháng 11 năm 2023",
+          "title": "Nơi tất cả bắt đầu",
+          "description": "Ứng dụng esim.vn bắt đầu với một ý tưởng chung — loại bỏ thẻ SIM nhựa và đơn giản hóa kết nối di động."
+        },
+        {
+          "date": "Tháng 3 năm 2024",
+          "title": "Lần ra mắt đầu tiên",
+          "description": "Chúng tôi giới thiệu các gói eSIM đầu tiên phủ sóng hơn 160 quốc gia với truy cập di động tức thì và không rác thải nhựa."
+        },
+        {
+          "date": "Tháng 12 năm 2024",
+          "title": "Ưu tiên bảo mật",
+          "description": "Chúng tôi đã thêm tính năng bảo mật tích hợp vào ứng dụng eSIM để bạn có thể duyệt web an toàn hơn khi du lịch."
+        },
+        {
+          "date": "Tháng 2 năm 2025",
+          "title": "Kết nối thế giới",
+          "description": "Đầu năm, chúng tôi mở rộng phủ sóng đến hơn 200 điểm đến và tiếp cận nhiều người hơn bao giờ hết."
+        },
+        {
+          "date": "2025",
+          "title": "Hành trình tiếp tục",
+          "description": "Chúng tôi tập trung mở rộng phủ sóng, cải thiện trải nghiệm esim.vn và giữ bạn kết nối 24/7."
+        }
       ]
     },
     "crew": {
@@ -670,11 +881,31 @@
     "life": {
       "title": "Cuộc sống tại esim.vn",
       "perks": [
-        { "title": "Cơ hội phát triển", "description": "Chúng tôi hỗ trợ sự phát triển của bạn với cơ hội học hỏi, trách nhiệm thực tế và cơ hội dẫn dắt (không chỉ theo sau).", "imageAlt": "Đội ngũ esim.vn tham gia sự kiện nội bộ công ty." },
-        { "title": "Cân bằng công việc-cuộc sống", "description": "Làm việc từ bất cứ đâu trên thế giới! Chúng tôi là đội ngũ không biên giới với nhiều quốc tịch, kết nối bằng niềm tin, không phải múi giờ.", "imageAlt": "Nhân viên esim.vn trò chuyện trong sự kiện tại trụ sở esim.vn." },
-        { "title": "Văn hóa và cộng đồng", "description": "Chúng tôi ưu tiên con người và ăn mừng chiến thắng, cột mốc và đóng góp độc đáo của mỗi thành viên.", "imageAlt": "Các thành viên đội ngũ esim.vn tập thể dục cùng nhau." },
-        { "title": "Tự chủ và sở hữu", "description": "Chúng tôi tin tưởng bạn dẫn dắt, thử nghiệm và biến ý tưởng thành hiện thực. Tại esim.vn, mọi người đều có quyền tự do đưa ra quyết định táo bạo.", "imageAlt": "Nhân viên esim.vn vỗ tay sau buổi thuyết trình." },
-        { "title": "Công việc dựa trên sự tò mò", "description": "Chúng tôi khuyến khích sự tò mò. Câu hỏi không chỉ được chào đón — chúng là cách chúng tôi xây dựng, học hỏi và phát triển.", "imageAlt": "Các nhà sáng lập esim.vn tham dự sự kiện." }
+        {
+          "title": "Cơ hội phát triển",
+          "description": "Chúng tôi hỗ trợ sự phát triển của bạn với cơ hội học hỏi, trách nhiệm thực tế và cơ hội dẫn dắt (không chỉ theo sau).",
+          "imageAlt": "Đội ngũ esim.vn tham gia sự kiện nội bộ công ty."
+        },
+        {
+          "title": "Cân bằng công việc-cuộc sống",
+          "description": "Làm việc từ bất cứ đâu trên thế giới! Chúng tôi là đội ngũ không biên giới với nhiều quốc tịch, kết nối bằng niềm tin, không phải múi giờ.",
+          "imageAlt": "Nhân viên esim.vn trò chuyện trong sự kiện tại trụ sở esim.vn."
+        },
+        {
+          "title": "Văn hóa và cộng đồng",
+          "description": "Chúng tôi ưu tiên con người và ăn mừng chiến thắng, cột mốc và đóng góp độc đáo của mỗi thành viên.",
+          "imageAlt": "Các thành viên đội ngũ esim.vn tập thể dục cùng nhau."
+        },
+        {
+          "title": "Tự chủ và sở hữu",
+          "description": "Chúng tôi tin tưởng bạn dẫn dắt, thử nghiệm và biến ý tưởng thành hiện thực. Tại esim.vn, mọi người đều có quyền tự do đưa ra quyết định táo bạo.",
+          "imageAlt": "Nhân viên esim.vn vỗ tay sau buổi thuyết trình."
+        },
+        {
+          "title": "Công việc dựa trên sự tò mò",
+          "description": "Chúng tôi khuyến khích sự tò mò. Câu hỏi không chỉ được chào đón — chúng là cách chúng tôi xây dựng, học hỏi và phát triển.",
+          "imageAlt": "Các nhà sáng lập esim.vn tham dự sự kiện."
+        }
       ]
     },
     "banner": {
@@ -714,9 +945,18 @@
           "label": "Trên iPhone",
           "appTitle": "Thiết lập eSIM trên iPhone với ứng dụng esim.vn",
           "steps": [
-            { "title": "Chọn gói dữ liệu eSIM cho chuyến đi", "description": "Chọn quốc gia bạn sẽ đến và chọn một gói." },
-            { "title": "Tải ứng dụng esim.vn", "description": "Tải ứng dụng, nhấn \"Cài đặt eSIM\" và làm theo các bước trên màn hình." },
-            { "title": "Gói của bạn sẽ tự động kích hoạt", "description": "Sẵn sàng cho chuyến đi — gói của bạn sẽ kích hoạt khi bạn đến nơi." }
+            {
+              "title": "Chọn gói dữ liệu eSIM cho chuyến đi",
+              "description": "Chọn quốc gia bạn sẽ đến và chọn một gói."
+            },
+            {
+              "title": "Tải ứng dụng esim.vn",
+              "description": "Tải ứng dụng, nhấn \"Cài đặt eSIM\" và làm theo các bước trên màn hình."
+            },
+            {
+              "title": "Gói của bạn sẽ tự động kích hoạt",
+              "description": "Sẵn sàng cho chuyến đi — gói của bạn sẽ kích hoạt khi bạn đến nơi."
+            }
           ],
           "manualTitle": "Thiết lập eSIM thủ công trên iPhone",
           "manualSteps": [
@@ -731,9 +971,18 @@
           "label": "Trên Android",
           "appTitle": "Thiết lập eSIM trên Android với ứng dụng esim.vn",
           "steps": [
-            { "title": "Chọn gói dữ liệu eSIM cho chuyến đi", "description": "Chọn quốc gia bạn sẽ đến và chọn một gói." },
-            { "title": "Tải ứng dụng esim.vn", "description": "Tải ứng dụng, nhấn \"Cài đặt eSIM\" và làm theo các bước trên màn hình để thiết lập." },
-            { "title": "Gói của bạn sẽ tự động kích hoạt", "description": "Sẵn sàng cho chuyến đi — gói của bạn sẽ kích hoạt khi bạn đến nơi." }
+            {
+              "title": "Chọn gói dữ liệu eSIM cho chuyến đi",
+              "description": "Chọn quốc gia bạn sẽ đến và chọn một gói."
+            },
+            {
+              "title": "Tải ứng dụng esim.vn",
+              "description": "Tải ứng dụng, nhấn \"Cài đặt eSIM\" và làm theo các bước trên màn hình để thiết lập."
+            },
+            {
+              "title": "Gói của bạn sẽ tự động kích hoạt",
+              "description": "Sẵn sàng cho chuyến đi — gói của bạn sẽ kích hoạt khi bạn đến nơi."
+            }
           ],
           "manualTitle": "Thiết lập eSIM thủ công trên Android",
           "manualSteps": [
@@ -747,9 +996,18 @@
           "label": "Bằng mã QR",
           "appTitle": "Thiết lập eSIM bằng mã QR",
           "steps": [
-            { "title": "Quét mã QR để tải esim.vn", "description": "Dùng điện thoại quét mã QR và tải ứng dụng esim.vn." },
-            { "title": "Mua gói dữ liệu eSIM cho chuyến đi", "description": "Lấy gói dữ liệu di động cho quốc gia bạn sẽ đến." },
-            { "title": "Gói của bạn sẽ tự động kích hoạt", "description": "Kết nối ngay khi bạn đến điểm đến." }
+            {
+              "title": "Quét mã QR để tải esim.vn",
+              "description": "Dùng điện thoại quét mã QR và tải ứng dụng esim.vn."
+            },
+            {
+              "title": "Mua gói dữ liệu eSIM cho chuyến đi",
+              "description": "Lấy gói dữ liệu di động cho quốc gia bạn sẽ đến."
+            },
+            {
+              "title": "Gói của bạn sẽ tự động kích hoạt",
+              "description": "Kết nối ngay khi bạn đến điểm đến."
+            }
           ],
           "manualTitle": "",
           "manualSteps": []
@@ -763,12 +1021,30 @@
         "title": "Ưu điểm của eSIM",
         "subtitle": "eSIM là tương lai của kết nối. Đây là những lợi ích chính của eSIM.",
         "items": [
-          { "title": "Không phí chuyển vùng cao", "description": "Du khách có thể mua eSIM kết nối với nhà mạng địa phương và tránh phí chuyển vùng bất ngờ." },
-          { "title": "Nhiều hồ sơ", "description": "Bạn có thể có nhiều eSIM ảo trên một thiết bị, dễ dàng chuyển đổi giữa các nhà mạng và số điện thoại khác nhau." },
-          { "title": "Trả cho những gì bạn cần", "description": "Đi Nhật một tuần? Lấy gói 7 ngày thay vì hàng tháng, và tiết kiệm tiền cho một phần okonomiyaki thêm." },
-          { "title": "Tiết kiệm không gian", "description": "Việc không có khe SIM vật lý giải phóng không gian cho các nâng cấp thiết bị khác (như pin lớn hơn hoặc nhiều tính năng hơn)." },
-          { "title": "Không thể mất hoặc bị đánh cắp", "description": "Thay đổi thẻ SIM nhỏ rất khó, đặc biệt khi bạn đang di chuyển. eSIM được tích hợp sẵn, nên không thể mất hoặc bị đánh cắp." },
-          { "title": "Ít rác thải hơn", "description": "Một thẻ SIM nhựa không phá hủy hành tinh, nhưng mua thẻ SIM đóng gói mới cho mỗi chuyến đi sẽ tích lũy theo thời gian. Hãy dùng eSIM thay thế." }
+          {
+            "title": "Không phí chuyển vùng cao",
+            "description": "Du khách có thể mua eSIM kết nối với nhà mạng địa phương và tránh phí chuyển vùng bất ngờ."
+          },
+          {
+            "title": "Nhiều hồ sơ",
+            "description": "Bạn có thể có nhiều eSIM ảo trên một thiết bị, dễ dàng chuyển đổi giữa các nhà mạng và số điện thoại khác nhau."
+          },
+          {
+            "title": "Trả cho những gì bạn cần",
+            "description": "Đi Nhật một tuần? Lấy gói 7 ngày thay vì hàng tháng, và tiết kiệm tiền cho một phần okonomiyaki thêm."
+          },
+          {
+            "title": "Tiết kiệm không gian",
+            "description": "Việc không có khe SIM vật lý giải phóng không gian cho các nâng cấp thiết bị khác (như pin lớn hơn hoặc nhiều tính năng hơn)."
+          },
+          {
+            "title": "Không thể mất hoặc bị đánh cắp",
+            "description": "Thay đổi thẻ SIM nhỏ rất khó, đặc biệt khi bạn đang di chuyển. eSIM được tích hợp sẵn, nên không thể mất hoặc bị đánh cắp."
+          },
+          {
+            "title": "Ít rác thải hơn",
+            "description": "Một thẻ SIM nhựa không phá hủy hành tinh, nhưng mua thẻ SIM đóng gói mới cho mỗi chuyến đi sẽ tích lũy theo thời gian. Hãy dùng eSIM thay thế."
+          }
         ]
       },
       "disadvantages": {
@@ -785,12 +1061,36 @@
       "title": "Sự khác biệt giữa eSIM và SIM vật lý là gì?",
       "subtitle": "Sự khác biệt chính giữa eSIM và thẻ SIM truyền thống là eSIM là kỹ thuật số trong khi thẻ SIM là chip vật lý.",
       "rows": [
-        { "label": "Số điện thoại", "esim": "Tối đa hai*", "sim": "Tối đa hai" },
-        { "label": "Nhà mạng", "esim": "Bao nhiêu tùy thích", "sim": "Tối đa hai" },
-        { "label": "Gỡ bỏ", "esim": "Hủy kích hoạt hồ sơ", "sim": "Tháo thẻ SIM" },
-        { "label": "Kích hoạt", "esim": "Thủ công hoặc tự động (gói kích hoạt tại điểm đến)", "sim": "Thủ công (cần lắp thẻ vào thiết bị)" },
-        { "label": "Tương thích", "esim": "Chỉ thiết bị mới", "sim": "Thiết bị cũ và hầu hết thiết bị mới" },
-        { "label": "Sử dụng ở nước ngoài", "esim": "Giá cả phải chăng — dễ dàng mua gói dữ liệu cho các quốc gia khác nhau", "sim": "Có thể đắt do chuyển vùng" }
+        {
+          "label": "Số điện thoại",
+          "esim": "Tối đa hai*",
+          "sim": "Tối đa hai"
+        },
+        {
+          "label": "Nhà mạng",
+          "esim": "Bao nhiêu tùy thích",
+          "sim": "Tối đa hai"
+        },
+        {
+          "label": "Gỡ bỏ",
+          "esim": "Hủy kích hoạt hồ sơ",
+          "sim": "Tháo thẻ SIM"
+        },
+        {
+          "label": "Kích hoạt",
+          "esim": "Thủ công hoặc tự động (gói kích hoạt tại điểm đến)",
+          "sim": "Thủ công (cần lắp thẻ vào thiết bị)"
+        },
+        {
+          "label": "Tương thích",
+          "esim": "Chỉ thiết bị mới",
+          "sim": "Thiết bị cũ và hầu hết thiết bị mới"
+        },
+        {
+          "label": "Sử dụng ở nước ngoài",
+          "esim": "Giá cả phải chăng — dễ dàng mua gói dữ liệu cho các quốc gia khác nhau",
+          "sim": "Có thể đắt do chuyển vùng"
+        }
       ],
       "footnote": "*esim.vn hiện tập trung vào dữ liệu di động, nên chúng tôi chưa hỗ trợ số điện thoại. Đừng lo — chúng tôi đang phát triển."
     },
@@ -802,16 +1102,46 @@
     "faq": {
       "title": "Câu hỏi thường gặp về eSIM",
       "items": [
-        { "question": "Thẻ eSIM làm gì?", "answer": "eSIM là phiên bản kỹ thuật số của thẻ SIM vật lý. Nó kết nối bạn với mạng di động, cho phép gọi điện, nhắn tin và sử dụng dữ liệu. Thay vì phải lắp vào thiết bị, bạn chỉ cần mua gói eSIM từ nhà cung cấp và kích hoạt." },
-        { "question": "Làm sao để có eSIM?", "answer": "Bạn có thể mua eSIM từ bất kỳ nhà cung cấp eSIM uy tín nào, thường bằng cách mua trực tuyến. Ví dụ, esim.vn cung cấp eSIM tại hơn 200 điểm đến — chỉ cần tìm quốc gia bạn muốn sử dụng dữ liệu và chọn gói." },
-        { "question": "eSIM có tốt hơn thẻ SIM không?", "answer": "Nói ngắn gọn — có. eSIM được tích hợp trong điện thoại, nên bạn không cần mở máy để lắp thẻ nhỏ. Những thẻ ảo này rất tuyệt để chuyển đổi giữa các nhà mạng và du lịch quốc tế." },
-        { "question": "Tại sao tôi nên muốn có eSIM?", "answer": "Bạn có thể muốn eSIM vì nhiều lý do, như đi nước ngoài hoặc cần thêm dữ liệu di động. Ví dụ, nếu bạn đến quốc gia không có chuyển vùng miễn phí, mua gói dữ liệu eSIM là giải pháp dễ dàng và tiết kiệm." },
-        { "question": "Tại sao eSIM chưa phổ biến?", "answer": "Công nghệ eSIM vẫn còn khá mới — điện thoại thông minh tương thích eSIM đầu tiên chỉ được phát hành năm 2016. Chưa nhiều người biết về eSIM, nhưng sự phổ biến đang tăng khi nhiều người tìm hiểu về lợi ích của eSIM." },
-        { "question": "eSIM có an toàn hơn SIM không?", "answer": "Có, ở một số khía cạnh. Thẻ SIM vật lý có thể bị hỏng, mất hoặc bị đánh cắp. eSIM là điện tử và tích hợp trong thiết bị, nên bạn không thể làm hỏng hoặc mất chúng." },
-        { "question": "eSIM có cung cấp số điện thoại không?", "answer": "Không phải lúc nào. Một số eSIM (như những gói bạn mua qua ứng dụng esim.vn) chỉ cung cấp dữ liệu di động mà không có số điện thoại. Tuy nhiên, một số nhà cung cấp khác cung cấp số điện thoại cùng eSIM." },
-        { "question": "eSIM có hoạt động không cần internet không?", "answer": "Có, eSIM có thể hoạt động không cần kết nối internet. Ví dụ, với một số eSIM, bạn có thể gọi điện thoại hoặc nhắn tin SMS. Những gì bạn có thể làm phụ thuộc vào gói eSIM và nhà cung cấp." },
-        { "question": "eSIM có hao pin điện thoại không?", "answer": "Hao pin không phải vấn đề với eSIM, ít nhất không nhiều hơn thẻ SIM vật lý. Nếu thiết bị gần đây dùng nhiều pin hơn, có thể do các ứng dụng khác trên điện thoại." },
-        { "question": "Có thể chuyển eSIM về SIM vật lý không?", "answer": "Có, bạn có thể chuyển eSIM về SIM vật lý — ví dụ, nếu bạn muốn dùng với model điện thoại cũ hơn. Tuy nhiên, tốt nhất nên đến cửa hàng nhà mạng để được tư vấn và lấy thẻ SIM mới." }
+        {
+          "question": "Thẻ eSIM làm gì?",
+          "answer": "eSIM là phiên bản kỹ thuật số của thẻ SIM vật lý. Nó kết nối bạn với mạng di động, cho phép gọi điện, nhắn tin và sử dụng dữ liệu. Thay vì phải lắp vào thiết bị, bạn chỉ cần mua gói eSIM từ nhà cung cấp và kích hoạt."
+        },
+        {
+          "question": "Làm sao để có eSIM?",
+          "answer": "Bạn có thể mua eSIM từ bất kỳ nhà cung cấp eSIM uy tín nào, thường bằng cách mua trực tuyến. Ví dụ, esim.vn cung cấp eSIM tại hơn 200 điểm đến — chỉ cần tìm quốc gia bạn muốn sử dụng dữ liệu và chọn gói."
+        },
+        {
+          "question": "eSIM có tốt hơn thẻ SIM không?",
+          "answer": "Nói ngắn gọn — có. eSIM được tích hợp trong điện thoại, nên bạn không cần mở máy để lắp thẻ nhỏ. Những thẻ ảo này rất tuyệt để chuyển đổi giữa các nhà mạng và du lịch quốc tế."
+        },
+        {
+          "question": "Tại sao tôi nên muốn có eSIM?",
+          "answer": "Bạn có thể muốn eSIM vì nhiều lý do, như đi nước ngoài hoặc cần thêm dữ liệu di động. Ví dụ, nếu bạn đến quốc gia không có chuyển vùng miễn phí, mua gói dữ liệu eSIM là giải pháp dễ dàng và tiết kiệm."
+        },
+        {
+          "question": "Tại sao eSIM chưa phổ biến?",
+          "answer": "Công nghệ eSIM vẫn còn khá mới — điện thoại thông minh tương thích eSIM đầu tiên chỉ được phát hành năm 2016. Chưa nhiều người biết về eSIM, nhưng sự phổ biến đang tăng khi nhiều người tìm hiểu về lợi ích của eSIM."
+        },
+        {
+          "question": "eSIM có an toàn hơn SIM không?",
+          "answer": "Có, ở một số khía cạnh. Thẻ SIM vật lý có thể bị hỏng, mất hoặc bị đánh cắp. eSIM là điện tử và tích hợp trong thiết bị, nên bạn không thể làm hỏng hoặc mất chúng."
+        },
+        {
+          "question": "eSIM có cung cấp số điện thoại không?",
+          "answer": "Không phải lúc nào. Một số eSIM (như những gói bạn mua qua ứng dụng esim.vn) chỉ cung cấp dữ liệu di động mà không có số điện thoại. Tuy nhiên, một số nhà cung cấp khác cung cấp số điện thoại cùng eSIM."
+        },
+        {
+          "question": "eSIM có hoạt động không cần internet không?",
+          "answer": "Có, eSIM có thể hoạt động không cần kết nối internet. Ví dụ, với một số eSIM, bạn có thể gọi điện thoại hoặc nhắn tin SMS. Những gì bạn có thể làm phụ thuộc vào gói eSIM và nhà cung cấp."
+        },
+        {
+          "question": "eSIM có hao pin điện thoại không?",
+          "answer": "Hao pin không phải vấn đề với eSIM, ít nhất không nhiều hơn thẻ SIM vật lý. Nếu thiết bị gần đây dùng nhiều pin hơn, có thể do các ứng dụng khác trên điện thoại."
+        },
+        {
+          "question": "Có thể chuyển eSIM về SIM vật lý không?",
+          "answer": "Có, bạn có thể chuyển eSIM về SIM vật lý — ví dụ, nếu bạn muốn dùng với model điện thoại cũ hơn. Tuy nhiên, tốt nhất nên đến cửa hàng nhà mạng để được tư vấn và lấy thẻ SIM mới."
+        }
       ]
     }
   },
@@ -896,7 +1226,7 @@
     "esimUnit": "eSIM",
     "buyNow": "Mua Ngay",
     "addToCart": "Thêm vào giỏ hàng",
-    "addToCartMobile":"Giỏ hàng",
+    "addToCartMobile": "Giỏ hàng",
     "noPlans": "Hiện không có gói nào cho điểm đến này.",
     "trust": {
       "rating": "4.7",
@@ -923,7 +1253,15 @@
     "calClose": "Đóng",
     "calConfirm": "Xác nhận",
     "calDays": "{count} ngày",
-    "weekDays": ["T2","T3","T4","T5","T6","T7","CN"],
+    "weekDays": [
+      "T2",
+      "T3",
+      "T4",
+      "T5",
+      "T6",
+      "T7",
+      "CN"
+    ],
     "deviceCheck": {
       "title": "Kiểm tra tương thích thiết bị",
       "placeholder": "Nhập tên thiết bị (VD: iPhone 15)",
@@ -953,9 +1291,15 @@
       "title": "Cách sử dụng mã giảm giá esim.vn",
       "description": "Nếu bạn có mã giảm giá, bạn có thể đổi mã trong ứng dụng cũng như trên web:",
       "steps": [
-        { "text": "Chọn gói và nhấn \"Đi đến thanh toán.\"" },
-        { "text": "Nhấn nút \"Có mã giảm giá?\"" },
-        { "text": "Nhập mã giảm giá và nhấn \"Áp dụng.\"" }
+        {
+          "text": "Chọn gói và nhấn \"Đi đến thanh toán.\""
+        },
+        {
+          "text": "Nhấn nút \"Có mã giảm giá?\""
+        },
+        {
+          "text": "Nhập mã giảm giá và nhấn \"Áp dụng.\""
+        }
       ]
     },
     "testimonials": {
@@ -965,13 +1309,29 @@
       "title": "esim.vn so với các nhà cung cấp eSIM khác",
       "viewPlans": "Xem gói cước",
       "rows": [
-        { "label": "Một eSIM cho mọi điểm đến được hỗ trợ" },
-        { "label": "Hỗ trợ chat trực tuyến 24/7" },
-        { "label": "Hoàn tiền", "tooltip": "Quyền yêu cầu hoàn tiền chung. Có một số hạn chế và điều kiện áp dụng." },
-        { "label": "Tính năng bảo mật" },
-        { "label": "Vị trí ảo" },
-        { "label": "Chặn URL độc hại" },
-        { "label": "Tiết kiệm dữ liệu (chặn quảng cáo)", "tooltip": "Tính năng giúp tiết kiệm đến 28,6% dữ liệu của bạn." }
+        {
+          "label": "Một eSIM cho mọi điểm đến được hỗ trợ"
+        },
+        {
+          "label": "Hỗ trợ chat trực tuyến 24/7"
+        },
+        {
+          "label": "Hoàn tiền",
+          "tooltip": "Quyền yêu cầu hoàn tiền chung. Có một số hạn chế và điều kiện áp dụng."
+        },
+        {
+          "label": "Tính năng bảo mật"
+        },
+        {
+          "label": "Vị trí ảo"
+        },
+        {
+          "label": "Chặn URL độc hại"
+        },
+        {
+          "label": "Tiết kiệm dữ liệu (chặn quảng cáo)",
+          "tooltip": "Tính năng giúp tiết kiệm đến 28,6% dữ liệu của bạn."
+        }
       ],
       "footnote": "*Dữ liệu được lấy từ trang web tiếng Anh chính thức của các đối thủ vào ngày 22 tháng 8 năm 2025 và báo cáo so sánh sản phẩm của West Coast Labs. Để biết thêm thông tin, vui lòng liên hệ ",
       "footnoteDisclaimer": "** esim.vn® không liên kết với các hàng hóa hoặc dịch vụ được so sánh."
@@ -1052,13 +1412,29 @@
       "title": "esim.vn so sánh với các nhà cung cấp eSIM khác như thế nào?",
       "viewPlans": "Xem gói cước",
       "rows": [
-        { "label": "Một eSIM cho mọi điểm đến được hỗ trợ" },
-        { "label": "Hỗ trợ chat trực tuyến 24/7" },
-        { "label": "Hoàn tiền", "tooltip": "Quyền yêu cầu hoàn tiền chung. Có một số hạn chế và điều kiện áp dụng." },
-        { "label": "Tính năng bảo mật" },
-        { "label": "Vị trí ảo" },
-        { "label": "Chặn URL độc hại" },
-        { "label": "Tiết kiệm dữ liệu (chặn quảng cáo)", "tooltip": "Tính năng giúp tiết kiệm đến 28,6% dữ liệu của bạn." }
+        {
+          "label": "Một eSIM cho mọi điểm đến được hỗ trợ"
+        },
+        {
+          "label": "Hỗ trợ chat trực tuyến 24/7"
+        },
+        {
+          "label": "Hoàn tiền",
+          "tooltip": "Quyền yêu cầu hoàn tiền chung. Có một số hạn chế và điều kiện áp dụng."
+        },
+        {
+          "label": "Tính năng bảo mật"
+        },
+        {
+          "label": "Vị trí ảo"
+        },
+        {
+          "label": "Chặn URL độc hại"
+        },
+        {
+          "label": "Tiết kiệm dữ liệu (chặn quảng cáo)",
+          "tooltip": "Tính năng giúp tiết kiệm đến 28,6% dữ liệu của bạn."
+        }
       ],
       "footnote": "*Dữ liệu được lấy từ trang web tiếng Anh chính thức của các đối thủ vào ngày 22 tháng 8 năm 2025 và báo cáo so sánh sản phẩm của West Coast Labs. Để biết thêm thông tin, vui lòng liên hệ ",
       "footnoteDisclaimer": "** esim.vn® không liên kết với các hàng hóa hoặc dịch vụ được so sánh."
@@ -1296,7 +1672,8 @@
     "review": "Đánh giá",
     "referFriend": "Giới thiệu bạn bè",
     "termsOfService": "Điều khoản dịch vụ",
-    "legal": "Pháp lý"
+    "legal": "Pháp lý",
+    "destinations": "Điểm đến"
   },
   "cart": {
     "title": "Giỏ hàng",

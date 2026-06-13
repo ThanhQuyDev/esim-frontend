@@ -7,7 +7,7 @@ const baseUrl = 'https://esim.vn';
 // Danh sách tất cả routes (dùng tên folder EN làm key)
 const routes = [
   '/',
-  '/all-destinations',
+  '/destinations',
   '/cart',
   '/checkout',
   '/review',

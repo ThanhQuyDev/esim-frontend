@@ -84,7 +84,9 @@ export async function generateMetadata({
     localizedName
   );
 
-  const genericSlug = entity.type === "destination" ? "/destination" : "/region";
+  const genericSlug = entity.type === "destination"
+    ? (locale === "vi" ? "/destination" : "/en/destination")
+    : (locale === "vi" ? "/region" : "/en/region");
   const seoSlugs = [`/${params.slug}`, genericSlug];
 
   return getSeoMetadata(
@@ -156,8 +158,8 @@ export default async function UnifiedSlugPage({
         <Breadcrumb
           items={[
             {
-              label: dict.breadcrumb.allDestinations,
-              href: `/${locale}/all-destinations`,
+              label: dict.breadcrumb.destinations,
+              href: (locale === "vi" ? '/diem-den' : "/${locale}/destinations"),
             },
             { label: localizedName },
           ]}
@@ -225,7 +227,7 @@ export default async function UnifiedSlugPage({
         items={[
           {
             label: dict.breadcrumb.allDestinations,
-            href: `/${locale}/all-destinations`,
+            href: `/${locale}/destinations`,
           },
           { label: localizedName },
         ]}

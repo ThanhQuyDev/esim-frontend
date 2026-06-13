@@ -226,11 +226,10 @@ export function AllDestinationsContent({
                       setActiveTab(tab.key);
                       setSearchQuery("");
                     }}
-                    className={`relative z-[1] body-sm-medium whitespace-nowrap md:body-md-medium px-4 py-1 focus-visible:outline-hidden focus-visible:shadow-focus rounded-full min-w-[60px] bg-transparent transition-all duration-200 ${
-                      activeTab === tab.key
+                    className={`relative z-[1] body-sm-medium whitespace-nowrap md:body-md-medium px-4 py-1 focus-visible:outline-hidden focus-visible:shadow-focus rounded-full min-w-[60px] bg-transparent transition-all duration-200 ${activeTab === tab.key
                         ? "!text-text-primary-on-color !bg-bg-dark hover:bg-inherit transition-[color] delay-250 duration-[0]"
                         : "text-text-primary hover:text-text-primary hover:bg-bg-primary"
-                    }`}
+                      }`}
                   >
                     {tab.badge ? (
                       <span className="flex items-center gap-2">
@@ -300,23 +299,6 @@ export function AllDestinationsContent({
               </div>
             ) : isAllTab ? (
               <>
-                {/* Regions section */}
-                {regionItems.length > 0 && (
-                  <div className="mb-10">
-                    <h2 className="heading-sm mb-4">{dict.sectionRegions}</h2>
-                    <div className="grid gap-3 lg:gap-6 w-full md:grid-cols-2 lg:grid-cols-3">
-                      {regionItems.map((item: any) => (
-                        <DestinationCard
-                          key={`region-${item.id}`}
-                          item={item}
-                          lang={lang}
-                          dict={dict}
-                          isRegion
-                        />
-                      ))}
-                    </div>
-                  </div>
-                )}
 
                 {/* Countries section */}
                 {allItems.length > 0 && (
@@ -345,6 +327,23 @@ export function AllDestinationsContent({
                 {isFetchingNextPage && (
                   <div className="flex items-center justify-center py-8">
                     <Loader2 className="w-6 h-6 text-text-tertiary animate-spin" />
+                  </div>
+                )}
+                {/* Regions section */}
+                {regionItems.length > 0 && (
+                  <div className="mb-10">
+                    <h2 className="heading-sm mb-4">{dict.sectionRegions}</h2>
+                    <div className="grid gap-3 lg:gap-6 w-full md:grid-cols-2 lg:grid-cols-3">
+                      {regionItems.map((item: any) => (
+                        <DestinationCard
+                          key={`region-${item.id}`}
+                          item={item}
+                          lang={lang}
+                          dict={dict}
+                          isRegion
+                        />
+                      ))}
+                    </div>
                   </div>
                 )}
               </>

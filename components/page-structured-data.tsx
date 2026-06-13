@@ -1,5 +1,5 @@
 import { headers } from 'next/headers';
-import { fetchSeoConfigByUrl } from '@/lib/api';
+import { fetchSeoConfigByUrl, getDestinationBySlug, getRegionBySlug } from '@/lib/api';
 import { StructuredData } from '@/components/structured-data';
 
 /**
@@ -13,30 +13,80 @@ function normalizePath(path: string): string {
 }
 
 /**
+ * Resolve a slug to determine whether it is a destination or a region.
+ * Returns `"destination"`, `"region"`, or `null`.
+ */
+async function resolveEntityType(
+  slug: string,
+  lang: string,
+): Promise<'destination' | 'region' | null> {
+  const destination = await getDestinationBySlug(slug, lang);
+  if (destination) return 'destination';
+
+  const region = await getRegionBySlug(slug, lang);
+  if (region) return 'region';
+
+  return null;
+}
+
+/**
  * Server component that fetches and renders the structured data (JSON-LD)
  * configured for the *current* page only.
  *
- * The backend `by-url` lookup falls back to ancestor paths (so `/blog/x`
- * inherits an ancestor's meta). That inheritance is correct for meta tags but
- * NOT for structured data — otherwise a schema configured for one page (e.g.
- * the home page at `/`) leaks onto every descendant page. We therefore only
- * emit structured data when the returned config URL matches the current path
- * exactly.
+ * Lookup strategy:
+ * 1. Homepage: CMS stores `/home` (vi) or `/en/home` (en) but the browser
+ *    shows `/` or `/en` → map accordingly.
+ * 2. Exact path: try the current normalized path as-is.
+ * 3. Slug-page fallback: for destination/region detail pages that have no
+ *    dedicated SEO config, fall back to `/destination` or `/region` (with
+ *    locale prefix for non-vi) based on the resolved entity type.
  */
-export async function PageStructuredData() {
+export async function PageStructuredData({ locale }: { locale: string }) {
   const headersList = await headers();
   const pathname = headersList.get('x-pathname');
 
   if (!pathname) return null;
 
   const normalizedPath = normalizePath(pathname);
-  const seo = await fetchSeoConfigByUrl(normalizedPath);
+  const localePrefix = locale !== 'vi' ? `/${locale}` : '';
 
-  if (!seo?.structuredData) return null;
+  // ── Step 1: Homepage mapping ──────────────────────────────────────
+  // CMS stores `/home` (vi) or `/en/home` (en) but browser shows `/` or `/en`.
+  const isViHome = normalizedPath === '/';
+  const isEnHome = locale !== 'vi' && normalizedPath === localePrefix;
 
-  // Only render when this is an exact match for the current page, not an
-  // inherited ancestor config.
-  if (normalizePath(seo.url) !== normalizedPath) return null;
+  let lookupPath = normalizedPath;
+  if (isViHome) lookupPath = '/home';
+  if (isEnHome) lookupPath = `${localePrefix}/home`;
 
-  return <StructuredData data={seo.structuredData} />;
+  const seo = await fetchSeoConfigByUrl(lookupPath);
+
+  if (seo?.structuredData && normalizePath(seo.url) === lookupPath) {
+    return <StructuredData data={seo.structuredData} />;
+  }
+
+  // ── Step 2: Slug-page fallback ────────────────────────────────────
+  // Detect single-segment paths that could be destination/region detail pages.
+  // e.g. `/japan` (vi) or `/en/japan` (en)
+  const pathWithoutLocale = localePrefix
+    ? normalizedPath.slice(localePrefix.length) || '/'
+    : normalizedPath;
+
+  const segments = pathWithoutLocale.split('/').filter(Boolean);
+
+  if (segments.length === 1) {
+    const slug = segments[0];
+    const entityType = await resolveEntityType(slug, locale);
+
+    if (entityType) {
+      const fallbackPath = `${localePrefix}/${entityType}`;
+      const fallbackSeo = await fetchSeoConfigByUrl(fallbackPath);
+
+      if (fallbackSeo?.structuredData) {
+        return <StructuredData data={fallbackSeo.structuredData} />;
+      }
+    }
+  }
+
+  return null;
 }

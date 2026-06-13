@@ -339,6 +339,11 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
     { label: "SM-DP+", value: esim.smdpAddress, copyable: true },
     { label: t.activationCode, value: esim.activationCode, copyable: true },
     { label: "APN", value: esim.apnValue, copyable: true },
+    {
+      label: lang === "vi" ? "Số điện thoại" : "Phone Number",
+      value: esim.phoneNumber || "",
+      copyable: !!esim.phoneNumber,
+    },
   ];
 
   // TODO: restore gate `esim.plan?.topUp === true` when backend populates plan.topUp

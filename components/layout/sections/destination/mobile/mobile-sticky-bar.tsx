@@ -111,6 +111,11 @@ export function MobileStickyBar({
     }
   }
 
+  // Description like "Unlimited / 7 days" or "5 GB / 30 days"
+  const descriptionPlan = selectedPlan
+    ? `${selectedPlan.type === 'unlimited' || selectedPlan.type === 'unlimited-reduce' ? 'Unlimited' : selectedPlan.dataMb >= 1024 ? `${parseFloat((selectedPlan.dataMb / 1024).toFixed(1))} GB` : `${selectedPlan.dataMb} MB`} / ${isFixed ? selectedPlan.durationDays : (selectedPlan.isAbleMultidate ? days : selectedPlan.durationDays)} days`
+    : '';
+
   const handleAddToCart = async () => {
     if (!selectedPlan) return;
     const isMultidate = !!selectedPlan.isAbleMultidate;
@@ -168,7 +173,7 @@ export function MobileStickyBar({
               eSIM {destination || ""}
             </div>
             <div className="text-sm font-bold truncate">
-              {selectedPlan.name} {planLabel}
+              {selectedPlan.name} {descriptionPlan}
             </div>
           </div>
         </div>

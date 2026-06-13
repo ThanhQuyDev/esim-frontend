@@ -69,7 +69,7 @@ export default async function LocaleLayout({
           href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@300;400;500;600;700&family=Google+Sans+Text:wght@400;500;600;700&display=swap"
           crossOrigin="anonymous"
         />
-        <PageStructuredData />
+        <PageStructuredData locale={locale} />
       </head>
       <body
         className={cn(

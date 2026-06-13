@@ -1092,9 +1092,11 @@ export function useCart() {
 
   const clear = useCallback(async () => {
     if (isLoggedIn) {
-      // Delete all items
+      // Delete all items — use allSettled so that invalidateApiCart() always
+      // runs even if some deletes fail (e.g. backend already removed items
+      // after a successful payment).
       const items = apiCartQuery.data || [];
-      await Promise.all(items.map((i) => deleteApiCartItem(token!, i.id)));
+      await Promise.allSettled(items.map((i) => deleteApiCartItem(token!, i.id)));
       invalidateApiCart();
     } else {
       clearLocalCart();
@@ -1213,6 +1215,8 @@ export interface MyEsim {
   updatedAt: string;
   deletedAt: string | null;
   provider: string | null;
+  /** Phone number assigned to this eSIM (null if not applicable). */
+  phoneNumber?: string | null;
   /** Plan info attached by the backend (`GET /esims/my/list` includes `plan`). */
   plan?: MyEsimPlan | null;
 }

@@ -284,9 +284,27 @@
     "viewAll": "View all posts",
     "readMore": "Read more",
     "fallback": [
-      { "title": "How to stay connected while traveling abroad", "slug": "stay-connected-abroad", "excerpt": "Learn the best ways to keep your phone connected when traveling internationally.", "author": "esim.vn Team", "tags": "Travel,eSIM" },
-      { "title": "eSIM vs physical SIM: Which is better?", "slug": "esim-vs-physical-sim", "excerpt": "A detailed comparison of eSIM and traditional SIM cards for travelers.", "author": "esim.vn Team", "tags": "eSIM,Guide" },
-      { "title": "Top 10 travel destinations for 2025", "slug": "top-destinations-2025", "excerpt": "Discover the most popular travel destinations and how to stay connected there.", "author": "esim.vn Team", "tags": "Travel,Destinations" }
+      {
+        "title": "How to stay connected while traveling abroad",
+        "slug": "stay-connected-abroad",
+        "excerpt": "Learn the best ways to keep your phone connected when traveling internationally.",
+        "author": "esim.vn Team",
+        "tags": "Travel,eSIM"
+      },
+      {
+        "title": "eSIM vs physical SIM: Which is better?",
+        "slug": "esim-vs-physical-sim",
+        "excerpt": "A detailed comparison of eSIM and traditional SIM cards for travelers.",
+        "author": "esim.vn Team",
+        "tags": "eSIM,Guide"
+      },
+      {
+        "title": "Top 10 travel destinations for 2025",
+        "slug": "top-destinations-2025",
+        "excerpt": "Discover the most popular travel destinations and how to stay connected there.",
+        "author": "esim.vn Team",
+        "tags": "Travel,Destinations"
+      }
     ]
   },
   "cta": {
@@ -305,77 +323,232 @@
     "subtitle": "Choose from data plans in 150+ countries. No contracts, no hidden fees.",
     "mostPopular": "Most Popular",
     "plans": [
-      { "flag": "🇪🇺", "region": "Europe", "data": "5GB", "validity": "30 days", "price": "$8.99", "pricePerGB": "$1.80/GB", "cta": "Get plan", "features": ["5G/LTE coverage", "Instant activation", "24/7 support"] },
-      { "flag": "🇺🇸", "region": "United States", "data": "10GB", "validity": "30 days", "price": "$11.99", "pricePerGB": "$1.20/GB", "cta": "Get plan", "features": ["5G/LTE coverage", "Instant activation", "24/7 support"] },
-      { "flag": "🌏", "region": "Asia", "data": "10GB", "validity": "30 days", "price": "$9.99", "pricePerGB": "$1.00/GB", "cta": "Get plan", "features": ["5G/LTE coverage", "Instant activation", "24/7 support"] },
-      { "flag": "🇯🇵", "region": "Japan", "data": "3GB", "validity": "7 days", "price": "$4.99", "pricePerGB": "$1.66/GB", "cta": "Get plan", "features": ["5G/LTE coverage", "Instant activation", "24/7 support"] }
+      {
+        "flag": "🇪🇺",
+        "region": "Europe",
+        "data": "5GB",
+        "validity": "30 days",
+        "price": "$8.99",
+        "pricePerGB": "$1.80/GB",
+        "cta": "Get plan",
+        "features": [
+          "5G/LTE coverage",
+          "Instant activation",
+          "24/7 support"
+        ]
+      },
+      {
+        "flag": "🇺🇸",
+        "region": "United States",
+        "data": "10GB",
+        "validity": "30 days",
+        "price": "$11.99",
+        "pricePerGB": "$1.20/GB",
+        "cta": "Get plan",
+        "features": [
+          "5G/LTE coverage",
+          "Instant activation",
+          "24/7 support"
+        ]
+      },
+      {
+        "flag": "🌏",
+        "region": "Asia",
+        "data": "10GB",
+        "validity": "30 days",
+        "price": "$9.99",
+        "pricePerGB": "$1.00/GB",
+        "cta": "Get plan",
+        "features": [
+          "5G/LTE coverage",
+          "Instant activation",
+          "24/7 support"
+        ]
+      },
+      {
+        "flag": "🇯🇵",
+        "region": "Japan",
+        "data": "3GB",
+        "validity": "7 days",
+        "price": "$4.99",
+        "pricePerGB": "$1.66/GB",
+        "cta": "Get plan",
+        "features": [
+          "5G/LTE coverage",
+          "Instant activation",
+          "24/7 support"
+        ]
+      }
     ],
     "getPlan": "Get plan",
     "allPlansTitle": "All plans include",
     "allPlansSubtitle": "Every esim.vn plan comes with these features, no matter which destination you choose.",
-    "benefits": ["Instant activation", "5G/LTE speeds", "24/7 customer support", "No contracts", "Easy setup", "Global coverage"]
+    "benefits": [
+      "Instant activation",
+      "5G/LTE speeds",
+      "24/7 customer support",
+      "No contracts",
+      "Easy setup",
+      "Global coverage"
+    ]
   },
   "footer": {
     "popularDestinations": {
       "title": "Popular Destinations",
       "links": [
-        { "label": "Japan eSIM", "href": "/en/destination/japan" },
-        { "label": "United States eSIM", "href": "/en/destination/united-states" },
-        { "label": "Turkey eSIM", "href": "/en/destination/turkey" },
-        { "label": "United Kingdom eSIM", "href": "/en/destination/united-kingdom" },
-        { "label": "Europe eSIM", "href": "/en/region/europe" },
-        { "label": "Thailand eSIM", "href": "/en/destination/thailand" },
-        { "label": "South Korea eSIM", "href": "/en/destination/south-korea" },
-        { "label": "Spain eSIM", "href": "/en/destination/spain" },
-        { "label": "Italy eSIM", "href": "/en/destination/italy" },
-        { "label": "France eSIM", "href": "/en/destination/france" }
+        {
+          "label": "Japan eSIM",
+          "href": "/en/destination/japan"
+        },
+        {
+          "label": "United States eSIM",
+          "href": "/en/destination/united-states"
+        },
+        {
+          "label": "Turkey eSIM",
+          "href": "/en/destination/turkey"
+        },
+        {
+          "label": "United Kingdom eSIM",
+          "href": "/en/destination/united-kingdom"
+        },
+        {
+          "label": "Europe eSIM",
+          "href": "/en/region/europe"
+        },
+        {
+          "label": "Thailand eSIM",
+          "href": "/en/destination/thailand"
+        },
+        {
+          "label": "South Korea eSIM",
+          "href": "/en/destination/south-korea"
+        },
+        {
+          "label": "Spain eSIM",
+          "href": "/en/destination/spain"
+        },
+        {
+          "label": "Italy eSIM",
+          "href": "/en/destination/italy"
+        },
+        {
+          "label": "France eSIM",
+          "href": "/en/destination/france"
+        }
       ]
     },
     "saily": {
       "title": "esim.vn",
       "links": [
-        { "label": "About us", "href": "/en/about-us" },
-        { "label": "Blog", "href": "/en/blog" },
-        { "label": "Press Area", "href": "/en/press-area" },
-        { "label": "Reviews", "href": "/en/review" }
+        {
+          "label": "About us",
+          "href": "/en/about-us"
+        },
+        {
+          "label": "Blog",
+          "href": "/en/blog"
+        },
+        {
+          "label": "Press Area",
+          "href": "/en/press-area"
+        },
+        {
+          "label": "Reviews",
+          "href": "/en/review"
+        }
       ]
     },
     "esim": {
       "title": "eSIM",
       "links": [
-        { "label": "eSIM compatible devices", "href": "/en/esim-supported-devices" },
-        { "label": "What is an eSIM?", "href": "/en/what-is-esim" },
-        { "label": "Data calculator", "href": "/en/data-calculator" },
-        { "label": "All destinations", "href": "/en/all-destinations" }
+        {
+          "label": "eSIM compatible devices",
+          "href": "/en/esim-supported-devices"
+        },
+        {
+          "label": "What is an eSIM?",
+          "href": "/en/what-is-esim"
+        },
+        {
+          "label": "Data calculator",
+          "href": "/en/data-calculator"
+        },
+        {
+          "label": "All destinations",
+          "href": "/en/destinations"
+        }
       ]
     },
     "helpLinks": {
       "title": "Help",
       "links": [
-        { "label": "Help center", "href": "/en/help-center" },
-        { "label": "Coupons", "href": "/en/coupon" },
-        { "label": "All destinations", "href": "/en/all-destinations" }
+        {
+          "label": "Help center",
+          "href": "/en/help-center"
+        },
+        {
+          "label": "Coupons",
+          "href": "/en/coupon"
+        },
+        {
+          "label": "All destinations",
+          "href": "/en/destinations"
+        }
       ]
     },
     "followUs": {
       "title": "Follow us",
       "links": [
-        { "label": "YouTube", "href": "https://www.youtube.com/@esim_service" },
-        { "label": "Instagram", "href": "https://www.instagram.com/sailyworld" },
-        { "label": "X (Twitter)", "href": "https://x.com/sailyworld" },
-        { "label": "Facebook", "href": "https://www.facebook.com/sailyservice" },
-        { "label": "TikTok", "href": "https://www.tiktok.com/@sailyworld" }
+        {
+          "label": "YouTube",
+          "href": "https://www.youtube.com/@esim_service"
+        },
+        {
+          "label": "Instagram",
+          "href": "https://www.instagram.com/sailyworld"
+        },
+        {
+          "label": "X (Twitter)",
+          "href": "https://x.com/sailyworld"
+        },
+        {
+          "label": "Facebook",
+          "href": "https://www.facebook.com/sailyservice"
+        },
+        {
+          "label": "TikTok",
+          "href": "https://www.tiktok.com/@sailyworld"
+        }
       ]
     },
     "legal": {
       "copyright": "© 2024 esim.vn. All rights reserved.",
       "links": [
-        { "label": "Privacy policy", "href": "/en/help-center" },
-        { "label": "Terms of service", "href": "/en/help-center" },
-        { "label": "Refund policy", "href": "/en/help-center" }
+        {
+          "label": "Privacy policy",
+          "href": "/en/help-center"
+        },
+        {
+          "label": "Terms of service",
+          "href": "/en/help-center"
+        },
+        {
+          "label": "Refund policy",
+          "href": "/en/help-center"
+        }
       ]
     },
-    "paymentMethods": ["Apple Pay", "Google Pay", "Visa", "Mastercard", "Amex", "Discover", "UnionPay", "JCB"]
+    "paymentMethods": [
+      "Apple Pay",
+      "Google Pay",
+      "Visa",
+      "Mastercard",
+      "Amex",
+      "Discover",
+      "UnionPay",
+      "JCB"
+    ]
   },
   "dataCalculator": {
     "metadata": {
@@ -627,23 +800,61 @@
       "title": "The values that guide us",
       "subtitle": "Our values aren't just inspirational words we put on a wall to look at — we live by them in everything we build.",
       "items": [
-        { "title": "Wander freely", "description": "We're replacing plastic SIM cards with an easy and eco-friendly solution that works in 200+ destinations." },
-        { "title": "Keep it simple", "description": "No tech jargon. No clutter. We built an eSIM app that's clean, intuitive, and easy to navigate." },
-        { "title": "Prioritize humans", "description": "We care about people, not just rigid processes. Every team member and user is treated with empathy and respect." },
-        { "title": "Always improve", "description": "We don't chase perfection — we chase progress. We believe that small wins make big shifts." },
-        { "title": "Think like a traveler", "description": "We stay curious, flexible, and open to the unknown, just like the explorers we built esim.vn for." },
-        { "title": "Make it matter", "description": "We're here to make a difference, so we focus on what truly matters — our users, team, and the world around us." }
+        {
+          "title": "Wander freely",
+          "description": "We're replacing plastic SIM cards with an easy and eco-friendly solution that works in 200+ destinations."
+        },
+        {
+          "title": "Keep it simple",
+          "description": "No tech jargon. No clutter. We built an eSIM app that's clean, intuitive, and easy to navigate."
+        },
+        {
+          "title": "Prioritize humans",
+          "description": "We care about people, not just rigid processes. Every team member and user is treated with empathy and respect."
+        },
+        {
+          "title": "Always improve",
+          "description": "We don't chase perfection — we chase progress. We believe that small wins make big shifts."
+        },
+        {
+          "title": "Think like a traveler",
+          "description": "We stay curious, flexible, and open to the unknown, just like the explorers we built esim.vn for."
+        },
+        {
+          "title": "Make it matter",
+          "description": "We're here to make a difference, so we focus on what truly matters — our users, team, and the world around us."
+        }
       ]
     },
     "timeline": {
       "title": "The esim.vn tale",
       "subtitle": "We envisioned a better way for travelers to stay online. Today, we're making that vision a reality for thousands around the globe. Here's how esim.vn got here.",
       "milestones": [
-        { "date": "November 2023", "title": "Where it all began", "description": "The esim.vn app started with a shared idea — ditch plastic SIM cards and simplify mobile connectivity." },
-        { "date": "March 2024", "title": "The first launch", "description": "We introduced our first eSIM plans that covered 160+ countries with instant mobile access and zero plastic waste." },
-        { "date": "December 2024", "title": "Prioritizing security", "description": "We've added built-in security features to our eSIM app so you can browse more safely while you travel." },
-        { "date": "February 2025", "title": "Connecting the world", "description": "At the start of the year, we expanded our coverage to 200+ destinations and reached more people than ever before." },
-        { "date": "2025", "title": "The journey continues", "description": "We're focused on expanding our coverage, improving the esim.vn experience, and keeping you connected 24/7." }
+        {
+          "date": "November 2023",
+          "title": "Where it all began",
+          "description": "The esim.vn app started with a shared idea — ditch plastic SIM cards and simplify mobile connectivity."
+        },
+        {
+          "date": "March 2024",
+          "title": "The first launch",
+          "description": "We introduced our first eSIM plans that covered 160+ countries with instant mobile access and zero plastic waste."
+        },
+        {
+          "date": "December 2024",
+          "title": "Prioritizing security",
+          "description": "We've added built-in security features to our eSIM app so you can browse more safely while you travel."
+        },
+        {
+          "date": "February 2025",
+          "title": "Connecting the world",
+          "description": "At the start of the year, we expanded our coverage to 200+ destinations and reached more people than ever before."
+        },
+        {
+          "date": "2025",
+          "title": "The journey continues",
+          "description": "We're focused on expanding our coverage, improving the esim.vn experience, and keeping you connected 24/7."
+        }
       ]
     },
     "crew": {
@@ -670,11 +881,31 @@
     "life": {
       "title": "Life at esim.vn",
       "perks": [
-        { "title": "Growth opportunities", "description": "We support your growth with learning opportunities, real responsibilities, and chances to lead (not just follow).", "imageAlt": "The esim.vn team participating in an internal company event." },
-        { "title": "Work-life balance", "description": "Work from anywhere in the world! We're a borderless team of many nationalities, connected by trust, not time zones.", "imageAlt": "esim.vn employees chatting during an event hosted at esim.vn headquarters." },
-        { "title": "Culture and community", "description": "We prioritize people and celebrate wins, milestones, and the unique contributions of every team member.", "imageAlt": "esim.vn team members working out together — part of the company's wellness initiative." },
-        { "title": "Autonomy and ownership", "description": "We trust you to lead, experiment, and bring your ideas to life. At esim.vn, everyone has the freedom to make bold decisions.", "imageAlt": "esim.vn employees clapping after a presentation." },
-        { "title": "Curiosity-driven work", "description": "We encourage curiosity. Questions aren't simply welcome — they're how we build, learn, and grow.", "imageAlt": "esim.vn founders attending an event." }
+        {
+          "title": "Growth opportunities",
+          "description": "We support your growth with learning opportunities, real responsibilities, and chances to lead (not just follow).",
+          "imageAlt": "The esim.vn team participating in an internal company event."
+        },
+        {
+          "title": "Work-life balance",
+          "description": "Work from anywhere in the world! We're a borderless team of many nationalities, connected by trust, not time zones.",
+          "imageAlt": "esim.vn employees chatting during an event hosted at esim.vn headquarters."
+        },
+        {
+          "title": "Culture and community",
+          "description": "We prioritize people and celebrate wins, milestones, and the unique contributions of every team member.",
+          "imageAlt": "esim.vn team members working out together — part of the company's wellness initiative."
+        },
+        {
+          "title": "Autonomy and ownership",
+          "description": "We trust you to lead, experiment, and bring your ideas to life. At esim.vn, everyone has the freedom to make bold decisions.",
+          "imageAlt": "esim.vn employees clapping after a presentation."
+        },
+        {
+          "title": "Curiosity-driven work",
+          "description": "We encourage curiosity. Questions aren't simply welcome — they're how we build, learn, and grow.",
+          "imageAlt": "esim.vn founders attending an event."
+        }
       ]
     },
     "banner": {
@@ -714,9 +945,18 @@
           "label": "On iPhone",
           "appTitle": "Set up an eSIM on your iPhone with the esim.vn app",
           "steps": [
-            { "title": "Pick an eSIM data plan for your trip", "description": "Select the country you're heading to and choose a plan." },
-            { "title": "Download the esim.vn app", "description": "Get the app, tap \"Install eSIM,\" and follow the steps on the screen." },
-            { "title": "Your plan will automatically activate", "description": "Get ready for your trip — your plan will activate when you arrive." }
+            {
+              "title": "Pick an eSIM data plan for your trip",
+              "description": "Select the country you're heading to and choose a plan."
+            },
+            {
+              "title": "Download the esim.vn app",
+              "description": "Get the app, tap \"Install eSIM,\" and follow the steps on the screen."
+            },
+            {
+              "title": "Your plan will automatically activate",
+              "description": "Get ready for your trip — your plan will activate when you arrive."
+            }
           ],
           "manualTitle": "Set up an eSIM manually on your iPhone",
           "manualSteps": [
@@ -731,9 +971,18 @@
           "label": "On Android",
           "appTitle": "Set up an eSIM on your Android with the esim.vn app",
           "steps": [
-            { "title": "Pick an eSIM data plan for your trip", "description": "Select the country you're heading to and choose a plan." },
-            { "title": "Download the esim.vn app", "description": "Get the app, tap \"Install eSIM,\" and follow the steps on the screen to set it up." },
-            { "title": "Your plan will automatically activate", "description": "Get ready for your trip — your plan will activate when you arrive." }
+            {
+              "title": "Pick an eSIM data plan for your trip",
+              "description": "Select the country you're heading to and choose a plan."
+            },
+            {
+              "title": "Download the esim.vn app",
+              "description": "Get the app, tap \"Install eSIM,\" and follow the steps on the screen to set it up."
+            },
+            {
+              "title": "Your plan will automatically activate",
+              "description": "Get ready for your trip — your plan will activate when you arrive."
+            }
           ],
           "manualTitle": "Set up an eSIM manually on your Android",
           "manualSteps": [
@@ -747,9 +996,18 @@
           "label": "With a QR code",
           "appTitle": "Set up an eSIM using a QR code",
           "steps": [
-            { "title": "Scan the QR code to download esim.vn", "description": "Use your phone to scan the QR and download the esim.vn app." },
-            { "title": "Buy an eSIM data plan for your trip", "description": "Get a mobile data plan for the country you'll be visiting." },
-            { "title": "Your plan will automatically activate", "description": "Get online the moment you arrive at your destination." }
+            {
+              "title": "Scan the QR code to download esim.vn",
+              "description": "Use your phone to scan the QR and download the esim.vn app."
+            },
+            {
+              "title": "Buy an eSIM data plan for your trip",
+              "description": "Get a mobile data plan for the country you'll be visiting."
+            },
+            {
+              "title": "Your plan will automatically activate",
+              "description": "Get online the moment you arrive at your destination."
+            }
           ],
           "manualTitle": "",
           "manualSteps": []
@@ -763,12 +1021,30 @@
         "title": "eSIM advantages",
         "subtitle": "eSIMs are the future of connectivity. Here are the main eSIM benefits.",
         "items": [
-          { "title": "No high roaming fees", "description": "Travelers can buy eSIMs that connect them to local carriers and avoid unexpected roaming fees." },
-          { "title": "Multiple profiles", "description": "You can have multiple virtual eSIMs on one device, making it easy to switch between different carriers and phone numbers." },
-          { "title": "Pay for what you need", "description": "Off to Japan for a week? Get a 7-day plan instead of monthly, and save your yen for an extra okonomiyaki." },
-          { "title": "Saves space", "description": "The absence of a physical SIM card slot frees up space for other device upgrades (like a bigger battery or more handset features)." },
-          { "title": "Can't get lost or stolen", "description": "Swapping out tiny SIM cards is tricky, especially if you're on the move. An eSIM is built in, so it won't get lost or stolen." },
-          { "title": "Less waste", "description": "A single plastic SIM won't destroy the planet, but getting a newly packaged SIM card for every trip adds up over time. Use an eSIM instead." }
+          {
+            "title": "No high roaming fees",
+            "description": "Travelers can buy eSIMs that connect them to local carriers and avoid unexpected roaming fees."
+          },
+          {
+            "title": "Multiple profiles",
+            "description": "You can have multiple virtual eSIMs on one device, making it easy to switch between different carriers and phone numbers."
+          },
+          {
+            "title": "Pay for what you need",
+            "description": "Off to Japan for a week? Get a 7-day plan instead of monthly, and save your yen for an extra okonomiyaki."
+          },
+          {
+            "title": "Saves space",
+            "description": "The absence of a physical SIM card slot frees up space for other device upgrades (like a bigger battery or more handset features)."
+          },
+          {
+            "title": "Can't get lost or stolen",
+            "description": "Swapping out tiny SIM cards is tricky, especially if you're on the move. An eSIM is built in, so it won't get lost or stolen."
+          },
+          {
+            "title": "Less waste",
+            "description": "A single plastic SIM won't destroy the planet, but getting a newly packaged SIM card for every trip adds up over time. Use an eSIM instead."
+          }
         ]
       },
       "disadvantages": {
@@ -785,12 +1061,36 @@
       "title": "What is the difference between an eSIM and a physical SIM?",
       "subtitle": "The main difference between an eSIM and a traditional SIM card is that an eSIM is digital while a SIM card is a physical chip.",
       "rows": [
-        { "label": "Phone numbers", "esim": "Up to two*", "sim": "Up to two" },
-        { "label": "Network Operators", "esim": "As many as you like", "sim": "Up to two" },
-        { "label": "Removal", "esim": "Deactivate the profile", "sim": "Remove the SIM card" },
-        { "label": "Activation", "esim": "Manual or automatic (plan activates at your destination)", "sim": "Manual (need to insert a card into your device)" },
-        { "label": "Compatibility", "esim": "Newer devices only", "sim": "Old and most new devices" },
-        { "label": "Using abroad", "esim": "Affordable — easy to get data plans for different countries", "sim": "May be expensive due to roaming" }
+        {
+          "label": "Phone numbers",
+          "esim": "Up to two*",
+          "sim": "Up to two"
+        },
+        {
+          "label": "Network Operators",
+          "esim": "As many as you like",
+          "sim": "Up to two"
+        },
+        {
+          "label": "Removal",
+          "esim": "Deactivate the profile",
+          "sim": "Remove the SIM card"
+        },
+        {
+          "label": "Activation",
+          "esim": "Manual or automatic (plan activates at your destination)",
+          "sim": "Manual (need to insert a card into your device)"
+        },
+        {
+          "label": "Compatibility",
+          "esim": "Newer devices only",
+          "sim": "Old and most new devices"
+        },
+        {
+          "label": "Using abroad",
+          "esim": "Affordable — easy to get data plans for different countries",
+          "sim": "May be expensive due to roaming"
+        }
       ],
       "footnote": "*esim.vn is all about mobile data right now, so we don't support phone numbers yet. Don't worry — we're working on it."
     },
@@ -802,16 +1102,46 @@
     "faq": {
       "title": "Frequently asked questions about eSIMs",
       "items": [
-        { "question": "What does an eSIM card do?", "answer": "An eSIM is a digital version of a physical SIM card. It connects you to a mobile network, allowing you to make calls, send texts, and use mobile data. Instead of having to insert it into your device, you just need to buy an eSIM plan from a provider and activate it." },
-        { "question": "How can I get an eSIM?", "answer": "You can get an eSIM from any reputable eSIM provider, typically by making an online purchase. For example, esim.vn offers eSIMs in over 200 destinations — just find the country you want to use your data in and pick a plan." },
-        { "question": "Is eSIM better than a SIM card?", "answer": "In short — yes. eSIMs are built into your phone, so you no longer need to open it up to insert a tiny card. These virtual cards are great for switching between providers and for international travel. Without a SIM card slot, phones can be made smaller or have improved features (like a larger battery)." },
-        { "question": "Why would I want an eSIM?", "answer": "You may want to get an eSIM for many reasons, like going abroad or needing extra mobile data to use in your home country. For example, if you're heading to a country where you can't get free roaming, buying an eSIM data plan can be an easy solution that won't break the bank." },
-        { "question": "Why are eSIMs not popular?", "answer": "eSIM technology is still quite new — the first eSIM-compatible smartphone was only released in 2016. Not many people know about eSIMs yet, and those who do typically use them with wearable and IoT devices only. That said, their popularity is growing as more people find out about eSIM benefits." },
-        { "question": "Is an eSIM safer than a SIM?", "answer": "Yes, in some ways. A physical SIM card can be damaged, lost, or stolen — especially if you're swapping out cards on your travels. eSIMs are electronic and built into your device, so you can't damage or lose them." },
-        { "question": "Does an eSIM give you a phone number?", "answer": "Not always. Some eSIMs (like the ones you can buy through the esim.vn app) only offer mobile data without a phone number, because you can do so much with data alone these days. However, some other providers give you a phone number with an eSIM." },
-        { "question": "Does an eSIM work without an internet connection?", "answer": "Yes, an eSIM can work without an internet connection. For example, with some eSIMs, you may be able to make cellular (voice) calls or send texts (SMS). What you can do with your eSIM depends on your eSIM plan and the provider you choose." },
-        { "question": "Does an eSIM drain your phone battery?", "answer": "Battery drain is not an issue with eSIMs, at least not more than with physical SIM cards. If your device has been using more battery power lately, it's likely caused by other apps on your phone." },
-        { "question": "Can you convert an eSIM back to a physical SIM?", "answer": "Yes, you can convert an eSIM back to a physical SIM — for example, if you want to use it with an older phone model. However, it's best to pop into your network provider's store to speak to an advisor and pick up a new SIM card." }
+        {
+          "question": "What does an eSIM card do?",
+          "answer": "An eSIM is a digital version of a physical SIM card. It connects you to a mobile network, allowing you to make calls, send texts, and use mobile data. Instead of having to insert it into your device, you just need to buy an eSIM plan from a provider and activate it."
+        },
+        {
+          "question": "How can I get an eSIM?",
+          "answer": "You can get an eSIM from any reputable eSIM provider, typically by making an online purchase. For example, esim.vn offers eSIMs in over 200 destinations — just find the country you want to use your data in and pick a plan."
+        },
+        {
+          "question": "Is eSIM better than a SIM card?",
+          "answer": "In short — yes. eSIMs are built into your phone, so you no longer need to open it up to insert a tiny card. These virtual cards are great for switching between providers and for international travel. Without a SIM card slot, phones can be made smaller or have improved features (like a larger battery)."
+        },
+        {
+          "question": "Why would I want an eSIM?",
+          "answer": "You may want to get an eSIM for many reasons, like going abroad or needing extra mobile data to use in your home country. For example, if you're heading to a country where you can't get free roaming, buying an eSIM data plan can be an easy solution that won't break the bank."
+        },
+        {
+          "question": "Why are eSIMs not popular?",
+          "answer": "eSIM technology is still quite new — the first eSIM-compatible smartphone was only released in 2016. Not many people know about eSIMs yet, and those who do typically use them with wearable and IoT devices only. That said, their popularity is growing as more people find out about eSIM benefits."
+        },
+        {
+          "question": "Is an eSIM safer than a SIM?",
+          "answer": "Yes, in some ways. A physical SIM card can be damaged, lost, or stolen — especially if you're swapping out cards on your travels. eSIMs are electronic and built into your device, so you can't damage or lose them."
+        },
+        {
+          "question": "Does an eSIM give you a phone number?",
+          "answer": "Not always. Some eSIMs (like the ones you can buy through the esim.vn app) only offer mobile data without a phone number, because you can do so much with data alone these days. However, some other providers give you a phone number with an eSIM."
+        },
+        {
+          "question": "Does an eSIM work without an internet connection?",
+          "answer": "Yes, an eSIM can work without an internet connection. For example, with some eSIMs, you may be able to make cellular (voice) calls or send texts (SMS). What you can do with your eSIM depends on your eSIM plan and the provider you choose."
+        },
+        {
+          "question": "Does an eSIM drain your phone battery?",
+          "answer": "Battery drain is not an issue with eSIMs, at least not more than with physical SIM cards. If your device has been using more battery power lately, it's likely caused by other apps on your phone."
+        },
+        {
+          "question": "Can you convert an eSIM back to a physical SIM?",
+          "answer": "Yes, you can convert an eSIM back to a physical SIM — for example, if you want to use it with an older phone model. However, it's best to pop into your network provider's store to speak to an advisor and pick up a new SIM card."
+        }
       ]
     }
   },
@@ -896,7 +1226,7 @@
     "esimUnit": "eSIM",
     "buyNow": "Buy Now",
     "addToCart": "Add to cart",
-    "addToCartMobile":"Add cart",
+    "addToCartMobile": "Add cart",
     "noPlans": "No plans available for this destination.",
     "trust": {
       "rating": "4.7",
@@ -923,7 +1253,15 @@
     "calClose": "Close",
     "calConfirm": "Confirm",
     "calDays": "{count} days",
-    "weekDays": ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+    "weekDays": [
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri",
+      "Sat",
+      "Sun"
+    ],
     "deviceCheck": {
       "title": "Check device compatibility",
       "placeholder": "Enter your device name (e.g. iPhone 15)",
@@ -953,9 +1291,15 @@
       "title": "How to use the esim.vn coupon code",
       "description": "If you have a coupon code, you can redeem it in the app as well as on the web:",
       "steps": [
-        { "text": "Choose a plan and click on \"Go to checkout.\"" },
-        { "text": "Click the \"Got a coupon?\" button." },
-        { "text": "Enter the coupon code and click \"Apply.\"" }
+        {
+          "text": "Choose a plan and click on \"Go to checkout.\""
+        },
+        {
+          "text": "Click the \"Got a coupon?\" button."
+        },
+        {
+          "text": "Enter the coupon code and click \"Apply.\""
+        }
       ]
     },
     "testimonials": {
@@ -965,13 +1309,29 @@
       "title": "esim.vn vs. other eSIM service providers",
       "viewPlans": "View Plans",
       "rows": [
-        { "label": "One eSIM for supported destinations" },
-        { "label": "24/7 live chat support" },
-        { "label": "Refunds", "tooltip": "A general right to request a refund. Certain restrictions and conditions apply." },
-        { "label": "Security features" },
-        { "label": "Virtual locations" },
-        { "label": "Blocks malicious URLs" },
-        { "label": "Data saver (ad blocker)", "tooltip": "A feature that can save up to 28.6% of your data." }
+        {
+          "label": "One eSIM for supported destinations"
+        },
+        {
+          "label": "24/7 live chat support"
+        },
+        {
+          "label": "Refunds",
+          "tooltip": "A general right to request a refund. Certain restrictions and conditions apply."
+        },
+        {
+          "label": "Security features"
+        },
+        {
+          "label": "Virtual locations"
+        },
+        {
+          "label": "Blocks malicious URLs"
+        },
+        {
+          "label": "Data saver (ad blocker)",
+          "tooltip": "A feature that can save up to 28.6% of your data."
+        }
       ],
       "footnote": "*This data was taken from competitors' official English-language sites on August 22, 2025, and the West Coast Labs product comparison report. For additional info, contact ",
       "footnoteDisclaimer": "** esim.vn® is unaffiliated with the goods or services to which it is being compared."
@@ -1052,13 +1412,29 @@
       "title": "How does esim.vn compare with other eSIM providers?",
       "viewPlans": "View Plans",
       "rows": [
-        { "label": "One eSIM for supported destinations" },
-        { "label": "24/7 live chat support" },
-        { "label": "Refunds", "tooltip": "A general right to request a refund. Certain restrictions and conditions apply." },
-        { "label": "Security features" },
-        { "label": "Virtual locations" },
-        { "label": "Blocks malicious URLs" },
-        { "label": "Data saver (ad blocker)", "tooltip": "A feature that can save up to 28.6% of your data." }
+        {
+          "label": "One eSIM for supported destinations"
+        },
+        {
+          "label": "24/7 live chat support"
+        },
+        {
+          "label": "Refunds",
+          "tooltip": "A general right to request a refund. Certain restrictions and conditions apply."
+        },
+        {
+          "label": "Security features"
+        },
+        {
+          "label": "Virtual locations"
+        },
+        {
+          "label": "Blocks malicious URLs"
+        },
+        {
+          "label": "Data saver (ad blocker)",
+          "tooltip": "A feature that can save up to 28.6% of your data."
+        }
       ],
       "footnote": "*This data was taken from competitors' official English-language sites on August 22, 2025, and the West Coast Labs product comparison report. For additional info, contact ",
       "footnoteDisclaimer": "** esim.vn® is unaffiliated with the goods or services to which it is being compared."
@@ -1296,7 +1672,8 @@
     "review": "Reviews",
     "referFriend": "Refer a friend",
     "termsOfService": "Terms of Service",
-    "legal": "Legal"
+    "legal": "Legal",
+    "destinations": "Destinations"
   },
   "cart": {
     "title": "Shopping Cart",

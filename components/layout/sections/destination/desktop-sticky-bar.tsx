@@ -103,6 +103,11 @@ export function DesktopStickyBar({
     }
   }
 
+  // Description like "Unlimited / 7 days" or "5 GB / 30 days"
+  const descriptionPlan = selectedPlan
+    ? `${selectedPlan.type === 'unlimited' || selectedPlan.type === 'unlimited-reduce' ? 'Unlimited' : selectedPlan.dataMb >= 1024 ? `${parseFloat((selectedPlan.dataMb / 1024).toFixed(1))} GB` : `${selectedPlan.dataMb} MB`} / ${isFixed ? selectedPlan.durationDays : (selectedPlan.isAbleMultidate ? days : selectedPlan.durationDays)} days`
+    : '';
+
   const handleAddToCart = async () => {
     if (!selectedPlan) return;
     const isMultidate = !!selectedPlan.isAbleMultidate;
@@ -151,7 +156,7 @@ export function DesktopStickyBar({
               eSIM {destination || ""}
             </div>
             <div className="text-base sm:text-sm font-medium text-[#1a1a1a] whitespace-nowrap overflow-hidden text-ellipsis">
-              {planLabel}
+              {descriptionPlan}
             </div>
           </div>
         </div>
