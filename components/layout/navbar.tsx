@@ -173,7 +173,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Giải pháp eSIM dành riêng cho nhà sáng tạo nội dung."
             : "eSIM solutions tailored for content creators.",
-          href: localizedHref(lang, 'all-destinations'),
+          href: localizedHref(lang, 'destinations'),
         },
       ],
       col2Label: isVi ? "Công cụ" : "Tools",
@@ -201,7 +201,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Khám phá tính năng bảo vệ kỹ thuật số của esim.vn."
             : "Discover esim.vn's built-in digital protection.",
-          href: localizedHref(lang, 'all-destinations'),
+          href: localizedHref(lang, 'destinations'),
           image:
             "https://sb.nordcdn.com/m/7bf573d226cb4b2d/original/mega-menu-explore-security-features.png",
           imageAlt: "A man uses esim.vn's built-in digital protection.",
@@ -211,7 +211,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Quản lý tất cả gói eSIM của đội nhóm."
             : "Manage all your team's eSIM plans.",
-          href: localizedHref(lang, 'all-destinations'),
+          href: localizedHref(lang, 'destinations'),
           image:
             "https://sb.nordcdn.com/m/37ec43195ff7cbbd/original/mega-menu-explore-b2b-admin-panel.png",
           imageAlt:
@@ -222,7 +222,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Dữ liệu không giới hạn, hoàn 8% tín dụng và nhiều ưu đãi."
             : "Unlimited data, 8% back in credits, and extra perks.",
-          href: localizedHref(lang, 'all-destinations'),
+          href: localizedHref(lang, 'destinations'),
           image:
             "https://sb.nordcdn.com/m/681452996b3d756b/original/mega-menu-explore-ultra-plan.png",
           imageAlt: "The Ultra plan tab on the esim.vn app.",
@@ -235,7 +235,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
       },
       bottomRight: {
         text: isVi ? "Tất cả điểm đến" : "All destinations",
-        href: localizedHref(lang, 'all-destinations'),
+        href: localizedHref(lang, 'destinations'),
       },
     },
     resources: {
@@ -289,7 +289,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Khám phá tính năng bảo vệ kỹ thuật số của esim.vn."
             : "Discover esim.vn's built-in digital protection.",
-          href: localizedHref(lang, 'all-destinations'),
+          href: localizedHref(lang, 'destinations'),
           image:
             "https://sb.nordcdn.com/m/7bf573d226cb4b2d/original/mega-menu-explore-security-features.png",
           imageAlt: "A man uses esim.vn's built-in digital protection.",
@@ -309,7 +309,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Dữ liệu không giới hạn, hoàn 8% tín dụng và nhiều ưu đãi."
             : "Unlimited data, 8% back in credits, and extra perks.",
-          href: localizedHref(lang, 'all-destinations'),
+          href: localizedHref(lang, 'destinations'),
           image:
             "https://sb.nordcdn.com/m/681452996b3d756b/original/mega-menu-explore-ultra-plan.png",
           imageAlt: "The Ultra plan tab on the esim.vn app.",
@@ -324,7 +324,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
       },
       bottomRight: {
         text: isVi ? "Tất cả điểm đến" : "All destinations",
-        href: localizedHref(lang, 'all-destinations'),
+        href: localizedHref(lang, 'destinations'),
       },
     },
     offers: {
@@ -354,7 +354,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Khám phá tính năng bảo vệ kỹ thuật số của esim.vn."
             : "Discover esim.vn's built-in digital protection.",
-          href: localizedHref(lang, 'all-destinations'),
+          href: localizedHref(lang, 'destinations'),
           image:
             "https://sb.nordcdn.com/m/7bf573d226cb4b2d/original/mega-menu-explore-security-features.png",
           imageAlt: "A man uses esim.vn's built-in digital protection.",
@@ -374,7 +374,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Dữ liệu không giới hạn, hoàn 8% tín dụng và nhiều ưu đãi."
             : "Unlimited data, 8% back in credits, and extra perks.",
-          href: localizedHref(lang, 'all-destinations'),
+          href: localizedHref(lang, 'destinations'),
           image:
             "https://sb.nordcdn.com/m/681452996b3d756b/original/mega-menu-explore-ultra-plan.png",
           imageAlt: "The Ultra plan tab on the esim.vn app.",
@@ -387,7 +387,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
       },
       bottomRight: {
        text: isVi ? "Tất cả điểm đến" : "All destinations",
-        href: localizedHref(lang, 'all-destinations'),
+        href: localizedHref(lang, 'destinations'),
       },
     },
     help: {
@@ -433,7 +433,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Khám phá tính năng bảo vệ kỹ thuật số của esim.vn."
             : "Discover esim.vn's built-in digital protection.",
-          href: localizedHref(lang, 'all-destinations'),
+          href: localizedHref(lang, 'destinations'),
           image:
             "https://sb.nordcdn.com/m/7bf573d226cb4b2d/original/mega-menu-explore-security-features.png",
           imageAlt: "A man uses esim.vn's built-in digital protection.",
@@ -453,7 +453,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
           desc: isVi
             ? "Dữ liệu không giới hạn, hoàn 8% tín dụng và nhiều ưu đãi."
             : "Unlimited data, 8% back in credits, and extra perks.",
-          href: localizedHref(lang, 'all-destinations'),
+          href: localizedHref(lang, 'destinations'),
           image:
             "https://sb.nordcdn.com/m/681452996b3d756b/original/mega-menu-explore-ultra-plan.png",
           imageAlt: "The Ultra plan tab on the esim.vn app.",
@@ -466,7 +466,7 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
       },
       bottomRight: {
         text: isVi ? "Tất cả điểm đến" : "All destinations",
-        href: localizedHref(lang, 'all-destinations'),
+        href: localizedHref(lang, 'destinations'),
       },
     },
   };
@@ -1597,7 +1597,7 @@ function MobileSidebar({
                     {lang === "vi" ? "Đăng nhập" : "Sign In"}
                   </button>
                   <Link
-                    href={localizedHref(lang, "all-destinations")}
+                    href={localizedHref(lang, "destinations")}
                     className="block w-full text-center px-5 py-3 border-md border-border-focus text-text-primary body-md-medium rounded-full cursor-pointer hover:bg-bg-primary transition-colors"
                     onClick={() => setOpen(false)}
                   >

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState } from "react";
 import { MapPin, Loader2, X } from "lucide-react";
 import { useInfiniteDestinations, useRegions } from "@/lib/hooks";
 import { useDebounce } from "@/lib/use-debounce";
@@ -133,9 +133,6 @@ export function AllDestinationsContent({
 
   const {
     data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
     isLoading,
   } = useInfiniteDestinations(hookTab, debouncedSearch);
 
@@ -150,31 +147,6 @@ export function AllDestinationsContent({
     "name",
     "ASC"
   );
-
-  // Intersection observer for infinite scroll
-  const sentinelRef = useRef<HTMLDivElement>(null);
-
-  const handleObserver = useCallback(
-    (entries: IntersectionObserverEntry[]) => {
-      const [entry] = entries;
-      if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
-        fetchNextPage();
-      }
-    },
-    [fetchNextPage, hasNextPage, isFetchingNextPage]
-  );
-
-  useEffect(() => {
-    const el = sentinelRef.current;
-    if (!el) return;
-
-    const observer = new IntersectionObserver(handleObserver, {
-      rootMargin: "200px",
-    });
-    observer.observe(el);
-
-    return () => observer.disconnect();
-  }, [handleObserver]);
 
   const allItems = data?.pages.flatMap((page) => page.data) ?? [];
 
@@ -321,17 +293,9 @@ export function AllDestinationsContent({
                   </div>
                 )}
 
-                {/* Sentinel for infinite scroll */}
-                <div ref={sentinelRef} className="h-1" />
-
-                {isFetchingNextPage && (
-                  <div className="flex items-center justify-center py-8">
-                    <Loader2 className="w-6 h-6 text-text-tertiary animate-spin" />
-                  </div>
-                )}
                 {/* Regions section */}
                 {regionItems.length > 0 && (
-                  <div className="mb-10">
+                  <div className="my-10">
                     <h2 className="heading-sm mb-4">{dict.sectionRegions}</h2>
                     <div className="grid gap-3 lg:gap-6 w-full md:grid-cols-2 lg:grid-cols-3">
                       {regionItems.map((item: any) => (
@@ -364,14 +328,6 @@ export function AllDestinationsContent({
                   ))}
                 </div>
 
-                {/* Sentinel for infinite scroll */}
-                <div ref={sentinelRef} className="h-1" />
-
-                {isFetchingNextPage && (
-                  <div className="flex items-center justify-center py-8">
-                    <Loader2 className="w-6 h-6 text-text-tertiary animate-spin" />
-                  </div>
-                )}
               </>
             )}
           </div>

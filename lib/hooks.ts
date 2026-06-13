@@ -144,7 +144,7 @@ export function useDestinations(
 
 // ===== Infinite Destinations Hook (for all-destinations page) =====
 
-const DESTINATIONS_PAGE_SIZE = 20;
+const DESTINATIONS_PAGE_SIZE = 250;
 
 export function useInfiniteDestinations(
   tab: "all" | "country" | "region" | "ultra",

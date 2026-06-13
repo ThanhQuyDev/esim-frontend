@@ -88,7 +88,7 @@ export function HelpCenterNavbar({ lang }: HelpCenterNavbarProps) {
     const navLinks = [
         {
             label: isVi ? "Điểm đến" : "Destinations",
-            href: localizedHref(lang, "all-destinations"),
+            href: localizedHref(lang, "destinations"),
         },
         {
             label: isVi ? "eSIM là gì?" : "What is an eSIM",

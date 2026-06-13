@@ -734,11 +734,11 @@ function CartItemRow({
             {item.destination}
           </span>
         )}
-        {item.dataMb && (
+        {item.dataMb ? (
           <span className="inline-block mt-2 ml-2 text-sm bg-blue-50 rounded-full px-3 py-1 text-blue-600">
             {item.dataMb >= 9999999 ? dict.unlimited || "Unlimited" : item.dataMb >= 1024 ? `${parseFloat((item.dataMb / 1024).toFixed(1))} GB` : `${item.dataMb} MB`}
           </span>
-        )}
+        ) : null}
         {item.durationDays && (
           <span className="inline-block mt-2 ml-2 text-sm bg-green-50 rounded-full px-3 py-1 text-green-600">
             {item.durationDays} {item.durationDays === 1 ? dict.day || "day" : dict.days || "days"}

@@ -387,7 +387,7 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
             role="button"
             className="max-md:w-full text-center inline-block text-primary-on-color bg-bg-dark hover:bg-neutral-800 border border-border-primary hover:border-neutral-800 active:bg-bg-dark active:text-primary-on-color box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[5.5px] body-sm-medium px-6"
             data-testid="primary-cta"
-            href={localizedHref(lang, "all-destinations")}
+            href={localizedHref(lang, "destinations")}
           >
             {t.viewAllDestinations || "View All Destinations"}
           </a>
