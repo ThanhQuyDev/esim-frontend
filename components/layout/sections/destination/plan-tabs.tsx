@@ -234,7 +234,14 @@ function UnlimitedPill({
 type ActiveSection = "local" | "fixed" | "daily" | "unlimited";
 
 export function PlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }: PlanTabsProps) {
-  const [speedTab, setSpeedTab] = useState<"normal" | "high">("normal");
+  // Default to whichever speed actually has plans so that when only the
+  // high-speed (dailyUnlimited) or only the normal-speed (fastUnlimited)
+  // unlimited group exists, its content is visible without requiring a click.
+  const [speedTab, setSpeedTab] = useState<"normal" | "high">(() => {
+    if (plans.fastUnlimited.length > 0) return "normal";
+    if (plans.dailyUnlimited.length > 0) return "high";
+    return "normal";
+  });
   const [activeSection, setActiveSection] = useState<ActiveSection>("fixed");
   const [dailyGb, setDailyGb] = useState<number>(0);
   const [normalGb, setNormalGb] = useState<number>(0);
@@ -284,6 +291,17 @@ export function PlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }: Plan
       setHighSpeedFup(uniqueHighFupSpeeds[0]);
     }
   }, [hasDailyUnlimited, uniqueHighFupSpeeds, highSpeedFup]);
+
+  // If the currently active speed tab no longer has any plans (e.g. after the
+  // destination/plans changed while the component stays mounted), switch to the
+  // tab that does. This prevents both unlimited panels from being hidden.
+  useEffect(() => {
+    setSpeedTab((prev) => {
+      if (prev === "normal" && !hasFastUnlimited && hasDailyUnlimited) return "high";
+      if (prev === "high" && !hasDailyUnlimited && hasFastUnlimited) return "normal";
+      return prev;
+    });
+  }, [hasFastUnlimited, hasDailyUnlimited]);
 
   // Keep the visual active section in sync with the externally selected plan.
   // This is required for the initial auto-selected local eSIM (Viettel) plan:

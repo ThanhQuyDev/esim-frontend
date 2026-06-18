@@ -436,7 +436,7 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
           isFixed={isFixed}
           dict={dict}
           lang={lang}
-          destination={(destinationData || destination)?.name}
+          destination={lang === "vi" ? (destinationData || destination)?.titleVi : (destinationData || destination)?.title}
           planLabel={planLabel}
           onQuantityChange={setQuantity}
           ctaRef={desktopCtaRef}

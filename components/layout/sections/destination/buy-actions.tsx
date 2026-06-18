@@ -6,6 +6,7 @@ import type { Plan } from "@/lib/api";
 import type { DestinationDict } from "./types";
 import { calcTotalPrice, calcTotalVndPrice, getFixedPrice, getFixedVndPrice } from "./types";
 import { formatVnd, useCart } from "@/lib/hooks";
+import { CartConfirmDialog } from "./cart-confirm-dialog";
 
 interface BuyActionsProps {
   selectedPlan: Plan | null;
@@ -69,40 +70,14 @@ export function BuyActions({ selectedPlan, days, quantity, isFixed, dict, lang, 
 
   return (
     <>
-      {/* Cart confirmation popup */}
-      {showConfirm && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setShowConfirm(false)}>
-          <div className="bg-white rounded-2xl shadow-2xl p-6 mx-4 max-w-sm w-full animate-in fade-in zoom-in-95" onClick={(e) => e.stopPropagation()}>
-            <div className="flex flex-col items-center text-center gap-4">
-              <div className="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M20 6L9 17l-5-5" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-medium text-[#111]">
-                {lang === "vi" ? "Đã thêm vào giỏ hàng!" : "Added to cart!"}
-              </h3>
-              <p className="text-base sm:text-sm text-[#6b7280]">
-                {selectedPlan?.name || "eSIM"} — {formatVnd(totalPrice)}
-              </p>
-              <div className="flex flex-col gap-2.5 w-full mt-2">
-                <button
-                  onClick={() => router.push(`/${lang}/cart`)}
-                  className="w-full py-3 rounded-full bg-[#fff500] border border-[#d1b700] text-base sm:text-sm font-medium text-[#111] transition-all hover:bg-[#d1b700] cursor-pointer"
-                >
-                  {lang === "vi" ? "Thanh toán ngay" : "Checkout now"}
-                </button>
-                <button
-                  onClick={() => setShowConfirm(false)}
-                  className="w-full py-3 rounded-full border border-[#e5e7eb] bg-white text-base sm:text-sm font-semibold text-[#111] transition-all hover:bg-gray-50 cursor-pointer"
-                >
-                  {lang === "vi" ? "Tiếp tục mua hàng" : "Continue shopping"}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Cart confirmation popup — shared with mobile add-to-cart flows */}
+      <CartConfirmDialog
+        open={showConfirm}
+        onClose={() => setShowConfirm(false)}
+        lang={lang}
+        itemName={selectedPlan?.name || "eSIM"}
+        totalLabel={formatVnd(totalPrice)}
+      />
 
       {/* CTA buttons */}
       <div className="grid grid-cols-[1fr_1.4fr] gap-2.5 mb-3">

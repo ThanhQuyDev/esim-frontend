@@ -226,8 +226,8 @@ export default async function UnifiedSlugPage({
       <Breadcrumb
         items={[
           {
-            label: dict.breadcrumb.allDestinations,
-            href: `/${locale}/destinations`,
+            label: dict.breadcrumb.destinations,
+            href: (locale === "vi" ? '/diem-den' : `/${locale}/destinations`),
           },
           { label: localizedName },
         ]}

@@ -303,7 +303,7 @@ export function ProductCard({
                       <path d="M8.53 16.11a6 6 0 016.95 0" />
                       <circle cx="12" cy="20" r="1" fill="#1D4ED8" />
                     </svg>
-                    {hotSpotAllowGb} {isHostSpotAllDay ? "-" : "/"} {durations} {lang === "en" ? "day" : "ngày"}
+                    {hotSpotAllowGb} {isHostSpotAllDay ? `- ${durations}` : `/`} {lang === "en" ? "day" : "ngày"}
                   </span>
                 ) : hasHotspot ? (
                   <span

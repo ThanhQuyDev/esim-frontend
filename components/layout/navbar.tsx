@@ -474,9 +474,11 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
 
 const NAV_ITEMS = ["product", "resources", "offers", "help"] as const;
 
-// localStorage key remembering that the user closed the promo/announcement bar
-// so it stays hidden across reloads until cleared.
+// localStorage key remembering that the user closed the promo/announcement bar.
+// The stored value is the dismissal timestamp (ms); the bar reappears after
+// ANNOUNCEMENT_DISMISS_TTL (currently 4 hours) so promotions resurface.
 const ANNOUNCEMENT_DISMISSED_KEY = "esim_announcement_dismissed";
+const ANNOUNCEMENT_DISMISS_TTL = 4 * 60 * 60 * 1000; // 4 hours in ms
 
 /* ===== Main Navbar ===== */
 
@@ -516,7 +518,8 @@ function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
   const dismissAnnouncement = useCallback(() => {
     setAnnouncementVisible(false);
     try {
-      localStorage.setItem(ANNOUNCEMENT_DISMISSED_KEY, "true");
+      // Store the dismissal time so we can re-show the bar after the TTL.
+      localStorage.setItem(ANNOUNCEMENT_DISMISSED_KEY, String(Date.now()));
     } catch {
       // localStorage unavailable — dismissal just won't persist.
     }
@@ -611,12 +614,23 @@ function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
   }, []);
 
   // Restore the dismissed state after mount so a closed announcement stays
-  // hidden across reloads. Reading in an effect (not useState initializer)
-  // keeps server and first client render in sync to avoid hydration mismatch.
+  // hidden across reloads — but only for the TTL window (4 hours). After that
+  // the stored timestamp is expired and removed, so the bar shows again.
+  // Reading in an effect (not useState initializer) keeps server and first
+  // client render in sync to avoid hydration mismatch.
   useEffect(() => {
     try {
-      if (localStorage.getItem(ANNOUNCEMENT_DISMISSED_KEY) === "true") {
+      const raw = localStorage.getItem(ANNOUNCEMENT_DISMISSED_KEY);
+      if (raw == null) return;
+      const dismissedAt = Number(raw);
+      const isStillValid =
+        Number.isFinite(dismissedAt) &&
+        Date.now() - dismissedAt < ANNOUNCEMENT_DISMISS_TTL;
+      if (isStillValid) {
         setAnnouncementVisible(false);
+      } else {
+        // Expired (or malformed legacy "true" value) — clear and re-show.
+        localStorage.removeItem(ANNOUNCEMENT_DISMISSED_KEY);
       }
     } catch {
       // localStorage unavailable — keep default visible.

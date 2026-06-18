@@ -6,6 +6,7 @@ import type { Plan } from "@/lib/api";
 import type { DestinationDict } from "../types";
 import { calcTotalPrice, calcTotalVndPrice, getFixedPrice, getFixedVndPrice } from "../types";
 import { formatVnd, useCart } from "@/lib/hooks";
+import { CartConfirmDialog } from "../cart-confirm-dialog";
 import Image from "next/image";
 
 interface MobileStickyBarProps {
@@ -44,6 +45,7 @@ export function MobileStickyBar({
   const { addItem } = useCart();
   const [visible, setVisible] = useState(false);
   const [nearFooter, setNearFooter] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   // Show sticky bar when CTA buttons scroll out of view
   useEffect(() => {
@@ -116,8 +118,9 @@ export function MobileStickyBar({
     ? `${selectedPlan.type === 'unlimited' || selectedPlan.type === 'unlimited-reduce' ? 'Unlimited' : selectedPlan.dataMb >= 1024 ? `${parseFloat((selectedPlan.dataMb / 1024).toFixed(1))} GB` : `${selectedPlan.dataMb} MB`} / ${isFixed ? selectedPlan.durationDays : (selectedPlan.isAbleMultidate ? days : selectedPlan.durationDays)} days`
     : '';
 
-  const handleAddToCart = async () => {
-    if (!selectedPlan) return;
+  // Shared add-to-cart logic. Returns true on success.
+  const doAddToCart = async () => {
+    if (!selectedPlan) return false;
     const isMultidate = !!selectedPlan.isAbleMultidate;
     const unitPrice = isFixed ? getFixedPrice(selectedPlan) : calcTotalPrice(selectedPlan, days);
     const unitVndPrice = isFixed ? getFixedVndPrice(selectedPlan) : calcTotalVndPrice(selectedPlan, days);
@@ -139,16 +142,31 @@ export function MobileStickyBar({
       },
       quantity
     );
-    router.push(`/${lang}/cart`);
+    return true;
   };
 
+  // Add to cart → show confirmation (continue shopping / checkout), like desktop.
+  const handleAddToCart = async () => {
+    if (await doAddToCart()) setShowConfirm(true);
+  };
+
+  // Buy now → add and go straight to cart.
   const handleBuyNow = async () => {
-    await handleAddToCart();
+    if (await doAddToCart()) router.push(`/${lang}/cart`);
   };
 
   if (!selectedPlan) return null;
 
   return (
+    <>
+      {/* Cart confirmation popup — matches desktop behaviour */}
+      <CartConfirmDialog
+        open={showConfirm}
+        onClose={() => setShowConfirm(false)}
+        lang={lang}
+        itemName={selectedPlan?.name || "eSIM"}
+        totalLabel={formatVnd(totalPrice)}
+      />
     <div
       className="fixed bottom-0 left-0 right-0 z-[300] bg-white border-t border-[#e5e7eb] px-4 pt-[10px] pb-5 shadow-[0_-4px_24px_rgba(0,0,0,0.1)] transition-transform duration-[280ms] ease-[cubic-bezier(.4,0,.2,1)]"
       style={{ transform: stickyVisible ? "translateY(0)" : "translateY(110%)" }}
@@ -237,7 +255,7 @@ export function MobileStickyBar({
           type="button"
           onClick={handleAddToCart}
           className="w-[100px] h-[42px] flex items-center justify-center rounded-full border border-[#1a1a1a] bg-white cursor-pointer shrink-0 transition-colors active:bg-[#1a1a1a] active:[&_svg]:stroke-white"
-          aria-label={dict.addToCart}
+          aria-label={dict.addToCartMobile}
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="9" cy="21" r="1" />
@@ -256,5 +274,6 @@ export function MobileStickyBar({
         </button>
       </div>
     </div>
+    </>
   );
 }

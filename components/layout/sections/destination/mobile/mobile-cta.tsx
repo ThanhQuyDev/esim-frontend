@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Plan } from "@/lib/api";
 import type { DestinationDict } from "../types";
 import { calcTotalPrice, calcTotalVndPrice, getFixedPrice, getFixedVndPrice } from "../types";
 import { formatVnd, useCart } from "@/lib/hooks";
+import { CartConfirmDialog } from "../cart-confirm-dialog";
 
 interface MobileCtaProps {
   selectedPlan: Plan | null;
@@ -27,6 +29,7 @@ export function MobileCta({
 }: MobileCtaProps) {
   const router = useRouter();
   const { addItem } = useCart();
+  const [showConfirm, setShowConfirm] = useState(false);
 
   let totalPrice = 0;
   if (selectedPlan) {
@@ -37,8 +40,9 @@ export function MobileCta({
     }
   }
 
-  const handleAddToCart = async () => {
-    if (!selectedPlan) return;
+  // Shared add-to-cart logic. Returns true on success.
+  const doAddToCart = async () => {
+    if (!selectedPlan) return false;
     const isMultidate = !!selectedPlan.isAbleMultidate;
     const unitPrice = isFixed ? getFixedPrice(selectedPlan) : calcTotalPrice(selectedPlan, days);
     const unitVndPrice = isFixed ? getFixedVndPrice(selectedPlan) : calcTotalVndPrice(selectedPlan, days);
@@ -60,15 +64,30 @@ export function MobileCta({
       },
       quantity
     );
-    router.push(`/${lang}/cart`);
+    return true;
   };
 
+  // Add to cart → show confirmation (continue shopping / checkout), like desktop.
+  const handleAddToCart = async () => {
+    if (await doAddToCart()) setShowConfirm(true);
+  };
+
+  // Buy now → add and go straight to cart.
   const handleBuyNow = async () => {
-    await handleAddToCart();
+    if (await doAddToCart()) router.push(`/${lang}/cart`);
   };
 
   return (
     <div className="px-4">
+      {/* Cart confirmation popup — matches desktop behaviour */}
+      <CartConfirmDialog
+        open={showConfirm}
+        onClose={() => setShowConfirm(false)}
+        lang={lang}
+        itemName={selectedPlan?.name || "eSIM"}
+        totalLabel={formatVnd(totalPrice)}
+      />
+
       {/* CTA Grid: Cart + Buy */}
       <div className="grid grid-cols-[1fr_1.5fr] gap-[9px] mb-3">
         {/* Add to Cart */}

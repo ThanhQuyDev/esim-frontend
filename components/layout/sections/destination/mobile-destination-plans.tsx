@@ -239,7 +239,7 @@ export function MobileDestinationPlans({
         lang={lang}
         region={region}
         destinationData={destinationData}
-        destination={resolvedDestination?.name}
+        destination={lang === "vi" ? resolvedDestination?.titleVi :resolvedDestination?.title}
         planLabel={planLabel}
         onQuantityChange={onQuantityChange}
         ctaRef={ctaRef}
