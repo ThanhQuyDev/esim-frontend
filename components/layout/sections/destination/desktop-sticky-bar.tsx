@@ -6,6 +6,7 @@ import type { Plan } from "@/lib/api";
 import type { DestinationDict } from "./types";
 import { calcTotalPrice, calcTotalVndPrice, getFixedPrice, getFixedVndPrice } from "./types";
 import { formatVnd, useCart } from "@/lib/hooks";
+import Image from "next/image";
 
 interface DesktopStickyBarProps {
   selectedPlan: Plan | null;
@@ -15,7 +16,10 @@ interface DesktopStickyBarProps {
   dict: DestinationDict;
   lang: string;
   destination?: string;
+  destinationData: any;
+  region?: any;
   planLabel: string;
+  planSource: string
   onQuantityChange: (q: number) => void;
   ctaRef: React.RefObject<HTMLDivElement | null>;
 }
@@ -29,8 +33,11 @@ export function DesktopStickyBar({
   lang,
   destination,
   planLabel,
+  destinationData,
+  region,
   onQuantityChange,
   ctaRef,
+  planSource,
 }: DesktopStickyBarProps) {
   const router = useRouter();
   const { addItem } = useCart();
@@ -89,7 +96,7 @@ export function DesktopStickyBar({
         chatBtn.style.bottom = "80px"; // Push above sticky bar
       } else {
         chatBtn.style.transition = "bottom 0.28s cubic-bezier(.4,0,.2,1)";
-        chatBtn.style.bottom = "0px"; 
+        chatBtn.style.bottom = "0px";
       }
     }
   }, [isVisible]);
@@ -134,7 +141,7 @@ export function DesktopStickyBar({
   };
 
   if (!selectedPlan) return null;
-
+  console
   return (
     <div
       className="fixed bottom-0 left-0 right-0 z-[300] bg-white border-t border-[#e5e7eb] shadow-[0_-4px_24px_rgba(0,0,0,0.08)] transition-transform duration-[280ms] ease-[cubic-bezier(.4,0,.2,1)] hidden min-[841px]:block"
@@ -144,12 +151,18 @@ export function DesktopStickyBar({
         {/* Left: Plan info */}
         <div className="flex items-center gap-3 min-w-0 flex-1">
           {/* Globe icon */}
-          <div className="w-10 h-10 rounded-full bg-[#FFF500] flex items-center justify-center shrink-0">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="2">
-              <circle cx="12" cy="12" r="10" />
-              <path d="M2 12h20M12 2a15 15 0 010 20M12 2a15 15 0 000 20" />
-            </svg>
-          </div>
+          {(region?.iconUrl || destinationData?.flagUrl) ? (
+            <div className="w-[30px] h-[30px] rounded-full overflow-hidden shrink-0 border">
+              <Image src={(planSource === "region" && region?.iconUrl) ? region.iconUrl : (destinationData?.flagUrl || region?.iconUrl || "")} alt={destinationData?.name} width={30} height={30} className="w-full h-full object-cover" />
+            </div>
+          ) : (
+            <div className="w-[30px] h-[30px] bg-[#fff500] rounded-full flex items-center justify-center shrink-0">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M2 12h20M12 2a15 15 0 010 20M12 2a15 15 0 000 20" />
+              </svg>
+            </div>
+          )}
           {/* Plan details */}
           <div className="min-w-0">
             <div className="text-sm text-[#6b7280] font-medium">
