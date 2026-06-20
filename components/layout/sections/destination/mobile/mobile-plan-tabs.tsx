@@ -295,25 +295,28 @@ export function MobilePlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }
     }
   }, [selectedPlan, localEsimPlans, plans.dataPlans, plans.slowUnlimited, plans.fastUnlimited, plans.dailyUnlimited]);
 
-  // When days change, re-pick the best plan for the ACTIVE section — but only if
-  // the currently selected plan still belongs to that section's group. This
-  // prevents the effect from overriding a plan the user just selected in a
-  // DIFFERENT section (e.g. switching from a daily plan to a fixed plan: the
-  // days change to the fixed plan's duration must not re-select the daily plan).
+  // When days change, re-pick the best plan within the SAME GB/speed group as the
+  // currently selected plan. We use selectedPlan.dataMb / fupSpeed instead of
+  // local state (dailyGb, normalGb, …) to avoid stale-closure bugs where a
+  // just-clicked GB chip hasn't been committed yet.
   useEffect(() => {
-    if (activeSection === "daily" && hasSlowUnlimited && dailyGb > 0 && plans.slowUnlimited.some((p) => p.id === selectedPlan?.id)) {
-      const best = findBestPlan(plans.slowUnlimited, dailyGb, days);
-      if (best && best.id !== selectedPlan?.id) onSelectPlan(best);
-    } else if (activeSection === "local" && hasLocalEsim && localGb > 0 && localEsimPlans.some((p) => p.id === selectedPlan?.id)) {
-      const best = findBestPlan(localEsimPlans, localGb, days);
-      if (best && best.id !== selectedPlan?.id) onSelectPlan(best);
-    } else if (activeSection === "unlimited" && speedTab === "normal" && hasFastUnlimited && normalGb > 0 && plans.fastUnlimited.some((p) => p.id === selectedPlan?.id)) {
-      const best = findBestPlan(plans.fastUnlimited, normalGb, days);
-      if (best && best.id !== selectedPlan?.id) onSelectPlan(best);
-    } else if (activeSection === "unlimited" && speedTab === "high" && hasDailyUnlimited && highSpeedFup && plans.dailyUnlimited.some((p) => p.id === selectedPlan?.id)) {
-      const match = findBestDailyUnlimitedPlan(plans.dailyUnlimited, highSpeedFup, days);
-      if (match && match.id !== selectedPlan?.id) onSelectPlan(match);
+    if (!selectedPlan) return;
+
+    if (plans.slowUnlimited.some((p) => p.id === selectedPlan.id)) {
+      const best = findBestPlan(plans.slowUnlimited, Number(selectedPlan.dataMb), days);
+      if (best && best.id !== selectedPlan.id) onSelectPlan(best);
+    } else if (localEsimPlans.some((p) => p.id === selectedPlan.id)) {
+      const best = findBestPlan(localEsimPlans, Number(selectedPlan.dataMb), days);
+      if (best && best.id !== selectedPlan.id) onSelectPlan(best);
+    } else if (plans.fastUnlimited.some((p) => p.id === selectedPlan.id)) {
+      const best = findBestPlan(plans.fastUnlimited, Number(selectedPlan.dataMb), days);
+      if (best && best.id !== selectedPlan.id) onSelectPlan(best);
+    } else if (plans.dailyUnlimited.some((p) => p.id === selectedPlan.id)) {
+      const match = findBestDailyUnlimitedPlan(plans.dailyUnlimited, selectedPlan.fupSpeed || "", days);
+      if (match && match.id !== selectedPlan.id) onSelectPlan(match);
     }
+    // Note: fixed plans (dataPlans) and smsCall plans have fixed durations —
+    // no re-selection needed when days change.
   }, [days]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSelectFixed = (plan: Plan) => {
@@ -417,16 +420,18 @@ export function MobilePlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }
           <div className="flex flex-wrap gap-2">
             {getUniqueDataMb(plans.slowUnlimited).map((gb) => {
               const best = findBestPlan(plans.slowUnlimited, gb, days);
+              const badgePlan = best ?? closestPlanByGb(plans.slowUnlimited, gb, days);
               return (
                 <MobileGbChip
                   key={gb}
                   gb={gb}
                   isSelected={activeSection === "daily" && dailyGb === gb}
-                  bestPlan={best}
+                  bestPlan={badgePlan}
                   lang={lang}
                   onSelect={() => {
                     setDailyGb(gb);
-                    if (best) handleSelectDaily(best);
+                    const pick = best ?? closestPlanByGb(plans.slowUnlimited, gb, days);
+                    if (pick) handleSelectDaily(pick);
                   }}
                 />
               );
