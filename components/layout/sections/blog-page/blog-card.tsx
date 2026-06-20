@@ -34,7 +34,7 @@ export function blogDetailHref(
   lang: string
 ): string {
   const articleSlug = (blog.slug || "").replace(/^\//, "");
-  return `/${lang}/blog/${encodeURIComponent(articleSlug)}`;
+  return lang==='vi'?`/blog/${encodeURIComponent(articleSlug)}` : `/${lang}/blog/${encodeURIComponent(articleSlug)}`;
 }
 
 export function CategoryBadge({

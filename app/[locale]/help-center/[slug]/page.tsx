@@ -7,6 +7,7 @@ import {
   fetchHelpCenterBySlug,
   fetchPopularHelpCenterArticles,
 } from "@/lib/api";
+import { getSeoMetadata } from "@/lib/seo";
 import { getLocale } from "next-intl/server";
 import {
   fromUrlSlug,
@@ -22,10 +23,12 @@ export async function generateMetadata({
 }) {
   const locale = await getLocale();
   const dict = await getDictionary(locale as Locale);
-  return {
+  const slug = decodeURIComponent(params.slug);
+  const seoUrl = locale === "vi" ? `/ho-tro/${slug}` : `/en/help-center/${slug}`;
+  return getSeoMetadata(seoUrl, {
     title: dict.metadata.title,
     description: dict.metadata.description,
-  };
+  });
 }
 
 export default async function HelpCenterSlugPage({

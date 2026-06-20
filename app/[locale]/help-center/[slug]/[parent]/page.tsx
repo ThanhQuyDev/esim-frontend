@@ -3,6 +3,7 @@ import { DetailContent } from "@/components/layout/sections/help-center/detail-c
 import { FooterSection } from "@/components/layout/sections/footer";
 import { getDictionary } from "@/lib/dictionaries";
 import { fetchHelpCenterArticles } from "@/lib/api";
+import { getSeoMetadata } from "@/lib/seo";
 import { getLocale } from "next-intl/server";
 import {
   fromUrlSlug,
@@ -18,10 +19,16 @@ export async function generateMetadata({
 }) {
   const locale = await getLocale();
   const dict = await getDictionary(locale as Locale);
-  return {
+  const slug = decodeURIComponent(params.slug);
+  const parentSlug = decodeURIComponent(params.parent);
+  const seoUrl =
+    locale === "vi"
+      ? `/ho-tro/${slug}/${parentSlug}`
+      : `/en/help-center/${slug}/${parentSlug}`;
+  return getSeoMetadata(seoUrl, {
     title: dict.metadata.title,
     description: dict.metadata.description,
-  };
+  });
 }
 
 export default async function HelpCenterParentPage({

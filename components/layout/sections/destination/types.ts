@@ -234,3 +234,20 @@ export function getAvailableDays(plans: Plan[], dataMb: number): number[] {
   const set = new Set(plans.filter((p) => p.dataMb === dataMb).map((p) => p.durationDays));
   return Array.from(set).sort((a, b) => a - b);
 }
+
+/**
+ * Among daily-unlimited plans sharing the same `fupSpeed`, pick the best plan
+ * for the requested `days`.
+ * - Prefer an exact `durationDays === days` match (keeps the high-speed tab in
+ *   sync with the days already chosen for other plan groups, e.g. 7 days).
+ * - Otherwise fall back to the smallest-duration plan of that fupSpeed.
+ *
+ * Returns null when no plan matches the given fupSpeed.
+ */
+export function findBestDailyUnlimitedPlan(plans: Plan[], fupSpeed: string, days: number): Plan | null {
+  const sameFup = plans.filter((p) => (p.fupSpeed || "") === fupSpeed);
+  if (sameFup.length === 0) return null;
+  const exact = sameFup.find((p) => p.durationDays === days);
+  if (exact) return exact;
+  return sameFup.reduce((prev, curr) => (curr.durationDays < prev.durationDays ? curr : prev));
+}

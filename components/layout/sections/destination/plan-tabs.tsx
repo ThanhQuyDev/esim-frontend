@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import type { Plan } from "@/lib/api";
 import type { DestinationDict, CategorizedPlans } from "./types";
-import { getUniqueDataMb, findBestPlan, getUniqueFupSpeeds } from "./types";
+import { getUniqueDataMb, findBestPlan, getUniqueFupSpeeds, findBestDailyUnlimitedPlan } from "./types";
 import { PlanTagBadges, ProviderBadge } from "./plan-badges";
 
 interface PlanTabsProps {
@@ -341,20 +341,24 @@ export function PlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }: Plan
     }
   }, [selectedPlan, localEsimPlans, plans.dataPlans, plans.slowUnlimited, plans.fastUnlimited, plans.dailyUnlimited]);
 
-  // When days change externally, re-pick best plan for active section
+  // When days change, re-pick the best plan for the ACTIVE section — but only if
+  // the currently selected plan still belongs to that section's group. This
+  // prevents the effect from overriding a plan the user just selected in a
+  // DIFFERENT section (e.g. switching from a daily plan to a fixed plan: the
+  // days change to the fixed plan's duration must not re-select the daily plan).
   useEffect(() => {
-    if (activeSection === "daily" && hasSlowUnlimited && dailyGb > 0) {
+    if (activeSection === "daily" && hasSlowUnlimited && dailyGb > 0 && plans.slowUnlimited.some((p) => p.id === selectedPlan?.id)) {
       const best = findBestPlan(plans.slowUnlimited, dailyGb, days);
-      if (best) onSelectPlan(best);
-    } else if (activeSection === "local" && hasLocalEsim && localGb > 0) {
+      if (best && best.id !== selectedPlan?.id) onSelectPlan(best);
+    } else if (activeSection === "local" && hasLocalEsim && localGb > 0 && localEsimPlans.some((p) => p.id === selectedPlan?.id)) {
       const best = findBestPlan(localEsimPlans, localGb, days);
-      if (best) onSelectPlan(best);
-    } else if (activeSection === "unlimited" && speedTab === "normal" && hasFastUnlimited && normalGb > 0) {
+      if (best && best.id !== selectedPlan?.id) onSelectPlan(best);
+    } else if (activeSection === "unlimited" && speedTab === "normal" && hasFastUnlimited && normalGb > 0 && plans.fastUnlimited.some((p) => p.id === selectedPlan?.id)) {
       const best = findBestPlan(plans.fastUnlimited, normalGb, days);
-      if (best) onSelectPlan(best);
-    } else if (activeSection === "unlimited" && speedTab === "high" && hasDailyUnlimited && highSpeedFup) {
-      const match = plans.dailyUnlimited.find((p) => p.fupSpeed === highSpeedFup && p.durationDays === days);
-      if (match) onSelectPlan(match);
+      if (best && best.id !== selectedPlan?.id) onSelectPlan(best);
+    } else if (activeSection === "unlimited" && speedTab === "high" && hasDailyUnlimited && highSpeedFup && plans.dailyUnlimited.some((p) => p.id === selectedPlan?.id)) {
+      const match = findBestDailyUnlimitedPlan(plans.dailyUnlimited, highSpeedFup, days);
+      if (match && match.id !== selectedPlan?.id) onSelectPlan(match);
     }
   }, [days]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -535,7 +539,7 @@ export function PlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }: Plan
           {speedTab === "high" && hasDailyUnlimited && (
             <div className="flex flex-wrap gap-2.5">
               {uniqueHighFupSpeeds.map((fup) => {
-                const match = plans.dailyUnlimited.find((p) => p.fupSpeed === fup) || plans.dailyUnlimited[0];
+                const match = findBestDailyUnlimitedPlan(plans.dailyUnlimited, fup, days) || plans.dailyUnlimited[0];
                 return (
                   <UnlimitedPill
                     key={fup}
