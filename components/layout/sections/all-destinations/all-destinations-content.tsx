@@ -57,7 +57,8 @@ function DestinationCard({
       <a
         className="align-bottom focus-visible:outline-hidden focus-visible:shadow-focus text-text-primary active:text-text-primary block group ease-out h-full rounded-sm transition-colors hover:text-text-primary hover:bg-bg-tertiary bg-bg-secondary"
         data-testid={item.countryCode || item.slug || item.id}
-        href={`/${lang}/${item.slug || item.countryCode?.toLowerCase()}`}
+        href={lang === 'vi' ? `/${item.slug || item.code?.toLowerCase()}` : `/${lang}/${item.slug || item.code?.toLowerCase()}`}
+
       >
         <div
           className="flex flex-col items-start text-left gap-4 relative border-none p-4 h-full rounded-sm transition-colors hover:text-text-primary hover:bg-bg-tertiary bg-gray-50 hover:bg-bg-secondary"
@@ -199,8 +200,8 @@ export function AllDestinationsContent({
                       setSearchQuery("");
                     }}
                     className={`relative z-[1] body-sm-medium whitespace-nowrap md:body-md-medium px-4 py-1 focus-visible:outline-hidden focus-visible:shadow-focus rounded-full min-w-[60px] bg-transparent transition-all duration-200 ${activeTab === tab.key
-                        ? "!text-text-primary-on-color !bg-bg-dark hover:bg-inherit transition-[color] delay-250 duration-[0]"
-                        : "text-text-primary hover:text-text-primary hover:bg-bg-primary"
+                      ? "!text-text-primary-on-color !bg-bg-dark hover:bg-inherit transition-[color] delay-250 duration-[0]"
+                      : "text-text-primary hover:text-text-primary hover:bg-bg-primary"
                       }`}
                   >
                     {tab.badge ? (

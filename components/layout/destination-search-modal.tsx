@@ -372,7 +372,7 @@ export function DestinationSearchModal({
                       : priceStr
                         ? `${lang === "vi" ? "Từ" : "From"} ${priceStr}`
                         : null;
-                    const href = `/${lang}/${item.slug}`;
+                    const href = lang === 'vi' ? `/${item.slug}` : `/${lang}/${item.slug}`;
 
                     return (
                       <div key={`${item._type}-${item.id}`}>
