@@ -3,7 +3,6 @@
 import { useState } from "react";
 import type { Plan } from "@/lib/api";
 import type { DestinationDict } from "../types";
-import { calcTotalVndPrice, getFixedVndPrice } from "../types";
 import { CalendarModal } from "../calendar-modal";
 
 interface MobilePlanConfigProps {
@@ -17,6 +16,10 @@ interface MobilePlanConfigProps {
   availableDays: number[];
   isFixed: boolean;
   selectedPlan?: Plan | null;
+  /** Returns the total VND price for 1 eSIM for the given number of days,
+   *  using the best-matching plan. Passed straight to CalendarModal so the
+   *  due-date summary matches the main price display. */
+  getTotalForDays?: (days: number) => number;
 }
 
 const QUICK_DAYS = [3, 5, 7, 10, 15, 20, 30, 180, 365];
@@ -32,17 +35,11 @@ export function MobilePlanConfig({
   availableDays,
   isFixed,
   selectedPlan,
+  getTotalForDays,
 }: MobilePlanConfigProps) {
   const [calOpen, setCalOpen] = useState(false);
   const dayOptions = isFlexibleDays ? QUICK_DAYS : availableDays;
-  const isLocalEsim = selectedPlan?.isLocalInventory 
-
-  const unitVndPricePerDay = (() => {
-    if (!selectedPlan) return 0;
-    if (isFixed) return getFixedVndPrice(selectedPlan) / Math.max(1, selectedPlan.durationDays);
-    if (isFlexibleDays) return calcTotalVndPrice(selectedPlan, 1);
-    return calcTotalVndPrice(selectedPlan, days) / Math.max(1, days);
-  })();
+  const isLocalEsim = selectedPlan?.isLocalInventory
 
   return (
     <div className="px-4 py-[18px] border-t-[7px] border-[#f3f4f6]">
@@ -138,7 +135,7 @@ export function MobilePlanConfig({
           onClose={() => setCalOpen(false)}
           initialDays={days}
           onConfirm={(d) => onDaysChange(d)}
-          unitVndPricePerDay={unitVndPricePerDay}
+          getTotalForDays={getTotalForDays ?? (() => 0)}
           quantity={quantity}
           lang={lang}
         />

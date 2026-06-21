@@ -3,14 +3,15 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { Modal } from "./modal";
 import { formatVnd } from "@/lib/hooks";
-import { roundVndToThousands } from "@/lib/utils";
 
 interface CalendarModalProps {
   open: boolean;
   onClose: () => void;
   initialDays: number;
   onConfirm: (days: number) => void;
-  unitVndPricePerDay?: number;
+  /** Returns the total VND price for 1 eSIM for the given number of days,
+   *  using the best-matching plan (findBestPlan) — not a simple per-day × days multiply. */
+  getTotalForDays: (days: number) => number;
   quantity: number;
   lang: string;
 }
@@ -147,7 +148,7 @@ export function CalendarModal({
   onClose,
   initialDays,
   onConfirm,
-  unitVndPricePerDay = 0,
+  getTotalForDays,
   quantity,
   lang,
 }: CalendarModalProps) {
@@ -249,7 +250,11 @@ export function CalendarModal({
     setBase(next);
   }, [base]);
 
-  const totalVnd = days > 0 ? roundVndToThousands(unitVndPricePerDay * days * quantity) : 0;
+  // totalVnd uses getTotalForDays() which finds the best-matching plan for the
+  // selected number of days (findBestPlan / findBestDailyUnlimitedPlan) and
+  // returns its actual price — NOT a simple per-day-rate × days multiply.
+  // This keeps the calendar summary in sync with the main price display.
+  const totalVnd = days > 0 ? getTotalForDays(days) * quantity : 0;
   const perDayVnd = days > 0 ? Math.round(totalVnd / days) : 0;
 
   const summaryTitle = !selS
@@ -397,7 +402,7 @@ export function CalendarModal({
             <div className="text-xs sm:text-sm whitespace-nowrap"> {dueDays}</div>
             </div>
             <div className="text-xs sm:text-sm text-[#6B7280] min-h-[18px] flex items-center gap-1.5 flex-wrap">
-              {selS && selE && days > 0 && unitVndPricePerDay > 0 && (
+              {selS && selE && days > 0 && totalVnd > 0 && (
                 <>
                   {totalLabel}{" "}
                   <span className="font-bold text-[#111]">{formatVnd(totalVnd)} =</span>
