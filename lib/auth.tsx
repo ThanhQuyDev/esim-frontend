@@ -9,6 +9,7 @@ import {
   useRef,
   type ReactNode,
 } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { getCart, clearCart } from "@/lib/cart";
 
 const API_BASE_URL =
@@ -159,6 +160,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const logoutRef = useRef<() => void>(() => {});
+  const queryClient = useQueryClient();
 
   // Hydrate from localStorage on mount
   useEffect(() => {
@@ -180,44 +182,62 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await apiSendOtp(email);
   }, []);
 
-  const verifyOtp = useCallback(async (email: string, otp: string) => {
-    const result = await apiVerifyOtp(email, otp);
-    setToken(result.token);
-    setUser(result.user);
-    persistAuth(result.token, result.user);
+  const verifyOtp = useCallback(
+    async (email: string, otp: string) => {
+      const result = await apiVerifyOtp(email, otp);
+      setToken(result.token);
+      setUser(result.user);
+      persistAuth(result.token, result.user);
 
-    // Sync localStorage cart → API cart after login
-    try {
-      const localCart = getCart();
-      if (localCart.items.length > 0) {
-        await Promise.all(
-          localCart.items.map((item) =>
-            fetch(`${API_BASE_URL}/api/v1/carts`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${result.token}`,
-              },
-              body: JSON.stringify({
-                planId: Number(item.id),
-                quantity: item.quantity,
-              }),
-            })
-          )
-        );
-        // Clear localStorage cart after successful sync
-        clearCart();
+      // Sync localStorage cart → API cart after login.
+      // IMPORTANT: this must run to completion BEFORE we invalidate the
+      // `["cart", "api"]` React Query cache. Otherwise the query would
+      // refetch an empty cart (because `setToken` already flipped
+      // `isLoggedIn` to true and kicked off a fetch against an empty
+      // server cart), and the UI would show an empty cart until a manual
+      // page reload. See https://... (cart-empty-after-login bug).
+      try {
+        const localCart = getCart();
+        if (localCart.items.length > 0) {
+          await Promise.all(
+            localCart.items.map((item) =>
+              fetch(`${API_BASE_URL}/api/v1/carts`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${result.token}`,
+                },
+                body: JSON.stringify({
+                  planId: Number(item.id),
+                  quantity: item.quantity,
+                }),
+              })
+            )
+          );
+          // Clear localStorage cart after successful sync
+          clearCart();
+        }
+      } catch {
+        // Sync failed silently — user can still use the app
+      } finally {
+        // Force React Query to refetch the API cart now that the sync has
+        // finished (or there was nothing to sync). This ensures the cart
+        // UI picks up the freshly-populated server cart without needing a
+        // manual F5.
+        queryClient.invalidateQueries({ queryKey: ["cart", "api"] });
       }
-    } catch {
-      // Sync failed silently — user can still use the app
-    }
-  }, []);
+    },
+    [queryClient]
+  );
 
   const logout = useCallback(() => {
     setToken(null);
     setUser(null);
     clearPersistedAuth();
-  }, []);
+    // Clear the API cart cache so a different user logging in won't see
+    // the previous user's cart data.
+    queryClient.removeQueries({ queryKey: ["cart", "api"] });
+  }, [queryClient]);
 
   // Keep logoutRef in sync so authFetch can always call the latest logout
   logoutRef.current = logout;
