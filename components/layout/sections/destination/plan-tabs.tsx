@@ -222,7 +222,7 @@ function UnlimitedPill({
         <span className={`text-[.875rem] font-semibold leading-tight ${isSelected ? "text-[#111]" : "text-[#374151]"}`}>
           {mainLabel}
         </span>
-        <span className={`text-sm leading-tight transition-colors ${isSelected ? "text-[#374151]" : "text-[#6b7280]"}`}>
+        <span className={`text-[.8125rem] leading-tight transition-colors ${isSelected ? "text-[#374151]" : "text-[#6b7280]"}`}>
           {hintLabel}
         </span>
       </span>

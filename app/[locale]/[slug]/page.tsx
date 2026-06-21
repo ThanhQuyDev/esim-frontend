@@ -241,7 +241,7 @@ export default async function UnifiedSlugPage({
         planSource="region"
         initialRegion={region}
       />
-      <div className="max-w-[1168px] mx-auto px-6">
+      <div className="max-w-[1168px] mx-auto px-4 sm:px-0">
         <LazyHowItWorksSection dict={dict.howItWorks} />
         <LazyFeaturesSection
           dict={dict.whyChoose}

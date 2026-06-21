@@ -36,12 +36,12 @@ export function CalendarPicker({
   // Two-step selection: start date then end date
   const [step, setStep] = useState<SelectionStep>("start");
   const [startDate, setStartDate] = useState<Date>(today);
-  const [endDate, setEndDate] = useState<Date>(() => addDays(today, days));
+  const [endDate, setEndDate] = useState<Date>(() => addDays(today, Math.max(days - 1, 0)));
 
   // Sync when days prop changes externally (quick day pills)
   useEffect(() => {
     setStartDate(today);
-    setEndDate(addDays(today, days));
+    setEndDate(addDays(today, Math.max(days - 1, 0)));
   }, [days, today]);
 
   // Reset step when popover opens
@@ -64,7 +64,7 @@ export function CalendarPicker({
       // Selecting start date
       setStartDate(selected);
       // Reset end date to start + current days
-      setEndDate(addDays(selected, days));
+      setEndDate(addDays(selected, Math.max(days - 1, 0)));
       setStep("end");
     } else {
       // Selecting end date — must be after start date
@@ -75,14 +75,16 @@ export function CalendarPicker({
   };
 
   const handleConfirm = () => {
-    const diff = differenceInDays(endDate, startDate);
+    // Inclusive day count: Jun 1 → Jun 2 = 2 days (both days are covered)
+    const diff = differenceInDays(endDate, startDate) + 1;
     if (diff > 0) {
       onDaysChange(diff);
     }
     setOpen(false);
   };
 
-  const selectedDays = differenceInDays(endDate, startDate);
+  // Inclusive day count: start and end dates both count as usage days
+  const selectedDays = differenceInDays(endDate, startDate) + 1;
 
   const formatDate = (date: Date) => date.toLocaleDateString(lang);
   const rangeText = `${formatDate(startDate)} → ${formatDate(endDate)} (${selectedDays} ${dict.daysUnit.toLowerCase()})`;

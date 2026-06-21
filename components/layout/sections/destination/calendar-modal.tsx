@@ -176,7 +176,8 @@ export function CalendarModal({
   const days = useMemo(() => {
     if (!selS || !selE) return 0;
     const ms = selE.getTime() - selS.getTime();
-    return Math.max(1, Math.round(ms / 86_400_000));
+    // Inclusive day count: Jun 1 → Jun 2 = 2 days (both days are covered)
+    return Math.max(1, Math.round(ms / 86_400_000) + 1);
   }, [selS, selE]);
 
   const monthNames = lang === "en" ? EN_MONTH_NAMES : VI_MONTH_NAMES;

@@ -182,6 +182,43 @@ export interface PlansByDestinationResponse {
   localEsim?: Plan[];
 }
 
+/**
+ * Normalize a raw plans-by-destination payload into the canonical
+ * `PlansByDestinationResponse` shape.
+ *
+ * Some backend versions return the SMS/Call list under a differently-cased
+ * key (`SmsCallEsim` instead of `smsCallEsim`). Without this, the SMS/Call
+ * category tab never renders because `plans.smsCallEsim` stays `undefined`.
+ * This maps any casing variant back to `smsCallEsim`.
+ */
+export function normalizePlansByDestination(
+  raw: PlansByDestinationResponse | Record<string, unknown> | null | undefined
+): PlansByDestinationResponse {
+  const EMPTY: PlansByDestinationResponse = {
+    dataPlans: [],
+    slowUnlimited: [],
+    fastUnlimited: [],
+    dailyUnlimited: [],
+    smsCallEsim: [],
+    localEsim: [],
+  };
+  if (!raw || typeof raw !== "object") return EMPTY;
+
+  const r = raw as Record<string, unknown>;
+  const dataPlans = Array.isArray(r.dataPlans) ? (r.dataPlans as Plan[]) : [];
+  const slowUnlimited = Array.isArray(r.slowUnlimited) ? (r.slowUnlimited as Plan[]) : [];
+  const fastUnlimited = Array.isArray(r.fastUnlimited) ? (r.fastUnlimited as Plan[]) : [];
+  const dailyUnlimited = Array.isArray(r.dailyUnlimited) ? (r.dailyUnlimited as Plan[]) : [];
+  const localEsim = Array.isArray(r.localEsim) ? (r.localEsim as Plan[]) : [];
+
+  // Accept the SMS/Call list under any common casing of "smsCallEsim".
+  const smsCallRaw =
+    r.smsCallEsim ?? r.SmsCallEsim ?? r.SMSCallEsim ?? r.smscallesim ?? null;
+  const smsCallEsim = Array.isArray(smsCallRaw) ? (smsCallRaw as Plan[]) : [];
+
+  return { dataPlans, slowUnlimited, fastUnlimited, dailyUnlimited, smsCallEsim, localEsim };
+}
+
 export interface PaginatedResponse<T> {
   data: T[];
   hasNextPage: boolean;
@@ -666,17 +703,20 @@ export async function getPlansByDestination(
 /**
  * Server-side: fetch categorized plans by destination slug.
  * Returns the same shape as the client-side usePlansBySlug hook.
+ * The raw payload is normalized (e.g. `SmsCallEsim` → `smsCallEsim`) so the
+ * SMS/Call category tab renders when the backend returns such plans.
  */
 export async function getPlansByDestinationSlug(
   slug: string,
   lang?: string
 ): Promise<PlansByDestinationResponse | null> {
   try {
-    return await apiFetch<PlansByDestinationResponse>(
+    const raw = await apiFetch<PlansByDestinationResponse>(
       `/api/v1/plans/by-destination/${encodeURIComponent(slug)}`,
       { lang },
       300
     );
+    return normalizePlansByDestination(raw);
   } catch {
     return null;
   }
@@ -685,17 +725,20 @@ export async function getPlansByDestinationSlug(
 /**
  * Server-side: fetch categorized plans by region slug.
  * Returns the same shape as the client-side usePlansByRegionSlug hook.
+ * The raw payload is normalized (e.g. `SmsCallEsim` → `smsCallEsim`) so the
+ * SMS/Call category tab renders when the backend returns such plans.
  */
 export async function getPlansByRegionSlug(
   slug: string,
   lang?: string
 ): Promise<PlansByDestinationResponse | null> {
   try {
-    return await apiFetch<PlansByDestinationResponse>(
+    const raw = await apiFetch<PlansByDestinationResponse>(
       `/api/v1/plans/by-region/${encodeURIComponent(slug)}`,
       { lang },
       300
     );
+    return normalizePlansByDestination(raw);
   } catch {
     return null;
   }

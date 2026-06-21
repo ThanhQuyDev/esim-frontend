@@ -113,7 +113,7 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
                 data-testid="search-input"
                 placeholder={t.subtitle || "Where are you travelling to?"}
                 autoComplete="off"
-                className="body-sm max-lg:body-md bg-bg-secondary outline-hidden appearance-none w-full leading-md py-[12.5px] pl-4 pr-12 text-text-primary placeholder-text-tertiary focus:border border-border-primary active:border-border-focus focus:border-border-focus transition-colors rounded-full focus-visible:outline-none focus:bg-white cursor-pointer"
+                className="body-sm max-lg:body-md bg-bg-secondary outline-hidden appearance-none w-full leading-md py-[12.5px] pl-4 pr-12 text-text-primary placeholder-text-tertiary border border-transparent focus:border-border-focus  active:border-border-focus transition-colors rounded-full focus-visible:outline-none focus:bg-white cursor-pointer"
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
