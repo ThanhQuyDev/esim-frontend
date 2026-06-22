@@ -142,51 +142,65 @@ export async function FooterSection({
 
         {/* Bottom Footer - Layout 2.3: Restructured copyright, policies, payment */}
         <div className="border-t border-border-primary pt-6">
-          <div className="flex flex-col-reverse md:flex-row flex-wrap-reverse justify-between gap-8">
-            <p className="body-xs flex flex-wrap gap-6 items-start sm:items-center font-normal scroll-mt-20 xl:scroll-mt-24">
-              <span className="font-normal text-text-tertiary">
-                © 2026 esim.vn. All rights reserved.
-              </span>
-              <span className="font-normal text-text-tertiary">
-                {lang === "vi"
-                  ? "Chịu trách nhiệm nội dung: Nguyễn Đức Thọ"
-                  : "Content responsibility: Nguyen Duc Tho"}
-              </span>
-              <span className="flex flex-wrap gap-6 items-center">
-                {LEGAL_POLICIES.map((policy) => (
-                  <Link
-                    key={policy.slug}
-                    className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus hover:underline inline-block text-text-tertiary"
-                    data-ga-slug={policy.navLabel.en}
-                    href={getPolicyHref(policy, lang ?? "vi")}
-                  >
-                    {policy.navLabel[lang ?? "vi"]}
-                  </Link>
-                ))}
-              </span>
-            </p>
-            <div>
-              <div className="h-full w-full flex group/stack [&>div:empty]:hidden flex-row gap-x-3">
-                {paymentIcons.map((payment) => (
-                  <div key={payment.name}>
-                    <div>
-                      <picture>
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          alt={payment.name.toLowerCase()}
-                          loading="lazy"
-                          width={payment.width}
-                          height={24}
-                          src={payment.src}
-                          style={{ color: "transparent" }}
-                        />
-                      </picture>
-                    </div>
+          <div className="flex flex-col-reverse md:flex-row flex-wrap justify-between items-center gap-6 pb-6 mb-6 border-b border-border-primary">
+            <div className="flex group/stack [&>div:empty]:hidden flex-row flex-wrap items-center gap-x-3 gap-y-3">
+              {paymentIcons.map((payment) => (
+                <div key={payment.name}>
+                  <div>
+                    <picture>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        alt={payment.name.toLowerCase()}
+                        loading="lazy"
+                        width={payment.width}
+                        height={24}
+                        src={payment.src}
+                        style={{ color: "transparent" }}
+                      />
+                    </picture>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
+            <a
+              href="http://online.gov.vn/Home/WebDetails/115435"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062664/bo-cong-thuong_yp0n0u.svg"
+                alt="Đã thông báo Bộ Công Thương"
+                width={150}
+                height={57}
+                loading="lazy"
+                style={{ color: "transparent" }}
+              />
+            </a>
           </div>
+          <p className="body-xs flex flex-wrap gap-6 items-start sm:items-center font-normal scroll-mt-20 xl:scroll-mt-24">
+            <span className="font-normal text-text-tertiary">
+              © 2026 esim.vn. All rights reserved.
+            </span>
+            <span className="font-normal text-text-tertiary">
+              {lang === "vi"
+                ? "Chịu trách nhiệm nội dung: Nguyễn Đức Thọ"
+                : "Content responsibility: Nguyen Duc Tho"}
+            </span>
+            <span className="flex flex-wrap gap-6 items-center">
+              {LEGAL_POLICIES.map((policy) => (
+                <Link
+                  key={policy.slug}
+                  className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus hover:underline inline-block text-text-tertiary"
+                  data-ga-slug={policy.navLabel.en}
+                  href={getPolicyHref(policy, lang ?? "vi")}
+                >
+                  {policy.navLabel[lang ?? "vi"]}
+                </Link>
+              ))}
+            </span>
+          </p>
         </div>
       </div>
     </footer>

@@ -106,11 +106,11 @@ export function MobilePrice({
 
       {/* Green Box (Perks) */}
       <div className="mx-4 my-3.5 bg-[#f0fdf4] border border-[#bbf7d0] rounded-xl px-3.5 py-[13px] flex flex-col gap-[9px]">
-        <div className="flex items-start gap-[9px] text-sm text-[#166534] leading-normal">
+        <div className="flex items-start gap-[9px] text-xs sm:text-sm text-[#166534] leading-normal">
           <GreenCheck />
           <span dangerouslySetInnerHTML={{ __html: greenBoxLine1 }} />
         </div>
-        <div className="flex items-start gap-[9px] text-sm text-[#166534] leading-normal">
+        <div className="flex items-start gap-[9px] text-xs sm:text-sm text-[#166534] leading-normal">
           <GreenCheck />
           <span>{dict.greenBox.line3}</span>
         </div>

@@ -8,13 +8,13 @@ const speakers = [
   {
     name: "Duc Tho — Senior Global Director",
     bio: "Duc Tho is the Senior Global Director at esim.vn. He is constantly working to make esim.vn the leading travel eSIM provider today. He conducts in-depth research to understand what travelers truly want, then turns those insights into intuitive, user-friendly features — all while seeking out new partners to expand esim.vn's distribution network worldwide.",
-    image: "https://sb.nordcdn.com/m/fa0fc58be0da722c/original/press-area-headshot-vykintas-V2.png",
+    image: "https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062665/press-area-headshot-duc-tho_kgjzp8.png",
     alt: "esim.vn's Senior Global Director, Duc Tho, smiling for a photo.",
   },
   {
     name: "Lai Ha — CEO",
     bio: "Lai Ha is the CEO of esim.vn, a platform dedicated to travel eSIMs designed to keep you seamlessly connected on every trip. After more than 10 years working at a leading telecommunications company in Vietnam, she now channels her expertise in telecom and internet connectivity — paired with her own real-world travel experience — into a single mission: delivering global connectivity that's affordable, secure, and easy to use.",
-    image: "https://sb.nordcdn.com/m/5d8ecfb2b970b513/original/press-area-headshot-matas-V2.png",
+    image: "https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062667/press-area-headshot-lai-ha_eoowig.png",
     alt: "esim.vn's CEO, Lai Ha, smiling for a photo.",
   },
 ];
