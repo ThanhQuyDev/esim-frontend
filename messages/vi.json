@@ -36,7 +36,7 @@
     "title": "eSIM là gì?",
     "descriptionBefore": "",
     "linkText": "eSIM",
-    "descriptionAfter": " là SIM kỹ thuật số cho phép bạn chuyển đổi nhà mạng và sử dụng nhiều gói cước di động mà không cần đổi thẻ. Hầu hết điện thoại mới đều hỗ trợ eSIM, và việc cài đặt chỉ mất vài thao tác.",
+    "descriptionAfter": " là một loại SIM điện tử có chiều dài và chiều rộng dưới 5mm được hàn vào bảng mạch của điện thoại. Cho phép bạn chuyển đổi nhà mạng và sử dụng nhiều gói cước di động mà không cần đổi thẻ SIM vật lý. Hầu hết điện thoại mới đều hỗ trợ eSIM, và việc cài đặt chỉ mất vài thao tác.",
     "imageAlt": "Thẻ eSIM với gói dữ liệu đang hoạt động."
   },
   "destinations": {
@@ -82,7 +82,7 @@
       {
         "icon": "circle-check",
         "title": "Dễ sử dụng",
-        "description": "Chỉ cần [tải ứng dụng esim.vn](/vi/what-is-esim), cài đặt eSIM và mua gói dữ liệu — nó sẽ tự động kích hoạt khi bạn đến điểm đến."
+        "description": "Chỉ cần [tải ứng dụng esim.vn](/esim-la-gi), cài đặt eSIM và mua gói dữ liệu — nó sẽ tự động kích hoạt khi bạn đến điểm đến."
       },
       {
         "icon": "ballot-check",
@@ -102,7 +102,7 @@
       {
         "icon": "earth",
         "title": "Gói toàn cầu và khu vực",
-        "description": "Luôn trực tuyến mọi nơi bạn đến — nhận [gói dữ liệu eSIM Toàn cầu](https://saily.com/esim-global/) hoặc [gói dữ liệu eSIM cho Châu Âu](https://saily.com/esim-europe/) để khám phá toàn bộ khu vực."
+        "description": "Luôn trực tuyến mọi nơi bạn đến — nhận gói dữ liệu eSIM Toàn cầu hoặc gói dữ liệu eSIM cho Châu Âu/Châu Á để khám phá toàn bộ khu vực."
       }
     ]
   },
@@ -149,7 +149,7 @@
       {
         "number": "3",
         "title": "Tận hưởng kết nối liền mạch trong suốt chuyến đi!",
-        "description": "Gói cước của bạn sẽ tự động kích hoạt khi bạn đến điểm đến hoặc 180 ngày sau khi mua.",
+        "description": "Gói cước của bạn sẽ tự động kích hoạt khi bạn đến điểm đến hoặc 30 ngày sau khi mua.",
         "imageAlt": "Bước 3 cài đặt eSIM: Gói của bạn sẽ tự động kích hoạt tại điểm đến."
       }
     ]
@@ -179,41 +179,41 @@
       {
         "source": "Lonely Planet",
         "type": "featured",
-        "text": "esim.vn là dịch vụ eSIM giá cả phải chăng, dễ sử dụng và bền vững, mang lại kết nối di động và internet đáng tin cậy từ bất kỳ đâu trên thế giới. Đó là lý do chúng tôi giới thiệu esim.vn là đối tác eSIM của mình."
+        "text": "esim.vn là website cung cấp eSIM du lịch giá rẻ, dễ sử dụng và được hỗ trợ suốt chuyến đi, mang lại kết nối internet tốc độ cao và tin cậy ở mọi quốc gia trên thế giới. Đó là lý do chúng tôi giới thiệu esim.vn là đối tác eSIM quốc tế của mình."
       },
       {
-        "name": "Jorge A.",
+        "name": "Jone",
         "source": "Trustpilot",
         "rating": 5,
-        "text": "Dễ dàng, rẻ và nhanh. Cài đặt từng bước dễ dàng và xử lý sự cố, tốc độ siêu nhanh (khoảng 100 mbps). Rẻ, phủ sóng tốt và hỗ trợ chat hữu ích. Tiếp tục phát huy."
+        "text": "Dễ sử dụng, giá rẻ và tốc độ rất nhanh. Các bước cài đặt rõ ràng, dễ làm theo, tốc độ mạng đạt khoảng 100 Mbps - nhanh hơn tôi nghĩ. Phủ sóng ổn định, đội ngũ hỗ trợ qua chat phản hồi nhanh và hữu ích. Sẽ tiếp tục sử dụng."
       },
       {
-        "name": "PewDiePie",
+        "name": "Mr.Hello",
         "source": "YouTube",
         "avatar": true,
-        "text": "Tôi có thể cài đặt ngay tại nhà, kích hoạt khi sẵn sàng (chỉ mất vài phút, tôi đã thử rồi), và bùm! Tôi có internet trên điện thoại khi đi du lịch, đúng như nó phải vậy… Vì vậy tôi khuyên bạn nên thử esim.vn lần tới khi đi du lịch — không thể thiếu!"
+        "text": "Kết nối internet ổn định và đáng tin cậy mỗi khi tôi ở nước ngoài. Giá hợp lý, thao tác sử dụng đơn giản. Đội ngũ hỗ trợ cũng rất nhiệt tình mỗi khi tôi cần giải đáp thắc mắc. Giờ đi đâu tôi cũng dùng eSIM của esim.vn ☺️"
       },
       {
-        "name": "DutchPilotGirl",
+        "name": "Lai Ha",
         "source": "YouTube",
         "avatar": true,
-        "text": "Có rất nhiều thứ bạn không thể làm ở nước ngoài mà không có kết nối internet tốt. esim.vn lo liệu mọi thứ. Đơn giản để mua và dễ cài đặt. Tôi yêu nó."
+        "text": "Giao diện website dễ dùng, giúp tôi nhanh chóng tìm được gói data phù hợp với chuyến đi của mình. Đặt eSIM online rất tiện - dù đang ở đâu hay sắp đến quốc gia nào, tôi cũng có thể mua trước được."
       },
       {
-        "name": "Domas R.",
+        "name": "Katom",
         "source": "Trustpilot",
         "rating": 5,
-        "text": "Tuyệt vời — đã dùng esim.vn ở 3 quốc gia rồi (Anh, Hà Lan và Bỉ). Chỉ mất khoảng 1 phút để mua esim và kích hoạt. Internet của tôi tốt hơn nhiều so với bạn bè vẫn kết nối với nhà mạng địa phương và dùng gói roaming."
+        "text": "Sử dụng rất dễ dàng. Tôi đã kích hoạt eSIM và sử dụng gói cước internet ngay khi hạ cánh tại thủ đô Bangkok. Trong khi những hành khách đi cùng chuyến bay với tôi phải nhanh chóng tìm đến các quầy bán thẻ sim tại sân bay đông đúc và ngột ngạt."
       },
       {
         "source": "CyberNews",
         "type": "press",
-        "text": "Với phủ sóng toàn diện và giá cả phải chăng, esim.vn là eSIM tốt nhất cho châu Âu. Kích hoạt esim.vn rất đơn giản. Tải ứng dụng, chọn gói và lướt internet. Bạn có thể liên hệ đội hỗ trợ khách hàng esim.vn qua chat trực tiếp hoặc email nếu gặp vấn đề."
+        "text": "Phủ sóng toàn diện, giá cả phải chăng - với tôi đây là lựa chọn eSIM tốt nhất khi đi châu Á. Kích hoạt cũng rất đơn giản: truy cập website esim.vn, chọn gói, kết nối mạng là dùng được ngay. Nếu có vấn đề gì, đội hỗ trợ luôn sẵn sàng qua chat hoặc email."
       },
       {
         "source": "TechRadar",
         "type": "press",
-        "text": "Là sản phẩm được hỗ trợ bởi thương hiệu NordVPN uy tín, esim.vn được hưởng lợi từ sự tập trung của công ty vào bảo mật và quyền riêng tư. Người dùng khen ngợi quy trình cài đặt dễ dàng, giá cả phải chăng và phủ sóng đáng tin cậy trên toàn thế giới."
+        "text": "esim.vn mang đến trải nghiệm liền mạch cho mọi chuyến đi. Qua quá trình sử dụng thực tế, phần lớn khách hàng đều ghi nhận các điểm nổi bật: cài đặt nhanh gọn, không rườm rà; mức giá rẻ hơn nhiều so với roaming truyền thống; giúp các du khách kết nối internet và di động ổn định tại hơn 200 quốc gia trên thế giới."
       }
     ]
   },
@@ -242,7 +242,7 @@
       },
       {
         "question": "Ứng dụng esim.vn có đáng tin không?",
-        "answer": "Có, ứng dụng esim.vn hoàn toàn đáng tin! Được xây dựng bởi công ty đứng sau NordVPN (Nord Security), cung cấp mọi thứ bạn cần trong một ứng dụng — bảo mật vững chắc, kích hoạt dễ dàng và giao diện trực quan. Với gói dữ liệu tại 200+ điểm đến, esim.vn là lựa chọn tuyệt vời cho du khách!"
+        "answer": "Có, ứng dụng esim.vn hoàn toàn đáng tin! Được xây dựng bởi Công ty TNHH Viễn thông ESIM (ESIMVN), cung cấp mọi thứ bạn cần trong một ứng dụng — bảo mật vững chắc, kích hoạt dễ dàng và giao diện trực quan. Với gói dữ liệu tại 200+ điểm đến, esim.vn là lựa chọn tuyệt vời cho du khách!"
       },
       {
         "question": "Ứng dụng esim.vn có gói eSIM giá rẻ không?",
@@ -253,28 +253,16 @@
         "answer": "Có, esim.vn hoạt động tại Hoa Kỳ. Dù bạn đang tìm eSIM cho Mỹ hay Châu Âu, bạn đã đến đúng nơi!"
       },
       {
-        "question": "esim.vn có tốt hơn Airalo không?",
-        "answer": "esim.vn và Airalo đều là lựa chọn tốt về tốc độ và hiệu suất. Tuy nhiên, nếu bạn muốn chia sẻ dữ liệu với các thiết bị khác, esim.vn tiện lợi hơn một chút. Hãy xem bài so sánh esim.vn vs. Airalo để tìm hiểu thêm!"
-      },
-      {
         "question": "Tôi có thể mua eSIM để du lịch không?",
         "answer": "Có, bạn hoàn toàn có thể mua eSIM để du lịch! Cách dễ nhất là tải ứng dụng eSIM từ App Store hoặc Google Play rồi mua gói dữ liệu eSIM qua ứng dụng. Chọn gói chỉ dữ liệu nếu bạn muốn giữ số điện thoại thường hoạt động khi đi xa."
-      },
-      {
-        "question": "Câu chuyện đằng sau cái tên esim.vn là gì?",
-        "answer": "esim.vn bắt nguồn từ từ \"sail\" (căng buồm) — chúng tôi muốn một cái tên gợi lên sự chuyển động, tự do và khám phá thế giới! esim.vn tò mò, năng động, dũng cảm, hòa nhập, vui vẻ và luôn sẵn sàng cho điều mới. Nếu là một người, esim.vn sẽ luôn di chuyển, gặp gỡ mọi người, theo đuổi phiêu lưu và giữ kết nối!"
-      },
-      {
-        "question": "Ai sở hữu dịch vụ esim.vn?",
-        "answer": "Nord Security, thương hiệu bảo mật và quyền riêng tư kỹ thuật số toàn cầu, sở hữu dịch vụ esim.vn. Đây cũng là công ty đứng sau các công cụ như NordVPN và NordPass, được hàng triệu người trên thế giới tin dùng."
       }
     ]
   },
   "referFriend": {
-    "title": "Giới thiệu bạn bè, cả hai cùng nhận 10.000đ!",
+    "title": "Giới thiệu bạn bè, để cả hai cùng nhận 10.000đ!",
     "description": "Mời bạn bè mua esim du lịch từ esim.vn để bạn nhận ngay 10.000đ trong khi họ cũng được giảm giá 10.000đ!",
     "cta": "Tìm hiểu thêm",
-    "imageAlt": "Một nhóm người vui vẻ nhận tín dụng US$5 từ esim.vn sau khi giới thiệu bạn bè."
+    "imageAlt": "Một nhóm người vui mừng khi nhận thưởng 10.000đ từ esim.vn sau khi giới thiệu bạn bè."
   },
   "blog": {
     "badge": "Blog",
@@ -314,7 +302,7 @@
     "ctaPrimary": "Tải esim.vn",
     "ctaSecondary": "Tải ứng dụng",
     "trustRating": "4.7/5 trên Trustpilot",
-    "trustBrand": "Bởi nhà sáng tạo NordVPN"
+    "trustBrand": "Bởi nhà sáng tạo ESIMVN"
   },
   "pricing": {
     "badge": "Bảng giá",
@@ -862,17 +850,17 @@
       "subtitle": "Tìm hiểu về những người đứng sau esim.vn và tầm nhìn của họ về kết nối di động dễ dàng hơn.",
       "members": [
         {
-          "name": "Vykintas Maknickas",
-          "role": "CEO tại esim.vn",
+          "name": "Đức Thọ",
+          "role": "Quản lý cấp cao toàn cầu tại esim.vn",
           "quote": "esim.vn bắt đầu với một ý tưởng đơn giản — kết nối di động dễ dàng, giá cả phải chăng và số hóa. Chúng tôi đang xây dựng trải nghiệm tốt hơn cho thế hệ du khách tiếp theo và bỏ lại những cách cũ."
         },
         {
-          "name": "Matas Čenys",
-          "role": "Trưởng bộ phận sản phẩm tại esim.vn",
+          "name": "Lại Hà",
+          "role": "CEO tại esim.vn",
           "quote": "Du khách là trung tâm của mọi thứ chúng tôi làm tại esim.vn. Đó là lý do mọi đội đều đang làm việc để kết nối du lịch thông minh và mượt mà hơn. Chúng tôi di chuyển nhanh và luôn tò mò để mang đến trải nghiệm tốt nhất có thể."
         },
         {
-          "name": "Neringa Kondrašovė",
+          "name": "Dũng",
           "role": "Quản lý dự án marketing tại esim.vn",
           "quote": "Điều tôi yêu thích nhất về esim.vn là tác động hàng ngày mà chúng tôi tạo ra. Chúng tôi đang giải quyết vấn đề thực cho người thực, và chúng tôi làm điều đó với một đội ngũ thực sự quan tâm đến trải nghiệm mà chúng tôi tạo ra."
         }
@@ -1279,12 +1267,12 @@
   },
   "couponPage": {
     "hero": {
-      "activeDate": "Có hiệu lực từ tháng 4 năm 2026",
+      "activeDate": "Có hiệu lực từ tháng 6 năm 2026",
       "title": "Mã giảm giá esim.vn",
       "description": "Sử dụng mã giảm giá của chúng tôi khi thanh toán để được giảm giá cho gói esim.vn.",
       "cta": "Lấy mã",
       "copied": "Đã sao chép!",
-      "couponCode": "Saily5",
+      "couponCode": "ESIMVN",
       "imageAlt": "Người phụ nữ mỉm cười áp dụng mã giảm giá esim.vn trong ứng dụng để được giảm giá cho gói eSIM."
     },
     "howToUse": {

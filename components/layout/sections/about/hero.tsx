@@ -11,8 +11,8 @@ const heroImages = [
     className: "w-[498px] lg:w-[454px] h-[300px] order-2 lg:order-1 hidden md:block",
   },
   {
-    src: "https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062657/about-us-hero-2_xxagny.webp",
-    alt: "Vykintas Maknickas, esim.vn CEO, speaking at an event.",
+    src: "https://sb.nordcdn.com/m/7ac8fe62dbb6b416/original/about-us-hero-2.png",
+    alt: "Mr.Duc Tho, Senior Global Director, speaking at an event.",
     className: "w-[214px] h-[300px] order-3 hidden md:block",
   },
   {
