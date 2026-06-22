@@ -167,8 +167,8 @@ export function ProductCard({
           )}
         </div>
 
-        {/* Body — overlaps image (matches `.pic-body` from HTML) */}
         <div className="bg-white rounded-t-[18px] -mt-7 relative z-[2] px-[18px] pt-5 pb-4">
+        {/* Body — overlaps image (matches `.pic-body` from HTML) */}
           {/* Title row with flag/icon */}
           <div className="flex items-center gap-2.5 mb-2">
             {(region?.iconUrl || destination.flagUrl) ? (

@@ -86,6 +86,7 @@ export function MobileDestinationPlans({
           destination={resolvedDestination}
           dict={dict}
           lang={lang}
+          planSource={planSource}
           region={region}
           operatorName={selectedPlan?.operatorName}
         />

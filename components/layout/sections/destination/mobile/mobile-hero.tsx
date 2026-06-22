@@ -11,6 +11,7 @@ interface MobileHeroProps {
   destination: Destination;
   dict: DestinationDict;
   lang: string;
+  planSource?: "destination" | "region";
   region?: Region | null;
   /** Operator name to seed the countries modal carrier column. */
   operatorName?: string;
@@ -25,7 +26,7 @@ function flagEmoji(countryCode?: string): string {
   return String.fromCodePoint(...codePoints);
 }
 
-export function MobileHero({ destination, dict, lang, region, operatorName }: MobileHeroProps) {
+export function MobileHero({ destination, dict, lang, planSource = "destination", region, operatorName }: MobileHeroProps) {
   const [countriesOpen, setCountriesOpen] = useState(false);
   const heroSrc = getCloudinaryTransformedUrl(destination.avatarUrl, {
     width: 820,
@@ -99,7 +100,7 @@ export function MobileHero({ destination, dict, lang, region, operatorName }: Mo
           <div className="flex items-center gap-[11px] min-w-0">
             {(region?.iconUrl || destination.flagUrl) ? (
               <div className="w-[30px] h-[30px] rounded-full overflow-hidden shrink-0 border">
-                <Image src={region?.iconUrl ? region.iconUrl : (destination.flagUrl || region?.iconUrl || "")} alt={destination.name} width={30} height={30} className="w-full h-full object-cover" />
+                <Image src={(planSource === "region" && region?.iconUrl) ? region.iconUrl : (destination.flagUrl || region?.iconUrl || "")} alt={destination.name} width={30} height={30} className="w-full h-full object-cover" />
               </div>
             ) : (
               <div className="w-[30px] h-[30px] bg-[#fff500] rounded-full flex items-center justify-center shrink-0">

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import type { Destination } from "@/lib/api";
+import type { Destination, Region } from "@/lib/api";
 import { getCloudinaryTransformedUrl } from "@/lib/image-utils";
 import type { DestinationDict } from "./types";
 
@@ -9,9 +9,11 @@ interface ProductHeroProps {
   destination: Destination;
   dict: DestinationDict;
   lang: string;
+  planSource?: "destination" | "region";
+  region?: Region | null;
 }
 
-export function ProductHero({ destination, dict, lang }: ProductHeroProps) {
+export function ProductHero({ destination, dict, lang, planSource = "destination", region }: ProductHeroProps) {
   const heroSrc = getCloudinaryTransformedUrl(destination.avatarUrl, {
     width: 520,
     height: 260,
@@ -56,9 +58,9 @@ export function ProductHero({ destination, dict, lang }: ProductHeroProps) {
       <div className="bg-white rounded-t-[18px] -mt-7 relative z-[2] px-[18px] pt-5 pb-4">
         {/* Title row with globe icon */}
         <div className="flex items-center gap-2.5 mb-2">
-          {destination.flagUrl ? (
+          {(region?.iconUrl || destination.flagUrl) ? (
             <div className="w-[30px] h-[30px] rounded-full overflow-hidden shrink-0 border">
-              <Image src={destination.flagUrl} alt={destination.name} width={30} height={30} className="w-full h-full object-cover" />
+              <Image src={(planSource === "region" && region?.iconUrl) ? region.iconUrl : (destination.flagUrl || region?.iconUrl || "")} alt={destination.name} width={30} height={30} className="w-full h-full object-cover" />
             </div>
           ) : (
             <div className="w-[30px] h-[30px] bg-[#fff500] rounded-full flex items-center justify-center shrink-0">
