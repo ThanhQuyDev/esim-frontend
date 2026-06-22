@@ -13,7 +13,7 @@ interface HeroSectionProps {
 }
 
 const HERO_IMAGE_URL =
-  "https://sb.nordcdn.com/m/452d4cc162d39d45/original/sf-homepage-hero-asset.png";
+  "https://res.cloudinary.com/deqfcfcwf/image/upload/v1782060650/hero-banner_rlrfwc.png";
 
 interface HeroImageProps {
   apiImageUrl: string | null;

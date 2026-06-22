@@ -107,7 +107,7 @@ export function ReferHero({ dict }: ReferHeroProps) {
                       width={555}
                       height={555}
                       decoding="async"
-                      src="https://sb.nordcdn.com/asset/f516430e-8144-4f46-b7cd-c9a0358ea6f1/referral-program-hero-asset.png"
+                      src="https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062668/referral-program-hero-asset_uaogul.png"
                       style={{ color: "transparent" }}
                     />
                   </div>

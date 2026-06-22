@@ -34,7 +34,7 @@ export function EsimHero({ dict, lang }: EsimHeroProps) {
                   width={600}
                   height={600}
                   className="w-full rounded-lg"
-                  src="https://sb.nordcdn.com/m/79249764050ec4c1/original/hero-what-is-esim-woman-sky-phone.png"
+                  src="https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062664/hero-what-is-esim_c8y0bh.webp"
                 />
               </div>
             </div>

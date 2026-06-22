@@ -8,13 +8,13 @@ const speakers = [
   {
     name: "Vykintas Maknickas — CEO",
     bio: "Vykintas is the CEO of esim.vn, a travel eSIM app built to keep you connected on every trip. After seven years at Nord Security, he's channeling his cybersecurity expertise and real travel experiences into one mission: making global connectivity affordable, safe, and stress free.",
-    image: "https://sb.nordcdn.com/m/fa0fc58be0da722c/original/press-area-headshot-vykintas-V2.png",
+    image: "https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062665/press-area-headshot-duc-tho_kgjzp8.png",
     alt: "esim.vn's CEO, Vykintas, smiling for a photo.",
   },
   {
     name: "Matas Čenys — Head of product",
     bio: "Matas is all about making esim.vn the best travel app out there. He digs deep to understand what travelers really want and turns insights into intuitive, handy features. Working closely with the design and engineering teams, he's focused on evolving the app to meet every traveler's needs.",
-    image: "https://sb.nordcdn.com/m/5d8ecfb2b970b513/original/press-area-headshot-matas-V2.png",
+    image: "https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062667/press-area-headshot-lai-ha_eoowig.png",
     alt: "esim.vn's head of product, Matas, smiling for a photo.",
   },
 ];

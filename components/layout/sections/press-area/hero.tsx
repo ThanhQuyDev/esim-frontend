@@ -59,7 +59,7 @@ export function PressAreaHero({ dict }: PressAreaHeroProps) {
                       height={555}
                       decoding="async"
                       style={{ color: "transparent" }}
-                      src="https://sb.nordcdn.com/m/61f8a8af9d05330c/original/press-area-hero.png"
+                      src="https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062667/press-area-hero_tdf18m.webp"
                     />
                   </div>
                 </div>

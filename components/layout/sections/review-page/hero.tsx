@@ -43,7 +43,7 @@ export function ReviewHero({ dict, lang }: ReviewHeroProps) {
                       height={555}
                       decoding="async"
                       style={{ color: "transparent" }}
-                      src={dict.imageUrl || "https://sb.nordcdn.com/m/7260eee2474e71e4/original/woman-stars-reviews-rating.png"}
+                      src={dict.imageUrl || "https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062668/woman-stars-reviews-rating_bnej4h.png"}
                     />
                   </div>
                 </div>

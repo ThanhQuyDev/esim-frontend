@@ -181,7 +181,7 @@ export function DownloadAppSection({ dict }: DownloadAppSectionProps) {
                             loading="lazy"
                             width={555}
                             height={555}
-                            src="https://sb.nordcdn.com/m/2116ba3676cc8b98/original/download-asset-xl.png"
+                            src="https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062393/asset-xl_sy6gmi.webp"
                             style={{ color: "transparent" }}
                           />
                         </div>
@@ -194,7 +194,7 @@ export function DownloadAppSection({ dict }: DownloadAppSectionProps) {
                             loading="lazy"
                             width={555}
                             height={555}
-                            src="https://sb.nordcdn.com/m/2116ba3676cc8b98/original/download-asset-xl.png"
+                            src="https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062393/asset-xl_sy6gmi.webp"
                             style={{ color: "transparent" }}
                           />
                         </div>

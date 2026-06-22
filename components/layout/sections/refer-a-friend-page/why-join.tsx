@@ -48,7 +48,7 @@ export function ReferWhyJoin({ dict }: ReferWhyJoinProps) {
                         width={555}
                         height={555}
                         decoding="async"
-                        src="https://sb.nordcdn.com/asset/e1a678a2-a104-4321-b390-1ddf95118eb1/join-referral-program-asset.png"
+                        src="https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062665/join-referral-program-asset_eitgun.png"
                         style={{ color: "transparent" }}
                       />
                     </div>

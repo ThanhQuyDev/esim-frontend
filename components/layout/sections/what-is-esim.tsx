@@ -53,7 +53,7 @@ export function WhatIsEsim({ dict, lang = "en" }: WhatIsEsimProps) {
                         width={555}
                         height={200}
                         decoding="async"
-                        src="https://sb.nordcdn.com/m/4b32c41c87b8ff4f/original/homepage-what-is-esim.png"
+                        src="https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062392/what-is-esim_rfrhcz.png"
                         style={{ color: "transparent" }}
                       />
                     </div>

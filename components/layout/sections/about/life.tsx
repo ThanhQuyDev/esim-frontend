@@ -11,11 +11,11 @@ interface AboutLifeProps {
 const lifeIcons = [GraduationCap, Scale, Sprout, Compass, Microscope];
 
 const lifeImages = [
-  "https://sb.nordcdn.com/m/713ed1bf421f8b2/original/about-us-life-at-saily-1.png",
-  "https://sb.nordcdn.com/m/7ea380c1b9a549a/original/about-us-life-at-saily-2.png",
+  "https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062658/about-us-life-at-esimvn-1_s3seqy.webp",
+  "https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062659/about-us-life-at-esimvn-2_xpkyto.png",
   "https://sb.nordcdn.com/m/290b710c37296382/original/about-us-life-at-saily-3.png",
   "https://sb.nordcdn.com/m/5ea489d3dbb04d5/original/about-us-life-at-saily-4.png",
-  "https://sb.nordcdn.com/m/26844073be68c91c/original/about-us-life-at-saily-5.png",
+  "https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062660/about-us-life-at-esimvn-5_wgn9ck.webp",
 ];
 
 export function AboutLife({ dict }: AboutLifeProps) {
