@@ -6,16 +6,16 @@ interface MeetSpeakersProps {
 
 const speakers = [
   {
-    name: "Vykintas Maknickas — CEO",
-    bio: "Vykintas is the CEO of esim.vn, a travel eSIM app built to keep you connected on every trip. After seven years at Nord Security, he's channeling his cybersecurity expertise and real travel experiences into one mission: making global connectivity affordable, safe, and stress free.",
+    name: "Duc Tho — Senior Global Director",
+    bio: "Duc Tho is the Senior Global Director at esim.vn. He is constantly working to make esim.vn the leading travel eSIM provider today. He conducts in-depth research to understand what travelers truly want, then turns those insights into intuitive, user-friendly features — all while seeking out new partners to expand esim.vn's distribution network worldwide.",
     image: "https://sb.nordcdn.com/m/fa0fc58be0da722c/original/press-area-headshot-vykintas-V2.png",
-    alt: "esim.vn's CEO, Vykintas, smiling for a photo.",
+    alt: "esim.vn's Senior Global Director, Duc Tho, smiling for a photo.",
   },
   {
-    name: "Matas Čenys — Head of product",
-    bio: "Matas is all about making esim.vn the best travel app out there. He digs deep to understand what travelers really want and turns insights into intuitive, handy features. Working closely with the design and engineering teams, he's focused on evolving the app to meet every traveler's needs.",
+    name: "Lai Ha — CEO",
+    bio: "Lai Ha is the CEO of esim.vn, a platform dedicated to travel eSIMs designed to keep you seamlessly connected on every trip. After more than 10 years working at a leading telecommunications company in Vietnam, she now channels her expertise in telecom and internet connectivity — paired with her own real-world travel experience — into a single mission: delivering global connectivity that's affordable, secure, and easy to use.",
     image: "https://sb.nordcdn.com/m/5d8ecfb2b970b513/original/press-area-headshot-matas-V2.png",
-    alt: "esim.vn's head of product, Matas, smiling for a photo.",
+    alt: "esim.vn's CEO, Lai Ha, smiling for a photo.",
   },
 ];
 
