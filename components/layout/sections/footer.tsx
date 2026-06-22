@@ -150,7 +150,7 @@ export async function FooterSection({
               <span className="font-normal text-text-tertiary">
                 {lang === "vi"
                   ? "Chịu trách nhiệm nội dung: Nguyễn Đức Thọ"
-                  : "Content responsibility: Nguyễn Đức Thọ"}
+                  : "Content responsibility: Nguyen Duc Tho"}
               </span>
               <span className="flex flex-wrap gap-6 items-center">
                 {LEGAL_POLICIES.map((policy) => (

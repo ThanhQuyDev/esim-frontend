@@ -12,7 +12,7 @@ const heroImages = [
   },
   {
     src: "https://sb.nordcdn.com/m/7ac8fe62dbb6b416/original/about-us-hero-2.png",
-    alt: "Vykintas Maknickas, esim.vn CEO, speaking at an event.",
+    alt: "Mr.Duc Tho, Senior Global Director, speaking at an event.",
     className: "w-[214px] h-[300px] order-3 hidden md:block",
   },
   {

@@ -22,9 +22,9 @@
     "language": "Language"
   },
   "hero": {
-    "badge": "By the creators of NordVPN",
+    "badge": "By the creators of ESIM Telecom Co., Limited",
     "title": "Affordable eSIM data for international travel",
-    "subtitle": "Choose from data plans in 150+ countries. Easy setup, instant connectivity.",
+    "subtitle": "Choose from data plans in 200+ countries. Easy setup, instant connectivity.",
     "ctaPrimary": "Search your destination",
     "promoBadge": "Get 10% off 10GB+ data plans!",
     "promoLink": "Get the deal"
@@ -36,7 +36,7 @@
     "title": "What is an eSIM?",
     "descriptionBefore": "An ",
     "linkText": "eSIM",
-    "descriptionAfter": " is a digital SIM that lets you switch carriers and use multiple mobile plans without swapping cards. Most new phones support eSIMs, and setting them up takes just a few taps.",
+    "descriptionAfter": " is a type of digital SIM card—less than 5mm in both length and width—that is soldered directly onto your phone's circuit board. It allows you to switch carriers and use multiple mobile plans without ever needing to swap a physical SIM card. Most new smartphones support eSIM, and setup only takes a few simple steps.",
     "imageAlt": "An eSIM card with an active data plan."
   },
   "destinations": {
@@ -102,7 +102,7 @@
       {
         "icon": "earth",
         "title": "Global and regional plans",
-        "description": "Stay online wherever you go — get a [Global eSIM data](https://saily.com/esim-global/) plan or an [eSIM data plan for Europe](https://saily.com/esim-europe/) to explore entire regions and beyond."
+        "description": "Stay online wherever you go — get a Global eSIM data plan or an eSIM data plan for Europe to explore entire regions and beyond."
       }
     ]
   },
@@ -179,41 +179,41 @@
       {
         "source": "Lonely Planet",
         "type": "featured",
-        "text": "esim.vn is an affordable, easy-to-use, and sustainable eSIM service that gives reliable mobile and internet connections from anywhere in the world. That's why we recommend esim.vn as our eSIM partner."
+        "text": "esim.vn offers affordable, easy-to-use travel eSIMs with support throughout the trip, delivering fast, reliable internet across destinations worldwide. That's why we recommend esim.vn as our international eSIM partner."
       },
       {
-        "name": "Jorge A.",
+        "name": "Jone",
         "source": "Trustpilot",
         "rating": 5,
-        "text": "Easy, cheap and fast. Easy step to step setup and troubleshooting, super fast speed (around 100 mbps). Cheap, great coverage and helpful chat/assistance. Keep up the good work."
+        "text": "Easy to use, affordable, and surprisingly fast — speeds hit about 100 Mbps, more than I expected. Setup was quick and straightforward, coverage stayed stable, and chat support responded fast whenever I needed help. Definitely sticking with this one."
       },
       {
-        "name": "PewDiePie",
+        "name": "Mr.Hello",
         "source": "YouTube",
         "avatar": true,
-        "text": "I can set it up at home right now, activate it when I'm ready (it takes literally just a couple of minutes, I've tried it myself), and boom! I have internet on my phone when traveling, as it should be… So I recommend checking out esim.vn next time you're traveling — it's a must!"
+        "text": "Stable, reliable internet connection every time I'm abroad. The price is reasonable and it's simple to use. The support team has also been very attentive whenever I had questions. These days, I use esim.vn's eSIM no matter where I travel ☺️"
       },
       {
-        "name": "DutchPilotGirl",
+        "name": "Lai Ha",
         "source": "YouTube",
         "avatar": true,
-        "text": "There's so much you can't do abroad without a proper internet connection. esim.vn takes care of everything. It's simple to buy and easy to install. I love it."
+        "text": "The website is easy to navigate, which helped me quickly find a data plan that matched my trip. Ordering an eSIM online is really convenient — no matter where I am or which country I'm heading to, I can purchase it in advance."
       },
       {
-        "name": "Domas R.",
+        "name": "Katom",
         "source": "Trustpilot",
         "rating": 5,
-        "text": "Awesome — used esim.vn across 3 countries already (UK, Netherlands and Belgium). Took me like 1min to buy esim and activate it. My internet was way better than my friends' who remained connected to their local providers and used roaming plans instead."
+        "text": "Super easy to use. I activated my eSIM and was online the moment I landed in Bangkok, while other passengers from my flight were rushing to find SIM card counters in the crowded, stuffy airport."
       },
       {
         "source": "CyberNews",
         "type": "press",
-        "text": "With comprehensive coverage and affordable prices, esim.vn is the best eSIM for Europe. Activating esim.vn is straightforward. Download the app, choose your plan, and surf the internet. You can contact the esim.vn customer support team via live chat or email if you encounter any issues."
+        "text": "Comprehensive coverage, fair pricing — the best eSIM I've found for traveling in Asia. Activation is simple: pick a plan on esim.vn, connect, and you're online instantly. Support is always there via chat or email if needed."
       },
       {
         "source": "TechRadar",
         "type": "press",
-        "text": "As a product backed by the reputable NordVPN brand, esim.vn benefits from the company's focus on security and privacy. Users praise its easy installation process, affordable pricing, and reliable coverage across the world."
+        "text": "esim.vn delivers a seamless experience for every trip. Based on real-world use, most customers highlight a few standout points: quick, hassle-free setup; pricing that's significantly lower than traditional roaming; and stable internet and mobile connectivity for travelers in over 200 countries."
       }
     ]
   },
@@ -242,7 +242,7 @@
       },
       {
         "question": "Is the esim.vn app legit?",
-        "answer": "Yes, the esim.vn app is totally legit! It's built by the company behind NordVPN (Nord Security), and offers everything you may need in one app — solid security, easy activation, and an intuitive interface. With data plans in 200+ destinations, esim.vn is a great pick for travelers (even if we say so ourselves!)."
+        "answer": "Yes, the esim.vn app is totally legit! It's built by the ESIM Telecom Co., Limited (ESIMVN), and offers everything you may need in one app — solid security, easy activation, and an intuitive interface. With data plans in 200+ destinations, esim.vn is a great pick for travelers (even if we say so ourselves!)."
       },
       {
         "question": "Does the esim.vn app offer cheap eSIM options?",
@@ -253,28 +253,16 @@
         "answer": "Yes, esim.vn works in the United States. Whether you're looking for an eSIM for the USA or Europe, you've come to the right place!"
       },
       {
-        "question": "Is esim.vn better than Airalo?",
-        "answer": "esim.vn and Airalo are both solid options when it comes to speed and performance. However, if you're planning to share your data with other devices, esim.vn's a bit more convenient. Check out our esim.vn vs. Airalo comparison to find out more!"
-      },
-      {
         "question": "Can I buy an eSIM for travel?",
         "answer": "Yes, you can definitely get an eSIM for travel! The easiest thing to do is download an eSIM app from the App Store or Google Play and then get your eSIM data plan through the app. Choose a data-only plan if you want to keep your regular phone number active while you're away."
-      },
-      {
-        "question": "What's the story behind the name esim.vn?",
-        "answer": "esim.vn comes from the word \"sail\" — we wanted a name that feels like movement, freedom, and exploring the world! esim.vn is curious, active, brave, inclusive, funny, and always up for something new. If it were a person, it would always be on the move, meeting people, chasing adventures, and staying connected!"
-      },
-      {
-        "question": "Who owns the esim.vn service?",
-        "answer": "Nord Security, a global digital security and privacy brand, owns the esim.vn service. It's also the company behind tools like NordVPN and NordPass, trusted by millions worldwide."
       }
     ]
   },
   "referFriend": {
     "title": "Refer a friend, and you'll both get 10.000đ!",
-    "description": "Invite your friends to use esim.vn and get 10.000đ in esim.vn credits while they get a 10.000đ discount!",
+    "description": "Invite your friends to use esim.vn and get 10.000vnd in esim.vn credits while they get a 10.000vnd discount!",
     "cta": "Learn More",
-    "imageAlt": "A group of people enjoying a US$5 esim.vn credit after referring a friend."
+    "imageAlt": "A group of people enjoying a 10.000vnd esim.vn credit after referring a friend."
   },
   "blog": {
     "badge": "Blog",
@@ -862,17 +850,17 @@
       "subtitle": "Get to know the people behind esim.vn and their vision for easier mobile connection.",
       "members": [
         {
-          "name": "Vykintas Maknickas",
-          "role": "CEO at esim.vn",
+          "name": "Duc Tho",
+          "role": "Senior Global Director",
           "quote": "esim.vn started with a simple idea — effortless, affordable, and digital mobile connectivity. We're building a better experience for the next generation of travelers and leaving the old ways behind."
         },
         {
-          "name": "Matas Čenys",
-          "role": "Head of product at esim.vn",
+          "name": "Lai Ha",
+          "role": "CEO at esim.vn",
           "quote": "Travelers are at the heart of everything we do at esim.vn. That's why every team is working on making travel connectivity smarter and smoother. We move fast and stay curious to deliver the best possible experience."
         },
         {
-          "name": "Neringa Kondrašovė",
+          "name": "Dung",
           "role": "Marketing project manager at esim.vn",
           "quote": "What I love most about esim.vn is the daily impact we have. We're solving real problems for real people, and we're doing it with a team that genuinely cares about the experience we create."
         }
@@ -1284,7 +1272,7 @@
       "description": "Use our coupon code at checkout to get a discount on your esim.vn plan.",
       "cta": "Get the code",
       "copied": "Copied!",
-      "couponCode": "Saily5",
+      "couponCode": "ESIMVN",
       "imageAlt": "Smiling woman applies a esim.vn coupon in the app to get a discount on her eSIM plan."
     },
     "howToUse": {
