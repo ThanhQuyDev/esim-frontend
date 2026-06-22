@@ -111,8 +111,8 @@ export function EsimAdvantages({ dict }: EsimAdvantagesProps) {
                         <div key={i}>
                           <div className="h-full w-full flex flex-col justify-start gap-y-4">
                             <div className="flex flex-col text-start items-start justify-start gap-y-6">
-                              <Icon className="lg:w-8 lg:h-8 w-6 h-6 text-text-primary" />
-                              <span className="body-lg-medium text-text-primary">{item.title}</span>
+                              <Icon className="lg:w-[38px] lg:h-[38px] w-6 h-6 text-text-primary" />
+                              <span className="text-[1.25rem] font-medium text-text-primary">{item.title}</span>
                             </div>
                             <p className="body-md text-text-secondary">{item.description}</p>
                           </div>

@@ -671,7 +671,7 @@ function ReferralQrCode({ url }: { url: string }) {
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="w-12 h-12 rounded-xl bg-white shadow-md flex items-center justify-center border border-gray-100">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="Logo" className="w-9 h-9 object-contain" />
+            <img src="/logo.svg" alt="Logo" className="w-9 h-9 object-contain" />
           </div>
         </div>
       </div>

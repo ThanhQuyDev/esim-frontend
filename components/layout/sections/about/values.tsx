@@ -105,8 +105,8 @@ export function AboutValues({ dict }: AboutValuesProps) {
                     <div key={i}>
                       <div className="h-full w-full flex flex-col justify-start gap-y-4">
                         <div className="flex flex-col text-start items-start justify-start gap-y-6">
-                          <Icon className="lg:w-8 lg:h-8 w-6 h-6 text-[#fff500]" />
-                          <p className="body-lg-medium text-text-primary-on-color">
+                          <Icon className="lg:w-[36px] lg:h-[36px] w-6 h-6 text-[#fff500]" />
+                          <p className="text-xl font-medium text-text-primary-on-color">
                             {item.title}
                           </p>
                         </div>
@@ -140,8 +140,8 @@ export function AboutValues({ dict }: AboutValuesProps) {
                         >
                           <div className={`h-full w-full flex flex-col justify-start gap-y-4 p-5 rounded-xl border transition-colors ${isActive ? "border-[#fff500] bg-white/[0.04]" : "border-white/[0.12]"}`}>
                             <div className="flex flex-col text-start items-start justify-start gap-y-6">
-                              <Icon className="lg:w-8 lg:h-8 w-6 h-6 text-[#fff500]" />
-                              <p className="body-lg-medium text-text-primary-on-color">
+                              <Icon className="lg:w-[38px] lg:h-[38px] w-6 h-6 text-[#fff500]" />
+                              <p className="text-xl font-medium text-text-primary-on-color">
                                 {item.title}
                               </p>
                             </div>

@@ -96,7 +96,7 @@ export async function FooterSection({
             <Link href="/">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/logo.png"
+                src="/logo.svg"
                 alt="esim.vn logo"
                 width={100}
                 height={45}

@@ -105,7 +105,7 @@ export function AboutLife({ dict }: AboutLifeProps) {
                             className="w-full object-cover rounded-lg"
                           />
                         </div>
-                        {perk.title === "Work-life balance" && (
+                        {i === 0 && (
                           <div className="absolute z-10" style={{ bottom: "-60px", right: "15px" }}>
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
@@ -118,7 +118,7 @@ export function AboutLife({ dict }: AboutLifeProps) {
                             />
                           </div>
                         )}
-                        {perk.title === "Autonomy and ownership" && (
+                        {i === 2 && (
                           <div className="absolute z-10" style={{ top: "-30px", right: "20px" }}>
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
@@ -131,7 +131,7 @@ export function AboutLife({ dict }: AboutLifeProps) {
                             />
                           </div>
                         )}
-                        {perk.title === "Curiosity-driven work" && (
+                        {i === 3 && (
                           <div className="absolute z-10" style={{ top: "-48px", right: "-40px" }}>
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
