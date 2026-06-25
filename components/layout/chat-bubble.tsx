@@ -307,7 +307,7 @@ function MessageBubble({
       {!isOwn && (
         <div className="flex-shrink-0 mr-2 mt-1">
           <img
-            src="/logo.png"
+            src="/logo/logo_chat.svg"
             alt="Admin"
             className="h-7 w-7 rounded-full object-cover border border-gray-200"
           />

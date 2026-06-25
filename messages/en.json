@@ -1369,7 +1369,7 @@
       "subtitle": "An affordable eSIM service from the creators of esim.vn",
       "cta": "View All Plans",
       "imageAlt": "A happy woman lies on the beach after posting a esim.vn review.",
-      "imageUrl": "https://sb.nordcdn.com/m/7260eee2474e71e4/original/woman-stars-reviews-rating.png"
+      "imageUrl": "https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062668/woman-stars-reviews-rating_bnej4h.png"
     },
     "features": {
       "title": "Reasons to buy a esim.vn card",
@@ -1485,7 +1485,7 @@
           "title": "Refer friends",
           "description": "After joining, you'll get a unique referral code. Drop it in your group chats or share it with buddies planning their next trip. The more you share, the more you earn!",
           "imageAlt": "An esim.vn app screen displaying a personalized referral code.",
-          "image": "https://sb.nordcdn.com/asset/8cc86d36-898f-422b-8e97-471376bea112/2-step-Rewards-sprint.svg"
+          "image": "https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062653/2-step-Rewards-sprint_t44ovw.svg"
         },
         {
           "number": "3",
@@ -1508,7 +1508,7 @@
           "title": "Share it with your friends",
           "description": "Tap on the \"Share\" button and send your code to a friend. Or two.",
           "imageAlt": "An esim.vn app screen displaying a personalized referral code.",
-          "image": "https://sb.nordcdn.com/asset/2fbcf9c5-806a-4d71-b42f-15feb5b6415c/2-step-regular-referral-program.svg"
+          "image": "https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062652/2-step-regular-referral-program_dewkxs.svg"
         },
         {
           "number": "3",
@@ -1517,7 +1517,7 @@
           "termsLink": "Terms apply",
           "termsHref": "/legal/referral-program-terms-and-conditions/",
           "imageAlt": "An esim.vn app screen showing a US$50 credit balance with a yellow \"Cash out\" button.",
-          "image": "https://sb.nordcdn.com/asset/6225d311-b87a-4e4b-ac0a-cb6e4de6c3a4/3-step-regular-referral-program.svg"
+          "image": "https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062654/3-step-regular-referral-program_v7bl44.svg"
         }
       ]
     },

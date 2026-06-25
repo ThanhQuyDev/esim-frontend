@@ -43,9 +43,9 @@ export default async function KycGuidePage({
         lang={locale}
         className="max-w-[880px] mx-auto sm:px-6 px-4"
       >
-        <KycGuideBackButton />
+        <KycGuideBackButton lang={locale} />
       </Breadcrumb>
-      <KycGuideContent initialRegion={initialRegion} />
+      <KycGuideContent initialRegion={initialRegion} lang={locale} />
     </main>
   );
 }

@@ -17,7 +17,7 @@ export function EsimHowWorks({ dict }: EsimHowWorksProps) {
                   width={2336}
                   height={1110}
                   className="w-full rounded-lg"
-                  src="https://sb.nordcdn.com/m/18cdff106bf93fd7/original/man-sky-phone-status.png"
+                  src="https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062665/man-sky-phone-status_wxgs8i.webp"
                 />
               </div>
               <div className="flex flex-col gap-y-6">

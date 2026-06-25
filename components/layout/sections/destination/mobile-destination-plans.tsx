@@ -39,6 +39,9 @@ export interface MobileDestinationPlansProps {
   hasSmsCallPlans: boolean;
   /** Open the shared eKYC guide modal. */
   onOpenEkyc?: () => void;
+  /** Returns the total VND price for 1 eSIM for the given number of days,
+   *  using the best-matching plan. Forwarded to MobilePlanConfig / CalendarModal. */
+  getTotalForDays?: (days: number) => number;
 }
 
 export function MobileDestinationPlans({
@@ -66,6 +69,7 @@ export function MobileDestinationPlans({
   onCategoryChange,
   hasSmsCallPlans,
   onOpenEkyc,
+  getTotalForDays,
 }: MobileDestinationPlansProps) {
   const ctaRef = useRef<HTMLDivElement>(null);
   const resolvedDestination = destinationData || destination;
@@ -171,6 +175,7 @@ export function MobileDestinationPlans({
                   availableDays={availableDays}
                   isFixed={isFixed}
                   selectedPlan={selectedPlan}
+                  getTotalForDays={getTotalForDays}
                 />
               </>
             )}
@@ -196,6 +201,7 @@ export function MobileDestinationPlans({
                   availableDays={[]}
                   isFixed={true}
                   selectedPlan={selectedPlan}
+                  getTotalForDays={getTotalForDays}
                 />
               </>
             )}

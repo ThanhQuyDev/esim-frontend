@@ -9,7 +9,7 @@ interface AboutTimelineProps {
 }
 
 const timelineImages = [
-  "https://sb.nordcdn.com/m/de19e7cfac2cf51/original/about-us-timeline-step-1.svg",
+  "https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062661/about-us-timeline-step-1_okfxik.svg",
   "https://sb.nordcdn.com/m/5d0a526e01f5d1e6/original/about-us-timeline-step-2.svg",
   "https://sb.nordcdn.com/m/3a52b19ab728cf16/original/about-us-timeline-step-3.svg",
   "https://sb.nordcdn.com/m/319134988244ae10/original/about-us-timeline-step-4.svg",

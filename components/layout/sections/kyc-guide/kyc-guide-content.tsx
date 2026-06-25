@@ -3,14 +3,92 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import {
-  KYC_REGIONS,
-  KYC_STEPS,
+  getKycRegions,
+  getKycSteps,
   type KycRegionKey,
   type KycStep,
 } from "./kyc-guide-data";
 import { PassportModal, IccidModal } from "./kyc-guide-modals";
+import type { Locale } from "@/lib/i18n-config";
 
 const REGION_KEYS: KycRegionKey[] = ["hk", "tw", "hkmo"];
+
+/* ── UI strings ── */
+interface UiStrings {
+  identityRequired: string;
+  statTime: string;
+  statSecurity: string;
+  statSupport: string;
+  noticeTitle: string;
+  noticeReadText: string;
+  noticeDesktop: string;
+  noticeMobile: string;
+  ctaRegisterNow: string;
+  ctaRegisterShort: string;
+  prepLabel: string;
+  prepPassport: string;
+  prepIccid: string;
+  stepsLabel: string;
+  tipsLabel: string;
+  invalidLabel: string;
+  doneTitle: string;
+  readyTitle: string;
+  readyDesc: string;
+  needSupport: string;
+  chatSupport: string;
+  emailSupportMobile: string;
+}
+
+const STRINGS: Record<Locale, UiStrings> = {
+  vi: {
+    identityRequired: "Xác thực danh tính bắt buộc",
+    statTime: "Thời gian hoàn tất",
+    statSecurity: "An toàn bảo mật",
+    statSupport: "Hỗ trợ trực tuyến",
+    noticeTitle: "Lưu ý quan trọng trước khi đăng ký",
+    noticeReadText: "Đã đọc và hiểu các lưu ý?",
+    noticeDesktop: "Bấm nút để bắt đầu đăng ký.",
+    noticeMobile: "Bấm nút bên dưới để bắt đầu.",
+    ctaRegisterNow: "Đăng ký xác thực ngay",
+    ctaRegisterShort: "Đăng ký ngay",
+    prepLabel: "Chuẩn bị trước khi bắt đầu",
+    prepPassport: "Hộ chiếu còn hiệu lực",
+    prepIccid: "Mã ICCID của eSIM (19–20 số)",
+    stepsLabel: "Hướng dẫn từng bước",
+    tipsLabel: "Lưu ý khi chụp ảnh hộ chiếu",
+    invalidLabel: "Giấy tờ không được chấp nhận",
+    doneTitle: "Hoàn tất! 🎉",
+    readyTitle: "Bạn đã sẵn sàng? Tiến hành xác thực ngay!",
+    readyDesc: "Bấm vào nút bên cạnh để truy cập trang đăng ký chính thức của nhà mạng CMLink.",
+    needSupport: "Cần hỗ trợ?",
+    chatSupport: "Chat hỗ trợ",
+    emailSupportMobile: "Email hỗ trợ",
+  },
+  en: {
+    identityRequired: "Identity verification required",
+    statTime: "Time to complete",
+    statSecurity: "Data security",
+    statSupport: "Online support",
+    noticeTitle: "Important notes before registering",
+    noticeReadText: "Read and understood the notes?",
+    noticeDesktop: "Click the button to start registering.",
+    noticeMobile: "Click the button below to start.",
+    ctaRegisterNow: "Register now",
+    ctaRegisterShort: "Register now",
+    prepLabel: "Prepare before you start",
+    prepPassport: "Valid passport",
+    prepIccid: "eSIM ICCID (19–20 digits)",
+    stepsLabel: "Step-by-step guide",
+    tipsLabel: "Tips for photographing your passport",
+    invalidLabel: "Documents not accepted",
+    doneTitle: "Done! 🎉",
+    readyTitle: "Ready? Start verification now!",
+    readyDesc: "Click the button to access the official CMLink registration page.",
+    needSupport: "Need help?",
+    chatSupport: "Chat support",
+    emailSupportMobile: "Email support",
+  },
+};
 
 /* ── Inline SVG icons ── */
 const IconWarnYellow = () => (
@@ -232,6 +310,7 @@ function StepItem({ step, index, isLast }: { step: KycStep; index: number; isLas
 
 interface KycGuideContentProps {
   initialRegion?: KycRegionKey;
+  lang: Locale;
 }
 
 /**
@@ -239,7 +318,7 @@ interface KycGuideContentProps {
  * tabs (HK / TW / HK+Macau) sharing the same step illustrations but distinct
  * notes, tips, and invalid-document lists per region.
  */
-export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) {
+export function KycGuideContent({ initialRegion = "hk", lang }: KycGuideContentProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -255,7 +334,10 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
     }
   }, [searchParams]);
 
-  const data = KYC_REGIONS[activeKey];
+  const s = STRINGS[lang];
+  const regions = getKycRegions(lang);
+  const steps = getKycSteps(lang);
+  const data = regions[activeKey];
 
   const handleTabClick = (k: KycRegionKey) => {
     setActiveKey(k);
@@ -278,7 +360,7 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
         <div className="flex w-full max-w-[880px] mx-auto">
           <div className="flex items-center max-[640px]:gap-0.5">
           {REGION_KEYS.map((k) => {
-            const r = KYC_REGIONS[k];
+            const r = regions[k];
             const active = k === activeKey;
             return (
               <button
@@ -341,7 +423,7 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
                   <line x1="12" y1="9" x2="12" y2="13" />
                   <line x1="12" y1="17" x2="12.01" y2="17" />
                 </svg>
-                Xác thực danh tính bắt buộc
+                {s.identityRequired}
               </span>
             </div>
           </div>
@@ -350,17 +432,17 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
             style={{ background: "rgba(0,0,0,0.26)" }}
           >
             {[
-              { v: "3′", l: "Thời gian hoàn tất" },
-              { v: "100%", l: "An toàn bảo mật" },
-              { v: "24/7", l: "Hỗ trợ trực tuyến" },
-            ].map((s, i) => (
+              { v: "3′", l: s.statTime },
+              { v: "100%", l: s.statSecurity },
+              { v: "24/7", l: s.statSupport },
+            ].map((stat, i) => (
               <div
-                key={s.l}
+                key={stat.l}
                 className="text-center py-[14px] max-[640px]:py-2.5 max-[640px]:px-1"
                 style={{ borderRight: i < 2 ? "1px solid rgba(255,255,255,0.1)" : "none" }}
               >
-                <div className="text-[21px] max-[640px]:text-[17px] font-extrabold text-white leading-none">{s.v}</div>
-                <div className="text-sm max-[640px]:text-[12px] mt-[3px] leading-[1.3]" style={{ color: "rgba(255,255,255,0.7)" }}>{s.l}</div>
+                <div className="text-[21px] max-[640px]:text-[17px] font-extrabold text-white leading-none">{stat.v}</div>
+                <div className="text-sm max-[640px]:text-[12px] mt-[3px] leading-[1.3]" style={{ color: "rgba(255,255,255,0.7)" }}>{stat.l}</div>
               </div>
             ))}
           </div>
@@ -377,7 +459,7 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
             }}
           >
             <IconWarnYellow />
-            <b>Lưu ý quan trọng trước khi đăng ký</b>
+            <b>{s.noticeTitle}</b>
           </div>
           <div className="flex flex-col gap-2.5 mb-4 max-[640px]:gap-[9px] max-[640px]:mb-3.5">
             {data.notes.map((n, i) => (
@@ -393,9 +475,9 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
           {/* Desktop: inline CTA. Mobile: text only — primary CTA lives in the sticky bottom bar. */}
           <div className="flex items-center justify-between gap-6 max-[640px]:gap-0">
             <div className="text-base max-[640px]:text-[12.5px] text-[#6B7280] leading-[1.6]">
-              Đã đọc và hiểu các lưu ý? <b className="text-[#374151]">Hoàn tất trong khoảng 3 phút.</b>{" "}
-              <span className="max-[640px]:hidden">Bấm nút để bắt đầu đăng ký.</span>
-              <span className="hidden max-[640px]:inline">Bấm nút bên dưới để bắt đầu.</span>
+              {s.noticeReadText} <b className="text-[#374151]">{lang === "vi" ? "Hoàn tất trong khoảng 3 phút." : "Done in about 3 minutes."}</b>{" "}
+              <span className="max-[640px]:hidden">{s.noticeDesktop}</span>
+              <span className="hidden max-[640px]:inline">{s.noticeMobile}</span>
             </div>
             <a
               href={data.url}
@@ -404,14 +486,14 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
               className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#DC2626] text-white rounded-full text-base font-bold whitespace-nowrap no-underline transition-opacity hover:opacity-90 max-[640px]:hidden"
               style={{ border: "none" }}
             >
-              Đăng ký xác thực ngay
+              {s.ctaRegisterNow}
               <IconExternal />
             </a>
           </div>
         </div>
 
         {/* Prep section — desktop: side-by-side; mobile: stacked with chevron */}
-        <SectionCard icon={<IconBag />} label="Chuẩn bị trước khi bắt đầu">
+        <SectionCard icon={<IconBag />} label={s.prepLabel}>
           <div className="flex gap-3.5 max-[640px]:flex-col max-[640px]:gap-2.5">
             <button
               type="button"
@@ -422,7 +504,7 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
               <span className="w-8 h-8 rounded-full bg-[#FEE2E2] flex items-center justify-center shrink-0">
                 <IconPassportSec />
               </span>
-              <span className="text-base max-[640px]:text-[.875rem] font-bold text-[#9F1239] max-[640px]:flex-1 max-[640px]:leading-[1.3]">Hộ chiếu còn hiệu lực</span>
+              <span className="text-base max-[640px]:text-[.875rem] font-bold text-[#9F1239] max-[640px]:flex-1 max-[640px]:leading-[1.3]">{s.prepPassport}</span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FECACA" strokeWidth="2.5" strokeLinecap="round" className="hidden max-[640px]:block shrink-0">
                 <polyline points="9 18 15 12 9 6" />
               </svg>
@@ -436,7 +518,7 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
               <span className="w-8 h-8 rounded-full bg-[#FEE2E2] flex items-center justify-center shrink-0">
                 <IconPhoneSec />
               </span>
-              <span className="text-base max-[640px]:text-[.875rem] font-bold text-[#9F1239] max-[640px]:flex-1 max-[640px]:leading-[1.3]">Mã ICCID của eSIM (19–20 số)</span>
+              <span className="text-base max-[640px]:text-[.875rem] font-bold text-[#9F1239] max-[640px]:flex-1 max-[640px]:leading-[1.3]">{s.prepIccid}</span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FECACA" strokeWidth="2.5" strokeLinecap="round" className="hidden max-[640px]:block shrink-0">
                 <polyline points="9 18 15 12 9 6" />
               </svg>
@@ -445,14 +527,14 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
         </SectionCard>
 
         {/* Steps */}
-        <SectionCard icon={<IconStepsSec />} label="Hướng dẫn từng bước">
-          {KYC_STEPS.map((s, i) => (
-            <StepItem key={s.t} step={s} index={i} isLast={i === KYC_STEPS.length - 1} />
+        <SectionCard icon={<IconStepsSec />} label={s.stepsLabel}>
+          {steps.map((step, i) => (
+            <StepItem key={step.t} step={step} index={i} isLast={i === steps.length - 1} />
           ))}
         </SectionCard>
 
         {/* Tips */}
-        <SectionCard icon={<IconCamSec />} label="Lưu ý khi chụp ảnh hộ chiếu">
+        <SectionCard icon={<IconCamSec />} label={s.tipsLabel}>
           <div className="flex flex-col gap-3 pl-2 max-[640px]:pl-1.5">
             {data.tips.map((t, i) => (
               <div key={i} className="flex items-center gap-3 max-[640px]:gap-[11px] text-base max-[640px]:text-[.875rem] leading-[1.65]">
@@ -466,7 +548,7 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
         </SectionCard>
 
         {/* Invalid */}
-        <SectionCard icon={<IconBanSec />} label="Giấy tờ không được chấp nhận">
+        <SectionCard icon={<IconBanSec />} label={s.invalidLabel}>
           <div className="flex flex-col gap-3 pl-2 max-[640px]:pl-1.5">
             {data.invalid.map((v, i) => (
               <div key={i} className="flex items-center gap-3 max-[640px]:gap-[11px] text-base max-[640px]:text-[.875rem] text-[#991B1B] leading-[1.65]">
@@ -488,7 +570,7 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
             <IconDoneCheck />
           </div>
           <div>
-            <div className="text-base max-[640px]:text-base font-extrabold max-[640px]:font-bold text-[#14532D] mb-[5px]">Hoàn tất! 🎉</div>
+            <div className="text-base max-[640px]:text-base font-extrabold max-[640px]:font-bold text-[#14532D] mb-[5px]">{s.doneTitle}</div>
             <div
               className="text-base max-[640px]:text-[.875rem] text-[#166534] leading-[1.75] max-[640px]:leading-[1.7]"
               dangerouslySetInnerHTML={{ __html: data.done }}
@@ -506,10 +588,10 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
         >
           <div className="flex-1">
             <div className="text-base font-extrabold text-[#7F1D1D] mb-[5px]">
-              Bạn đã sẵn sàng? Tiến hành xác thực ngay!
+              {s.readyTitle}
             </div>
             <div className="text-sm text-[#991B1B] leading-[1.55]">
-              Bấm vào nút bên cạnh để truy cập trang đăng ký chính thức của nhà mạng CMLink.
+              {s.readyDesc}
             </div>
           </div>
           <a
@@ -519,7 +601,7 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
             className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#DC2626] text-white rounded-full text-base font-bold whitespace-nowrap no-underline transition-opacity hover:opacity-90"
             style={{ border: "none" }}
           >
-            Đăng ký ngay
+            {s.ctaRegisterShort}
             <IconExternal />
           </a>
         </div>
@@ -529,9 +611,9 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
           className="flex items-center justify-center gap-6 p-4 max-[640px]:gap-5 max-[640px]:px-4 max-[640px]:py-[14px] max-[640px]:mt-1 text-sm max-[640px]:text-[.875rem] text-[#6B7280]"
           style={{ borderTop: "1.5px solid #E5E7EB" }}
         >
-          <span className="max-[640px]:hidden">Cần hỗ trợ?</span>
+          <span className="max-[640px]:hidden">{s.needSupport}</span>
           <a href="#" className="inline-flex items-center gap-1.5 text-[#374151] font-semibold no-underline transition-colors hover:text-[#DC2626] max-[640px]:min-h-[44px]">
-            <IconChat /> Chat hỗ trợ
+            <IconChat /> {s.chatSupport}
           </a>
           <span className="text-[#E5E7EB]">|</span>
           <a
@@ -540,7 +622,7 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
           >
             <IconMail />
             <span className="max-[640px]:hidden">hotro@esim.com.vn</span>
-            <span className="hidden max-[640px]:inline">Email hỗ trợ</span>
+            <span className="hidden max-[640px]:inline">{s.emailSupportMobile}</span>
           </a>
         </div>
       </div>
@@ -560,14 +642,14 @@ export function KycGuideContent({ initialRegion = "hk" }: KycGuideContentProps) 
           rel="noopener noreferrer"
           className="flex items-center justify-center gap-2 h-[50px] bg-[#DC2626] text-white rounded-full text-sm font-bold no-underline w-full active:opacity-80"
         >
-          Đăng ký xác thực ngay
+          {s.ctaRegisterNow}
           <IconExternal />
         </a>
       </div>
 
       {/* Modals */}
-      <PassportModal open={passportOpen} onClose={() => setPassportOpen(false)} />
-      <IccidModal open={iccidOpen} onClose={() => setIccidOpen(false)} />
+      <PassportModal open={passportOpen} onClose={() => setPassportOpen(false)} lang={lang} />
+      <IccidModal open={iccidOpen} onClose={() => setIccidOpen(false)} lang={lang} />
 
       <style jsx>{`
         @keyframes kycFadeIn {

@@ -514,6 +514,13 @@ function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
   // About Us page (localized: /gioi-thieu in vi, /about-us in en) gets a solid
   // white navbar background instead of the default transparent/blur header.
   const isAboutUsPage = /(?:^|\/)(?:gioi-thieu|about-us)\/?$/.test(pathname);
+  // `mounted` gates the announcement render until after the first effect run,
+  // so we never paint the bar in a "wrong" state. On reload, if the user had
+  // previously dismissed it, the bar would otherwise flash visible for a frame
+  // before the localStorage effect hides it. Rendering nothing until mounted
+  // also keeps the server and first client render identical (no hydration
+  // mismatch) because both start with mounted=false.
+  const [mounted, setMounted] = useState(false);
   const [announcementVisible, setAnnouncementVisible] = useState(true);
   const dismissAnnouncement = useCallback(() => {
     setAnnouncementVisible(false);
@@ -616,32 +623,44 @@ function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
   // Restore the dismissed state after mount so a closed announcement stays
   // hidden across reloads — but only for the TTL window (4 hours). After that
   // the stored timestamp is expired and removed, so the bar shows again.
-  // Reading in an effect (not useState initializer) keeps server and first
-  // client render in sync to avoid hydration mismatch.
+  //
+  // We also flip `mounted` to true here. Because the announcement bar is gated
+  // on `mounted`, it is guaranteed NOT to render until this effect finishes the
+  // localStorage check. That prevents the "flash" where a previously-dismissed
+  // bar briefly paints visible before the effect hides it.
+  // Reading localStorage in an effect (not useState initializer) keeps server
+  // and first client render in sync to avoid hydration mismatch.
   useEffect(() => {
     try {
       const raw = localStorage.getItem(ANNOUNCEMENT_DISMISSED_KEY);
-      if (raw == null) return;
-      const dismissedAt = Number(raw);
-      const isStillValid =
-        Number.isFinite(dismissedAt) &&
-        Date.now() - dismissedAt < ANNOUNCEMENT_DISMISS_TTL;
-      if (isStillValid) {
-        setAnnouncementVisible(false);
-      } else {
-        // Expired (or malformed legacy "true" value) — clear and re-show.
-        localStorage.removeItem(ANNOUNCEMENT_DISMISSED_KEY);
+      if (raw != null) {
+        const dismissedAt = Number(raw);
+        const isStillValid =
+          Number.isFinite(dismissedAt) &&
+          Date.now() - dismissedAt < ANNOUNCEMENT_DISMISS_TTL;
+        if (isStillValid) {
+          setAnnouncementVisible(false);
+        } else {
+          // Expired (or malformed legacy "true" value) — clear and re-show.
+          localStorage.removeItem(ANNOUNCEMENT_DISMISSED_KEY);
+        }
       }
     } catch {
       // localStorage unavailable — keep default visible.
+    } finally {
+      // Always mark as mounted so a valid (non-dismissed) bar can render.
+      setMounted(true);
     }
   }, []);
 
   return (
     <>
       <div className="sticky top-0 z-40">
-        {/* ===== Announcement Bar (Carousel) ===== */}
-        {announcementVisible && hasAnnouncement && isLandingPage && (
+        {/* ===== Announcement Bar (Carousel) =====
+            Gated on `mounted` so the bar never flashes on reload when it was
+            previously dismissed — it only renders after the localStorage
+            check completes. */}
+        {mounted && announcementVisible && hasAnnouncement && isLandingPage && (
           <div className="relative bg-[#1a1a1a] text-text-primary-on-color overflow-hidden">
             <div className="px-6 min-w-full flex justify-between items-center md:gap-3">
               {topBars.length > 1 ? (
@@ -789,9 +808,12 @@ function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
                   {NAV_ITEMS.map((item) => (
                     <button
                       key={item}
-                      onClick={() =>
-                        setOpenDropdown(openDropdown === item ? null : item)
-                      }
+                      onClick={() => {
+                        setOpenDropdown(openDropdown === item ? null : item);
+                        // Close the destination popup so only one popup (mega
+                        // menu OR destination dropdown) is open at a time.
+                        setDestinationsOpen(false);
+                      }}
                       className={cn(
                         "px-3 py-1.5 body-sm-medium text-text-primary bg-transparent rounded-md cursor-pointer flex gap-2 items-center transition-colors duration-200 hover:bg-[rgba(0,0,0,0.06)]",
                         openDropdown === item && "bg-[rgba(0,0,0,0.06)]"

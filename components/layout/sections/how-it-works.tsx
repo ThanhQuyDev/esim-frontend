@@ -5,7 +5,7 @@ interface HowItWorksSectionProps {
 const stepImages = [
   "https://sb.nordcdn.com/m/2e23689ebdcc105/original/1-step.svg",
   "https://sb.nordcdn.com/m/2a28e7fa0cb54961/original/2-step.svg",
-  "https://sb.nordcdn.com/m/3f8ce32d6d5693d3/original/3-step.svg",
+  "https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062654/3-step_by4lao.svg",
 ];
 
 export function HowItWorksSection({ dict }: HowItWorksSectionProps) {

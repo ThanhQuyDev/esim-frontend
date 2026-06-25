@@ -211,6 +211,8 @@ export function MobileFeatures({
   const hasLocalNumber = false; // eSIM typically doesn't provide local number
   const hasEkyc = !!selectedPlan?.isKyc;
   const hasTopup = selectedPlan?.topUp ?? true
+  const durations = selectedPlan ? selectedPlan?.durationDays : false
+  const isHostSpotAllDay = selectedPlan?.type === "fixed" || selectedPlan?.provider === "japantravelsim"
   const operatorName = selectedPlan?.operatorName || null;
   const speed = selectedPlan?.speed || null;;
 
@@ -263,7 +265,7 @@ export function MobileFeatures({
                 <path d="M8.53 16.11a6 6 0 016.95 0" />
                 <circle cx="12" cy="20" r="1" fill="#1D4ED8" />
               </svg>
-              {hotSpotAllowGb} GB / {lang === "en" ? "day" : "ngày"}
+              {hotSpotAllowGb} {isHostSpotAllDay ? `- ${durations}` : `/`} {lang === "en" ? "day" : "ngày"}
             </span>
           ) : hasHotspot ? (
             <span

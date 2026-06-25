@@ -110,7 +110,7 @@ export function ReferDownloadApp({ dict }: ReferDownloadAppProps) {
                         width={430}
                         height={430}
                         decoding="async"
-                        src="https://sb.nordcdn.com/m/5f88d37e18fa2128/original/download-app-qr.png"
+                        src="https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062663/app-qr_ybthkz.png"
                         style={{ color: "transparent" }}
                       />
                     </div>

@@ -9,7 +9,7 @@ interface ReviewFeaturesProps {
 
 function WalletIcon() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor" className="lg:w-8 lg:h-8 w-6 h-6 text-primary">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor" className="lg:w-[38px] lg:h-[38px] w-6 h-6 text-primary">
       <path d="M464 48H64C28.7 48 0 76.7 0 112v288c0 35.3 28.7 64 64 64h400c26.5 0 48-21.5 48-48V96c0-26.5-21.5-48-48-48zm16 368c0 8.8-7.2 16-16 16H64c-17.6 0-32-14.4-32-32V112c0-17.6 14.4-32 32-32h400c8.8 0 16 7.2 16 16v320zm-64-208c-17.7 0-32 14.3-32 32s14.3 32 32 32 32-14.3 32-32-14.3-32-32-32zm0 32c0 0 0 0 0 0z"/>
     </svg>
   );
@@ -17,7 +17,7 @@ function WalletIcon() {
 
 function CirclePlusIcon() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor" className="lg:w-8 lg:h-8 w-6 h-6 text-primary">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor" className="lg:w-[38px] lg:h-[38px] w-6 h-6 text-primary">
       <path d="M256 48C141.1 48 48 141.1 48 256s93.1 208 208 208 208-93.1 208-208S370.9 48 256 48zm0 384c-97 0-176-79-176-176S159 80 256 80s176 79 176 176-79 176-176 176zm96-192h-80v-80c0-8.8-7.2-16-16-16s-16 7.2-16 16v80h-80c-8.8 0-16 7.2-16 16s7.2 16 16 16h80v80c0 8.8 7.2 16 16 16s16-7.2 16-16v-80h80c8.8 0 16-7.2 16-16s-7.2-16-16-16z"/>
     </svg>
   );
@@ -25,7 +25,7 @@ function CirclePlusIcon() {
 
 function SimCardIcon() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor" className="lg:w-8 lg:h-8 w-6 h-6 text-primary">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor" className="lg:w-[38px] lg:h-[38px] w-6 h-6 text-primary">
       <path d="M336 0H176L0 176v272c0 35.3 28.7 64 64 64h272c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64zm32 448c0 17.6-14.4 32-32 32H64c-17.6 0-32-14.4-32-32V187.3L180.7 32H336c17.6 0 32 14.4 32 32v384zM160 256h-32c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16v-32c0-8.8-7.2-16-16-16zm96 0h-32c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16v-32c0-8.8-7.2-16-16-16zm-96 96h-32c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16v-32c0-8.8-7.2-16-16-16zm96 0h-32c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16v-32c0-8.8-7.2-16-16-16z"/>
     </svg>
   );
@@ -33,7 +33,7 @@ function SimCardIcon() {
 
 function ChatSupportIcon() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" fill="currentColor" className="lg:w-8 lg:h-8 w-6 h-6 text-primary">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" fill="currentColor" className="lg:w-[38px] lg:h-[38px] w-6 h-6 text-primary">
       <path d="M208 0C93.1 0 0 78.8 0 176c0 39.6 15.3 76.2 41.1 106.6L1.3 370.5c-3.4 7.5-.1 16.3 7.4 19.8 2 .9 4.1 1.3 6.2 1.3 5.7 0 11.1-3.1 13.9-8.5l44.5-98.7C107.5 306.2 155.8 320 208 320c114.9 0 208-78.8 208-176S322.9 0 208 0zm0 288c-46.5 0-89.8-12.2-121.8-32.4-5.8-3.7-13.2-3.5-18.8.5L32 304l24.5-54.2c2.7-6 1.2-13.1-3.7-17.5C27.7 210.7 32 192.5 32 176c0-79.4 78.8-144 176-144s176 64.6 176 144-78.8 144-176 144zm384-80c0-62.8-53.6-114.4-125.3-131.8 2.2 10.4 3.3 21.2 3.3 32.2 0 114.4-114.9 207.6-256.3 207.6H208c-5.5 0-10.9-.2-16.3-.5C222.5 372.8 288.3 416 368 416c38.8 0 74.8-10.4 105.3-28.2l35.5 78.7c2.8 5.4 8.2 8.5 13.9 8.5 2.1 0 4.2-.4 6.2-1.3 7.5-3.5 10.8-12.3 7.4-19.8l-29.8-66.1C537.3 358.6 592 310.4 592 208z"/>
     </svg>
   );
@@ -154,7 +154,7 @@ export function ReviewFeatures({ dict, lang }: ReviewFeaturesProps) {
                         <div className="h-full w-full flex [&>div:empty]:hidden flex-col text-start items-start justify-start gap-y-6">
                           <div><IconComponent /></div>
                           <div>
-                            <h3 className="body-lg-medium text-primary scroll-mt-20 xl:scroll-mt-24">{feature.title}</h3>
+                            <h3 className="text-xl font-medium text-primary scroll-mt-20 xl:scroll-mt-24">{feature.title}</h3>
                           </div>
                         </div>
                       </div>

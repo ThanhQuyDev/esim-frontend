@@ -9,9 +9,9 @@ interface AboutCrewProps {
 }
 
 const crewImages = [
-  "https://sb.nordcdn.com/m/5a3fba689153f9d4/original/about-us-voices-of-saily-vykintas.png",
-  "https://sb.nordcdn.com/m/108f4f7d954bec87/original/about-us-voices-of-saily-matas.png",
-  "https://sb.nordcdn.com/m/33e8884daf33e459/original/about-us-voices-of-saily-neringa.png",
+  "https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062661/about-us-voices-of-esimvn-duc-tho_xthsga.webp",
+  "https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062662/about-us-voices-of-esimvn-lai-ha_wni7rb.webp",
+  "https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062662/about-us-voices-of-esimvn-dung_ktqykh.webp",
 ];
 
 export function AboutCrew({ dict }: AboutCrewProps) {

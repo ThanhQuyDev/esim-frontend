@@ -16,7 +16,7 @@ export function ContentSections({ dict }: ContentSectionsProps) {
               <div className="flex flex-col gap-y-8">
                 <Image
                   alt={dict.whatIsMobileData.imageAlt}
-                  src="https://sb.nordcdn.com/m/79249764050ec4c1/original/hero-what-is-esim-woman-sky-phone.png"
+                  src="https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062664/hero-what-is-esim_c8y0bh.webp"
                   width={555}
                   height={555}
                   loading="lazy"
@@ -46,7 +46,7 @@ export function ContentSections({ dict }: ContentSectionsProps) {
                 <div>
                   <Image
                     alt={dict.whatIsMobileData.imageAlt}
-                    src="https://sb.nordcdn.com/m/79249764050ec4c1/original/hero-what-is-esim-woman-sky-phone.png"
+                    src="https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062664/hero-what-is-esim_c8y0bh.webp"
                     width={555}
                     height={555}
                     loading="lazy"

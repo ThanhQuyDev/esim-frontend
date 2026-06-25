@@ -1,10 +1,12 @@
 "use client";
 
 import { Modal } from "@/components/layout/sections/destination/modal";
+import type { Locale } from "@/lib/i18n-config";
 
 interface KycGuideModalProps {
   open: boolean;
   onClose: () => void;
+  lang: Locale;
 }
 
 const CloseButton = ({ onClick }: { onClick: () => void }) => (
@@ -122,59 +124,141 @@ function MWarn({ children }: { children: React.ReactNode }) {
 }
 
 /** "Passport requirements" modal — opened from the prep section. */
-export function PassportModal({ open, onClose }: KycGuideModalProps) {
+export function PassportModal({ open, onClose, lang }: KycGuideModalProps) {
+  const t =
+    lang === "en"
+      ? {
+          title: "Valid passport",
+          reqTitle: "Mandatory requirements",
+          req: [
+            "The passport must be valid and not expired at the time of registration and eSIM usage.",
+            "The information on the passport must match the registration details exactly.",
+            "The passport photo must be clear, with nothing obscured and no light reflections.",
+          ],
+          acceptedTitle: "Accepted passport types",
+          accepted: ["✓ Ordinary passport", "✓ Diplomatic passport", "✓ Official passport"],
+          rejectedTitle: "Not accepted",
+          rejected: ["✕ HK SAR Passport", "✕ British National (Overseas)", "✕ Expired passport"],
+          warn: "If your passport expires in under 6 months, some countries may refuse entry.",
+        }
+      : {
+          title: "Hộ chiếu còn hiệu lực",
+          reqTitle: "Yêu cầu bắt buộc",
+          req: [
+            "Hộ chiếu phải còn hiệu lực, chưa hết hạn tại thời điểm đăng ký và sử dụng eSIM.",
+            "Thông tin trên hộ chiếu phải khớp chính xác với thông tin đăng ký.",
+            "Ảnh chụp hộ chiếu phải rõ nét, không bị che khuất, không phản chiếu ánh sáng.",
+          ],
+          acceptedTitle: "Loại hộ chiếu được chấp nhận",
+          accepted: ["✓ Hộ chiếu phổ thông", "✓ Hộ chiếu ngoại giao", "✓ Hộ chiếu công vụ"],
+          rejectedTitle: "Không được chấp nhận",
+          rejected: ["✕ HK SAR Passport", "✕ British National (Overseas)", "✕ Hộ chiếu hết hạn"],
+          warn: "Nếu hộ chiếu sắp hết hạn dưới 6 tháng, một số quốc gia có thể từ chối nhập cảnh.",
+        };
+
   return (
-    <ModalShell open={open} onClose={onClose} title="Hộ chiếu còn hiệu lực">
-      <MSection label="Yêu cầu bắt buộc">
-        <MRow>Hộ chiếu phải còn hiệu lực, chưa hết hạn tại thời điểm đăng ký và sử dụng eSIM.</MRow>
-        <MRow>Thông tin trên hộ chiếu phải khớp chính xác với thông tin đăng ký.</MRow>
-        <MRow>Ảnh chụp hộ chiếu phải rõ nét, không bị che khuất, không phản chiếu ánh sáng.</MRow>
+    <ModalShell open={open} onClose={onClose} lang={lang} title={t.title}>
+      <MSection label={t.reqTitle}>
+        {t.req.map((r, i) => (
+          <MRow key={i}>{r}</MRow>
+        ))}
       </MSection>
 
-      <MSection label="Loại hộ chiếu được chấp nhận">
+      <MSection label={t.acceptedTitle}>
         <div className="flex flex-wrap gap-[7px] mt-1">
-          <MTag kind="ok">✓ Hộ chiếu phổ thông</MTag>
-          <MTag kind="ok">✓ Hộ chiếu ngoại giao</MTag>
-          <MTag kind="ok">✓ Hộ chiếu công vụ</MTag>
+          {t.accepted.map((a, i) => (
+            <MTag key={i} kind="ok">{a}</MTag>
+          ))}
         </div>
       </MSection>
 
-      <MSection label="Không được chấp nhận">
+      <MSection label={t.rejectedTitle}>
         <div className="flex flex-wrap gap-[7px] mt-1">
-          <MTag kind="no">✕ HK SAR Passport</MTag>
-          <MTag kind="no">✕ British National (Overseas)</MTag>
-          <MTag kind="no">✕ Hộ chiếu hết hạn</MTag>
+          {t.rejected.map((r, i) => (
+            <MTag key={i} kind="no">{r}</MTag>
+          ))}
         </div>
       </MSection>
 
-      <MWarn>Nếu hộ chiếu sắp hết hạn dưới 6 tháng, một số quốc gia có thể từ chối nhập cảnh.</MWarn>
+      <MWarn>{t.warn}</MWarn>
     </ModalShell>
   );
 }
 
 /** "Find your ICCID" modal — opened from the prep section. */
-export function IccidModal({ open, onClose }: KycGuideModalProps) {
+export function IccidModal({ open, onClose, lang }: KycGuideModalProps) {
+  const t =
+    lang === "en"
+      ? {
+          title: "eSIM ICCID",
+          whatTitle: "What is an ICCID?",
+          what: [
+            <>
+              An ICCID (Integrated Circuit Card Identifier) is the unique identifier of an eSIM, consisting of <b>19–20 digits</b>.
+            </>,
+          ],
+          whereTitle: "Where to find the ICCID",
+          where: [
+            <>
+              The <b>confirmation email</b> from esim.vn sent after a successful eSIM purchase.
+            </>,
+            <>
+              iPhone: <b>Settings → Mobile Data → eSIM</b> → view the ICCID number.
+            </>,
+            <>
+              Android: <b>Settings → Connections → SIM → eSIM</b> → view the ICCID.
+            </>,
+          ],
+          exampleTitle: "ICCID example",
+          warn: (
+            <>
+              Enter all 19–20 digits accurately, <b>do not omit</b> any character.
+            </>
+          ),
+        }
+      : {
+          title: "Mã ICCID của eSIM",
+          whatTitle: "ICCID là gì?",
+          what: [
+            <>
+              ICCID (Integrated Circuit Card Identifier) là mã định danh duy nhất của eSIM, gồm <b>19–20 chữ số</b>.
+            </>,
+          ],
+          whereTitle: "Tìm ICCID ở đâu?",
+          where: [
+            <>
+              <b>Email xác nhận</b> từ esim.vn gửi sau khi mua eSIM thành công.
+            </>,
+            <>
+              iPhone: <b>Cài đặt → Cài đặt di động → eSIM</b> → xem Số ICCID.
+            </>,
+            <>
+              Android: <b>Cài đặt → Kết nối → SIM → eSIM</b> → xem ICCID.
+            </>,
+          ],
+          exampleTitle: "Ví dụ ICCID",
+          warn: (
+            <>
+              Nhập chính xác toàn bộ 19–20 chữ số, <b>không bỏ sót</b> bất kỳ ký tự nào.
+            </>
+          ),
+        };
+
   return (
-    <ModalShell open={open} onClose={onClose} title="Mã ICCID của eSIM">
-      <MSection label="ICCID là gì?">
-        <MRow>
-          ICCID (Integrated Circuit Card Identifier) là mã định danh duy nhất của eSIM, gồm <b>19–20 chữ số</b>.
-        </MRow>
+    <ModalShell open={open} onClose={onClose} lang={lang} title={t.title}>
+      <MSection label={t.whatTitle}>
+        {t.what.map((w, i) => (
+          <MRow key={i}>{w}</MRow>
+        ))}
       </MSection>
 
-      <MSection label="Tìm ICCID ở đâu?">
-        <MRow>
-          <b>Email xác nhận</b> từ esim.vn gửi sau khi mua eSIM thành công.
-        </MRow>
-        <MRow>
-          iPhone: <b>Cài đặt → Cài đặt di động → eSIM</b> → xem Số ICCID.
-        </MRow>
-        <MRow>
-          Android: <b>Cài đặt → Kết nối → SIM → eSIM</b> → xem ICCID.
-        </MRow>
+      <MSection label={t.whereTitle}>
+        {t.where.map((w, i) => (
+          <MRow key={i}>{w}</MRow>
+        ))}
       </MSection>
 
-      <MSection label="Ví dụ ICCID">
+      <MSection label={t.exampleTitle}>
         <code
           className="block bg-[#F8FAFC] rounded-[10px] py-3.5 px-[18px] text-base font-mono text-[#1C1917] font-semibold my-1.5"
           style={{ border: "1.5px solid #E5E7EB", letterSpacing: "3px" }}
@@ -183,9 +267,7 @@ export function IccidModal({ open, onClose }: KycGuideModalProps) {
         </code>
       </MSection>
 
-      <MWarn>
-        Nhập chính xác toàn bộ 19–20 chữ số, <b>không bỏ sót</b> bất kỳ ký tự nào.
-      </MWarn>
+      <MWarn>{t.warn}</MWarn>
     </ModalShell>
   );
 }

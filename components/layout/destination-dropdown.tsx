@@ -113,7 +113,7 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
                 data-testid="search-input"
                 placeholder={t.subtitle || "Where are you travelling to?"}
                 autoComplete="off"
-                className="body-sm max-lg:body-md bg-bg-secondary outline-hidden appearance-none w-full leading-md py-[12.5px] pl-4 pr-12 text-text-primary placeholder-text-tertiary focus:border border-border-primary active:border-border-focus focus:border-border-focus transition-colors rounded-full focus-visible:outline-none focus:bg-white cursor-pointer"
+                className="body-sm max-lg:body-md bg-bg-secondary outline-hidden appearance-none w-full leading-md py-[12.5px] pl-4 pr-12 text-text-primary placeholder-text-tertiary border border-transparent focus:border-border-focus  active:border-border-focus transition-colors rounded-full focus-visible:outline-none focus:bg-white cursor-pointer"
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -186,7 +186,7 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
                             key={dest.id}
                             className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus rounded-sm w-full block group lg:p-3 lg:hover:bg-gray-100"
                             data-testid={dest.code}
-                            href={`/${lang}/${dest.slug || dest.code?.toLowerCase()}`}
+                            href={lang === 'vi' ? `/${dest.slug || dest.code?.toLowerCase()}` : `/${lang}/${dest.slug || dest.code?.toLowerCase()}`}
                           >
                             <div className="flex flex-row gap-2">
                               <div className="flex items-center justify-center h-6 w-6 rounded-full shrink-0 text-text-primary">
@@ -236,7 +236,7 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
                             key={region.id}
                             className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus rounded-sm w-full block group lg:p-3 lg:hover:bg-gray-100"
                             data-testid={region.slug}
-                            href={`/${lang}/${region.slug}`}
+                            href={lang === 'vi' ? `/${region.slug}` : `/${lang}/${region.slug}`}
                           >
                             <div className="flex flex-row gap-2">
                               <div className="flex items-center justify-center h-6 w-6 rounded-full shrink-0 text-text-primary">
@@ -312,7 +312,8 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
                               key={`${item._type || 'dest'}-${item.id}`}
                               className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus rounded-sm w-full block group lg:p-3 lg:hover:bg-gray-100"
                               data-testid={item.code || item.slug}
-                              href={`/${lang}/${item.slug || item.code?.toLowerCase()}`}
+                              href={lang === 'vi' ? `/${item.slug || item.code?.toLowerCase()}` : `/${lang}/${item.slug || item.code?.toLowerCase()}`}
+
                             >
                               <div className="flex flex-row gap-2">
                                 <div className="flex items-center justify-center h-6 w-6 rounded-full shrink-0 text-text-primary">

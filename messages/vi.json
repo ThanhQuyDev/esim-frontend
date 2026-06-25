@@ -1369,7 +1369,7 @@
       "subtitle": "Dịch vụ eSIM giá cả phải chăng từ esim.vn",
       "cta": "Xem Tất Cả Gói",
       "imageAlt": "Một phụ nữ vui vẻ nằm trên bãi biển sau khi đăng đánh giá esim.vn.",
-      "imageUrl": "https://sb.nordcdn.com/m/7260eee2474e71e4/original/woman-stars-reviews-rating.png"
+      "imageUrl": "https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062668/woman-stars-reviews-rating_bnej4h.png"
     },
     "features": {
       "title": "Lý do nên mua thẻ esim.vn",
@@ -1485,7 +1485,7 @@
           "title": "Giới thiệu bạn bè",
           "description": "Sau khi tham gia, bạn sẽ nhận được mã giới thiệu duy nhất. Gửi mã này vào nhóm chat hoặc chia sẻ với bạn bè đang lên kế hoạch cho chuyến đi tiếp theo. Càng chia sẻ nhiều, càng nhận thưởng nhiều!",
           "imageAlt": "Màn hình ứng dụng esim.vn hiển thị mã giới thiệu cá nhân hóa.",
-          "image": "https://sb.nordcdn.com/asset/8cc86d36-898f-422b-8e97-471376bea112/2-step-Rewards-sprint.svg"
+          "image": "https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062653/2-step-Rewards-sprint_t44ovw.svg"
         },
         {
           "number": "3",
@@ -1508,7 +1508,7 @@
           "title": "Chia sẻ với bạn bè",
           "description": "Nhấn nút \"Chia sẻ\" và gửi mã của bạn cho một (hoặc hai) người bạn.",
           "imageAlt": "Màn hình ứng dụng esim.vn hiển thị mã giới thiệu cá nhân hóa.",
-          "image": "https://sb.nordcdn.com/asset/2fbcf9c5-806a-4d71-b42f-15feb5b6415c/2-step-regular-referral-program.svg"
+          "image": "https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062652/2-step-regular-referral-program_dewkxs.svg"
         },
         {
           "number": "3",
@@ -1517,7 +1517,7 @@
           "termsLink": "Xem điều khoản",
           "termsHref": "/legal/referral-program-terms-and-conditions/",
           "imageAlt": "Màn hình ứng dụng esim.vn hiển thị số dư 100.000đ với nút \"Rút thưởng\" màu vàng.",
-          "image": "https://sb.nordcdn.com/asset/6225d311-b87a-4e4b-ac0a-cb6e4de6c3a4/3-step-regular-referral-program.svg"
+          "image": "https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062654/3-step-regular-referral-program_v7bl44.svg"
         }
       ]
     },

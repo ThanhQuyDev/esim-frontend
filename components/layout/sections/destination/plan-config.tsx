@@ -3,7 +3,6 @@
 import { useState } from "react";
 import type { Plan } from "@/lib/api";
 import type { DestinationDict } from "./types";
-import { calcTotalVndPrice, getFixedVndPrice } from "./types";
 import { CalendarModal } from "./calendar-modal";
 
 interface PlanConfigProps {
@@ -16,8 +15,12 @@ interface PlanConfigProps {
   isFlexibleDays: boolean;
   availableDays: number[];
   isFixed: boolean;
-  /** Selected plan — used to compute the calendar modal's price summary. */
+  /** Selected plan — kept for API compatibility (no longer used to derive price). */
   selectedPlan?: Plan | null;
+  /** Returns the total VND price for 1 eSIM for the given number of days,
+   *  using the best-matching plan. Passed straight to CalendarModal so the
+   *  due-date summary matches the main price display. */
+  getTotalForDays?: (days: number) => number;
 }
 
 const QUICK_DAYS = [3, 5, 7, 10, 15, 20, 30, 180, 365];
@@ -33,21 +36,12 @@ export function PlanConfig({
   availableDays,
   isFixed,
   selectedPlan,
+  getTotalForDays,
 }: PlanConfigProps) {
   const [calOpen, setCalOpen] = useState(false);
   const dayOptions = isFlexibleDays
     ? QUICK_DAYS
     : availableDays;
-
-  // Per-day VND used by the calendar modal's bottom summary.
-  // For flexible (multidate) plans the price is per day already; otherwise we
-  // approximate with current totalPrice / current days.
-  const unitVndPricePerDay = (() => {
-    if (!selectedPlan) return 0;
-    if (isFixed) return getFixedVndPrice(selectedPlan) / Math.max(1, selectedPlan.durationDays);
-    if (isFlexibleDays) return calcTotalVndPrice(selectedPlan, 1);
-    return calcTotalVndPrice(selectedPlan, days) / Math.max(1, days);
-  })();
 
   return (
     <div className="my-5 border-t border-[#e5e7eb] pt-5">
@@ -137,7 +131,7 @@ export function PlanConfig({
           onClose={() => setCalOpen(false)}
           initialDays={days}
           onConfirm={(d) => onDaysChange(d)}
-          unitVndPricePerDay={unitVndPricePerDay}
+          getTotalForDays={getTotalForDays ?? (() => 0)}
           quantity={quantity}
           lang={lang}
         />

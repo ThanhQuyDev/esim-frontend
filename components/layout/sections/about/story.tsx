@@ -29,7 +29,7 @@ export function AboutStory({ dict }: AboutStoryProps) {
                   width={555}
                   height={555}
                   className="rounded-lg w-full"
-                  src="https://sb.nordcdn.com/m/262e61df1b70a59a/original/about-us-founders.png"
+                  src="https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062656/about-us-esimvn_iabfiq.webp"
                 />
               </div>
             </div>

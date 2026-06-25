@@ -266,16 +266,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
     await validateAndApplyPromo(promoInput);
   };
 
-  const handleCheckout = () => {
-    if (selectedItems.length === 0) return;
-
-    // If not logged in, show auth modal and queue checkout after login
-    if (!user) {
-      pendingCheckoutRef.current = true;
-      openAuthModal();
-      return;
-    }
-
+  const persistCheckoutContext = useCallback(() => {
     // Store selected items & coupon for the checkout page
     localStorage.setItem("esim_checkout_items", JSON.stringify(selectedItems));
     if (cart.appliedCoupon) {
@@ -289,31 +280,41 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
     } else {
       localStorage.removeItem("esim_checkout_referral");
     }
+  }, [selectedItems, cart.appliedCoupon, promoApplied]);
+
+  const handleCheckout = () => {
+    if (selectedItems.length === 0) return;
+
+    // If not logged in, persist the selected items FIRST (so they survive
+    // the localStorage → API cart sync that happens on login), then show
+    // the auth modal and queue the checkout redirect for after login.
+    if (!user) {
+      persistCheckoutContext();
+      pendingCheckoutRef.current = true;
+      openAuthModal();
+      return;
+    }
+
+    persistCheckoutContext();
     window.location.href = `/${lang}/checkout`;
   };
 
-  // After login completes, if checkout was pending, proceed to checkout
+  // After login completes, if checkout was pending, proceed to checkout.
+  // We no longer re-read `cart.items` here because the API cart may still
+  // be refetching (and will be empty for a brief moment). The selected
+  // items were already persisted to localStorage before the auth modal
+  // opened, so the checkout page will have everything it needs.
   useEffect(() => {
     if (user && pendingCheckoutRef.current) {
       pendingCheckoutRef.current = false;
+      // Brief delay so the auth modal close animation finishes and the
+      // auth state settles before navigating.
       const timer = setTimeout(() => {
-        const currentItems = cart.items.filter((i) => selectedIds.has(i.id));
-        if (currentItems.length > 0) {
-          localStorage.setItem("esim_checkout_items", JSON.stringify(currentItems));
-          if (cart.appliedCoupon) {
-            localStorage.setItem("esim_checkout_coupon", JSON.stringify(cart.appliedCoupon));
-          } else {
-            localStorage.removeItem("esim_checkout_coupon");
-          }
-          if (promoApplied?.type === "referral") {
-            localStorage.setItem("esim_checkout_referral", promoApplied.code);
-          }
-        }
         window.location.href = `/${lang}/checkout`;
-      }, 1500);
+      }, 800);
       return () => clearTimeout(timer);
     }
-  }, [user, cart.items, selectedIds, cart.appliedCoupon, promoApplied, lang]);
+  }, [user, lang]);
 
   const toggleSelect = (id: string) => {
     setSelectedIds((prev) => {

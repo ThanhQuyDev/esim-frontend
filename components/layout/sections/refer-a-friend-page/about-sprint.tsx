@@ -46,7 +46,7 @@ export function ReferAboutSprint({ dict }: ReferAboutSprintProps) {
                         width={555}
                         height={555}
                         decoding="async"
-                        src="https://sb.nordcdn.com/asset/b5c58123-80bf-4950-9663-4d5ae876936f/about-rewards-sprint-program-asset.png"
+                        src="https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062656/about-rewards-sprint-program-asset_zcrcd4.png"
                         style={{ color: "transparent" }}
                       />
                     </div>

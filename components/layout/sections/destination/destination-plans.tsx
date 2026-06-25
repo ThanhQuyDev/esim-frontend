@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import type { Plan, PlansByDestinationResponse } from "@/lib/api";
 import { usePlansBySlug, usePlansByRegionSlug, useRegionBySlug, useDestinationBySlug } from "@/lib/hooks";
-import { hasMultidatePlan } from "./types";
+import { hasMultidatePlan, findBestPlan, findBestDailyUnlimitedPlan, calcTotalVndPrice } from "./types";
 import type { DestinationPlansProps } from "./types";
 import { ProductCard } from "./product-card";
 import { DeviceChecker } from "./device-checker";
@@ -156,6 +156,46 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
     }
   }, [isFlexibleDays, availableDays, days]);
 
+  // getTotalForDays(n): returns the TOTAL VND price for 1 eSIM when the user
+  // picks `n` travel days. It mirrors the exact plan-selection logic used in
+  // plan-tabs.tsx / mobile-plan-tabs.tsx when days change — i.e. it finds the
+  // BEST plan within the same dataMb / fupSpeed group for `n` days and returns
+  // its real price, instead of blindly multiplying a per-day rate × n.
+  //
+  // This keeps the CalendarModal (due-date popup) total in sync with the
+  // main price display and the "Buy now" button — fixing the bug where, e.g.,
+  // picking 7 days would show (1-day plan price × 7) instead of the real
+  // "1GB / 7 days" package price.
+  const getTotalForDays = useCallback((n: number): number => {
+    if (!selectedPlan) return 0;
+    if (isFixed) return calcTotalVndPrice(selectedPlan, n);
+    // daily-unlimited plans are matched by fupSpeed (not dataMb)
+    if (plans.dailyUnlimited.some((p) => p.id === selectedPlan.id)) {
+      const best = findBestDailyUnlimitedPlan(plans.dailyUnlimited, selectedPlan.fupSpeed || "", n)
+        ?? selectedPlan;
+      return calcTotalVndPrice(best, n);
+    }
+    // other plan categories are matched by dataMb
+    if (plans.slowUnlimited.some((p) => p.id === selectedPlan.id)) {
+      const best = findBestPlan(plans.slowUnlimited, Number(selectedPlan.dataMb), n)
+        ?? selectedPlan;
+      return calcTotalVndPrice(best, n);
+    }
+    if (plans.fastUnlimited.some((p) => p.id === selectedPlan.id)) {
+      const best = findBestPlan(plans.fastUnlimited, Number(selectedPlan.dataMb), n)
+        ?? selectedPlan;
+      return calcTotalVndPrice(best, n);
+    }
+    const localEsimPlans = plans.localEsim ?? [];
+    if (localEsimPlans.some((p) => p.id === selectedPlan.id)) {
+      const best = findBestPlan(localEsimPlans, Number(selectedPlan.dataMb), n)
+        ?? selectedPlan;
+      return calcTotalVndPrice(best, n);
+    }
+    // Fallback: use the currently selected plan's own price for `n` days
+    return calcTotalVndPrice(selectedPlan, n);
+  }, [selectedPlan, isFixed, plans]);
+
   // Build price label
   const planLabel = useMemo(() => {
     if (!selectedPlan) return "";
@@ -226,6 +266,7 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
           onCategoryChange={handleCategoryChange}
           hasSmsCallPlans={hasSmsCallPlans}
           onOpenEkyc={() => setEkycModalOpen(true)}
+          getTotalForDays={getTotalForDays}
         />
       </div>
 
@@ -385,6 +426,7 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
                       availableDays={availableDays}
                       isFixed={isFixed}
                       selectedPlan={selectedPlan}
+                      getTotalForDays={getTotalForDays}
                     />
                   </>
                 )}
@@ -408,6 +450,7 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
                       availableDays={[]}
                       isFixed={true}
                       selectedPlan={selectedPlan}
+                      getTotalForDays={getTotalForDays}
                     />
                   </>
                 )}

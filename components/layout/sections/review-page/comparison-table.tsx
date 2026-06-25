@@ -17,7 +17,7 @@ interface CompanyLogo {
 }
 
 const companyLogos: CompanyLogo[] = [
-  { alt: "esim.vn logo", src: "/logo/logo_esimvn_white.png", width: 76, height: 26 },
+  { alt: "esim.vn logo", src: "/logo/logo_esimvn_white.svg", width: 76, height: 26 },
   { alt: "Airalo logo", src: "https://sb.nordcdn.com/m/77cc5cef50c57f8b/original/airalo-logo.svg", width: 59, height: 64 },
   { alt: "Holafly logo", src: "https://sb.nordcdn.com/m/43e603916e183a9c/original/holafly-logo.svg", width: 91, height: 28 },
   { alt: "Nomad logo", src: "https://sb.nordcdn.com/m/5c39fbbb13daf567/original/nomad-logo.svg", width: 57, height: 48 },

@@ -6,32 +6,32 @@ interface AboutHeroProps {
 
 const heroImages = [
   {
-    src: "https://sb.nordcdn.com/m/6e538b5819aa776a/original/about-us-hero-1.png",
+    src: "https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062656/about-us-hero-1_cpl6dv.webp",
     alt: "People taking photos of the cake as they celebrate esim.vn's birthday at the eSIM company's HQ.",
     className: "w-[498px] lg:w-[454px] h-[300px] order-2 lg:order-1 hidden md:block",
   },
   {
-    src: "https://sb.nordcdn.com/m/7ac8fe62dbb6b416/original/about-us-hero-2.png",
+    src: "https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062657/about-us-hero-2_xxagny.webp",
     alt: "Mr.Duc Tho, Senior Global Director, speaking at an event.",
     className: "w-[214px] h-[300px] order-3 hidden md:block",
   },
   {
-    src: "https://sb.nordcdn.com/m/6f01957e31cad5fc/original/about-us-hero-3.png",
+    src: "https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062657/about-us-hero-3_ehuvn1.webp",
     alt: "A member of the esim.vn team hugging a dog at the office.",
     className: "w-[214px] h-[300px] order-4 hidden lg:block",
   },
   {
-    src: "https://sb.nordcdn.com/m/6cb130e8717d215/original/about-us-hero-4.png",
+    src: "https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062657/about-us-hero-4_km0gjl.webp",
     alt: "esim.vn employees gathered around a phone during a business event.",
     className: "w-[454px] h-[300px] order-5 hidden lg:block",
   },
   {
-    src: "https://sb.nordcdn.com/m/69280afade2466f4/original/about-us-hero-5.png",
+    src: "https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062658/about-us-hero-5_suwotq.webp",
     alt: "Presenter giving a talk at a esim.vn event.",
     className: "w-[214px] h-[300px] max-xl:hidden order-6 hidden xl:block",
   },
   {
-    src: "https://sb.nordcdn.com/m/69f9250792426abb/original/about-us-hero-6.png",
+    src: "https://res.cloudinary.com/deqfcfcwf/image/upload/v1782062658/about-us-hero-6_cw0wek.webp",
     alt: "A traveler wearing a backpack with a esim.vn sticker.",
     className: "w-[214px] h-[300px] max-xl:hidden order-7 hidden xl:block",
   },

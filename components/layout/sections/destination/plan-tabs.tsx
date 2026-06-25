@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import type { Plan } from "@/lib/api";
 import type { DestinationDict, CategorizedPlans } from "./types";
-import { getUniqueDataMb, findBestPlan, getUniqueFupSpeeds } from "./types";
+import { getUniqueDataMb, findBestPlan, getUniqueFupSpeeds, findBestDailyUnlimitedPlan } from "./types";
 import { PlanTagBadges, ProviderBadge } from "./plan-badges";
 
 interface PlanTabsProps {
@@ -222,7 +222,7 @@ function UnlimitedPill({
         <span className={`text-[.875rem] font-semibold leading-tight ${isSelected ? "text-[#111]" : "text-[#374151]"}`}>
           {mainLabel}
         </span>
-        <span className={`text-sm leading-tight transition-colors ${isSelected ? "text-[#374151]" : "text-[#6b7280]"}`}>
+        <span className={`text-[.8125rem] leading-tight transition-colors ${isSelected ? "text-[#374151]" : "text-[#6b7280]"}`}>
           {hintLabel}
         </span>
       </span>
@@ -341,21 +341,28 @@ export function PlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }: Plan
     }
   }, [selectedPlan, localEsimPlans, plans.dataPlans, plans.slowUnlimited, plans.fastUnlimited, plans.dailyUnlimited]);
 
-  // When days change externally, re-pick best plan for active section
+  // When days change, re-pick the best plan within the SAME GB/speed group as the
+  // currently selected plan. We use selectedPlan.dataMb / fupSpeed instead of
+  // local state (dailyGb, normalGb, …) to avoid stale-closure bugs where a
+  // just-clicked GB chip hasn't been committed yet.
   useEffect(() => {
-    if (activeSection === "daily" && hasSlowUnlimited && dailyGb > 0) {
-      const best = findBestPlan(plans.slowUnlimited, dailyGb, days);
-      if (best) onSelectPlan(best);
-    } else if (activeSection === "local" && hasLocalEsim && localGb > 0) {
-      const best = findBestPlan(localEsimPlans, localGb, days);
-      if (best) onSelectPlan(best);
-    } else if (activeSection === "unlimited" && speedTab === "normal" && hasFastUnlimited && normalGb > 0) {
-      const best = findBestPlan(plans.fastUnlimited, normalGb, days);
-      if (best) onSelectPlan(best);
-    } else if (activeSection === "unlimited" && speedTab === "high" && hasDailyUnlimited && highSpeedFup) {
-      const match = plans.dailyUnlimited.find((p) => p.fupSpeed === highSpeedFup && p.durationDays === days);
-      if (match) onSelectPlan(match);
+    if (!selectedPlan) return;
+
+    if (plans.slowUnlimited.some((p) => p.id === selectedPlan.id)) {
+      const best = findBestPlan(plans.slowUnlimited, Number(selectedPlan.dataMb), days);
+      if (best && best.id !== selectedPlan.id) onSelectPlan(best);
+    } else if (localEsimPlans.some((p) => p.id === selectedPlan.id)) {
+      const best = findBestPlan(localEsimPlans, Number(selectedPlan.dataMb), days);
+      if (best && best.id !== selectedPlan.id) onSelectPlan(best);
+    } else if (plans.fastUnlimited.some((p) => p.id === selectedPlan.id)) {
+      const best = findBestPlan(plans.fastUnlimited, Number(selectedPlan.dataMb), days);
+      if (best && best.id !== selectedPlan.id) onSelectPlan(best);
+    } else if (plans.dailyUnlimited.some((p) => p.id === selectedPlan.id)) {
+      const match = findBestDailyUnlimitedPlan(plans.dailyUnlimited, selectedPlan.fupSpeed || "", days);
+      if (match && match.id !== selectedPlan.id) onSelectPlan(match);
     }
+    // Note: fixed plans (dataPlans) and smsCall plans have fixed durations —
+    // no re-selection needed when days change.
   }, [days]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Handle selecting a plan from a specific section
@@ -535,7 +542,7 @@ export function PlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }: Plan
           {speedTab === "high" && hasDailyUnlimited && (
             <div className="flex flex-wrap gap-2.5">
               {uniqueHighFupSpeeds.map((fup) => {
-                const match = plans.dailyUnlimited.find((p) => p.fupSpeed === fup) || plans.dailyUnlimited[0];
+                const match = findBestDailyUnlimitedPlan(plans.dailyUnlimited, fup, days) || plans.dailyUnlimited[0];
                 return (
                   <UnlimitedPill
                     key={fup}

@@ -10,6 +10,7 @@ import type {
   PaginatedResponse,
   PlansByDestinationResponse,
 } from "./api";
+import { normalizePlansByDestination } from "./api";
 import type { Locale } from "./i18n-config";
 import { useAuth, authFetch } from "./auth";
 import {
@@ -385,8 +386,11 @@ export function usePlansBySlug(slug: string, lang?: string, initialData?: PlansB
         lang ? { "x-custom-lang": lang } : undefined,
         signal
       ),
+    // Normalize so any casing variant of the SMS/Call key (e.g. `SmsCallEsim`)
+    // is mapped to `smsCallEsim`, keeping the category tab in sync with the data.
+    select: normalizePlansByDestination,
     enabled: slug.length > 0,
-    ...(initialData ? { initialData, staleTime: 5 * 60 * 1000 } : {}),
+    ...(initialData ? { initialData: normalizePlansByDestination(initialData), staleTime: 5 * 60 * 1000 } : {}),
   });
 }
 
@@ -400,8 +404,11 @@ export function usePlansByRegionSlug(slug: string, lang?: string, initialData?: 
         lang ? { "x-custom-lang": lang } : undefined,
         signal
       ),
+    // Normalize so any casing variant of the SMS/Call key (e.g. `SmsCallEsim`)
+    // is mapped to `smsCallEsim`, keeping the category tab in sync with the data.
+    select: normalizePlansByDestination,
     enabled: slug.length > 0,
-    ...(initialData ? { initialData, staleTime: 5 * 60 * 1000 } : {}),
+    ...(initialData ? { initialData: normalizePlansByDestination(initialData), staleTime: 5 * 60 * 1000 } : {}),
   });
 }
 
@@ -1024,7 +1031,7 @@ export function useCart() {
         return {
           id: String(item.planId),
           name: item.plan?.name || `Plan #${item.planId}`,
-          description: `${(item.plan.type === 'unlimited' || item.plan.type === 'unlimited-reduce') ? 'Unlimited' : item.plan?.dataMb ? dataLabel : "?"} / ${(item.periodNum ?? item.plan?.durationDays) || "?"} days`,
+          description: `${(item.plan?.type === 'unlimited' || item.plan?.type === 'unlimited-reduce') ? 'Unlimited' : item.plan?.dataMb ? dataLabel : "?"} / ${(item.periodNum ?? item.plan?.durationDays) || "?"} days`,
           price: 0,
           quantity: item.quantity,
           destination: item.plan?.destination?.name,
