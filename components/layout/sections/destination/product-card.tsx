@@ -168,7 +168,7 @@ export function ProductCard({
         </div>
 
         <div className="bg-white rounded-t-[18px] -mt-7 relative z-[2] px-[18px] pt-5 pb-4">
-        {/* Body — overlaps image (matches `.pic-body` from HTML) */}
+          {/* Body — overlaps image (matches `.pic-body` from HTML) */}
           {/* Title row with flag/icon */}
           <div className="flex items-center gap-2.5 mb-2">
             {(region?.iconUrl || destination.flagUrl) ? (
@@ -184,7 +184,7 @@ export function ProductCard({
               </div>
             )}
             <h1 className="text-[26px] font-extrabold text-[#111] leading-[1.25] tracking-[-0.4px]">
-              eSIM {(lang === "vi" ? destination.titleVi : destination.title) || dict.title.replace("{destination}", destination.name)}
+              {(lang === "vi" ? `eSIM ${destination.titleVi}` : `${destination.title} eSIM`) || dict.title.replace("{destination}", destination.name)}
             </h1>
           </div>
           <p className="text-base sm:text-sm text-[#6b7280] leading-[1.6] mb-3">

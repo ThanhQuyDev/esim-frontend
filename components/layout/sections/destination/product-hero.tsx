@@ -71,7 +71,7 @@ export function ProductHero({ destination, dict, lang, planSource = "destination
             </div>
           )}
           <h1 className="text-[26px] font-extrabold text-[#111] leading-[1.25] tracking-[-0.4px]">
-            eSIM {(lang === "vi" ? destination.titleVi : destination.title) || dict.title.replace("{destination}", destination.name)}
+            {(lang === "vi" ? `eSIM ${destination.titleVi}` : `${destination.title} eSIM`) || dict.title.replace("{destination}", destination.name)}
           </h1>
         </div>
         <p className="text-base sm:text-sm text-[#6b7280] leading-[1.6] mb-3">
