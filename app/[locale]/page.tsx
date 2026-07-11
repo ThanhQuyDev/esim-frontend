@@ -11,6 +11,7 @@ import { FAQSection } from "@/components/layout/sections/faq";
 import { ReferFriendBanner } from "@/components/layout/sections/refer-friend";
 import { FooterSection } from "@/components/layout/sections/footer";
 import { getFooters, getHeroBanners, getFaqs, getWhyChooseUs } from "@/lib/api";
+import { getCmsSeoUrlForHome } from "@/lib/cms-seo-url";
 import { getSeoMetadata } from "@/lib/seo";
 import { getDictionary } from "@/lib/dictionaries";
 import { getLocale } from "next-intl/server";
@@ -19,9 +20,8 @@ import type { Locale } from "@/lib/i18n-config";
 export async function generateMetadata() {
   const locale = await getLocale();
   const dict = await getDictionary(locale as Locale);
-  const homeSlug = locale === "vi" ? "/home" : `/${locale}/home`;
   return getSeoMetadata(
-    homeSlug,
+    getCmsSeoUrlForHome(locale as Locale),
     { title: dict.metadata.title, description: dict.metadata.description }
   );
 }
@@ -29,7 +29,7 @@ export async function generateMetadata() {
 export default async function Home() {
   const locale = (await getLocale()) as Locale;
   const dict = await getDictionary(locale);
-  const homeSlug = locale === "vi" ? "/home" : `/${locale}/home`;
+  const homeSlug = getCmsSeoUrlForHome(locale);
   const [heroBanners, footerLinks, faqsRes, whyChooseUsRes] = await Promise.all([
     getHeroBanners({ lang: locale }),
     getFooters({ lang: locale }),

@@ -1,6 +1,8 @@
 import { KycGuideContent, KycGuideBackButton } from "@/components/layout/sections/kyc-guide";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
+import { getCmsSeoUrlForPage } from "@/lib/cms-seo-url";
 import { getDictionary } from "@/lib/dictionaries";
+import { getSeoMetadata } from "@/lib/seo";
 import { getLocale } from "next-intl/server";
 import type { KycRegionKey } from "@/components/layout/sections/kyc-guide";
 import type { Locale } from "@/lib/i18n-config";
@@ -9,7 +11,7 @@ import type { Metadata } from "next";
 const VALID_REGIONS: KycRegionKey[] = ["hk", "tw", "hkmo"];
 
 export async function generateMetadata(): Promise<Metadata> {
-  const locale = await getLocale();
+  const locale = (await getLocale()) as Locale;
   const title =
     locale === "en"
       ? "eKYC registration guide — esim.vn"
@@ -18,9 +20,12 @@ export async function generateMetadata(): Promise<Metadata> {
     locale === "en"
       ? "Step-by-step guide to register identity verification (eKYC) for HK / Taiwan / Macau eSIM."
       : "Hướng dẫn chi tiết các bước đăng ký xác thực danh tính (eKYC) cho eSIM Hồng Kông / Đài Loan / Macau.";
-  return {
+  const cms = await getSeoMetadata(getCmsSeoUrlForPage("/kyc-guide", locale), {
     title,
     description,
+  });
+  return {
+    ...cms,
     robots: { index: false, follow: true },
   };
 }

@@ -4,13 +4,15 @@ import {
 } from "@/components/layout/sections/terms-of-service";
 import { FooterSection } from "@/components/layout/sections/footer";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
+import { getCmsSeoUrlForPage } from "@/lib/cms-seo-url";
 import { getDictionary } from "@/lib/dictionaries";
+import { getSeoMetadata } from "@/lib/seo";
 import { getLocale } from "next-intl/server";
 import type { Locale } from "@/lib/i18n-config";
 import type { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const locale = await getLocale();
+  const locale = (await getLocale()) as Locale;
   const title =
     locale === "en"
       ? "Terms of Service — esim.vn"
@@ -19,7 +21,10 @@ export async function generateMetadata(): Promise<Metadata> {
     locale === "en"
       ? "Read the esim.vn Consumer Terms of Service governing the use of our eSIM data plans, app, website and related services."
       : "Điều khoản và Điều kiện giao dịch khi mua eSIM du lịch và sử dụng dịch vụ trên esim.vn.";
-  return { title, description };
+  return getSeoMetadata(getCmsSeoUrlForPage("/terms-of-service", locale), {
+    title,
+    description,
+  });
 }
 
 export default async function TermsOfServicePage() {

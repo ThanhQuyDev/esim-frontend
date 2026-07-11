@@ -3,6 +3,7 @@ import { CheckCircle2, Home, Mail, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FooterSection } from "@/components/layout/sections/footer";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
+import { getCmsSeoUrlForPage } from "@/lib/cms-seo-url";
 import { getDictionary } from "@/lib/dictionaries";
 import { getSeoMetadata } from "@/lib/seo";
 import { getLocale } from "next-intl/server";
@@ -10,13 +11,15 @@ import type { Locale } from "@/lib/i18n-config";
 import type { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const locale = await getLocale();
-  const dict = await getDictionary(locale as Locale);
-  const seoUrl = locale === "vi" ? "/ho-tro/lien-he/thanh-cong" : "/en/help-center/support/success";
-  return getSeoMetadata(seoUrl, {
-    title: dict.support?.form?.success?.title ?? "Support Request Submitted",
-    description: dict.support?.form?.success?.description ?? "",
-  });
+  const locale = (await getLocale()) as Locale;
+  const dict = await getDictionary(locale);
+  return getSeoMetadata(
+    getCmsSeoUrlForPage("/help-center/support/success", locale),
+    {
+      title: dict.support?.form?.success?.title ?? "Support Request Submitted",
+      description: dict.support?.form?.success?.description ?? "",
+    }
+  );
 }
 
 function interpolate(template: string, vars: Record<string, string>): string {

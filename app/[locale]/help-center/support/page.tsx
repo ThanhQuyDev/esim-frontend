@@ -1,16 +1,16 @@
 import { SupportForm } from "@/components/layout/sections/support";
 import { FooterSection } from "@/components/layout/sections/footer";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
+import { getCmsSeoUrlForPage } from "@/lib/cms-seo-url";
 import { getDictionary } from "@/lib/dictionaries";
 import { getSeoMetadata } from "@/lib/seo";
 import { getLocale } from "next-intl/server";
 import type { Locale } from "@/lib/i18n-config";
 
 export async function generateMetadata() {
-  const locale = await getLocale();
-  const dict = await getDictionary(locale as Locale);
-  const seoUrl = locale === "vi" ? "/ho-tro/lien-he" : "/en/help-center/support";
-  return getSeoMetadata(seoUrl, {
+  const locale = (await getLocale()) as Locale;
+  const dict = await getDictionary(locale);
+  return getSeoMetadata(getCmsSeoUrlForPage("/help-center/support", locale), {
     title: dict.support?.form?.pageTitle ?? "Support",
     description: dict.support?.form?.pageSubtitle ?? "",
   });

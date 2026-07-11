@@ -301,7 +301,7 @@ export function useFaqs(
       if (urls.length > 0 && !blogId) {
         const results = await Promise.all(
           urls.map((u) => {
-            const params: Record<string, string> = { language: lang, limit: "6", url: u };
+            const params: Record<string, string> = { language: lang, url: u };
             return clientFetch<PaginatedResponse<Faq> | Faq[]>(
               "/api/v1/faqs/by-context",
               params,
@@ -326,7 +326,6 @@ export function useFaqs(
 
       const params: Record<string, string> = {
         language: lang,
-        limit: "6",
       };
       if (urls.length > 0) params.url = urls[0];
       if (blogId) params.blogId = blogId;

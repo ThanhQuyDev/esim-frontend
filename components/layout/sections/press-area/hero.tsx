@@ -18,9 +18,6 @@ export function PressAreaHero({ dict }: PressAreaHeroProps) {
                       <div>
                         <a
                           className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus"
-                           
-                          target="_blank"
-                          href="https://www.trustpilot.com/review/saily.com"
                         >
                           <div className="inline-flex gap-2 items-start">
                             <div className="flex gap-2 items-baseline">

@@ -1,4 +1,5 @@
 import { headers } from 'next/headers';
+import { resolveCmsSeoLookupPath } from '@/lib/cms-seo-url';
 import { fetchSeoConfigByUrl, getDestinationBySlug, getRegionBySlug } from '@/lib/api';
 import { StructuredData } from '@/components/structured-data';
 
@@ -50,18 +51,11 @@ export async function PageStructuredData({ locale }: { locale: string }) {
   const normalizedPath = normalizePath(pathname);
   const localePrefix = locale !== 'vi' ? `/${locale}` : '';
 
-  // ── Step 1: Homepage mapping ──────────────────────────────────────
-  // CMS stores `/home` (vi) or `/en/home` (en) but browser shows `/` or `/en`.
-  const isViHome = normalizedPath === '/';
-  const isEnHome = locale !== 'vi' && normalizedPath === localePrefix;
-
-  let lookupPath = normalizedPath;
-  if (isViHome) lookupPath = '/home';
-  if (isEnHome) lookupPath = `${localePrefix}/home`;
+  const lookupPath = resolveCmsSeoLookupPath(normalizedPath, locale as 'vi' | 'en');
 
   const seo = await fetchSeoConfigByUrl(lookupPath);
 
-  if (seo?.structuredData && normalizePath(seo.url) === lookupPath) {
+  if (seo?.structuredData && normalizePath(seo.url) === normalizePath(lookupPath)) {
     return <StructuredData data={seo.structuredData} />;
   }
 

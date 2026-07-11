@@ -499,7 +499,7 @@ export async function getFaqs(
       urls.map((u) =>
         apiFetch<PaginatedResponse<Faq>>(
           "/api/v1/faqs/by-context",
-          { limit: 6, ...rest, url: u },
+          { ...rest, url: u },
           300
         ).catch(() => ({ data: [], hasNextPage: false }) as PaginatedResponse<Faq>)
       )
@@ -519,7 +519,7 @@ export async function getFaqs(
 
   return apiFetch<PaginatedResponse<Faq>>(
     "/api/v1/faqs/by-context",
-    { limit: 6, ...options },
+    options,
     300
   );
 }
