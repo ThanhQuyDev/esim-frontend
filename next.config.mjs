@@ -4,6 +4,9 @@ const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Self-hosted on VPS (moved off Vercel): emit a standalone server bundle so the
+  // deploy artifact is ~50MB instead of shipping the full node_modules tree.
+  output: "standalone",
   experimental: {
     optimizePackageImports: ["lucide-react"],
   },
