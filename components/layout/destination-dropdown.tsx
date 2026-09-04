@@ -6,6 +6,7 @@ import { useTopDestinations, useSearchDestinations, useRegions, useSearchRegions
 import { useDebounce } from "@/lib/use-debounce";
 import type { Locale } from "@/lib/i18n-config";
 import { localizedHref } from "@/lib/route-mapping";
+import { localizedSlug } from "@/lib/slug";
 
 interface DestinationDropdownDict {
   subtitle?: string;
@@ -186,7 +187,7 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
                             key={dest.id}
                             className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus rounded-sm w-full block group lg:p-3 lg:hover:bg-gray-100"
                             data-testid={dest.code}
-                            href={lang === 'vi' ? `/${dest.slug || dest.code?.toLowerCase()}` : `/${lang}/${dest.slug || dest.code?.toLowerCase()}`}
+                            href={localizedHref(lang, localizedSlug(dest, lang) || dest.code?.toLowerCase() || "")}
                           >
                             <div className="flex flex-row gap-2">
                               <div className="flex items-center justify-center h-6 w-6 rounded-full shrink-0 text-text-primary">
@@ -236,7 +237,7 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
                             key={region.id}
                             className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus rounded-sm w-full block group lg:p-3 lg:hover:bg-gray-100"
                             data-testid={region.slug}
-                            href={lang === 'vi' ? `/${region.slug}` : `/${lang}/${region.slug}`}
+                            href={localizedHref(lang, localizedSlug(region, lang))}
                           >
                             <div className="flex flex-row gap-2">
                               <div className="flex items-center justify-center h-6 w-6 rounded-full shrink-0 text-text-primary">
@@ -312,7 +313,7 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
                               key={`${item._type || 'dest'}-${item.id}`}
                               className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus rounded-sm w-full block group lg:p-3 lg:hover:bg-gray-100"
                               data-testid={item.code || item.slug}
-                              href={lang === 'vi' ? `/${item.slug || item.code?.toLowerCase()}` : `/${lang}/${item.slug || item.code?.toLowerCase()}`}
+                              href={localizedHref(lang, localizedSlug(item, lang) || item.code?.toLowerCase() || "")}
 
                             >
                               <div className="flex flex-row gap-2">
@@ -379,7 +380,7 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
             <a
               className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus body-sm-medium text-text-primary hover:text-text-secondary"
               data-testid="secondary-cta"
-              href={`/${lang}/esim-supported-devices`}
+              href={localizedHref(lang, "esim-supported-devices")}
             >
               {lang === "vi" ? "Thiết bị của bạn có tương thích eSIM không?" : "Is your device eSIM compatible?"}
             </a>

@@ -135,7 +135,7 @@ export function WalletPageContent({ lang, embedded }: WalletPageContentProps) {
           <h2 className="text-2xl sm:text-xl font-semibold text-gray-900 mb-2">{t.signInRequired}</h2>
           <p className="text-gray-500 mb-4">{t.signInPrompt}</p>
           <Link
-            href={`/${lang}`}
+            href={localizedHref(lang, "/")}
             className="inline-flex items-center px-6 py-2.5 bg-gray-900 text-white rounded-full text-base sm:text-sm font-medium hover:bg-gray-800 transition-colors"
           >
             {t.goHome}
@@ -374,6 +374,7 @@ function WalletTab({ t, lang }: { t: WalletDict; lang: string }) {
 
 function ReferralTab({ t, lang }: { t: WalletDict; lang: string }) {
   const { data: referral, isLoading, error, refetch } = useReferralProfile();
+  const { data: wallet } = useWalletMe();
   const updateReferral = useUpdateReferralCode();
   const [copied, setCopied] = useState<"code" | "link" | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -626,7 +627,15 @@ function ReferralTab({ t, lang }: { t: WalletDict; lang: string }) {
           {[
             { step: "1", title: t.howStep1, desc: t.howStep1Desc, icon: <Share2 className="w-5 h-5" /> },
             { step: "2", title: t.howStep2, desc: t.howStep2Desc, icon: <ShoppingBag className="w-5 h-5" /> },
-            { step: "3", title: t.howStep3, desc: t.howStep3Desc, icon: <Gift className="w-5 h-5" /> },
+            {
+              step: "3",
+              title: t.howStep3,
+              desc: t.howStep3Desc.replace(
+                "{reward}",
+                formatVnd(wallet?.referralRewardVnd ?? 10_000)
+              ),
+              icon: <Gift className="w-5 h-5" />,
+            },
           ].map((item) => (
             <div key={item.step} className="flex gap-4">
               <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex-shrink-0">

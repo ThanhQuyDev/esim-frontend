@@ -128,7 +128,7 @@ export function SearchResultsContent({ lang }: SearchResultsContentProps) {
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchInput.trim()) {
-      router.push(`${localizedHref(lang, "help-center")}/search?q=${encodeURIComponent(searchInput.trim())}`);
+      router.push(`${localizedHref(lang, "help-center/search")}?q=${encodeURIComponent(searchInput.trim())}`);
     }
   };
 
@@ -270,7 +270,7 @@ export function SearchResultsContent({ lang }: SearchResultsContentProps) {
               <nav className="mt-8 flex items-center justify-center gap-4" aria-label="Pagination">
                 {currentPage > 1 && (
                   <Link
-                    href={`${localizedHref(lang, "help-center")}/search?q=${encodeURIComponent(query)}&page=${currentPage - 1}`}
+                    href={`${localizedHref(lang, "help-center/search")}?q=${encodeURIComponent(query)}&page=${currentPage - 1}`}
                     className="px-4 py-2 text-base sm:text-sm border border-gray-300 rounded hover:bg-gray-50"
                   >
                     ‹ {lang === "vi" ? "Trước" : "Previous"}
@@ -284,7 +284,7 @@ export function SearchResultsContent({ lang }: SearchResultsContentProps) {
 
                 {hasNextPage && (
                   <Link
-                    href={`${localizedHref(lang, "help-center")}/search?q=${encodeURIComponent(query)}&page=${currentPage + 1}`}
+                    href={`${localizedHref(lang, "help-center/search")}?q=${encodeURIComponent(query)}&page=${currentPage + 1}`}
                     className="px-4 py-2 text-base sm:text-sm border border-gray-300 rounded hover:bg-gray-50"
                   >
                     {lang === "vi" ? "Tiếp" : "Next"} ›

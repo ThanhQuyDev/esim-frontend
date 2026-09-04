@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { Destination, Region } from "@/lib/api";
 import { Modal } from "./modal";
 import type { DestinationDict } from "./types";
+import { localizedDestinationName } from "@/lib/destination-name";
 import Image from "next/image";
 
 interface CountriesModalProps {
@@ -77,7 +78,7 @@ export function CountriesModal({
       return region.destinations.map((d) => ({
         flagUrl: d.flagUrl,
         flag: flagEmoji(d.countryCode),
-        name: d.name,
+        name: localizedDestinationName(d, lang),
         carrier: defaultCarrier || "",
       }));
     }
@@ -86,13 +87,13 @@ export function CountriesModal({
         {
           flagUrl: destination.flagUrl,
           flag: flagEmoji(destination.countryCode),
-          name: destination.name,
+          name: localizedDestinationName(destination, lang),
           carrier: defaultCarrier || "",
         },
       ];
     }
     return [];
-  }, [region, destination, defaultCarrier]);
+  }, [region, destination, defaultCarrier, lang]);
 
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -121,10 +122,10 @@ export function CountriesModal({
   return (
     <Modal open={open} onClose={onClose} ariaLabel={lang === "vi" ? titleVi : titleEn}>
       <div
-        className="bg-white rounded-t-[20px] sm:rounded-[20px] flex flex-col overflow-hidden w-full animate-slide-up"
+        className="bg-white rounded-t-[20px] sm:rounded-[20px] flex min-w-0 max-w-full flex-col overflow-hidden w-full animate-slide-up"
         style={{
-          width: "min(560px, calc(100vw))",
-          height: "min(620px, calc(100vh - 180px))",
+          width: "min(560px, 100%)",
+          height: "min(620px, calc(100dvh - 24px))",
           boxShadow: "0 28px 80px rgba(0,0,0,0.22)",
         }}
         onClick={(e) => e.stopPropagation()}
@@ -155,7 +156,7 @@ export function CountriesModal({
           </div>
 
           {/* Search */}
-          <div className="flex items-center gap-2.5 px-3.5 h-12 border-b mb-4 transition-colors focus-within:bg-white focus-within:border-[#1a1a1a]">
+          <div className="flex min-w-0 items-center gap-2.5 px-3.5 h-12 border-b mb-4 transition-colors focus-within:bg-white focus-within:border-[#1a1a1a]">
             <span className="flex items-center text-[#9ca3af] shrink-0">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="11" cy="11" r="8" />
@@ -168,7 +169,7 @@ export function CountriesModal({
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={placeholder}
-              className="flex-1 border-none bg-transparent text-sm font-[inherit] text-[#111] outline-none placeholder:text-[#B0B7C3]"
+              className="min-w-0 flex-1 border-none bg-transparent text-base sm:text-sm font-[inherit] text-[#111] outline-none placeholder:text-[#B0B7C3]"
             />
             {query && (
               <button

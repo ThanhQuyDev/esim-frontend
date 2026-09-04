@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import type { Plan, PlansByDestinationResponse } from "@/lib/api";
 import { usePlansBySlug, usePlansByRegionSlug, useRegionBySlug, useDestinationBySlug } from "@/lib/hooks";
-import { hasMultidatePlan, findBestPlan, findBestDailyUnlimitedPlan, calcTotalVndPrice } from "./types";
+import { hasMultidatePlan, findBestPlan, findBestDailyUnlimitedPlan, calcTotalVndPrice, buildPlanLabel } from "./types";
 import type { DestinationPlansProps } from "./types";
 import { ProductCard } from "./product-card";
 import { DeviceChecker } from "./device-checker";
@@ -199,9 +199,8 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
   // Build price label
   const planLabel = useMemo(() => {
     if (!selectedPlan) return "";
-    if (isFixed) return `· ${selectedPlan.name}`;
-    return `· ${selectedPlan.name} · ${days} ${dict.daysUnit.toLowerCase()}`;
-  }, [selectedPlan, isFixed, days, dict]);
+    return buildPlanLabel(selectedPlan, days, isFixed, dict, lang);
+  }, [selectedPlan, days, isFixed, dict, lang]);
 
   const dataLabel = selectedPlan
     ? `${selectedPlan.dataMb >= 1024 ? `${parseFloat((selectedPlan.dataMb / 1024).toFixed(1))}GB` : `${selectedPlan.dataMb}MB`}/${dict.daysUnit.toLowerCase()}`

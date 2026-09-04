@@ -182,7 +182,7 @@ export function CategoriesContent({ lang }: CategoriesContentProps) {
                 <nav aria-label="Breadcrumb">
                   <ol className="flex items-center gap-1 list-none p-0 m-0 flex-wrap">
                     <li>
-                      <Link href={`/${lang}`} className="text-gray-700 no-underline hover:text-gray-900 transition-colors">
+                      <Link href={localizedHref(lang, "/")} className="text-gray-700 no-underline hover:text-gray-900 transition-colors">
                         {lang === "vi" ? "Trang chủ" : "Home"}
                       </Link>
                     </li>
@@ -291,7 +291,7 @@ export function CategoriesContent({ lang }: CategoriesContentProps) {
               <nav aria-label="Breadcrumb">
                 <ol className="flex items-center gap-1 list-none p-0 m-0 flex-wrap">
                   <li>
-                    <Link href={`/${lang}`} className="text-gray-700 no-underline hover:text-gray-900 transition-colors">
+                    <Link href={localizedHref(lang, "/")} className="text-gray-700 no-underline hover:text-gray-900 transition-colors">
                       {lang === "vi" ? "Trang chủ" : "Home"}
                     </Link>
                   </li>

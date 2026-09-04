@@ -46,6 +46,7 @@
     "tabs": {
       "country": "Quốc gia",
       "region": "Khu vực",
+      "local": "eSIM nội địa",
       "ultraPlan": "Ultra Plan"
     },
     "from": "Từ",
@@ -59,6 +60,7 @@
       "all": "Tất cả",
       "country": "Quốc gia",
       "region": "Khu vực",
+      "local": "eSIM nội địa",
       "ultraPlan": "Ultra Plan"
     },
     "searchPlaceholder": "Tìm kiếm điểm đến",
@@ -259,10 +261,10 @@
     ]
   },
   "referFriend": {
-    "title": "Giới thiệu bạn bè, để cả hai cùng nhận 10.000đ!",
-    "description": "Mời bạn bè mua esim du lịch từ esim.vn để bạn nhận ngay 10.000đ trong khi họ cũng được giảm giá 10.000đ!",
+    "title": "Giới thiệu bạn bè, nhận {reward}đ eXU!",
+    "description": "Bạn bè được giảm 10.000đ cho đơn đầu tiên, còn bạn nhận {reward}đ eXU theo hạng thành viên khi giới thiệu thành công.",
     "cta": "Tìm hiểu thêm",
-    "imageAlt": "Một nhóm người vui mừng khi nhận thưởng 10.000đ từ esim.vn sau khi giới thiệu bạn bè."
+    "imageAlt": "Một nhóm người vui mừng sau khi giới thiệu bạn bè đến esim.vn."
   },
   "blog": {
     "badge": "Blog",
@@ -1431,30 +1433,31 @@
   "referFriendPage": {
     "metadata": {
       "title": "Giới thiệu bạn bè — esim.vn",
-      "description": "Chia sẻ mã giới thiệu esim.vn và nhận tới 200.000đ phần thưởng cùng tín dụng eSIM!"
+      "description": "Chia sẻ mã giới thiệu esim.vn và nhận thưởng eXU theo hạng thành viên."
     },
     "hero": {
-      "badge": "Tham gia Sprint thưởng",
-      "title": "Chia sẻ mã giới thiệu esim.vn, nhận tới 200.000đ!",
-      "description": "Trong thời gian giới hạn, chia sẻ esim.vn có thể giúp bạn nhận tới 100.000đ tiền thưởng và tới 100.000đ tín dụng esim.vn! Chỉ cần tham gia Sprint thưởng, bắt đầu giới thiệu bạn bè và xem phần thưởng tăng dần.",
+      "badge": "Quyền lợi theo hạng thành viên",
+      "title": "Giới thiệu bạn bè, nhận thêm eXU",
+      "description": "Bạn bè được giảm 10.000đ cho đơn eSIM đầu tiên. Sau khi đơn được thanh toán thành công, bạn nhận thưởng eXU theo hạng thành viên hiện tại.",
       "perks": [
-        "3 lượt giới thiệu = 20.000đ tiền thưởng",
-        "6 lượt giới thiệu = 30.000đ tiền thưởng",
-        "10 lượt giới thiệu = 50.000đ tiền thưởng"
+        "Du khách: 10.000đ eXU mỗi lượt giới thiệu",
+        "Du khách bạc: 12.000đ eXU mỗi lượt giới thiệu",
+        "Du khách vàng: 15.000đ eXU mỗi lượt giới thiệu",
+        "Du khách bạch kim: 20.000đ eXU mỗi lượt giới thiệu"
       ],
-      "termsPrefix": "Áp dụng đến hết 14/8 hoặc khi hết phần thưởng. ",
+      "termsPrefix": "Người được giới thiệu được giảm cố định 10.000đ cho đơn đầu tiên. ",
       "termsLink": "Xem điều khoản",
       "termsSuffix": ".",
-      "termsHref": "/legal/refer-a-friend-campaign/",
+      "termsHref": "/legal/referral-program-terms-and-conditions/",
       "imageAlt": "Một cặp đôi vui vẻ tận hưởng lợi ích từ chương trình giới thiệu của esim.vn.",
       "appStoreAlt": "App Store",
       "googlePlayAlt": "Google Play"
     },
     "whyJoin": {
       "title": "Vì sao nên tham gia chương trình giới thiệu esim.vn?",
-      "paragraph1": "Đây là cách dễ dàng để nhận thưởng chỉ bằng việc giúp bạn bè giữ kết nối khi đi nước ngoài! Trong khi chương trình giới thiệu thông thường tặng bạn 10.000đ tín dụng esim.vn cho mỗi người bạn, Sprint thưởng giới hạn của chúng tôi còn tặng thêm tới 100.000đ tiền thưởng hoặc thẻ trả trước!",
-      "noteLabel": "Lưu ý:",
-      "noteBody": " Nếu bạn không tham gia Sprint trong ứng dụng, bạn vẫn nhận được 10.000đ tín dụng cho mỗi lượt giới thiệu — chỉ là sẽ không nhận được phần thưởng tiền thưởng bổ sung.",
+      "paragraph1": "Bạn giúp bạn bè giữ kết nối khi đi nước ngoài, còn cả hai đều nhận được quyền lợi. Người bạn được giảm 10.000đ cho đơn đầu tiên và bạn nhận eXU để dùng cho những lần mua eSIM tiếp theo.",
+      "noteLabel": "Mức thưởng:",
+      "noteBody": " Phần thưởng của người giới thiệu được xác định theo hạng thành viên tại thời điểm tạo đơn và được cộng sau khi đơn thanh toán thành công.",
       "imageAlt": "Điện thoại hiển thị ứng dụng eSIM esim.vn và các điểm đến được hỗ trợ, trong khi một chiếc máy bay bay trên bầu trời xanh."
     },
     "aboutSprint": {
@@ -1512,8 +1515,8 @@
         },
         {
           "number": "3",
-          "title": "Tặng 10.000đ, nhận 10.000đ",
-          "description": "Bất kỳ ai dùng mã giới thiệu của bạn sẽ được giảm 10.000đ, còn bạn nhận được 10.000đ tín dụng esim.vn.",
+          "title": "Bạn bè được giảm, bạn nhận eXU theo hạng",
+          "description": "Người dùng mã giới thiệu của bạn được giảm 10.000đ cho đơn eSIM đầu tiên. Bạn nhận 10.000đ, 12.000đ, 15.000đ hoặc 20.000đ eXU tùy theo hạng thành viên khi đơn được tạo.",
           "termsLink": "Xem điều khoản",
           "termsHref": "/legal/referral-program-terms-and-conditions/",
           "imageAlt": "Màn hình ứng dụng esim.vn hiển thị số dư 100.000đ với nút \"Rút thưởng\" màu vàng.",
@@ -1636,6 +1639,7 @@
   },
   "breadcrumb": {
     "home": "Trang chủ",
+    "domesticEsim": "eSIM nội địa",
     "aboutUs": "Về chúng tôi",
     "allDestinations": "Tất cả điểm đến",
     "blog": "Blog",
@@ -1722,6 +1726,10 @@
     "invoiceEmail": "Email nhận hóa đơn",
     "invoiceEmailPlaceholder": "Email nhận hóa đơn",
     "invoiceEmailRequired": "Vui lòng nhập email nhận hóa đơn",
+    "invoicePhone": "Số điện thoại nhận hóa đơn",
+    "invoicePhonePlaceholder": "+84 xxx xxx xxx",
+    "invoicePhoneRequired": "Vui lòng nhập số điện thoại nhận hóa đơn",
+    "invoicePhoneInvalid": "Số điện thoại nhận hóa đơn không hợp lệ",
     "orderSummary": "Tóm tắt đơn hàng",
     "subtotal": "Tạm tính",
     "discount": "Giảm giá",

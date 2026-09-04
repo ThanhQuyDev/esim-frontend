@@ -91,24 +91,33 @@ export function BlogMeta({
 
 export function AuthorLink({
   author,
+  authorSlug: profileSlug,
+  authorAvatar,
   lang,
 }: {
   author: string | null;
+  authorSlug?: string | null;
+  authorAvatar?: string | null;
   lang: string;
 }) {
   if (!author) return null;
-  const authorSlug = author.toLowerCase().replace(/\s+/g, "-");
+  const slug = profileSlug || author.toLowerCase().replace(/\s+/g, "-");
+  const prefix = lang === "vi" ? "" : `/${lang}`;
   return (
     <Link
-      href={`/${lang}/blog/author/${authorSlug}/`}
+      href={`${prefix}/blog/author/${slug}/`}
       className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus"
     >
       <div className="flex flex-row items-center gap-3">
         <div className="relative rounded-full overflow-hidden w-[24px] min-w-[24px] h-[24px] bg-tertiary">
           <div className="relative overflow-hidden w-full h-full flex items-center justify-center">
-            <span className="text-[12px] text-secondary font-medium">
-              {author.charAt(0).toUpperCase()}
-            </span>
+            {authorAvatar ? (
+              <Image src={authorAvatar} alt={author} fill className="object-cover" />
+            ) : (
+              <span className="text-[12px] text-secondary font-medium">
+                {author.charAt(0).toUpperCase()}
+              </span>
+            )}
           </div>
         </div>
         <address className="body-sm text-secondary not-italic hover:underline">
@@ -172,7 +181,12 @@ export function BlogCard({ blog, lang }: { blog: Blog; lang: string }) {
           </div>
         </div>
         <div>
-          <AuthorLink author={blog.author} lang={lang} />
+          <AuthorLink
+            author={blog.authorProfile?.name ?? blog.author}
+            authorSlug={blog.authorProfile?.slug ?? blog.authorSlug}
+            authorAvatar={blog.authorProfile?.avatar ?? blog.authorAvatar}
+            lang={lang}
+          />
         </div>
       </div>
     </article>

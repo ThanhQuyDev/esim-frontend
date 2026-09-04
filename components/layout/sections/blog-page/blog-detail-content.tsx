@@ -41,7 +41,7 @@ async function fetchRandomRelatedPosts(
   signal?: AbortSignal
 ): Promise<Blog[]> {
   const res = await fetch(
-    `${API_BASE_URL}/api/v1/blogs?page=1&limit=10`,
+    `${API_BASE_URL}/api/v1/blogs?page=1&limit=10&filters=${encodeURIComponent(JSON.stringify({ isPublished: true }))}`,
     {
       headers: { "x-custom-lang": lang },
       signal,
@@ -50,8 +50,11 @@ async function fetchRandomRelatedPosts(
   if (!res.ok) return [];
   const data = await res.json();
   const blogs: Blog[] = data.data || data.items || data || [];
-  // Filter out current blog and pick 2 random
-  const filtered = blogs.filter((b: Blog) => b.id !== currentBlogId);
+  // Defense in depth: public related-article cards must never expose drafts,
+  // even if an older/cached API response includes them.
+  const filtered = blogs.filter(
+    (b: Blog) => b.id !== currentBlogId && b.isPublished === true
+  );
   const shuffled = filtered.sort(() => Math.random() - 0.5);
   return shuffled.slice(0, 2);
 }

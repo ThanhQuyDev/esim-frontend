@@ -4,6 +4,7 @@ export const routing = defineRouting({
   locales: ['vi', 'en'],
   defaultLocale: 'vi',
   localePrefix: 'as-needed', // vi không có prefix, en có /en
+  localeDetection: false,
 
   pathnames: {
     // Home
@@ -13,6 +14,12 @@ export const routing = defineRouting({
     '/[slug]': {
       vi: '/[slug]',
       en: '/[slug]',
+    },
+
+    // Domestic (local-inventory) eSIM carrier detail
+    '/esim-noi-dia/[carrier]': {
+      vi: '/esim-noi-dia/[carrier]',
+      en: '/domestic-esim/[carrier]',
     },
 
     // Destinations

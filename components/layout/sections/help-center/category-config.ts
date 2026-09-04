@@ -10,6 +10,8 @@
  *  - go from a label back to the canonical key
  */
 
+import { routing } from "@/i18n/routing";
+
 type LocaleEntry = { key: string; label: string };
 
 interface CategoryEntry {
@@ -132,7 +134,7 @@ export function fromUrlSlug(slug: string): string {
  * For Vietnamese: `getting_started` → `bat-dau`
  * For English: `getting_started` → `getting-started`
  */
-export function toLocalizedCategorySlug(key: string, lang = "en"): string {
+export function toLocalizedCategorySlug(key: string, lang: string = routing.defaultLocale): string {
   const entry = getEntry(CATEGORY_INDEX, key);
   if (entry) {
     const localeKey = lang === "vi" ? entry.vi.key : entry.en.key;
@@ -146,7 +148,7 @@ export function toLocalizedCategorySlug(key: string, lang = "en"): string {
  * For Vietnamese: `setting_up` → `cai-dat`
  * For English: `setting_up` → `setting-up`
  */
-export function toLocalizedParentSlug(key: string, lang = "en"): string {
+export function toLocalizedParentSlug(key: string, lang: string = routing.defaultLocale): string {
   const entry = getEntry(PARENT_INDEX, key);
   if (entry) {
     const localeKey = lang === "vi" ? entry.vi.key : entry.en.key;
@@ -191,7 +193,7 @@ export function resolveParentKey(key: string | null | undefined): string {
 }
 
 /** Get the localized label for a category key (canonical / en / vi). */
-export function getCategoryLabel(key: string, lang = "en"): string {
+export function getCategoryLabel(key: string, lang: string = routing.defaultLocale): string {
   const entry = getEntry(CATEGORY_INDEX, key);
   if (entry) {
     return (lang === "vi" ? entry.vi.label : entry.en.label) || entry.en.label;
@@ -200,7 +202,7 @@ export function getCategoryLabel(key: string, lang = "en"): string {
 }
 
 /** Get the localized label for a parent (section) key. */
-export function getParentLabel(key: string, lang = "en"): string {
+export function getParentLabel(key: string, lang: string = routing.defaultLocale): string {
   const entry = getEntry(PARENT_INDEX, key);
   if (entry) {
     return (lang === "vi" ? entry.vi.label : entry.en.label) || entry.en.label;
@@ -222,7 +224,7 @@ export function getParentKeyFromLabel(label: string): string | null {
  * Legacy alias — kept for places that still call `formatParent(...)`.
  * New code should prefer `getParentLabel(...)`.
  */
-export function formatParent(parent: string, lang = "en"): string {
+export function formatParent(parent: string, lang: string = routing.defaultLocale): string {
   return getParentLabel(parent, lang);
 }
 

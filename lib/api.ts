@@ -10,6 +10,7 @@ export interface Destination {
   id: number;
   name: string;
   slug: string;
+  slugVi?: string;
   countryCode: string;
   parentId?: number;
   flagUrl?: string;
@@ -58,6 +59,15 @@ export interface BlogMiniTag {
   linkUrl: string | null;
 }
 
+export interface BlogAuthor {
+  id: number;
+  userId: number;
+  name: string;
+  slug: string;
+  avatar?: string | null;
+  description?: string | null;
+}
+
 export interface Blog {
   id: string;
   language: string;
@@ -66,6 +76,8 @@ export interface Blog {
   author: string | null;
   authorAvatar?: string | null;
   authorBio?: string | null;
+  authorSlug?: string | null;
+  authorProfile?: BlogAuthor | null;
   tags?: string | null;
   coverImage: string | null;
   excerpt: string | null;
@@ -110,6 +122,7 @@ export interface Region {
   id: number;
   name: string;
   slug: string;
+  slugVi?: string;
   destinations?: Destination[];
   destinationCount?: number;
   avatarUrl?: string;
@@ -264,6 +277,7 @@ export interface Footer {
   title: string;
   titleVi: string;
   url: string;
+  sortOrder?: number;
   categories?: string | null;
   iconUrl?: string | null;
   createdAt: string | Date;
@@ -610,7 +624,35 @@ export async function getBlogsByCategoryAndParent(
   );
 }
 
-export async function getBlogDetail(
+export async function getBlogsByAuthor(
+  authorSlug: string,
+  options: FetchOptions = {}
+): Promise<PaginatedResponse<Blog>> {
+  return apiFetch<PaginatedResponse<Blog>>(
+    "/api/v1/blogs",
+    {
+      limit: 20,
+      ...options,
+      filters: JSON.stringify({ authorSlug }),
+    },
+    120
+  );
+}
+
+export async function getBlogAuthor(authorSlug: string): Promise<BlogAuthor | null> {
+  try {
+    const res = await fetch(
+      `${API_BASE_URL}/api/v1/blogs/authors/${encodeURIComponent(authorSlug)}`,
+      { next: { revalidate: 300 } }
+    );
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
+}
+
+export async function getBlogById(
   id: string,
   lang?: string
 ): Promise<Blog> {
@@ -735,6 +777,52 @@ export async function getPlansByRegionSlug(
   try {
     const raw = await apiFetch<PlansByDestinationResponse>(
       `/api/v1/plans/by-region/${encodeURIComponent(slug)}`,
+      { lang },
+      300
+    );
+    return normalizePlansByDestination(raw);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * A domestic (local-inventory) carrier, grouped from `isLocalInventory` plans.
+ * `fromVndPrice` is the cheapest plan price so the card can show "Từ {n}đ".
+ */
+export interface LocalCarrier {
+  provider: string;
+  fromVndPrice: number;
+  planCount: number;
+}
+
+/**
+ * Server-side: list domestic eSIM carriers (grouped from local-inventory plans).
+ * Returns [] on error so the tab renders an empty state instead of throwing.
+ */
+export async function getLocalCarriers(): Promise<LocalCarrier[]> {
+  try {
+    return await apiFetch<LocalCarrier[]>(
+      "/api/v1/plans/local-carriers",
+      {},
+      300
+    );
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Server-side: fetch categorized domestic plans for one carrier slug.
+ * Same grouped shape as getPlansByDestinationSlug (normalized casing).
+ */
+export async function getLocalPlansByCarrier(
+  carrier: string,
+  lang?: string
+): Promise<PlansByDestinationResponse | null> {
+  try {
+    const raw = await apiFetch<PlansByDestinationResponse>(
+      `/api/v1/plans/local/${encodeURIComponent(carrier)}`,
       { lang },
       300
     );

@@ -1,5 +1,8 @@
 "use client";
 
+import { localizedHref } from "@/lib/route-mapping";
+import { localizedSlug } from "@/lib/slug";
+
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useTopDestinations, useSearchDestinations, useSearchRegions, useRegions } from "@/lib/hooks";
 import { useDebounce } from "@/lib/use-debounce";
@@ -76,7 +79,7 @@ export function DestinationSearchModal({
     (slug: string) => {
       onClose();
       // Navigate to destination page
-      window.location.href = `/${lang}/${slug}`;
+      window.location.href = localizedHref(lang, slug);
     },
     [lang, onClose]
   );
@@ -84,7 +87,7 @@ export function DestinationSearchModal({
   const handleSelectRegion = useCallback(
     (slug: string) => {
       onClose();
-      window.location.href = `/${lang}/${slug}`;
+      window.location.href = localizedHref(lang, slug);
     },
     [lang, onClose]
   );
@@ -243,7 +246,7 @@ export function DestinationSearchModal({
                     </p>
                     <a
                       role="button"
-                      href={`/${lang}/destinations`}
+                      href={localizedHref(lang, "destinations")}
                       className="text-center inline-block text-primary pointer-fine:hover:bg-brand-black pointer-fine:hover:text-primary-on-color border-md border-black active:bg-brand-black active:text-primary-on-color box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7"
                     >
                       {lang === "vi"
@@ -254,7 +257,7 @@ export function DestinationSearchModal({
                 ) : (
                   mergedResults.map((item: any) => {
                     const isRegion = item._type === "region";
-                    const href = `/${lang}/${item.slug}`;
+                    const href = localizedHref(lang, localizedSlug(item, lang));
                     const priceStr = item.minPrice || item.fromPrice
                       ? formatPrice(item.minPrice || item.fromPrice)
                       : null;
@@ -280,8 +283,8 @@ export function DestinationSearchModal({
                           data-anchor-link="true"
                           onClick={(e) => {
                             e.preventDefault();
-                            if (isRegion) handleSelectRegion(item.slug);
-                            else handleSelect(item.slug);
+                            if (isRegion) handleSelectRegion(localizedSlug(item, lang));
+                            else handleSelect(localizedSlug(item, lang));
                           }}
                         >
                           <div
@@ -372,7 +375,7 @@ export function DestinationSearchModal({
                       : priceStr
                         ? `${lang === "vi" ? "Từ" : "From"} ${priceStr}`
                         : null;
-                    const href = lang === 'vi' ? `/${item.slug}` : `/${lang}/${item.slug}`;
+                    const href = localizedHref(lang, localizedSlug(item, lang));
 
                     return (
                       <div key={`${item._type}-${item.id}`}>
@@ -384,8 +387,8 @@ export function DestinationSearchModal({
                           data-anchor-link="true"
                           onClick={(e) => {
                             e.preventDefault();
-                            if (isRegionItem) handleSelectRegion(item.slug);
-                            else handleSelect(item.slug);
+                            if (isRegionItem) handleSelectRegion(localizedSlug(item, lang));
+                            else handleSelect(localizedSlug(item, lang));
                           }}
                         >
                           <div

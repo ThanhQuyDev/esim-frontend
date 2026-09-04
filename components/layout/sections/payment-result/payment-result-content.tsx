@@ -124,9 +124,7 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
     }
   }, [showSuccess, isTopup, isApiCart, clearApiCart]);
 
-  // Calculate cashback (2% of payable amount)
-  const orderVndPrice = orderData?.vndPrice || 0;
-  const cashbackAmount = orderVndPrice > 0 ? Math.round(orderVndPrice * 0.02) : 0;
+  const cashbackAmount = orderData?.cashbackAmountVnd ?? 0;
 
   const copyToClipboard = async (text: string, field: string) => {
     try {
@@ -261,7 +259,7 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
               variant="outline"
               className="flex-1 h-12 rounded-full border-gray-200 text-gray-700 font-semibold hover:bg-gray-50 transition-colors cursor-pointer"
             >
-              <Link href={`/${lang}`}>
+              <Link href={localizedHref(lang, "/")}>
                 <Home className="w-4 h-4 mr-2" />
                 {t.backHome}
               </Link>
@@ -359,7 +357,7 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
             asChild
             className="flex-1 h-12 rounded-full bg-emerald-600 text-white font-semibold hover:bg-emerald-700 transition-colors cursor-pointer"
           >
-            <Link href={`/${lang}`}>
+            <Link href={localizedHref(lang, "/")}>
               <Home className="w-4 h-4 mr-2" />
               {t.backHome}
             </Link>

@@ -1,3 +1,5 @@
+import { localizedHref } from "@/lib/route-mapping";
+
 interface ReviewComparisonTableProps {
   dict: Record<string, any>;
   lang: string;
@@ -154,7 +156,7 @@ export function ReviewComparisonTable({ dict, lang }: ReviewComparisonTableProps
                                 role="button"
                                 className="max-md:w-full text-center inline-block text-primary bg-accent pointer-fine:hover:bg-accent-hover border-md border-bg-accent-hover pointer-fine:hover:border-accent-hover active:bg-accent-active! active:border-accent-active! box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7"
                                 data-ga-slug="View Plans"
-                                href={`/${lang}/destinations`}
+                                href={localizedHref(lang, "destinations")}
                               >
                                 {dict.viewPlans || "View Plans"}
                               </a>

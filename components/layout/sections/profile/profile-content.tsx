@@ -1,15 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { User, Smartphone, Mail, LogOut, Wallet, Gift, Copy, Clock, ArrowRight } from "lucide-react";
+import { User, Smartphone, Mail, LogOut, Wallet, Gift, Copy, Clock, ArrowRight, Award, TrendingUp, Coins } from "lucide-react";
 import { useAuth } from "@/lib/auth";
-import { useMyOrders, useMyEsims, useWalletMe, useReferralProfile } from "@/lib/hooks";
+import {
+  useMyOrders,
+  useMyEsims,
+  useWalletMe,
+  useReferralProfile,
+  type MembershipTier,
+} from "@/lib/hooks";
 import { profileTranslations } from "./translations";
 import { OrderList } from "./order-list";
 import { EsimCardList } from "./esim-card-list";
 import { PersonalInfo } from "./personal-info";
 import { WalletPageContent } from "@/components/layout/sections/wallet/wallet-page-content";
 import Link from "next/link";
+import { localizedHref } from "@/lib/route-mapping";
 
 interface ProfileContentProps {
   lang: "en" | "vi";
@@ -23,6 +30,28 @@ function formatVnd(amount: number): string {
     currency: "VND",
     maximumFractionDigits: 0,
   }).format(amount);
+}
+
+function getTierLabel(tier: MembershipTier, lang: "en" | "vi"): string {
+  const labels: Record<MembershipTier, { en: string; vi: string }> = {
+    traveler: { en: "Traveler", vi: "Du khách" },
+    silver: { en: "Silver Traveler", vi: "Du khách bạc" },
+    gold: { en: "Gold Traveler", vi: "Du khách vàng" },
+    platinum: { en: "Platinum Traveler", vi: "Du khách bạch kim" },
+  };
+
+  return labels[tier][lang];
+}
+
+function getTierGradient(tier: MembershipTier): string {
+  const gradients: Record<MembershipTier, string> = {
+    traveler: "from-sky-500 to-blue-600",
+    silver: "from-slate-400 to-slate-600",
+    gold: "from-amber-400 to-orange-500",
+    platinum: "from-violet-500 to-indigo-700",
+  };
+
+  return gradients[tier];
 }
 
 function getExpiryColor(daysLeft: number | null): string {
@@ -70,7 +99,7 @@ export function ProfileContent({ lang }: ProfileContentProps) {
             {lang === "vi" ? "Vui lòng đăng nhập để xem hồ sơ." : "Please sign in to view your profile."}
           </p>
           <Link
-            href={`/${lang}`}
+            href={localizedHref(lang, "/")}
             className="inline-flex items-center px-6 py-2.5 bg-gray-900 text-white rounded-full text-base sm:text-sm font-medium hover:bg-gray-800 transition-colors"
           >
             {lang === "vi" ? "Về trang chủ" : "Go Home"}
@@ -148,6 +177,95 @@ export function ProfileContent({ lang }: ProfileContentProps) {
 
             {/* Personal Info — moved out of SIM management tab */}
             <PersonalInfo t={t} lang={lang} />
+
+            {wallet && (
+              <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+                <div className={`bg-gradient-to-r ${getTierGradient(wallet.membershipTier)} p-5 text-white`}>
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <Award className="w-5 h-5" />
+                        <span className="text-base sm:text-sm font-medium opacity-90">
+                          {lang === "vi" ? "Hạng thành viên" : "Membership tier"}
+                        </span>
+                      </div>
+                      <p className="text-[1.7rem] sm:text-2xl font-medium">
+                        {getTierLabel(wallet.membershipTier, lang)}
+                      </p>
+                    </div>
+                    {wallet.tierSource === "override" && (
+                      <span className="rounded-full bg-white/20 px-3 py-1 text-sm font-medium">
+                        {lang === "vi" ? "Điều chỉnh bởi quản trị viên" : "Admin adjusted"}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="p-5 space-y-5">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="rounded-xl bg-emerald-50 p-3">
+                      <div className="flex items-center gap-2 text-emerald-700 mb-1">
+                        <Coins className="w-4 h-4" />
+                        <span className="text-sm">
+                          {lang === "vi" ? "Hoàn tiền" : "Cashback"}
+                        </span>
+                      </div>
+                      <p className="text-lg font-semibold text-emerald-800">
+                        {wallet.cashbackPercent}% eXU
+                      </p>
+                    </div>
+                    <div className="rounded-xl bg-blue-50 p-3">
+                      <div className="flex items-center gap-2 text-blue-700 mb-1">
+                        <Gift className="w-4 h-4" />
+                        <span className="text-sm">
+                          {lang === "vi" ? "Thưởng giới thiệu" : "Referral reward"}
+                        </span>
+                      </div>
+                      <p className="text-lg font-semibold text-blue-800">
+                        {formatVnd(wallet.referralRewardVnd)} eXU
+                      </p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex items-center justify-between gap-4 mb-2">
+                      <div className="flex items-center gap-2 text-gray-600">
+                        <TrendingUp className="w-4 h-4" />
+                        <span className="text-base sm:text-sm">
+                          {lang === "vi" ? "Tổng chi tiêu" : "Lifetime spend"}
+                        </span>
+                      </div>
+                      <span className="text-base sm:text-sm font-semibold text-gray-900">
+                        {formatVnd(wallet.lifetimeSpendVnd)}
+                      </span>
+                    </div>
+
+                    {wallet.nextTier && wallet.nextTierThresholdVnd !== null ? (
+                      <>
+                        <div className="h-2 overflow-hidden rounded-full bg-gray-100">
+                          <div
+                            className={`h-full rounded-full bg-gradient-to-r ${getTierGradient(wallet.nextTier)}`}
+                            style={{ width: `${Math.min(100, Math.max(0, wallet.progressPercent))}%` }}
+                          />
+                        </div>
+                        <div className="flex items-center justify-between gap-4 mt-2 text-sm text-gray-500">
+                          <span>{Math.round(wallet.progressPercent)}%</span>
+                          <span>
+                            {lang === "vi" ? "Tiếp theo" : "Next"}: {getTierLabel(wallet.nextTier, lang)} · {formatVnd(wallet.nextTierThresholdVnd)}
+                          </span>
+                        </div>
+                      </>
+                    ) : (
+                      <p className="text-base sm:text-sm text-violet-700 font-medium">
+                        {lang === "vi"
+                          ? "Bạn đã đạt hạng thành viên cao nhất."
+                          : "You have reached the highest membership tier."}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* eXU Wallet Balance Card */}
             {wallet && (

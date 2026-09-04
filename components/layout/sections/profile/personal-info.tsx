@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { User, Phone, Save, Loader2 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useMyProfile, useUpdateProfile } from "@/lib/hooks";
+import { PHONE_MAX_LENGTH, sanitizePhoneInput } from "@/lib/utils";
 import type { ProfileDict } from "./translations";
 
 interface PersonalInfoProps {
@@ -32,7 +33,7 @@ export function PersonalInfo({ t, lang }: PersonalInfoProps) {
     if (source) {
       setFirstName(source.firstName || "");
       setLastName(source.lastName || "");
-      setPhone(profile?.phoneNumber || user?.phoneNumber || "");
+      setPhone(sanitizePhoneInput(profile?.phoneNumber || user?.phoneNumber || ""));
     }
   }, [profile, user]);
 
@@ -117,9 +118,11 @@ export function PersonalInfo({ t, lang }: PersonalInfoProps) {
             <Phone className="absolute top-1/2 left-3 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
             <input
               type="tel"
+              inputMode="tel"
+              maxLength={PHONE_MAX_LENGTH}
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder={lang === "vi" ? "0901 234 567" : "+1 555 123 4567"}
+              onChange={(e) => setPhone(sanitizePhoneInput(e.target.value))}
+              placeholder={lang === "vi" ? "0901234567" : "+15551234567"}
               className="w-full pl-9 pr-3 py-2 text-base sm:text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-colors"
             />
           </div>

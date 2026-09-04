@@ -60,6 +60,7 @@ export interface AuthUser {
   firstName?: string;
   lastName?: string;
   phoneNumber?: string | null;
+  hasPassword?: boolean;
 }
 
 interface AuthContextValue {
@@ -69,7 +70,15 @@ interface AuthContextValue {
   /** Send OTP to email (works for both login & register) */
   sendOtp: (email: string) => Promise<void>;
   /** Verify OTP and complete authentication */
-  verifyOtp: (email: string, otp: string) => Promise<void>;
+  verifyOtp: (email: string, otp: string) => Promise<AuthUser>;
+  /** Log in with email + password (fallback when email delivery fails) */
+  loginWithPassword: (email: string, password: string) => Promise<AuthUser>;
+  /** Log in with a Google ID token */
+  loginWithGoogle: (idToken: string) => Promise<AuthUser>;
+  /** Set a password for an account that doesn't have one yet */
+  setPassword: (password: string) => Promise<void>;
+  /** Request a password reset email */
+  forgotPassword: (email: string) => Promise<void>;
   logout: () => void;
   /** Opens the auth modal */
   openAuthModal: () => void;
@@ -117,6 +126,40 @@ function loadPersistedAuth(): { token: string; user: AuthUser } | null {
 
 // ===== API calls =====
 
+/**
+ * Error carrying the backend's machine-readable error code.
+ *
+ * The API returns 422 as `{ status, errors: { <field>: "<code>" } }` with no
+ * top-level `message`, so reading `body.message` alone always yields
+ * undefined. Callers should branch on `code` (e.g. "passwordNotSet") and
+ * render their own localized text.
+ */
+export class AuthError extends Error {
+  code: string;
+  field: string;
+
+  constructor(code: string, field: string) {
+    super(code);
+    this.name = "AuthError";
+    this.code = code;
+    this.field = field;
+  }
+}
+
+async function throwApiError(res: Response, fallback: string): Promise<never> {
+  const body = await res.json().catch(() => ({}));
+  const errors = body?.errors;
+
+  if (errors && typeof errors === "object") {
+    const [field, code] = Object.entries(errors)[0] ?? [];
+    if (typeof code === "string") {
+      throw new AuthError(code, field ?? "");
+    }
+  }
+
+  throw new AuthError(body?.message || `${fallback} (${res.status})`, "");
+}
+
 async function apiSendOtp(email: string): Promise<void> {
   const res = await fetch(`${API_BASE_URL}/api/v1/auth/email/otp/send`, {
     method: "POST",
@@ -125,30 +168,29 @@ async function apiSendOtp(email: string): Promise<void> {
   });
 
   if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
-    throw new Error(body.message || `Failed to send OTP (${res.status})`);
+    await throwApiError(res, "Failed to send OTP");
   }
 }
 
-async function apiVerifyOtp(
-  email: string,
-  otp: string
+async function apiLogin(
+  path: string,
+  payload: Record<string, string>,
+  fallback: string
 ): Promise<{ token: string; user: AuthUser }> {
-  const res = await fetch(`${API_BASE_URL}/api/v1/auth/email/otp/verify`, {
+  const res = await fetch(`${API_BASE_URL}${path}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, otp }),
+    body: JSON.stringify(payload),
   });
 
   if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
-    throw new Error(body.message || `OTP verification failed (${res.status})`);
+    await throwApiError(res, fallback);
   }
 
   const data = await res.json();
   return {
     token: data.token,
-    user: data.user ?? { id: 0, email },
+    user: data.user ?? { id: 0, email: payload.email ?? "" },
   };
 }
 
@@ -182,9 +224,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await apiSendOtp(email);
   }, []);
 
-  const verifyOtp = useCallback(
-    async (email: string, otp: string) => {
-      const result = await apiVerifyOtp(email, otp);
+  const completeLogin = useCallback(
+    async (result: { token: string; user: AuthUser }) => {
       setToken(result.token);
       setUser(result.user);
       persistAuth(result.token, result.user);
@@ -208,8 +249,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                   Authorization: `Bearer ${result.token}`,
                 },
                 body: JSON.stringify({
-                  planId: Number(item.id),
+                  planId: item.planId ?? Number(item.id),
                   quantity: item.quantity,
+                  ...(item.durationDays ? { periodNum: item.durationDays } : {}),
                 }),
               })
             )
@@ -226,9 +268,84 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // manual F5.
         queryClient.invalidateQueries({ queryKey: ["cart", "api"] });
       }
+
+      return result.user;
     },
     [queryClient]
   );
+
+  const verifyOtp = useCallback(
+    async (email: string, otp: string) => {
+      const result = await apiLogin(
+        "/api/v1/auth/email/otp/verify",
+        { email, otp },
+        "OTP verification failed"
+      );
+      return completeLogin(result);
+    },
+    [completeLogin]
+  );
+
+  const loginWithPassword = useCallback(
+    async (email: string, password: string) => {
+      const result = await apiLogin(
+        "/api/v1/auth/email/login",
+        { email, password },
+        "Login failed"
+      );
+      return completeLogin(result);
+    },
+    [completeLogin]
+  );
+
+  const loginWithGoogle = useCallback(
+    async (idToken: string) => {
+      const result = await apiLogin(
+        "/api/v1/auth/google/login",
+        { idToken },
+        "Google login failed"
+      );
+      return completeLogin(result);
+    },
+    [completeLogin]
+  );
+
+  const setPassword = useCallback(
+    async (password: string) => {
+      const res = await authFetch(
+        `${API_BASE_URL}/api/v1/auth/me/password`,
+        token,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password }),
+        }
+      );
+
+      if (!res.ok) {
+        await throwApiError(res, "Failed to set password");
+      }
+
+      const updated = await res.json();
+      setUser(updated);
+      if (token) {
+        persistAuth(token, updated);
+      }
+    },
+    [token]
+  );
+
+  const forgotPassword = useCallback(async (email: string) => {
+    const res = await fetch(`${API_BASE_URL}/api/v1/auth/forgot/password`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+
+    if (!res.ok) {
+      await throwApiError(res, "Failed to send reset email");
+    }
+  }, []);
 
   const logout = useCallback(() => {
     setToken(null);
@@ -254,6 +371,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isLoading,
         sendOtp,
         verifyOtp,
+        loginWithPassword,
+        loginWithGoogle,
+        setPassword,
+        forgotPassword,
         logout,
         openAuthModal,
         authModalOpen,

@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { useWalletMe } from "@/lib/hooks";
 import { localizedHref } from "@/lib/route-mapping";
 
 interface ReferFriendBannerProps {
@@ -7,7 +10,13 @@ interface ReferFriendBannerProps {
 }
 
 export function ReferFriendBanner({ dict, lang = "vi" }: ReferFriendBannerProps) {
+  const { data: wallet } = useWalletMe();
   const href = localizedHref(lang, "refer-a-friend");
+  const reward = new Intl.NumberFormat("vi-VN").format(
+    wallet?.referralRewardVnd ?? 10_000
+  );
+  const title = String(dict.title).replace("{reward}", reward);
+  const description = String(dict.description).replace("{reward}", reward);
   return (
     <div
       data-section="ReferFriendBanner"
@@ -26,21 +35,21 @@ export function ReferFriendBanner({ dict, lang = "vi" }: ReferFriendBannerProps)
                   <div className="md:p-16 px-6 py-8 w-full flex flex-col gap-6 lg:gap-8">
                     <div className="text-center lg:text-left">
                       <h2 className="heading-lg scroll-mt-20 xl:scroll-mt-24">
-                        {dict.title}
+                        {title}
                       </h2>
                     </div>
                     <p className="body-md text-secondary scroll-mt-20 xl:scroll-mt-24">
-                      {dict.description}
+                      {description}
                     </p>
                     <div>
                       <a
                         role="button"
                         className="max-md:w-full text-center inline-block text-primary hover:bg-black hover:text-white pointer-fine:hover:bg-brand-black pointer-fine:hover:text-primary-on-color border-md border-black active:bg-brand-black active:text-primary-on-color box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7"
                         href={href}
-                        aria-label={`Learn more about ${dict.title}`}
+                        aria-label={`Learn more about ${title}`}
                       >
                         {dict.cta}
-                        <span className="sr-only"> about {dict.title}</span>
+                        <span className="sr-only"> about {title}</span>
                       </a>
                     </div>
                   </div>

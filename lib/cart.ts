@@ -6,6 +6,8 @@ import { roundVndToThousands } from "./utils";
 
 export interface CartItem {
   id: string;
+  /** Numeric plan id sent to the API. `id` is the cart-line key and may include the selected duration. */
+  planId?: number;
   name: string;
   description: string;
   price: number; // USD (after discount if applicable)

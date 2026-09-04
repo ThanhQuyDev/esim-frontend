@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { localizedHref } from "@/lib/route-mapping";
 import type { Plan } from "@/lib/api";
 import type { DestinationDict } from "../types";
 import { calcTotalPrice, calcTotalVndPrice, getFixedPrice, getFixedVndPrice } from "../types";
@@ -52,7 +53,8 @@ export function MobileCta({
     const displayDays = isFixed ? selectedPlan.durationDays : (isMultidate ? days : selectedPlan.durationDays);
     await addItem(
       {
-        id: String(selectedPlan.id),
+        id: `${selectedPlan.id}:${cartDurationDays ?? "fixed"}`,
+        planId: selectedPlan.id,
         name: selectedPlan.name || `eSIM ${destination || ""}`.trim(),
         description: `${selectedPlan.type === 'unlimited' || selectedPlan.type === 'unlimited-reduce' ? 'Unlimited' : selectedPlan.dataMb >= 1024 ? `${parseFloat((selectedPlan.dataMb / 1024).toFixed(1))} GB` : `${selectedPlan.dataMb} MB`} / ${displayDays} days`,
         price: unitPrice,
@@ -74,7 +76,7 @@ export function MobileCta({
 
   // Buy now → add and go straight to cart.
   const handleBuyNow = async () => {
-    if (await doAddToCart()) router.push(`/${lang}/cart`);
+    if (await doAddToCart()) router.push(localizedHref(lang, "cart"));
   };
 
   return (

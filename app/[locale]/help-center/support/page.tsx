@@ -4,6 +4,7 @@ import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { getCmsSeoUrlForPage } from "@/lib/cms-seo-url";
 import { getDictionary } from "@/lib/dictionaries";
 import { getSeoMetadata } from "@/lib/seo";
+import { localizedHref } from "@/lib/route-mapping";
 import { getLocale } from "next-intl/server";
 import type { Locale } from "@/lib/i18n-config";
 
@@ -26,7 +27,7 @@ export default async function SupportPage() {
       <main role="main" className="min-h-[calc(100vh-200px)]">
         <Breadcrumb
           items={[
-            { label: dict.breadcrumb.helpCenter, href: `/${locale}/help-center` },
+            { label: dict.breadcrumb.helpCenter, href: localizedHref(locale, "help-center") },
             { label: dict.breadcrumb.helpCenterSupport },
           ]}
           lang={locale}

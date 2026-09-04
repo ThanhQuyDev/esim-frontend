@@ -96,6 +96,37 @@ export interface DestinationPlansProps {
   initialRegion?: Region | null;
 }
 
+// ===== Helper: localized plan label for the price display =====
+export function formatDataLabel(mb: number): string {
+  if (mb >= 1024) {
+    const gb = mb / 1024;
+    return Number.isInteger(gb) ? `${gb}GB` : `${parseFloat(gb.toFixed(1))}GB`;
+  }
+  return `${mb}MB`;
+}
+
+export function buildPlanLabel(
+  plan: Plan,
+  days: number,
+  isFixed: boolean,
+  dict: DestinationDict,
+  lang: string,
+): string {
+  if (lang !== "vi") {
+    if (isFixed) return `· ${plan.name}`;
+    return `· ${plan.name} · ${days} ${dict.daysUnit.toLowerCase()}`;
+  }
+
+  const isUnlimited = plan.type === "unlimited" || plan.type === "unlimited-reduce";
+  const dataLabel = isUnlimited ? dict.features.unlimited : formatDataLabel(Number(plan.dataMb));
+  const daysLabel = dict.daysUnit.toLowerCase();
+  const duration = isFixed ? plan.durationDays : days;
+  const dailyLabel = "ngày";
+  const dataWithRate = plan.isAbleMultidate ? `${dataLabel}/${dailyLabel}` : dataLabel;
+
+  return `· ${dataWithRate} · ${duration} ${daysLabel}`;
+}
+
 // ===== Helper: find best plan for a given dataMb + days =====
 /**
  * Among plans with the same dataMb, pick the cheapest total cost for `days` travel days.

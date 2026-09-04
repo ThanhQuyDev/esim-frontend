@@ -1,7 +1,3 @@
-"use client";
-
-import { useState } from "react";
-
 interface Step {
   number: string;
   title: string;
@@ -71,10 +67,7 @@ function StepCard({ step }: { step: Step }) {
 }
 
 export function ReferHowItWorks({ dict }: ReferHowItWorksProps) {
-  const [activeTab, setActiveTab] = useState<"sprint" | "regular">("sprint");
-  const tabs = dict.tabs ?? {};
-  const sprintSteps: Step[] = dict.sprintSteps ?? [];
-  const regularSteps: Step[] = dict.regularSteps ?? [];
+  const steps: Step[] = dict.regularSteps ?? [];
 
   return (
     <div
@@ -97,59 +90,10 @@ export function ReferHowItWorks({ dict }: ReferHowItWorksProps) {
 
         <div className="mx-4 sm:mx-auto">
           <div className="container mx-auto">
-            <div>
-              <div className="container mx-auto">
-                <div className="flex gap-1 pb-4 scrollbar-none overflow-auto">
-                  <div className="relative flex gap-1 w-fit p-1 border border-secondary rounded-full">
-                    <button
-                      type="button"
-                      onClick={() => setActiveTab("sprint")}
-                      className={`relative z-10 body-sm-medium whitespace-nowrap md:body-md-medium px-4 py-1 focus-visible:outline-hidden focus-visible:shadow-focus rounded-full transition-colors ${
-                        activeTab === "sprint"
-                          ? "bg-dark text-white"
-                          : "bg-transparent text-primary hover:bg-secondary/40"
-                      }`}
-                    >
-                      {tabs.sprint}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setActiveTab("regular")}
-                      className={`relative z-10 body-sm-medium whitespace-nowrap md:body-md-medium px-4 py-1 focus-visible:outline-hidden focus-visible:shadow-focus rounded-full transition-colors ${
-                        activeTab === "regular"
-                          ? "bg-dark text-white"
-                          : "bg-transparent text-primary hover:bg-secondary/40"
-                      }`}
-                    >
-                      {tabs.regular}
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="sm:mx-auto">
-                <div className="container mx-auto">
-                  {activeTab === "sprint" && (
-                    <div className="pt-6">
-                      <div className="grid sm:gap-x-8 md:grid-cols-3 grid-cols-1 gap-y-8">
-                        {sprintSteps.map((step, i) => (
-                          <StepCard key={i} step={step} />
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {activeTab === "regular" && (
-                    <div className="pt-6">
-                      <div className="grid sm:gap-x-8 md:grid-cols-3 grid-cols-1 gap-y-8">
-                        {regularSteps.map((step, i) => (
-                          <StepCard key={i} step={step} />
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
+            <div className="grid sm:gap-x-8 md:grid-cols-3 grid-cols-1 gap-y-8">
+              {steps.map((step, index) => (
+                <StepCard key={index} step={step} />
+              ))}
             </div>
           </div>
         </div>

@@ -5,6 +5,8 @@ import { MapPin, Loader2, X } from "lucide-react";
 import { useInfiniteDestinations, useRegions } from "@/lib/hooks";
 import { useDebounce } from "@/lib/use-debounce";
 import type { Locale } from "@/lib/i18n-config";
+import { localizedSlug } from "@/lib/slug";
+import { LocalCarrierGrid } from "@/components/layout/sections/local-esim/local-carrier-grid";
 
 interface AllDestinationsContentProps {
   dict: Record<string, any>;
@@ -39,7 +41,7 @@ function SearchIcon({ className }: { className?: string }) {
   );
 }
 
-type TabKey = "all" | "country" | "region" | "ultra";
+type TabKey = "all" | "country" | "region" | "ultra" | "local";
 
 function DestinationCard({
   item,
@@ -57,7 +59,7 @@ function DestinationCard({
       <a
         className="align-bottom focus-visible:outline-hidden focus-visible:shadow-focus text-text-primary active:text-text-primary block group ease-out h-full rounded-sm transition-colors hover:text-text-primary hover:bg-bg-tertiary bg-bg-secondary"
         data-testid={item.countryCode || item.slug || item.id}
-        href={lang === 'vi' ? `/${item.slug || item.code?.toLowerCase()}` : `/${lang}/${item.slug || item.code?.toLowerCase()}`}
+        href={lang === 'vi' ? `/${localizedSlug(item, lang) || item.code?.toLowerCase()}` : `/${lang}/${localizedSlug(item, lang) || item.code?.toLowerCase()}`}
 
       >
         <div
@@ -159,6 +161,7 @@ export function AllDestinationsContent({
     { key: "all", label: dict.tabs.all },
     { key: "country", label: dict.tabs.country },
     { key: "region", label: dict.tabs.region },
+    { key: "local", label: dict.tabs.local },
   ];
 
   return (
@@ -171,12 +174,12 @@ export function AllDestinationsContent({
         {/* Header */}
         <div className="mx-4 sm:mx-auto">
           <div className="container grid sm:gap-x-8 grid-cols-12 mb-10 mx-auto">
-            <div className="col-span-12 md:col-span-8">
-              <div className="grid grid-cols-1 gap-y-6">
-                <h1 className="heading-xl scroll-mt-20 xl:scroll-mt-24">
+            <div className="col-span-12 min-w-0 md:col-span-8">
+              <div className="grid min-w-0 grid-cols-1 gap-y-6">
+                <h1 className="heading-xl break-words scroll-mt-20 xl:scroll-mt-24">
                   {dict.title}
                 </h1>
-                <p className="body-md text-text-secondary scroll-mt-20 xl:scroll-mt-24 whitespace-nowrap">
+                <p className="body-md min-w-0 break-words text-text-secondary scroll-mt-20 xl:scroll-mt-24">
                   {dict.description}
                 </p>
               </div>
@@ -220,7 +223,7 @@ export function AllDestinationsContent({
             </div>
 
             {/* Search Input */}
-            <div id="input-wrapper" className="relative mb-6">
+            <div id="input-wrapper" className={`relative mb-6 ${activeTab === "local" ? "hidden" : ""}`}>
               <input
                 data-testid="search-input"
                 placeholder={dict.searchPlaceholder}
@@ -260,7 +263,17 @@ export function AllDestinationsContent({
             </div>
 
             {/* Destination Grid */}
-            {isLoading || (isAllTab && isLoadingRegions) ? (
+            {activeTab === "local" ? (
+              <LocalCarrierGrid
+                lang={lang}
+                fromLabel={dict.from}
+                emptyLabel={
+                  lang === "vi"
+                    ? "Chưa có eSIM nội địa khả dụng."
+                    : "No domestic eSIMs available yet."
+                }
+              />
+            ) : isLoading || (isAllTab && isLoadingRegions) ? (
               <div className="flex items-center justify-center py-16">
                 <Loader2 className="w-8 h-8 text-text-tertiary animate-spin" />
               </div>

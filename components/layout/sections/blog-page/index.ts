@@ -2,6 +2,7 @@ export { BlogPageContent } from "./blog-page-content";
 export { BlogDetailContent } from "./blog-detail-content";
 export { BlogSearchResultsContent } from "./blog-search-results-content";
 export { BlogCategoryNav } from "./blog-category-nav";
+export { BlogCard } from "./blog-card";
 export { BlogArticleHeading } from "./blog-article-heading";
 export { BlogTableOfContents } from "./blog-toc";
 export { BlogMiniTagWidget } from "./blog-mini-tag";

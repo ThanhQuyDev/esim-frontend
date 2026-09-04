@@ -117,7 +117,7 @@ export function HelpCenterContent({ lang, initialArticles }: HelpCenterContentPr
               onSubmit={(e) => {
                 e.preventDefault();
                 if (searchQuery.trim()) {
-                  router.push(`${localizedHref(lang, "help-center")}/search?q=${encodeURIComponent(searchQuery.trim())}`);
+                  router.push(`${localizedHref(lang, "help-center/search")}?q=${encodeURIComponent(searchQuery.trim())}`);
                 }
               }}
             >

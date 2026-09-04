@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { Search, ChevronDown, X } from "lucide-react";
+import { localizedHref } from "@/lib/route-mapping";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.saily.example.com";
@@ -51,7 +52,7 @@ function BlogSearchInput({ lang, mobile }: { lang: string; mobile?: boolean }) {
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
     if (keyword.trim()) {
-      router.push(`/${lang}/blog/search?q=${encodeURIComponent(keyword.trim())}`);
+      router.push(`${localizedHref(lang, "blog/search")}?q=${encodeURIComponent(keyword.trim())}`);
     }
   }
 

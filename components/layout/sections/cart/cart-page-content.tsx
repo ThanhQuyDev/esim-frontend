@@ -19,6 +19,7 @@ import { useExchangeRate, convertUsdToVnd, formatVnd, useCart, useReferralProfil
 import { useAuth } from "@/lib/auth";
 import { walletTranslations } from "@/components/layout/sections/wallet/translations";
 import Link from "next/link";
+import { localizedHref } from "@/lib/route-mapping";
 
 interface CartPageContentProps {
   dict: Record<string, any>;
@@ -38,8 +39,9 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
   const { user, openAuthModal, token } = useAuth();
   const { data: referralProfile } = useReferralProfile();
   const { data: wallet } = useWalletMe();
-  const validateReferralMutation = useValidateReferral();
+  const { mutateAsync: validateReferral } = useValidateReferral();
   const pendingCheckoutRef = useRef(false);
+  const autoValidatedReferralRef = useRef<string | null>(null);
   const wt = walletTranslations[lang as "en" | "vi"];
 
   // Sync cart items from API or localStorage
@@ -59,18 +61,6 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
       setSelectedIds((prev) => prev.size === 0 ? new Set(c.items.map((i) => i.id)) : prev);
     }
   }, [isApiCart, apiCartItems, getLocalCartData]);
-
-  // Auto-fill referral code from URL capture
-  useEffect(() => {
-    const storedRef = localStorage.getItem("esim_referral_code");
-    if (storedRef && !promoApplied) {
-      setPromoInput(storedRef);
-      // Only auto-validate via API if user is logged in
-      if (user) {
-        validateAndApplyPromo(storedRef);
-      }
-    }
-  }, [user]);
 
   // Listen for localStorage cart-updated events (guest mode)
   useEffect(() => {
@@ -116,8 +106,8 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
   const promoDiscountVnd = promoApplied && isReferralValid ? promoApplied.discountVnd : 0;
   const vndTotalValue = Math.max(0, vndTotalBeforePromo - promoDiscountVnd);
 
-  // Cashback: 2% after coupon + referral (eXU does not affect cashback)
-  const cashbackVnd = Math.round(vndTotalValue * 0.02);
+  const cashbackPercent = wallet?.cashbackPercent ?? 2;
+  const cashbackVnd = Math.round((vndTotalValue * cashbackPercent) / 100);
 
   // Reactive referral validation: when selected items change, re-validate
   useEffect(() => {
@@ -157,7 +147,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
     }
   }, [vndSubtotalValue, subtotal, cart.appliedCoupon, lang]);
 
-  const validateAndApplyPromo = async (code: string) => {
+  const validateAndApplyPromo = useCallback(async (code: string) => {
     const trimmed = code.trim().toUpperCase();
     if (!trimmed) return;
 
@@ -239,7 +229,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
     }
 
     try {
-      const result = await validateReferralMutation.mutateAsync({
+      const result = await validateReferral({
         code: trimmed,
         subtotalVnd: vndSubtotalValue,
         hasCoupon: !!cart.appliedCoupon,
@@ -250,7 +240,31 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
     } catch (err: any) {
       setPromoError(err.message || "Mã giới thiệu không hợp lệ");
     }
-  };
+  }, [
+    availableCoupons,
+    vndSubtotalValue,
+    dict.couponMinAmount,
+    subtotal,
+    user,
+    token,
+    lang,
+    openAuthModal,
+    cart.appliedCoupon,
+    wt.referralWithCoupon,
+    validateReferral,
+    vndDiscountValue,
+  ]);
+
+  useEffect(() => {
+    const storedRef = localStorage.getItem("esim_referral_code");
+    if (!storedRef || promoApplied) return;
+
+    setPromoInput(storedRef);
+    if (!user || autoValidatedReferralRef.current === storedRef) return;
+
+    autoValidatedReferralRef.current = storedRef;
+    void validateAndApplyPromo(storedRef);
+  }, [user, promoApplied, validateAndApplyPromo]);
 
   const handleApplyPromo = async () => {
     if (promoApplied) {
@@ -276,7 +290,13 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
     }
     // Persist referral code
     if (promoApplied?.type === "referral") {
-      localStorage.setItem("esim_checkout_referral", promoApplied.code);
+      localStorage.setItem(
+        "esim_checkout_referral",
+        JSON.stringify({
+          code: promoApplied.code,
+          buyerDiscountVnd: promoApplied.discountVnd,
+        })
+      );
     } else {
       localStorage.removeItem("esim_checkout_referral");
     }
@@ -296,7 +316,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
     }
 
     persistCheckoutContext();
-    window.location.href = `/${lang}/checkout`;
+    window.location.href = localizedHref(lang, "checkout");
   };
 
   // After login completes, if checkout was pending, proceed to checkout.
@@ -310,7 +330,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
       // Brief delay so the auth modal close animation finishes and the
       // auth state settles before navigating.
       const timer = setTimeout(() => {
-        window.location.href = `/${lang}/checkout`;
+        window.location.href = localizedHref(lang, "checkout");
       }, 800);
       return () => clearTimeout(timer);
     }
@@ -388,7 +408,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
           {dict.emptyCartDescription || "Browse our eSIM plans and add them to your cart."}
         </p>
         <Link
-          href={`/${lang}`}
+          href={localizedHref(lang, "/")}
           className="inline-flex items-center gap-2 rounded-full bg-bg-accent px-7 py-3 font-medium text-text-primary transition-colors hover:bg-bg-accent-hover"
         >
           {dict.browsePlans || "Browse Plans"}
@@ -483,7 +503,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
                   </div>
                   <span className="text-sm text-green-600">
                     {promoApplied.type === "referral"
-                      ? (lang === "vi" ? "Giảm 10.000₫" : "10,000₫ off")
+                      ? `-${formatVnd(promoApplied.discountVnd)}`
                       : `-${cart.appliedCoupon?.discount}%`}
                   </span>
                 </div>
@@ -613,8 +633,8 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
                 </p>
                 <p className="text-sm text-emerald-600">
                   {lang === "vi"
-                    ? "2% hoàn tiền vào ví eXU sau khi thanh toán"
-                    : "2% cashback to your eXU wallet after payment"}
+                    ? `${cashbackPercent}% hoàn tiền vào ví eXU sau khi thanh toán`
+                    : `${cashbackPercent}% cashback to your eXU wallet after payment`}
                 </p>
               </div>
             </div>
@@ -637,10 +657,16 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
                   localStorage.setItem("esim_checkout_coupon", JSON.stringify(cart.appliedCoupon));
                 }
                 if (promoApplied?.type === "referral") {
-                  localStorage.setItem("esim_checkout_referral", promoApplied.code);
+                  localStorage.setItem(
+                    "esim_checkout_referral",
+                    JSON.stringify({
+                      code: promoApplied.code,
+                      buyerDiscountVnd: promoApplied.discountVnd,
+                    })
+                  );
                 }
                 localStorage.setItem("esim_checkout_use_exu", "true");
-                window.location.href = `/${lang}/checkout`;
+                window.location.href = localizedHref(lang, "checkout");
               }}
               className="flex w-full items-center justify-center gap-2 rounded-full bg-emerald-500 py-3.5 text-base sm:text-sm font-semibold text-white transition-colors hover:bg-emerald-600 cursor-pointer"
             >

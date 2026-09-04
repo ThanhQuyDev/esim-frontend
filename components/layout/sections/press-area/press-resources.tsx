@@ -26,9 +26,9 @@ export function PressResources({ dict }: PressResourcesProps) {
                         <div className="text-center lg:text-left">
                           <p className="heading-lg text-start scroll-mt-20 xl:scroll-mt-24">{dict.contactTitle}</p>
                         </div>
-                        <p className="body-md text-text-secondary scroll-mt-20 xl:scroll-mt-24">
+                        <p className="body-md min-w-0 break-words text-text-secondary scroll-mt-20 xl:scroll-mt-24">
                           {dict.contactDesc.split("ceo@esim.com.vn")[0]}
-                          <a className="underline" href="mailto:ceo@esim.com.vn">ceo@esim.com.vn</a>
+                          <a className="break-all underline" href="mailto:ceo@esim.com.vn">ceo@esim.com.vn</a>
                           {dict.contactDesc.split("ceo@esim.com.vn")[1]}
                         </p>
                         <a

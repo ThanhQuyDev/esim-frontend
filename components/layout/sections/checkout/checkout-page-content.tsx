@@ -24,24 +24,26 @@ import {
   type CartItem,
   type Coupon,
 } from "@/lib/cart";
-import { useExchangeRate, useCheckout, useCart, convertUsdToVnd, formatVnd, useWalletMe, useMyProfile } from "@/lib/hooks";
+import { useExchangeRate, useCheckout, useCart, convertUsdToVnd, formatVnd, useWalletMe, useMyProfile, useValidateReferral } from "@/lib/hooks";
 import { useAuth } from "@/lib/auth";
 import { walletTranslations } from "@/components/layout/sections/wallet/translations";
 import Link from "next/link";
 import { localizedHref } from "@/lib/route-mapping";
+import { PHONE_MAX_LENGTH, sanitizePhoneInput } from "@/lib/utils";
 
 interface CheckoutPageContentProps {
   dict: Record<string, any>;
   lang: string;
 }
 
-type PaymentMethod = "onepay" | "bank_transfer";
+type PaymentMethod = "onepay" | "bank_transfer" | "wallet";
 
 interface InvoiceInfo {
   companyName: string;
   taxCode: string;
   address: string;
   email: string;
+  phone: string;
 }
 
 export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
@@ -57,6 +59,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
     taxCode: "",
     address: "",
     email: "",
+    phone: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [orderComplete, setOrderComplete] = useState(false);
@@ -67,10 +70,17 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
 
   // Referral code state (read from cart, not editable here)
   const [referralCode, setReferralCode] = useState("");
+  const [referralDiscountVnd, setReferralDiscountVnd] = useState(0);
   const [referralApplied, setReferralApplied] = useState(false);
+
+  // KOL marketing-link attribution — set by /go/[code] as a 30-day cookie.
+  // Independent of referralCode/coupon: a buyer can have both a discount code
+  // and have arrived via a KOL link.
+  const [partnerLinkCode, setPartnerLinkCode] = useState<string | undefined>(undefined);
 
   const { data: usdToVndRate = 25_500 } = useExchangeRate();
   const checkout = useCheckout();
+  const { mutateAsync: validateReferral } = useValidateReferral();
   const cart = useCart();
   const { data: wallet } = useWalletMe();
 
@@ -86,13 +96,32 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
       const storedUseExu = localStorage.getItem("esim_checkout_use_exu");
       if (storedItems) setItems(JSON.parse(storedItems));
       if (storedCoupon) setCoupon(JSON.parse(storedCoupon));
+      // Referral codes are re-validated against the backend by the
+      // validateReferral effect below. Never trust the cached
+      // `buyerDiscountVnd` / applied flag from localStorage: a buyer who has
+      // already completed an order is no longer eligible, and marking the code
+      // as applied here short-circuited that check so the discount stuck.
       if (storedReferral) {
-        setReferralCode(storedReferral);
-        setReferralApplied(true);
+        try {
+          const parsed = JSON.parse(storedReferral) as { code?: string };
+          if (parsed.code) setReferralCode(parsed.code);
+        } catch {
+          setReferralCode(storedReferral);
+        }
+        setReferralDiscountVnd(0);
+        setReferralApplied(false);
       }
       if (storedUseExu === "true") {
         setUseExu(true);
         localStorage.removeItem("esim_checkout_use_exu");
+      }
+
+      // KOL marketing-link attribution, set as a cookie by /go/[code].
+      const partnerLinkMatch = document.cookie.match(
+        /(?:^|;\s*)esim_partner_link=([^;]+)/
+      );
+      if (partnerLinkMatch) {
+        setPartnerLinkCode(decodeURIComponent(partnerLinkMatch[1]));
       }
     } catch {
       // ignore
@@ -102,16 +131,16 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
   // Auto-fill email + phone from logged-in user profile
   const { data: myProfile } = useMyProfile();
   useEffect(() => {
-    if (user?.email && !email) {
-      setEmail(user.email);
-    }
-  }, [user]);
+    if (!user?.email) return;
+    setEmail((currentEmail) => currentEmail || user.email);
+  }, [user?.email]);
 
   useEffect(() => {
-    if (myProfile?.phoneNumber && !phone) {
-      setPhone(myProfile.phoneNumber);
-    }
-  }, [myProfile]);
+    if (!myProfile?.phoneNumber) return;
+    setPhone((currentPhone) =>
+      currentPhone || sanitizePhoneInput(myProfile.phoneNumber ?? "")
+    );
+  }, [myProfile?.phoneNumber]);
 
   const subtotal = getSubtotal(items);
   const discount = getDiscount(subtotal, coupon);
@@ -128,14 +157,49 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
   const vndDiscount = getVndDiscount(vndSubtotal, coupon);
   const vndTotal = Math.max(0, vndSubtotal - vndDiscount);
 
+  useEffect(() => {
+    if (!referralCode || referralApplied || !user || vndSubtotal <= 0) return;
+
+    validateReferral({
+      code: referralCode,
+      subtotalVnd: vndSubtotal,
+      hasCoupon: !!coupon,
+    })
+      .then((result) => {
+        setReferralCode(result.referralCode);
+        setReferralDiscountVnd(result.buyerDiscountVnd);
+        setReferralApplied(true);
+      })
+      .catch(() => {
+        setReferralCode("");
+        setReferralDiscountVnd(0);
+        localStorage.removeItem("esim_checkout_referral");
+      });
+  }, [referralCode, referralApplied, user, vndSubtotal, coupon, validateReferral]);
+
   // eXU calculations
   const exuAmountNum = useExu ? Math.max(0, parseInt(exuAmount.replace(/\D/g, ""), 10) || 0) : 0;
+  const referralDiscountAmount = referralApplied ? referralDiscountVnd : 0;
   const maxExuUsable = wallet && wallet.status === "active"
-    ? Math.min(wallet.availableBalanceVnd, Math.max(0, vndTotal - (referralApplied ? 10000 : 0)))
+    ? Math.min(wallet.availableBalanceVnd, Math.max(0, vndTotal - referralDiscountAmount))
     : 0;
   const actualExuUsed = Math.min(exuAmountNum, maxExuUsable);
-  const referralDiscountAmount = referralApplied ? 10000 : 0;
   const finalVndTotal = Math.max(0, vndTotal - actualExuUsed - referralDiscountAmount);
+  const isWalletOnlyPayment = useExu && maxExuUsable > 0 && finalVndTotal === 0;
+
+  useEffect(() => {
+    if (!useExu || maxExuUsable <= 0) return;
+
+    setExuAmount(maxExuUsable.toLocaleString("vi-VN"));
+  }, [useExu, maxExuUsable]);
+
+  useEffect(() => {
+    if (isWalletOnlyPayment && paymentMethod !== "wallet") {
+      setPaymentMethod("wallet");
+    } else if (!isWalletOnlyPayment && paymentMethod === "wallet") {
+      setPaymentMethod("onepay");
+    }
+  }, [isWalletOnlyPayment, paymentMethod]);
 
   const checkoutDisplaySubtotal = hasVndPricing
     ? `${vndSubtotal.toLocaleString("vi-VN")}₫`
@@ -147,9 +211,9 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
     ? `${finalVndTotal.toLocaleString("vi-VN")}₫`
     : formatPrice(total);
 
-  // Cashback: 2% after coupon + referral (eXU does not affect cashback)
+  const cashbackPercent = wallet?.cashbackPercent ?? 2;
   const cashbackBaseVnd = Math.max(0, vndTotal - referralDiscountAmount);
-  const cashbackVnd = Math.round(cashbackBaseVnd * 0.02);
+  const cashbackVnd = Math.round((cashbackBaseVnd * cashbackPercent) / 100);
 
   const validate = (): boolean => {
     const newErrors: Record<string, string> = {};
@@ -161,7 +225,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
     }
 
     // Phone is optional — only validate format if provided
-    if (phone.trim() && !/^[0-9+\-\s()]{8,15}$/.test(phone)) {
+    if (phone.trim() && !/^\+?\d{8,20}$/.test(phone)) {
       newErrors.phone = dict.phoneInvalid || "Invalid phone number";
     }
 
@@ -177,6 +241,13 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
       }
       if (!invoiceInfo.email.trim()) {
         newErrors.invoiceEmail = dict.invoiceEmailRequired || "Invoice email is required";
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(invoiceInfo.email)) {
+        newErrors.invoiceEmail = dict.emailInvalid || "Invalid invoice email address";
+      }
+      if (!invoiceInfo.phone.trim()) {
+        newErrors.invoicePhone = dict.invoicePhoneRequired || "Invoice phone number is required";
+      } else if (!/^\+?\d{8,20}$/.test(invoiceInfo.phone)) {
+        newErrors.invoicePhone = dict.invoicePhoneInvalid || "Invalid invoice phone number";
       }
     }
 
@@ -194,7 +265,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
     if (!validate()) return;
 
     const checkoutItems = items.map((item) => ({
-      planId: Number(item.id),
+      planId: item.planId ?? Number(item.id),
       quantity: item.quantity,
       ...(item.durationDays ? { periodNum: item.durationDays } : {}),
     }));
@@ -202,12 +273,13 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
     checkout.mutate(
       {
         token: token || undefined,
-        paymentMethod: "stripe",
+        paymentMethod,
         paymentId: "",
         currency: "USD",
         items: checkoutItems,
         couponCode: coupon?.code || "",
         referralCode: referralApplied ? referralCode : undefined,
+        partnerLinkCode,
         useWalletAmountVnd: actualExuUsed > 0 ? actualExuUsed : undefined,
         // Pass the current locale and a locale-aware absolute return URL so
         // OnePay redirects the buyer back to the result page in the same
@@ -228,6 +300,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
               taxCode: invoiceInfo.taxCode.trim(),
               address: invoiceInfo.address.trim(),
               invoiceEmail: invoiceInfo.email.trim(),
+              invoicePhone: invoiceInfo.phone.trim(),
             },
           }
           : {}),
@@ -244,7 +317,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
               email,
               phone,
               wantInvoice: wantInvoice ? invoiceInfo : null,
-              paymentMethod: "onepay",
+              paymentMethod,
               exuUsed: actualExuUsed,
               referralDiscount: referralDiscountAmount,
               referralCode: referralApplied ? referralCode : null,
@@ -289,7 +362,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
             "Thank you for your order. You will receive a confirmation email shortly."}
         </p>
         <Link
-          href={`/${lang}`}
+          href={localizedHref(lang, "/")}
           className="inline-flex items-center gap-2 rounded-full bg-bg-accent px-7 py-3 font-medium text-text-primary transition-colors hover:bg-bg-accent-hover"
         >
           {dict.backToHome || "Back to Home"}
@@ -376,9 +449,11 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
                 <input
                   id="phone"
                   type="tel"
+                  inputMode="tel"
+                  maxLength={PHONE_MAX_LENGTH}
                   value={phone}
                   onChange={(e) => {
-                    setPhone(e.target.value);
+                    setPhone(sanitizePhoneInput(e.target.value));
                     setErrors((prev) => ({ ...prev, phone: "" }));
                   }}
                   placeholder={dict.phonePlaceholder || "+84 xxx xxx xxx"}
@@ -456,9 +531,12 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
           <div className="space-y-3">
             {/* OnePay */}
             <label
-              className={`flex items-center gap-4 rounded-xl border p-4 cursor-pointer transition-colors ${paymentMethod === "onepay"
-                  ? "border-[var(--bg-accent)] bg-yellow-50/30"
-                  : "border-border-primary hover:bg-bg-secondary"
+              aria-disabled={isWalletOnlyPayment}
+              className={`flex items-center gap-4 rounded-xl border p-4 transition-colors ${isWalletOnlyPayment
+                  ? "cursor-not-allowed border-border-primary bg-bg-secondary opacity-45 grayscale"
+                  : paymentMethod === "onepay"
+                    ? "cursor-pointer border-[var(--bg-accent)] bg-yellow-50/30"
+                    : "cursor-pointer border-border-primary hover:bg-bg-secondary"
                 }`}
             >
               <input
@@ -466,8 +544,9 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
                 name="payment"
                 value="onepay"
                 checked={paymentMethod === "onepay"}
+                disabled={isWalletOnlyPayment}
                 onChange={() => setPaymentMethod("onepay")}
-                className="h-4 w-4 accent-[var(--bg-accent)]"
+                className="h-4 w-4 accent-[var(--bg-accent)] disabled:cursor-not-allowed"
               />
               <div className="flex items-center gap-3 flex-1">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50">
@@ -602,6 +681,48 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
                     {errors.taxCode && <p className="text-sm text-red-500">{errors.taxCode}</p>}
                   </div>
 
+                  {/* Invoice Email */}
+                  <div className="space-y-1.5">
+                    <label htmlFor="invoiceEmail" className="text-base sm:text-sm font-medium text-text-primary">
+                      {dict.invoiceEmail || "Invoice Email"} <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      id="invoiceEmail"
+                      type="email"
+                      value={invoiceInfo.email}
+                      onChange={(e) => {
+                        setInvoiceInfo((prev) => ({ ...prev, email: e.target.value }));
+                        setErrors((prev) => ({ ...prev, invoiceEmail: "" }));
+                      }}
+                      placeholder={dict.invoiceEmailPlaceholder || "Email to receive invoice"}
+                      className={`w-full rounded-xl border px-4 py-2.5 text-base sm:text-sm outline-none transition-colors ${errors.invoiceEmail ? "border-red-400" : "border-border-primary focus:border-[var(--border-focus)]"
+                        }`}
+                    />
+                    {errors.invoiceEmail && <p className="text-sm text-red-500">{errors.invoiceEmail}</p>}
+                  </div>
+
+                  {/* Invoice Phone */}
+                  <div className="space-y-1.5">
+                    <label htmlFor="invoicePhone" className="text-base sm:text-sm font-medium text-text-primary">
+                      {dict.invoicePhone || "Invoice Phone Number"} <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      id="invoicePhone"
+                      type="tel"
+                      inputMode="tel"
+                      maxLength={PHONE_MAX_LENGTH}
+                      value={invoiceInfo.phone}
+                      onChange={(e) => {
+                        setInvoiceInfo((prev) => ({ ...prev, phone: sanitizePhoneInput(e.target.value) }));
+                        setErrors((prev) => ({ ...prev, invoicePhone: "" }));
+                      }}
+                      placeholder={dict.invoicePhonePlaceholder || "+84 xxx xxx xxx"}
+                      className={`w-full rounded-xl border px-4 py-2.5 text-base sm:text-sm outline-none transition-colors ${errors.invoicePhone ? "border-red-400" : "border-border-primary focus:border-[var(--border-focus)]"
+                        }`}
+                    />
+                    {errors.invoicePhone && <p className="text-sm text-red-500">{errors.invoicePhone}</p>}
+                  </div>
+
                   {/* Address */}
                   <div className="space-y-1.5 sm:col-span-2">
                     <label htmlFor="invoiceAddress" className="text-base sm:text-sm font-medium text-text-primary">
@@ -620,26 +741,6 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
                         }`}
                     />
                     {errors.invoiceAddress && <p className="text-sm text-red-500">{errors.invoiceAddress}</p>}
-                  </div>
-
-                  {/* Invoice Email */}
-                  <div className="space-y-1.5 sm:col-span-2">
-                    <label htmlFor="invoiceEmail" className="text-base sm:text-sm font-medium text-text-primary">
-                      {dict.invoiceEmail || "Invoice Email"} <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      id="invoiceEmail"
-                      type="email"
-                      value={invoiceInfo.email}
-                      onChange={(e) => {
-                        setInvoiceInfo((prev) => ({ ...prev, email: e.target.value }));
-                        setErrors((prev) => ({ ...prev, invoiceEmail: "" }));
-                      }}
-                      placeholder={dict.invoiceEmailPlaceholder || "Email to receive invoice"}
-                      className={`w-full rounded-xl border px-4 py-2.5 text-base sm:text-sm outline-none transition-colors ${errors.invoiceEmail ? "border-red-400" : "border-border-primary focus:border-[var(--border-focus)]"
-                        }`}
-                    />
-                    {errors.invoiceEmail && <p className="text-sm text-red-500">{errors.invoiceEmail}</p>}
                   </div>
                 </div>
               )}
@@ -728,8 +829,8 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
                   </p>
                   <p className="text-xs text-emerald-600">
                     {lang === "vi"
-                      ? "2% hoàn tiền vào ví eXU sau khi thanh toán"
-                      : "2% cashback to your eXU wallet after payment"}
+                      ? `${cashbackPercent}% hoàn tiền vào ví eXU sau khi thanh toán`
+                      : `${cashbackPercent}% cashback to your eXU wallet after payment`}
                   </p>
                 </div>
               </div>

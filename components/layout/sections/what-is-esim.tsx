@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { routing } from "@/i18n/routing";
 import { localizedHref } from "@/lib/route-mapping";
 
 interface WhatIsEsimProps {
@@ -7,7 +8,7 @@ interface WhatIsEsimProps {
   lang?: string;
 }
 
-export function WhatIsEsim({ dict, lang = "en" }: WhatIsEsimProps) {
+export function WhatIsEsim({ dict, lang = routing.defaultLocale }: WhatIsEsimProps) {
   return (
     <div
       data-section="WhatIsEsim"
@@ -34,7 +35,7 @@ export function WhatIsEsim({ dict, lang = "en" }: WhatIsEsimProps) {
                               {dict.descriptionBefore}
                               <Link
                                 className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus underline"
-                                href={localizedHref(lang || "en", "what-is-esim")}
+                                href={localizedHref(lang, "what-is-esim")}
                               >
                                 {dict.linkText}
                               </Link>

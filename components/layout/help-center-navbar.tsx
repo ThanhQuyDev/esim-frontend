@@ -34,6 +34,8 @@ export function HelpCenterNavbar({ lang }: HelpCenterNavbarProps) {
 
     const isVi = lang === "vi";
     const helpCenterHome = localizedHref(lang, "help-center");
+    const helpCenterSearch = localizedHref(lang, "help-center/search");
+    const homeHref = localizedHref(lang, "/");
 
     // intlPathname (from @/i18n/navigation usePathname) returns the internal
     // route key, e.g. "/help-center" for both "/en/help-center" and "/ho-tro".
@@ -66,10 +68,6 @@ export function HelpCenterNavbar({ lang }: HelpCenterNavbarProps) {
 
     const handleLangChange = useCallback(
         (newLocale: string) => {
-            // Always go to help-center home when switching language.
-            // Set NEXT_LOCALE cookie so middleware uses the target locale,
-            // then hard-navigate to the localized help-center root.
-            document.cookie = `NEXT_LOCALE=${newLocale};path=/;max-age=${60 * 60 * 24 * 365};samesite=lax`;
             window.location.href = localizedHref(newLocale, "help-center");
         },
         []
@@ -80,9 +78,9 @@ export function HelpCenterNavbar({ lang }: HelpCenterNavbarProps) {
             e.preventDefault();
             const trimmed = query.trim();
             if (!trimmed) return;
-            router.push(`${helpCenterHome}/search?q=${encodeURIComponent(trimmed)}`);
+            router.push(`${helpCenterSearch}?q=${encodeURIComponent(trimmed)}`);
         },
-        [query, router, helpCenterHome]
+        [query, router, helpCenterSearch]
     );
 
     const navLinks = [
@@ -114,7 +112,7 @@ export function HelpCenterNavbar({ lang }: HelpCenterNavbarProps) {
                 {/* LEFT: Brand logo (goes to site home) + Help Center context label */}
                 <div className="flex items-center min-w-0 gap-3">
                     <Link
-                        href={`/${lang}`}
+                        href={homeHref}
                         className="flex items-center shrink-0"
                         aria-label={isVi ? "Về trang chủ esim.vn" : "Back to esim.vn home"}
                     >

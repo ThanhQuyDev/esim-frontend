@@ -84,7 +84,6 @@ export function DetailContent({
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<HelpCenterArticle[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set([category]));
   const [expandedParents, setExpandedParents] = useState<Set<string>>(
     new Set(parent ? [`${category}/${parent}`] : [])
@@ -265,7 +264,7 @@ export function DetailContent({
               <nav aria-label="Breadcrumb">
                 <ol className="flex items-center gap-1 list-none p-0 m-0 flex-wrap">
                   <li>
-                    <Link href={`/${lang}`} className="text-gray-700 no-underline hover:text-gray-900 transition-colors">
+                    <Link href={localizedHref(lang, "/")} className="text-gray-700 no-underline hover:text-gray-900 transition-colors">
                       {lang === "vi" ? "Trang chủ" : "Home"}
                     </Link>
                   </li>
@@ -317,7 +316,124 @@ export function DetailContent({
       {/* Page container (Layout 2.2: max-w-7xl) */}
       <div className="container mx-auto px-4 sm:px-0 flex-1" id="page-container">
         <div className="flex flex-col md:flex-row gap-8 lg:gap-10">
-        
+          {/* Category navigation - LEFT, restored for desktop Help pages. */}
+          <aside className="hidden lg:block w-60 xl:w-64 flex-shrink-0 order-1">
+            <nav
+              aria-label={lang === "vi" ? "Danh mục trợ giúp" : "Help categories"}
+              className="sticky top-[120px] max-h-[calc(100vh-150px)] overflow-y-auto py-10 pr-2"
+            >
+              <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-gray-500">
+                {lang === "vi" ? "Danh mục" : "Categories"}
+              </h2>
+              <ul className="m-0 list-none space-y-1 p-0">
+                {Object.entries(grouped).map(([catKey, parents]) => {
+                  const categoryExpanded = expandedCategories.has(catKey);
+                  const categoryActive = catKey === category;
+                  return (
+                    <li key={catKey}>
+                      <div
+                        className={`flex items-center rounded-md ${
+                          categoryActive ? "bg-gray-100" : "hover:bg-gray-50"
+                        }`}
+                      >
+                        <Link
+                          href={`${basePath}/${toLocalizedCategorySlug(catKey, lang)}`}
+                          className={`min-w-0 flex-1 px-3 py-2 text-sm no-underline ${
+                            categoryActive
+                              ? "font-semibold text-gray-950"
+                              : "font-medium text-gray-700"
+                          }`}
+                        >
+                          {getCategoryLabel(catKey, lang)}
+                        </Link>
+                        <button
+                          type="button"
+                          onClick={() => toggleCategory(catKey)}
+                          className="mr-1 flex h-8 w-8 shrink-0 items-center justify-center rounded text-gray-500 hover:bg-gray-200"
+                          aria-label={
+                            categoryExpanded
+                              ? lang === "vi" ? "Thu gọn danh mục" : "Collapse category"
+                              : lang === "vi" ? "Mở rộng danh mục" : "Expand category"
+                          }
+                          aria-expanded={categoryExpanded}
+                        >
+                          <ChevronDown
+                            className={`h-4 w-4 transition-transform ${
+                              categoryExpanded ? "rotate-0" : "-rotate-90"
+                            }`}
+                          />
+                        </button>
+                      </div>
+
+                      {categoryExpanded && (
+                        <ul className="m-0 ml-3 list-none border-l border-gray-200 py-1 pl-3">
+                          {Object.entries(parents).map(([parentKey, parentItems]) => {
+                            const parentPath = `${catKey}/${parentKey}`;
+                            const parentExpanded = expandedParents.has(parentPath);
+                            const parentActive = categoryActive && parentKey === parent;
+                            return (
+                              <li key={parentKey}>
+                                <div className="flex items-center">
+                                  <Link
+                                    href={`${basePath}/${toLocalizedCategorySlug(catKey, lang)}/${toLocalizedParentSlug(parentKey, lang)}`}
+                                    className={`min-w-0 flex-1 py-1.5 text-sm no-underline ${
+                                      parentActive
+                                        ? "font-semibold text-gray-950"
+                                        : "text-gray-600 hover:text-gray-950"
+                                    }`}
+                                  >
+                                    {getParentLabel(parentKey, lang)}
+                                  </Link>
+                                  {parentItems.length > 0 && (
+                                    <button
+                                      type="button"
+                                      onClick={() => toggleParent(catKey, parentKey)}
+                                      className="flex h-7 w-7 shrink-0 items-center justify-center rounded text-gray-400 hover:bg-gray-100"
+                                      aria-expanded={parentExpanded}
+                                    >
+                                      <ChevronRight
+                                        className={`h-3.5 w-3.5 transition-transform ${
+                                          parentExpanded ? "rotate-90" : ""
+                                        }`}
+                                      />
+                                    </button>
+                                  )}
+                                </div>
+                                {parentExpanded && (
+                                  <ul className="m-0 list-none space-y-1 pb-2 pl-2 pt-1">
+                                    {parentItems.map((article) => {
+                                      const articleSlug = getArticleSlug(article);
+                                      const isActive = articleSlug === activeArticleSlug;
+                                      return (
+                                        <li key={article.id}>
+                                          <Link
+                                            href={`${basePath}/${articleSlug}`}
+                                            className={`block break-words py-1 text-xs leading-5 no-underline ${
+                                              isActive
+                                                ? "font-semibold text-gray-950"
+                                                : "text-gray-500 hover:text-gray-900"
+                                            }`}
+                                            aria-current={isActive ? "page" : undefined}
+                                          >
+                                            {article.title}
+                                          </Link>
+                                        </li>
+                                      );
+                                    })}
+                                  </ul>
+                                )}
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            </nav>
+          </aside>
+
 
           {/* Main content - CENTER */}
           <div className="flex-1 order-2 min-w-0">

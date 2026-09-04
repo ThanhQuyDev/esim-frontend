@@ -46,6 +46,7 @@
     "tabs": {
       "country": "Country",
       "region": "Region",
+      "local": "Domestic eSIM",
       "ultraPlan": "Ultra Plan"
     },
     "from": "From",
@@ -59,6 +60,7 @@
       "all": "All",
       "country": "Country",
       "region": "Region",
+      "local": "Domestic eSIM",
       "ultraPlan": "Ultra Plan"
     },
     "searchPlaceholder": "Search for destination",
@@ -259,10 +261,10 @@
     ]
   },
   "referFriend": {
-    "title": "Refer a friend, and you'll both get 10.000đ!",
-    "description": "Invite your friends to use esim.vn and get 10.000vnd in esim.vn credits while they get a 10.000vnd discount!",
+    "title": "Refer a friend and earn {reward} VND in eXU!",
+    "description": "Your friend gets 10,000 VND off their first order, while you earn {reward} VND in eXU based on your membership tier after a successful referral.",
     "cta": "Learn More",
-    "imageAlt": "A group of people enjoying a 10.000vnd esim.vn credit after referring a friend."
+    "imageAlt": "A group of people celebrating after referring friends to esim.vn."
   },
   "blog": {
     "badge": "Blog",
@@ -1431,30 +1433,31 @@
   "referFriendPage": {
     "metadata": {
       "title": "Refer a friend — esim.vn",
-      "description": "Share an esim.vn referral code and earn up to US$100 in gift cards and esim.vn credits!"
+      "description": "Share your esim.vn referral code and earn eXU based on your membership tier."
     },
     "hero": {
-      "badge": "Join the Rewards sprint",
-      "title": "Share an esim.vn referral code, earn up to US$100!",
-      "description": "For a limited time only, sharing esim.vn can earn you up to US$50 in gift cards and up to US$50 in esim.vn credits! Just join the Rewards sprint, start referring friends, and watch your rewards grow.",
+      "badge": "Membership tier benefits",
+      "title": "Refer friends and earn more eXU",
+      "description": "Your friend gets 10,000 VND off their first eSIM order. After the order is paid successfully, you earn eXU based on your current membership tier.",
       "perks": [
-        "3 referrals = US$10 gift card",
-        "6 referrals = US$15 gift card",
-        "10 referrals = US$25 gift card"
+        "Traveler: 10,000 VND in eXU per referral",
+        "Silver Traveler: 12,000 VND in eXU per referral",
+        "Gold Traveler: 15,000 VND in eXU per referral",
+        "Platinum Traveler: 20,000 VND in eXU per referral"
       ],
-      "termsPrefix": "Runs until August 14 or while rewards last. ",
+      "termsPrefix": "The referred friend always gets 10,000 VND off their first order. ",
       "termsLink": "Terms apply",
       "termsSuffix": ".",
-      "termsHref": "/legal/refer-a-friend-campaign/",
+      "termsHref": "/legal/referral-program-terms-and-conditions/",
       "imageAlt": "A happy couple enjoying the benefits of esim.vn's referral program.",
       "appStoreAlt": "App Store",
       "googlePlayAlt": "Google Play"
     },
     "whyJoin": {
       "title": "Why join the esim.vn referral program?",
-      "paragraph1": "It's an easy way to earn rewards just for helping your friends stay connected abroad! While our regular referral program gives you US$5 in esim.vn credits per friend, our limited-time Rewards sprint offers up to US$50 in gift cards or prepaid cards on top of that!",
-      "noteLabel": "Note:",
-      "noteBody": " If you don't join the sprint in the app, you'll still earn the usual US$5 in credits for every referral — you'll just miss out on earning the bonus gift cards.",
+      "paragraph1": "You help friends stay connected abroad and both receive a benefit. Your friend gets 10,000 VND off their first order, while you earn eXU for future eSIM purchases.",
+      "noteLabel": "Reward amount:",
+      "noteBody": " The referrer's reward is determined by their membership tier when the order is created and is credited after successful payment.",
       "imageAlt": "A phone shows the esim.vn eSIM app and its supported destinations, while a plane travels the blue skies in the background."
     },
     "aboutSprint": {
@@ -1512,8 +1515,8 @@
         },
         {
           "number": "3",
-          "title": "Give US$5, get US$5",
-          "description": "Anyone using your referral code will get a US$5 discount, while you'll get US$5 in esim.vn credits.",
+          "title": "Your friend saves, you earn by tier",
+          "description": "Anyone using your referral code gets 10,000 VND off their first eSIM order. You earn 10,000, 12,000, 15,000, or 20,000 VND in eXU based on your membership tier when the order is created.",
           "termsLink": "Terms apply",
           "termsHref": "/legal/referral-program-terms-and-conditions/",
           "imageAlt": "An esim.vn app screen showing a US$50 credit balance with a yellow \"Cash out\" button.",
@@ -1636,6 +1639,7 @@
   },
   "breadcrumb": {
     "home": "Home",
+    "domesticEsim": "Domestic eSIM",
     "aboutUs": "About Us",
     "allDestinations": "All Destinations",
     "blog": "Blog",
@@ -1692,6 +1696,10 @@
     "daysUnit": "days"
   },
   "checkout": {
+    "invoicePhone": "Invoice phone number",
+    "invoicePhonePlaceholder": "+84 xxx xxx xxx",
+    "invoicePhoneRequired": "Invoice phone number is required",
+    "invoicePhoneInvalid": "Invalid invoice phone number",
     "paymentNote": "By completing your order, you agree to our Terms of Service and Privacy Policy."
   }
 }

@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { localizedHref } from "@/lib/route-mapping";
 
 export interface CartConfirmDialogProps {
   /** Controls visibility of the dialog. */
@@ -91,7 +92,7 @@ export function CartConfirmDialog({
           </p>
           <div className="flex flex-col gap-2.5 w-full mt-2">
             <button
-              onClick={() => router.push(`/${lang}/cart`)}
+              onClick={() => router.push(localizedHref(lang, "cart"))}
               className="w-full py-3 rounded-full bg-[#fff500] border border-[#d1b700] text-base sm:text-sm font-medium text-[#111] transition-all hover:bg-[#d1b700] cursor-pointer"
             >
               {isVi ? "Thanh toán ngay" : "Checkout now"}

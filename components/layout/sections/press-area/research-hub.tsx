@@ -83,10 +83,10 @@ export function ResearchHub({ dict }: ResearchHubProps) {
       <div className="py-16">
         <div className="mx-4 sm:mx-auto">
           <div className="container grid sm:gap-x-8 grid-cols-12 mb-10 mx-auto">
-            <div className="col-span-12 md:col-span-8">
-              <div className="grid grid-cols-1 gap-y-6">
-                <h2 className="heading-xl scroll-mt-20 xl:scroll-mt-24">{dict.title}</h2>
-                <p className="body-md text-text-secondary scroll-mt-20 xl:scroll-mt-24">{dict.description}</p>
+            <div className="col-span-12 min-w-0 md:col-span-8">
+              <div className="grid min-w-0 grid-cols-1 gap-y-6">
+                <h2 className="heading-xl break-words scroll-mt-20 xl:scroll-mt-24">{dict.title}</h2>
+                <p className="body-md min-w-0 break-words text-text-secondary scroll-mt-20 xl:scroll-mt-24">{dict.description}</p>
               </div>
             </div>
           </div>

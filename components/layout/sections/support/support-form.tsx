@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
+import { localizedHref } from "@/lib/route-mapping";
 
 import {
   createTicketFormSchema,
@@ -327,7 +328,7 @@ export function SupportForm({ lang, dict, successHref }: SupportFormProps) {
             {dict.success.ctaNew}
           </Button>
           <Button asChild variant="outline" className="cursor-pointer">
-            <Link href={`/${lang}`}>
+            <Link href={localizedHref(lang, "/")}>
               <Home className="mr-2 h-4 w-4" aria-hidden="true" />
               {dict.success.ctaHome}
             </Link>

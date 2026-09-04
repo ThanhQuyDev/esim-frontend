@@ -84,7 +84,9 @@ function RelatedArticle({ article, lang }: { article: Blog; lang: string }) {
 export function BlogArticleFooter({ blog, lang, socialLinks }: { blog: Blog; lang: string; socialLinks: SocialLink[] }) {
   const authorName = blog.author || "Unknown";
   const authorAvatarUrl = blog.authorAvatar || "";
-  const relatedBlogs = blog.relatedBlogs || [];
+  const relatedBlogs = (blog.relatedBlogs || []).filter(
+    (article) => article.isPublished === true
+  );
 
   return (
     <div

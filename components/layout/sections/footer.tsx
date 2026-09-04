@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { routing } from "@/i18n/routing";
+import { localizedHref } from "@/lib/route-mapping";
 import {
   getFooters,
   pickLocalizedTitle,
@@ -43,10 +45,15 @@ function getFallbackColumns(dict: Record<string, any>): FooterColumn[] {
 
 function getApiFooterColumns(
   footerLinks: ApiFooter[],
-  lang: Locale = "en"
+  lang: Locale = routing.defaultLocale
 ): FooterColumn[] {
   const groupedLinks = new Map<string, FooterLink[]>();
-  footerLinks.forEach((footerLink) => {
+  const orderedFooterLinks = [...footerLinks].sort(
+    (a, b) =>
+      (a.sortOrder ?? 0) - (b.sortOrder ?? 0) ||
+      String(a.createdAt).localeCompare(String(b.createdAt))
+  );
+  orderedFooterLinks.forEach((footerLink) => {
     const label = pickLocalizedTitle(footerLink, lang).trim();
     const href = footerLink.url?.trim();
 
@@ -81,7 +88,7 @@ function getApiFooterColumns(
 export async function FooterSection({
   dict,
   footerLinks,
-  lang = "en",
+  lang = routing.defaultLocale,
 }: FooterSectionProps) {
   const resolvedFooterLinks = footerLinks ?? (await getFooters({ lang }));
   const apiColumns = getApiFooterColumns(resolvedFooterLinks, lang);
@@ -93,7 +100,7 @@ export async function FooterSection({
         {/* Logo & App Store */}
         <div className="flex flex-wrap flex-col md:flex-row gap-8 justify-between items-start pb-8">
           <div>
-            <Link href="/">
+            <Link href={localizedHref(lang, "/")}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/logo.svg"

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Smartphone, ChevronDown, ChevronUp, Globe, Wifi, Calendar, ShoppingBag } from "lucide-react";
 import Link from "next/link";
+import { localizedHref } from "@/lib/route-mapping";
 import { EsimDetail } from "./esim-detail";
 import type { ProfileEsim } from "./esim-detail";
 import type { ProfileDict } from "./translations";
@@ -56,7 +57,7 @@ export function EsimList({ esims, t, lang }: EsimListProps) {
             </div>
             <p className="text-gray-500 mb-4">{t.noEsims}</p>
             <Link
-              href={`/${lang}`}
+              href={localizedHref(lang, "/")}
               className="inline-flex items-center gap-2 px-4 py-2 text-base sm:text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
             >
               <ShoppingBag className="w-4 h-4" />

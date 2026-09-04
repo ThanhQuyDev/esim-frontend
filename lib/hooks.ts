@@ -9,6 +9,7 @@ import type {
   Region,
   PaginatedResponse,
   PlansByDestinationResponse,
+  LocalCarrier,
 } from "./api";
 import { normalizePlansByDestination } from "./api";
 import type { Locale } from "./i18n-config";
@@ -411,6 +412,50 @@ export function usePlansByRegionSlug(slug: string, lang?: string, initialData?: 
   });
 }
 
+// ===== Domestic (local-inventory) eSIM Hooks =====
+
+/**
+ * List domestic eSIM carriers, grouped from active isLocalInventory plans.
+ * Powers the "eSIM nội địa" tab card grid on the homepage / all-destinations.
+ */
+export function useLocalCarriers() {
+  return useQuery({
+    queryKey: ["local-carriers"],
+    queryFn: ({ signal }) =>
+      clientFetch<LocalCarrier[]>(
+        "/api/v1/plans/local-carriers",
+        undefined,
+        undefined,
+        signal
+      ),
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+/**
+ * Fetch the grouped domestic plans for one carrier (provider slug).
+ * Mirrors usePlansBySlug: same normalized shape + optional SSR initialData.
+ */
+export function useLocalPlansByCarrier(
+  carrier: string,
+  lang?: string,
+  initialData?: PlansByDestinationResponse
+) {
+  return useQuery({
+    queryKey: [...queryKeys.plans.all, "byCarrier", carrier || "initial"],
+    queryFn: ({ signal }) =>
+      clientFetch<PlansByDestinationResponse>(
+        `/api/v1/plans/local/${encodeURIComponent(carrier)}`,
+        undefined,
+        lang ? { "x-custom-lang": lang } : undefined,
+        signal
+      ),
+    select: normalizePlansByDestination,
+    enabled: carrier.length > 0,
+    ...(initialData ? { initialData: normalizePlansByDestination(initialData), staleTime: 5 * 60 * 1000 } : {}),
+  });
+}
+
 // ===== Exchange Rate Hook =====
 
 interface ExchangeRateResponse {
@@ -712,6 +757,7 @@ export interface InvoicePayload {
   taxCode: string;
   address: string;
   invoiceEmail: string;
+  invoicePhone: string;
 }
 
 export interface CheckoutPayload {
@@ -722,6 +768,13 @@ export interface CheckoutPayload {
   items: { planId: number; quantity: number; periodNum?: number }[];
   couponCode: string;
   referralCode?: string;
+  /**
+   * KOL marketing-link attribution code, read from the `esim_partner_link`
+   * cookie set by `/go/[code]`. Independent of `referralCode`/`couponCode` —
+   * a buyer can have a discount code AND arrive via a KOL link at the same
+   * time (one benefits the buyer, the other credits the KOL's commission).
+   */
+  partnerLinkCode?: string;
   useWalletAmountVnd?: number;
   phoneNumber?: string;
   email?: string;
@@ -764,12 +817,31 @@ export type WalletTransactionType =
   | "redemption_release"
   | "expiry_debit";
 
+export type MembershipTier = "traveler" | "silver" | "gold" | "platinum";
+export type TierSource = "automatic" | "override";
+
+export interface TierBenefits {
+  minimumSpendVnd: number;
+  cashbackPercent: number;
+  referralRewardVnd: number;
+}
+
 export interface WalletMeResponse {
   balanceVnd: number;
   availableBalanceVnd: number;
   status: "active" | "locked";
   expiresAt: string | null;
   daysLeft: number | null;
+  lifetimeSpendVnd: number;
+  automaticTier: MembershipTier;
+  membershipTier: MembershipTier;
+  tierSource: TierSource;
+  cashbackPercent: number;
+  referralRewardVnd: number;
+  tierBenefits: TierBenefits;
+  nextTier: MembershipTier | null;
+  nextTierThresholdVnd: number | null;
+  progressPercent: number;
 }
 
 export interface WalletTransaction {
@@ -842,6 +914,11 @@ export interface OrderResponse {
   orderNumber: string;
   status: string;
   vndPrice: number;
+  cashbackAmountVnd: number;
+  membershipTierSnapshot: MembershipTier;
+  tierSourceSnapshot: TierSource;
+  cashbackPercentSnapshot: number;
+  eligibleSpendVnd: number;
   paymentMethod: string;
   couponCode: string;
   items: OrderItem[];
@@ -866,6 +943,79 @@ export function useCheckout() {
         throw new Error(err.message || `Checkout failed: ${res.status}`);
       }
 
+      return res.json();
+    },
+  });
+}
+
+// ===== Bank transfer (SePay / Techcombank) =====
+
+/** Payment instructions returned by both bank-transfer checkout endpoints. */
+export interface BankTransferCheckoutResponse {
+  orderNumber?: string;
+  /** Topup endpoint returns the order number as `orderId`. */
+  orderId?: string;
+  /** Reference code the buyer must put in the transfer memo. */
+  bankTransferCode: string;
+  /** VietQR image URL with account + amount + memo pre-filled. */
+  qrUrl: string;
+  amount: number;
+  accountNumber: string;
+  accountName: string;
+  bankCode: string;
+  /** Only set when the eXU wallet already covered the whole order. */
+  paymentUrl?: string;
+}
+
+/**
+ * Create a BUY_NEW order paid by bank transfer. The order stays `pending`
+ * until SePay's webhook confirms the money arrived — poll with
+ * {@link useOrderByNumber}.
+ */
+export function useBankTransferCheckout() {
+  return useMutation({
+    mutationFn: async (
+      payload: CheckoutPayload
+    ): Promise<BankTransferCheckoutResponse> => {
+      const { token, ...body } = payload;
+      const res = await authFetch(
+        `${API_BASE_URL}/api/v1/payment/plan/bank-transfer`,
+        token,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        }
+      );
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || `Bank transfer checkout failed: ${res.status}`);
+      }
+      return res.json();
+    },
+  });
+}
+
+/** Same as {@link useBankTransferCheckout} but for a topup order. */
+export function useTopupBankTransfer() {
+  const { token } = useAuth();
+  return useMutation({
+    mutationFn: async (
+      payload: TopupCheckoutPayload
+    ): Promise<BankTransferCheckoutResponse> => {
+      const res = await authFetch(
+        `${API_BASE_URL}/api/v1/topup/bank-transfer`,
+        token,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || `Topup bank transfer failed: ${res.status}`);
+      }
       return res.json();
     },
   });
@@ -1028,7 +1178,8 @@ export function useCart() {
           ? roundVndToThousands(totalRawVndPrice * (1 - planDiscount! / 100))
           : totalRawVndPrice;
         return {
-          id: String(item.planId),
+          id: String(item.id),
+          planId: item.planId,
           name: item.plan?.name || `Plan #${item.planId}`,
           description: `${(item.plan?.type === 'unlimited' || item.plan?.type === 'unlimited-reduce') ? 'Unlimited' : item.plan?.dataMb ? dataLabel : "?"} / ${(item.periodNum ?? item.plan?.durationDays) || "?"} days`,
           price: 0,
@@ -1052,7 +1203,12 @@ export function useCart() {
   const addItem = useCallback(
     async (item: Omit<CartItem, "quantity">, quantity = 1) => {
       if (isLoggedIn) {
-        await addApiCartItem(token!, Number(item.id), quantity, item.durationDays);
+        await addApiCartItem(
+          token!,
+          item.planId ?? Number(item.id),
+          quantity,
+          item.durationDays
+        );
         invalidateApiCart();
       } else {
         addToLocalCart(item, quantity);
@@ -1064,9 +1220,10 @@ export function useCart() {
   const updateItem = useCallback(
     async (itemId: string, quantity: number) => {
       if (isLoggedIn) {
-        // Find the API cart item id
+        // API-backed cart line ids are unique even when the same plan has
+        // multiple selected durations.
         const apiItem = (apiCartQuery.data || []).find(
-          (i) => String(i.planId) === itemId
+          (i) => String(i.id) === itemId
         );
         if (apiItem) {
           await updateApiCartItem(token!, apiItem.id, quantity);
@@ -1083,7 +1240,7 @@ export function useCart() {
     async (itemId: string) => {
       if (isLoggedIn) {
         const apiItem = (apiCartQuery.data || []).find(
-          (i) => String(i.planId) === itemId
+          (i) => String(i.id) === itemId
         );
         if (apiItem) {
           await deleteApiCartItem(token!, apiItem.id);
@@ -1274,7 +1431,12 @@ export function useMyEsims() {
 
 // ===== Topup =====
 
-export type TopupProvider = "AIRALO" | "ESIM_ACCESS" | "GADGET_KOREA";
+export type TopupProvider =
+  | "AIRALO"
+  | "ESIM_ACCESS"
+  | "GADGET_KOREA"
+  | "BILLION"
+  | "MICRO_ESIM";
 
 export interface TopupPackage {
   provider: TopupProvider;
@@ -1465,6 +1627,8 @@ export type ValidateReferralResult = {
   referrerUserId: number;
   buyerDiscountVnd: number;
   rewardVnd: number;
+  membershipTierSnapshot: MembershipTier;
+  tierSourceSnapshot: TierSource;
 };
 
 export function useValidateReferral() {

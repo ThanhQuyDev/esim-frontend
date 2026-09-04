@@ -13,10 +13,13 @@ import {
 import {
   useTopupPackages,
   useTopupCheckout,
+  useTopupBankTransfer,
+  type BankTransferCheckoutResponse,
   type MyEsim,
   type TopupPackage,
 } from "@/lib/hooks";
 import type { ProfileDict } from "./translations";
+import { BankTransferPanel } from "../payment/bank-transfer-panel";
 
 interface TopupModalProps {
   esim: MyEsim;
@@ -30,6 +33,8 @@ const PROVIDER_LABEL: Record<string, string> = {
   AIRALO: "Airalo",
   ESIM_ACCESS: "eSIMAccess",
   GADGET_KOREA: "Gadget Korea",
+  BILLION: "Billion",
+  MICRO_ESIM: "MicroEsim",
 };
 
 function formatVnd(amount: number): string {
@@ -71,13 +76,18 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
   } = useTopupPackages(open ? esim.iccid : null, open);
 
   const checkoutMutation = useTopupCheckout();
+  const bankTransferMutation = useTopupBankTransfer();
+  const [bankTransfer, setBankTransfer] =
+    useState<BankTransferCheckoutResponse | null>(null);
 
   // Reset state when modal closes/opens with different eSIM
   useEffect(() => {
     if (!open) {
       setSelectedPackageId(null);
       setErrorMessage(null);
+      setBankTransfer(null);
       checkoutMutation.reset();
+      bankTransferMutation.reset();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, esim.iccid]);
@@ -100,6 +110,47 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
     selectedPackageId !== null
       ? packages.find((p) => p.packageId === selectedPackageId) ?? null
       : null;
+
+  /**
+   * Bank-transfer topup: creates a pending order and shows the VietQR panel.
+   * The SePay webhook confirms payment asynchronously, so we stay in the modal
+   * and let {@link BankTransferPanel} poll the order.
+   */
+  const handleBankTransfer = async () => {
+    setErrorMessage(null);
+    if (!selectedPackage || !provider) {
+      setErrorMessage(t.topupSelectPackage);
+      return;
+    }
+
+    try {
+      const res = await bankTransferMutation.mutateAsync({
+        iccid: esim.iccid,
+        packageId: selectedPackage.packageId,
+        provider,
+        paymentMethod: "ONEPAY",
+      });
+      setBankTransfer(res);
+
+      try {
+        sessionStorage.setItem(
+          "esim_topup_pending",
+          JSON.stringify({
+            orderId: res.orderId ?? res.orderNumber,
+            iccid: esim.iccid,
+            provider,
+            packageId: selectedPackage.packageId,
+            createdAt: Date.now(),
+          })
+        );
+      } catch {
+        /* sessionStorage might be unavailable (private mode) — ignore */
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : t.topupErrorGeneric;
+      setErrorMessage(mapTopupError(msg, t));
+    }
+  };
 
   const handleConfirm = async () => {
     setErrorMessage(null);
@@ -179,7 +230,9 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto px-5 py-4">
-          {packagesLoading ? (
+          {bankTransfer ? (
+            <BankTransferPanel info={bankTransfer} lang={lang} />
+          ) : packagesLoading ? (
             <div className="flex items-center justify-center py-16">
               <Loader2 className="w-6 h-6 animate-spin text-blue-500" />
               <span className="ml-2 text-base sm:text-sm text-gray-500">
@@ -229,7 +282,7 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
         </div>
 
         {/* Footer / Action */}
-        {!packagesLoading && !packagesError && packages.length > 0 && (
+        {!bankTransfer && !packagesLoading && !packagesError && packages.length > 0 && (
           <div className="border-t border-gray-100 bg-gray-50/80 px-5 py-3 space-y-2.5">
             {errorMessage && (
               <div className="flex items-start gap-2 rounded-lg bg-red-50 border border-red-100 p-2.5">
@@ -244,6 +297,20 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
                 className="px-4 py-2.5 rounded-xl text-base sm:text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {t.topupCancel}
+              </button>
+              <button
+                onClick={handleBankTransfer}
+                disabled={!selectedPackage || bankTransferMutation.isPending}
+                data-testid="topup-bank-transfer-btn"
+                className="px-4 py-2.5 rounded-xl text-base sm:text-sm font-semibold border border-gray-300 bg-white text-gray-800 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+              >
+                {bankTransferMutation.isPending ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : lang === "vi" ? (
+                  "Chuyển khoản"
+                ) : (
+                  "Bank transfer"
+                )}
               </button>
               <button
                 onClick={handleConfirm}

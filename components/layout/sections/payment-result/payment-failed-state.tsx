@@ -3,6 +3,7 @@
 import { ArrowLeft, XCircle, Clock, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { localizedHref } from "@/lib/route-mapping";
 import type { PaymentStatus } from "@/lib/onepay";
 
 const failedStatusConfig: Record<
@@ -123,7 +124,7 @@ export function PaymentFailedState({
             variant="outline"
             className="flex-1 rounded-full h-12 border-gray-200 text-gray-700 hover:bg-gray-50 cursor-pointer"
           >
-            <Link href={`/${lang}`}>
+            <Link href={localizedHref(lang, "/")}>
               <ArrowLeft className="w-4 h-4 mr-2" />
               {lang === "vi" ? "Quay lại" : "Go Back"}
             </Link>
@@ -132,7 +133,7 @@ export function PaymentFailedState({
             asChild
             className="flex-1 rounded-full h-12 bg-emerald-600 text-white font-semibold hover:bg-emerald-700 cursor-pointer"
           >
-            <Link href={`/${lang}#pricing`}>
+            <Link href={`${localizedHref(lang, "/")}#pricing`}>
               {lang === "vi" ? "Thử lại" : "Try Again"}
             </Link>
           </Button>

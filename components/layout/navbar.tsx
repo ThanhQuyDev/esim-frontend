@@ -33,6 +33,7 @@ import {
 } from "lucide-react";
 import type { Locale } from "@/lib/i18n-config";
 import { localizedHref } from "@/lib/route-mapping";
+import { localizedSlug } from "@/lib/slug";
 import {
   pickLocalizedTitle,
   resolveFileUrl,
@@ -564,11 +565,6 @@ function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
     // different slug per locale, so map it explicitly. Other dynamic routes
     // still fall back to safe parent paths to avoid missing next-intl params.
     if (intlPathname === "/[slug]" || intlPathname === "/legal/[slug]") {
-      // Persist the target locale in the NEXT_LOCALE cookie before the hard
-      // navigation. Otherwise next-intl's middleware reads the stale cookie and
-      // redirects the prefix-less default-locale path (e.g. /thailand) back to
-      // the previous locale (e.g. /en/thailand), so the switch never happens.
-      document.cookie = `NEXT_LOCALE=${newLocale};path=/;max-age=${60 * 60 * 24 * 365};samesite=lax`;
       window.location.href =
         intlPathname === "/legal/[slug]"
           ? resolveLegalLangSwitchPath(pathname, newLocale)
@@ -1222,11 +1218,11 @@ function MobileSidebar({
 
   /* Build destination href */
   const getDestinationHref = (dest: any) =>
-    `${localePrefix}/${dest.slug || dest.code?.toLowerCase()}`;
+    `${localePrefix}/${localizedSlug(dest, lang) || dest.code?.toLowerCase()}`;
 
   /* Build region href */
   const getRegionHref = (region: any) =>
-    `${localePrefix}/${region.slug}`;
+    `${localePrefix}/${localizedSlug(region, lang)}`;
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>

@@ -5,6 +5,8 @@ import { MapPin, Loader2 } from "lucide-react";
 import { useDestinations, useRegions } from "@/lib/hooks";
 import type { Locale } from "@/lib/i18n-config";
 import { localizedHref } from "@/lib/route-mapping";
+import { localizedSlug } from "@/lib/slug";
+import { LocalCarrierGrid } from "./local-esim/local-carrier-grid";
 
 interface DestinationsSectionProps {
   dict: Record<string, any>;
@@ -32,25 +34,26 @@ function ChevronDownIcon({ className }: { className?: string }) {
 }
 
 export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
-  const [activeTab, setActiveTab] = useState<"country" | "region" | "ultra">("country");
+  const [activeTab, setActiveTab] = useState<"country" | "region" | "ultra" | "local">("country");
 
   const { data: destinations = [], isLoading: isLoadingDestinations } = useDestinations(
     JSON.stringify({ isPopular: true }),
     "name",
     "ASC",
-    9
+    12
   );
 
   const { data: regions = [], isLoading: isLoadingRegions } = useRegions(
     JSON.stringify({ isPopular: true }),
     "name",
     "ASC",
-    9
+    12
   );
 
   const tabs = [
     { key: "country" as const, label: dict.tabs.country, testId: "country-list-tab-chip-country" },
     { key: "region" as const, label: dict.tabs.region, testId: "country-list-tab-chip-region" },
+    { key: "local" as const, label: dict.tabs.local, testId: "country-list-tab-chip-local" },
   ];
 
   const showRegions = activeTab === "region";
@@ -119,8 +122,18 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
                 </div>
               </div>
 
-              {/* Destination/Region Grid */}
-              {isLoading ? (
+              {/* Destination/Region/Local Grid */}
+              {activeTab === "local" ? (
+                <LocalCarrierGrid
+                  lang={lang}
+                  fromLabel={dict.from}
+                  emptyLabel={
+                    lang === "vi"
+                      ? "Chưa có eSIM nội địa khả dụng."
+                      : "No domestic eSIMs available yet."
+                  }
+                />
+              ) : isLoading ? (
                 <div className="flex items-center justify-center py-16">
                   <Loader2 className="w-8 h-8 text-text-tertiary animate-spin" />
                 </div>
@@ -137,7 +150,7 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
                     >
                       <a
                         className="align-bottom focus-visible:outline-hidden focus-visible:shadow-focus text-text-primary active:text-text-primary block group ease-out h-full rounded-sm transition-colors hover:text-text-primary hover:bg-bg-tertiary bg-bg-primary"
-                        href={lang === 'vi' ? `/${item.slug || item.code?.toLowerCase()}` : `/${lang}/${item.slug || item.code?.toLowerCase()}`}
+                        href={lang === 'vi' ? `/${localizedSlug(item, lang) || item.code?.toLowerCase()}` : `/${lang}/${localizedSlug(item, lang) || item.code?.toLowerCase()}`}
                         data-testid={item.code || item.slug || item.id}
                       >
                         <div

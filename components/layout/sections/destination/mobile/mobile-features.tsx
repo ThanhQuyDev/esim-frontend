@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import type { Destination, Plan, Region, SupportedDevicesResponse } from "@/lib/api";
+import { localizedHref } from "@/lib/route-mapping";
 import type { DestinationDict } from "../types";
 
 interface MobileFeaturesProps {
@@ -123,7 +124,7 @@ function MobileDeviceChecker({ dict, lang }: { dict: DestinationDict; lang: stri
     if (e.key === "Enter") handleCheck();
   };
 
-  const deviceLink = lang === "vi" ? "/vi/thiet-bi-ho-tro-esim" : `/${lang}/esim-supported-devices`;
+  const deviceLink = localizedHref(lang, "esim-supported-devices");
 
   return (
     <div className="px-4 py-[18px] border-t-[7px] border-[#f3f4f6]">
@@ -202,7 +203,7 @@ export function MobileFeatures({
   onOpenEkyc,
 }: MobileFeaturesProps) {
   const [bannerOpen, setBannerOpen] = useState(false);
-  const deviceLink = lang === "vi" ? "/vi/thiet-bi-ho-tro-esim" : `/${lang}/esim-supported-devices`;
+  const deviceLink = localizedHref(lang, "esim-supported-devices");
 
   // Determine feature values from selected plan
   const hasHotspot = selectedPlan?.hotSpot ?? false;

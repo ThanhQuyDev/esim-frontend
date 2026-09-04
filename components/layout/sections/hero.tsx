@@ -174,18 +174,18 @@ export function HeroSection({ dict, heroBanners = [], lang }: HeroSectionProps) 
                             </div>
                           )}
                           {hasSecondItem && (
-                            <div className="flex flex-row gap-x-3">
+                            <div className="flex flex-row items-center gap-x-2">
                               {/* eslint-disable-next-line @next/next/no-img-element */}
                               <img
                                 alt={activeBanner!.secondContent!}
                                 src={activeBanner!.secondIcon!}
-                                width={20}
-                                height={20}
-                                className="max-w-fit"
+                                width={24}
+                                height={24}
+                                className="h-6 w-6 shrink-0 object-contain"
                                 loading="lazy"
-                                style={{ color: "transparent", maxWidth: "20px", width: "20px" }}
+                                style={{ color: "transparent" }}
                               />
-                              <p>{activeBanner!.secondContent}</p>
+                              <p className="body-md-bold text-text-primary">{activeBanner!.secondContent}</p>
                             </div>
                           )}
                         </div>

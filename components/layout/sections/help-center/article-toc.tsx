@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { routing } from "@/i18n/routing";
 
 interface TocItem {
   id: string;
@@ -91,7 +92,11 @@ interface ArticleTocProps {
   lang?: string;
 }
 
-export function ArticleToc({ headings: headingsProp, content, lang = "en" }: ArticleTocProps) {
+export function ArticleToc({
+  headings: headingsProp,
+  content,
+  lang = routing.defaultLocale,
+}: ArticleTocProps) {
   const [expanded, setExpanded] = useState(false);
   const [activeId, setActiveId] = useState<string>("");
 

@@ -1,11 +1,9 @@
 import {
   ReferHero,
   ReferWhyJoin,
-  ReferAboutSprint,
   ReferHowItWorks,
   ReferDownloadApp,
 } from "@/components/layout/sections/refer-a-friend-page";
-import { FAQSection } from "@/components/layout/sections/faq";
 import { FooterSection } from "@/components/layout/sections/footer";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { getCmsSeoUrlForPage } from "@/lib/cms-seo-url";
@@ -38,10 +36,8 @@ export default async function ReferAFriendPage() {
       />
       <ReferHero dict={refer.hero} />
       <ReferWhyJoin dict={refer.whyJoin} />
-      <ReferAboutSprint dict={refer.aboutSprint} />
       <ReferHowItWorks dict={refer.howItWorks} />
       <ReferDownloadApp dict={refer.downloadApp} />
-      <FAQSection dict={refer.faq} lang={locale} />
       <FooterSection dict={dict.footer} lang={locale} />
     </main>
   );

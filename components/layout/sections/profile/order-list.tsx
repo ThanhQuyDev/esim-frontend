@@ -6,6 +6,7 @@ import type { ProfileDict } from "./translations";
 import type { MyOrder } from "@/lib/hooks";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { localizedHref } from "@/lib/route-mapping";
 
 interface OrderListProps {
   orders: MyOrder[];
@@ -172,7 +173,7 @@ export function OrderList({ orders, isLoading, t, lang }: OrderListProps) {
     setRetryOrder(null);
     // Cart state is preserved server-side; route to /cart so the user
     // can immediately reattempt the payment via the gateway.
-    router.push(`/${lang}/cart`);
+    router.push(localizedHref(lang, "cart"));
   };
 
   if (isLoading) {
@@ -198,7 +199,7 @@ export function OrderList({ orders, isLoading, t, lang }: OrderListProps) {
         {orders.map((order) => (
           <Link
             key={order.id}
-            href={`/${lang}/payment/result?orderNumber=${order.orderNumber}`}
+            href={`${localizedHref(lang, "payment/result")}?orderNumber=${order.orderNumber}`}
             onClick={(e) => handleOrderClick(order, e)}
             className="flex items-center gap-4 p-4 rounded-xl border border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm transition-all group"
           >

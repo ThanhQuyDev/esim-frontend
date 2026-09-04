@@ -18,11 +18,6 @@ export default function LangSwitcher() {
 
   const switchLocale = (newLocale: string) => {
     if (pathname === '/[slug]' || pathname === '/legal/[slug]') {
-      // Persist the target locale in the NEXT_LOCALE cookie before the hard
-      // navigation. Otherwise next-intl's middleware reads the stale cookie and
-      // redirects the prefix-less default-locale path (e.g. /thailand) back to
-      // the previous locale (e.g. /en/thailand), so the switch never happens.
-      document.cookie = `NEXT_LOCALE=${newLocale};path=/;max-age=${60 * 60 * 24 * 365};samesite=lax`;
       window.location.href =
         pathname === '/legal/[slug]'
           ? resolveLegalLangSwitchPath(publicPathname, newLocale)

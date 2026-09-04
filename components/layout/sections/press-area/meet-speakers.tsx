@@ -28,7 +28,7 @@ export function MeetSpeakers({ dict }: MeetSpeakersProps) {
             <div className="flex flex-col gap-y-8">
               <div className="flex flex-col items-center gap-y-4">
                 <h2 className="heading-xl scroll-mt-20 xl:scroll-mt-24">{dict.title}</h2>
-                <p className="body-md text-text-secondary scroll-mt-20 xl:scroll-mt-24">{dict.description}</p>
+                <p className="body-md max-w-full break-words text-center text-text-secondary scroll-mt-20 xl:scroll-mt-24">{dict.description}</p>
               </div>
               <div className="grid sm:gap-x-8 md:grid-cols-2 grid-cols-1 gap-y-8">
                 {speakers.map((speaker) => (

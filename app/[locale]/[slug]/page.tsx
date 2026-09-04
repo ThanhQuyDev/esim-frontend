@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import {
   getDestinationBySlug,
   getRegionBySlug,
@@ -6,6 +6,7 @@ import {
   getDestinations,
   getRegions,
 } from "@/lib/api";
+import { localizedSlug } from "@/lib/slug";
 import { getSeoMetadata } from "@/lib/seo";
 import { getDictionary } from "@/lib/dictionaries";
 import { getLocale } from "next-intl/server";
@@ -84,21 +85,49 @@ export async function generateMetadata({
     localizedName
   );
 
+  // The exact SEO config must be looked up with the locale-aware public path.
+  // Without `/en`, English destination/region pages queried the Vietnamese
+  // `/${slug}` record first, so title/description/keywords were Vietnamese
+  // while structured data (which uses the request pathname) stayed English.
+  const exactSeoSlug = localizedPath(params.slug, locale);
   const genericSlug = entity.type === "destination"
     ? (locale === "vi" ? "/destination" : "/en/destination")
     : (locale === "vi" ? "/region" : "/en/region");
-  const seoSlugs = [`/${params.slug}`, genericSlug];
+  const seoSlugs = [exactSeoSlug, genericSlug];
 
-  return getSeoMetadata(
+  const metadata = await getSeoMetadata(
     seoSlugs,
     { title: fallbackTitle, description: fallbackDescription },
     { name: localizedName }
   );
+
+  // SEO: canonical points at this locale's canonical slug; hreflang lists the
+  // slug variant for each locale (vi → slugVi || slug, en → slug).
+  const viSlug = localizedSlug(entity.data, "vi");
+  const enSlug = localizedSlug(entity.data, "en");
+  metadata.alternates = {
+    canonical: localizedPath(localizedSlug(entity.data, locale), locale),
+    languages: {
+      vi: localizedPath(viSlug, "vi"),
+      en: localizedPath(enSlug, "en"),
+    },
+  };
+
+  return metadata;
+}
+
+/**
+ * Build the public path for an entity's canonical slug in a given locale.
+ * vi (default locale) has no prefix; en is prefixed with `/en`.
+ */
+function localizedPath(slug: string, locale: Locale): string {
+  return locale === "vi" ? `/${slug}` : `/${locale}/${slug}`;
 }
 
 /**
  * Build static params at build time for all destinations and regions
  * across all locales. This enables SSG for every entity page.
+ * Each locale uses its own canonical slug (vi → slugVi || slug, en → slug).
  */
 export async function generateStaticParams() {
   const params: { locale: string; slug: string }[] = [];
@@ -111,13 +140,15 @@ export async function generateStaticParams() {
 
     for (const locale of ["en", "vi"] as const) {
       for (const dest of destRes.data) {
-        if (dest.slug) {
-          params.push({ locale, slug: dest.slug });
+        const slug = localizedSlug(dest, locale);
+        if (slug) {
+          params.push({ locale, slug });
         }
       }
       for (const region of regionRes.data) {
-        if (region.slug) {
-          params.push({ locale, slug: region.slug });
+        const slug = localizedSlug(region, locale);
+        if (slug) {
+          params.push({ locale, slug });
         }
       }
     }
@@ -143,10 +174,22 @@ export default async function UnifiedSlugPage({
     notFound();
   }
 
+  // SEO: enforce the locale's canonical slug. If the visitor reached this page
+  // via the other locale's slug (e.g. VI user on `/esim-thailand`), 308-redirect
+  // to the canonical slug for this locale to avoid duplicate content.
+  const canonicalSlug = localizedSlug(entity.data, locale);
+  if (canonicalSlug && canonicalSlug !== params.slug) {
+    permanentRedirect(localizedPath(canonicalSlug, locale));
+  }
+
   const localizedName = pickLocalizedName(entity.data, locale);
 
   if (entity.type === "destination") {
-    const faqSlugs = [`/${params.slug}`, "/destination"];
+    const localePrefix = locale === "vi" ? "" : `/${locale}`;
+    const faqSlugs = [
+      localizedPath(params.slug, locale),
+      `${localePrefix}/destination`,
+    ];
     const destination = entity.data;
     const whyChooseUsRes = await getWhyChooseUs({
       lang: locale,
@@ -197,7 +240,11 @@ export default async function UnifiedSlugPage({
   }
 
   // Region
-  const faqSlugs = [`/${params.slug}`, "/region"];
+  const localePrefix = locale === "vi" ? "" : `/${locale}`;
+  const faqSlugs = [
+    localizedPath(params.slug, locale),
+    `${localePrefix}/region`,
+  ];
   const region = entity.data;
   const whyChooseUsRes = await getWhyChooseUs({
     lang: locale,

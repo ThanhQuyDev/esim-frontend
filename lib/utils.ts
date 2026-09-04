@@ -24,6 +24,22 @@ export function interpolate(
   });
 }
 
+export const PHONE_MAX_LENGTH = 20;
+
+/**
+ * Keep only digits and a single leading "+", capped at PHONE_MAX_LENGTH.
+ *
+ * The cap matches the backend column (`phoneNumber varchar(20)`) and its
+ * `@MaxLength(20)` DTO rule, so a value that passes through here can never be
+ * rejected for length.
+ */
+export function sanitizePhoneInput(value: string): string {
+  const hasLeadingPlus = value.trimStart().startsWith("+");
+  const digits = value.replace(/\D/g, "");
+  const result = hasLeadingPlus ? `+${digits}` : digits;
+  return result.slice(0, PHONE_MAX_LENGTH);
+}
+
 /**
  * Round a VND amount to the nearest thousand dong.
  */

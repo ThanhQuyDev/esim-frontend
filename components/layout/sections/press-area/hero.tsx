@@ -19,8 +19,8 @@ export function PressAreaHero({ dict }: PressAreaHeroProps) {
                         <a
                           className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus"
                         >
-                          <div className="inline-flex gap-2 items-start">
-                            <div className="flex gap-2 items-baseline">
+                          <div className="inline-flex max-w-full flex-wrap gap-2 items-start">
+                            <div className="flex min-w-0 flex-wrap gap-2 items-baseline">
                               <p className="body-md-medium text-text-primary scroll-mt-20 xl:scroll-mt-24">{dict.excellent}</p>
                               <p className="body-sm text-text-primary scroll-mt-20 xl:scroll-mt-24">{dict.rating}</p>
                             </div>

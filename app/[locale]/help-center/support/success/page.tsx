@@ -6,6 +6,7 @@ import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { getCmsSeoUrlForPage } from "@/lib/cms-seo-url";
 import { getDictionary } from "@/lib/dictionaries";
 import { getSeoMetadata } from "@/lib/seo";
+import { localizedHref } from "@/lib/route-mapping";
 import { getLocale } from "next-intl/server";
 import type { Locale } from "@/lib/i18n-config";
 import type { Metadata } from "next";
@@ -42,8 +43,8 @@ export default async function SupportSuccessPage({
     <>
       <Breadcrumb
         items={[
-          { label: dict.breadcrumb.helpCenter, href: `/${locale}/help-center` },
-          { label: dict.breadcrumb.helpCenterSupport, href: `/${locale}/help-center/support` },
+          { label: dict.breadcrumb.helpCenter, href: localizedHref(locale, "help-center") },
+          { label: dict.breadcrumb.helpCenterSupport, href: localizedHref(locale, "help-center/support") },
           { label: dict.breadcrumb.helpCenterSupportSuccess },
         ]}
         lang={locale}
@@ -73,13 +74,13 @@ export default async function SupportSuccessPage({
 
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Button asChild className="cursor-pointer">
-                <Link href={`/${locale}/help-center/support`}>
+                <Link href={localizedHref(locale, "help-center/support")}>
                   <Send className="mr-2 h-4 w-4" aria-hidden="true" />
                   {successDict.ctaNew}
                 </Link>
               </Button>
               <Button asChild variant="outline" className="cursor-pointer">
-                <Link href={`/${locale}`}>
+                <Link href={localizedHref(locale, "/")}>
                   <Home className="mr-2 h-4 w-4" aria-hidden="true" />
                   {successDict.ctaHome}
                 </Link>
