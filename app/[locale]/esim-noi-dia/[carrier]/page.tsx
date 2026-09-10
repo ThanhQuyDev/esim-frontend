@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import { getLocalPlansByCarrier, getLocalCarriers } from "@/lib/api";
 import { getDictionary } from "@/lib/dictionaries";
-import { getLocale } from "next-intl/server";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { LocalEsimDetail } from "@/components/layout/sections/local-esim/local-esim-detail";
 import { getCarrierMeta } from "@/components/layout/sections/local-esim/carrier-meta";
@@ -28,6 +27,12 @@ import type { Metadata } from "next";
  * The carrier list is data-driven: any `provider` with active
  * `isLocalInventory` plans gets a page. Plans are fetched grouped and rendered
  * by {@link LocalEsimDetail}. Returns 404 when the carrier has no plans.
+ *
+ * Locale comes from `params.locale`, never from `getLocale()`. This route pairs
+ * `generateStaticParams` with on-demand rendering for carriers that were not
+ * prerendered, and `getLocale()` reads request headers — a dynamic API that
+ * throws DYNAMIC_SERVER_USAGE (a 500, not the intended 404) on that path. The
+ * `[locale]` segment is already in the URL, so the param is the safe source.
  */
 
 export async function generateStaticParams() {
@@ -42,9 +47,9 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: {
-  params: { carrier: string };
+  params: { carrier: string; locale: string };
 }): Promise<Metadata> {
-  const locale = (await getLocale()) as Locale;
+  const locale = params.locale as Locale;
   const meta = getCarrierMeta(params.carrier);
   const title =
     locale === "vi"
@@ -60,9 +65,9 @@ export async function generateMetadata({
 export default async function DomesticEsimCarrierPage({
   params,
 }: {
-  params: { carrier: string };
+  params: { carrier: string; locale: string };
 }) {
-  const locale = (await getLocale()) as Locale;
+  const locale = params.locale as Locale;
   const dict = await getDictionary(locale);
   const carrier = params.carrier.toLowerCase();
 
