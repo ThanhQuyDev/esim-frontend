@@ -3,6 +3,8 @@ export interface ProfileDict {
   tabProfile: string;
   tabWallet: string;
   tabSimManagement: string;
+  /** Only rendered for users who are affiliate partners (#095). */
+  tabAffiliate: string;
   personalInfo: string;
   fullName: string;
   email: string;
@@ -90,6 +92,7 @@ export const profileTranslations: Record<"en" | "vi", ProfileDict> = {
     tabProfile: "Profile",
     tabWallet: "eXU Wallet",
     tabSimManagement: "SIM Management",
+    tabAffiliate: "Affiliate",
     email: "Email",
     myOrders: "Order History",
     noOrders: "No orders yet.",
@@ -173,6 +176,7 @@ export const profileTranslations: Record<"en" | "vi", ProfileDict> = {
     tabProfile: "Hồ sơ",
     tabWallet: "Ví eXU",
     tabSimManagement: "Quản lý SIM",
+    tabAffiliate: "Affiliate",
     email: "Email",
     myOrders: "Lịch Sử Đơn Hàng",
     noOrders: "Chưa có đơn hàng nào.",

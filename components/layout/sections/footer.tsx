@@ -1,11 +1,8 @@
 import Link from "next/link";
 import { routing } from "@/i18n/routing";
 import { localizedHref } from "@/lib/route-mapping";
-import {
-  getFooters,
-  pickLocalizedTitle,
-  type Footer as ApiFooter,
-} from "@/lib/api";
+import { getFooters, type Footer as ApiFooter } from "@/lib/api";
+import { buildFooterColumns } from "@/lib/footer-groups";
 import type { Locale } from "@/lib/i18n-config";
 import { FooterColumns, type FooterColumn } from "./footer-columns";
 import { LEGAL_POLICIES, getPolicyHref } from "./legal";
@@ -43,47 +40,8 @@ function getFallbackColumns(dict: Record<string, any>): FooterColumn[] {
   ];
 }
 
-function getApiFooterColumns(
-  footerLinks: ApiFooter[],
-  lang: Locale = routing.defaultLocale
-): FooterColumn[] {
-  const groupedLinks = new Map<string, FooterLink[]>();
-  const orderedFooterLinks = [...footerLinks].sort(
-    (a, b) =>
-      (a.sortOrder ?? 0) - (b.sortOrder ?? 0) ||
-      String(a.createdAt).localeCompare(String(b.createdAt))
-  );
-  orderedFooterLinks.forEach((footerLink) => {
-    const label = pickLocalizedTitle(footerLink, lang).trim();
-    const href = footerLink.url?.trim();
-
-    if (!label || !href) return;
-
-    const category =
-      footerLink.categories?.trim() || (lang === "vi" ? "Liên kết" : "Links");
-    const links = groupedLinks.get(category) ?? [];
-
-    links.push({
-      id: footerLink.id,
-      label,
-      href,
-      iconUrl: footerLink.iconUrl || null,
-    });
-
-    groupedLinks.set(category, links);
-  });
-
-  const columns = Array.from(groupedLinks.entries()).map(([title, links]) => ({
-    title,
-    links,
-  }));
-
-  // Always render the "Follow Us" / "Theo dõi" column at the end
-  return [
-    ...columns.filter((c) => c.title.trim().toLowerCase() !== "follow us" && c.title.trim().toLowerCase() !== "theo dõi" && c.title.trim().toLowerCase() !== "theo doi"),
-    ...columns.filter((c) => c.title.trim().toLowerCase() === "follow us" || c.title.trim().toLowerCase() === "theo dõi" || c.title.trim().toLowerCase() === "theo doi"),
-  ];
-}
+/* Grouping moved to `lib/footer-groups.ts` so the bilingual headings and the
+   language-independent grouping key can be tested on their own (#088). */
 
 export async function FooterSection({
   dict,
@@ -91,7 +49,13 @@ export async function FooterSection({
   lang = routing.defaultLocale,
 }: FooterSectionProps) {
   const resolvedFooterLinks = footerLinks ?? (await getFooters({ lang }));
-  const apiColumns = getApiFooterColumns(resolvedFooterLinks, lang);
+  // Headings come from the row's own language field, and rows group by the
+  // default heading so one column cannot split in two (#088).
+  const apiColumns = buildFooterColumns(
+    resolvedFooterLinks,
+    lang,
+    lang === "vi" ? "Liên kết" : "Links"
+  );
   const columns = apiColumns.length > 0 ? apiColumns : getFallbackColumns(dict);
 
   return (
@@ -170,7 +134,7 @@ export async function FooterSection({
               ))}
             </div>
             <a
-              href="http://online.gov.vn/Home/WebDetails/115435"
+              href="http://online.gov.vn/nen-tang/f86f2973-99df-4d63-a3af-1fa2f2cf94c2"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-block"

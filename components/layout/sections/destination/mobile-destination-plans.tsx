@@ -11,6 +11,8 @@ import { MobileCta } from "./mobile/mobile-cta";
 import { MobileFeatures } from "./mobile/mobile-features";
 import { MobileStickyBar } from "./mobile/mobile-sticky-bar";
 import { CategoryTabs, type PlanCategory } from "./category-tabs";
+import { NonHkIpToggle } from "./nonhkip-toggle";
+import type { SeoTemplateVars } from "@/lib/seo-vars";
 import { SimplePlanList } from "./simple-plan-list";
 
 export interface MobileDestinationPlansProps {
@@ -37,6 +39,14 @@ export interface MobileDestinationPlansProps {
   activeCategory: PlanCategory;
   onCategoryChange: (category: PlanCategory) => void;
   hasSmsCallPlans: boolean;
+  /** Local-exit-IP ("nonhkip") filter — see lib/plan-nonhkip.ts (#041). */
+  showNonHkIpToggle: boolean;
+  onlyNonHkIp: boolean;
+  onToggleNonHkIp: (next: boolean) => void;
+  /** Whether any plan survives the local-IP filter. */
+  hasVisiblePlans: boolean;
+  /** Price/name variables for the CMS description paragraph (#050). */
+  descriptionVars?: SeoTemplateVars;
   /** Open the shared eKYC guide modal. */
   onOpenEkyc?: () => void;
   /** Returns the total VND price for 1 eSIM for the given number of days,
@@ -68,19 +78,21 @@ export function MobileDestinationPlans({
   activeCategory,
   onCategoryChange,
   hasSmsCallPlans,
+  showNonHkIpToggle,
+  onlyNonHkIp,
+  onToggleNonHkIp,
+  hasVisiblePlans,
+  descriptionVars,
   onOpenEkyc,
   getTotalForDays,
 }: MobileDestinationPlansProps) {
   const ctaRef = useRef<HTMLDivElement>(null);
   const resolvedDestination = destinationData || destination;
 
-  const hasAnyPlans =
-    (plans.localEsim?.length ?? 0) > 0 ||
-    plans.dataPlans.length > 0 ||
-    plans.slowUnlimited.length > 0 ||
-    plans.fastUnlimited.length > 0 ||
-    plans.dailyUnlimited.length > 0 ||
-    (plans.smsCallEsim?.length ?? 0) > 0;
+  // `hasVisiblePlans` already counts the (possibly filtered) lists. Keep
+  // rendering when the local-IP filter emptied them, so its toggle stays
+  // reachable instead of being replaced by "no plans" (#041).
+  const hasAnyPlans = hasVisiblePlans || (showNonHkIpToggle && onlyNonHkIp);
 
   return (
     <div className="bg-white max-w-full">
@@ -93,6 +105,7 @@ export function MobileDestinationPlans({
           planSource={planSource}
           region={region}
           operatorName={selectedPlan?.operatorName}
+          descriptionVars={descriptionVars}
         />
 
         {/* 2. Price + Green Box + inline KYC banner */}
@@ -150,6 +163,17 @@ export function MobileDestinationPlans({
                 hasSmsCallPlans={hasSmsCallPlans}
               />
             </div>
+
+            {showNonHkIpToggle && (
+              <div className="px-4">
+                <NonHkIpToggle
+                  active={onlyNonHkIp}
+                  onToggle={onToggleNonHkIp}
+                  lang={lang}
+                  empty={!hasVisiblePlans}
+                />
+              </div>
+            )}
 
             {/* Plan selection based on active category */}
             {activeCategory === "data" && (

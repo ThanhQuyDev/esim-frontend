@@ -1,12 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { MapPin, Loader2, X } from "lucide-react";
 import { useInfiniteDestinations, useRegions } from "@/lib/hooks";
+import { optimizeCloudinary } from "@/lib/cdn-image";
 import { useDebounce } from "@/lib/use-debounce";
 import type { Locale } from "@/lib/i18n-config";
 import { localizedSlug } from "@/lib/slug";
 import { LocalCarrierGrid } from "@/components/layout/sections/local-esim/local-carrier-grid";
+import { useMatchedLocalCarriers } from "@/components/layout/sections/local-esim/local-carrier-search";
+import { toRegionListItems, variantCountLabel } from "@/lib/region-groups";
 
 interface AllDestinationsContentProps {
   dict: Record<string, any>;
@@ -76,7 +80,9 @@ function DestinationCard({
                     loading="lazy"
                     decoding="async"
                     className="w-full h-full object-cover absolute inset-0"
-                    src={item.flagUrl || item.iconUrl}
+                    width={36}
+                    height={36}
+                    src={optimizeCloudinary(item.flagUrl || item.iconUrl, { width: 72 })}
                   />
                   <div className="absolute inset-0 rounded-full pointer-events-none border border-[rgba(0,0,0,0.1)]" />
                 </>
@@ -95,7 +101,15 @@ function DestinationCard({
                 <span className="whitespace-nowrap">
                   {dict.from} {Number(item.fromPrice).toLocaleString("vi-VN") || "20.000"}đ
                 </span>
-                {item.destinationCount != null && (
+                {item.variantCount > 1 ? (
+                  <>
+                    {" "}
+                    •{" "}
+                    <span className="whitespace-nowrap">
+                      {variantCountLabel(item.variantCount, lang)}
+                    </span>
+                  </>
+                ) : item.destinationCount != null ? (
                   <>
                     {" "}
                     •{" "}
@@ -106,7 +120,7 @@ function DestinationCard({
                         : dict.countries}
                     </span>
                   </>
-                )}
+                ) : null}
               </p>
             </div>
             {/* Chevron */}
@@ -125,7 +139,10 @@ export function AllDestinationsContent({
   lang,
 }: AllDestinationsContentProps) {
   const [activeTab, setActiveTab] = useState<TabKey>("all");
-  const [searchQuery, setSearchQuery] = useState("");
+  // Seeded from ?q= so a search started elsewhere — the 404 page, for one —
+  // arrives here with the term already applied instead of an empty box (#093).
+  const initialQuery = useSearchParams().get("q") ?? "";
+  const [searchQuery, setSearchQuery] = useState(initialQuery);
   const debouncedSearch = useDebounce(searchQuery, 300);
 
   // On the "all" tab, show both regions and countries as separate sections.
@@ -141,21 +158,43 @@ export function AllDestinationsContent({
 
   // Regions for the "all" tab (and the dedicated "region" tab keeps using the
   // infinite list above). useRegions returns the full active region list.
-  const regionsFilter =
+  // `isActive` is filtered server-side so inactive regions never eat into the
+  // page of results the customer gets back.
+  const regionsFilter = JSON.stringify(
     debouncedSearch && debouncedSearch.trim()
-      ? JSON.stringify({ search: debouncedSearch.trim() })
-      : undefined;
+      ? { search: debouncedSearch.trim(), isActive: true }
+      : { isActive: true }
+  );
   const { data: regions, isLoading: isLoadingRegions } = useRegions(
     regionsFilter,
     "name",
     "ASC"
   );
 
-  const allItems = data?.pages.flatMap((page) => page.data) ?? [];
+  // Domestic eSIM matches for the current query. Searching "việt nam" /
+  // "esim nội địa" / a carrier name surfaces them alongside the destinations,
+  // instead of leaving the customer on an empty "no results" screen.
+  const { matches: localMatches } = useMatchedLocalCarriers(debouncedSearch);
+  const showLocalMatches = activeTab !== "local" && localMatches.length > 0;
 
-  const regionItems = (regions ?? []).filter((r: any) => r.isActive);
+  const rawItems = data?.pages.flatMap((page) => page.data) ?? [];
 
   const showRegions = activeTab === "region";
+
+  // Same-named regions that differ only by country count collapse into one
+  // card linking to the group page (`/esim-chau-a`). Applies to the dedicated
+  // "Khu vực" tab (which pages through /regions) and to the regions section of
+  // the "Tất cả" tab alike.
+  // Not memoized: `rawItems` is rebuilt by flatMap on every render anyway, so
+  // a memo here would never hit.
+  const allItems = showRegions
+    ? toRegionListItems(rawItems as any, lang)
+    : rawItems;
+
+  const regionItems = useMemo(
+    () => toRegionListItems((regions ?? []).filter((r: any) => r.isActive), lang),
+    [regions, lang]
+  );
 
   const tabs: { key: TabKey; label: string; badge?: string }[] = [
     { key: "all", label: dict.tabs.all },
@@ -273,75 +312,96 @@ export function AllDestinationsContent({
                     : "No domestic eSIMs available yet."
                 }
               />
-            ) : isLoading || (isAllTab && isLoadingRegions) ? (
-              <div className="flex items-center justify-center py-16">
-                <Loader2 className="w-8 h-8 text-text-tertiary animate-spin" />
-              </div>
-            ) : allItems.length === 0 &&
-              (!isAllTab || regionItems.length === 0) ? (
-              <div className="flex flex-col items-center justify-center py-16 text-text-tertiary">
-                <MapPin className="w-12 h-12 mb-4" />
-                <p className="body-lg-medium">{dict.noResults}</p>
-              </div>
-            ) : isAllTab ? (
-              <>
-
-                {/* Countries section */}
-                {allItems.length > 0 && (
-                  <div>
-                    <h2 className="heading-sm mb-4">{dict.sectionCountries}</h2>
-                    <div
-                      id="country-list-items"
-                      className="grid gap-3 lg:gap-6 w-full md:grid-cols-2 lg:grid-cols-3"
-                    >
-                      {allItems.map((item: any) => (
-                        <DestinationCard
-                          key={`country-${item.id}`}
-                          item={item}
-                          lang={lang}
-                          dict={dict}
-                          isRegion={false}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Regions section */}
-                {regionItems.length > 0 && (
-                  <div className="my-10">
-                    <h2 className="heading-sm mb-4">{dict.sectionRegions}</h2>
-                    <div className="grid gap-3 lg:gap-6 w-full md:grid-cols-2 lg:grid-cols-3">
-                      {regionItems.map((item: any) => (
-                        <DestinationCard
-                          key={`region-${item.id}`}
-                          item={item}
-                          lang={lang}
-                          dict={dict}
-                          isRegion
-                        />
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </>
             ) : (
               <>
-                <div
-                  id="country-list-items"
-                  className="grid gap-3 lg:gap-6 w-full md:grid-cols-2 lg:grid-cols-3"
-                >
-                  {allItems.map((item: any) => (
-                    <DestinationCard
-                      key={item.id}
-                      item={item}
+                {/* Domestic eSIM matches ("việt nam", "esim nội địa", a carrier
+                    name) — rendered above the destination results. */}
+                {showLocalMatches && (
+                  <div className="mb-10">
+                    <h2 className="heading-sm mb-4">
+                      {lang === "vi" ? "eSIM nội địa" : "Domestic eSIM"}
+                    </h2>
+                    <LocalCarrierGrid
                       lang={lang}
-                      dict={dict}
-                      isRegion={showRegions}
+                      fromLabel={dict.from}
+                      emptyLabel=""
+                      carriers={localMatches}
                     />
-                  ))}
+                  </div>
+                )}
+                {isLoading || (isAllTab && isLoadingRegions) ? (
+                <div className="flex items-center justify-center py-16">
+                  <Loader2 className="w-8 h-8 text-text-tertiary animate-spin" />
                 </div>
+              ) : allItems.length === 0 &&
+                (!isAllTab || regionItems.length === 0) ? (
+                showLocalMatches ? null : (
+                <div className="flex flex-col items-center justify-center py-16 text-text-tertiary">
+                  <MapPin className="w-12 h-12 mb-4" />
+                  <p className="body-lg-medium">{dict.noResults}</p>
+                </div>
+                )
+              ) : isAllTab ? (
+                <>
 
+                  {/* Countries section */}
+                  {allItems.length > 0 && (
+                    <div>
+                      <h2 className="heading-sm mb-4">{dict.sectionCountries}</h2>
+                      <div
+                        id="country-list-items"
+                        className="grid gap-3 lg:gap-6 w-full md:grid-cols-2 lg:grid-cols-3"
+                      >
+                        {allItems.map((item: any) => (
+                          <DestinationCard
+                            key={`country-${item.id}`}
+                            item={item}
+                            lang={lang}
+                            dict={dict}
+                            isRegion={false}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Regions section */}
+                  {regionItems.length > 0 && (
+                    <div className="my-10">
+                      <h2 className="heading-sm mb-4">{dict.sectionRegions}</h2>
+                      <div className="grid gap-3 lg:gap-6 w-full md:grid-cols-2 lg:grid-cols-3">
+                        {regionItems.map((item: any) => (
+                          <DestinationCard
+                            key={`region-${item.id}`}
+                            item={item}
+                            lang={lang}
+                            dict={dict}
+                            isRegion
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <>
+                  <div
+                    id="country-list-items"
+                    className="grid gap-3 lg:gap-6 w-full md:grid-cols-2 lg:grid-cols-3"
+                  >
+                    {allItems.map((item: any) => (
+                      <DestinationCard
+                        key={item.id}
+                        item={item}
+                        lang={lang}
+                        dict={dict}
+                        isRegion={showRegions}
+                      />
+                    ))}
+                  </div>
+
+                </>
+              )}
               </>
             )}
           </div>

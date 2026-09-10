@@ -1,6 +1,15 @@
 import { headers } from 'next/headers';
 import { resolveCmsSeoLookupPath } from '@/lib/cms-seo-url';
-import { fetchSeoConfigByUrl, getDestinationBySlug, getRegionBySlug } from '@/lib/api';
+import {
+  fetchSeoConfigByUrl,
+  getDestinationBySlug,
+  getRegionBySlug,
+  getPlansByDestinationSlug,
+  getPlansByRegionSlug
+} from '@/lib/api';
+import { buildSeoTemplateVars } from '@/lib/seo-vars';
+import { buildProductSchema, hasProductSchema } from '@/lib/product-schema';
+import { getUsdVndRate } from '@/lib/exchange-rate';
 import { StructuredData } from '@/components/structured-data';
 
 /**
@@ -17,17 +26,55 @@ function normalizePath(path: string): string {
  * Resolve a slug to determine whether it is a destination or a region.
  * Returns `"destination"`, `"region"`, or `null`.
  */
-async function resolveEntityType(
+interface ResolvedEntity {
+  type: 'destination' | 'region';
+  name: string;
+  description: string | null;
+  image: string | null;
+}
+
+async function resolveEntity(
   slug: string,
   lang: string,
-): Promise<'destination' | 'region' | null> {
+): Promise<ResolvedEntity | null> {
   const destination = await getDestinationBySlug(slug, lang);
-  if (destination) return 'destination';
+  if (destination) {
+    return {
+      type: 'destination',
+      name:
+        (lang === 'vi' ? destination.titleVi : destination.title) ||
+        destination.name,
+      description:
+        (lang === 'vi' ? destination.descriptionVi : destination.description) ??
+        null,
+      image: destination.avatarUrl ?? destination.flagUrl ?? null,
+    };
+  }
 
   const region = await getRegionBySlug(slug, lang);
-  if (region) return 'region';
+  if (region) {
+    return {
+      type: 'region',
+      name: (lang === 'vi' ? region.titleVi : region.title) || region.name,
+      description:
+        (lang === 'vi' ? region.descriptionVi : region.description) ?? null,
+      image: region.avatarUrl ?? region.iconUrl ?? null,
+    };
+  }
 
   return null;
+}
+
+/** The plans of the resolved entity — both the SEO variables and the Product
+ *  schema are built from this one (cached) call. */
+async function entityPlans(
+  type: 'destination' | 'region',
+  slug: string,
+  lang: string,
+) {
+  return type === 'destination'
+    ? getPlansByDestinationSlug(slug, lang)
+    : getPlansByRegionSlug(slug, lang);
 }
 
 /**
@@ -55,32 +102,66 @@ export async function PageStructuredData({ locale }: { locale: string }) {
 
   const seo = await fetchSeoConfigByUrl(lookupPath);
 
-  if (seo?.structuredData && normalizePath(seo.url) === normalizePath(lookupPath)) {
-    return <StructuredData data={seo.structuredData} />;
-  }
-
-  // ── Step 2: Slug-page fallback ────────────────────────────────────
-  // Detect single-segment paths that could be destination/region detail pages.
-  // e.g. `/japan` (vi) or `/en/japan` (en)
+  // Detect single-segment paths that could be destination/region detail pages,
+  // e.g. `/japan` (vi) or `/en/japan` (en).
   const pathWithoutLocale = localePrefix
     ? normalizedPath.slice(localePrefix.length) || '/'
     : normalizedPath;
-
   const segments = pathWithoutLocale.split('/').filter(Boolean);
+  const slug = segments.length === 1 ? segments[0] : null;
+  const entity = slug ? await resolveEntity(slug, locale) : null;
+  const plans = entity && slug ? await entityPlans(entity.type, slug, locale) : null;
+  const vars = entity
+    ? buildSeoTemplateVars({
+        name: entity.name,
+        plans,
+        lang: locale,
+        rate: await getUsdVndRate()
+      })
+    : {};
 
-  if (segments.length === 1) {
-    const slug = segments[0];
-    const entityType = await resolveEntityType(slug, locale);
+  // ── The CMS-authored block, if this page has one ──────────────────
+  let cmsBlock: string | null = null;
 
-    if (entityType) {
-      const fallbackPath = `${localePrefix}/${entityType}`;
-      const fallbackSeo = await fetchSeoConfigByUrl(fallbackPath);
-
-      if (fallbackSeo?.structuredData) {
-        return <StructuredData data={fallbackSeo.structuredData} />;
-      }
-    }
+  if (seo?.structuredData && normalizePath(seo.url) === normalizePath(lookupPath)) {
+    cmsBlock = seo.structuredData;
+  } else if (entity) {
+    // Slug-page fallback: a destination/region page with no record of its own
+    // inherits the shared `/destination` or `/region` schema.
+    const fallbackSeo = await fetchSeoConfigByUrl(`${localePrefix}/${entity.type}`);
+    cmsBlock = fallbackSeo?.structuredData ?? null;
   }
 
-  return null;
+  // ── Product + Offer, generated from the plans actually on sale (#051) ──
+  // Skipped when the CMS block already declares a Product: two Products on one
+  // page make Google pick between them arbitrarily.
+  const productSchema =
+    entity && !hasProductSchema(cmsBlock)
+      ? buildProductSchema({
+          name:
+            locale === 'vi' ? `eSIM ${entity.name}` : `${entity.name} eSIM`,
+          url: normalizedPath,
+          description: entity.description,
+          image: entity.image,
+          plans,
+          lang: locale
+        })
+      : null;
+
+  if (!cmsBlock && !productSchema) return null;
+
+  return (
+    <>
+      {/* Variables are handed to StructuredData rather than applied here, so
+          they reach JSON-LD only — a pasted gtag snippet must be left
+          byte-for-byte, template literals included. */}
+      {cmsBlock && <StructuredData data={cmsBlock} vars={vars} />}
+      {productSchema && (
+        <script
+          type='application/ld+json'
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+        />
+      )}
+    </>
+  );
 }

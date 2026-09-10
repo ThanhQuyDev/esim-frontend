@@ -8,6 +8,7 @@ import {
   getSavedCoupons,
   fetchApiCoupons,
   getSubtotal,
+  couponDiscountLabel,
   getDiscount,
   getTotal,
   getVndDiscount,
@@ -86,8 +87,6 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
 
   const selectedItems = cart.items.filter((i) => selectedIds.has(i.id));
   const subtotal = getSubtotal(selectedItems);
-  const discount = getDiscount(subtotal, cart.appliedCoupon);
-  const total = getTotal(selectedItems, cart.appliedCoupon);
 
   // VND-aware calculations
   const getVndSubtotal = (items: CartItem[]): number => {
@@ -99,6 +98,10 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
   const hasVndPricing = selectedItems.some((i) => i.vndPrice);
   const vndSubtotalValue = getVndSubtotal(selectedItems);
   const vndDiscountValue = getVndDiscount(vndSubtotalValue, cart.appliedCoupon);
+  // The USD figures follow the VND ones: a flat-amount or capped code (#082)
+  // is a dong figure, so the same share has to come off both.
+  const discount = getDiscount(subtotal, cart.appliedCoupon, vndSubtotalValue);
+  const total = getTotal(selectedItems, cart.appliedCoupon, vndSubtotalValue);
   const vndTotalBeforePromo = Math.max(0, vndSubtotalValue - vndDiscountValue);
 
   // Apply promo discount only when valid (referral requires subtotal >= 100k)
@@ -504,7 +507,9 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
                   <span className="text-sm text-green-600">
                     {promoApplied.type === "referral"
                       ? `-${formatVnd(promoApplied.discountVnd)}`
-                      : `-${cart.appliedCoupon?.discount}%`}
+                      : cart.appliedCoupon
+                        ? couponDiscountLabel(cart.appliedCoupon)
+                        : ""}
                   </span>
                 </div>
                 <button
@@ -583,7 +588,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
                           ) : null}
                         </div>
                         <span className="text-base sm:text-sm font-medium text-green-600">
-                          -{coupon.discount}%
+                          {couponDiscountLabel(coupon)}
                         </span>
                       </button>
                     ))}

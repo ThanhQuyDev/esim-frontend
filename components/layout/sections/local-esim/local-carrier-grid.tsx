@@ -3,7 +3,9 @@
 import { Loader2 } from "lucide-react";
 import { useLocalCarriers } from "@/lib/hooks";
 import { getCarrierMeta } from "./carrier-meta";
+import { localCarrierHref, localCarrierTitle } from "./local-carrier-search";
 import type { Locale } from "@/lib/i18n-config";
+import type { LocalCarrier } from "@/lib/api";
 
 interface LocalCarrierGridProps {
   lang: Locale;
@@ -11,6 +13,11 @@ interface LocalCarrierGridProps {
   fromLabel: string;
   /** Localized empty-state text. */
   emptyLabel: string;
+  /**
+   * Pre-filtered carriers to render (e.g. search matches). When omitted the
+   * grid fetches and shows the full carrier list itself.
+   */
+  carriers?: LocalCarrier[];
 }
 
 function ChevronRightIcon({ className }: { className?: string }) {
@@ -39,8 +46,15 @@ function ChevronRightIcon({ className }: { className?: string }) {
  * to `/esim-noi-dia/{provider}`. Shared by the homepage and all-destinations
  * "eSIM nội địa" tabs.
  */
-export function LocalCarrierGrid({ lang, fromLabel, emptyLabel }: LocalCarrierGridProps) {
-  const { data: carriers = [], isLoading } = useLocalCarriers();
+export function LocalCarrierGrid({
+  lang,
+  fromLabel,
+  emptyLabel,
+  carriers: carriersProp,
+}: LocalCarrierGridProps) {
+  const { data: fetchedCarriers = [], isLoading: isFetching } = useLocalCarriers();
+  const carriers = carriersProp ?? fetchedCarriers;
+  const isLoading = carriersProp ? false : isFetching;
 
   if (isLoading) {
     return (
@@ -62,10 +76,7 @@ export function LocalCarrierGrid({ lang, fromLabel, emptyLabel }: LocalCarrierGr
     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-6 w-full">
       {carriers.map((carrier) => {
         const meta = getCarrierMeta(carrier.provider);
-        const href =
-          lang === "vi"
-            ? `/esim-noi-dia/${carrier.provider}`
-            : `/en/domestic-esim/${carrier.provider}`;
+        const href = localCarrierHref(lang, carrier.provider);
         const priceLabel = `${fromLabel} ${carrier.fromVndPrice.toLocaleString("vi-VN")}đ`;
         const sub = meta.infra ? `${priceLabel} · ${meta.infra}` : priceLabel;
 
@@ -90,8 +101,7 @@ export function LocalCarrierGrid({ lang, fromLabel, emptyLabel }: LocalCarrierGr
               {/* Name + price/infra */}
               <div className="flex flex-col gap-0.5 min-w-0">
                 <p className="body-lg-medium truncate">
-                  {lang === "vi" ? "eSIM " : ""}
-                  {meta.label}
+                  {localCarrierTitle(lang, carrier.provider)}
                 </p>
                 <p className="body-md text-text-tertiary truncate">{sub}</p>
               </div>

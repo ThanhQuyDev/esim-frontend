@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { RocketIcon, CreditCardIcon, Pickaxe, MessageCircleQuestionIcon, Search, X } from "lucide-react";
+import { RocketIcon, CreditCardIcon, Pickaxe, MessageCircleQuestionIcon } from "lucide-react";
 import type { HelpCenterArticle } from "@/lib/api";
 import { localizedHref } from "@/lib/route-mapping";
+import { helpCenterArticleSlug } from "@/lib/help-center-search";
+import { HelpCenterSearchBox } from "./help-center-search-box";
 import { ScrollToTop } from "./scroll-to-top";
 import {
   getCategoryLabel,
@@ -15,9 +16,6 @@ import {
   toLocalizedParentSlug,
 } from "./category-config";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.saily.example.com";
-
 // Map API category keys to icons
 const CATEGORY_ICONS: Record<string, React.ElementType> = {
   getting_started: RocketIcon,
@@ -26,31 +24,14 @@ const CATEGORY_ICONS: Record<string, React.ElementType> = {
   faq: MessageCircleQuestionIcon,
 };
 
-/**
- * Resolve the URL slug for a help-center article.
- * Prefers the canonical `slug` field from the API, falls back to a
- * title-derived slug only when the CMS hasn't provided one.
- */
-function getArticleSlug(article: { slug?: string; title: string }): string {
-  if (article.slug && article.slug.trim().length > 0) return article.slug;
-  return article.title
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
-
 interface HelpCenterContentProps {
   lang: string;
   initialArticles?: HelpCenterArticle[];
 }
 
 export function HelpCenterContent({ lang, initialArticles }: HelpCenterContentProps) {
-  const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<HelpCenterArticle[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
-  const [articles, setArticles] = useState<HelpCenterArticle[]>(initialArticles ?? []);
-  const [loading, setLoading] = useState(!initialArticles);
+  const [articles] = useState<HelpCenterArticle[]>(initialArticles ?? []);
+  const [loading] = useState(!initialArticles);
 
   // Derive unique categories from API data
   const categoryKeys = useMemo(() => {
@@ -64,40 +45,6 @@ export function HelpCenterContent({ lang, initialArticles }: HelpCenterContentPr
     return articles.filter((a) => a.isPopular).slice(0, 6);
   }, [articles]);
 
-  // Search handler
-  const handleSearch = useCallback(async (query: string) => {
-    if (!query.trim()) {
-      setSearchResults([]);
-      setIsSearching(false);
-      return;
-    }
-    setIsSearching(true);
-    try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/help-center?page=1&limit=10&search=${encodeURIComponent(query)}`,
-        { headers: { "x-custom-lang": lang } }
-      );
-      if (res.ok) {
-        const json = await res.json();
-        setSearchResults(json.data || []);
-      } else {
-        setSearchResults([]);
-      }
-    } catch {
-      setSearchResults([]);
-    } finally {
-      setIsSearching(false);
-    }
-  }, [lang]);
-
-  // Debounced search
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      handleSearch(searchQuery);
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [searchQuery, handleSearch]);
-
   return (
     <div>
       {/* HERO with Search */}
@@ -109,49 +56,10 @@ export function HelpCenterContent({ lang, initialArticles }: HelpCenterContentPr
             </h1>
           </div>
 
-          <div className="max-w-xl my-4 mx-auto relative">
+          <div className="max-w-xl my-4 mx-auto">
             <h2 className="sr-only">{lang === "vi" ? "Tìm kiếm" : "Search"}</h2>
-            <form
-              role="search"
-              className="flex items-center gap-2"
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (searchQuery.trim()) {
-                  router.push(`${localizedHref(lang, "help-center/search")}?q=${encodeURIComponent(searchQuery.trim())}`);
-                }
-              }}
-            >
-              <div className="relative flex-1">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
-                <input
-                  type="text"
-                  placeholder={lang === "vi" ? "Nhập chủ đề, câu hỏi hoặc vấn đề" : "Type a topic, question or issue here"}
-                  className="w-full pl-12 pr-10 py-3 rounded-full text-sm sm:text-base border-0 border-black focus:border-[0.5px] focus:py-[11.5px] shadow-lg focus:outline-none"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  aria-label={lang === "vi" ? "Nhập chủ đề, câu hỏi hoặc vấn đề" : "Type a topic, question or issue here"}
-                />
-                {searchQuery && (
-                  <button
-                    type="button"
-                    onClick={() => { setSearchQuery(""); setSearchResults([]); setIsSearching(false); }}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-6 h-6 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-500 hover:text-gray-700 transition-colors cursor-pointer"
-                    aria-label={lang === "vi" ? "Xóa tìm kiếm" : "Clear search"}
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                )}
-              </div>
-              <button
-                type="submit"
-                disabled={!searchQuery.trim()}
-                className="inline-flex items-center justify-center gap-2 px-3 py-3 rounded-full bg-black text-white text-base sm:text-sm font-semibold shadow-lg hover:bg-gray-600 transition-colors disabled:bg-gray-700 disabled:cursor-not-allowed cursor-pointer whitespace-nowrap"
-                aria-label={lang === "vi" ? "Tìm kiếm" : "Search"}
-              >
-                <Search className="w-4 h-4" aria-hidden="true" />
-                <span className="hidden sm:inline">{lang === "vi" ? "Tìm kiếm" : "Search"}</span>
-              </button>
-            </form>
+            {/* Results now drop down as the customer types (#074) */}
+            <HelpCenterSearchBox lang={lang} variant="hero" />
           </div>
         </div>
       </div>
@@ -207,7 +115,7 @@ export function HelpCenterContent({ lang, initialArticles }: HelpCenterContentPr
               {popularArticles.map((article) => (
                 <Link
                   key={article.id}
-                  href={`${localizedHref(lang, "help-center")}/${getArticleSlug(article)}`}
+                  href={`${localizedHref(lang, "help-center")}/${helpCenterArticleSlug(article)}`}
                   className="block bg-gray-100 rounded-md p-5 hover:shadow-md transition no-underline"
                 >
                   <p className="text-base sm:text-sm text-gray-600 mb-2">

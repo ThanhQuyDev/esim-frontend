@@ -9,6 +9,7 @@ import {
   resolveLangSwitchPath,
   resolveLegalLangSwitchPath,
 } from '@/i18n/lang-switch';
+import { rememberLocaleChoice } from '@/i18n/geo-locale';
 
 export default function LangSwitcher() {
   const locale = useLocale();
@@ -17,6 +18,9 @@ export default function LangSwitcher() {
   const publicPathname = useNextPathname();
 
   const switchLocale = (newLocale: string) => {
+    // Remember the choice so the geo redirect on `/` never overrides it.
+    rememberLocaleChoice(newLocale);
+
     if (pathname === '/[slug]' || pathname === '/legal/[slug]') {
       window.location.href =
         pathname === '/legal/[slug]'

@@ -16,6 +16,53 @@ function applyVars(value: string | undefined | null, vars?: TemplateVars): strin
   return interpolate(value, vars);
 }
 
+export const SITE_NAME = "esim.vn";
+
+export interface SeoMetadataOptions {
+  /** Route locale, for `og:locale`. */
+  locale?: string;
+  /** Canonical public path or absolute URL, for `og:url`. */
+  url?: string;
+}
+
+/** Facebook / Zalo expect a territory-qualified locale, not a bare language. */
+function ogLocale(locale?: string): string | undefined {
+  if (!locale) return undefined;
+  return locale === "vi" ? "vi_VN" : locale === "en" ? "en_US" : locale;
+}
+
+/**
+ * The Open Graph fields that belong on every page (#048). Only title,
+ * description and image were being emitted, so shared links carried no site
+ * name, type, locale or canonical URL — the parts crawlers use to attribute the
+ * link and to pick a preview language.
+ */
+function socialBase(options?: SeoMetadataOptions) {
+  return {
+    type: "website" as const,
+    siteName: SITE_NAME,
+    locale: ogLocale(options?.locale),
+    url: options?.url,
+  };
+}
+
+/**
+ * X/Twitter falls back to OG tags, but only a declared card type gets the large
+ * image treatment — without it a shared link renders as a small thumbnail.
+ */
+function twitterCard(
+  title?: string,
+  description?: string,
+  images?: { url: string }[]
+) {
+  return {
+    card: "summary_large_image" as const,
+    title,
+    description,
+    images: images?.map((image) => image.url),
+  };
+}
+
 /**
  * Fetch SEO config from API for a given page URL and return Next.js Metadata.
  * Falls back to provided defaults or global defaults if the API returns nothing.
@@ -27,7 +74,8 @@ function applyVars(value: string | undefined | null, vars?: TemplateVars): strin
 export async function getSeoMetadata(
   pageUrl: string | string[],
   fallback?: { title?: string; description?: string },
-  templateVars?: TemplateVars
+  templateVars?: TemplateVars,
+  options?: SeoMetadataOptions
 ): Promise<Metadata> {
   const seo = await fetchSeoConfigByUrl(pageUrl);
 
@@ -38,16 +86,19 @@ export async function getSeoMetadata(
     const ogDescription =
       applyVars(seo.ogDescription, templateVars) || metaDescription;
     const keywords = applyVars(seo.metaKeywords, templateVars);
+    const images = seo.ogImage ? [{ url: seo.ogImage }] : undefined;
 
     return {
       title: metaTitle,
       description: metaDescription,
       keywords,
       openGraph: {
+        ...socialBase(options),
         title: ogTitle,
         description: ogDescription,
-        images: seo.ogImage ? [{ url: seo.ogImage }] : undefined,
+        images,
       },
+      twitter: twitterCard(ogTitle, ogDescription, images),
     };
   }
 
@@ -58,6 +109,7 @@ export async function getSeoMetadata(
   return {
     title,
     description,
-    openGraph: { title, description },
+    openGraph: { ...socialBase(options), title, description },
+    twitter: twitterCard(title, description),
   };
 }

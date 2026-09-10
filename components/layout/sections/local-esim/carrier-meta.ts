@@ -45,6 +45,14 @@ const CARRIER_META: Record<string, CarrierMeta> = {
     infra: "Hạ tầng MobiFone",
     phonePrefix: "079",
   },
+  viettel: {
+    label: "Viettel",
+    logoBg: "#EE0033",
+    infra: "Hạ tầng Viettel",
+    // No phonePrefix: Viettel sells several ranges (086/096–098/032–039) and
+    // we don't know which one this inventory draws from — the row is optional,
+    // so it stays hidden until someone fills in the real prefix.
+  },
 };
 
 /**

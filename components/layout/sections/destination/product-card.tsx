@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { planVoiceInfo } from "@/lib/plan-voice";
+import { applySeoVars, type SeoTemplateVars } from "@/lib/seo-vars";
+import { VoiceFeatureRow } from "./voice-feature-row";
 import Image from "next/image";
 import type { Destination, Plan, Region } from "@/lib/api";
 import { getCloudinaryTransformedUrl } from "@/lib/image-utils";
@@ -14,6 +17,8 @@ interface ProductCardProps {
   planSource?: "destination" | "region";
   selectedPlan?: Plan | null;
   region?: Region | null;
+  /** Price/name variables for the CMS description paragraph (#050). */
+  descriptionVars?: SeoTemplateVars;
   /** Called when user opens the eKYC popup from the inline banner. */
   onOpenEkyc?: () => void;
 }
@@ -84,6 +89,7 @@ export function ProductCard({
   planSource = "destination",
   selectedPlan,
   region,
+  descriptionVars,
   onOpenEkyc,
 }: ProductCardProps) {
   const [activeTab, setActiveTab] = useState<"features" | "delivery">("features");
@@ -103,8 +109,9 @@ export function ProductCard({
   // Derive feature values from the selected plan
   const hasHotspot = selectedPlan?.hotSpot ?? false;
   const hotSpotAllowGb = selectedPlan?.hotSpotAllow ?? null;
-  const hasCalls = selectedPlan ? (Number(selectedPlan.call ?? 0) > 0 || Number(selectedPlan.sms ?? 0) > 0) : false;
-  const hasLocalNumber = false;
+  const voice = planVoiceInfo(selectedPlan);
+  // A plan with calls or SMS necessarily has a phone number (#045).
+  const hasLocalNumber = voice.hasVoice;
   const hasEkyc = !!selectedPlan?.isKyc;
   const hasTopup = selectedPlan ? selectedPlan.topUp : false;
   const durations = selectedPlan ? selectedPlan?.durationDays : false
@@ -188,7 +195,12 @@ export function ProductCard({
             </h1>
           </div>
           <p className="text-base sm:text-sm text-[#6b7280] leading-[1.6] mb-3">
-            {(lang === "vi" ? destination.descriptionVi : destination.description) || dict.subtitle.replace("{destination}", destination.name)}
+            {applySeoVars(
+              (lang === "vi" ? destination.descriptionVi : destination.description) ||
+                dict.subtitle.replace("{destination}", destination.name),
+              descriptionVars ?? {},
+              { stripUnresolved: true }
+            )}
           </p>
 
           {/* Countries button — only meaningful on region pages (multi-country coverage). */}
@@ -325,7 +337,11 @@ export function ProductCard({
                   </span>
                 )}
               </div>
-              <FeatureRow label={dict.features.calls} value={hasCalls} yesText={dict.features.yes} noText={dict.features.no} />
+              <VoiceFeatureRow
+                label={dict.features.calls}
+                info={voice}
+                dict={dict.features}
+              />
               <FeatureRow label={dict.features.localNumber} value={hasLocalNumber} yesText={dict.features.yes} noText={dict.features.no} />
               <FeatureRow label={dict.features.topup} value={hasTopup} yesText={dict.features.yes} noText={dict.features.no} />
               {/* Hide eKYC row when banner is shown (since the banner already conveys it) */}
@@ -353,6 +369,39 @@ export function ProductCard({
                     ? (lang === "vi" ? "15 ngày kể từ ngày mua" : "15 days from purchase")
                     : dict.delivery.activationDesc}
                 </span>
+              </div>
+              {/* #039: how the usage period is counted, and that an
+                  unactivated eSIM can still be refunded. Both are the first
+                  things support gets asked, so they belong on the product page
+                  rather than only in the policy pages. */}
+              <div className="flex items-start justify-between py-[13px] border-b border-[#f3f4f6] gap-3">
+                <span className="text-base sm:text-sm text-[#374151]">
+                  {dict.delivery.usagePeriod}
+                </span>
+                <span className="text-base sm:text-sm font-medium text-right max-w-[60%]">
+                  {selectedPlan?.isAbleMultidate
+                    ? dict.delivery.usagePeriodDaily
+                    : dict.delivery.usagePeriodFixed.replace(
+                        "{days}",
+                        String(selectedPlan?.durationDays ?? ""),
+                      )}
+                </span>
+              </div>
+              <div className="flex items-start justify-between py-[13px] border-b border-[#f3f4f6] gap-3">
+                <span className="text-base sm:text-sm text-[#374151]">
+                  {dict.delivery.refundTitle}
+                </span>
+                <div className="flex flex-col items-end gap-1 text-right max-w-[60%]">
+                  <span className="text-base sm:text-sm font-medium">
+                    {dict.delivery.refundUnactivated}
+                  </span>
+                  <a
+                    href={lang === "vi" ? "/phap-ly/chinh-sach-hoan-tien" : "/en/legal/refund-policy"}
+                    className="text-sm text-[#2563eb] underline underline-offset-2"
+                  >
+                    {dict.delivery.refundPolicyLink}
+                  </a>
+                </div>
               </div>
               <div className="flex items-start gap-2.5 mt-2.5 p-3 bg-[#FFFBEB] border border-[#FDE68A] rounded-sm">
                 <WarnIcon />

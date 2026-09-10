@@ -5,6 +5,7 @@ import type { CSSProperties } from "react";
 import { resolveFileUrl, type HeroBanner } from "@/lib/api";
 import { DestinationSearchModal } from "@/components/layout/destination-search-modal";
 import type { Locale } from "@/lib/i18n-config";
+import { optimizeCloudinary } from "@/lib/cdn-image";
 
 interface HeroSectionProps {
   dict: Record<string, any>;
@@ -25,6 +26,14 @@ interface HeroImageProps {
   style?: CSSProperties;
 }
 
+/**
+ * The hero picture is the page's LCP element (#092).
+ *
+ * Two things Lighthouse asks for and this was missing: the image is served
+ * through Cloudinary's automatic format/quality (a PNG hero downloads as
+ * WebP/AVIF instead), and it is marked as the highest-priority fetch so the
+ * browser starts it before the rest of the page's images.
+ */
 function HeroImage({
   apiImageUrl,
   fallbackSrc,
@@ -34,30 +43,19 @@ function HeroImage({
   className,
   style,
 }: HeroImageProps) {
-  if (apiImageUrl) {
-    return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
-        alt={alt}
-        src={apiImageUrl}
-        width={width}
-        height={height}
-        className={className}
-        loading="eager"
-        style={style}
-      />
-    );
-  }
+  const src = optimizeCloudinary(apiImageUrl || fallbackSrc, { width });
 
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
       alt={alt}
-      src={fallbackSrc}
+      src={src}
       width={width}
       height={height}
       className={className}
       loading="eager"
+      fetchPriority="high"
+      decoding="async"
       style={style}
     />
   );

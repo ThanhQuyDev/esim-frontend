@@ -55,7 +55,7 @@ export default async function DataCalculatorPage() {
               </div>
 
               {/* Calculator */}
-              <DataCalculator dict={calc.calculator} />
+              <DataCalculator dict={calc.calculator} lang={locale} />
             </div>
           </div>
         </div>

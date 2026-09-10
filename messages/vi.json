@@ -1,4 +1,18 @@
 ﻿{
+  "notFound": {
+    "code": "404",
+    "title": "Không tìm thấy trang này",
+    "description": "Trang bạn tìm có thể đã đổi đường dẫn hoặc không còn tồn tại. Dưới đây là vài lối đi quen thuộc.",
+    "searchLabel": "Bạn đang tìm eSIM cho nước nào?",
+    "searchPlaceholder": "Nhập tên quốc gia hoặc khu vực",
+    "searchCta": "Tìm eSIM",
+    "backHome": "Về trang chủ",
+    "linksTitle": "Có thể bạn cần",
+    "destinations": "Tất cả điểm đến",
+    "helpCenter": "Trung tâm trợ giúp",
+    "blog": "Blog",
+    "support": "Liên hệ hỗ trợ"
+  },
   "metadata": {
     "title": "esim.vn - Gói dữ liệu eSIM cho du lịch quốc tế",
     "description": "Kết nối toàn cầu với gói dữ liệu eSIM giá rẻ. Không cần SIM vật lý. Kích hoạt ngay tại 150+ quốc gia."
@@ -154,7 +168,34 @@
         "description": "Gói cước của bạn sẽ tự động kích hoạt khi bạn đến điểm đến hoặc 30 ngày sau khi mua.",
         "imageAlt": "Bước 3 cài đặt eSIM: Gói của bạn sẽ tự động kích hoạt tại điểm đến."
       }
-    ]
+    ],
+    "destination": {
+      "subtitle": "Hướng dẫn dùng eSIM ${name}",
+      "title": "eSIM ${name} hoạt động như thế nào?",
+      "description": "Chỉ 3 bước: chọn gói eSIM ${name}, thanh toán và quét mã QR nhận qua email. Không cần đổi SIM vật lý, vẫn giữ nguyên số Việt Nam khi tới ${name}.",
+      "steps": [
+        {
+          "number": "1",
+          "title": "Chọn gói dữ liệu cho chuyến đi ${name}",
+          "description": "Chọn dung lượng và số ngày đúng với hành trình tại ${name}, không phải trả cho phần bạn không dùng.",
+          "planNote": "Hiện có ${planCount} gói eSIM ${name}: ${dataRange}, thời hạn ${dayRange}, giá từ ${fromPrice}.",
+          "planNoteUnlimited": "Hiện có ${planCount} gói eSIM ${name}: ${dataRange}, thời hạn ${dayRange}, giá từ ${fromPrice} — có cả gói không giới hạn dung lượng.",
+          "imageAlt": "Bước 1: chọn gói eSIM ${name}."
+        },
+        {
+          "number": "2",
+          "title": "Nhận eSIM ${name} qua email ngay sau khi thanh toán",
+          "description": "Quét mã QR để cài eSIM theo hướng dẫn. Hãy cài trước khi bay vì bước này cần internet.",
+          "imageAlt": "Bước 2: cài eSIM ${name} theo hướng dẫn trong email."
+        },
+        {
+          "number": "3",
+          "title": "Tới ${name} là có mạng ngay",
+          "description": "Gói tự động kích hoạt khi eSIM kết nối mạng lần đầu tại ${name} — không tính từ lúc bạn mua.",
+          "imageAlt": "Bước 3: eSIM tự kích hoạt khi bạn đến ${name}."
+        }
+      ]
+    }
   },
   "downloadApp": {
     "title": "Tải ứng dụng esim.vn",
@@ -556,6 +597,25 @@
       "selectTime": "Chọn thời gian bạn dành cho mỗi hoạt động mỗi ngày",
       "estimatedUsage": "Ước tính dữ liệu sử dụng",
       "monthly": "Hàng tháng",
+      "suggestions": {
+        "title": "Gợi ý gói cước phù hợp",
+        "subtitle": "Nhập điểm đến để xem gói nào đủ cho mức data bạn vừa tính.",
+        "placeholder": "Nhập điểm đến (vd: Nhật Bản)",
+        "searching": "Đang tìm...",
+        "noDestinations": "Không tìm thấy điểm đến phù hợp",
+        "loadingPlans": "Đang tìm gói phù hợp...",
+        "needUsage": "Chọn thời gian sử dụng ở phần bên trên để tính data trước đã.",
+        "noneCover": "Chưa có gói nào đủ cho mức dùng này. Gần nhất có:",
+        "noPlans": "Điểm đến này chưa có gói cước nào.",
+        "coversDays": "Đủ khoảng {{days}} ngày với mức của bạn",
+        "unlimited": "Không giới hạn",
+        "durationDays": "{{days}} ngày",
+        "perDay": "~ {{price}}/ngày",
+        "viewAll": "Xem tất cả gói {{name}}",
+        "change": "Đổi điểm đến"
+      },
+      "perDay": "mỗi ngày",
+      "hoursPerDay": "{{hours}} giờ/ngày",
       "resetCalculator": "Đặt lại",
       "calculateData": "Tính dữ liệu",
       "close": "Đóng",
@@ -1181,7 +1241,9 @@
       "topup": "Nạp thêm dữ liệu (Topup)",
       "yes": "Có",
       "no": "Không",
-      "unlimited": "Không giới hạn"
+      "unlimited": "Không giới hạn",
+      "minutesUnit": "phút gọi",
+      "smsUnit": "tin nhắn SMS"
     },
     "delivery": {
       "title": "Giao hàng & Kích hoạt",
@@ -1189,7 +1251,13 @@
       "instant": "Nhận ngay lập tức",
       "instantDesc": "Gửi qua email ngay sau khi mua",
       "activationPeriod": "Thời hạn kích hoạt gói",
-      "activationDesc": "180 ngày kể từ ngày mua"
+      "activationDesc": "180 ngày kể từ ngày mua",
+      "usagePeriod": "Cách tính chu kỳ sử dụng",
+      "usagePeriodFixed": "{days} ngày liên tục, tính từ khi eSIM kết nối mạng lần đầu — không tính từ lúc mua",
+      "usagePeriodDaily": "Tính theo từng ngày sử dụng, bắt đầu từ khi eSIM kết nối mạng lần đầu — không tính từ lúc mua",
+      "refundTitle": "Hoàn tiền",
+      "refundUnactivated": "Hoàn tiền nếu eSIM chưa kích hoạt, chưa qua sử dụng",
+      "refundPolicyLink": "Xem chính sách hoàn tiền"
     },
     "note": {
       "title": "Lưu ý:",
@@ -1265,6 +1333,13 @@
     "tabs": {
       "features": "Tính năng",
       "delivery": "Giao hàng & Kích hoạt"
+    },
+    "voucher": {
+      "priceAfter": "Giá sau voucher",
+      "saveAmount": "(tiết kiệm {amount})",
+      "hint": "Nhập mã bên cạnh ở bước thanh toán để được giảm {percent}%. Áp dụng cho đơn hàng này.",
+      "copyCode": "Sao chép mã {code}",
+      "copied": "Đã sao chép"
     }
   },
   "couponPage": {
@@ -1594,12 +1669,12 @@
       "descriptionPlaceholder": "Mô tả chi tiết vấn đề bạn gặp phải...",
       "descriptionCounter": "{{count}}/{{max}} ký tự",
       "attachments": "File đính kèm",
-      "attachmentsHelp": "Kéo thả file vào đây hoặc nhấn để chọn. Tối đa 5 file, mỗi file ≤ 5MB.",
-      "attachmentsAccept": "Chấp nhận: ảnh, PDF, DOC, DOCX",
+      "attachmentsHelp": "Kéo thả file vào đây hoặc nhấn để chọn. Tối đa 5 file: ảnh và tài liệu ≤ 5MB, video ≤ 50MB.",
+      "attachmentsAccept": "Chấp nhận: ảnh, video (MP4, MOV, WEBM...), PDF, DOC, DOCX",
       "attachmentsBrowse": "Chọn file",
       "attachmentsRemove": "Xoá",
       "attachmentsTooMany": "Tối đa 5 file đính kèm.",
-      "attachmentsTooLarge": "{{name}} vượt quá 5MB.",
+      "attachmentsTooLarge": "{{name}} vượt quá {{size}}MB.",
       "attachmentsInvalidType": "{{name}} có định dạng không được hỗ trợ.",
       "submit": "Gửi yêu cầu",
       "submitting": "Đang gửi...",
@@ -1607,6 +1682,14 @@
       "required": "Bắt buộc",
       "optional": "Tuỳ chọn",
       "privacyNotice": "Email của bạn chỉ dùng để phản hồi yêu cầu này, không gửi marketing.",
+      "antiSpam": {
+        "honeypotLabel": "Để trống ô này",
+        "blockedTitle": "Chưa gửi được yêu cầu",
+        "tooFast": "Bạn gửi quá nhanh. Vui lòng đợi {{seconds}} giây rồi gửi lại.",
+        "rateLimited": "Bạn đã gửi nhiều yêu cầu trong thời gian ngắn. Vui lòng thử lại sau {{minutes}} phút.",
+        "duplicate": "Yêu cầu này vừa được gửi rồi. Vui lòng chờ phản hồi, hoặc sửa nội dung nếu muốn bổ sung thông tin.",
+        "blockedHelp": "Nếu bạn cần hỗ trợ gấp, hãy dùng khung chat ở góc màn hình."
+      },
       "validation": {
         "emailRequired": "Vui lòng nhập email.",
         "emailInvalid": "Email không hợp lệ.",
@@ -1739,6 +1822,243 @@
     "orderSuccess": "Đặt hàng thành công!",
     "backToHome": "Về trang chủ",
     "noItems": "Không có sản phẩm để thanh toán",
-    "paymentNote": "Bằng việc hoàn tất đơn hàng, bạn đồng ý với Điều khoản Dịch vụ và Chính sách Bảo mật của chúng tôi."
+    "paymentNote": "Bằng việc hoàn tất đơn hàng, bạn đồng ý với Điều khoản Dịch vụ và Chính sách Bảo mật của chúng tôi.",
+    "cardPayment": "Thanh toán qua thẻ",
+    "cardPaymentDescription": "Thẻ ATM nội địa, Visa, Mastercard, JCB — qua cổng OnePay",
+    "qrPayment": "Thanh toán qua mã QR",
+    "qrPaymentDescription": "Quét mã VietQR bằng app ngân hàng, hệ thống tự xác nhận trong vài giây"
+  },
+  "regionSuggestions": {
+    "title": "Đi nhiều nước? Gói eSIM khu vực có {name}",
+    "subtitle": "Nếu chuyến đi qua nhiều quốc gia, một gói khu vực hoặc toàn cầu dùng được cho cả hành trình — không cần mua eSIM riêng từng nước.",
+    "viewPlans": "Xem gói"
+  },
+  "affiliateRegister": {
+    "breadcrumb": "Đăng ký Affiliate",
+    "pageTitle": "Đăng ký chương trình Affiliate",
+    "pageSubtitle": "Giới thiệu eSIM esim.vn tới người theo dõi của bạn và nhận hoa hồng trên mỗi đơn hàng hợp lệ. Điền hồ sơ bên dưới, đội ngũ của chúng tôi sẽ duyệt và gửi kết quả qua email.",
+    "sectionAccount": "Thông tin đối tác",
+    "sectionAccountHelp": "Đây cũng là tài khoản bạn dùng để đăng nhập theo dõi đơn hàng và hoa hồng sau khi được duyệt.",
+    "sectionChannel": "Kênh giới thiệu",
+    "sectionChannelHelp": "Cho chúng tôi biết bạn sẽ giới thiệu eSIM ở đâu — thông tin này giúp duyệt hồ sơ nhanh hơn.",
+    "legalType": "Bạn đăng ký với tư cách",
+    "legalTypeIndividual": "Cá nhân",
+    "legalTypeIndividualHelp": "KOL/KOC, chủ kênh, người sáng tạo nội dung",
+    "legalTypeCompany": "Doanh nghiệp",
+    "legalTypeCompanyHelp": "Công ty, agency có mã số thuế",
+    "contactName": "Họ và tên người liên hệ",
+    "contactNamePlaceholder": "Nguyễn Văn A",
+    "contactEmail": "Email",
+    "contactEmailPlaceholder": "ban@example.com",
+    "contactEmailHelp": "Kết quả duyệt hồ sơ sẽ được gửi tới email này. Đây cũng là tên đăng nhập của bạn.",
+    "contactPhone": "Số điện thoại",
+    "contactPhonePlaceholder": "0901234567",
+    "password": "Mật khẩu",
+    "passwordPlaceholder": "Ít nhất 6 ký tự",
+    "passwordHelp": "Dùng để đăng nhập trang đối tác sau khi được duyệt.",
+    "confirmPassword": "Nhập lại mật khẩu",
+    "confirmPasswordPlaceholder": "Nhập lại mật khẩu",
+    "companyName": "Tên công ty",
+    "companyNamePlaceholder": "Công ty TNHH ABC",
+    "taxCode": "Mã số thuế",
+    "taxCodePlaceholder": "0312345678",
+    "businessAddress": "Địa chỉ đăng ký kinh doanh",
+    "businessAddressPlaceholder": "123 Nguyễn Huệ, Quận 1, TP.HCM",
+    "channel": "Kênh chính",
+    "channelUrl": "Đường dẫn kênh",
+    "channelUrlPlaceholder": "https://tiktok.com/@tenkenh",
+    "followers": "Số người theo dõi",
+    "followersPlaceholder": "50000",
+    "followersHelp": "Con số ước lượng cũng được.",
+    "notes": "Bạn muốn nói thêm điều gì?",
+    "notesPlaceholder": "Ví dụ: mình làm nội dung du lịch Nhật - Hàn, thường ra video vào cuối tuần...",
+    "channelOptions": {
+      "tiktok": "TikTok",
+      "facebook": "Facebook",
+      "youtube": "YouTube",
+      "instagram": "Instagram",
+      "website": "Website / Blog",
+      "other": "Kênh khác"
+    },
+    "acceptTerms": "Tôi đã đọc và đồng ý với",
+    "acceptTermsLink": "điều khoản sử dụng",
+    "submit": "Gửi hồ sơ đăng ký",
+    "submitting": "Đang gửi...",
+    "required": "bắt buộc",
+    "optional": "không bắt buộc",
+    "errorGeneric": "Không gửi được hồ sơ. Vui lòng thử lại sau ít phút.",
+    "success": {
+      "title": "Đã nhận hồ sơ của bạn",
+      "description": "Hồ sơ đang chờ duyệt. Chúng tôi thường phản hồi trong vòng 1-3 ngày làm việc.",
+      "emailNotice": "Dù được duyệt hay chưa, bạn đều sẽ nhận được email thông báo kết quả — nhớ kiểm tra cả hộp thư rác.",
+      "ctaLogin": "Tới trang đăng nhập",
+      "ctaHome": "Về trang chủ"
+    },
+    "apiErrors": {
+      "emailAlreadyExists": "Email này đã có tài khoản. Hãy đăng nhập hoặc dùng email khác.",
+      "unknown": "Không gửi được hồ sơ. Vui lòng kiểm tra lại thông tin."
+    },
+    "validation": {
+      "contactNameRequired": "Vui lòng nhập họ tên người liên hệ.",
+      "contactNameMax": "Họ tên tối đa 255 ký tự.",
+      "contactEmailRequired": "Vui lòng nhập email.",
+      "contactEmailInvalid": "Email chưa đúng định dạng.",
+      "contactPhoneRequired": "Vui lòng nhập số điện thoại.",
+      "contactPhoneInvalid": "Số điện thoại chưa đúng định dạng.",
+      "passwordRequired": "Vui lòng nhập mật khẩu.",
+      "passwordMin": "Mật khẩu cần ít nhất 6 ký tự.",
+      "passwordMismatch": "Mật khẩu nhập lại không khớp.",
+      "companyNameRequired": "Vui lòng nhập tên công ty.",
+      "taxCodeRequired": "Vui lòng nhập mã số thuế.",
+      "channelUrlInvalid": "Đường dẫn cần bắt đầu bằng http:// hoặc https://",
+      "followersInvalid": "Số người theo dõi chỉ gồm chữ số.",
+      "notesMax": "Nội dung tối đa 2000 ký tự.",
+      "termsRequired": "Bạn cần đồng ý với điều khoản để tiếp tục."
+    }
+  },
+  "affiliatePage": {
+    "breadcrumb": "Chương trình Affiliate",
+    "metadata": {
+      "title": "Chương trình Affiliate esim.vn — Nhận hoa hồng mỗi đơn eSIM",
+      "description": "Giới thiệu eSIM du lịch esim.vn tới người theo dõi của bạn và nhận hoa hồng trên mỗi đơn hàng hợp lệ. Đăng ký miễn phí, có link riêng, theo dõi đơn và hoa hồng theo thời gian thực."
+    },
+    "hero": {
+      "badge": "Chương trình Affiliate",
+      "title": "Giới thiệu eSIM, nhận hoa hồng trên mỗi đơn hàng",
+      "description": "Bạn làm nội dung du lịch, quản lý cộng đồng hay có website nhiều người đọc? Chia sẻ link riêng của bạn, người xem mua eSIM esim.vn — bạn nhận hoa hồng. Không mất phí tham gia, không yêu cầu doanh số tối thiểu.",
+      "perks": [
+        "Đăng ký miễn phí, được duyệt là dùng được ngay",
+        "Link và mã giới thiệu riêng, tự tạo bao nhiêu cũng được",
+        "Xem đơn hàng và hoa hồng ngay trong tài khoản của bạn",
+        "Đơn vẫn được tính trong 30 ngày kể từ lần khách bấm link gần nhất"
+      ],
+      "ctaPrimary": "Đăng ký làm đối tác",
+      "ctaSecondary": "Xem cách hoạt động",
+      "stats": [
+        {
+          "value": "200+",
+          "label": "quốc gia và vùng lãnh thổ có sóng"
+        },
+        {
+          "value": "30 ngày",
+          "label": "thời gian ghi nhận đơn sau khi bấm link"
+        },
+        {
+          "value": "0đ",
+          "label": "chi phí tham gia chương trình"
+        }
+      ]
+    },
+    "howItWorks": {
+      "title": "Cách hoạt động",
+      "subtitle": "Ba bước, không cần biết kỹ thuật và không cần cài đặt gì thêm trên kênh của bạn.",
+      "steps": [
+        {
+          "title": "Đăng ký và chờ duyệt",
+          "description": "Điền hồ sơ ngắn gồm thông tin liên hệ và kênh bạn sẽ giới thiệu. Chúng tôi duyệt và gửi email báo kết quả, thường trong 1-3 ngày làm việc."
+        },
+        {
+          "title": "Lấy link giới thiệu",
+          "description": "Sau khi được duyệt, bạn tự tạo link và mã giới thiệu trong tài khoản, đặt vào video, bài viết, bio hay tin nhắn cộng đồng."
+        },
+        {
+          "title": "Nhận hoa hồng",
+          "description": "Khách bấm link và mua eSIM, đơn hàng sẽ hiện trong tài khoản của bạn. Hoa hồng được ghi có sau khi đơn thanh toán thành công và qua đối soát."
+        }
+      ],
+      "windowNote": "Đơn hợp lệ là đơn được đặt trong vòng 30 ngày kể từ lần gần nhất khách bấm vào link của bạn — kể cả khi họ quay lại website trực tiếp để mua. Nếu khách bấm lại link, 30 ngày được tính lại từ đầu."
+    },
+    "benefits": {
+      "title": "Vì sao nên tham gia",
+      "subtitle": "Chúng tôi lo phần sản phẩm, giao eSIM và hỗ trợ khách. Bạn chỉ cần giới thiệu.",
+      "items": [
+        {
+          "icon": "wallet",
+          "title": "Hoa hồng theo hạng đối tác",
+          "description": "Mức hoa hồng gắn với hạng của bạn: càng nhiều đơn hợp lệ, hạng càng cao và tỷ lệ càng tốt. Hoa hồng vào ví đối tác của bạn."
+        },
+        {
+          "icon": "link",
+          "title": "Link và mã riêng của bạn",
+          "description": "Tự tạo link cho từng chiến dịch hay từng nền tảng để biết kênh nào ra đơn, thay vì đoán."
+        },
+        {
+          "icon": "chart",
+          "title": "Số liệu minh bạch",
+          "description": "Lượt bấm, đơn hàng, doanh thu và hoa hồng của từng link đều xem được trong tài khoản, không phải hỏi ai."
+        },
+        {
+          "icon": "globe",
+          "title": "Sản phẩm dễ bán",
+          "description": "eSIM dùng được ở hơn 200 quốc gia và vùng lãnh thổ, kích hoạt bằng mã QR trong vài phút — thứ mà người đi du lịch nào cũng cần."
+        },
+        {
+          "icon": "ticket",
+          "title": "Mã giảm giá cá nhân hoá",
+          "description": "Bạn có thể tạo mã giảm giá riêng cho người theo dõi của mình, để lời mời của bạn có thêm giá trị thật."
+        },
+        {
+          "icon": "sparkles",
+          "title": "Không ràng buộc",
+          "description": "Không phí tham gia, không cam kết doanh số, không độc quyền. Bạn giới thiệu bao nhiêu là tuỳ bạn."
+        }
+      ]
+    },
+    "audience": {
+      "title": "Chương trình dành cho ai",
+      "items": [
+        {
+          "title": "KOL / KOC du lịch",
+          "description": "Người làm nội dung trên TikTok, YouTube, Instagram hay Facebook về du lịch, review, mẹo đi nước ngoài."
+        },
+        {
+          "title": "Chủ website và blogger",
+          "description": "Trang cẩm nang du lịch, blog cá nhân, diễn đàn — nơi người đọc đang tìm cách có mạng khi ra nước ngoài."
+        },
+        {
+          "title": "Quản trị viên cộng đồng",
+          "description": "Nhóm du học sinh, hội người Việt ở nước ngoài, group phượt — nơi câu hỏi về SIM/eSIM xuất hiện mỗi ngày."
+        },
+        {
+          "title": "Người làm dịch vụ du lịch",
+          "description": "Tư vấn viên visa, tour, vé máy bay — eSIM là thứ khách hàng của bạn cần ngay trước chuyến đi."
+        }
+      ]
+    },
+    "faq": {
+      "title": "Câu hỏi thường gặp",
+      "items": [
+        {
+          "question": "Tham gia có mất phí không?",
+          "answer": "Không. Đăng ký và sử dụng chương trình hoàn toàn miễn phí, không có phí duy trì và không yêu cầu doanh số tối thiểu."
+        },
+        {
+          "question": "Bao lâu thì biết hồ sơ được duyệt hay không?",
+          "answer": "Chúng tôi thường phản hồi trong 1-3 ngày làm việc. Dù được duyệt hay bị từ chối, bạn đều nhận được email thông báo kết quả — nếu bị từ chối, email sẽ nêu lý do để bạn bổ sung và nộp lại."
+        },
+        {
+          "question": "Đơn hàng như thế nào thì được tính hoa hồng?",
+          "answer": "Đơn được đặt trong vòng 30 ngày kể từ lần gần nhất khách bấm vào link giới thiệu của bạn, hoặc khách nhập mã giới thiệu của bạn khi thanh toán. Khách quay lại website trực tiếp trong 30 ngày đó vẫn được tính cho bạn."
+        },
+        {
+          "question": "Tôi có thể tự bấm link của mình để mua không?",
+          "answer": "Không. Đơn tự đặt qua link của chính mình không được tính hoa hồng — hệ thống có kiểm tra để phát hiện các trường hợp này."
+        },
+        {
+          "question": "Khi nào tôi nhận được tiền?",
+          "answer": "Hoa hồng của mỗi đơn ở trạng thái chờ đối soát cho tới khi đơn hoàn tất. Sau khi được ghi có vào ví đối tác, bạn có thể tạo yêu cầu rút tiền về tài khoản ngân hàng của mình."
+        },
+        {
+          "question": "Nếu khách hoàn tiền thì sao?",
+          "answer": "Đơn bị huỷ hoặc hoàn tiền toàn bộ sẽ bị trừ lại phần hoa hồng tương ứng, kể cả khi đã ghi có trước đó."
+        }
+      ]
+    },
+    "cta": {
+      "title": "Sẵn sàng bắt đầu?",
+      "description": "Điền hồ sơ trong vài phút. Được duyệt là bạn có ngay link giới thiệu đầu tiên.",
+      "cta": "Đăng ký làm đối tác",
+      "note": "Miễn phí tham gia · Không cam kết doanh số · Huỷ bất cứ lúc nào"
+    }
   }
 }

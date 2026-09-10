@@ -3,8 +3,18 @@ const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.saily.example.com";
 
 import { mockSupportedDevices } from "./mock-supported-devices";
+import { pickContextFaqs } from "./faq-context";
 
 // ===== Types =====
+
+/** A region a destination belongs to, as returned inside the destination payload. */
+export interface RegionRef {
+  id: number;
+  name: string;
+  slug: string;
+  slugVi?: string | null;
+  avatarUrl?: string | null;
+}
 
 export interface Destination {
   id: number;
@@ -12,6 +22,11 @@ export interface Destination {
   slug: string;
   slugVi?: string;
   countryCode: string;
+  /**
+   * Regions (and global packs) that include this country. Only `/destinations/
+   * slug/:slug` loads the relation; list endpoints leave it undefined.
+   */
+  regions?: RegionRef[];
   parentId?: number;
   flagUrl?: string;
   avatarUrl?: string;
@@ -177,12 +192,29 @@ export interface Plan {
   tags?: PlanTag[] | string[];
   /** True when the plan uses local provider inventory (e.g. Viettel) — show a provider badge. */
   isLocalInventory?: boolean;
+  /**
+   * Unsold eSIMs left for a local-inventory plan. Undefined for API
+   * providers, which create an eSIM on demand and can never be out of stock.
+   */
+  availableStock?: number | null;
   /** True when the plan requires KYC verification before activation. */
   isKyc?: boolean;
+  /**
+   * True for a plan whose traffic exits on a local IP instead of being routed
+   * through Hong Kong — the variant TikTok / ChatGPT work on. Captured at sync
+   * time from the provider package name; see lib/plan-nonhkip.ts (#041).
+   */
+  isNonHkIp?: boolean;
   /** Whether the plan allows hotspot / tethering. */
   hotSpot?: boolean;
   /** Hotspot data allowance in GB per day (e.g. 2 means 2 GB/day). */
-  hotSpotAllow?: number | null;
+  /**
+   * Free-text hotspot allowance as stored by the backend (`string | null`),
+   * e.g. "10GB", "300MB", "1.5GB" — occasionally a bare number ("180").
+   * It was typed `number` here, which is what let a caller append its own
+   * "GB" and render "10GBGB/ngày".
+   */
+  hotSpotAllow?: string | null;
 }
 
 /** Response shape from /api/v1/plans/by-destination/{slug} */
@@ -278,7 +310,10 @@ export interface Footer {
   titleVi: string;
   url: string;
   sortOrder?: number;
+  /** Column heading, default/English — also the grouping key (#088). */
   categories?: string | null;
+  /** Column heading in Vietnamese; falls back to categories. */
+  categoriesVi?: string | null;
   iconUrl?: string | null;
   createdAt: string | Date;
   updatedAt: string | Date;
@@ -518,17 +553,9 @@ export async function getFaqs(
         ).catch(() => ({ data: [], hasNextPage: false }) as PaginatedResponse<Faq>)
       )
     );
-    const seen = new Set<string>();
-    const merged: Faq[] = [];
-    for (const res of results) {
-      for (const faq of normalizeListResponse<Faq>(res)) {
-        if (!seen.has(faq.id)) {
-          seen.add(faq.id);
-          merged.push(faq);
-        }
-      }
-    }
-    return { data: merged, hasNextPage: false };
+    // Priority, not union — same rule as the client hook: a page with its own
+    // FAQs must not also show the blanket ones (#053).
+    return { data: pickContextFaqs(results), hasNextPage: false };
   }
 
   return apiFetch<PaginatedResponse<Faq>>(

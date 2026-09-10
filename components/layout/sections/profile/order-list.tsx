@@ -49,6 +49,17 @@ function formatDate(dateStr: string, lang: string) {
   });
 }
 
+/**
+ * How many eSIMs the order contains (#064).
+ *
+ * Falls back to the line count when the backend has not been updated yet, and
+ * to 1 when neither is known — an order always has at least one product, and a
+ * customer reading "0 sản phẩm" next to a paid order would think it failed.
+ */
+function productCount(order: MyOrder): number {
+  return order.productQuantity || order.itemCount || 1;
+}
+
 function formatAmount(order: MyOrder) {
   if (order.vndPrice > 0) {
     return new Intl.NumberFormat("vi-VN").format(order.vndPrice) + "₫";
@@ -228,6 +239,13 @@ export function OrderList({ orders, isLoading, t, lang }: OrderListProps) {
                 <span className="flex items-center gap-1">
                   <CreditCard className="w-3 h-3" />
                   {formatAmount(order)}
+                </span>
+                <span
+                  data-testid="order-product-count"
+                  className="flex items-center gap-1"
+                >
+                  <Package className="w-3 h-3" />
+                  {productCount(order)} {lang === "vi" ? "sản phẩm" : productCount(order) === 1 ? "item" : "items"}
                 </span>
               </div>
             </div>

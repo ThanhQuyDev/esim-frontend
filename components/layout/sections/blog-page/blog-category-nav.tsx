@@ -259,6 +259,28 @@ function DesktopCategoryNav({
 }) {
   const [openCat, setOpenCat] = useState<string | null>(null);
   const navRef = useRef<HTMLUListElement>(null);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Hovering a category opens its sub-menu (#067): clicking the little arrow
+  // was the only way in, which nobody discovers.
+  const cancelClose = () => {
+    if (closeTimer.current) {
+      clearTimeout(closeTimer.current);
+      closeTimer.current = null;
+    }
+  };
+
+  const openOnHover = (cat: string) => {
+    cancelClose();
+    setOpenCat(cat);
+  };
+
+  // A short delay, because the sub-menu sits a few pixels below the label and
+  // the pointer briefly leaves both while travelling between them.
+  const closeSoon = () => {
+    cancelClose();
+    closeTimer.current = setTimeout(() => setOpenCat(null), 150);
+  };
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -267,7 +289,10 @@ function DesktopCategoryNav({
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      if (closeTimer.current) clearTimeout(closeTimer.current);
+    };
   }, []);
 
   return (
@@ -278,7 +303,19 @@ function DesktopCategoryNav({
           const isOpen = openCat === cat;
 
           return (
-            <li key={cat} className="relative flex items-center" aria-haspopup="true">
+            <li
+              key={cat}
+              className="relative flex items-center"
+              aria-haspopup="true"
+              data-testid={`blog-cat-${categorySlug(cat)}`}
+              onMouseEnter={() => catParents.length > 0 && openOnHover(cat)}
+              onMouseLeave={closeSoon}
+              onFocus={() => catParents.length > 0 && openOnHover(cat)}
+              onBlur={closeSoon}
+              onKeyDown={(event) => {
+                if (event.key === "Escape") setOpenCat(null);
+              }}
+            >
               <Link
                 className="text-sm hover:underline font-medium align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus text-primary active:text-primary hover:text-secondary "
                 href={`/${lang}/blog/${categorySlug(cat)}/`}
@@ -299,19 +336,26 @@ function DesktopCategoryNav({
                 </button>
               )}
               {catParents.length > 0 && isOpen && (
-                <ul className="absolute left-0 top-full mt-1 bg-white shadow-lg rounded-sm py-2 min-w-[180px] z-50">
-                  {catParents.map((parent) => (
-                    <li key={parent}>
-                      <Link
-                        className="block px-4 py-2 text-sm text-primary hover:bg-gray-100 hover:text-gray-900 transition-colors"
-                        href={`/${lang}/blog/${categorySlug(cat)}/${categorySlug(parent)}/`}
-                        onClick={() => setOpenCat(null)}
-                      >
-                        {parent}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
+                /* The wrapper carries the offset as padding rather than margin,
+                   so the pointer never crosses a dead gap on its way down. */
+                <div
+                  data-testid={`blog-subnav-${categorySlug(cat)}`}
+                  className="absolute left-0 top-full pt-1 z-50"
+                >
+                  <ul className="bg-white shadow-lg rounded-sm py-2 min-w-[180px]">
+                    {catParents.map((parent) => (
+                      <li key={parent}>
+                        <Link
+                          className="block px-4 py-2 text-sm text-primary hover:bg-gray-100 hover:text-gray-900 transition-colors"
+                          href={`/${lang}/blog/${categorySlug(cat)}/${categorySlug(parent)}/`}
+                          onClick={() => setOpenCat(null)}
+                        >
+                          {parent}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               )}
             </li>
           );

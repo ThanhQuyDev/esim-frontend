@@ -2,7 +2,8 @@
 
 import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import type { Plan, PlansByDestinationResponse } from "@/lib/api";
-import { usePlansBySlug, usePlansByRegionSlug, useRegionBySlug, useDestinationBySlug } from "@/lib/hooks";
+import { usePlansBySlug, usePlansByRegionSlug, useRegionBySlug, useDestinationBySlug, useExchangeRate } from "@/lib/hooks";
+import { buildSeoTemplateVars } from "@/lib/seo-vars";
 import { hasMultidatePlan, findBestPlan, findBestDailyUnlimitedPlan, calcTotalVndPrice, buildPlanLabel } from "./types";
 import type { DestinationPlansProps } from "./types";
 import { ProductCard } from "./product-card";
@@ -15,6 +16,8 @@ import { BuyActions } from "./buy-actions";
 import { DesktopStickyBar } from "./desktop-sticky-bar";
 import { MobileDestinationPlans } from "./mobile-destination-plans";
 import { CategoryTabs, type PlanCategory } from "./category-tabs";
+import { NonHkIpToggle } from "./nonhkip-toggle";
+import { hasNonHkIpPlans, filterNonHkIpPlans } from "@/lib/plan-nonhkip";
 import { SimplePlanList } from "./simple-plan-list";
 import { EkycModal } from "./ekyc-modal";
 
@@ -38,7 +41,7 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
     lang,
     planSource === "region" ? (initialPlans ?? undefined) : undefined
   );
-  const { data: plans = EMPTY_PLANS, isLoading } = planSource === "region" ? regionQuery : destQuery;
+  const { data: allPlans = EMPTY_PLANS, isLoading } = planSource === "region" ? regionQuery : destQuery;
 
   // Server already sends the initial entity. Avoid duplicate detail fetches on first load.
   const regionDetailQuery = useRegionBySlug("", lang);
@@ -52,7 +55,40 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
   const [quantity, setQuantity] = useState(1);
   const [activeCategory, setActiveCategory] = useState<PlanCategory>("data");
   const [ekycModalOpen, setEkycModalOpen] = useState(false);
+  const [onlyNonHkIp, setOnlyNonHkIp] = useState(false);
   const desktopCtaRef = useRef<HTMLDivElement>(null);
+
+  // Local-exit-IP filter (#041). Every memo and child below reads `plans`, so
+  // narrowing it here is enough — the day list, price and CTA all follow.
+  const showNonHkIpToggle = useMemo(() => hasNonHkIpPlans(allPlans), [allPlans]);
+  const plans = useMemo(
+    () => (onlyNonHkIp ? filterNonHkIpPlans(allPlans) : allPlans),
+    [allPlans, onlyNonHkIp]
+  );
+
+  // Prices written into the CMS description (P1) must read in the visitor own
+  // currency: dong on the Vietnamese page, USD on the English one (#050).
+  const { data: usdVndRate } = useExchangeRate();
+  const descriptionEntity = destinationData || destination;
+  const descriptionVars = useMemo(
+    () =>
+      buildSeoTemplateVars({
+        name:
+          (lang === "vi" ? descriptionEntity.titleVi : descriptionEntity.title) ||
+          descriptionEntity.name,
+        plans: allPlans,
+        lang,
+        rate: usdVndRate,
+      }),
+    [descriptionEntity, allPlans, lang, usdVndRate]
+  );
+
+  const handleToggleNonHkIp = useCallback((next: boolean) => {
+    setOnlyNonHkIp(next);
+    // The selected plan may not survive the filter; let the auto-select effect
+    // pick the first plan that does.
+    setSelectedPlan(null);
+  }, []);
 
   const hasSmsCallPlans = (plans.smsCallEsim?.length ?? 0) > 0;
 
@@ -138,13 +174,18 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
     }
   };
 
-  const hasAnyPlans =
-    (plans.localEsim?.length ?? 0) > 0 ||
-    plans.dataPlans.length > 0 ||
-    plans.fastUnlimited.length > 0 ||
-    plans.slowUnlimited.length > 0 ||
-    plans.dailyUnlimited.length > 0 ||
-    hasSmsCallPlans;
+  const countPlans = (p: PlansByDestinationResponse) =>
+    (p.localEsim?.length ?? 0) +
+    p.dataPlans.length +
+    p.fastUnlimited.length +
+    p.slowUnlimited.length +
+    p.dailyUnlimited.length +
+    (p.smsCallEsim?.length ?? 0);
+
+  // Decided on the unfiltered set: the local-IP filter must never collapse the
+  // page into "no plans", or the customer loses the toggle that got them there.
+  const hasAnyPlans = countPlans(allPlans) > 0;
+  const hasVisiblePlans = countPlans(plans) > 0;
 
   // Snap days to nearest available when switching between flexible/fixed
   useEffect(() => {
@@ -264,6 +305,11 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
           activeCategory={activeCategory}
           onCategoryChange={handleCategoryChange}
           hasSmsCallPlans={hasSmsCallPlans}
+          showNonHkIpToggle={showNonHkIpToggle}
+          onlyNonHkIp={onlyNonHkIp}
+          onToggleNonHkIp={handleToggleNonHkIp}
+          hasVisiblePlans={hasVisiblePlans}
+          descriptionVars={descriptionVars}
           onOpenEkyc={() => setEkycModalOpen(true)}
           getTotalForDays={getTotalForDays}
         />
@@ -312,6 +358,7 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
                   planSource={planSource}
                   selectedPlan={selectedPlan}
                   region={regionData}
+                  descriptionVars={descriptionVars}
                   onOpenEkyc={() => setEkycModalOpen(true)}
                 />
                 <DeviceChecker dict={dict} lang={lang} />
@@ -404,6 +451,15 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
                   dict={dict}
                   hasSmsCallPlans={hasSmsCallPlans}
                 />
+
+                {showNonHkIpToggle && (
+                  <NonHkIpToggle
+                    active={onlyNonHkIp}
+                    onToggle={handleToggleNonHkIp}
+                    lang={lang}
+                    empty={!hasVisiblePlans}
+                  />
+                )}
 
                 {activeCategory === "data" && (
                   <>

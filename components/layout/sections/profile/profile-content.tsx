@@ -1,19 +1,24 @@
 "use client";
 
-import { useState } from "react";
-import { User, Smartphone, Mail, LogOut, Wallet, Gift, Copy, Clock, ArrowRight, Award, TrendingUp, Coins } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { User, Smartphone, Mail, LogOut, Wallet, Gift, Copy, Clock, ArrowRight, Award, TrendingUp, Coins, Share2 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import {
   useMyOrders,
   useMyEsims,
   useWalletMe,
   useReferralProfile,
+  usePartnerMe,
   type MembershipTier,
 } from "@/lib/hooks";
 import { profileTranslations } from "./translations";
 import { OrderList } from "./order-list";
 import { EsimCardList } from "./esim-card-list";
+import { ChangeEmail } from "./change-email";
+import { TierLadder } from "./tier-ladder";
 import { PersonalInfo } from "./personal-info";
+import { AffiliateTab } from "./affiliate-tab";
 import { WalletPageContent } from "@/components/layout/sections/wallet/wallet-page-content";
 import Link from "next/link";
 import { localizedHref } from "@/lib/route-mapping";
@@ -22,7 +27,10 @@ interface ProfileContentProps {
   lang: "en" | "vi";
 }
 
-type Tab = "profile" | "sim" | "wallet";
+type Tab = "profile" | "sim" | "wallet" | "affiliate";
+
+/** Values `?tab=` accepts, so an unknown one is ignored rather than blanking the page. */
+const TABS: readonly Tab[] = ["profile", "sim", "wallet", "affiliate"];
 
 function formatVnd(amount: number): string {
   return new Intl.NumberFormat("vi-VN", {
@@ -32,6 +40,16 @@ function formatVnd(amount: number): string {
   }).format(amount);
 }
 
+/**
+ * Tier name and colour.
+ *
+ * Both look the tier up in a table of the four known values and used to index
+ * the result straight away: `labels[tier][lang]`. A tier the frontend does not
+ * know — a fifth one added in the backend, or a wallet response that arrives
+ * without one — made that `undefined[lang]`, which threw and took the WHOLE
+ * profile page down to an unhandled runtime error. A customer with a name we
+ * cannot spell should still see their orders and eSIMs.
+ */
 function getTierLabel(tier: MembershipTier, lang: "en" | "vi"): string {
   const labels: Record<MembershipTier, { en: string; vi: string }> = {
     traveler: { en: "Traveler", vi: "Du khách" },
@@ -40,7 +58,7 @@ function getTierLabel(tier: MembershipTier, lang: "en" | "vi"): string {
     platinum: { en: "Platinum Traveler", vi: "Du khách bạch kim" },
   };
 
-  return labels[tier][lang];
+  return labels[tier]?.[lang] ?? labels.traveler[lang];
 }
 
 function getTierGradient(tier: MembershipTier): string {
@@ -51,7 +69,7 @@ function getTierGradient(tier: MembershipTier): string {
     platinum: "from-violet-500 to-indigo-700",
   };
 
-  return gradients[tier];
+  return gradients[tier] ?? gradients.traveler;
 }
 
 function getExpiryColor(daysLeft: number | null): string {
@@ -77,8 +95,23 @@ export function ProfileContent({ lang }: ProfileContentProps) {
   const { data: esims = [], isLoading: esimsLoading } = useMyEsims();
   const { data: wallet } = useWalletMe();
   const { data: referral } = useReferralProfile();
+  // Null for an ordinary customer, so the tab simply never appears (#095).
+  const { data: partner } = usePartnerMe();
   const [activeTab, setActiveTab] = useState<Tab>("profile");
   const [referralCopied, setReferralCopied] = useState(false);
+
+  // `?tab=` so a link can open a specific tab — the partner approval email
+  // points straight at `?tab=affiliate` and has to land where it says (#095).
+  // Applied once the partner record is known, because the Affiliates tab only
+  // exists for partners; anyone else keeps the default tab.
+  const searchParams = useSearchParams();
+  const requestedTab = searchParams.get("tab");
+  useEffect(() => {
+    if (!requestedTab) return;
+    if (requestedTab === "affiliate" && !partner) return;
+    if (!TABS.includes(requestedTab as Tab)) return;
+    setActiveTab(requestedTab as Tab);
+  }, [requestedTab, partner]);
 
   const copyReferralCode = async (code: string) => {
     try {
@@ -114,6 +147,16 @@ export function ProfileContent({ lang }: ProfileContentProps) {
     { key: "wallet", label: t.tabWallet, icon: <Wallet className="w-4 h-4" /> },
     { key: "sim", label: t.tabSimManagement, icon: <Smartphone className="w-4 h-4" /> },
   ];
+
+  // Partners get one extra tab; nobody else is shown a screen that would
+  // only 403 for them (#095).
+  if (partner) {
+    tabs.push({
+      key: "affiliate",
+      label: t.tabAffiliate,
+      icon: <Share2 className="w-4 h-4" />,
+    });
+  }
 
   const daysLeft = wallet?.daysLeft ?? null;
   const expiryColor = getExpiryColor(daysLeft);
@@ -173,6 +216,8 @@ export function ProfileContent({ lang }: ProfileContentProps) {
                   </div>
                 </div>
               </div>
+              {/* Self-service email change (#057) */}
+              <ChangeEmail currentEmail={user.email} lang={lang} />
             </div>
 
             {/* Personal Info — moved out of SIM management tab */}
@@ -265,6 +310,15 @@ export function ProfileContent({ lang }: ProfileContentProps) {
                   </div>
                 </div>
               </div>
+            )}
+
+            {/* Every level, reached and not yet reached (#061) */}
+            {wallet && (
+              <TierLadder
+                currentTier={wallet.membershipTier}
+                lifetimeSpendVnd={wallet.lifetimeSpendVnd}
+                lang={lang}
+              />
             )}
 
             {/* eXU Wallet Balance Card */}
@@ -381,6 +435,10 @@ export function ProfileContent({ lang }: ProfileContentProps) {
               </div>
             </div>
           </div>
+        )}
+
+        {activeTab === "affiliate" && partner && (
+          <AffiliateTab lang={lang} partner={partner} />
         )}
 
         {activeTab === "wallet" && (

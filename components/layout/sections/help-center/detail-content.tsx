@@ -15,6 +15,7 @@ import {
 } from "./category-config";
 import { ArticleFooter } from "./article-footer";
 import { ArticleToc, processArticleContent } from "./article-toc";
+import { HelpCenterSearchBox } from "./help-center-search-box";
 import { ScrollToTop } from "./scroll-to-top";
 
 const API_BASE_URL =
@@ -81,9 +82,6 @@ export function DetailContent({
 }: DetailContentProps) {
   const [articles, setArticles] = useState<HelpCenterArticle[]>(initialArticles ?? []);
   const [loading, setLoading] = useState(!initialArticles);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<HelpCenterArticle[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set([category]));
   const [expandedParents, setExpandedParents] = useState<Set<string>>(
     new Set(parent ? [`${category}/${parent}`] : [])
@@ -202,40 +200,6 @@ export function DetailContent({
     });
   };
 
-  // Search handler
-  const handleSearch = useCallback(async (query: string) => {
-    if (!query.trim()) {
-      setSearchResults([]);
-      setIsSearching(false);
-      return;
-    }
-    setIsSearching(true);
-    try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/help-center?page=1&limit=10&search=${encodeURIComponent(query)}`,
-        { headers: { "x-custom-lang": lang } }
-      );
-      if (res.ok) {
-        const json = await res.json();
-        setSearchResults(json.data || []);
-      } else {
-        setSearchResults([]);
-      }
-    } catch {
-      setSearchResults([]);
-    } finally {
-      setIsSearching(false);
-    }
-  }, [lang]);
-
-  // Debounced search
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      handleSearch(searchQuery);
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [searchQuery, handleSearch]);
-
   if (loading) {
     return (
       <main role="main">
@@ -253,8 +217,13 @@ export function DetailContent({
 
   return (
     <main role="main">
-      {/* Search Box on top for sub-pages (Bug 2.8 + Layout 2.3) */}
-     
+      {/* Search box with live results, same as the rest of the help centre (#074) */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="container mx-auto px-4 sm:px-0 py-3">
+          <HelpCenterSearchBox lang={lang} className="max-w-lg" />
+        </div>
+      </div>
+
 
       {/* Breadcrumb (Style 2.9) — merged: Trang chủ > Trung tâm trợ giúp > ... */}
       <div className="bg-gray-100">

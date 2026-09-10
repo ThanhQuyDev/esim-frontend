@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Check, Copy, Loader2 } from "lucide-react";
+import { AlertCircle, Check, Copy, Loader2 } from "lucide-react";
 import { useOrderByNumber, formatVnd, type BankTransferCheckoutResponse } from "@/lib/hooks";
 
 interface BankTransferPanelProps {
@@ -26,6 +26,11 @@ const TEXT = {
     waiting: "Đang chờ nhận tiền…",
     waitingHint: "Sau khi bạn chuyển khoản, hệ thống sẽ tự động xác nhận trong vài giây.",
     paid: "Đã nhận được thanh toán!",
+    manual: "Đã nhận thanh toán nhưng chưa nạp được",
+    manualHint:
+      "Đơn của bạn đang được xử lý thủ công. Vui lòng liên hệ CSKH kèm mã đơn",
+    failed: "Đơn hàng không thành công",
+    failedHint: "Vui lòng thử lại hoặc liên hệ CSKH kèm mã đơn",
     copied: "Đã sao chép",
     copy: "Sao chép",
   },
@@ -42,6 +47,11 @@ const TEXT = {
     waiting: "Waiting for your transfer…",
     waitingHint: "Once you transfer, we confirm automatically within seconds.",
     paid: "Payment received!",
+    manual: "Payment received, but the top-up didn't go through",
+    manualHint:
+      "Your order is being handled manually. Please contact support with order",
+    failed: "Order was not completed",
+    failedHint: "Please try again or contact support with order",
     copied: "Copied",
     copy: "Copy",
   },
@@ -112,6 +122,13 @@ export function BankTransferPanel({ info, lang, onPaid }: BankTransferPanelProps
     order?.status === "completed" ||
     (order?.items?.some((i) => i.esims && i.esims.length > 0) ?? false);
 
+  // The money arrived but the provider call failed — the backend flags these
+  // for an admin. Without this branch the panel spins on "waiting for your
+  // transfer" forever, even though the customer has already paid.
+  const needsManualHandling = order?.status === "MANUAL_INTERVENTION";
+  const hasFailed =
+    order?.status === "failed" || order?.status === "cancelled";
+
   // Notify once, in an effect — calling the callback during render would fire
   // on every re-render (and breaks React's render purity).
   const notifiedRef = useRef(false);
@@ -169,6 +186,22 @@ export function BankTransferPanel({ info, lang, onPaid }: BankTransferPanelProps
           <div className="flex items-center gap-2 text-[#16A34A] font-semibold" data-testid="bank-transfer-paid">
             <Check className="w-5 h-5" />
             {t.paid}
+          </div>
+        ) : needsManualHandling || hasFailed ? (
+          <div
+            className="flex items-start gap-2.5"
+            data-testid={needsManualHandling ? "bank-transfer-manual" : "bank-transfer-failed"}
+          >
+            <AlertCircle className="w-5 h-5 text-[#DC2626] shrink-0 mt-0.5" />
+            <div>
+              <p className="font-semibold text-[#B91C1C]">
+                {needsManualHandling ? t.manual : t.failed}
+              </p>
+              <p className="text-[13px] text-[#6b7280]">
+                {needsManualHandling ? t.manualHint : t.failedHint}{" "}
+                <span className="font-mono font-semibold text-[#111]">{orderNumber}</span>.
+              </p>
+            </div>
           </div>
         ) : (
           <div className="flex items-start gap-2.5" data-testid="bank-transfer-waiting">

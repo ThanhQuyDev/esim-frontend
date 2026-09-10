@@ -1,4 +1,8 @@
 interface HowItWorksSectionProps {
+  /**
+   * Either the generic dict (homepage) or the per-country/region one built by
+   * `buildHowItWorksDict` (#044). A step may carry an extra `note` line.
+   */
   dict: Record<string, any>;
 }
 
@@ -62,6 +66,15 @@ export function HowItWorksSection({ dict }: HowItWorksSectionProps) {
                             <p className="body-md text-secondary scroll-mt-20 xl:scroll-mt-24">
                               {step.description}
                             </p>
+                            {/* Facts about this country's own plan lineup (#044) */}
+                            {step.note && (
+                              <p
+                                data-testid={`how-it-works-note-${i}`}
+                                className="body-sm rounded-md bg-white/70 px-2.5 py-2 text-primary"
+                              >
+                                {step.note}
+                              </p>
+                            )}
                           </div>
                         </div>
 

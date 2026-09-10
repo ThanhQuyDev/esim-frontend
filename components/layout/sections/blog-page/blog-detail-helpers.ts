@@ -30,8 +30,37 @@ export function blogDetailHref(blog: { slug: string; category?: string | null; p
   return lang === 'vi' ? `/blog/${encodeURIComponent(articleSlug)}` : `/${lang}/blog/${encodeURIComponent(articleSlug)}`;
 }
 
+/**
+ * Slug for an author name, normalized the way the backend stores it (#068).
+ *
+ * This used to only lowercase and hyphenate, so "Nguyễn Văn A" became
+ * "nguyễn-văn-a" while the author record holds "nguyen-van-a" — every Vietnamese
+ * byline led to a 404 when a reader clicked it.
+ */
 export function authorSlug(name: string): string {
-  return name.toLowerCase().replace(/\s+/g, "-");
+  return categorySlug(name);
+}
+
+/**
+ * Link to an author's page. Prefers the slug the author record actually carries
+ * — an admin can set a custom one — and only derives it from the name as a
+ * fallback. Returns null when there is no author to link to.
+ */
+export function authorHref(
+  blog: {
+    author?: string | null;
+    authorSlug?: string | null;
+    authorProfile?: { slug?: string | null } | null;
+  },
+  lang: string
+): string | null {
+  const slug =
+    blog.authorSlug?.trim() ||
+    blog.authorProfile?.slug?.trim() ||
+    (blog.author ? authorSlug(blog.author) : "");
+  if (!slug) return null;
+  const prefix = lang === "vi" ? "" : `/${lang}`;
+  return `${prefix}/blog/author/${encodeURIComponent(slug)}`;
 }
 
 export function formatTimeRead(timeRead: number | string | null): string {

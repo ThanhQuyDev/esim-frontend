@@ -32,6 +32,16 @@ import {
 import { submitTicket } from "@/lib/services/tickets.service";
 import { uploadFile } from "@/lib/services/files.service";
 import type { AttachmentItem } from "@/lib/types/ticket";
+import {
+  checkSubmission,
+  loadHistory,
+  recordSubmission,
+  retryAfterMinutes,
+  retryAfterSeconds,
+  submissionFingerprint,
+  type SpamReason,
+  type SubmissionRecord,
+} from "@/lib/support-anti-spam";
 
 import { FileUploadZone } from "./file-upload-zone";
 
@@ -71,6 +81,15 @@ export interface SupportFormDict {
   submit: string;
   submitting: string;
   uploading: string;
+  /** Spam-guard copy (#075). Optional so an older dictionary still renders. */
+  antiSpam?: {
+    honeypotLabel: string;
+    blockedTitle: string;
+    tooFast: string;
+    rateLimited: string;
+    duplicate: string;
+    blockedHelp: string;
+  };
   required: string;
   optional: string;
   privacyNotice: string;
@@ -98,6 +117,30 @@ function interpolate(template: string, vars: Record<string, string | number>): s
     key in vars ? String(vars[key]) : ""
   );
 }
+
+/** Fallback copy so the guard still speaks if a dictionary lags behind (#075). */
+const ANTI_SPAM_FALLBACK: Record<"vi" | "en", NonNullable<SupportFormDict["antiSpam"]>> = {
+  vi: {
+    honeypotLabel: "Để trống ô này",
+    blockedTitle: "Chưa gửi được yêu cầu",
+    tooFast: "Bạn gửi quá nhanh. Vui lòng đợi {{seconds}} giây rồi gửi lại.",
+    rateLimited:
+      "Bạn đã gửi nhiều yêu cầu trong thời gian ngắn. Vui lòng thử lại sau {{minutes}} phút.",
+    duplicate:
+      "Yêu cầu này vừa được gửi rồi. Vui lòng chờ phản hồi, hoặc sửa nội dung nếu muốn bổ sung thông tin.",
+    blockedHelp: "Nếu bạn cần hỗ trợ gấp, hãy dùng khung chat ở góc màn hình.",
+  },
+  en: {
+    honeypotLabel: "Leave this field empty",
+    blockedTitle: "Request not sent",
+    tooFast: "That was too quick. Please wait {{seconds}} seconds and try again.",
+    rateLimited:
+      "You have sent several requests in a short time. Please try again in {{minutes}} minutes.",
+    duplicate:
+      "You just sent this exact request. Please wait for our reply, or edit it if you want to add something.",
+    blockedHelp: "If it is urgent, use the chat bubble in the corner of the screen.",
+  },
+};
 
 // ----------- Banner -----------
 
@@ -136,6 +179,45 @@ export function SupportForm({ lang, dict, successHref }: SupportFormProps) {
   );
   const formTopRef = useRef<HTMLDivElement>(null);
 
+  // ----- Spam guard (#075) -----
+  const antiSpam =
+    dict.antiSpam ?? ANTI_SPAM_FALLBACK[lang === "en" ? "en" : "vi"];
+  /** Hidden field: humans never see it, bots fill every input they find. */
+  const [honeypot, setHoneypot] = useState("");
+  /** When this form appeared — a request written faster than that is a script. */
+  const mountedAtRef = useRef<number>(Date.now());
+  const [history, setHistory] = useState<SubmissionRecord[]>([]);
+
+  // Past submissions live in localStorage, so a reload does not reset the
+  // count. Read after mount to keep the server and client markup identical.
+  useEffect(() => {
+    setHistory(loadHistory(typeof window === "undefined" ? undefined : window.localStorage));
+  }, []);
+
+  const spamMessage = useCallback(
+    (reason: SpamReason, retryAfterMs: number): string => {
+      switch (reason) {
+        case "tooFast":
+          return interpolate(antiSpam.tooFast, {
+            seconds: retryAfterSeconds(retryAfterMs),
+          });
+        case "rateLimited":
+          return interpolate(antiSpam.rateLimited, {
+            minutes: retryAfterMinutes(retryAfterMs),
+          });
+        case "duplicate":
+          return antiSpam.duplicate;
+        case "honeypot":
+        default:
+          // Say something honest rather than silently swallowing the request:
+          // on the vanishing chance a human tripped this, they can still reach
+          // support through the chat widget.
+          return antiSpam.blockedHelp;
+      }
+    },
+    [antiSpam],
+  );
+
   // Auto-fill email when authenticated
   useEffect(() => {
     if (user?.email && !form.getValues("customerEmail")) {
@@ -155,6 +237,24 @@ export function SupportForm({ lang, dict, successHref }: SupportFormProps) {
   const onSubmit = useCallback(
     async (values: TicketFormValues) => {
       setBanner(null);
+
+      // 0) Spam guard — runs before anything is uploaded or sent (#075)
+      const fingerprint = submissionFingerprint(values);
+      const verdict = checkSubmission({
+        honeypot,
+        elapsedMs: Date.now() - mountedAtRef.current,
+        fingerprint,
+        history,
+      });
+      if (!verdict.ok) {
+        setBanner({
+          kind: "error",
+          title: antiSpam.blockedTitle,
+          description: spamMessage(verdict.reason, verdict.retryAfterMs),
+        });
+        formTopRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+      }
 
       // 1) Upload attachments (sequential to keep server load predictable)
       let uploadedUrls: string[] = [];
@@ -225,6 +325,16 @@ export function SupportForm({ lang, dict, successHref }: SupportFormProps) {
       setPhase("idle");
 
       if (result.ok) {
+        // Count it towards the per-browser limit, and remember the fingerprint
+        // so an identical resend is caught as a duplicate (#075).
+        setHistory(
+          recordSubmission(
+            typeof window === "undefined" ? undefined : window.localStorage,
+            fingerprint,
+          ),
+        );
+        mountedAtRef.current = Date.now();
+
         // Cleanup attachments object URLs
         attachments.forEach((it) => {
           if (it.previewUrl) URL.revokeObjectURL(it.previewUrl);
@@ -294,12 +404,26 @@ export function SupportForm({ lang, dict, successHref }: SupportFormProps) {
       });
       formTopRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     },
-    [attachments, dict, form, router, successHref, user]
+    [
+      antiSpam,
+      attachments,
+      dict,
+      form,
+      history,
+      honeypot,
+      router,
+      spamMessage,
+      successHref,
+      user,
+    ]
   );
 
   const resetEntireFlow = useCallback(() => {
     setSubmittedTicketId(null);
     setBanner(null);
+    // A fresh form means a fresh fill-time clock (#075).
+    mountedAtRef.current = Date.now();
+    setHoneypot("");
     form.reset(ticketFormDefaultValues as unknown as TicketFormValues);
     if (user?.email) {
       form.setValue("customerEmail", user.email, { shouldDirty: false });
@@ -348,6 +472,22 @@ export function SupportForm({ lang, dict, successHref }: SupportFormProps) {
         className="space-y-6"
       >
         <div ref={formTopRef} aria-hidden="true" />
+
+        {/* Honeypot (#075): off-screen, skipped by keyboard and screen readers,
+            so only a script that fills every input will touch it. */}
+        <div aria-hidden="true" className="absolute left-[-9999px] top-auto h-px w-px overflow-hidden">
+          <label htmlFor="support-website">{antiSpam.honeypotLabel}</label>
+          <input
+            id="support-website"
+            name="website"
+            type="text"
+            tabIndex={-1}
+            autoComplete="off"
+            data-testid="support-honeypot"
+            value={honeypot}
+            onChange={(e) => setHoneypot(e.target.value)}
+          />
+        </div>
 
         {/* Banner (live region for both success + error) */}
         <div role="status" aria-live="polite" aria-atomic="true">
@@ -607,8 +747,8 @@ export function SupportForm({ lang, dict, successHref }: SupportFormProps) {
               browse: dict.attachmentsBrowse,
               remove: dict.attachmentsRemove,
               tooMany: dict.attachmentsTooMany,
-              tooLarge: (name) =>
-                interpolate(dict.attachmentsTooLarge, { name }),
+              tooLarge: (name, limitMb) =>
+                interpolate(dict.attachmentsTooLarge, { name, size: limitMb }),
               invalidType: (name) =>
                 interpolate(dict.attachmentsInvalidType, { name }),
             }}

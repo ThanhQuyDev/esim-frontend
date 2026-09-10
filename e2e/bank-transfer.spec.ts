@@ -52,7 +52,10 @@ async function stubOtherAuthedCalls(page: Page) {
   });
 }
 
-async function mockApi(page: Page, opts: { paidAfter: number }) {
+async function mockApi(
+  page: Page,
+  opts: { paidAfterMs: number; paidStatus?: string },
+) {
   await stubOtherAuthedCalls(page);
   await page.route(`${API_BASE}/api/v1/topup/packages**`, async (route) => {
     await route.fulfill({
@@ -97,21 +100,27 @@ async function mockApi(page: Page, opts: { paidAfter: number }) {
     });
   });
 
-  // Order polling: pending for the first N calls, then paid (as if the SePay
-  // webhook had landed).
-  let calls = 0;
+  // Order polling: pending for the first `paidAfterMs` of polling, then paid
+  // (as if the SePay webhook had landed).
+  //
+  // The clock starts at the FIRST poll, not here: React's dev-mode double mount
+  // fires two polls back to back so a call-count threshold flips to "paid"
+  // before the waiting state ever renders, and a clock started at mock-setup
+  // time can expire while the page is still compiling under a parallel run.
+  // Anchoring on the first poll makes that first response always "pending".
+  let firstPollAt: number | null = null;
   await page.route(
     `${API_BASE}/api/v1/orders/my/by-number/**`,
     async (route) => {
-      calls += 1;
-      const paid = calls > opts.paidAfter;
+      firstPollAt ??= Date.now();
+      const paid = Date.now() - firstPollAt > opts.paidAfterMs;
       await route.fulfill({
         status: 200,
         contentType: "application/json",
         body: JSON.stringify({
           id: 1,
           orderNumber: ORDER_NUMBER,
-          status: paid ? "paid" : "pending",
+          status: paid ? (opts.paidStatus ?? "paid") : "pending",
           vndPrice: 280000,
           paymentMethod: "bank_transfer",
           items: [],
@@ -124,7 +133,7 @@ async function mockApi(page: Page, opts: { paidAfter: number }) {
 test.describe("Topup — bank transfer", () => {
   test("shows QR + exact transfer memo, then flips to paid", async ({ page }) => {
     await seedAuth(page);
-    await mockApi(page, { paidAfter: 1 });
+    await mockApi(page, { paidAfterMs: 4000 });
 
     await page.goto(
       `/en/profile/topup-test?provider=BILLION&iccid=${ICCID}&lang=en`,
@@ -152,5 +161,33 @@ test.describe("Topup — bank transfer", () => {
     await expect(page.getByTestId("bank-transfer-paid")).toBeVisible({
       timeout: 15000,
     });
+  });
+
+  /**
+   * The money arrives but the provider recharge fails, so the backend flags the
+   * order MANUAL_INTERVENTION. The customer must be told — before this branch
+   * existed the panel sat on "waiting for your transfer" forever, even though
+   * they had already paid.
+   */
+  test("surfaces MANUAL_INTERVENTION instead of waiting forever", async ({
+    page,
+  }) => {
+    await seedAuth(page);
+    await mockApi(page, { paidAfterMs: 4000, paidStatus: "MANUAL_INTERVENTION" });
+
+    await page.goto(
+      `/en/profile/topup-test?provider=BILLION&iccid=${ICCID}&lang=en`,
+    );
+    await page.getByTestId("open-topup").click();
+    await page.getByText("Billion 3GB - 30 Days").click();
+    await page.getByTestId("topup-bank-transfer-btn").click();
+
+    await expect(page.getByTestId("bank-transfer-waiting")).toBeVisible();
+
+    const manual = page.getByTestId("bank-transfer-manual");
+    await expect(manual).toBeVisible({ timeout: 15000 });
+    // The order number is the only handle support has on the failed topup.
+    await expect(manual).toContainText(ORDER_NUMBER);
+    await expect(page.getByTestId("bank-transfer-paid")).toHaveCount(0);
   });
 });

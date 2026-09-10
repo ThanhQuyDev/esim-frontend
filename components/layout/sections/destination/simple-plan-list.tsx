@@ -1,5 +1,6 @@
 "use client";
 
+import { isPlanSoldOut, soldOutLabel } from "@/lib/plan-stock";
 import type { Plan } from "@/lib/api";
 import type { DestinationDict } from "./types";
 import { PlanTagBadges, ProviderBadge } from "./plan-badges";
@@ -42,18 +43,33 @@ export function SimplePlanList({ plans, selectedPlan, onSelectPlan, dict }: Simp
           const dataStr = formatDataLabel(Number(plan.dataMb));
           const label = `${dataStr} – ${plan.durationDays} ${dict.daysUnit.toLowerCase()}`;
 
+          // Domestic stock can run out. Keep the chip visible but greyed out
+          // and unselectable instead of letting the buyer pick something we
+          // cannot deliver (#040).
+          const soldOut = isPlanSoldOut(plan);
+
           return (
             <button
               type="button"
               key={plan.id}
-              onClick={() => onSelectPlan(plan)}
-              className={`inline-flex items-center gap-[7px] px-[15px] py-[9px] rounded-[30px] text-[.875rem] font-medium border cursor-pointer transition-colors whitespace-nowrap font-[inherit] ${
-                isSelected
-                  ? "bg-white text-[#1a1a1a] border-[#1a1a1a] font-semibold shadow-[0_0_0_1px_#1a1a1a]"
-                  : "bg-white text-[#374151] border-[#e5e7eb] hover:bg-[#f3f4f6] hover:border-[#9ca3af]"
+              onClick={() => !soldOut && onSelectPlan(plan)}
+              disabled={soldOut}
+              aria-disabled={soldOut}
+              data-sold-out={soldOut ? "true" : undefined}
+              className={`inline-flex items-center gap-[7px] px-[15px] py-[9px] rounded-[30px] text-[.875rem] font-medium border transition-colors whitespace-nowrap font-[inherit] ${
+                soldOut
+                  ? "bg-[#f9fafb] text-[#9ca3af] border-[#e5e7eb] opacity-60 cursor-not-allowed line-through"
+                  : isSelected
+                    ? "cursor-pointer bg-white text-[#1a1a1a] border-[#1a1a1a] font-semibold shadow-[0_0_0_1px_#1a1a1a]"
+                    : "cursor-pointer bg-white text-[#374151] border-[#e5e7eb] hover:bg-[#f3f4f6] hover:border-[#9ca3af]"
               }`}
             >
               {label}
+              {soldOut && (
+                <span className="text-[11px] font-medium px-[5px] py-[2px] rounded leading-tight shrink-0 bg-[#F3F4F6] text-[#6B7280] border border-[#D1D5DB] no-underline">
+                  {soldOutLabel(lang)}
+                </span>
+              )}
               <PlanTagBadges tags={plan.tags as string[] | undefined} lang={lang} />
               {plan.sms != null && plan.sms > 0 && (
                 <span className="text-[11px] font-medium tracking-wide px-[5px] py-[2px] rounded leading-tight shrink-0 bg-[#dbeafe] text-[#1e40af]">

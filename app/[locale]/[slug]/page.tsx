@@ -5,8 +5,26 @@ import {
   getWhyChooseUs,
   getDestinations,
   getRegions,
+  getPlansByDestinationSlug,
+  getPlansByRegionSlug,
 } from "@/lib/api";
 import { localizedSlug } from "@/lib/slug";
+import {
+  findRegionGroupBySlug,
+  groupRegions,
+  type RegionGroup,
+} from "@/lib/region-groups";
+import { RegionVariantPicker } from "@/components/layout/sections/region-group/region-variant-picker";
+import { RegionSuggestions } from "@/components/layout/sections/destination/region-suggestions";
+import { buildRegionSuggestions } from "@/lib/region-suggestions";
+import { buildHowItWorksDict } from "@/lib/how-it-works";
+import { buildSeoTemplateVars } from "@/lib/seo-vars";
+import {
+  pickWhyChooseUs,
+  whyChooseUsCount,
+  WHY_CHOOSE_US_POOL_SIZE,
+} from "@/lib/why-choose-us";
+import { getUsdVndRate } from "@/lib/exchange-rate";
 import { getSeoMetadata } from "@/lib/seo";
 import { getDictionary } from "@/lib/dictionaries";
 import { getLocale } from "next-intl/server";
@@ -62,6 +80,26 @@ async function resolveEntity(
   return null;
 }
 
+/**
+ * Regions that share a name but cover a different number of countries are
+ * listed once, under a group slug (`esim-chau-a`). Resolve that slug — and
+ * also a variant's own slug, so a variant page can offer its siblings.
+ *
+ * Returns null when the backend is unreachable: the caller then behaves
+ * exactly as before this grouping existed.
+ */
+async function resolveRegionGroup(
+  slug: string,
+  locale: Locale
+): Promise<RegionGroup | null> {
+  try {
+    const regions = await getRegions({ limit: 500 });
+    return findRegionGroupBySlug(regions.data, slug, locale);
+  } catch {
+    return null;
+  }
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -72,6 +110,25 @@ export async function generateMetadata({
   const entity = await resolveEntity(params.slug, locale);
 
   if (!entity) {
+    // Group landing page (`/esim-chau-a`): no record of its own, so build the
+    // metadata from the group label and the generic region SEO config.
+    const group = await resolveRegionGroup(params.slug, locale);
+    if (group && group.slug === params.slug) {
+      return getSeoMetadata(
+        [
+          localizedPath(params.slug, locale),
+          locale === "vi" ? "/region" : "/en/region",
+        ],
+        {
+          title: dict.destinationPage.title.replace("{destination}", group.label),
+          description: dict.destinationPage.subtitle.replace(
+            "{destination}",
+            group.label
+          ),
+        },
+        { name: group.label }
+      );
+    }
     return { title: dict.destinationPage?.notFound ?? "Not Found" };
   }
 
@@ -95,10 +152,30 @@ export async function generateMetadata({
     : (locale === "vi" ? "/region" : "/en/region");
   const seoSlugs = [exactSeoSlug, genericSlug];
 
+  // Price / lineup variables, so a CMS record can read "eSIM ${name} từ
+  // ${fromPrice}" and stay correct as prices move (#047). The plans call is the
+  // same cached one the page body makes.
+  const seoVars = buildSeoTemplateVars({
+    name: localizedName,
+    plans:
+      entity.type === "destination"
+        ? await getPlansByDestinationSlug(params.slug, locale)
+        : await getPlansByRegionSlug(params.slug, locale),
+    lang: locale,
+    // English copy quotes USD, converted at the live rate (#050).
+    rate: await getUsdVndRate(),
+  });
+
+  const canonicalPath = localizedPath(
+    localizedSlug(entity.data, locale),
+    locale
+  );
+
   const metadata = await getSeoMetadata(
     seoSlugs,
     { title: fallbackTitle, description: fallbackDescription },
-    { name: localizedName }
+    seoVars,
+    { locale, url: canonicalPath }
   );
 
   // SEO: canonical points at this locale's canonical slug; hreflang lists the
@@ -106,7 +183,7 @@ export async function generateMetadata({
   const viSlug = localizedSlug(entity.data, "vi");
   const enSlug = localizedSlug(entity.data, "en");
   metadata.alternates = {
-    canonical: localizedPath(localizedSlug(entity.data, locale), locale),
+    canonical: canonicalPath,
     languages: {
       vi: localizedPath(viSlug, "vi"),
       en: localizedPath(enSlug, "en"),
@@ -151,6 +228,17 @@ export async function generateStaticParams() {
           params.push({ locale, slug });
         }
       }
+      // Landing pages for same-named region groups (`esim-chau-a`). Only
+      // multi-variant groups get one; single regions already have their own.
+      for (const group of groupRegions(regionRes.data, locale)) {
+        if (
+          group.members.length > 1 &&
+          group.slug &&
+          !params.some((p) => p.locale === locale && p.slug === group.slug)
+        ) {
+          params.push({ locale, slug: group.slug });
+        }
+      }
     }
   } catch {
     // Fallback: empty params means ISR at runtime
@@ -171,6 +259,39 @@ export default async function UnifiedSlugPage({
   ]);
 
   if (!entity) {
+    const group = await resolveRegionGroup(params.slug, locale);
+    if (group && group.slug === params.slug) {
+      return (
+        <main role="main">
+          <Breadcrumb
+            items={[
+              {
+                label: dict.breadcrumb.destinations,
+                href: locale === "vi" ? "/diem-den" : `/${locale}/destinations`,
+              },
+              { label: group.label },
+            ]}
+            lang={locale}
+          />
+          <div className="mx-4 sm:mx-auto">
+            <div className="container mx-auto py-10">
+              <h1 className="heading-xl mb-3">{group.label}</h1>
+              <p className="body-md text-text-secondary mb-8">
+                {locale === "vi"
+                  ? "Chọn gói theo số lượng quốc gia bạn cần."
+                  : "Choose the pack by how many countries you need."}
+              </p>
+              <RegionVariantPicker
+                group={group}
+                lang={locale}
+                fromLabel={dict.allDestinations.from}
+              />
+            </div>
+          </div>
+          <LazyFooterSection dict={dict.footer} lang={locale} />
+        </main>
+      );
+    }
     notFound();
   }
 
@@ -191,9 +312,34 @@ export default async function UnifiedSlugPage({
       `${localePrefix}/destination`,
     ];
     const destination = entity.data;
+    // The whole pool, so the draw below has something to draw from: the
+    // default limit of 6 meant a seventh reason was never shown (#087).
     const whyChooseUsRes = await getWhyChooseUs({
       lang: locale,
       type: "quoc_gia",
+      limit: WHY_CHOOSE_US_POOL_SIZE,
+    });
+    // Copy can read "eSIM ${name} chỉ từ ${fromPrice}"; the page shows a
+    // random handful of the reasons written for country pages (#087).
+    const whyChooseUsItems = pickWhyChooseUs(whyChooseUsRes.data, {
+      count: whyChooseUsCount("quoc_gia"),
+      vars: buildSeoTemplateVars({
+        name: localizedName,
+        plans: await getPlansByDestinationSlug(params.slug, locale),
+        lang: locale,
+        rate: await getUsdVndRate(),
+      }),
+    });
+    // Regional / global packs that cover this country (#043). A failure here
+    // must not take the country page down, so it degrades to no suggestions.
+    const regionSuggestions = await getRegions({ limit: 500 })
+      .then((res) => buildRegionSuggestions(destination, res.data, locale))
+      .catch(() => []);
+    // The usage steps describe THIS country's plan lineup (#044).
+    const howItWorks = buildHowItWorksDict(dict.howItWorks, {
+      name: localizedName,
+      plans: await getPlansByDestinationSlug(params.slug, locale),
+      lang: locale,
     });
 
     return (
@@ -215,11 +361,23 @@ export default async function UnifiedSlugPage({
           lang={locale}
         />
         <div className="max-w-[1168px] mx-auto">
-          <LazyHowItWorksSection dict={dict.howItWorks} />
+          {/* Regional / global alternatives — above the usage steps, per #043 */}
+          <RegionSuggestions
+            items={regionSuggestions}
+            countryName={localizedName}
+            dict={{
+              ...dict.regionSuggestions,
+              from: dict.allDestinations.from,
+              country: dict.allDestinations.country,
+              countries: dict.allDestinations.countries,
+            }}
+            lang={locale}
+          />
+          <LazyHowItWorksSection dict={howItWorks} />
           <LazyFeaturesSection
             dict={dict.whyChoose}
             lang={locale}
-            features={whyChooseUsRes.data}
+            features={whyChooseUsItems}
           />
           <LazyEsimComparison dict={dict.whatIsEsimPage.comparison} />
           <PartnerBar dict={dict.partnerBar} />
@@ -249,7 +407,28 @@ export default async function UnifiedSlugPage({
   const whyChooseUsRes = await getWhyChooseUs({
     lang: locale,
     type: "khu_vuc",
+    limit: WHY_CHOOSE_US_POOL_SIZE,
   });
+  const whyChooseUsItems = pickWhyChooseUs(whyChooseUsRes.data, {
+    count: whyChooseUsCount("khu_vuc"),
+    vars: buildSeoTemplateVars({
+      name: localizedName,
+      plans: await getPlansByRegionSlug(params.slug, locale),
+      lang: locale,
+      rate: await getUsdVndRate(),
+    }),
+  });
+  // The usage steps describe THIS region's plan lineup (#044).
+  const howItWorks = buildHowItWorksDict(dict.howItWorks, {
+    name: localizedName,
+    plans: await getPlansByRegionSlug(params.slug, locale),
+    lang: locale,
+  });
+
+  // Same-named regions with a different country count are siblings: offer them
+  // here too, so landing straight on `/esim-chau-a-13-quoc-gia` still shows the
+  // other packs.
+  const variantGroup = await resolveRegionGroup(params.slug, locale);
 
   // Adapt Region to Destination shape for shared components
   const destination: Destination = {
@@ -280,6 +459,23 @@ export default async function UnifiedSlugPage({
         ]}
         lang={locale}
       />
+      {variantGroup && (
+        <div className="mx-4 sm:mx-auto">
+          <div className="container mx-auto pb-6">
+            <h2 className="heading-sm mb-4">
+              {locale === "vi"
+                ? "Chọn theo số lượng quốc gia"
+                : "Choose by number of countries"}
+            </h2>
+            <RegionVariantPicker
+              group={variantGroup}
+              lang={locale}
+              activeSlug={params.slug}
+              fromLabel={dict.allDestinations.from}
+            />
+          </div>
+        </div>
+      )}
       <DestinationPlans
         destination={destination}
         slug={params.slug}
@@ -289,11 +485,11 @@ export default async function UnifiedSlugPage({
         initialRegion={region}
       />
       <div className="max-w-[1168px] mx-auto px-4 sm:px-0">
-        <LazyHowItWorksSection dict={dict.howItWorks} />
+        <LazyHowItWorksSection dict={howItWorks} />
         <LazyFeaturesSection
           dict={dict.whyChoose}
           lang={locale}
-          features={whyChooseUsRes.data}
+          features={whyChooseUsItems}
         />
         <LazyEsimComparison dict={dict.whatIsEsimPage.comparison} />
         <LazyTestimonialsSection dict={dict.testimonials} />

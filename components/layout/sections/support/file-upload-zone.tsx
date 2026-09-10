@@ -5,8 +5,11 @@ import { UploadCloud } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   ACCEPT_ATTRIBUTE,
+  attachmentKind,
+  bytesToMb,
   MAX_ATTACHMENTS,
   MAX_FILE_SIZE_BYTES,
+  MAX_VIDEO_SIZE_BYTES,
   validateAttachment,
 } from "@/lib/services/files.service";
 import type { AttachmentItem } from "@/lib/types/ticket";
@@ -25,7 +28,8 @@ interface FileUploadZoneProps {
     browse: string;
     remove: string;
     tooMany: string;
-    tooLarge: (name: string) => string;
+    /** `limitMb` differs per kind: video gets a bigger allowance (#076). */
+    tooLarge: (name: string, limitMb: number) => string;
     invalidType: (name: string) => string;
   };
 }
@@ -95,22 +99,26 @@ export function FileUploadZone({
           break;
         }
 
-        const validation = validateAttachment(file);
-        if (validation === "tooLarge") {
-          reportError(labels.tooLarge(file.name));
+        const rejection = validateAttachment(file);
+        if (rejection?.error === "tooLarge") {
+          reportError(labels.tooLarge(file.name, rejection.limitMb));
           continue;
         }
-        if (validation === "invalidType") {
+        if (rejection?.error === "invalidType") {
           reportError(labels.invalidType(file.name));
           continue;
         }
 
+        // Videos get an object URL too, so the tile can show a real frame of
+        // the recording instead of a generic icon (#076).
+        const kind = attachmentKind(file);
         accepted.push({
           localId: makeLocalId(),
           file,
-          previewUrl: file.type.startsWith("image/")
-            ? URL.createObjectURL(file)
-            : undefined,
+          previewUrl:
+            kind === "image" || kind === "video"
+              ? URL.createObjectURL(file)
+              : undefined,
           status: "queued",
         });
       }
@@ -200,7 +208,8 @@ export function FileUploadZone({
         <p className="text-base sm:text-sm font-medium">{labels.helpText}</p>
         <p className="mt-1 text-sm text-gray-500">{labels.acceptText}</p>
         <p className="mt-1 text-sm text-gray-400">
-          {(MAX_FILE_SIZE_BYTES / (1024 * 1024)).toFixed(0)} MB · {MAX_ATTACHMENTS} files max
+          {bytesToMb(MAX_FILE_SIZE_BYTES)} MB · video {bytesToMb(MAX_VIDEO_SIZE_BYTES)} MB ·{" "}
+          {MAX_ATTACHMENTS} files max
         </p>
         <span
           className={cn(

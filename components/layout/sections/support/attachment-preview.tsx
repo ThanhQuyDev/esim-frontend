@@ -1,8 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FileText, FileImage, File as FileIcon, X, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
+import {
+  FileText,
+  FileImage,
+  FileVideo,
+  File as FileIcon,
+  X,
+  Loader2,
+  AlertCircle,
+  CheckCircle2,
+} from "lucide-react";
 import type { AttachmentItem } from "@/lib/types/ticket";
+import { attachmentKind } from "@/lib/services/files.service";
 
 interface AttachmentPreviewProps {
   item: AttachmentItem;
@@ -17,15 +27,16 @@ function formatBytes(bytes: number): string {
 }
 
 function getIcon(file: File) {
-  if (file.type.startsWith("image/")) return FileImage;
-  if (file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf"))
-    return FileText;
-  if (
-    file.type.includes("word") ||
-    /\.(doc|docx)$/i.test(file.name)
-  )
-    return FileText;
-  return FileIcon;
+  switch (attachmentKind(file)) {
+    case "image":
+      return FileImage;
+    case "video":
+      return FileVideo;
+    case "document":
+      return FileText;
+    default:
+      return FileIcon;
+  }
 }
 
 /**
@@ -39,7 +50,10 @@ function getIcon(file: File) {
 export function AttachmentPreview({ item, onRemove, removeLabel }: AttachmentPreviewProps) {
   const [imageError, setImageError] = useState(false);
   const Icon = getIcon(item.file);
-  const isImage = item.file.type.startsWith("image/") && item.previewUrl && !imageError;
+  const kind = attachmentKind(item.file);
+  const isImage = kind === "image" && item.previewUrl && !imageError;
+  /** A frame of the recording beats a generic film icon (#076). */
+  const isVideo = kind === "video" && item.previewUrl && !imageError;
 
   // Reset error if previewUrl changes
   useEffect(() => {
@@ -57,6 +71,16 @@ export function AttachmentPreview({ item, onRemove, removeLabel }: AttachmentPre
           <img
             src={item.previewUrl}
             alt={item.file.name}
+            className="h-full w-full object-cover"
+            onError={() => setImageError(true)}
+          />
+        ) : isVideo ? (
+          <video
+            src={item.previewUrl}
+            muted
+            playsInline
+            preload="metadata"
+            aria-label={item.file.name}
             className="h-full w-full object-cover"
             onError={() => setImageError(true)}
           />

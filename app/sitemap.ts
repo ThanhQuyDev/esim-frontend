@@ -1,41 +1,68 @@
-import { MetadataRoute } from 'next';
-import { routing } from '@/i18n/routing';
-import { getPathname } from '@/i18n/navigation';
+import { MetadataRoute } from "next";
+import { getPathname } from "@/i18n/navigation";
+import {
+  getBlogs,
+  getDestinations,
+  getLocalCarriers,
+  getRegions,
+  fetchHelpCenterArticles,
+} from "@/lib/api";
+import { buildSitemap, type SitemapSources } from "@/lib/sitemap-entries";
 
-const baseUrl = 'https://esim.vn';
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://esim.vn";
 
-// Danh sách tất cả routes (dùng tên folder EN làm key)
-const routes = [
-  '/',
-  '/destinations',
-  '/cart',
-  '/checkout',
-  '/review',
-  '/data-calculator',
-  '/what-is-esim',
-  '/coupon',
-  '/blog',
-  '/about-us',
-  '/press-area',
-  '/help-center',
-  '/esim-supported-devices',
-  '/profile',
-  '/kyc-guide',
-] as const;
+/** Regenerate daily; the catalogue does not change by the minute. */
+export const revalidate = 86_400;
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  return routes.map((route) => {
-    const alternates: Record<string, string> = {};
+/** Enough to cover the catalogue; the APIs cap their own page sizes anyway. */
+const CATALOGUE_LIMIT = 1000;
+const CONTENT_LIMIT = 500;
 
-    for (const locale of routing.locales) {
-      const pathname = getPathname({ locale, href: route });
-      const prefix = locale === routing.defaultLocale ? '' : `/${locale}`;
-      alternates[locale] = `${baseUrl}${prefix}${pathname}`;
-    }
+/**
+ * The sitemap has to be published even when an upstream call fails: an empty
+ * section is a smaller problem than a 500 where the sitemap should be.
+ */
+async function safely<T>(load: () => Promise<T>, fallback: T): Promise<T> {
+  try {
+    return await load();
+  } catch {
+    return fallback;
+  }
+}
 
-    return {
-      url: `${baseUrl}${getPathname({ locale: 'vi', href: route })}`,
-      alternates: { languages: alternates },
-    };
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const [destinations, regions, blogs, helpArticles, carriers] = await Promise.all([
+    safely(() => getDestinations({ limit: CATALOGUE_LIMIT }).then((r) => r.data), []),
+    safely(() => getRegions({ limit: CATALOGUE_LIMIT }).then((r) => r.data), []),
+    safely(() => getBlogs({ limit: CONTENT_LIMIT }).then((r) => r.data), []),
+    safely(() => fetchHelpCenterArticles().then((r) => r.data), []),
+    safely(() => getLocalCarriers(), []),
+  ]);
+
+  const sources: SitemapSources = {
+    destinations,
+    regions,
+    blogs,
+    helpArticles,
+    carriers,
+  };
+
+  return buildSitemap(sources, {
+    baseUrl,
+    // next-intl owns the localized path for every route key, dynamic ones
+    // included — so `/blog/x` becomes `/en/blog/x` and a carrier page picks
+    // up its English path (`/domestic-esim/...`) automatically.
+    path: (locale, key, params) => {
+      try {
+        const href = params
+          ? ({ pathname: key, params } as never)
+          : (key as never);
+        return getPathname({ locale, href });
+      } catch {
+        // An unknown key must not take the whole sitemap down.
+        return null;
+      }
+    },
+    lastModified: new Date(),
   });
 }

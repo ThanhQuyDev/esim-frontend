@@ -1,29 +1,17 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Search } from "lucide-react";
 import type { HelpCenterArticle } from "@/lib/api";
 import { ScrollToTop } from "./scroll-to-top";
 import { localizedHref } from "@/lib/route-mapping";
+import { helpCenterArticleSlug as getArticleSlug } from "@/lib/help-center-search";
+import { HelpCenterSearchBox } from "./help-center-search-box";
 import { getCategoryLabel, getParentLabel, toLocalizedCategorySlug, toLocalizedParentSlug } from "./category-config";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.saily.example.com";
-
-/**
- * Resolve the URL slug for a help-center article.
- * Prefers the canonical `slug` field from the API; falls back to a
- * title-derived slug only when the CMS hasn't provided one.
- */
-function getArticleSlug(article: { slug?: string; title: string }): string {
-  if (article.slug && article.slug.trim().length > 0) return article.slug;
-  return article.title
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
 
 interface CategoriesContentProps {
   lang: string;
@@ -37,9 +25,6 @@ export function CategoriesContent({ lang }: CategoriesContentProps) {
   const [articles, setArticles] = useState<HelpCenterArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedArticle, setSelectedArticle] = useState<HelpCenterArticle | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<HelpCenterArticle[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -66,40 +51,6 @@ export function CategoriesContent({ lang }: CategoriesContentProps) {
       setSelectedArticle(null);
     }
   }, [articleId, articles]);
-
-  // Search handler
-  const handleSearch = useCallback(async (query: string) => {
-    if (!query.trim()) {
-      setSearchResults([]);
-      setIsSearching(false);
-      return;
-    }
-    setIsSearching(true);
-    try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/help-center?page=1&limit=10&search=${encodeURIComponent(query)}`,
-        { headers: { "x-custom-lang": lang } }
-      );
-      if (res.ok) {
-        const json = await res.json();
-        setSearchResults(json.data || []);
-      } else {
-        setSearchResults([]);
-      }
-    } catch {
-      setSearchResults([]);
-    } finally {
-      setIsSearching(false);
-    }
-  }, [lang]);
-
-  // Debounced search
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      handleSearch(searchQuery);
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [searchQuery, handleSearch]);
 
   const filtered = categoryFilter
     ? articles.filter((a) => a.category === categoryFilter)
@@ -131,46 +82,7 @@ export function CategoriesContent({ lang }: CategoriesContentProps) {
         {/* Search Box */}
         <div className="bg-white border-b border-gray-200">
           <div className="container mx-auto py-3">
-            <form role="search" className="relative max-w-lg" onSubmit={(e) => e.preventDefault()}>
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input
-                type="search"
-                placeholder={lang === "vi" ? "Nhập chủ đề, câu hỏi hoặc vấn đề" : "Type a topic, question or issue here"}
-                className="w-full pl-10 pr-4 py-2.5 rounded-full text-base sm:text-sm border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                aria-label={lang === "vi" ? "Tìm kiếm bài viết" : "Search articles"}
-              />
-              {searchQuery.trim() && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-xl border border-gray-200 max-h-64 overflow-y-auto z-50">
-                  {isSearching ? (
-                    <div className="p-3 text-center text-gray-500 text-base sm:text-sm">
-                      {lang === "vi" ? "Đang tìm kiếm..." : "Searching..."}
-                    </div>
-                  ) : searchResults.length > 0 ? (
-                    <ul className="list-none p-0 m-0">
-                      {searchResults.map((article) => (
-                        <li key={article.id}>
-                          <Link
-                            href={`${localizedHref(lang, "help-center")}/${getArticleSlug(article)}`}
-                            className="block px-4 py-2.5 text-gray-900 no-underline hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
-                          >
-                            <p className="text-base sm:text-sm font-medium">{article.title}</p>
-                            <p className="text-sm text-gray-500 mt-0.5">
-                              {getCategoryLabel(article.category, lang)} › {getParentLabel(article.parent, lang)}
-                            </p>
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <div className="p-3 text-center text-gray-500 text-base sm:text-sm">
-                      {lang === "vi" ? "Không tìm thấy kết quả" : "No results found"}
-                    </div>
-                  )}
-                </div>
-              )}
-            </form>
+            <HelpCenterSearchBox lang={lang} className="max-w-lg" />
           </div>
         </div>
 
@@ -240,46 +152,7 @@ export function CategoriesContent({ lang }: CategoriesContentProps) {
       {/* Search Box */}
       <div className="bg-white border-b border-gray-200">
         <div className="container mx-auto py-3">
-          <form role="search" className="relative max-w-lg" onSubmit={(e) => e.preventDefault()}>
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input
-              type="search"
-              placeholder={lang === "vi" ? "Nhập chủ đề, câu hỏi hoặc vấn đề" : "Type a topic, question or issue here"}
-              className="w-full pl-10 pr-4 py-2.5 rounded-full text-base sm:text-sm border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              aria-label={lang === "vi" ? "Tìm kiếm bài viết" : "Search articles"}
-            />
-            {searchQuery.trim() && (
-              <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-xl border border-gray-200 max-h-64 overflow-y-auto z-50">
-                {isSearching ? (
-                  <div className="p-3 text-center text-gray-500 text-base sm:text-sm">
-                    {lang === "vi" ? "Đang tìm kiếm..." : "Searching..."}
-                  </div>
-                ) : searchResults.length > 0 ? (
-                  <ul className="list-none p-0 m-0">
-                    {searchResults.map((article) => (
-                      <li key={article.id}>
-                        <Link
-                          href={`${localizedHref(lang, "help-center")}/${getArticleSlug(article)}`}
-                          className="block px-4 py-2.5 text-gray-900 no-underline hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
-                        >
-                          <p className="text-base sm:text-sm font-medium">{article.title}</p>
-                          <p className="text-sm text-gray-500 mt-0.5">
-                            {getCategoryLabel(article.category, lang)} › {getParentLabel(article.parent, lang)}
-                          </p>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <div className="p-3 text-center text-gray-500 text-base sm:text-sm">
-                    {lang === "vi" ? "Không tìm thấy kết quả" : "No results found"}
-                  </div>
-                )}
-              </div>
-            )}
-          </form>
+          <HelpCenterSearchBox lang={lang} className="max-w-lg" />
         </div>
       </div>
 

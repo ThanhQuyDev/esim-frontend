@@ -9,8 +9,10 @@ import {
   resolveLangSwitchPath,
   resolveLegalLangSwitchPath,
 } from "@/i18n/lang-switch";
+import { rememberLocaleChoice } from "@/i18n/geo-locale";
 import * as Dialog from "@radix-ui/react-dialog";
 import { cn } from "@/lib/utils";
+import { optimizeCloudinary } from "@/lib/cdn-image";
 import { SailyLogo } from "@/components/icons/saily-logo";
 import { HelpCenterNavbar } from "@/components/layout/help-center-navbar";
 import { DestinationDropdown } from "@/components/layout/destination-dropdown";
@@ -94,7 +96,12 @@ function AnnouncementIcon({ iconUrl, className }: AnnouncementIconProps) {
       // eslint-disable-next-line @next/next/no-img-element
       <img
         alt=""
-        src={iconUrl}
+        // 16px on screen: sized so nothing reflows, fetched at 2x (#092).
+        src={optimizeCloudinary(iconUrl, { width: 32 })}
+        width={16}
+        height={16}
+        loading="lazy"
+        decoding="async"
         className={cn(iconClassName, "object-contain")}
         aria-hidden="true"
       />
@@ -559,6 +566,9 @@ function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
   const intlPathname = useIntlPathname();
 
   const handleLangChange = useCallback((newLocale: string) => {
+    // Remember the choice so the geo redirect on `/` never overrides it.
+    rememberLocaleChoice(newLocale);
+
     // Destination/region pages (`/[slug]`) use the same public slug in both
     // locales, so keep the current slug and only add/remove the locale prefix
     // (e.g. /thailand → /en/thailand). Legal pages (`/legal/[slug]`) use a

@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Search, BookOpen } from "lucide-react";
 import type { Blog } from "@/lib/api";
+import { authorHref } from "./blog-detail-helpers";
 import { BlogCategoryNav } from "./blog-category-nav";
 import { blogDetailHref } from "./blog-detail-helpers";
 import { ScrollToTop } from "./scroll-to-top";
@@ -81,12 +82,22 @@ function BlogMeta({ date, timeRead, lang }: { date: string | null; timeRead: str
   );
 }
 
-function AuthorLink({ author, lang }: { author: string | null; lang: string }) {
+function AuthorLink({
+  author,
+  authorSlug,
+  lang,
+}: {
+  author: string | null;
+  authorSlug?: string | null;
+  lang: string;
+}) {
   if (!author) return null;
-  const authorSlug = author.toLowerCase().replace(/\s+/g, "-");
+  // Same rule as everywhere else: the author's real slug wins (#068).
+  const href = authorHref({ author, authorSlug }, lang);
+  if (!href) return null;
   return (
     <Link
-      href={`/${lang}/blog/author/${authorSlug}/`}
+      href={href}
       className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus hover:underline"
     >
       <div className="flex flex-row items-center gap-3">
@@ -152,7 +163,11 @@ function BlogCard({ blog, lang }: { blog: Blog; lang: string }) {
           </div>
         </div>
         <div>
-          <AuthorLink author={blog.author} lang={lang} />
+          <AuthorLink
+            author={blog.authorProfile?.name ?? blog.author}
+            authorSlug={blog.authorProfile?.slug ?? blog.authorSlug}
+            lang={lang}
+          />
         </div>
       </div>
     </article>

@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { ChevronRight, Home } from "lucide-react";
 import { routing } from "@/i18n/routing";
 
@@ -18,12 +17,13 @@ interface BreadcrumbProps {
 }
 
 /**
- * Breadcrumb navigation component with JSON-LD structured data for SEO.
- * Follows shadcn/ui design patterns with Tailwind CSS.
+ * Visible breadcrumb navigation.
+ *
+ * The BreadcrumbList JSON-LD is NOT emitted here: schema belongs in <head>, and a
+ * component rendered in the page body cannot reach it. `PageBreadcrumbSchema`
+ * (mounted in the layout head) publishes the trail for every page instead (#052).
  */
 export function Breadcrumb({ items, lang, className = "", children }: BreadcrumbProps) {
-  const pathname = usePathname();
-
   // Default locale (vi) has no prefix under localePrefix: 'as-needed'.
   // Strip a leading `/${defaultLocale}` segment from any href so the default
   // locale never shows `/vi` in breadcrumb links (pages still pass `/${locale}/...`).
@@ -44,28 +44,11 @@ export function Breadcrumb({ items, lang, className = "", children }: Breadcrumb
     ...items.map((item) => ({ ...item, href: normalizeHref(item.href) })),
   ];
 
-  // JSON-LD structured data for SEO
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: allItems.map((item, index) => ({
-      "@type": "ListItem",
-      position: index + 1,
-      name: item.label,
-      item: item.href
-        ? `https://esim.vn${item.href}`
-        : `https://esim.vn${pathname}`,
-    })),
-  };
-
+  // No JSON-LD here: the BreadcrumbList belongs in <head>, so it is rendered by
+  // PageBreadcrumbSchema from the layout instead (#052). This component is now
+  // purely the visible trail.
   return (
     <>
-      {/* JSON-LD for SEO */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-
       {/* Visual breadcrumb */}
       <nav
         aria-label="Breadcrumb"

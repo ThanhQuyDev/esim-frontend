@@ -18,7 +18,7 @@
  */
 
 import { useState } from "react";
-import { notFound } from "next/navigation";
+import { notFound, useSearchParams } from "next/navigation";
 import { useLocale } from "next-intl";
 import { TopupModal } from "@/components/layout/sections/profile/topup-modal";
 import { profileTranslations } from "@/components/layout/sections/profile/translations";
@@ -67,10 +67,11 @@ export default function TopupTestPage() {
   const locale = useLocale() as "vi" | "en";
   const [open, setOpen] = useState(false);
 
-  const params =
-    typeof window !== "undefined"
-      ? new URLSearchParams(window.location.search)
-      : new URLSearchParams();
+  // `useSearchParams` rather than `window.location.search`: reading `window`
+  // during render makes the server and client markup disagree, which React
+  // reports as a hydration error and then re-renders the whole tree on the
+  // client.
+  const params = useSearchParams();
 
   const provider = (params.get("provider") ?? "BILLION").toUpperCase();
   const lang = (params.get("lang") as "vi" | "en" | null) ?? locale;

@@ -1,11 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createHash } from "crypto";
+
+import {
+  PARTNER_LINK_CLICKED_AT_COOKIE_NAME,
+  PARTNER_LINK_COOKIE_NAME,
+  PARTNER_LINK_COOKIE_OPTIONS,
+  hashClientIp,
+  recordPartnerLinkClick,
+} from "@/lib/partner-link";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.saily.example.com";
 
-const PARTNER_LINK_COOKIE_NAME = "esim_partner_link";
-const PARTNER_LINK_ATTRIBUTION_DAYS = 30;
+/**
+ * Never cached: this is a click counter as much as a redirect, and a cached
+ * response silently stops recording clicks for the KOL.
+ */
+export const dynamic = "force-dynamic";
 
 /**
  * KOL marketing-link redirect: /go/[code] → records a click against the
@@ -21,49 +31,34 @@ export async function GET(
   const { code } = await params;
   const origin = request.nextUrl.origin;
 
-  let targetPath: string | null = null;
-  try {
-    const clientIp =
-      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-      request.headers.get("x-real-ip") ||
-      "";
-    // Never forward the raw IP — hash it so the backend can dedupe/rate-limit
-    // clicks without storing PII.
-    const ipHash = clientIp
-      ? createHash("sha256").update(clientIp).digest("hex")
-      : undefined;
+  const result = await recordPartnerLinkClick(API_BASE_URL, code, {
+    userAgent: request.headers.get("user-agent") || undefined,
+    referrer: request.headers.get("referer") || undefined,
+    ipHash:
+      hashClientIp(
+        request.headers.get("x-forwarded-for"),
+        request.headers.get("x-real-ip")
+      ) || undefined,
+  });
 
-    const res = await fetch(
-      `${API_BASE_URL}/api/v1/partner-links/${encodeURIComponent(code)}/click`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userAgent: request.headers.get("user-agent") || undefined,
-          referrer: request.headers.get("referer") || undefined,
-          ipHash,
-        }),
-      }
-    );
-
-    if (res.ok) {
-      const data = await res.json().catch(() => null);
-      targetPath = data?.targetPath || null;
-    }
-  } catch {
-    // Best-effort: an unreachable API must not block the redirect.
-  }
-
-  const redirectUrl = targetPath
-    ? new URL(targetPath, origin)
+  const redirectUrl = result?.targetPath
+    ? new URL(result.targetPath, origin)
     : new URL("/", origin);
 
   const response = NextResponse.redirect(redirectUrl);
-  response.cookies.set(PARTNER_LINK_COOKIE_NAME, code, {
-    maxAge: PARTNER_LINK_ATTRIBUTION_DAYS * 24 * 60 * 60,
-    path: "/",
-    sameSite: "lax",
-  });
+  // Set even when the click could not be recorded: an unreachable API must not
+  // cost the partner an attribution the visitor genuinely earned them, and the
+  // backend re-checks the 30-day window at order time anyway.
+  response.cookies.set(
+    PARTNER_LINK_COOKIE_NAME,
+    code,
+    PARTNER_LINK_COOKIE_OPTIONS
+  );
+  response.cookies.set(
+    PARTNER_LINK_CLICKED_AT_COOKIE_NAME,
+    new Date().toISOString(),
+    PARTNER_LINK_COOKIE_OPTIONS
+  );
 
   return response;
 }

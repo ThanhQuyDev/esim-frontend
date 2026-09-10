@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { planVoiceInfo } from "@/lib/plan-voice";
+import { VoiceFeatureRow } from "../voice-feature-row";
 import type { Destination, Plan, Region, SupportedDevicesResponse } from "@/lib/api";
 import { localizedHref } from "@/lib/route-mapping";
 import type { DestinationDict } from "../types";
@@ -208,8 +210,10 @@ export function MobileFeatures({
   // Determine feature values from selected plan
   const hasHotspot = selectedPlan?.hotSpot ?? false;
   const hotSpotAllowGb = selectedPlan?.hotSpotAllow ?? null;
-  const hasCalls = selectedPlan?.call != null && Number(selectedPlan.call) > 0;
-  const hasLocalNumber = false; // eSIM typically doesn't provide local number
+  const voice = planVoiceInfo(selectedPlan);
+  // A plan with calls or SMS necessarily has a phone number (#045). This row
+  // used to be hardcoded "no", which contradicted the Calls & SMS row above it.
+  const hasLocalNumber = voice.hasVoice;
   const hasEkyc = !!selectedPlan?.isKyc;
   const hasTopup = selectedPlan?.topUp ?? true
   const durations = selectedPlan ? selectedPlan?.durationDays : false
@@ -288,7 +292,12 @@ export function MobileFeatures({
             </span>
           )}
         </div>
-        <FeatureRow label={dict.features.calls} value={hasCalls} yesText={dict.features.yes} noText={dict.features.no} />
+        <VoiceFeatureRow
+          label={dict.features.calls}
+          info={voice}
+          dict={dict.features}
+          compact
+        />
         <FeatureRow label={dict.features.localNumber} value={hasLocalNumber} yesText={dict.features.yes} noText={dict.features.no} />
         <FeatureRow label={dict.features.topup} value={hasTopup} yesText={dict.features.yes} noText={dict.features.no} />
         {!hasEkyc && (

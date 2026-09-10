@@ -4,8 +4,15 @@ import { localizedHref } from "@/lib/route-mapping";
 import { localizedSlug } from "@/lib/slug";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useTopDestinations, useSearchDestinations, useSearchRegions, useRegions } from "@/lib/hooks";
+import { useTopDestinations, useSearchDestinations, useSearchRegions, useRegions, useLocalCarriers } from "@/lib/hooks";
 import { useDebounce } from "@/lib/use-debounce";
+import { getCarrierMeta } from "@/components/layout/sections/local-esim/carrier-meta";
+import {
+  matchLocalCarriers,
+  localCarrierHref,
+  localCarrierTitle,
+} from "@/components/layout/sections/local-esim/local-carrier-search";
+import { toRegionListItems, variantCountLabel } from "@/lib/region-groups";
 import type { Locale } from "@/lib/i18n-config";
 
 interface DestinationSearchModalProps {
@@ -44,10 +51,25 @@ export function DestinationSearchModal({
   const { data: searchRegions = [], isFetching: isSearchingReg } =
     useSearchRegions(debouncedQuery, hasSearch);
 
+  // Domestic ("eSIM nội địa") carriers. The list is small and cached, so it is
+  // fetched once with the modal and filtered client-side — searching
+  // "việt nam" / "esim việt nam" / "nội địa" surfaces every carrier, while
+  // "wintel" / "vnsky" narrows to that brand.
+  const { data: localCarriers = [], isLoading: isLoadingLocal } =
+    useLocalCarriers();
+  const matchedCarriers = hasSearch
+    ? matchLocalCarriers(debouncedQuery, localCarriers)
+    : [];
+
+  // Same-named regions with different country counts show up as ONE suggestion
+  // pointing at the group page, in both the default list and the results.
+  const groupedPopularRegions = toRegionListItems(allRegions, lang);
+  const groupedSearchRegions = toRegionListItems(searchRegions, lang);
+
   // Combined Top 10: popular destinations + regions
   const top10Combined = (() => {
     const countryItems = topDestinations.map((d: any) => ({ ...d, _type: "destination" as const }));
-    const regionItems = allRegions.map((r: any) => ({ ...r, _type: "region" as const }));
+    const regionItems = groupedPopularRegions.map((r: any) => ({ ...r, _type: "region" as const }));
     return [...countryItems, ...regionItems].slice(0, 10);
   })();
 
@@ -95,7 +117,7 @@ export function DestinationSearchModal({
   if (!open) return null;
 
   const isLoading = hasSearch
-    ? isSearchingDest || isSearchingReg
+    ? isSearchingDest || isSearchingReg || isLoadingLocal
     : isLoadingTop || isLoadingRegions;
 
   // Format price helper
@@ -112,7 +134,7 @@ export function DestinationSearchModal({
         ...d,
         _type: "destination" as const,
       })),
-      ...searchRegions.map((r: any) => ({
+      ...groupedSearchRegions.map((r: any) => ({
         ...r,
         _type: "region" as const,
         name: r.name,
@@ -237,7 +259,7 @@ export function DestinationSearchModal({
                   </svg>
                 </div>
               ) : hasSearch ? (
-                mergedResults.length === 0 ? (
+                mergedResults.length === 0 && matchedCarriers.length === 0 ? (
                   <div className="col-span-full flex flex-col items-center justify-center py-12 gap-4">
                     <p className="body-sm-medium text-text-secondary">
                       {lang === "vi"
@@ -255,7 +277,78 @@ export function DestinationSearchModal({
                     </a>
                   </div>
                 ) : (
-                  mergedResults.map((item: any) => {
+                  <>
+                    {/* Domestic eSIM carriers — shown first because a
+                        "việt nam" / "esim nội địa" query is asking for exactly
+                        this product, not for a destination page. */}
+                    {matchedCarriers.length > 0 && (
+                      <>
+                        <p className="body-sm-medium text-text-secondary mb-2 md:mb-3 col-span-full scroll-mt-20 xl:scroll-mt-24">
+                          {lang === "vi" ? "eSIM nội địa" : "Domestic eSIM"}
+                        </p>
+                        {matchedCarriers.map((carrier) => {
+                          const meta = getCarrierMeta(carrier.provider);
+                          const priceStr = formatPrice(carrier.fromVndPrice);
+                          const carrierSub = [
+                            priceStr
+                              ? `${lang === "vi" ? "Từ" : "From"} ${priceStr}`
+                              : null,
+                            meta.infra || null,
+                          ]
+                            .filter(Boolean)
+                            .join(" · ");
+
+                          return (
+                            <div key={`local-${carrier.provider}`}>
+                              <a
+                                href={localCarrierHref(lang, carrier.provider)}
+                                data-testid={`search-local-carrier-${carrier.provider}`}
+                                className="align-bottom focus-visible:outline-hidden focus-visible:shadow-focus text-text-primary active:text-text-primary hover:text-text-secondary block h-full group ease-out rounded-[8px] transition-colors duration-medium hover:bg-bg-primary active:bg-bg-primary"
+                                onClick={onClose}
+                              >
+                                <div className="flex flex-col items-start text-left rtl:text-right gap-4 relative h-full bg-white word-break-word transform-gpu border-none p-0 rounded-[8px] transition-colors duration-medium hover:bg-bg-secondary active:bg-bg-primary">
+                                  <div className="flex gap-3 items-center p-3">
+                                    <div
+                                      className="w-[24px] h-[24px] relative overflow-hidden shrink-0 rounded-full flex items-center justify-center text-white font-bold text-[10px]"
+                                      style={{ backgroundColor: meta.logoBg }}
+                                    >
+                                      <span className={meta.italic ? "italic" : undefined}>
+                                        {meta.label.charAt(0).toUpperCase()}
+                                      </span>
+                                    </div>
+                                    <div className="flex flex-col">
+                                      <div className="flex items-center gap-1.5">
+                                        <p className="body-md-medium text-text-primary! scroll-mt-20 xl:scroll-mt-24">
+                                          {localCarrierTitle(lang, carrier.provider)}
+                                        </p>
+                                        <span className="text-center whitespace-nowrap rounded-full inline-block bg-blue-100 text-blue-700 py-0 px-1.5 body-2xs-medium">
+                                          {lang === "vi" ? "Nội địa" : "Domestic"}
+                                        </span>
+                                      </div>
+                                      {carrierSub && (
+                                        <p className="text-xs text-text-tertiary scroll-mt-20 xl:scroll-mt-24">
+                                          <span className="whitespace-normal">
+                                            {carrierSub}
+                                          </span>
+                                        </p>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              </a>
+                            </div>
+                          );
+                        })}
+                      </>
+                    )}
+
+                    {/* Countries + regions */}
+                    {matchedCarriers.length > 0 && mergedResults.length > 0 && (
+                      <p className="body-sm-medium text-text-secondary mb-2 md:mb-3 col-span-full scroll-mt-20 xl:scroll-mt-24">
+                        {lang === "vi" ? "Điểm đến" : "Destinations"}
+                      </p>
+                    )}
+                    {mergedResults.map((item: any) => {
                     const isRegion = item._type === "region";
                     const href = localizedHref(lang, localizedSlug(item, lang));
                     const priceStr = item.minPrice || item.fromPrice
@@ -263,10 +356,12 @@ export function DestinationSearchModal({
                       : null;
                     const subtitle = isRegion
                       ? [
-                        `${item.destinationCount || 0} ${lang === "vi"
-                          ? "quốc gia"
-                          : (item.destinationCount === 1 ? "country" : "countries")
-                        }`,
+                        item.variantCount > 1
+                          ? variantCountLabel(item.variantCount, lang)
+                          : `${item.destinationCount || 0} ${lang === "vi"
+                            ? "quốc gia"
+                            : (item.destinationCount === 1 ? "country" : "countries")
+                          }`,
                         priceStr ? `${lang === "vi" ? "Từ" : "From"} ${priceStr}` : null,
                       ].filter(Boolean).join(" · ")
                       : priceStr
@@ -352,7 +447,8 @@ export function DestinationSearchModal({
                         </a>
                       </div>
                     );
-                  })
+                  })}
+                  </>
                 )
               ) : (
                 /* Default: Most popular destinations + regions */
@@ -369,7 +465,9 @@ export function DestinationSearchModal({
                       : null;
                     const subtitle = isRegionItem
                       ? [
-                        `${item.destinationCount || 0} ${lang === "vi" ? "quốc gia" : (item.destinationCount === 1 ? "country" : "countries")}`,
+                        item.variantCount > 1
+                          ? variantCountLabel(item.variantCount, lang)
+                          : `${item.destinationCount || 0} ${lang === "vi" ? "quốc gia" : (item.destinationCount === 1 ? "country" : "countries")}`,
                         priceStr ? `${lang === "vi" ? "Từ" : "From"} ${priceStr}` : null,
                       ].filter(Boolean).join(" · ")
                       : priceStr

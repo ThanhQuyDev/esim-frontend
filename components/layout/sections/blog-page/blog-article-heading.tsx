@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Calendar, BookOpen } from "lucide-react";
 import type { Blog } from "@/lib/api";
-import { formatDate, formatTimeRead, authorSlug, type SocialLink } from "./blog-detail-helpers";
+import { formatDate, formatTimeRead, authorSlug, authorHref, type SocialLink } from "./blog-detail-helpers";
 import { SocialIconsCol, SocialIconsRow } from "./blog-social-icons";
 
 export function BlogArticleHeading({ blog, lang, socialLinks = [] }: { blog: Blog; lang: string; socialLinks?: SocialLink[] }) {
@@ -53,7 +53,7 @@ export function BlogArticleHeading({ blog, lang, socialLinks = [] }: { blog: Blo
                   <div className="flex">
                     <Link
                       className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus "
-                      href={`/${lang}/blog/author/${authorSlug(authorName)}/`}
+                      href={authorHref(blog, lang) ?? "#"}
                     >
                       <div className="flex flex-row items-center gap-4">
                         {authorAvatarUrl && (

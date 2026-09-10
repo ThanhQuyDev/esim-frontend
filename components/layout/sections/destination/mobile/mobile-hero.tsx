@@ -6,6 +6,7 @@ import type { Destination, Region } from "@/lib/api";
 import { getCloudinaryTransformedUrl } from "@/lib/image-utils";
 import type { DestinationDict } from "../types";
 import { CountriesModal } from "../countries-modal";
+import { applySeoVars, type SeoTemplateVars } from "@/lib/seo-vars";
 
 interface MobileHeroProps {
   destination: Destination;
@@ -13,6 +14,8 @@ interface MobileHeroProps {
   lang: string;
   planSource?: "destination" | "region";
   region?: Region | null;
+  /** Price/name variables for the CMS description paragraph (#050). */
+  descriptionVars?: SeoTemplateVars;
   /** Operator name to seed the countries modal carrier column. */
   operatorName?: string;
 }
@@ -26,7 +29,7 @@ function flagEmoji(countryCode?: string): string {
   return String.fromCodePoint(...codePoints);
 }
 
-export function MobileHero({ destination, dict, lang, planSource = "destination", region, operatorName }: MobileHeroProps) {
+export function MobileHero({ destination, dict, lang, planSource = "destination", region, operatorName, descriptionVars }: MobileHeroProps) {
   const [countriesOpen, setCountriesOpen] = useState(false);
   const heroSrc = getCloudinaryTransformedUrl(destination.avatarUrl, {
     width: 820,
@@ -164,7 +167,12 @@ export function MobileHero({ destination, dict, lang, planSource = "destination"
 
         {/* Description */}
         <p className="px-4 pt-3.5 text-[14.5px] text-[#6b7280] leading-[1.65]">
-          {(lang === "vi" ? destination.descriptionVi : destination.description) || dict.subtitle.replace("{destination}", destination.name)}
+          {applySeoVars(
+            (lang === "vi" ? destination.descriptionVi : destination.description) ||
+              dict.subtitle.replace("{destination}", destination.name),
+            descriptionVars ?? {},
+            { stripUnresolved: true }
+          )}
         </p>
       </div>
 

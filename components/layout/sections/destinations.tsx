@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { MapPin, Loader2 } from "lucide-react";
 import { useDestinations, useRegions } from "@/lib/hooks";
+import { optimizeCloudinary } from "@/lib/cdn-image";
 import type { Locale } from "@/lib/i18n-config";
 import { localizedHref } from "@/lib/route-mapping";
 import { localizedSlug } from "@/lib/slug";
 import { LocalCarrierGrid } from "./local-esim/local-carrier-grid";
+import { toRegionListItems, variantCountLabel } from "@/lib/region-groups";
 
 interface DestinationsSectionProps {
   dict: Record<string, any>;
@@ -57,7 +59,13 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
   ];
 
   const showRegions = activeTab === "region";
-  const displayItems = showRegions ? regions : destinations;
+  // Same-named regions that differ only by country count collapse into one
+  // card linking to the group page (`/esim-chau-a`).
+  const regionItems = useMemo(
+    () => toRegionListItems(regions, lang),
+    [regions, lang]
+  );
+  const displayItems = showRegions ? regionItems : destinations;
   const isLoading = showRegions ? isLoadingRegions : isLoadingDestinations;
 
   return (
@@ -167,7 +175,9 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
                                     loading="lazy"
                                     decoding="async"
                                     className="w-full h-full object-cover absolute inset-0"
-                                    src={item.flagUrl || item.iconUrl}
+                                    width={36}
+                                    height={36}
+                                    src={optimizeCloudinary(item.flagUrl || item.iconUrl, { width: 72 })}
                                   />
                                   <div className="absolute inset-0 rounded-full pointer-events-none border border-[rgba(0,0,0,0.1)]" />
                                 </>
@@ -183,7 +193,9 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
                               <p className="body-md text-text-tertiary">
                                 <span className="whitespace-nowrap">
                                   {showRegions
-                                    ? `${item.fromPrice ? `${dict.from} ${Number(item.fromPrice).toLocaleString("vi-VN")}₫ · ` : ""}${item.destinationCount} ${item.destinationCount === 1 ? (lang === "vi" ? "quốc gia" : "country") : (lang === "vi" ? "quốc gia" : "countries")}`
+                                    ? `${item.fromPrice ? `${dict.from} ${Number(item.fromPrice).toLocaleString("vi-VN")}₫ · ` : ""}${item.variantCount > 1
+                                      ? variantCountLabel(item.variantCount, lang)
+                                      : `${item.destinationCount} ${item.destinationCount === 1 ? (lang === "vi" ? "quốc gia" : "country") : (lang === "vi" ? "quốc gia" : "countries")}`}`
                                     : item.fromPrice
                                       ? `${dict.from} ${Number(item.fromPrice).toLocaleString("vi-VN")}₫`
                                       : ""

@@ -10,6 +10,16 @@ const API_BASE_URL =
 
 // ===== Types (from spec) =====
 
+/** Snippet of the quoted message, sent with any reply (#073). */
+export interface ChatMessageQuote {
+  id: number;
+  senderId: number | null;
+  message: string;
+  fileUrl?: string | null;
+  fileName?: string | null;
+  fileType?: string | null;
+}
+
 export interface ChatMessage {
   id: number;
   chatRoomId: number;
@@ -22,6 +32,8 @@ export interface ChatMessage {
   fileName?: string;
   fileType?: string;
   fileSize?: number;
+  replyToId?: number | null;
+  replyTo?: ChatMessageQuote | null;
 }
 
 export type { FileAttachment } from "@/lib/cloudinary";
@@ -98,7 +110,7 @@ export function useChatSocket() {
   }, [token]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const sendMessage = useCallback(
-    (text: string, attachment?: FileAttachment) => {
+    (text: string, attachment?: FileAttachment, replyToId?: number | null) => {
       if (!socketRef.current || !roomId) return;
       if (!text.trim() && !attachment) return;
 
@@ -106,6 +118,11 @@ export function useChatSocket() {
         chatRoomId: roomId,
         message: text.trim() || (attachment ? "📎" : ""),
       };
+
+      // Quoting an earlier message of this same room (#073)
+      if (replyToId) {
+        payload.replyToId = replyToId;
+      }
 
       if (attachment) {
         payload.fileUrl = attachment.fileUrl;

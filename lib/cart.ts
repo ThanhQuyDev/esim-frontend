@@ -1,6 +1,7 @@
 "use client";
 
 import { roundVndToThousands } from "./utils";
+import { couponDiscountVnd } from "./voucher-preview";
 
 // ===== Cart Types =====
 
@@ -31,6 +32,12 @@ export interface Coupon {
   minAmount?: number;
   minOrderAmountVnd?: number; // VND min order from API
   isPopular?: boolean;
+  /** `fixed` = a flat VND amount off instead of a percentage (#082). */
+  discountType?: "percent" | "fixed";
+  /** Flat VND off, when `discountType` is `fixed`. */
+  discountAmountVnd?: number;
+  /** Ceiling for a percentage code — "15% off, up to 50k". */
+  maxDiscountVnd?: number | null;
 }
 
 export interface Cart {
@@ -121,21 +128,71 @@ export function getSubtotal(items: CartItem[]): number {
   return items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 }
 
-export function getDiscount(subtotal: number, coupon: Coupon | null): number {
+/** The coupon as the shared VND rule wants it (#082). */
+function toDiscountRule(coupon: Coupon) {
+  return {
+    discountPercent: coupon.discount,
+    discountType: coupon.discountType ?? ("percent" as const),
+    discountAmount: coupon.discountAmountVnd ?? 0,
+    maxDiscountAmount: coupon.maxDiscountVnd ?? null,
+  };
+}
+
+/**
+ * USD discount — the fallback display for lines with no VND price.
+ *
+ * A flat-amount or capped code is a VND figure, so it cannot be applied to a
+ * dollar subtotal directly: pass `vndSubtotal` and the same share comes off
+ * both currencies, which is what the server does for order totals (#082).
+ */
+export function getDiscount(
+  subtotal: number,
+  coupon: Coupon | null,
+  vndSubtotal?: number
+): number {
   if (!coupon) return 0;
   // Skip USD minAmount check for API coupons (minOrderAmountVnd is validated separately in VND)
   if (!coupon.minOrderAmountVnd && coupon.minAmount && subtotal < coupon.minAmount) return 0;
-  return (subtotal * coupon.discount) / 100;
+
+  const isPlainPercent =
+    (coupon.discountType ?? "percent") === "percent" && !(coupon.maxDiscountVnd ?? 0);
+  if (isPlainPercent) return (subtotal * coupon.discount) / 100;
+
+  if (!(vndSubtotal && vndSubtotal > 0)) return 0;
+  const share = couponDiscountVnd(toDiscountRule(coupon), vndSubtotal) / vndSubtotal;
+  return Math.round(subtotal * share * 100) / 100;
 }
 
 export function getVndDiscount(subtotal: number, coupon: Coupon | null): number {
   if (!coupon) return 0;
-  return roundVndToThousands((subtotal * coupon.discount) / 100);
+  return couponDiscountVnd(toDiscountRule(coupon), subtotal);
 }
 
-export function getTotal(items: CartItem[], coupon: Coupon | null): number {
+
+/**
+ * How a coupon reads on screen (#082).
+ *
+ * A flat-amount code shown as "-0%" tells the customer nothing, and a capped
+ * one shown as "-15%" promises more than it gives on a large order.
+ */
+export function couponDiscountLabel(coupon: Coupon): string {
+  if ((coupon.discountType ?? "percent") === "fixed") {
+    return `-${(coupon.discountAmountVnd ?? 0).toLocaleString("vi-VN")}₫`;
+  }
+  const cap = coupon.maxDiscountVnd ?? 0;
+  if (cap > 0) {
+    return `-${coupon.discount}% (tối đa ${cap.toLocaleString("vi-VN")}₫)`;
+  }
+  return `-${coupon.discount}%`;
+}
+
+export function getTotal(
+  items: CartItem[],
+  coupon: Coupon | null,
+  vndSubtotal?: number
+): number {
   const subtotal = getSubtotal(items);
-  const discount = getDiscount(subtotal, coupon);
+  const discount = getDiscount(subtotal, coupon, vndSubtotal);
   return Math.max(0, subtotal - discount);
 }
 
@@ -195,7 +252,15 @@ export async function fetchApiCoupons(): Promise<Coupon[]> {
     if (!res.ok) throw new Error(`API ${res.status}`);
     const json = await res.json();
     return (json.data || [])
-      .filter((c: any) => c.isActive && !c.deletedAt && (!c.expiresAt || new Date(c.expiresAt) > new Date()))
+      // `isPublic === false` is a code the admin marked private: it still
+      // works when typed in, but it must never appear in this list (#081).
+      .filter(
+        (c: any) =>
+          c.isActive &&
+          !c.deletedAt &&
+          c.isPublic !== false &&
+          (!c.expiresAt || new Date(c.expiresAt) > new Date()),
+      )
       .map((c: any) => ({
         code: c.code,
         discount: c.discountPercent,
@@ -204,6 +269,10 @@ export async function fetchApiCoupons(): Promise<Coupon[]> {
         minAmount: c.minOrderAmount || 0,
         minOrderAmountVnd: c.minOrderAmount || 0,
         isPopular: !!c.isPopular,
+        discountType: c.discountType === "fixed" ? "fixed" : "percent",
+        discountAmountVnd: Number(c.discountAmount ?? 0),
+        maxDiscountVnd:
+          c.maxDiscountAmount == null ? null : Number(c.maxDiscountAmount),
       }));
   } catch (err) {
     console.warn("Failed to fetch API coupons, falling back to saved:", err);

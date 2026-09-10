@@ -14,6 +14,11 @@ import {
 } from "@/components/layout/sections/destination/lazy-below-fold-sections";
 import { PartnerBar } from "@/components/layout/sections/partner-bar";
 import { getWhyChooseUs } from "@/lib/api";
+import {
+  pickWhyChooseUs,
+  whyChooseUsCount,
+  WHY_CHOOSE_US_POOL_SIZE,
+} from "@/lib/why-choose-us";
 import type { Locale } from "@/lib/i18n-config";
 import type { Metadata } from "next";
 
@@ -70,7 +75,14 @@ export default async function DomesticEsimCarrierPage({
   const whyChooseUsRes = await getWhyChooseUs({
     lang: locale,
     type: "quoc_gia",
+    limit: WHY_CHOOSE_US_POOL_SIZE,
   }).catch(() => ({ data: [] }));
+  // Carrier name fills the copy variables; a random handful of the country-page
+  // reasons is shown rather than always the first six (#087).
+  const whyChooseUsItems = pickWhyChooseUs(whyChooseUsRes.data, {
+    count: whyChooseUsCount("quoc_gia"),
+    vars: { name: meta.label },
+  });
 
   const faqSlugs = [`/esim-noi-dia/${carrier}`, "/destination"];
 
@@ -94,7 +106,7 @@ export default async function DomesticEsimCarrierPage({
         <LazyFeaturesSection
           dict={dict.whyChoose}
           lang={locale}
-          features={whyChooseUsRes.data}
+          features={whyChooseUsItems}
         />
         <PartnerBar dict={dict.partnerBar} />
         <LazyFAQSection

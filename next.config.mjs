@@ -4,6 +4,12 @@ const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // A KOL hands out esim.vn/go/<code>; the handler lives at /api/go/<code>.
+  // Without this the only working link carried an /api/ segment in front of
+  // customers.
+  async rewrites() {
+    return [{ source: "/go/:code", destination: "/api/go/:code" }];
+  },
   experimental: {
     optimizePackageImports: ["lucide-react"],
   },

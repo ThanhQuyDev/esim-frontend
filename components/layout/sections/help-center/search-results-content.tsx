@@ -2,10 +2,10 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Search, X } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import type { HelpCenterArticle } from "@/lib/api";
 import { localizedHref } from "@/lib/route-mapping";
+import { HelpCenterSearchBox } from "./help-center-search-box";
 import { getCategoryLabel, getParentLabel, toLocalizedCategorySlug, toLocalizedParentSlug } from "./category-config";
 import { ScrollToTop } from "./scroll-to-top";
 
@@ -70,7 +70,6 @@ interface SearchResultsContentProps {
 }
 
 export function SearchResultsContent({ lang }: SearchResultsContentProps) {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const query = searchParams.get("q") || "";
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
@@ -79,7 +78,6 @@ export function SearchResultsContent({ lang }: SearchResultsContentProps) {
   const [loading, setLoading] = useState(true);
   const [hasNextPage, setHasNextPage] = useState(false);
   const [total, setTotal] = useState<number | null>(null);
-  const [searchInput, setSearchInput] = useState(query);
 
   const fetchResults = useCallback(async () => {
     if (!query.trim()) {
@@ -121,17 +119,6 @@ export function SearchResultsContent({ lang }: SearchResultsContentProps) {
     fetchResults();
   }, [fetchResults]);
 
-  useEffect(() => {
-    setSearchInput(query);
-  }, [query]);
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchInput.trim()) {
-      router.push(`${localizedHref(lang, "help-center/search")}?q=${encodeURIComponent(searchInput.trim())}`);
-    }
-  };
-
   const totalPages = total ? Math.ceil(total / RESULTS_PER_PAGE) : null;
 
   return (
@@ -139,31 +126,8 @@ export function SearchResultsContent({ lang }: SearchResultsContentProps) {
       {/* Mobile search bar — visible only on mobile, below breadcrumb */}
       <div className="xl:hidden bg-white border-b border-gray-200">
         <div className="container mx-auto px-4 py-3">
-          <form
-            role="search"
-            onSubmit={handleSearchSubmit}
-            className="relative"
-          >
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-            <input
-              type="text"
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              placeholder={lang === "vi" ? "Nhập chủ đề, câu hỏi hoặc vấn đề" : "Type a topic, question or issue here"}
-              aria-label={lang === "vi" ? "Tìm kiếm" : "Search"}
-              className="w-full pl-10 pr-9 py-2.5 text-base rounded-full border border-gray-300 shadow-sm bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
-            />
-            {searchInput && (
-              <button
-                type="button"
-                onClick={() => setSearchInput("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-6 h-6 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-500 hover:text-gray-700 transition-colors cursor-pointer"
-                aria-label={lang === "vi" ? "Xóa tìm kiếm" : "Clear search"}
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            )}
-          </form>
+          {/* Same live-results box as everywhere else in the help centre (#074) */}
+          <HelpCenterSearchBox lang={lang} initialQuery={query} />
         </div>
       </div>
 

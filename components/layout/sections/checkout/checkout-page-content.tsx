@@ -5,7 +5,7 @@ import {
   Mail,
   Phone,
   CreditCard,
-  Building2,
+  QrCode,
   FileText,
   ChevronDown,
   ChevronUp,
@@ -24,7 +24,8 @@ import {
   type CartItem,
   type Coupon,
 } from "@/lib/cart";
-import { useExchangeRate, useCheckout, useCart, convertUsdToVnd, formatVnd, useWalletMe, useMyProfile, useValidateReferral } from "@/lib/hooks";
+import { useExchangeRate, useCheckout, useBankTransferCheckout, useCart, convertUsdToVnd, formatVnd, useWalletMe, useMyProfile, useValidateReferral, type BankTransferCheckoutResponse } from "@/lib/hooks";
+import { BankTransferPanel } from "@/components/layout/sections/payment/bank-transfer-panel";
 import { useAuth } from "@/lib/auth";
 import { walletTranslations } from "@/components/layout/sections/wallet/translations";
 import Link from "next/link";
@@ -77,9 +78,15 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
   // Independent of referralCode/coupon: a buyer can have both a discount code
   // and have arrived via a KOL link.
   const [partnerLinkCode, setPartnerLinkCode] = useState<string | undefined>(undefined);
+  // When that visit happened, so the API can apply the 30-day rule itself
+  // rather than assuming the cookie above expired on time (#095, ý 3).
+  const [partnerLinkClickedAt, setPartnerLinkClickedAt] = useState<string | undefined>(undefined);
 
   const { data: usdToVndRate = 25_500 } = useExchangeRate();
   const checkout = useCheckout();
+  const bankTransferCheckout = useBankTransferCheckout();
+  const [bankTransfer, setBankTransfer] =
+    useState<BankTransferCheckoutResponse | null>(null);
   const { mutateAsync: validateReferral } = useValidateReferral();
   const cart = useCart();
   const { data: wallet } = useWalletMe();
@@ -122,6 +129,12 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
       );
       if (partnerLinkMatch) {
         setPartnerLinkCode(decodeURIComponent(partnerLinkMatch[1]));
+      }
+      const partnerLinkAtMatch = document.cookie.match(
+        /(?:^|;\s*)esim_partner_link_at=([^;]+)/
+      );
+      if (partnerLinkAtMatch) {
+        setPartnerLinkClickedAt(decodeURIComponent(partnerLinkAtMatch[1]));
       }
     } catch {
       // ignore
@@ -270,8 +283,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
       ...(item.durationDays ? { periodNum: item.durationDays } : {}),
     }));
 
-    checkout.mutate(
-      {
+    const payload = {
         token: token || undefined,
         paymentMethod,
         paymentId: "",
@@ -280,6 +292,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
         couponCode: coupon?.code || "",
         referralCode: referralApplied ? referralCode : undefined,
         partnerLinkCode,
+        partnerLinkClickedAt,
         useWalletAmountVnd: actualExuUsed > 0 ? actualExuUsed : undefined,
         // Pass the current locale and a locale-aware absolute return URL so
         // OnePay redirects the buyer back to the result page in the same
@@ -304,48 +317,85 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
             },
           }
           : {}),
-      },
+    };
+
+    /** Bookkeeping both payment methods share once the order exists. */
+    const rememberOrder = (orderNumber: string) => {
+      localStorage.setItem(
+        "esim_last_order",
+        JSON.stringify({
+          orderNumber,
+          items,
+          coupon,
+          email,
+          phone,
+          wantInvoice: wantInvoice ? invoiceInfo : null,
+          paymentMethod,
+          exuUsed: actualExuUsed,
+          referralDiscount: referralDiscountAmount,
+          referralCode: referralApplied ? referralCode : null,
+        })
+      );
+      localStorage.removeItem("esim_checkout_items");
+      localStorage.removeItem("esim_checkout_coupon");
+      localStorage.removeItem("esim_checkout_referral");
+      localStorage.removeItem("esim_checkout_use_exu");
+      localStorage.removeItem("esim_referral_code");
+      removeCoupon();
+    };
+
+    const showError = (error: Error) => {
+      alert(
+        error.message ||
+        (lang === "vi"
+          ? "Lỗi kết nối. Vui lòng thử lại."
+          : "Network error. Please try again.")
+      );
+    };
+
+    // Bank transfer has its own endpoint and never goes to OnePay. Without this
+    // branch the buyer could pick "Chuyển khoản ngân hàng" and still be sent to
+    // the OnePay gateway.
+    if (paymentMethod === "bank_transfer") {
+      bankTransferCheckout.mutate(payload, {
+        onSuccess: (data) => {
+          rememberOrder(data.orderNumber ?? data.orderId ?? "");
+          // `paymentUrl` is only set when the eXU wallet already covered the
+          // whole order — then there is nothing to transfer.
+          if (data.paymentUrl) {
+            window.location.href = data.paymentUrl;
+            return;
+          }
+          setBankTransfer(data);
+        },
+        onError: showError,
+      });
+      return;
+    }
+
+    checkout.mutate(payload,
       {
         onSuccess: (data) => {
           // Persist order info for the result page
-          localStorage.setItem(
-            "esim_last_order",
-            JSON.stringify({
-              orderNumber: data.orderNumber,
-              items,
-              coupon,
-              email,
-              phone,
-              wantInvoice: wantInvoice ? invoiceInfo : null,
-              paymentMethod,
-              exuUsed: actualExuUsed,
-              referralDiscount: referralDiscountAmount,
-              referralCode: referralApplied ? referralCode : null,
-            })
-          );
-
-          // Clear checkout-related localStorage to prevent stale data on next visit
-          localStorage.removeItem("esim_checkout_items");
-          localStorage.removeItem("esim_checkout_coupon");
-          localStorage.removeItem("esim_checkout_referral");
-          localStorage.removeItem("esim_checkout_use_exu");
-          localStorage.removeItem("esim_referral_code");
-          removeCoupon();
+          rememberOrder(data.orderNumber);
 
           // Redirect to OnePay payment gateway (or result page for wallet-only)
           window.location.href = data.paymentUrl;
         },
-        onError: (error) => {
-          alert(
-            error.message ||
-            (lang === "vi"
-              ? "Lỗi kết nối. Vui lòng thử lại."
-              : "Network error. Please try again.")
-          );
-        },
+        onError: showError,
       }
     );
   };
+
+  // Bank-transfer instructions: the order exists and is pending until SePay
+  // confirms the money arrived.
+  if (bankTransfer) {
+    return (
+      <div className="mx-auto w-full max-w-2xl py-6">
+        <BankTransferPanel info={bankTransfer} lang={lang as "en" | "vi"} />
+      </div>
+    );
+  }
 
   // Order Complete Screen
   if (orderComplete) {
@@ -528,6 +578,23 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
             {dict.paymentMethod || "Payment Method"}
           </h3>
 
+          {/* Nothing left to charge: say so, otherwise the customer just sees
+              two greyed-out boxes and no explanation. */}
+          {isWalletOnlyPayment && (
+            <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+              <p className="text-base sm:text-sm font-medium text-emerald-700">
+                {lang === "vi"
+                  ? "Đơn hàng được thanh toán toàn bộ bằng eXU."
+                  : "This order is fully paid with your eXU balance."}
+              </p>
+              <p className="mt-1 text-sm text-emerald-600">
+                {lang === "vi"
+                  ? "Bạn không cần thanh toán thêm, nên các phương thức bên dưới đã được tắt."
+                  : "There is nothing left to pay, so the methods below are disabled."}
+              </p>
+            </div>
+          )}
+
           <div className="space-y-3">
             {/* OnePay */}
             <label
@@ -553,9 +620,12 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
                   <CreditCard className="h-5 w-5 text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-base sm:text-sm font-semibold text-text-primary">OnePay</p>
+                  <p className="text-base sm:text-sm font-semibold text-text-primary">
+                    {dict.cardPayment || "Pay by card"}
+                  </p>
                   <p className="text-sm text-text-tertiary">
-                    {dict.onepayDescription || "Pay with credit/debit card via OnePay"}
+                    {dict.cardPaymentDescription ||
+                      "Domestic ATM, Visa, Mastercard or JCB via the OnePay gateway"}
                   </p>
                 </div>
               </div>
@@ -563,9 +633,12 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
 
             {/* Bank Transfer */}
             <label
-              className={`flex items-center gap-4 rounded-xl border p-4 cursor-pointer transition-colors ${paymentMethod === "bank_transfer"
-                  ? "border-[var(--bg-accent)] bg-yellow-50/30"
-                  : "border-border-primary hover:bg-bg-secondary"
+              aria-disabled={isWalletOnlyPayment}
+              className={`flex items-center gap-4 rounded-xl border p-4 transition-colors ${isWalletOnlyPayment
+                  ? "cursor-not-allowed border-border-primary bg-bg-secondary opacity-45 grayscale"
+                  : paymentMethod === "bank_transfer"
+                    ? "cursor-pointer border-[var(--bg-accent)] bg-yellow-50/30"
+                    : "cursor-pointer border-border-primary hover:bg-bg-secondary"
                 }`}
             >
               <input
@@ -573,19 +646,25 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
                 name="payment"
                 value="bank_transfer"
                 checked={paymentMethod === "bank_transfer"}
+                disabled={isWalletOnlyPayment}
                 onChange={() => setPaymentMethod("bank_transfer")}
-                className="h-4 w-4 accent-[var(--bg-accent)]"
+                className="h-4 w-4 accent-[var(--bg-accent)] disabled:cursor-not-allowed"
               />
               <div className="flex items-center gap-3 flex-1">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
-                  <Building2 className="h-5 w-5 text-green-600" />
+                  <QrCode className="h-5 w-5 text-green-600" />
                 </div>
                 <div>
+                  {/* Named after what the customer gets — a QR to scan — not
+                      after the mechanism. Labelling it "Chuyển khoản ngân hàng"
+                      is why buyers kept picking the card gateway and then
+                      hunting for VietQR inside it. */}
                   <p className="text-base sm:text-sm font-semibold text-text-primary">
-                    {dict.bankTransfer || "Bank Transfer"}
+                    {dict.qrPayment || "Pay by QR code"}
                   </p>
                   <p className="text-sm text-text-tertiary">
-                    {dict.bankTransferDescription || "Transfer directly to our bank account"}
+                    {dict.qrPaymentDescription ||
+                      "Scan the VietQR code in your banking app — confirmed automatically in seconds"}
                   </p>
                 </div>
               </div>

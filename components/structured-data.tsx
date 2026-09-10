@@ -1,62 +1,50 @@
+import { applySeoVars, type SeoTemplateVars } from '@/lib/seo-vars';
+import { isJsonLd, parseScriptBlocks } from '@/lib/script-blocks';
+
 /**
- * Renders structured data (JSON-LD) into the document <head>.
- * Supports both raw JSON-LD content and one or more full <script> tags
- * from the CMS — each <script> tag is preserved as its own element.
+ * Renders the CMS "Schema / Script" block into the document <head>.
  *
- * Uses plain <script> tags (not next/script) so they are emitted
- * server-side inside <head> when this component is placed there.
+ * Parsing lives in lib/script-blocks.ts, which explains why a script's type is
+ * no longer forced to JSON-LD and why external loader tags are kept (#049).
+ *
+ * Uses plain <script> tags (not next/script) so they are emitted server-side
+ * inside <head> when this component is placed there.
  */
-
-interface ParsedScript {
-  type: string;
-  content: string;
-}
-
-function parseTypeAttr(openingTag: string): string {
-  const match = openingTag.match(/type\s*=\s*["']([^"']+)["']/i);
-  return match?.[1] ?? 'application/ld+json';
-}
-
-function parseScripts(raw: string): ParsedScript[] {
-  const scriptRegex = /<script\b([^>]*)>([\s\S]*?)<\/script>/gi;
-  const scripts: ParsedScript[] = [];
-  let match: RegExpExecArray | null;
-
-  while ((match = scriptRegex.exec(raw)) !== null) {
-    const content = match[2].trim();
-    if (!content) continue;
-    scripts.push({
-      type: parseTypeAttr(match[1]),
-      content
-    });
-  }
-
-  return scripts;
-}
-
-export function StructuredData({ data }: { data: string | null }) {
+export function StructuredData({
+  data,
+  vars
+}: {
+  data: string | null;
+  /**
+   * SEO template variables (#047). Applied to JSON-LD blocks ONLY: a pasted
+   * JavaScript snippet may legitimately contain `${…}` template literals, and
+   * rewriting those would corrupt the script.
+   */
+  vars?: SeoTemplateVars;
+}) {
   if (!data) return null;
 
-  const trimmed = data.trim();
-  if (!trimmed) return null;
-
-  // CMS may store one or more full <script> tags. Preserve each tag
-  // separately instead of merging them into a single script element.
-  const scripts = trimmed.toLowerCase().includes('<script')
-    ? parseScripts(trimmed)
-    : [{ type: 'application/ld+json', content: trimmed }];
-
+  const scripts = parseScriptBlocks(data);
   if (scripts.length === 0) return null;
 
   return (
     <>
-      {scripts.map((script, index) => (
-        <script
-          key={index}
-          type={script.type}
-          dangerouslySetInnerHTML={{ __html: script.content }}
-        />
-      ))}
+      {scripts.map((script, index) => {
+        if (!script.content) return <script key={index} {...script.props} />;
+
+        const content =
+          vars && isJsonLd(script)
+            ? applySeoVars(script.content, vars, { stripUnresolved: true })
+            : script.content;
+
+        return (
+          <script
+            key={index}
+            {...script.props}
+            dangerouslySetInnerHTML={{ __html: content }}
+          />
+        );
+      })}
     </>
   );
 }

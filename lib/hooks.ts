@@ -12,7 +12,7 @@ import type {
   LocalCarrier,
 } from "./api";
 import { normalizePlansByDestination } from "./api";
-import type { Locale } from "./i18n-config";
+import { i18n, type Locale } from "./i18n-config";
 import { useAuth, authFetch } from "./auth";
 import {
   getCart as getLocalCart,
@@ -24,6 +24,8 @@ import {
   type Cart,
 } from "./cart";
 import { roundVndToThousands } from "./utils";
+import type { VoucherCandidate } from "./voucher-preview";
+import { pickContextFaqs } from "./faq-context";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.saily.example.com";
@@ -47,6 +49,21 @@ async function clientFetch<T>(
 
 // ===== Query Keys =====
 
+/**
+ * Cache-key fragment for a request localized through the `x-custom-lang`
+ * header.
+ *
+ * Destination, region and plan endpoints answer in whatever language that
+ * header asks for, but the slug in the URL is the SAME across locales
+ * (`/thailand` and `/en/thailand`). Leaving the language out of the key made
+ * those queries collide, so after visiting the English page the cached English
+ * payload was served on the Vietnamese one — the site appeared to "switch
+ * itself to English" mid-session.
+ */
+function langKey(lang?: string): string {
+  return lang || "default";
+}
+
 export const queryKeys = {
   destinations: {
     all: ["destinations"] as const,
@@ -61,7 +78,8 @@ export const queryKeys = {
   },
   plans: {
     all: ["plans"] as const,
-    byDestination: (destinationId: number) => ["plans", "destination", destinationId] as const,
+    byDestination: (destinationId: number, lang?: string) =>
+      ["plans", "destination", destinationId, lang ?? "default"] as const,
   },
   exchangeRate: {
     usdToVnd: ["exchangeRate", "USD", "VND"] as const,
@@ -78,6 +96,10 @@ export const queryKeys = {
     all: ["blogs"] as const,
     list: (lang: string) => ["blogs", "list", lang] as const,
     detail: (id: string) => ["blogs", "detail", id] as const,
+  },
+  coupons: {
+    all: ["coupons"] as const,
+    public: ["coupons", "public"] as const,
   },
 };
 
@@ -110,7 +132,10 @@ export function useSearchDestinations(query: string, enabled = true) {
         "/api/v1/destinations",
         {
           limit: "20",
-          filters: JSON.stringify({ search: query }),
+          // Filter inactive records server-side: they used to be dropped after
+          // the fact, so a page of results could arrive mostly empty and hide
+          // real suggestions behind the 20-row window.
+          filters: JSON.stringify({ search: query, isActive: true }),
         },
         undefined,
         signal
@@ -220,7 +245,11 @@ export function useRegions(
 
 export function useRegionBySlug(slug: string, lang?: string) {
   return useQuery({
-    queryKey: [...queryKeys.regions.all, "detail", slug],
+    // `lang` MUST be part of the key: the response is localized through the
+    // `x-custom-lang` header while the slug is identical in both locales
+    // (`/thailand` and `/en/thailand`), so a shared key would hand the other
+    // language's cached payload back and the page would flip to English.
+    queryKey: [...queryKeys.regions.all, "detail", slug, langKey(lang)],
     queryFn: ({ signal }) =>
       clientFetch<Region>(
         `/api/v1/regions/slug/${encodeURIComponent(slug)}`,
@@ -234,7 +263,7 @@ export function useRegionBySlug(slug: string, lang?: string) {
 
 export function useDestinationBySlug(slug: string, lang?: string) {
   return useQuery({
-    queryKey: [...queryKeys.destinations.all, "detail", slug],
+    queryKey: [...queryKeys.destinations.all, "detail", slug, langKey(lang)],
     queryFn: ({ signal }) =>
       clientFetch<Destination>(
         `/api/v1/destinations/slug/${encodeURIComponent(slug)}`,
@@ -254,7 +283,9 @@ export function useSearchRegions(query: string, enabled = true) {
         "/api/v1/regions",
         {
           limit: "20",
-          filters: JSON.stringify({ search: query }),
+          // Same reason as useSearchDestinations: keep inactive regions out of
+          // the 20-row window so every matching suggestion actually shows.
+          filters: JSON.stringify({ search: query, isActive: true }),
           orderBy: "name",
           order: "ASC"
         },
@@ -288,7 +319,7 @@ interface UseFaqsOptions {
  * backend returns only the FAQs relevant to the current screen.
  */
 export function useFaqs(
-  lang: Locale = "en",
+  lang: Locale = i18n.defaultLocale,
   initialData?: Faq[],
   options?: UseFaqsOptions
 ) {
@@ -311,18 +342,13 @@ export function useFaqs(
             ).catch(() => [] as Faq[]);
           })
         );
-        const seen = new Set<string>();
-        const merged: Faq[] = [];
-        for (const res of results) {
-          const items = Array.isArray(res) ? res : Array.isArray(res?.data) ? res.data : [];
-          for (const faq of items) {
-            if (!seen.has(faq.id)) {
-              seen.add(faq.id);
-              merged.push(faq);
-            }
-          }
-        }
-        return { data: merged, hasNextPage: false } as PaginatedResponse<Faq>;
+        // Priority, not union: a page with its own FAQs must not also show the
+        // blanket ones from `/destination` (#053). Still fetched in parallel —
+        // the requests are cheap and one round trip beats two.
+        return {
+          data: pickContextFaqs(results),
+          hasNextPage: false,
+        } as PaginatedResponse<Faq>;
       }
 
       const params: Record<string, string> = {
@@ -360,7 +386,7 @@ export function useFaqs(
 
 export function usePlansByDestination(destinationId: number, lang?: string) {
   return useQuery({
-    queryKey: queryKeys.plans.byDestination(destinationId),
+    queryKey: queryKeys.plans.byDestination(destinationId, langKey(lang)),
     queryFn: ({ signal }) =>
       clientFetch<PaginatedResponse<Plan>>(
         "/api/v1/plans",
@@ -378,7 +404,7 @@ export function usePlansByDestination(destinationId: number, lang?: string) {
 
 export function usePlansBySlug(slug: string, lang?: string, initialData?: PlansByDestinationResponse) {
   return useQuery({
-    queryKey: [...queryKeys.plans.all, "byDestination", slug || "initial"],
+    queryKey: [...queryKeys.plans.all, "byDestination", slug || "initial", langKey(lang)],
     queryFn: ({ signal }) =>
       clientFetch<PlansByDestinationResponse>(
         `/api/v1/plans/by-destination/${encodeURIComponent(slug)}`,
@@ -396,7 +422,7 @@ export function usePlansBySlug(slug: string, lang?: string, initialData?: PlansB
 
 export function usePlansByRegionSlug(slug: string, lang?: string, initialData?: PlansByDestinationResponse) {
   return useQuery({
-    queryKey: [...queryKeys.plans.all, "byRegion", slug || "initial"],
+    queryKey: [...queryKeys.plans.all, "byRegion", slug || "initial", langKey(lang)],
     queryFn: ({ signal }) =>
       clientFetch<PlansByDestinationResponse>(
         `/api/v1/plans/by-region/${encodeURIComponent(slug)}`,
@@ -442,7 +468,7 @@ export function useLocalPlansByCarrier(
   initialData?: PlansByDestinationResponse
 ) {
   return useQuery({
-    queryKey: [...queryKeys.plans.all, "byCarrier", carrier || "initial"],
+    queryKey: [...queryKeys.plans.all, "byCarrier", carrier || "initial", langKey(lang)],
     queryFn: ({ signal }) =>
       clientFetch<PlansByDestinationResponse>(
         `/api/v1/plans/local/${encodeURIComponent(carrier)}`,
@@ -499,6 +525,31 @@ export function convertUsdToVnd(usdAmount: number, rate: number): number {
   return roundVndToThousands(usdAmount * rate);
 }
 
+// ===== Coupon Hooks =====
+
+/**
+ * Active public coupons, used to show the "price after voucher" on plan pages
+ * (#042). `GET /coupons` is unauthenticated, so this works for guests too.
+ *
+ * Failures resolve to an empty list rather than an error state: a missing
+ * voucher line is invisible, while a broken price block is not.
+ */
+export function usePublicCoupons() {
+  return useQuery({
+    queryKey: queryKeys.coupons.public,
+    queryFn: ({ signal }) =>
+      clientFetch<PaginatedResponse<VoucherCandidate>>(
+        "/api/v1/coupons",
+        { limit: "50", filters: JSON.stringify({ isActive: true }) },
+        undefined,
+        signal
+      ),
+    select: (res) => res?.data ?? [],
+    staleTime: 5 * 60 * 1000,
+    retry: 1,
+  });
+}
+
 /**
  * Format a VND amount: "125.000₫"
  */
@@ -511,7 +562,7 @@ export function formatExu(amount: number): string {
 
 // ===== Why Choose Us Hooks =====
 
-export function useWhyChooseUs(lang: Locale = "en", url?: string) {
+export function useWhyChooseUs(lang: Locale = i18n.defaultLocale, url?: string) {
   return useQuery({
     queryKey: queryKeys.whyChooseUs.list(lang),
     queryFn: ({ signal }) =>
@@ -530,7 +581,7 @@ export function useWhyChooseUs(lang: Locale = "en", url?: string) {
 
 // ===== Blog Hooks =====
 
-export function useBlogs(lang: Locale = "en", limit = 6) {
+export function useBlogs(lang: Locale = i18n.defaultLocale, limit = 6) {
   return useQuery({
     queryKey: queryKeys.blogs.list(lang),
     queryFn: ({ signal }) =>
@@ -775,6 +826,13 @@ export interface CheckoutPayload {
    * time (one benefits the buyer, the other credits the KOL's commission).
    */
   partnerLinkCode?: string;
+  /**
+   * ISO timestamp of that link visit, from the `esim_partner_link_at` cookie.
+   * The API only pays the commission on an order placed within 30 days of it;
+   * omitted for cookies set before this field existed, where the API falls
+   * back to its own click log.
+   */
+  partnerLinkClickedAt?: string;
   useWalletAmountVnd?: number;
   phoneNumber?: string;
   email?: string;
@@ -1306,6 +1364,10 @@ export interface MyOrder {
   couponCode: string | null;
   discountAmount: number;
   createdAt: string;
+  /** Order lines. */
+  itemCount?: number;
+  /** Total eSIMs in the order — quantities summed, not lines counted (#064). */
+  productQuantity?: number;
 }
 
 interface MyOrdersResponse {
@@ -1399,6 +1461,10 @@ export interface EsimDataUsage {
   isUnlimited: boolean;
   status: string;
   lastUpdateTime: string | null;
+  /** When the eSIM first connected; null until it has been activated (#062). */
+  activatedAt?: string | null;
+  /** Plan length in days, for the time bar. */
+  durationDays?: number | null;
 }
 
 export function useEsimDataUsage(esimId: number | null) {
@@ -1700,6 +1766,289 @@ export function useUpdateProfile() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["my-profile"] });
+    },
+  });
+}
+
+// ===== Email change (#057) =====
+
+/**
+ * Extract the field error the API returns as
+ * `{ errors: { email: 'emailAlreadyExists' } }`, so the caller can show a
+ * translated message instead of a raw status code.
+ */
+async function readApiError(res: Response, fallback: string): Promise<string> {
+  const body = await res.json().catch(() => null);
+  const errors = body?.errors as Record<string, string> | undefined;
+  const first = errors ? Object.values(errors)[0] : undefined;
+  return first || body?.message || fallback;
+}
+
+/** The new address a pending email change is waiting on, or null. */
+export function usePendingEmailChange() {
+  const { token } = useAuth();
+  return useQuery({
+    queryKey: ["email-change", "pending", token],
+    enabled: !!token,
+    queryFn: async ({ signal }) => {
+      const res = await authFetch(
+        `${API_BASE_URL}/api/v1/auth/me/email/change`,
+        token,
+        { signal }
+      );
+      if (!res.ok) return { pendingEmail: null as string | null };
+      return res.json() as Promise<{ pendingEmail: string | null }>;
+    },
+  });
+}
+
+/** Step 1: mail a confirmation code to the new address. */
+export function useRequestEmailChange() {
+  const { token } = useAuth();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (email: string) => {
+      const res = await authFetch(
+        `${API_BASE_URL}/api/v1/auth/me/email/change`,
+        token,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        }
+      );
+      if (!res.ok) throw new Error(await readApiError(res, "requestFailed"));
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["email-change", "pending"] });
+    },
+  });
+}
+
+/** Step 2: confirm the code; the account moves to the new address. */
+export function useConfirmEmailChange() {
+  const { token } = useAuth();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: { email: string; code: string }) => {
+      const res = await authFetch(
+        `${API_BASE_URL}/api/v1/auth/me/email/change/confirm`,
+        token,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
+      if (!res.ok) throw new Error(await readApiError(res, "confirmFailed"));
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["my-profile"] });
+      queryClient.invalidateQueries({ queryKey: ["email-change", "pending"] });
+    },
+  });
+}
+
+// ===== Membership ladder (#061) =====
+
+export interface MembershipTierRung {
+  tier: MembershipTier;
+  minimumSpendVnd: number;
+  cashbackPercent: number;
+  referralRewardVnd: number;
+}
+
+/**
+ * Every membership level and what it gives, lowest first.
+ *
+ * Fetched rather than hardcoded so the profile page can never advertise a
+ * cashback rate the backend does not actually pay: it comes from the same
+ * constants the payouts use. Public endpoint, no token needed.
+ */
+export function useMembershipTiers() {
+  return useQuery({
+    queryKey: ["membership-tiers"],
+    queryFn: ({ signal }) =>
+      clientFetch<MembershipTierRung[]>(
+        "/api/v1/membership-tiers",
+        undefined,
+        undefined,
+        signal
+      ),
+    staleTime: 60 * 60 * 1000,
+  });
+}
+
+// ===== Affiliate partner self-service (#095) =====
+
+export type PartnerOrderValidity = "valid" | "pending" | "invalid";
+
+export type PartnerOrderInvalidReason =
+  /** The partner bought through their own link (#095). */
+  | "self_referral"
+  | "order_cancelled"
+  | "commission_reversed"
+  | "no_commission";
+
+export interface PartnerProfile {
+  id: number;
+  partnerType: string;
+  status: string;
+  tierCode?: string | null;
+  contactName?: string | null;
+}
+
+export interface PartnerLink {
+  id: number;
+  code: string;
+  label: string;
+  targetPath?: string | null;
+  status: string;
+  clickCount: number;
+  conversionCount: number;
+  totalCommissionVnd: number | string;
+  createdAt: string;
+}
+
+export interface PartnerOrderRow {
+  orderNumber: string;
+  status: string;
+  vndPrice: number;
+  createdAt: string;
+  commissionVnd: number | null;
+  commissionStatus: string | null;
+  linkCode: string | null;
+  esimCount: number;
+  items: { planName: string; quantity: number }[];
+  validity: PartnerOrderValidity;
+  invalidReason: PartnerOrderInvalidReason | null;
+}
+
+/**
+ * The signed-in user's partner record, or null when they are not a partner.
+ *
+ * `GET /partners/me` is role-guarded, so an ordinary customer gets a 403 here.
+ * That is not an error worth showing or retrying — it just means the Affiliates
+ * tab does not apply to them.
+ */
+export function usePartnerMe() {
+  const { token } = useAuth();
+  return useQuery({
+    queryKey: ["partner-me", token],
+    enabled: !!token,
+    retry: false,
+    queryFn: async ({ signal }): Promise<PartnerProfile | null> => {
+      const res = await authFetch(`${API_BASE_URL}/api/v1/partners/me`, token, {
+        signal,
+      });
+      if (res.status === 403 || res.status === 404) return null;
+      if (!res.ok) throw new Error(`Failed to fetch partner: ${res.status}`);
+      return res.json();
+    },
+  });
+}
+
+export function usePartnerLinks(enabled = true) {
+  const { token } = useAuth();
+  return useQuery({
+    queryKey: ["partner-links", token],
+    enabled: !!token && enabled,
+    retry: false,
+    queryFn: async ({ signal }): Promise<PartnerLink[]> => {
+      const res = await authFetch(
+        `${API_BASE_URL}/api/v1/partners/me/links`,
+        token,
+        { signal }
+      );
+      if (!res.ok) throw new Error(`Failed to fetch links: ${res.status}`);
+      return res.json();
+    },
+  });
+}
+
+export function usePartnerOrders(enabled = true) {
+  const { token } = useAuth();
+  return useQuery({
+    queryKey: ["partner-orders", token],
+    enabled: !!token && enabled,
+    retry: false,
+    queryFn: async ({ signal }): Promise<PartnerOrderRow[]> => {
+      const res = await authFetch(
+        `${API_BASE_URL}/api/v1/partners/me/orders`,
+        token,
+        { signal }
+      );
+      if (!res.ok) throw new Error(`Failed to fetch orders: ${res.status}`);
+      return res.json();
+    },
+  });
+}
+
+export function useCreatePartnerLink() {
+  const { token } = useAuth();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: {
+      label: string;
+      code?: string;
+      targetPath?: string;
+    }): Promise<PartnerLink> => {
+      const res = await authFetch(
+        `${API_BASE_URL}/api/v1/partners/me/links`,
+        token,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        // A taken code comes back as a field error; surfacing it verbatim is
+        // the difference between "try another code" and a dead end.
+        const fieldError =
+          err?.errors && typeof err.errors === "object"
+            ? Object.values(err.errors as Record<string, string>)[0]
+            : null;
+        throw new Error(
+          fieldError || err?.message || `Failed to create link: ${res.status}`
+        );
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["partner-links"] });
+    },
+  });
+}
+
+export interface PartnerWalletSummary {
+  balanceVnd: number;
+  availableBalanceVnd: number;
+  /** Already claimed by a withdrawal request that has not been paid yet. */
+  pendingPayoutVnd: number;
+  /** Earned but still awaiting reconciliation (#095, ý 2). */
+  pendingCommissionVnd: number;
+  /** Lifetime total actually paid out. */
+  withdrawnVnd: number;
+  status: string;
+}
+
+export function usePartnerWallet(enabled = true) {
+  const { token } = useAuth();
+  return useQuery({
+    queryKey: ["partner-wallet", token],
+    enabled: !!token && enabled,
+    retry: false,
+    queryFn: async ({ signal }): Promise<PartnerWalletSummary> => {
+      const res = await authFetch(
+        `${API_BASE_URL}/api/v1/partners/me/wallet`,
+        token,
+        { signal }
+      );
+      if (!res.ok) throw new Error(`Failed to fetch wallet: ${res.status}`);
+      return res.json();
     },
   });
 }

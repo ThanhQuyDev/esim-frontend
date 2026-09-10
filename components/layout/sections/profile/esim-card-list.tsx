@@ -1,5 +1,6 @@
 "use client";
 
+import { esimQrLogoSettings } from "@/lib/esim-qr";
 import { useState, useEffect } from "react";
 import {
   Copy,
@@ -116,12 +117,7 @@ function QrCodeImage({ lpa }: { lpa: string }) {
         value={lpa}
         size={180}
         level="H"
-        imageSettings={{
-          src: 'https://res.cloudinary.com/drozbviwb/image/upload/v1780067058/logo_esimvn_zycejk.png',
-          height: 24,
-          width: 116,
-          excavate: true,
-        }}
+        imageSettings={esimQrLogoSettings(180)}
       />
       <p className="text-sm text-gray-400 text-center max-w-[200px] break-all leading-tight">
         {lpa}
@@ -181,7 +177,21 @@ function DataUsageBar({ label, used, total, unit, isUnlimited }: {
   );
 }
 
-function DataUsageSection({ esimId, lang }: { esimId: number; lang: string }) {
+/** Provider status codes are English enum values; customers read Vietnamese. */
+function statusLabel(status: string | undefined, lang: string): string {
+  const key = (status ?? "").toUpperCase();
+  const labels: Record<string, { vi: string; en: string }> = {
+    ACTIVE: { vi: "Đang dùng", en: "Active" },
+    NOT_ACTIVE: { vi: "Chưa kích hoạt", en: "Not activated" },
+    EXPIRED: { vi: "Hết hạn", en: "Expired" },
+    USED_UP: { vi: "Hết dung lượng", en: "Used up" },
+  };
+  const known = labels[key];
+  if (known) return lang === "vi" ? known.vi : known.en;
+  return status || (lang === "vi" ? "Không rõ" : "Unknown");
+}
+
+export function DataUsageSection({ esimId, lang }: { esimId: number; lang: string }) {
   const { data: usage, isLoading, isError } = useEsimDataUsage(esimId);
 
   if (isLoading) {
@@ -210,10 +220,29 @@ function DataUsageSection({ esimId, lang }: { esimId: number; lang: string }) {
   const usedGb = usage.dataUsed / 1024;
   const remainingGb = usage.remaining / 1024;
 
-  // Calculate days remaining from expiredAt
-  const daysRemaining = usage.expiredAt
-    ? Math.max(0, Math.ceil((new Date(usage.expiredAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+  // Time left runs from the moment the eSIM first connected — the plan clock
+  // does not start at purchase (#062).
+  const activatedAt = usage.activatedAt ? new Date(usage.activatedAt) : null;
+  const expiresAt = usage.expiredAt ? new Date(usage.expiredAt) : null;
+  const isActivated = !!activatedAt || usage.status?.toUpperCase() === "ACTIVE";
+
+  const daysRemaining = expiresAt
+    ? Math.max(0, Math.ceil((expiresAt.getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
     : null;
+
+  // Days already used, for a bar that reads like the data one.
+  const totalDays =
+    usage.durationDays ??
+    (activatedAt && expiresAt
+      ? Math.max(
+          1,
+          Math.round((expiresAt.getTime() - activatedAt.getTime()) / (1000 * 60 * 60 * 24))
+        )
+      : null);
+  const daysUsed =
+    totalDays !== null && daysRemaining !== null
+      ? Math.min(totalDays, Math.max(0, totalDays - daysRemaining))
+      : null;
 
   const statusColor: Record<string, string> = {
     ACTIVE: "bg-emerald-100 text-emerald-700",
@@ -227,19 +256,54 @@ function DataUsageSection({ esimId, lang }: { esimId: number; lang: string }) {
         <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">
           {lang === "vi" ? "Dữ liệu sử dụng" : "Data Usage"}
         </h4>
-        <span className={`inline-flex items-center px-2 py-0.5 text-sm font-medium rounded-full ${statusColor[usage.status] || "bg-gray-100 text-gray-500"}`}>
-          {usage.status}
+        <span
+          data-testid="usage-status"
+          className={`inline-flex items-center px-2 py-0.5 text-sm font-medium rounded-full ${statusColor[usage.status?.toUpperCase()] || "bg-gray-100 text-gray-500"}`}
+        >
+          {statusLabel(usage.status, lang)}
         </span>
       </div>
 
-      {/* Data bar */}
-      <DataUsageBar
-        label={lang === "vi" ? "Dữ liệu" : "Data"}
-        used={usedGb}
-        total={totalGb}
-        unit="GB"
-        isUnlimited={usage.isUnlimited}
-      />
+      {/* Data bar. Some providers report only what has been used and never the
+          package size; a bar drawn against 0 would read "0 GB left" on a plan
+          that is barely touched, so show the usage as a figure instead (#065). */}
+      {usage.isUnlimited || totalGb > 0 ? (
+        <DataUsageBar
+          label={lang === "vi" ? "Dữ liệu" : "Data"}
+          used={usedGb}
+          total={totalGb}
+          unit="GB"
+          isUnlimited={usage.isUnlimited}
+        />
+      ) : (
+        <div data-testid="data-used-only" className="flex items-center justify-between">
+          <span className="text-sm font-medium text-gray-600">
+            {lang === "vi" ? "Dữ liệu" : "Data"}
+          </span>
+          <span className="text-sm font-semibold text-gray-900">
+            {lang === "vi" ? "Đã dùng" : "Used"} {usedGb.toFixed(usedGb < 100 ? 1 : 0)} GB
+          </span>
+        </div>
+      )}
+
+      {/* Time bar — same shape as the data bar, per #062 */}
+      {isActivated && totalDays !== null && daysUsed !== null ? (
+        <div data-testid="time-bar">
+          <DataUsageBar
+            label={lang === "vi" ? "Thời gian sử dụng" : "Usage period"}
+            used={daysUsed}
+            total={totalDays}
+            unit={lang === "vi" ? "ngày" : "days"}
+            isUnlimited={false}
+          />
+        </div>
+      ) : (
+        <p data-testid="not-activated" className="text-sm text-gray-500">
+          {lang === "vi"
+            ? "Chưa kích hoạt — thời gian sử dụng bắt đầu tính từ khi eSIM kết nối mạng lần đầu."
+            : "Not activated yet — the usage period starts when the eSIM first connects to a network."}
+        </p>
+      )}
 
       {/* Summary cards */}
       <div className="grid grid-cols-2 gap-2">

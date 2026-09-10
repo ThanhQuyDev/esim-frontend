@@ -123,12 +123,12 @@ export function DeviceChecker({ dict, lang }: DeviceCheckerProps) {
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder={lang === "en" ? "e.g. iPhone 15, Samsung S24, …" : "VD: iPhone 15, Samsung S24, …"}
-            className="flex-1 px-4 py-[9px] border border-[#e5e7eb] rounded-full text-base sm:text-sm text-[#111] placeholder:text-[#9ca3af] outline-none bg-white transition-colors focus:border-gray-700 font-[inherit]"
+            className="flex-1 min-w-0 px-4 py-[9px] border border-[#e5e7eb] rounded-full text-base sm:text-sm text-[#111] placeholder:text-[#9ca3af] outline-none bg-white transition-colors focus:border-gray-700 font-[inherit]"
           />
           <button
             onClick={() => handleCheck()}
             disabled={isChecking || !query.trim()}
-            className="px-5 py-[9px] bg-[#111] text-white text-sm font-medium rounded-full border-none cursor-pointer font-[inherit] whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+            className="shrink-0 px-5 py-[9px] bg-[#111] text-white text-sm font-medium rounded-full border-none cursor-pointer font-[inherit] whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isChecking ? dict.deviceCheck.checking : dict.deviceCheck.button}
           </button>

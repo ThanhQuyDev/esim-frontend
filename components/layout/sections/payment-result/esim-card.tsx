@@ -1,5 +1,6 @@
 "use client";
 
+import { esimQrLogoSettings } from "@/lib/esim-qr";
 import { Smartphone, Globe, Wifi, Calendar, QrCode } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { CopyableField } from "./copyable-field";
@@ -15,7 +16,6 @@ interface EsimCardProps {
   t: PaymentResultDict;
 }
 
-const ESIMVN_LOGO = 'https://res.cloudinary.com/drozbviwb/image/upload/v1780067058/logo_esimvn_zycejk.png';
 
 function LpaQrCode({ lpa, scanLabel }: { lpa: string; scanLabel: string }) {
   return (
@@ -25,12 +25,7 @@ function LpaQrCode({ lpa, scanLabel }: { lpa: string; scanLabel: string }) {
         value={lpa}
         size={192}
         level="H"
-        imageSettings={{
-          src: ESIMVN_LOGO,
-          height: 24,
-          width: 116,
-          excavate: true,
-        }}
+        imageSettings={esimQrLogoSettings(192)}
       />
       <p className="text-sm text-gray-500 mt-3">{scanLabel}</p>
     </div>

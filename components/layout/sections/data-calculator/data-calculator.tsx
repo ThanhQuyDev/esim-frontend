@@ -18,6 +18,8 @@ import {
 import Image from "next/image";
 import { ACTIVITIES, PROFILE_PRESETS, DATA_RATES } from "./calculator-data";
 import { DonutChart } from "./donut-chart";
+import { PlanSuggestions } from "./plan-suggestions";
+import type { Locale } from "@/lib/i18n-config";
 
 const ICON_MAP: Record<string, React.ElementType> = {
   smartphone: Smartphone,
@@ -41,9 +43,10 @@ const PROFILE_IMAGES: Record<string, string> = {
 
 interface DataCalculatorProps {
   dict: Record<string, any>;
+  lang: Locale;
 }
 
-export function DataCalculator({ dict }: DataCalculatorProps) {
+export function DataCalculator({ dict, lang }: DataCalculatorProps) {
   const [selectedProfile, setSelectedProfile] = useState("casual_browser");
   const [values, setValues] = useState<Record<string, number>>(
     () => PROFILE_PRESETS[0].values
@@ -162,6 +165,8 @@ export function DataCalculator({ dict }: DataCalculatorProps) {
             {dict.estimatedUsage}
           </p>
           <DonutChart values={values} dict={dict} />
+          {/* Which plan actually covers that estimate (#078) */}
+          <PlanSuggestions values={values} dict={dict} lang={lang} />
         </div>
 
         <button
@@ -177,6 +182,7 @@ export function DataCalculator({ dict }: DataCalculatorProps) {
       <MobileBottomBar
         values={values}
         dict={dict}
+        lang={lang}
         onReset={handleReset}
       />
     </div>
@@ -363,10 +369,12 @@ function ActivityControl({
 function MobileBottomBar({
   values,
   dict,
+  lang,
   onReset,
 }: {
   values: Record<string, number>;
   dict: Record<string, any>;
+  lang: Locale;
   onReset: () => void;
 }) {
   const [showResults, setShowResults] = useState(false);
@@ -456,6 +464,9 @@ function MobileBottomBar({
               </button>
             </div>
             <DonutChart values={values} dict={dict} />
+            <div className="mt-6">
+              <PlanSuggestions values={values} dict={dict} lang={lang} />
+            </div>
             <button
               onClick={handleClose}
               className="w-full mt-6 text-center text-primary bg-bg-accent hover:bg-bg-accent-hover rounded-full transition-colors py-3 body-md-medium"

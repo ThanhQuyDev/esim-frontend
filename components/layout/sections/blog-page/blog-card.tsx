@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { BookOpen } from "lucide-react";
 import type { Blog } from "@/lib/api";
+import { authorHref } from "./blog-detail-helpers";
 
 function formatDate(dateStr: string | null): string {
   if (!dateStr) return "";
@@ -101,11 +102,13 @@ export function AuthorLink({
   lang: string;
 }) {
   if (!author) return null;
-  const slug = profileSlug || author.toLowerCase().replace(/\s+/g, "-");
-  const prefix = lang === "vi" ? "" : `/${lang}`;
+  // One shared rule for author links: the profile slug wins, the name is only a
+  // fallback, and it is normalized the way the backend stores it (#068).
+  const href = authorHref({ author, authorSlug: profileSlug }, lang);
+  if (!href) return null;
   return (
     <Link
-      href={`${prefix}/blog/author/${slug}/`}
+      href={href}
       className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus"
     >
       <div className="flex flex-row items-center gap-3">

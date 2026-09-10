@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { BookOpen } from "lucide-react";
 import type { Blog } from "@/lib/api";
-import { formatDate, formatTimeRead, authorSlug, categorySlug, blogDetailHref, type SocialLink } from "./blog-detail-helpers";
+import { formatDate, formatTimeRead, authorSlug, authorHref, categorySlug, blogDetailHref, type SocialLink } from "./blog-detail-helpers";
 import { SocialIconsRow } from "./blog-social-icons";
 
 function RelatedArticle({ article, lang }: { article: Blog; lang: string }) {
@@ -114,7 +114,7 @@ export function BlogArticleFooter({ blog, lang, socialLinks }: { blog: Blog; lan
                   <div>
                     <Link
                       className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus group"
-                      href={`/${lang}/blog/author/${authorSlug(authorName)}/`}
+                      href={authorHref(blog, lang) ?? "#"}
                     >
                       <div className="flex flex-col sm:flex-row gap-3 sm:gap-6">
                         {/* Desktop avatar */}

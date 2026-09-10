@@ -5,6 +5,7 @@ import type { DestinationDict } from "../types";
 import { calcTotalVndPrice, calcTotalVndRetailPrice, getFixedVndPrice } from "../types";
 import { formatVnd } from "@/lib/hooks";
 import { roundVndToThousands } from "@/lib/utils";
+import { VoucherPrice } from "../voucher-price";
 
 interface MobilePriceProps {
   selectedPlan: Plan | null;
@@ -101,6 +102,10 @@ export function MobilePrice({
             <span className="text-[#6b7280] text-sm hidden min-[841px]:inline">{planLabel}</span>
             <span className="text-[#6b7280] text-sm min-[841px]:hidden">{planLabel.split("·").slice(0, 2).join("·").trim()}</span>
           </div>
+        )}
+        {/* What the buyer actually pays once the house voucher is applied (#042) */}
+        {selectedPlan && (
+          <VoucherPrice totalVnd={totalPrice} dict={dict} className="mt-2.5" />
         )}
       </div>
 

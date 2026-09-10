@@ -1,10 +1,35 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback, type FormEvent, type ChangeEvent } from "react";
-import { useChatSocket, type ChatMessage } from "@/lib/chat-socket";
+import { useChatSocket, type ChatMessage, type ChatMessageQuote } from "@/lib/chat-socket";
 import { uploadToCloudinary, validateChatFile, type FileAttachment } from "@/lib/cloudinary";
 import { useAuth } from "@/lib/auth";
-import { MessageCircle, X, Send, Loader2, Paperclip, Image as ImageIcon } from "lucide-react";
+import { MessageCircle, X, Send, Loader2, Paperclip, Image as ImageIcon, CornerUpLeft } from "lucide-react";
+
+// ===== Quoted-message helpers (#073) =====
+
+/**
+ * One line describing a quoted message. Attachment-only messages are stored
+ * with the placeholder "📎", which says nothing in a quote — fall back to the
+ * file name so the customer recognises what is being answered.
+ */
+function quoteSummary(quote: Pick<ChatMessageQuote, "message" | "fileName" | "fileType">) {
+  const text = quote.message?.trim();
+  if (text && text !== "📎") return text;
+  if (quote.fileType?.startsWith("image/")) return quote.fileName || "Hình ảnh";
+  if (quote.fileType?.startsWith("video/")) return quote.fileName || "Video";
+  return quote.fileName || "Tệp đính kèm";
+}
+
+/**
+ * Who wrote a quoted message, from the customer's point of view. The widget
+ * only ever has two sides plus the bot, so no user lookup is needed.
+ */
+function quoteAuthorName(senderId: number | null, viewerId: number | null) {
+  if (senderId === null) return "Hệ thống";
+  if (viewerId !== null && senderId === viewerId) return "Bạn";
+  return "Hỗ trợ viên";
+}
 
 // ===== Browser Title Notification Hook =====
 
@@ -134,6 +159,8 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
   const { connected, messages, sendMessage, error, userId, markAsRead } = useChatSocket();
   const [input, setInput] = useState("");
   const [uploading, setUploading] = useState(false);
+  /** Message being quoted, cleared once the reply is sent (#073). */
+  const [replyTo, setReplyTo] = useState<ChatMessage | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -152,9 +179,21 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
-    sendMessage(input);
+    sendMessage(input, undefined, replyTo?.id);
     setInput("");
+    setReplyTo(null);
   };
+
+  const startReply = useCallback((message: ChatMessage) => {
+    setReplyTo(message);
+    inputRef.current?.focus();
+  }, []);
+
+  /** Scroll the quoted original into view when its quote is tapped (#073). */
+  const jumpToMessage = useCallback((messageId: number) => {
+    const target = document.getElementById(`chat-msg-${messageId}`);
+    target?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, []);
 
   const handleFileSelect = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -166,8 +205,9 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
     setUploading(true);
     try {
       const attachment = await uploadToCloudinary(file);
-      sendMessage(input || "", attachment);
+      sendMessage(input || "", attachment, replyTo?.id);
       setInput("");
+      setReplyTo(null);
     } catch {
       // Upload failed silently
     } finally {
@@ -175,7 +215,7 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
       // Reset file input
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
-  }, [input, sendMessage]);
+  }, [input, sendMessage, replyTo]);
 
   return (
     <div
@@ -223,15 +263,53 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
         )}
 
         {messages.map((msg) => (
-          <MessageBubble key={msg.id} message={msg} isOwn={msg.senderId === userId} />
+          <MessageBubble
+            key={msg.id}
+            message={msg}
+            isOwn={msg.senderId === userId}
+            viewerId={userId}
+            onReply={startReply}
+            onJumpToQuoted={jumpToMessage}
+          />
         ))}
 
         <div ref={messagesEndRef} />
       </div>
 
+      {/* Quoted message chip — the reply the customer is about to send (#073) */}
+      {replyTo && (
+        <div
+          className="flex items-center gap-2 border-t border-gray-200 bg-gray-50 px-3 py-2"
+          data-testid="chat-reply-preview"
+        >
+          <CornerUpLeft className="h-4 w-4 shrink-0 text-gray-400" aria-hidden="true" />
+          <div className="min-w-0 flex-1 border-l-2 border-[#5353ff] pl-2">
+            <p className="truncate text-[12px] font-medium text-gray-600">
+              Đang trả lời {quoteAuthorName(replyTo.senderId, userId).toLowerCase()}
+            </p>
+            <p className="truncate text-[12px] text-gray-500">{quoteSummary(replyTo)}</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setReplyTo(null)}
+            className="shrink-0 rounded-full p-1 text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-600"
+            aria-label="Hủy trả lời"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
+
       {/* Input area */}
       <form
         onSubmit={handleSubmit}
+        onKeyDown={(e) => {
+          // Esc backs out of the quote without clearing what has been typed
+          if (e.key === "Escape" && replyTo) {
+            e.preventDefault();
+            setReplyTo(null);
+          }
+        }}
         className="flex items-center gap-2 border-t border-gray-200 bg-white px-3 py-2"
       >
         {/* File attachment button */}
@@ -289,9 +367,15 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
 function MessageBubble({
   message,
   isOwn,
+  viewerId,
+  onReply,
+  onJumpToQuoted,
 }: {
   message: ChatMessage;
   isOwn: boolean;
+  viewerId: number | null;
+  onReply?: (message: ChatMessage) => void;
+  onJumpToQuoted?: (messageId: number) => void;
 }) {
   const time = new Date(message.createdAt).toLocaleTimeString("vi-VN", {
     hour: "2-digit",
@@ -302,7 +386,11 @@ function MessageBubble({
   const hasTextContent = !!(message.message && message.message !== "📎");
 
   return (
-    <div className={`flex ${isOwn ? "justify-end" : "justify-start"}`}>
+    <div
+      id={`chat-msg-${message.id}`}
+      data-testid={`chat-msg-${message.id}`}
+      className={`group flex scroll-mt-4 ${isOwn ? "justify-end" : "justify-start"}`}
+    >
       {/* Admin logo — shown before admin messages */}
       {!isOwn && (
         <div className="flex-shrink-0 mr-2 mt-1">
@@ -322,6 +410,32 @@ function MessageBubble({
               : "px-3.5 py-2 bg-white text-gray-800 border border-gray-200 rounded-bl-md"
         }`}
       >
+        {/* Quoted message — what this reply is answering (#073) */}
+        {message.replyTo && (
+          <button
+            type="button"
+            onClick={() => onJumpToQuoted?.(message.replyTo!.id)}
+            data-testid={`chat-quote-${message.id}`}
+            className={`mb-1.5 block w-full border-l-2 pl-2 text-left ${
+              hasImage && !hasTextContent ? "px-3.5 pt-2" : ""
+            } ${isOwn ? "border-white/60" : "border-[#5353ff]"}`}
+            title="Xem tin nhắn gốc"
+          >
+            <span
+              className={`block truncate text-[12px] font-medium ${
+                isOwn ? "text-white/85" : "text-gray-600"
+              }`}
+            >
+              {quoteAuthorName(message.replyTo.senderId, viewerId)}
+            </span>
+            <span
+              className={`block truncate text-[12px] ${isOwn ? "text-white/70" : "text-gray-500"}`}
+            >
+              {quoteSummary(message.replyTo)}
+            </span>
+          </button>
+        )}
+
         {/* File attachment preview */}
         {message.fileUrl && message.fileType?.startsWith("image/") && (
           <a href={message.fileUrl} target="_blank" rel="noopener noreferrer" className="block">
@@ -353,6 +467,21 @@ function MessageBubble({
           {time}
         </p>
       </div>
+
+      {/* Reply affordance. Always visible on touch — there is no hover there —
+          and revealed on hover from a pointer, so the thread stays clean (#073). */}
+      {onReply && (
+        <button
+          type="button"
+          onClick={() => onReply(message)}
+          data-testid={`chat-reply-${message.id}`}
+          className="ml-1 mt-1 flex h-7 w-7 shrink-0 items-center justify-center self-start rounded-full text-gray-400 transition-opacity hover:bg-gray-200 hover:text-gray-600 sm:opacity-0 sm:group-hover:opacity-100 sm:focus-visible:opacity-100"
+          aria-label="Trả lời tin nhắn này"
+          title="Trả lời tin nhắn này"
+        >
+          <CornerUpLeft className="h-3.5 w-3.5" />
+        </button>
+      )}
     </div>
   );
 }

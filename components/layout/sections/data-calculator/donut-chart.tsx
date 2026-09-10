@@ -3,43 +3,60 @@
 import { useState } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import { DATA_RATES, CHART_COLORS } from "./calculator-data";
+import {
+  buildDonutSegments,
+  formatData,
+  formatHours,
+  formatShare,
+  monthlyMb,
+  totalDailyMb,
+} from "@/lib/data-calculator-chart";
 
 interface DonutChartProps {
   values: Record<string, number>;
   dict: Record<string, any>;
 }
 
-function formatGB(mb: number): string {
-  if (mb >= 1000) return `${(mb / 1000).toFixed(1)} GB`;
-  if (mb > 0) return `${Math.round(mb)} MB`;
-  return "0 GB";
+const EMPTY_COLOR = "#E2E2E4";
+
+function interpolate(template: string, vars: Record<string, string | number>): string {
+  return template.replace(/\{\{\s*(\w+)\s*\}\}/g, (_, key) =>
+    key in vars ? String(vars[key]) : "",
+  );
 }
 
+/**
+ * Ring of estimated data usage (#077).
+ *
+ * Slices are exactly proportional to the data each activity uses: no padding
+ * angle (it used to swallow the small activities whole) and no zero-data
+ * slices (they shifted the hover index onto the wrong activity). Separation
+ * comes from a stroke, which is painted on top and does not change any angle.
+ *
+ * Hovering either the ring or a legend row highlights the same activity, and
+ * the legend spells out the data and share behind every colour so the picture
+ * can be checked against the numbers.
+ */
 export function DonutChart({ values, dict }: DonutChartProps) {
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [activeKey, setActiveKey] = useState<string | null>(null);
 
-  const segments = Object.entries(values)
-    .filter(([, hours]) => hours > 0)
-    .map(([key, hours]) => ({
-      key,
-      name: dict.activities?.[key]?.title || key,
-      hours,
-      value: hours * (DATA_RATES[key] || 0),
-      color: CHART_COLORS[key] || "#E2E2E4",
-    }));
+  const segments = buildDonutSegments(values, {
+    rates: DATA_RATES,
+    colors: CHART_COLORS,
+    label: (key) => dict.activities?.[key]?.title,
+  });
 
-  const totalDailyMB = segments.reduce((sum, s) => sum + s.value, 0);
-  const totalMonthlyMB = totalDailyMB * 30;
+  const dailyMb = totalDailyMb(segments);
+  const hasData = segments.length > 0 && dailyMb > 0;
 
-  // If no data, show empty ring
-  const chartData =
-    segments.length > 0 && totalDailyMB > 0
-      ? segments
-      : [{ key: "empty", name: "Empty", hours: 0, value: 1, color: "#E2E2E4" }];
+  const chartData = hasData
+    ? segments
+    : [{ key: "empty", name: "", hours: 0, dailyMb: 1, share: 1, color: EMPTY_COLOR }];
 
-  const legendItems = segments.filter((s) => s.value > 0);
+  const activeSegment = segments.find((segment) => segment.key === activeKey) ?? null;
 
-  const activeSegment = activeIndex !== null ? chartData[activeIndex] : null;
+  const perDayLabel: string = dict.perDay ?? "mỗi ngày";
+  const hoursPerDayTemplate: string = dict.hoursPerDay ?? "{{hours}} h/day";
 
   return (
     <div className="flex flex-col gap-6 w-full">
@@ -47,22 +64,33 @@ export function DonutChart({ values, dict }: DonutChartProps) {
         <div className="relative flex items-center justify-center">
           {/* Center label */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-            <div className="flex flex-col items-center">
-              {activeSegment && activeSegment.key !== "empty" ? (
+            <div className="flex flex-col items-center text-center px-8">
+              {activeSegment ? (
+                /* Data first, time underneath — this is a data calculator, the
+                   gigabytes are the answer and the hours are the input. */
                 <>
                   <p className="body-xs text-text-tertiary">{activeSegment.name}</p>
-                  <p className="heading-xl text-text-primary">
-                    {activeSegment.hours}h
+                  <p
+                    className="heading-xl text-text-primary"
+                    data-testid="donut-active-data"
+                  >
+                    {formatData(activeSegment.dailyMb)}
                   </p>
-                  <p className="body-xs text-text-tertiary">
-                    {formatGB(activeSegment.value)}/day
+                  <p className="body-xs text-text-tertiary" data-testid="donut-active-time">
+                    {interpolate(hoursPerDayTemplate, {
+                      hours: formatHours(activeSegment.hours),
+                    })}{" "}
+                    · {formatShare(activeSegment.share)}
                   </p>
                 </>
               ) : (
                 <>
                   <p className="body-xs text-text-tertiary">{dict.monthly}</p>
-                  <p className="heading-xl text-text-primary">
-                    {formatGB(totalMonthlyMB)}
+                  <p className="heading-xl text-text-primary" data-testid="donut-total-monthly">
+                    {formatData(monthlyMb(dailyMb))}
+                  </p>
+                  <p className="body-xs text-text-tertiary" data-testid="donut-total-daily">
+                    {formatData(dailyMb)} {perDayLabel}
                   </p>
                 </>
               )}
@@ -76,22 +104,26 @@ export function DonutChart({ values, dict }: DonutChartProps) {
                 cy="50%"
                 innerRadius={125}
                 outerRadius={160}
-                dataKey="value"
-                paddingAngle={1}
+                dataKey="dailyMb"
+                nameKey="name"
+                /* No paddingAngle: it subtracted a fixed angle from every
+                   slice, which erased the small activities entirely (#077). */
+                paddingAngle={0}
                 startAngle={90}
                 endAngle={-270}
                 animationBegin={0}
                 animationDuration={800}
                 animationEasing="ease-out"
-                stroke="none"
-                onMouseEnter={(_, index) => setActiveIndex(index)}
-                onMouseLeave={() => setActiveIndex(null)}
+                stroke="#FFFFFF"
+                strokeWidth={2}
+                onMouseEnter={(_, index) => setActiveKey(chartData[index]?.key ?? null)}
+                onMouseLeave={() => setActiveKey(null)}
               >
-                {chartData.map((entry, index) => (
+                {chartData.map((entry) => (
                   <Cell
-                    key={`cell-${index}`}
+                    key={`cell-${entry.key}`}
                     fill={entry.color}
-                    opacity={activeIndex !== null && activeIndex !== index ? 0.5 : 1}
+                    opacity={activeKey !== null && activeKey !== entry.key ? 0.5 : 1}
                     style={{ cursor: "pointer", transition: "opacity 0.2s" }}
                   />
                 ))}
@@ -101,18 +133,37 @@ export function DonutChart({ values, dict }: DonutChartProps) {
         </div>
       </div>
 
-      {legendItems.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {legendItems.map((seg) => (
-            <div key={seg.key} className="flex items-center gap-2">
-              <div
-                className="h-2 w-2 shrink-0 rounded-sm"
-                style={{ backgroundColor: seg.color }}
-              />
-              <p className="body-2xs-medium text-text-secondary">{seg.name}</p>
-            </div>
+      {hasData && (
+        <ul className="flex flex-col gap-2 list-none p-0 m-0">
+          {segments.map((segment) => (
+            <li key={segment.key}>
+              <button
+                type="button"
+                data-testid={`donut-legend-${segment.key}`}
+                onMouseEnter={() => setActiveKey(segment.key)}
+                onMouseLeave={() => setActiveKey(null)}
+                onFocus={() => setActiveKey(segment.key)}
+                onBlur={() => setActiveKey(null)}
+                className={`flex w-full items-center gap-2 rounded-sm px-1 py-0.5 text-left transition-colors ${
+                  activeKey === segment.key ? "bg-bg-secondary" : ""
+                }`}
+              >
+                <span
+                  className="h-2 w-2 shrink-0 rounded-sm"
+                  style={{ backgroundColor: segment.color }}
+                  aria-hidden="true"
+                />
+                <span className="body-2xs-medium text-text-secondary flex-1 truncate">
+                  {segment.name}
+                </span>
+                {/* The numbers behind the colour, so a wrong slice is obvious */}
+                <span className="body-2xs-medium text-text-tertiary shrink-0 tabular-nums">
+                  {formatData(segment.dailyMb)} · {formatShare(segment.share)}
+                </span>
+              </button>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
     </div>
   );

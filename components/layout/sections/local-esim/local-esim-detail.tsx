@@ -3,10 +3,12 @@
 import { useMemo, useState, useEffect } from "react";
 import type { Plan, PlansByDestinationResponse } from "@/lib/api";
 import { useLocalPlansByCarrier, useLocalCarriers, formatVnd } from "@/lib/hooks";
-import { getCarrierMeta } from "./carrier-meta";
+import { isPlanSoldOut, soldOutLabel } from "@/lib/plan-stock";
+import { getCarrierMeta, carrierInitial } from "./carrier-meta";
 import { BuyActions } from "../destination/buy-actions";
 import { DeviceChecker } from "../destination/device-checker";
 import { EkycModal } from "../destination/ekyc-modal";
+import { VoucherPrice } from "../destination/voucher-price";
 import type { DestinationDict } from "../destination/types";
 import type { Locale } from "@/lib/i18n-config";
 
@@ -49,6 +51,21 @@ function cycleLabel(days: number, lang: Locale): string {
   return lang === "vi" ? `${days} ngày` : `${days} days`;
 }
 
+/**
+ * Label for the hotspot allowance pill.
+ *
+ * `plan.hotSpotAllow` is a free-text column that usually already carries its
+ * unit ("10GB", "300MB", "1.5GB") but is sometimes a bare number ("180").
+ * Appending "GB" unconditionally rendered "10GBGB/ngày", so only add the unit
+ * when the value doesn't already end in one.
+ */
+function hotspotLabel(allowance: string, lang: Locale): string {
+  const per = lang === "vi" ? "ngày" : "day";
+  const value = allowance.trim();
+  const hasUnit = /(kb|mb|gb|tb)$/i.test(value);
+  return `${value}${hasUnit ? "" : "GB"}/${per}`;
+}
+
 /** First marketing tag as a small badge label, if any. */
 function firstTag(plan: Plan): string | null {
   const tags = (plan.tags as string[] | undefined) || [];
@@ -70,11 +87,16 @@ export function LocalEsimDetail({ carrier, dict, lang, initialPlans }: LocalEsim
   const [quantity, setQuantity] = useState(1);
   const [ekycOpen, setEkycOpen] = useState(false);
 
-  // Auto-select the cheapest available plan on load / carrier change.
+  // Auto-select the cheapest plan that is actually IN STOCK on load / carrier
+  // change. Picking a sold-out one would land the buyer on a disabled option
+  // with the buy button primed against it (#040).
   useEffect(() => {
-    if (!selectedPlan && allPlans.length > 0) {
-      setSelectedPlan(highSpeed[0] ?? unlimited[0] ?? allPlans[0]);
-    }
+    if (selectedPlan || allPlans.length === 0) return;
+
+    const inStock = (list: Plan[]) => list.find((plan) => !isPlanSoldOut(plan));
+    setSelectedPlan(
+      inStock(highSpeed) ?? inStock(unlimited) ?? inStock(allPlans) ?? null,
+    );
   }, [allPlans, highSpeed, unlimited, selectedPlan]);
 
   const hasEkyc = !!selectedPlan?.isKyc;
@@ -108,7 +130,7 @@ export function LocalEsimDetail({ carrier, dict, lang, initialPlans }: LocalEsim
                 style={{ backgroundColor: meta.logoBg, border: "3px solid #fff" }}
               >
                 <span className={meta.italic ? "italic" : undefined}>
-                  {meta.label.slice(0, 2).toUpperCase()}
+                  {carrierInitial(meta)}
                 </span>
               </div>
             </div>
@@ -156,7 +178,7 @@ export function LocalEsimDetail({ carrier, dict, lang, initialPlans }: LocalEsim
                 label={lang === "vi" ? "Chia sẻ kết nối" : "Hotspot"}
                 pill={
                   selectedPlan.hotSpotAllow
-                    ? `${selectedPlan.hotSpotAllow}GB/${lang === "vi" ? "ngày" : "day"}`
+                    ? hotspotLabel(selectedPlan.hotSpotAllow, lang)
                     : lang === "vi"
                       ? "Có"
                       : "Yes"
@@ -208,6 +230,15 @@ export function LocalEsimDetail({ carrier, dict, lang, initialPlans }: LocalEsim
                 {cycleLabel(selectedPlan.durationDays, lang)}
                 {selectedPlan.name ? ` · ${selectedPlan.name}` : ""}
               </p>
+            )}
+            {/* Price after the house voucher (#042) — quantity included, since
+                that is what the cart will charge. */}
+            {selectedPlan && (
+              <VoucherPrice
+                totalVnd={priceNow * quantity}
+                dict={dict}
+                className="mt-2.5"
+              />
             )}
           </div>
 
@@ -363,19 +394,33 @@ function PlanGroup({
         {plans.map((plan) => {
           const selected = selectedPlan?.id === plan.id;
           const tag = firstTag(plan);
+          // Domestic stock can run out; a sold-out plan stays visible but is
+          // greyed out and unselectable rather than silently failing at
+          // checkout (#040).
+          const soldOut = isPlanSoldOut(plan);
           return (
             <button
               key={plan.id}
               type="button"
-              onClick={() => onSelect(plan)}
+              onClick={() => !soldOut && onSelect(plan)}
+              disabled={soldOut}
+              aria-disabled={soldOut}
               data-testid={`local-plan-${plan.id}`}
+              data-sold-out={soldOut ? "true" : undefined}
               className={`relative text-left rounded-[12px] border p-3.5 transition-all ${
-                selected
-                  ? "border-[#111] shadow-[0_0_0_1px_#111] bg-white"
-                  : "border-[#e5e7eb] bg-white hover:border-[#9ca3af]"
+                soldOut
+                  ? "border-[#e5e7eb] bg-[#f9fafb] opacity-50 grayscale cursor-not-allowed"
+                  : selected
+                    ? "border-[#111] shadow-[0_0_0_1px_#111] bg-white"
+                    : "border-[#e5e7eb] bg-white hover:border-[#9ca3af]"
               }`}
             >
-              {tag && (
+              {soldOut && (
+                <span className="absolute -top-[9px] left-3 text-[11px] font-semibold px-[7px] py-[2px] rounded bg-[#F3F4F6] text-[#6B7280] border border-[#D1D5DB]">
+                  {soldOutLabel(lang)}
+                </span>
+              )}
+              {tag && !soldOut && (
                 <span className="absolute -top-[9px] right-3 text-[11px] font-medium px-[7px] py-[2px] rounded bg-[#FEF9E7] text-[#92400E] border border-[#F5C518]">
                   {tag}
                 </span>

@@ -11,6 +11,11 @@ import { FAQSection } from "@/components/layout/sections/faq";
 import { ReferFriendBanner } from "@/components/layout/sections/refer-friend";
 import { FooterSection } from "@/components/layout/sections/footer";
 import { getFooters, getHeroBanners, getFaqs, getWhyChooseUs } from "@/lib/api";
+import {
+  pickWhyChooseUs,
+  whyChooseUsCount,
+  WHY_CHOOSE_US_POOL_SIZE,
+} from "@/lib/why-choose-us";
 import { getCmsSeoUrlForHome } from "@/lib/cms-seo-url";
 import { getSeoMetadata } from "@/lib/seo";
 import { getDictionary } from "@/lib/dictionaries";
@@ -34,8 +39,20 @@ export default async function Home() {
     getHeroBanners({ lang: locale }),
     getFooters({ lang: locale }),
     getFaqs({ lang: locale, urls: [homeSlug] }),
-    getWhyChooseUs({ lang: locale, type: "trang_chu" }),
+    // The whole pool: the page draws its own handful below (#087).
+    getWhyChooseUs({
+      lang: locale,
+      type: "trang_chu",
+      limit: WHY_CHOOSE_US_POOL_SIZE,
+    }),
   ]);
+
+  // The homepage is not about one country, so only the copy that needs no
+  // country name resolves — anything else keeps its placeholder visible, which
+  // is the admin's cue that the reason belongs on a country page instead.
+  const whyChooseUsItems = pickWhyChooseUs(whyChooseUsRes.data, {
+    count: whyChooseUsCount("trang_chu"),
+  });
 
   return (
     <main role="main">
@@ -43,7 +60,7 @@ export default async function Home() {
       <PartnerBar dict={dict.partnerBar} />
       <WhatIsEsim dict={dict.whatIsEsim} lang={locale} />
       <DestinationsSection dict={dict.destinations} lang={locale} />
-      <FeaturesSection dict={dict.whyChoose} lang={locale} features={whyChooseUsRes.data} />
+      <FeaturesSection dict={dict.whyChoose} lang={locale} features={whyChooseUsItems} />
       <SecurityFeatures dict={dict.security} />
       <HowItWorksSection dict={dict.howItWorks} />
       <DownloadAppSection dict={dict.downloadApp} />

@@ -111,10 +111,13 @@ export function DesktopStickyBar({
     }
   }
 
-  // Description like "Unlimited / 7 days" or "5 GB / 30 days"
-  const descriptionPlan = selectedPlan
-    ? `${selectedPlan.type === 'unlimited' || selectedPlan.type === 'unlimited-reduce' ? 'Unlimited' : selectedPlan.dataMb >= 1024 ? `${parseFloat((selectedPlan.dataMb / 1024).toFixed(1))} GB` : `${selectedPlan.dataMb} MB`} / ${isFixed ? selectedPlan.durationDays : (selectedPlan.isAbleMultidate ? days : selectedPlan.durationDays)} days`
-    : '';
+  /*
+   * Shown next to the price, so it must follow the page language (#038). The
+   * hand-built English string this replaces ("5 GB / 30 days") was hardcoded and
+   * never translated. `planLabel` is the same localized summary the price block
+   * already uses; its leading "· " separator is dropped here.
+   */
+  const descriptionPlan = planLabel.replace(/^·\s*/, '').trim();
 
   const handleAddToCart = async () => {
     if (!selectedPlan) return;

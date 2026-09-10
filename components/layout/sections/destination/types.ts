@@ -21,6 +21,9 @@ export interface DestinationDict {
     yes: string;
     no: string;
     unlimited: string;
+    /** Units for the call/SMS allowance shown on the Calls & SMS row (#045). */
+    minutesUnit: string;
+    smsUnit: string;
   };
   delivery: {
     title: string;
@@ -29,6 +32,13 @@ export interface DestinationDict {
     instantDesc: string;
     activationPeriod: string;
     activationDesc: string;
+    /** How the usage cycle is counted, and the unactivated-refund note (#039). */
+    usagePeriod: string;
+    usagePeriodFixed: string;
+    usagePeriodDaily: string;
+    refundTitle: string;
+    refundUnactivated: string;
+    refundPolicyLink: string;
   };
   note: { title: string; text: string };
   planTabs: { data: string; dataCalls: string; localSim: string };
@@ -76,6 +86,17 @@ export interface DestinationDict {
   tabs: {
     features: string;
     delivery: string;
+  };
+  /** "Price after voucher" line under the price block (#042). */
+  voucher: {
+    priceAfter: string;
+    /** "{amount}" → the VND saving. */
+    saveAmount: string;
+    /** "{percent}" → the voucher's discount percent. */
+    hint: string;
+    /** "{code}" → the voucher code. */
+    copyCode: string;
+    copied: string;
   };
 }
 

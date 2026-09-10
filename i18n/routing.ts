@@ -154,6 +154,16 @@ export const routing = defineRouting({
       en: '/refer-a-friend',
     },
 
+    // Affiliate programme (#095)
+    '/affiliate': {
+      vi: '/affiliate',
+      en: '/affiliate',
+    },
+    '/affiliate/register': {
+      vi: '/affiliate/dang-ky',
+      en: '/affiliate/register',
+    },
+
     // Terms of Service
     '/terms-of-service': {
       vi: '/dieu-khoan-dich-vu',

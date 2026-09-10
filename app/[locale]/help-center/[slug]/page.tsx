@@ -47,6 +47,10 @@ export default async function HelpCenterSlugPage({
     fetchHelpCenterArticles(locale),
   ]);
 
+  // Last crumb of the trail: the readable slug, or the article title when the
+  // slug turns out to name an article (#051).
+  const crumbLabel = fromUrlSlug(slug);
+
   // Check if the resolved key is a valid category
   const isCategory =
     possibleCatKey &&

@@ -114,10 +114,17 @@ export function MobileStickyBar({
     }
   }
 
-  // Description like "Unlimited / 7 days" or "5 GB / 30 days"
-  const descriptionPlan = selectedPlan
-    ? `${selectedPlan.type === 'unlimited' || selectedPlan.type === 'unlimited-reduce' ? 'Unlimited' : selectedPlan.dataMb >= 1024 ? `${parseFloat((selectedPlan.dataMb / 1024).toFixed(1))} GB` : `${selectedPlan.dataMb} MB`} / ${isFixed ? selectedPlan.durationDays : (selectedPlan.isAbleMultidate ? days : selectedPlan.durationDays)} days`
-    : '';
+  /*
+   * The bar used to print the raw `plan.name` plus a hand-built English
+   * description ("5 GB / 30 days"), so a Vietnamese buyer saw the supplier's
+   * English package name right next to the price (#038).
+   *
+   * `planLabel` is the same string the desktop price block already shows, and
+   * it is built from the plan's structured fields in the current language — it
+   * was passed to this component but never used. Its leading "· " separator
+   * only makes sense next to other text, so it comes off here.
+   */
+  const planSummary = planLabel.replace(/^·\s*/, '').trim();
 
   // Shared add-to-cart logic. Returns true on success.
   const doAddToCart = async () => {
@@ -193,7 +200,7 @@ export function MobileStickyBar({
               eSIM {destination || ""}
             </div>
             <div className="text-sm font-bold truncate">
-              {selectedPlan.name} {descriptionPlan}
+              {planSummary}
             </div>
           </div>
         </div>

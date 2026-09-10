@@ -1,4 +1,18 @@
 ﻿{
+  "notFound": {
+    "code": "404",
+    "title": "We could not find that page",
+    "description": "The page may have moved or no longer exists. Here are a few places to pick things up again.",
+    "searchLabel": "Which country do you need an eSIM for?",
+    "searchPlaceholder": "Type a country or region",
+    "searchCta": "Find an eSIM",
+    "backHome": "Back to home",
+    "linksTitle": "You might need",
+    "destinations": "All destinations",
+    "helpCenter": "Help centre",
+    "blog": "Blog",
+    "support": "Contact support"
+  },
   "metadata": {
     "title": "esim.vn - Affordable eSIM Data Plans for International Travel",
     "description": "Stay connected worldwide with affordable eSIM data plans. No physical SIM needed. Instant activation in 150+ countries."
@@ -154,7 +168,34 @@
         "description": "Your plan will activate when you reach your destination or 30 days after purchase.",
         "imageAlt": "Step 3 of eSIM set up: Your plan will activate automatically at your destination."
       }
-    ]
+    ],
+    "destination": {
+      "subtitle": "How to use your ${name} eSIM",
+      "title": "How does a ${name} eSIM work?",
+      "description": "Three steps: pick a ${name} plan, pay, and scan the QR code we email you. No physical SIM swap, and you keep your own number in ${name}.",
+      "steps": [
+        {
+          "number": "1",
+          "title": "Pick the data plan for your ${name} trip",
+          "description": "Choose the data and the number of days your ${name} trip actually needs — nothing more.",
+          "planNote": "There are ${planCount} ${name} eSIM plans right now: ${dataRange}, ${dayRange}, from ${fromPrice}.",
+          "planNoteUnlimited": "There are ${planCount} ${name} eSIM plans right now: ${dataRange}, ${dayRange}, from ${fromPrice} — unlimited-data plans included.",
+          "imageAlt": "Step 1: pick your ${name} eSIM plan."
+        },
+        {
+          "number": "2",
+          "title": "Get your ${name} eSIM by email, right after payment",
+          "description": "Scan the QR code and follow the install steps. Do it before you fly — installing needs an internet connection.",
+          "imageAlt": "Step 2: install your ${name} eSIM from the emailed instructions."
+        },
+        {
+          "number": "3",
+          "title": "Land in ${name} and you are online",
+          "description": "The plan starts counting when the eSIM first connects to a network in ${name} — not when you bought it.",
+          "imageAlt": "Step 3: your ${name} eSIM activates on arrival."
+        }
+      ]
+    }
   },
   "downloadApp": {
     "title": "Download the esim.vn app",
@@ -556,6 +597,25 @@
       "selectTime": "Select how much time you spend on each activity per day",
       "estimatedUsage": "Your estimated data usage",
       "monthly": "Monthly",
+      "suggestions": {
+        "title": "Plans that fit",
+        "subtitle": "Enter a destination to see which plans cover the data you just estimated.",
+        "placeholder": "Enter a destination (e.g. Japan)",
+        "searching": "Searching…",
+        "noDestinations": "No matching destination",
+        "loadingPlans": "Looking for plans…",
+        "needUsage": "Set your activity hours above so we have a data estimate first.",
+        "noneCover": "No plan covers this much. The closest we have:",
+        "noPlans": "No plans available for this destination yet.",
+        "coversDays": "Lasts about {{days}} days at your usage",
+        "unlimited": "Unlimited",
+        "durationDays": "{{days}} days",
+        "perDay": "~ {{price}}/day",
+        "viewAll": "See all {{name}} plans",
+        "change": "Change destination"
+      },
+      "perDay": "per day",
+      "hoursPerDay": "{{hours}} h/day",
       "resetCalculator": "Reset Calculator",
       "calculateData": "Calculate Data",
       "close": "Close",
@@ -1181,7 +1241,9 @@
       "topup": "Data top-up",
       "yes": "Yes",
       "no": "No",
-      "unlimited": "Unlimited"
+      "unlimited": "Unlimited",
+      "minutesUnit": "call minutes",
+      "smsUnit": "SMS"
     },
     "delivery": {
       "title": "Delivery & Activation",
@@ -1189,7 +1251,13 @@
       "instant": "Instant delivery",
       "instantDesc": "Sent via email right after purchase",
       "activationPeriod": "Activation period",
-      "activationDesc": "180 days from purchase date"
+      "activationDesc": "180 days from purchase date",
+      "usagePeriod": "How the usage period is counted",
+      "usagePeriodFixed": "{days} consecutive days, counted from the first time the eSIM connects to a network — not from purchase",
+      "usagePeriodDaily": "Counted per day of use, starting the first time the eSIM connects to a network — not from purchase",
+      "refundTitle": "Refund",
+      "refundUnactivated": "Refundable while the eSIM is still unactivated and unused",
+      "refundPolicyLink": "See the refund policy"
     },
     "note": {
       "title": "Note:",
@@ -1265,6 +1333,13 @@
     "tabs": {
       "features": "Features",
       "delivery": "Delivery & Activation"
+    },
+    "voucher": {
+      "priceAfter": "Price after voucher",
+      "saveAmount": "(save {amount})",
+      "hint": "Enter the code beside it at checkout for {percent}% off. Valid for this order.",
+      "copyCode": "Copy code {code}",
+      "copied": "Copied"
     }
   },
   "couponPage": {
@@ -1594,12 +1669,12 @@
       "descriptionPlaceholder": "Describe your issue in detail...",
       "descriptionCounter": "{{count}}/{{max}} characters",
       "attachments": "Attachments",
-      "attachmentsHelp": "Drag and drop files or click to browse. Up to 5 files, max 5MB each.",
-      "attachmentsAccept": "Accepted: images, PDF, DOC, DOCX",
+      "attachmentsHelp": "Drag and drop files or click to browse. Up to 5 files: images and documents max 5MB, video max 50MB.",
+      "attachmentsAccept": "Accepted: images, video (MP4, MOV, WEBM…), PDF, DOC, DOCX",
       "attachmentsBrowse": "Browse files",
       "attachmentsRemove": "Remove",
       "attachmentsTooMany": "You can attach up to 5 files.",
-      "attachmentsTooLarge": "{{name}} exceeds the 5MB limit.",
+      "attachmentsTooLarge": "{{name}} exceeds the {{size}}MB limit.",
       "attachmentsInvalidType": "{{name}} is an unsupported file type.",
       "submit": "Submit",
       "submitting": "Submitting...",
@@ -1607,6 +1682,14 @@
       "required": "Required",
       "optional": "Optional",
       "privacyNotice": "Your email is only used to reply to this request, never for marketing.",
+      "antiSpam": {
+        "honeypotLabel": "Leave this field empty",
+        "blockedTitle": "Request not sent",
+        "tooFast": "That was too quick. Please wait {{seconds}} seconds and try again.",
+        "rateLimited": "You have sent several requests in a short time. Please try again in {{minutes}} minutes.",
+        "duplicate": "You just sent this exact request. Please wait for our reply, or edit it if you want to add something.",
+        "blockedHelp": "If it is urgent, use the chat bubble in the corner of the screen."
+      },
       "validation": {
         "emailRequired": "Email is required.",
         "emailInvalid": "Please enter a valid email.",
@@ -1700,6 +1783,243 @@
     "invoicePhonePlaceholder": "+84 xxx xxx xxx",
     "invoicePhoneRequired": "Invoice phone number is required",
     "invoicePhoneInvalid": "Invalid invoice phone number",
-    "paymentNote": "By completing your order, you agree to our Terms of Service and Privacy Policy."
+    "paymentNote": "By completing your order, you agree to our Terms of Service and Privacy Policy.",
+    "cardPayment": "Pay by card",
+    "cardPaymentDescription": "Domestic ATM, Visa, Mastercard or JCB via the OnePay gateway",
+    "qrPayment": "Pay by QR code",
+    "qrPaymentDescription": "Scan the VietQR code in your banking app — confirmed automatically in seconds"
+  },
+  "regionSuggestions": {
+    "title": "Visiting more than one country? Regional eSIMs that include {name}",
+    "subtitle": "One regional or global plan covers the whole trip, so you don't need a separate eSIM for every country.",
+    "viewPlans": "View plans"
+  },
+  "affiliateRegister": {
+    "breadcrumb": "Affiliate sign-up",
+    "pageTitle": "Join the esim.vn affiliate programme",
+    "pageSubtitle": "Recommend esim.vn to your audience and earn a commission on every valid order. Fill in the form below — we review each application and email you the result.",
+    "sectionAccount": "Your details",
+    "sectionAccountHelp": "These also become the account you sign in with to follow your orders and commission once you are approved.",
+    "sectionChannel": "Where you will promote",
+    "sectionChannelHelp": "Tell us where you talk to your audience — it is what we look at when reviewing your application.",
+    "legalType": "You are applying as",
+    "legalTypeIndividual": "An individual",
+    "legalTypeIndividualHelp": "Creator, KOL/KOC, channel owner",
+    "legalTypeCompany": "A company",
+    "legalTypeCompanyHelp": "Business or agency with a tax code",
+    "contactName": "Contact name",
+    "contactNamePlaceholder": "Jane Doe",
+    "contactEmail": "Email",
+    "contactEmailPlaceholder": "you@example.com",
+    "contactEmailHelp": "We send the decision to this address. It is also your login.",
+    "contactPhone": "Phone number",
+    "contactPhonePlaceholder": "0901234567",
+    "password": "Password",
+    "passwordPlaceholder": "At least 6 characters",
+    "passwordHelp": "Used to sign in to the partner area once approved.",
+    "confirmPassword": "Confirm password",
+    "confirmPasswordPlaceholder": "Type the password again",
+    "companyName": "Company name",
+    "companyNamePlaceholder": "ABC Co., Ltd",
+    "taxCode": "Tax code",
+    "taxCodePlaceholder": "0312345678",
+    "businessAddress": "Registered address",
+    "businessAddressPlaceholder": "123 Nguyen Hue, District 1, HCMC",
+    "channel": "Main channel",
+    "channelUrl": "Channel link",
+    "channelUrlPlaceholder": "https://tiktok.com/@yourchannel",
+    "followers": "Followers",
+    "followersPlaceholder": "50000",
+    "followersHelp": "A rough number is fine.",
+    "notes": "Anything else you want to tell us?",
+    "notesPlaceholder": "For example: I make travel content about Japan and Korea, posting every weekend...",
+    "channelOptions": {
+      "tiktok": "TikTok",
+      "facebook": "Facebook",
+      "youtube": "YouTube",
+      "instagram": "Instagram",
+      "website": "Website / Blog",
+      "other": "Other channel"
+    },
+    "acceptTerms": "I have read and agree to the",
+    "acceptTermsLink": "terms of service",
+    "submit": "Send application",
+    "submitting": "Sending...",
+    "required": "required",
+    "optional": "optional",
+    "errorGeneric": "We could not send your application. Please try again shortly.",
+    "success": {
+      "title": "Application received",
+      "description": "Your application is now waiting for review. We usually reply within 1-3 working days.",
+      "emailNotice": "Approved or not, you will get an email with the outcome — check your spam folder too.",
+      "ctaLogin": "Go to sign in",
+      "ctaHome": "Back to home"
+    },
+    "apiErrors": {
+      "emailAlreadyExists": "That email already has an account. Sign in, or use another address.",
+      "unknown": "We could not send your application. Please check your details."
+    },
+    "validation": {
+      "contactNameRequired": "Please enter a contact name.",
+      "contactNameMax": "Contact name is at most 255 characters.",
+      "contactEmailRequired": "Please enter your email.",
+      "contactEmailInvalid": "That email address does not look right.",
+      "contactPhoneRequired": "Please enter a phone number.",
+      "contactPhoneInvalid": "That phone number does not look right.",
+      "passwordRequired": "Please enter a password.",
+      "passwordMin": "The password needs at least 6 characters.",
+      "passwordMismatch": "The two passwords do not match.",
+      "companyNameRequired": "Please enter the company name.",
+      "taxCodeRequired": "Please enter the tax code.",
+      "channelUrlInvalid": "The link must start with http:// or https://",
+      "followersInvalid": "Followers must be digits only.",
+      "notesMax": "At most 2000 characters.",
+      "termsRequired": "Please accept the terms to continue."
+    }
+  },
+  "affiliatePage": {
+    "breadcrumb": "Affiliate programme",
+    "metadata": {
+      "title": "esim.vn Affiliate Programme — Earn on every eSIM order",
+      "description": "Recommend esim.vn travel eSIMs to your audience and earn a commission on every valid order. Free to join, your own referral links, and orders and commission you can follow in real time."
+    },
+    "hero": {
+      "badge": "Affiliate programme",
+      "title": "Recommend eSIMs, earn on every order",
+      "description": "Make travel content, run a community, or own a site people read? Share your own link, your audience buys an esim.vn eSIM, and you earn a commission. No joining fee, no sales target.",
+      "perks": [
+        "Free to join — start as soon as you are approved",
+        "Your own links and referral codes, as many as you want",
+        "Orders and commission visible in your own account",
+        "Orders still count for 30 days after your visitor's last click"
+      ],
+      "ctaPrimary": "Apply to join",
+      "ctaSecondary": "See how it works",
+      "stats": [
+        {
+          "value": "200+",
+          "label": "countries and regions covered"
+        },
+        {
+          "value": "30 days",
+          "label": "an order still counts after a click"
+        },
+        {
+          "value": "Free",
+          "label": "to join the programme"
+        }
+      ]
+    },
+    "howItWorks": {
+      "title": "How it works",
+      "subtitle": "Three steps, no technical setup and nothing to install on your channel.",
+      "steps": [
+        {
+          "title": "Apply and get approved",
+          "description": "Fill in a short form with your contact details and the channel you will promote on. We review it and email you the outcome, usually within 1-3 working days."
+        },
+        {
+          "title": "Get your referral link",
+          "description": "Once approved, create your own links and referral codes in your account and put them in your videos, posts, bio or community messages."
+        },
+        {
+          "title": "Earn your commission",
+          "description": "Someone clicks your link and buys an eSIM, and the order appears in your account. Commission is credited once the order is paid and reconciled."
+        }
+      ],
+      "windowNote": "A valid order is one placed within 30 days of your visitor's most recent click on your link — including when they come back to the site directly to buy. If they click your link again, the 30 days start over."
+    },
+    "benefits": {
+      "title": "Why join",
+      "subtitle": "We handle the product, delivery and customer support. You just make the introduction.",
+      "items": [
+        {
+          "icon": "wallet",
+          "title": "Commission that grows with your tier",
+          "description": "Your rate follows your partner tier: the more valid orders you bring, the higher the tier and the better the rate. Commission lands in your partner wallet."
+        },
+        {
+          "icon": "link",
+          "title": "Links and codes of your own",
+          "description": "Create a separate link per campaign or platform, so you know which channel actually sells instead of guessing."
+        },
+        {
+          "icon": "chart",
+          "title": "Numbers you can check yourself",
+          "description": "Clicks, orders, revenue and commission for every link, in your own account — no need to ask anyone."
+        },
+        {
+          "icon": "globe",
+          "title": "A product that sells itself",
+          "description": "eSIMs that work in 200+ countries and regions and activate from a QR code in minutes — something every traveller needs."
+        },
+        {
+          "icon": "ticket",
+          "title": "Your own discount codes",
+          "description": "Create a personalised discount code for your audience, so your recommendation comes with something real attached."
+        },
+        {
+          "icon": "sparkles",
+          "title": "No strings",
+          "description": "No fee, no sales commitment, no exclusivity. You promote as much or as little as you like."
+        }
+      ]
+    },
+    "audience": {
+      "title": "Who it is for",
+      "items": [
+        {
+          "title": "Travel creators",
+          "description": "People making travel, review or how-to content on TikTok, YouTube, Instagram or Facebook."
+        },
+        {
+          "title": "Site owners and bloggers",
+          "description": "Travel guides, personal blogs and forums, where readers are already looking for a way to get online abroad."
+        },
+        {
+          "title": "Community admins",
+          "description": "Student groups, expat communities, backpacker groups — where SIM and eSIM questions come up daily."
+        },
+        {
+          "title": "Travel service providers",
+          "description": "Visa, tour and flight consultants: an eSIM is exactly what your customers need right before they fly."
+        }
+      ]
+    },
+    "faq": {
+      "title": "Frequently asked questions",
+      "items": [
+        {
+          "question": "Does it cost anything to join?",
+          "answer": "No. Joining and using the programme is free, with no maintenance fee and no minimum sales requirement."
+        },
+        {
+          "question": "How long until I know whether I am approved?",
+          "answer": "We usually reply within 1-3 working days. Either way you get an email with the outcome — a rejection says why, so you can fix it and apply again."
+        },
+        {
+          "question": "Which orders earn me a commission?",
+          "answer": "Orders placed within 30 days of your visitor's most recent click on your link, or where the buyer entered your referral code at checkout. Someone who comes back to the site directly within those 30 days still counts as yours."
+        },
+        {
+          "question": "Can I use my own link to buy?",
+          "answer": "No. Orders you place through your own link do not earn commission — we check for this."
+        },
+        {
+          "question": "When do I get paid?",
+          "answer": "Each order's commission stays pending until the order is complete. Once it is credited to your partner wallet, you can request a withdrawal to your bank account."
+        },
+        {
+          "question": "What happens if a customer gets a refund?",
+          "answer": "A cancelled or fully refunded order has its commission reversed, including when it had already been credited."
+        }
+      ]
+    },
+    "cta": {
+      "title": "Ready to start?",
+      "description": "The form takes a few minutes. Once approved, your first referral link is waiting.",
+      "cta": "Apply to join",
+      "note": "Free to join · No sales commitment · Leave any time"
+    }
   }
 }
