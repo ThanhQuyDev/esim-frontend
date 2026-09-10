@@ -35,6 +35,14 @@ import type { Metadata } from "next";
  * `[locale]` segment is already in the URL, so the param is the safe source.
  */
 
+// Trang luôn dựng theo từng request. Lý do: generateStaticParams() lấy danh sách
+// nhà mạng từ API, nên khi API chưa có gói nội địa (hoặc lỗi mạng đúng lúc build)
+// danh sách rỗng, Next sẽ dựng TĨNH theo yêu cầu cho carrier chưa prerender —
+// mà đường dựng tĩnh đó cấm chạm API động, dẫn tới DYNAMIC_SERVER_USAGE và trả
+// 500 thay vì trang 404. Dựng động thì vẫn là HTML render sẵn phía server (Google
+// đọc bình thường), các lệnh fetch vẫn được cache 300s nên không tăng tải API.
+export const dynamic = "force-dynamic";
+
 export async function generateStaticParams() {
   try {
     const carriers = await getLocalCarriers();
