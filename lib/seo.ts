@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { fetchSeoConfigByUrl } from "./api";
+import { SITE_BASE_URL } from "./hreflang";
 import { interpolate } from "./utils";
 
 const DEFAULT_SEO = {
@@ -47,6 +48,16 @@ function socialBase(options?: SeoMetadataOptions) {
 }
 
 /**
+ * The generated share card (`app/[locale]/opengraph-image.tsx`). Next only
+ * attaches a file-based image at its own segment, and a page that returns its
+ * own `openGraph` replaces that object whole — so every page built here lost
+ * the image (#L010). Name it explicitly whenever the CMS has none.
+ */
+function defaultOgImages(locale?: string) {
+  return [{ url: `${SITE_BASE_URL}/${locale || "vi"}/opengraph-image`, width: 1200, height: 630 }];
+}
+
+/**
  * X/Twitter falls back to OG tags, but only a declared card type gets the large
  * image treatment — without it a shared link renders as a small thumbnail.
  */
@@ -86,7 +97,9 @@ export async function getSeoMetadata(
     const ogDescription =
       applyVars(seo.ogDescription, templateVars) || metaDescription;
     const keywords = applyVars(seo.metaKeywords, templateVars);
-    const images = seo.ogImage ? [{ url: seo.ogImage }] : undefined;
+    const images = seo.ogImage
+      ? [{ url: seo.ogImage }]
+      : defaultOgImages(options?.locale);
 
     return {
       title: metaTitle,
@@ -106,10 +119,12 @@ export async function getSeoMetadata(
   const description =
     applyVars(fallback?.description, templateVars) ?? DEFAULT_SEO.description;
 
+  const images = defaultOgImages(options?.locale);
+
   return {
     title,
     description,
-    openGraph: { ...socialBase(options), title, description },
-    twitter: twitterCard(title, description),
+    openGraph: { ...socialBase(options), title, description, images },
+    twitter: twitterCard(title, description, images),
   };
 }
