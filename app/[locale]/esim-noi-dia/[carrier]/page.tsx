@@ -58,6 +58,16 @@ export async function generateMetadata({
   params: { carrier: string; locale: string };
 }): Promise<Metadata> {
   const locale = params.locale as Locale;
+  // Check the carrier exists before titling the page after it: metadata runs
+  // before the page's notFound(), so a made-up slug used to get a 404 page
+  // advertising "eSIM KHONG-CO-THAT nội địa". Same cached fetch as the page.
+  const plans = await getLocalPlansByCarrier(params.carrier.toLowerCase(), locale);
+  if (!plans) {
+    return {
+      title: locale === "vi" ? "Không tìm thấy trang | esim.vn" : "Page not found | esim.vn",
+      robots: { index: false, follow: false },
+    };
+  }
   const meta = getCarrierMeta(params.carrier);
   const title =
     locale === "vi"

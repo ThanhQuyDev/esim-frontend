@@ -497,7 +497,7 @@ export async function getFooters(
   options: FetchOptions = {}
 ): Promise<Footer[]> {
   return getPublicLandingList<Footer>(
-    "/footers",
+    "/api/v1/footers",
     { limit: 100, ...options },
     300
   );
@@ -1001,7 +1001,11 @@ export async function fetchSeoConfigByUrl(
       const encodedUrl = encodeURIComponent(u);
       const res = await fetch(
         `${API_BASE_URL}/api/v1/seo-configs/by-url?url=${encodedUrl}`,
-        { next: { revalidate: 300 } }
+        // Not cached: with `revalidate: 300` an edit saved in the CMS was still
+        // missing from the live <title> well past five minutes (confirmed on
+        // beta with the database and API already updated). SEO is the one
+        // thing an admin edits and expects to see; it is a single indexed row.
+        { cache: "no-store" }
       );
       if (!res.ok) continue;
       const data: SeoConfig = await res.json();

@@ -37,6 +37,7 @@ import {
 import { walletTranslations, type WalletDict } from "./translations";
 import Link from "next/link";
 import { localizedHref } from "@/lib/route-mapping";
+import { SITE_BASE_URL } from "@/lib/hreflang";
 import QRCode from "qrcode";
 
 interface WalletPageContentProps {
@@ -446,7 +447,7 @@ function ReferralTab({ t, lang }: { t: WalletDict; lang: string }) {
 
   if (!referral) return null;
 
-  const referralLink = `https://esim.vn/?ref=${referral.code}`;
+  const referralLink = `${SITE_BASE_URL}/?ref=${referral.code}`;
 
   return (
     <div className="space-y-6">

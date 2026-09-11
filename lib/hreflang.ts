@@ -1,6 +1,12 @@
 import { routing } from "@/i18n/routing";
 
-export const SITE_BASE_URL = "https://esim.vn";
+/**
+ * The public origin of this deployment. Same source as `app/sitemap.ts` and
+ * `app/robots.ts`, so canonical, hreflang, sitemap and every referral link
+ * agree — a hardcoded "https://esim.vn" sent beta's links to production.
+ */
+export const SITE_BASE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://esim.vn";
 
 type LocalizedAlternates = {
   canonical: string;

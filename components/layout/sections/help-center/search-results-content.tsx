@@ -21,7 +21,9 @@ interface SearchResponse {
 }
 
 function getArticleSlug(article: { slug?: string; title: string }): string {
-  if (article.slug && article.slug.trim().length > 0) return article.slug;
+  // Leading "/" in the stored slug would yield "/ho-tro//…" once appended.
+  const slug = article.slug?.trim().replace(/^\/+/, "");
+  if (slug) return slug;
   return article.title
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")

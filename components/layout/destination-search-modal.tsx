@@ -6,7 +6,7 @@ import { localizedSlug } from "@/lib/slug";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useTopDestinations, useSearchDestinations, useSearchRegions, useRegions, useLocalCarriers } from "@/lib/hooks";
 import { useDebounce } from "@/lib/use-debounce";
-import { getCarrierMeta } from "@/components/layout/sections/local-esim/carrier-meta";
+import { getCarrierMeta, carrierInfra } from "@/components/layout/sections/local-esim/carrier-meta";
 import {
   matchLocalCarriers,
   localCarrierHref,
@@ -293,7 +293,7 @@ export function DestinationSearchModal({
                             priceStr
                               ? `${lang === "vi" ? "Từ" : "From"} ${priceStr}`
                               : null,
-                            meta.infra || null,
+                            carrierInfra(meta, lang) || null,
                           ]
                             .filter(Boolean)
                             .join(" · ");
@@ -317,8 +317,8 @@ export function DestinationSearchModal({
                                       </span>
                                     </div>
                                     <div className="flex flex-col">
-                                      <div className="flex items-center gap-1.5">
-                                        <p className="body-md-medium text-text-primary! scroll-mt-20 xl:scroll-mt-24">
+                                      <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
+                                        <p className="body-md-medium text-text-primary! scroll-mt-20 xl:scroll-mt-24 min-w-0">
                                           {localCarrierTitle(lang, carrier.provider)}
                                         </p>
                                         <span className="text-center whitespace-nowrap rounded-full inline-block bg-blue-100 text-blue-700 py-0 px-1.5 body-2xs-medium">

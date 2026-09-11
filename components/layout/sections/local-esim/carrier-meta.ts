@@ -17,8 +17,8 @@ export interface CarrierMeta {
   label: string;
   /** Logo circle background (brand colour). */
   logoBg: string;
-  /** Network infrastructure line, e.g. "Hạ tầng VinaPhone". */
-  infra: string;
+  /** Network the carrier rides on, e.g. "VinaPhone". Rendered per locale by {@link carrierInfra}. */
+  network: string;
   /** Subscriber number prefix shown as a pill, e.g. "055". */
   phonePrefix?: string;
   /** Render the logo label in italic (iTEL's wordmark is italic). */
@@ -29,26 +29,26 @@ const CARRIER_META: Record<string, CarrierMeta> = {
   wintel: {
     label: "Wintel",
     logoBg: "#E4232B",
-    infra: "Hạ tầng VinaPhone",
+    network: "VinaPhone",
     phonePrefix: "055",
   },
   itel: {
     label: "iTEL",
     logoBg: "#D91E2A",
-    infra: "Hạ tầng VinaPhone",
+    network: "VinaPhone",
     phonePrefix: "087",
     italic: true,
   },
   vnsky: {
     label: "VNSKY",
     logoBg: "#0A6CFF",
-    infra: "Hạ tầng MobiFone",
+    network: "MobiFone",
     phonePrefix: "079",
   },
   viettel: {
     label: "Viettel",
     logoBg: "#EE0033",
-    infra: "Hạ tầng Viettel",
+    network: "Viettel",
     // No phonePrefix: Viettel sells several ranges (086/096–098/032–039) and
     // we don't know which one this inventory draws from — the row is optional,
     // so it stays hidden until someone fills in the real prefix.
@@ -65,9 +65,18 @@ export function getCarrierMeta(provider: string): CarrierMeta {
     CARRIER_META[key] ?? {
       label: (provider || "eSIM").toUpperCase(),
       logoBg: "#6B7280",
-      infra: "",
+      network: "",
     }
   );
+}
+
+/**
+ * Localised infrastructure line: "Hạ tầng VinaPhone" / "VinaPhone network".
+ * Empty when the carrier has no known network, so callers can skip the row.
+ */
+export function carrierInfra(meta: CarrierMeta, lang: string): string {
+  if (!meta.network) return "";
+  return lang === "vi" ? `Hạ tầng ${meta.network}` : `${meta.network} network`;
 }
 
 /** Short first letter(s) for the round logo badge when no image is used. */

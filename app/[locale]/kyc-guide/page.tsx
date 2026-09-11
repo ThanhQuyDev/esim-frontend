@@ -50,6 +50,9 @@ export default async function KycGuidePage({
       >
         <KycGuideBackButton lang={locale} />
       </Breadcrumb>
+      {/* The guide's visual title lives inside the region tabs; without an h1
+          the page had no document heading for search engines or screen readers. */}
+      <h1 className="sr-only">{dict.breadcrumb.kycGuide}</h1>
       <KycGuideContent initialRegion={initialRegion} lang={locale} />
     </main>
   );

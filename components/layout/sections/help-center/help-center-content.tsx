@@ -131,7 +131,7 @@ export function HelpCenterContent({ lang, initialArticles }: HelpCenterContentPr
 
           <div className="mt-6 text-center">
             <Link
-              href={`${localizedHref(lang, "help-center")}/categories`}
+              href={`${localizedHref(lang, "help-center/categories")}`}
               className="text-gray-700 hover:text-gray-900 no-underline text-base sm:text-sm"
             >
               {lang === "vi" ? "Xem thêm" : "See more"}

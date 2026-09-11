@@ -2,7 +2,7 @@
 
 import { Loader2 } from "lucide-react";
 import { useLocalCarriers } from "@/lib/hooks";
-import { getCarrierMeta } from "./carrier-meta";
+import { getCarrierMeta, carrierInfra } from "./carrier-meta";
 import { localCarrierHref, localCarrierTitle } from "./local-carrier-search";
 import type { Locale } from "@/lib/i18n-config";
 import type { LocalCarrier } from "@/lib/api";
@@ -78,7 +78,8 @@ export function LocalCarrierGrid({
         const meta = getCarrierMeta(carrier.provider);
         const href = localCarrierHref(lang, carrier.provider);
         const priceLabel = `${fromLabel} ${carrier.fromVndPrice.toLocaleString("vi-VN")}đ`;
-        const sub = meta.infra ? `${priceLabel} · ${meta.infra}` : priceLabel;
+        const infra = carrierInfra(meta, lang);
+        const sub = infra ? `${priceLabel} · ${infra}` : priceLabel;
 
         return (
           <a

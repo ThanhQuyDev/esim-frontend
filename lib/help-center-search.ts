@@ -43,7 +43,10 @@ export function helpCenterArticleSlug(article: {
   slug?: string;
   title: string;
 }): string {
-  if (article.slug && article.slug.trim().length > 0) return article.slug;
+  // CMS slugs are stored with a leading "/" (e.g. "/chinh-sach-hoan-tien"),
+  // which callers append after "/ho-tro/" — producing "/ho-tro//…" links.
+  const slug = article.slug?.trim().replace(/^\/+/, "");
+  if (slug) return slug;
   return article.title
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")

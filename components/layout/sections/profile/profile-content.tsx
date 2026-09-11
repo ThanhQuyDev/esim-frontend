@@ -22,6 +22,7 @@ import { AffiliateTab } from "./affiliate-tab";
 import { WalletPageContent } from "@/components/layout/sections/wallet/wallet-page-content";
 import Link from "next/link";
 import { localizedHref } from "@/lib/route-mapping";
+import { SITE_BASE_URL } from "@/lib/hreflang";
 
 interface ProfileContentProps {
   lang: "en" | "vi";
@@ -387,7 +388,7 @@ export function ProfileContent({ lang }: ProfileContentProps) {
                   <div className="flex items-center gap-3">
                     <div className="flex-1 bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
                       <p className="text-sm text-gray-400 mb-0.5">{t.referralLink}</p>
-                      <p className="text-base sm:text-sm text-gray-600 truncate">{`https://esim.vn/?ref=${referral.code}`}</p>
+                      <p className="text-base sm:text-sm text-gray-600 truncate">{`${SITE_BASE_URL}/?ref=${referral.code}`}</p>
                     </div>
                     <button
                       onClick={() => copyReferralCode(referral.code)}

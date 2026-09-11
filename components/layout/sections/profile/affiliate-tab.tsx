@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { SITE_BASE_URL } from "@/lib/hreflang";
 import {
   AlertCircle,
   Check,
@@ -200,7 +201,7 @@ export function AffiliateTab({
   );
 
   const origin =
-    typeof window === "undefined" ? "https://esim.vn" : window.location.origin;
+    typeof window === "undefined" ? SITE_BASE_URL : window.location.origin;
 
   const counts = useMemo(
     () => ({

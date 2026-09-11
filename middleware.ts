@@ -42,6 +42,9 @@ export const config = {
     // `go` is also excluded: /go/<code> is the KOL marketing link, rewritten
     // to /api/go/<code> by next.config. Without the exclusion the i18n
     // middleware redirects it to /vi/go/<code> first and the link 404s.
-    '/((?!_next|api|go|.*\\..*).*)',
+    // `opengraph-image` / `twitter-image` are served straight from
+    // app/[locale]; letting the i18n middleware touch them would put a
+    // redirect in front of every social-share preview image.
+    '/((?!_next|api|go|.*opengraph-image|.*twitter-image|.*\\..*).*)',
   ],
 };

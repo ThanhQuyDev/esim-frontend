@@ -106,7 +106,7 @@ export function CategoriesContent({ lang }: CategoriesContentProps) {
                     </li>
                     <li className="text-gray-400 mx-1">›</li>
                     <li>
-                      <Link href={`${localizedHref(lang, "help-center")}/categories?category=${selectedArticle.category}`} className="text-gray-700 no-underline hover:text-gray-900 transition-colors">
+                      <Link href={`${localizedHref(lang, "help-center/categories")}?category=${selectedArticle.category}`} className="text-gray-700 no-underline hover:text-gray-900 transition-colors">
                         {getCategoryLabel(selectedArticle.category, lang)}
                       </Link>
                     </li>
@@ -191,6 +191,14 @@ export function CategoriesContent({ lang }: CategoriesContentProps) {
 
       {/* Content */}
       <div className="container mx-auto py-8">
+        {/* The article view has its own h1; this listing view had none. */}
+        <h1 className="sr-only">
+          {categoryFilter
+            ? getCategoryLabel(categoryFilter, lang)
+            : lang === "vi"
+              ? "Danh mục trợ giúp"
+              : "Help center categories"}
+        </h1>
         {Object.entries(grouped).map(([parentKey, arts]) => (
           <div key={parentKey} className="mb-8">
             <h2 className="text-lg font-semibold mb-3 text-gray-900">{getParentLabel(parentKey, lang)}</h2>

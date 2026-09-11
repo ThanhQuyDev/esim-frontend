@@ -39,6 +39,9 @@ export default async function BlogSearchPage() {
         ]}
         lang={locale}
       />
+      <h1 className="sr-only">
+        {dict.breadcrumb.blogSearch || (locale === "vi" ? "Tìm kiếm bài viết" : "Search articles")}
+      </h1>
       <Suspense
         fallback={
           <div className="container mx-auto px-8 py-12 text-center text-gray-500">

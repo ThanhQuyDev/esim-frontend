@@ -4,7 +4,7 @@ import { useMemo, useState, useEffect } from "react";
 import type { Plan, PlansByDestinationResponse } from "@/lib/api";
 import { useLocalPlansByCarrier, useLocalCarriers, formatVnd } from "@/lib/hooks";
 import { isPlanSoldOut, soldOutLabel } from "@/lib/plan-stock";
-import { getCarrierMeta, carrierInitial } from "./carrier-meta";
+import { getCarrierMeta, carrierInitial, carrierInfra } from "./carrier-meta";
 import { BuyActions } from "../destination/buy-actions";
 import { DeviceChecker } from "../destination/device-checker";
 import { EkycModal } from "../destination/ekyc-modal";
@@ -150,8 +150,8 @@ export function LocalEsimDetail({ carrier, dict, lang, initialPlans }: LocalEsim
               </div>
               <p className="text-sm text-[#6b7280] leading-relaxed">
                 {lang === "vi"
-                  ? `eSIM nội địa Việt Nam — ${meta.infra || "Data 4G/5G"}, có số thuê bao gọi & nhắn tin.`
-                  : `Vietnam domestic eSIM — ${meta.infra || "4G/5G data"}, with a callable subscriber number.`}
+                  ? `eSIM nội địa Việt Nam — ${carrierInfra(meta, lang) || "Data 4G/5G"}, có số thuê bao gọi & nhắn tin.`
+                  : `Vietnam domestic eSIM — ${carrierInfra(meta, lang) || "4G/5G data"}, with a callable subscriber number.`}
               </p>
             </div>
           </div>
@@ -160,7 +160,7 @@ export function LocalEsimDetail({ carrier, dict, lang, initialPlans }: LocalEsim
           <div className="rounded-[16px] border border-[#e5e7eb] bg-white p-[18px] mb-4">
             <FeatureRow
               label={lang === "vi" ? "Nhà mạng" : "Carrier"}
-              value={`${meta.label} 4G/5G${meta.infra ? ` · ${meta.infra}` : ""}`}
+              value={`${meta.label} 4G/5G${carrierInfra(meta, lang) ? ` · ${carrierInfra(meta, lang)}` : ""}`}
             />
             {meta.phonePrefix && (
               <FeatureRow

@@ -83,9 +83,13 @@ export function BuyActions({ selectedPlan, days, quantity, isFixed, dict, lang, 
 
       {/* CTA buttons */}
       <div className="grid grid-cols-[1fr_1.4fr] gap-2.5 mb-3">
+        {/* Disabled until a plan is picked: when every plan is sold out there is
+            nothing to pick, and an enabled button that silently does nothing
+            reads as a broken site. */}
         <button
           onClick={handleAddToCart}
-          className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-full border border-[#111] bg-white text-base font-semibold cursor-pointer text-[#111] font-[inherit] transition-all hover:bg-[#111] hover:text-white whitespace-nowrap"
+          disabled={!selectedPlan}
+          className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-full border border-[#111] bg-white text-base font-semibold cursor-pointer text-[#111] font-[inherit] transition-all hover:bg-[#111] hover:text-white whitespace-nowrap disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-[#111]"
         >
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="9" cy="21" r="1" />
@@ -96,14 +100,15 @@ export function BuyActions({ selectedPlan, days, quantity, isFixed, dict, lang, 
         </button>
         <button
           onClick={handleBuyNow}
-          className="flex items-center justify-center px-3 py-2.5 rounded-full border border-[#d1b700] bg-[#fff500] text-base font-semibold cursor-pointer font-[inherit] transition-all hover:bg-[#d1b700] whitespace-nowrap"
+          disabled={!selectedPlan}
+          className="flex items-center justify-center px-3 py-2.5 rounded-full border border-[#d1b700] bg-[#fff500] text-base font-semibold cursor-pointer font-[inherit] transition-all hover:bg-[#d1b700] whitespace-nowrap disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-[#fff500]"
         >
-          {dict.buyNow} — {selectedPlan ? formatVnd(totalPrice) : "—"}
+          {dict.buyNow}{selectedPlan ? ` — ${formatVnd(totalPrice)}` : ""}
         </button>
       </div>
 
       {/* Trust row */}
-      <div className="flex items-center justify-center gap-4 py-3 my-3 border-t border-b border-[#efefef]">
+      <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 py-3 my-3 border-t border-b border-[#efefef]">
         <div className="flex items-center gap-[5px] text-[12.5px] text-[#374151] font-medium whitespace-nowrap">
           <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
             <path d="M8 1.5L2 4v4c0 3.5 2.5 6 6 6s6-2.5 6-6V4L8 1.5z" fill="#dcfce7" stroke="#16a34a" strokeWidth="1.2" strokeLinejoin="round" />
