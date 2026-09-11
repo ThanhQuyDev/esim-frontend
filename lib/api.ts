@@ -992,20 +992,29 @@ export interface SeoConfig {
 // ===== SEO Config API =====
 
 export async function fetchSeoConfigByUrl(
-  url: string | string[]
+  url: string | string[],
+  options: { revalidate?: number } = {}
 ): Promise<SeoConfig | null> {
   const urls = Array.isArray(url) ? url : [url];
+
+  // Not cached by default: with `revalidate: 300` an edit saved in the CMS was
+  // still missing from the live <title> well past five minutes (confirmed on
+  // beta with the database and API already updated). SEO is the one thing an
+  // admin edits and expects to see; it is a single indexed row.
+  // Statically generated pages must pass `revalidate`: an uncached fetch there
+  // is dynamic usage, which Next raises as an error — the catch below swallows
+  // it and every such page answered 500 instead (#L021).
+  const cacheOptions: RequestInit =
+    options.revalidate === undefined
+      ? { cache: "no-store" }
+      : { next: { revalidate: options.revalidate } };
 
   for (const u of urls) {
     try {
       const encodedUrl = encodeURIComponent(u);
       const res = await fetch(
         `${API_BASE_URL}/api/v1/seo-configs/by-url?url=${encodedUrl}`,
-        // Not cached: with `revalidate: 300` an edit saved in the CMS was still
-        // missing from the live <title> well past five minutes (confirmed on
-        // beta with the database and API already updated). SEO is the one
-        // thing an admin edits and expects to see; it is a single indexed row.
-        { cache: "no-store" }
+        cacheOptions
       );
       if (!res.ok) continue;
       const data: SeoConfig = await res.json();

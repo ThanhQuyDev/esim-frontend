@@ -100,6 +100,13 @@ async function resolveRegionGroup(
   }
 }
 
+/**
+ * These pages are statically generated, so their SEO lookup has to be cached
+ * (an uncached one made every destination page answer 500). A CMS edit reaches
+ * them within this window.
+ */
+const SEO_REVALIDATE_SECONDS = 60;
+
 export async function generateMetadata({
   params,
 }: {
@@ -126,7 +133,8 @@ export async function generateMetadata({
             group.label
           ),
         },
-        { name: group.label }
+        { name: group.label },
+        { revalidate: SEO_REVALIDATE_SECONDS }
       );
     }
     return { title: dict.destinationPage?.notFound ?? "Not Found" };
@@ -175,7 +183,7 @@ export async function generateMetadata({
     seoSlugs,
     { title: fallbackTitle, description: fallbackDescription },
     seoVars,
-    { locale, url: canonicalPath }
+    { locale, url: canonicalPath, revalidate: SEO_REVALIDATE_SECONDS }
   );
 
   // SEO: canonical points at this locale's canonical slug; hreflang lists the

@@ -24,6 +24,12 @@ export interface SeoMetadataOptions {
   locale?: string;
   /** Canonical public path or absolute URL, for `og:url`. */
   url?: string;
+  /**
+   * Cache the CMS lookup for this many seconds. Required on statically
+   * generated pages (see `fetchSeoConfigByUrl`); omit it elsewhere so an edit
+   * shows at once.
+   */
+  revalidate?: number;
 }
 
 /** Facebook / Zalo expect a territory-qualified locale, not a bare language. */
@@ -88,7 +94,9 @@ export async function getSeoMetadata(
   templateVars?: TemplateVars,
   options?: SeoMetadataOptions
 ): Promise<Metadata> {
-  const seo = await fetchSeoConfigByUrl(pageUrl);
+  const seo = await fetchSeoConfigByUrl(pageUrl, {
+    revalidate: options?.revalidate,
+  });
 
   if (seo) {
     const metaTitle = applyVars(seo.metaTitle, templateVars);
