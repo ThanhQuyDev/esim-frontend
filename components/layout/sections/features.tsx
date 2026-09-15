@@ -1,21 +1,38 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import Image from "next/image";
 import type { Locale } from "@/lib/i18n-config";
 import type { WhyChooseUs } from "@/lib/api";
+import { pickWhyChooseUs } from "@/lib/why-choose-us";
 
 interface FeaturesSectionProps {
   dict: Record<string, any>;
   lang: Locale;
+  /** The page's whole pool of reasons, copy already filled in. */
   features?: WhyChooseUs[];
+  /** How many to show, drawn at random per visit; all of them when omitted. */
+  count?: number;
 }
 
-export function FeaturesSection({ dict, lang, features = [] }: FeaturesSectionProps) {
+export function FeaturesSection({ dict, lang, features = [], count }: FeaturesSectionProps) {
   // Sort by sortOrder and filter active items
-  const sortedFeatures = [...features]
-    .filter((f) => f.isActive)
-    .sort((a, b) => a.sortOrder - b.sortOrder);
+  const pool = useMemo(
+    () =>
+      [...features]
+        .filter((f) => f.isActive)
+        .sort((a, b) => a.sortOrder - b.sortOrder),
+    [features],
+  );
+  const limit = count ?? pool.length;
+
+  // The server HTML (and so the first client render) shows the first `limit`
+  // by sort order; the random draw happens in the browser after hydration so a
+  // prerendered page still shows a different handful on each visit (#042).
+  const [sortedFeatures, setSortedFeatures] = useState(() => pool.slice(0, limit));
+  useEffect(() => {
+    setSortedFeatures(pickWhyChooseUs(pool, { count: limit }));
+  }, [pool, limit]);
 
   // Mobile carousel state
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -88,7 +105,7 @@ export function FeaturesSection({ dict, lang, features = [] }: FeaturesSectionPr
             {/* Desktop grid (md+) */}
             <div className="sm:gap-x-8 md:grid-cols-3 grid-cols-1 gap-y-8 hidden md:grid">
               {sortedFeatures.map((feature) => (
-                <div key={feature.id}>
+                <div key={feature.id} data-testid="why-choose-us-card">
                   <div className="h-full w-full flex flex-col justify-start gap-y-4">
                     <div>
                       <div className="h-full w-full flex flex-col text-start items-start justify-start gap-y-6">

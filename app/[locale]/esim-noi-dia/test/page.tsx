@@ -37,7 +37,8 @@
  * Guard: 404 in production — only renders under `next dev`.
  *
  * Query params:
- *   ?view=detail|tab|search|plans|region-suggest|how-it-works|faq|tier-ladder|esim-usage|esim-cards|orders|blog-nav|lang-cache|help-search|support-form|donut|plan-suggest|affiliate
+ *   ?view=detail|tab|search|plans|region-suggest|how-it-works|faq|tier-ladder|esim-usage|esim-cards|orders|blog-nav|lang-cache|help-search|support-form|donut|plan-suggest|affiliate|why-choose-us
+ *   ?count=6                          (why-choose-us view; how many of the 10 to show)
  *   ?slug=japan                       (plans view; default japan)
  *   ?carrier=wintel|itel|vnsky|...   (detail view; default wintel)
  *   ?lang=vi|en                       (defaults to the route locale)
@@ -72,6 +73,8 @@ import { SupportForm, type SupportFormDict } from "@/components/layout/sections/
 import { DonutChart } from "@/components/layout/sections/data-calculator/donut-chart";
 import { PlanSuggestions } from "@/components/layout/sections/data-calculator/plan-suggestions";
 import { DataCalculator } from "@/components/layout/sections/data-calculator/data-calculator";
+import { FeaturesSection } from "@/components/layout/sections/features";
+import type { WhyChooseUs } from "@/lib/api";
 import { profileTranslations } from "@/components/layout/sections/profile/translations";
 import type { MembershipTier } from "@/lib/hooks";
 import type { DestinationDict } from "@/components/layout/sections/destination/types";
@@ -173,6 +176,23 @@ function HowItWorksProbe({ slug, lang }: { slug: string; lang: Locale }) {
     />
   );
 }
+
+/**
+ * Ten "TẠI SAO" reasons for the `why-choose-us` view (#042). Module-level so the
+ * array keeps its identity across renders, as a server prop does.
+ */
+const WHY_CHOOSE_US_POOL: WhyChooseUs[] = Array.from({ length: 10 }, (_, i) => ({
+  id: `r${i}`,
+  title: `Lý do ${i}`,
+  description: `Mô tả ${i}`,
+  icon: null,
+  sortOrder: i,
+  isActive: true,
+  language: "vi",
+  type: "quoc_gia",
+  createdAt: "",
+  updatedAt: "",
+})) as unknown as WhyChooseUs[];
 
 /** Minimal destination for the `plans` view — the plan list is what's tested. */
 function harnessDestination(slug: string): Destination {
@@ -496,6 +516,23 @@ export default function LocalEsimTestPage() {
         <div style={{ maxWidth: 420 }}>
           <DonutChart values={values} dict={calcDict} />
         </div>
+      </main>
+    );
+  }
+
+  if (view === "why-choose-us") {
+    // The real "TẠI SAO" section given a pool of ten and `?count=` (#042), so
+    // the per-visit random draw can be checked in a browser.
+    const count = Number(params.get("count") ?? 6);
+    return (
+      <main role="main" style={{ padding: 12 }}>
+        <p data-testid="local-test-meta">view=why-choose-us count={count}</p>
+        <FeaturesSection
+          dict={(messages.whyChoose ?? {}) as Record<string, unknown>}
+          lang={lang}
+          features={WHY_CHOOSE_US_POOL}
+          count={count}
+        />
       </main>
     );
   }

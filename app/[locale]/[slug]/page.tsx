@@ -22,7 +22,7 @@ import { buildRegionSuggestions } from "@/lib/region-suggestions";
 import { buildHowItWorksDict } from "@/lib/how-it-works";
 import { buildSeoTemplateVars } from "@/lib/seo-vars";
 import {
-  pickWhyChooseUs,
+  prepareWhyChooseUs,
   whyChooseUsCount,
   WHY_CHOOSE_US_POOL_SIZE,
 } from "@/lib/why-choose-us";
@@ -345,16 +345,17 @@ export default async function UnifiedSlugPage({
       limit: WHY_CHOOSE_US_POOL_SIZE,
     });
     // Copy can read "eSIM ${name} chỉ từ ${fromPrice}"; the page shows a
-    // random handful of the reasons written for country pages (#087).
-    const whyChooseUsItems = pickWhyChooseUs(whyChooseUsRes.data, {
-      count: whyChooseUsCount("quoc_gia"),
-      vars: buildSeoTemplateVars({
+    // random handful of the reasons written for country pages (#087), drawn in
+    // the browser because this page is prerendered (#042).
+    const whyChooseUsItems = prepareWhyChooseUs(
+      whyChooseUsRes.data,
+      buildSeoTemplateVars({
         name: localizedName,
         plans: await getPlansByDestinationSlug(params.slug, locale),
         lang: locale,
         rate: await getUsdVndRate(),
-      }),
-    });
+      })
+    );
     // Regional / global packs that cover this country (#043). A failure here
     // must not take the country page down, so it degrades to no suggestions.
     const regionSuggestions = await getRegions({ limit: 500 })
@@ -403,6 +404,7 @@ export default async function UnifiedSlugPage({
             dict={dict.whyChoose}
             lang={locale}
             features={whyChooseUsItems}
+            count={whyChooseUsCount("quoc_gia")}
           />
           <LazyEsimComparison dict={dict.whatIsEsimPage.comparison} />
           <PartnerBar dict={dict.partnerBar} />
@@ -435,15 +437,15 @@ export default async function UnifiedSlugPage({
     type: "khu_vuc",
     limit: WHY_CHOOSE_US_POOL_SIZE,
   });
-  const whyChooseUsItems = pickWhyChooseUs(whyChooseUsRes.data, {
-    count: whyChooseUsCount("khu_vuc"),
-    vars: buildSeoTemplateVars({
+  const whyChooseUsItems = prepareWhyChooseUs(
+    whyChooseUsRes.data,
+    buildSeoTemplateVars({
       name: localizedName,
       plans: await getPlansByRegionSlug(params.slug, locale),
       lang: locale,
       rate: await getUsdVndRate(),
-    }),
-  });
+    })
+  );
   // The usage steps describe THIS region's plan lineup (#044).
   const howItWorks = buildHowItWorksDict(dict.howItWorks, {
     name: localizedName,
@@ -497,6 +499,7 @@ export default async function UnifiedSlugPage({
           dict={dict.whyChoose}
           lang={locale}
           features={whyChooseUsItems}
+          count={whyChooseUsCount("khu_vuc")}
         />
         <LazyEsimComparison dict={dict.whatIsEsimPage.comparison} />
         <LazyTestimonialsSection dict={dict.testimonials} />

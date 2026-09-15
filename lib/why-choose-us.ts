@@ -29,6 +29,8 @@ export const WHY_CHOOSE_US_COUNT: Record<string, number> = {
   /** Country page — the example in the brief: 6 shown out of however many. */
   quoc_gia: 6,
   khu_vuc: 6,
+  /** The homepage asks with its CMS type, `trang_chu`. */
+  trang_chu: 6,
   homepage: 6,
   esim_noi_dia: 6,
 };
@@ -78,6 +80,22 @@ export function pickWhyChooseUs(
       title: applySeoVars(item.title, vars ?? {}),
       description: applySeoVars(item.description, vars ?? {}),
     }));
+}
+
+/**
+ * The whole active pool with its copy filled in, in the admin's order — what a
+ * page hands to `FeaturesSection` together with its `count` (#042).
+ *
+ * Country and region pages are prerendered, so a draw made on the server was
+ * frozen into the HTML: every visitor saw the same six until the next build.
+ * The server now sends the pool and the browser draws, so each visit gets its
+ * own handful.
+ */
+export function prepareWhyChooseUs(
+  items: WhyChooseUs[] | null | undefined,
+  vars?: SeoTemplateVars
+): WhyChooseUs[] {
+  return pickWhyChooseUs(items, { count: Number.POSITIVE_INFINITY, vars });
 }
 
 /** Fisher–Yates over a copy, taking the first `count`. */

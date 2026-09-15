@@ -14,7 +14,7 @@ import {
 import { PartnerBar } from "@/components/layout/sections/partner-bar";
 import { getWhyChooseUs } from "@/lib/api";
 import {
-  pickWhyChooseUs,
+  prepareWhyChooseUs,
   whyChooseUsCount,
   WHY_CHOOSE_US_POOL_SIZE,
 } from "@/lib/why-choose-us";
@@ -102,9 +102,8 @@ export default async function DomesticEsimCarrierPage({
   }).catch(() => ({ data: [] }));
   // Carrier name fills the copy variables; a random handful of the country-page
   // reasons is shown rather than always the first six (#087).
-  const whyChooseUsItems = pickWhyChooseUs(whyChooseUsRes.data, {
-    count: whyChooseUsCount("quoc_gia"),
-    vars: { name: meta.label },
+  const whyChooseUsItems = prepareWhyChooseUs(whyChooseUsRes.data, {
+    name: meta.label,
   });
 
   const faqSlugs = [`/esim-noi-dia/${carrier}`, "/destination"];
@@ -130,6 +129,7 @@ export default async function DomesticEsimCarrierPage({
           dict={dict.whyChoose}
           lang={locale}
           features={whyChooseUsItems}
+          count={whyChooseUsCount("esim_noi_dia")}
         />
         <PartnerBar dict={dict.partnerBar} />
         <LazyFAQSection

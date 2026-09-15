@@ -12,7 +12,7 @@ import { ReferFriendBanner } from "@/components/layout/sections/refer-friend";
 import { FooterSection } from "@/components/layout/sections/footer";
 import { getFooters, getHeroBanners, getFaqs, getWhyChooseUs } from "@/lib/api";
 import {
-  pickWhyChooseUs,
+  prepareWhyChooseUs,
   whyChooseUsCount,
   WHY_CHOOSE_US_POOL_SIZE,
 } from "@/lib/why-choose-us";
@@ -50,9 +50,8 @@ export default async function Home() {
   // The homepage is not about one country, so only the copy that needs no
   // country name resolves — anything else keeps its placeholder visible, which
   // is the admin's cue that the reason belongs on a country page instead.
-  const whyChooseUsItems = pickWhyChooseUs(whyChooseUsRes.data, {
-    count: whyChooseUsCount("trang_chu"),
-  });
+  // The browser draws the random handful (#042).
+  const whyChooseUsItems = prepareWhyChooseUs(whyChooseUsRes.data);
 
   return (
     <main role="main">
@@ -60,7 +59,12 @@ export default async function Home() {
       <PartnerBar dict={dict.partnerBar} />
       <WhatIsEsim dict={dict.whatIsEsim} lang={locale} />
       <DestinationsSection dict={dict.destinations} lang={locale} />
-      <FeaturesSection dict={dict.whyChoose} lang={locale} features={whyChooseUsItems} />
+      <FeaturesSection
+        dict={dict.whyChoose}
+        lang={locale}
+        features={whyChooseUsItems}
+        count={whyChooseUsCount("trang_chu")}
+      />
       <SecurityFeatures dict={dict.security} />
       <HowItWorksSection dict={dict.howItWorks} />
       <DownloadAppSection dict={dict.downloadApp} />
