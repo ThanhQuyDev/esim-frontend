@@ -3,6 +3,7 @@ import { summarizePlanFacts } from "./how-it-works";
 import { interpolate } from "./utils";
 import {
   formatSalePrice,
+  formatSalePriceK,
   formatUsdPrice,
   formatVndPrice,
   salePriceCurrency,
@@ -32,6 +33,11 @@ export interface SeoTemplateVars {
    * "$4.71" on an English one (#050).
    */
   fromPrice?: string;
+  /**
+   * The same price shortened (#017): "58K" on a Vietnamese page, "$2.07" on an
+   * English one.
+   */
+  fromPriceK?: string;
   /** Always VND, for copy that needs the dong figure regardless of locale. */
   fromPriceVnd?: string;
   /** Always USD, converted at the live rate. */
@@ -51,6 +57,7 @@ export interface SeoTemplateVars {
 export const SEO_TEMPLATE_VAR_NAMES = [
   "name",
   "fromPrice",
+  "fromPriceK",
   "fromPriceVnd",
   "fromPriceUsd",
   "fromPriceNumber",
@@ -83,6 +90,7 @@ export function buildSeoTemplateVars(opts: {
   if (facts.fromPriceVnd > 0) {
     const vnd = facts.fromPriceVnd;
     vars.fromPrice = formatSalePrice(vnd, opts.lang, opts.rate);
+    vars.fromPriceK = formatSalePriceK(vnd, opts.lang, opts.rate);
     vars.fromPriceVnd = formatVndPrice(vnd);
     vars.fromPriceUsd = formatUsdPrice(usdFromVnd(vnd, opts.rate));
     // Bare number in the same currency — schema.org rejects "120.000đ".

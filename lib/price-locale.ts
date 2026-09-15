@@ -41,6 +41,23 @@ export function formatSalePrice(
   return formatUsdPrice(usdFromVnd(vnd, rate));
 }
 
+/**
+ * The price shortened for tight copy (#017): thousands of dong on a Vietnamese
+ * page — "58K", with one decimal only when the amount is not a whole thousand
+ * ("58,5K", "1.250K") — and the same USD figure as {@link formatSalePrice}
+ * everywhere else ("$2.07"), since "K" means nothing next to a dollar price.
+ */
+export function formatSalePriceK(
+  vnd: number,
+  lang: string,
+  rate: number = FALLBACK_USD_VND_RATE
+): string {
+  if (!(vnd > 0)) return "";
+  if (lang !== "vi") return formatUsdPrice(usdFromVnd(vnd, rate));
+  const thousands = Math.round(vnd / 100) / 10;
+  return `${thousands.toLocaleString("vi-VN", { maximumFractionDigits: 1 })}K`;
+}
+
 /** ISO code for the currency `formatSalePrice` used, for schema.org. */
 export function salePriceCurrency(lang: string): "VND" | "USD" {
   return lang === "vi" ? "VND" : "USD";

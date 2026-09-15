@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { applySeoVars, buildSeoTemplateVars } from "../lib/seo-vars";
+import { formatSalePriceK } from "../lib/price-locale";
 
 /**
  * #047 — plan prices available to the CMS SEO records.
@@ -148,6 +149,46 @@ test.describe("SEO template variables", () => {
     });
 
     expect(vars.dayRange).toBe("3 – 30 days");
+  });
+
+  test("shortens the price to K in Vietnamese (#017)", () => {
+    expect(formatSalePriceK(58_000, "vi")).toBe("58K");
+    // A decimal only when the amount is not a whole thousand.
+    expect(formatSalePriceK(58_500, "vi")).toBe("58,5K");
+    expect(formatSalePriceK(1_250_000, "vi")).toBe("1.250K");
+    expect(formatSalePriceK(0, "vi")).toBe("");
+  });
+
+  test("keeps the USD price for the short form in English (#017)", () => {
+    // The task's own example: 52.600đ reads $2.07 at a 25.400 rate.
+    expect(formatSalePriceK(52_600, "en", 25_400)).toBe("$2.07");
+  });
+
+  test("exposes ${fromPriceK} to CMS copy in both languages (#017)", () => {
+    const vi = buildSeoTemplateVars({ name: "Nhật Bản", plans: JAPAN, lang: "vi" });
+    expect(vi.fromPriceK).toBe("120K");
+    expect(applySeoVars("eSIM ${name} chỉ từ ${fromPriceK}", vi)).toBe(
+      "eSIM Nhật Bản chỉ từ 120K",
+    );
+
+    const en = buildSeoTemplateVars({
+      name: "Japan",
+      plans: JAPAN,
+      lang: "en",
+      rate: 25_400,
+    });
+    // Same dollar figure as ${fromPrice} — "K" is only for dong.
+    expect(en.fromPriceK).toBe(en.fromPrice);
+    expect(en.fromPriceK).toBe("$4.72");
+  });
+
+  test("omits ${fromPriceK} when the page has no plans", () => {
+    const vars = buildSeoTemplateVars({
+      name: "Nhật Bản",
+      plans: payload(),
+      lang: "vi",
+    });
+    expect(vars.fromPriceK).toBeUndefined();
   });
 
   test("returns an empty string for an empty record field", () => {
