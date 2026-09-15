@@ -90,7 +90,7 @@ export const profileTranslations: Record<"en" | "vi", ProfileDict> = {
   en: {
     pageTitle: "My Account",
     tabProfile: "Profile",
-    tabWallet: "eXU Wallet",
+    tabWallet: "eXU Points",
     tabSimManagement: "SIM Management",
     tabAffiliate: "Affiliate",
     email: "Email",
@@ -142,7 +142,7 @@ export const profileTranslations: Record<"en" | "vi", ProfileDict> = {
     topup: "Top Up",
     simComingSoon: "SIM management will be available soon. Your eSIM details will appear here after purchase.",
     // eXU Wallet
-    walletBalance: "eXU Balance",
+    walletBalance: "eXU Points",
     availableBalance: "Available",
     expiresIn: "Expires in",
     noExpiry: "No expiry",
@@ -174,7 +174,7 @@ export const profileTranslations: Record<"en" | "vi", ProfileDict> = {
   vi: {
     pageTitle: "Tài Khoản",
     tabProfile: "Hồ sơ",
-    tabWallet: "Ví eXU",
+    tabWallet: "Điểm eXU",
     tabSimManagement: "Quản lý SIM",
     tabAffiliate: "Affiliate",
     email: "Email",
@@ -226,7 +226,7 @@ export const profileTranslations: Record<"en" | "vi", ProfileDict> = {
     topup: "Nạp thêm",
     simComingSoon: "Quản lý SIM sẽ sớm khả dụng. Chi tiết eSIM sẽ hiển thị ở đây sau khi mua.",
     // eXU Wallet
-    walletBalance: "Số dư eXU",
+    walletBalance: "Điểm eXU",
     availableBalance: "Khả dụng",
     expiresIn: "Hết hạn sau",
     noExpiry: "Không có hạn",

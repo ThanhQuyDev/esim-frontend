@@ -647,12 +647,12 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
               <Coins className="w-5 h-5 text-emerald-600 flex-shrink-0" />
               <div>
                 <p className="text-base sm:text-sm font-medium text-emerald-700">
-                  {lang === "vi" ? "Nhận" : "Earn"} {formatExu(cashbackVnd)}
+                  {lang === "vi" ? "Tích" : "Earn"} {formatExu(cashbackVnd, lang)}
                 </p>
                 <p className="text-sm text-emerald-600">
                   {lang === "vi"
-                    ? `${cashbackPercent}% hoàn tiền vào ví eXU sau khi thanh toán`
-                    : `${cashbackPercent}% cashback to your eXU wallet after payment`}
+                    ? `Tích ${cashbackPercent}% giá trị đơn thành điểm eXU sau khi thanh toán`
+                    : `Earn ${cashbackPercent}% of the order value as eXU points after payment`}
                 </p>
               </div>
             </div>
@@ -690,8 +690,8 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
             >
               <Wallet className="h-5 w-5" />
               {lang === "vi"
-                ? `Thanh toán bằng eXU (${formatVnd(wallet.availableBalanceVnd)})`
-                : `Pay with eXU Wallet (${formatVnd(wallet.availableBalanceVnd)})`}
+                ? `Dùng điểm eXU (${formatExu(wallet.availableBalanceVnd, lang)})`
+                : `Use eXU points (${formatExu(wallet.availableBalanceVnd, lang)})`}
             </button>
           ) : null}
 

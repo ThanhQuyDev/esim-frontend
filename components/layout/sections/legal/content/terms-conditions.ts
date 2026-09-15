@@ -16,7 +16,7 @@ export const termsConditions: LegalPolicy = {
   content: {
     vi: {
       title: "Điều khoản và Điều kiện",
-      date: "00:14 22/11/2023",
+      date: "09:00 16/09/2026",
       blocks: [
         {
           lines: [
@@ -144,9 +144,16 @@ export const termsConditions: LegalPolicy = {
           ],
         },
         {
-          heading: "8. Tích điểm và đổi điểm",
+          heading: "8. Tích điểm và đổi điểm thưởng eXU",
           lines: [
             ["- Quy định về tích lũy và quy đổi điểm thưởng được thực hiện theo chính sách cụ thể tại từng thời điểm và từng chương trình của esim.vn."],
+            [{ b: ["- eXU là điểm thưởng"] }, " do esim.vn tặng cho Khách hàng có tài khoản: tích điểm khi mua hàng, thưởng khi giới thiệu bạn bè, điểm được hoàn lại khi đơn hàng đã dùng eXU bị hủy/hoàn tiền, hoặc điểm tặng theo chương trình khuyến mãi. eXU được hiển thị theo đơn vị điểm, ví dụ: 10.000 điểm eXU."],
+            ["- ", { b: ["eXU không phải là tiền"] }, ", không phải tiền điện tử, tài sản ảo, ví điện tử hay phương tiện thanh toán, và không có giá trị quy đổi thành tiền mặt."],
+            ["- eXU ", { b: ["không rút được ra tiền mặt"] }, ", không được hoàn lại thành tiền và ", { b: ["không chuyển nhượng"] }, ", tặng, bán hoặc gộp sang tài khoản của người khác."],
+            ["- Khách hàng ", { b: ["không thể nạp eXU bằng tiền mặt"] }, ", chuyển khoản hay bất kỳ hình thức thanh toán nào; eXU chỉ phát sinh từ các hoạt động nêu trên."],
+            ["- eXU ", { b: ["chỉ được sử dụng nội bộ trên esim.vn"] }, " để trừ vào giá trị đơn hàng của chính tài khoản đó, mỗi 01 điểm eXU được trừ 01 đồng trên đơn hàng."],
+            ["- eXU ", { b: ["có thời hạn sử dụng 365 ngày"] }, " kể từ lần gần nhất tài khoản được cộng điểm. Khi hết hạn, toàn bộ điểm eXU còn lại sẽ bị hủy và không được khôi phục. Ngày hết hạn được hiển thị trong mục Điểm eXU của tài khoản."],
+            ["- esim.vn có quyền thu hồi điểm eXU đã cộng cho đơn hàng bị hủy hoặc hoàn tiền, và có quyền khóa hoặc hủy điểm eXU khi phát hiện gian lận, lạm dụng chương trình hoặc vi phạm Điều khoản và Điều kiện này."],
             ["- esim.vn khuyến khích Khách hàng đăng ký tài khoản trên esim.vn để thực hiện mua hàng dễ dàng và tiện theo dõi lịch sử giao dịch, nhận thông tin cập nhật về hàng hóa, các chương trình khuyến mãi và hưởng các ưu đãi dành cho Khách hàng thân thiết."],
           ],
         },
@@ -220,7 +227,7 @@ export const termsConditions: LegalPolicy = {
     },
     en: {
       title: "Terms & Conditions",
-      date: "00:14 22/11/2023",
+      date: "09:00 16/09/2026",
       blocks: [
         {
           lines: [
@@ -348,9 +355,16 @@ export const termsConditions: LegalPolicy = {
           ],
         },
         {
-          heading: "8. Earning and redeeming points",
+          heading: "8. Earning and redeeming eXU reward points",
           lines: [
             ["- Regulations on accumulating and redeeming reward points are implemented according to the specific policy at each time and each program of esim.vn."],
+            [{ b: ["- eXU are reward points"] }, " given by esim.vn to Customers with an account: earned on purchases, as a reward for referring friends, returned when an order paid with eXU is cancelled or refunded, or granted through promotional programs. eXU are shown as points, for example: 10,000 eXU points."],
+            ["- ", { b: ["eXU are not money"] }, ", not cryptocurrency, virtual assets, an e-wallet or a means of payment, and have no cash value."],
+            ["- eXU ", { b: ["cannot be withdrawn as cash"] }, ", cannot be refunded as money, and ", { b: ["cannot be transferred"] }, ", gifted, sold or merged into another person's account."],
+            ["- Customers ", { b: ["cannot top up eXU with cash"] }, ", bank transfer or any other payment method; eXU only arise from the activities listed above."],
+            ["- eXU ", { b: ["can only be used internally on esim.vn"] }, " to reduce the value of that account's own orders, with each 01 eXU point deducting 01 VND from the order."],
+            ["- eXU ", { b: ["expire 365 days"] }, " after the account was last credited with points. On expiry, all remaining eXU points are cancelled and cannot be restored. The expiry date is shown in the eXU Points section of the account."],
+            ["- esim.vn may take back eXU points credited for an order that is cancelled or refunded, and may lock or cancel eXU points where fraud, abuse of a program or a breach of these Terms & Conditions is detected."],
             ["- esim.vn encourages Customers to register an account on esim.vn to shop easily, conveniently track transaction history, receive updates about goods and promotions, and enjoy incentives for loyal Customers."],
           ],
         },

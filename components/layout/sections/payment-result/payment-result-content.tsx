@@ -18,7 +18,7 @@ import Link from "next/link";
 import { localizedHref } from "@/lib/route-mapping";
 import { Button } from "@/components/ui/button";
 import { getResponseCodeMessage } from "@/lib/onepay";
-import { useOrderByNumber, useCart } from "@/lib/hooks";
+import { formatExu, useOrderByNumber, useCart } from "@/lib/hooks";
 import { clearCart as clearLocalCart } from "@/lib/cart";
 import { OrderInfoCard } from "./order-info-card";
 import { EsimLoadingState } from "./esim-loading-state";
@@ -305,12 +305,12 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
               </div>
               <div className="flex-1">
                 <p className="text-base sm:text-sm font-semibold text-emerald-800">
-                  {lang === "vi" ? "Bạn đã nhận được" : "You earned"} {formatVnd(cashbackAmount)} eXU!
+                  {lang === "vi" ? "Bạn đã được tích" : "You earned"} {formatExu(cashbackAmount, lang)}!
                 </p>
                 <p className="text-base sm:text-sm text-emerald-600 mt-0.5">
                   {lang === "vi"
-                    ? "Số dư eXU sẽ được cộng vào ví của bạn."
-                    : "eXU balance has been added to your wallet."}
+                    ? "Điểm eXU sẽ được cộng vào tài khoản của bạn."
+                    : "Your eXU points have been added to your account."}
                 </p>
               </div>
             </div>

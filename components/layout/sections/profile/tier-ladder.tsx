@@ -1,7 +1,7 @@
 "use client";
 
 import { Check, Coins, Gift, Lock } from "lucide-react";
-import { formatVnd, useMembershipTiers } from "@/lib/hooks";
+import { formatExu, formatVnd, useMembershipTiers } from "@/lib/hooks";
 import type { MembershipTier } from "@/lib/hooks";
 
 interface TierLadderProps {
@@ -175,7 +175,7 @@ export function TierLadder({
                   }`}
                 >
                   <Gift className="h-3.5 w-3.5" />
-                  {formatVnd(rung.referralRewardVnd)}
+                  {formatExu(rung.referralRewardVnd, lang)}
                 </span>
               </div>
             </li>

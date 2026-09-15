@@ -24,7 +24,7 @@ import {
   type CartItem,
   type Coupon,
 } from "@/lib/cart";
-import { useExchangeRate, useCheckout, useBankTransferCheckout, useCart, convertUsdToVnd, formatVnd, useWalletMe, useMyProfile, useValidateReferral, type BankTransferCheckoutResponse } from "@/lib/hooks";
+import { useExchangeRate, useCheckout, useBankTransferCheckout, useCart, convertUsdToVnd, formatVnd, formatExu, useWalletMe, useMyProfile, useValidateReferral, type BankTransferCheckoutResponse } from "@/lib/hooks";
 import { BankTransferPanel } from "@/components/layout/sections/payment/bank-transfer-panel";
 import { useAuth } from "@/lib/auth";
 import { walletTranslations } from "@/components/layout/sections/wallet/translations";
@@ -543,7 +543,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
               </label>
             </div>
             <p className="text-base sm:text-sm text-text-tertiary">
-              {wt.useExuBalanceDesc} — <span className="font-medium text-emerald-600">{formatVnd(wallet.availableBalanceVnd)}</span>
+              {wt.useExuBalanceDesc} — <span className="font-medium text-emerald-600">{formatExu(wallet.availableBalanceVnd, lang)}</span>
             </p>
             {useExu && (
               <div className="space-y-2">
@@ -559,13 +559,16 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
                         setExuAmount(raw ? num.toLocaleString("vi-VN") : "");
                       }
                     }}
-                    placeholder={formatVnd(maxExuUsable)}
+                    placeholder={maxExuUsable.toLocaleString(lang === "vi" ? "vi-VN" : "en-US")}
                     className="w-full rounded-xl border border-border-primary px-4 py-2.5 text-base sm:text-sm outline-none focus:border-[var(--border-focus)] transition-colors"
                   />
-                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-text-tertiary">VND</span>
+                  {/* Points, not dong: eXU is not money (#052). */}
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-text-tertiary">
+                    {lang === "vi" ? "điểm" : "points"}
+                  </span>
                 </div>
                 <p className="text-sm text-text-tertiary">
-                  {wt.exuBalance}: {formatVnd(wallet.availableBalanceVnd)} · {lang === "vi" ? "Tối đa" : "Max"}: {formatVnd(maxExuUsable)}
+                  {wt.exuBalance}: {formatExu(wallet.availableBalanceVnd, lang)} · {lang === "vi" ? "Tối đa" : "Max"}: {formatExu(maxExuUsable, lang)}
                 </p>
               </div>
             )}
@@ -584,8 +587,8 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
             <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
               <p className="text-base sm:text-sm font-medium text-emerald-700">
                 {lang === "vi"
-                  ? "Đơn hàng được thanh toán toàn bộ bằng eXU."
-                  : "This order is fully paid with your eXU balance."}
+                  ? "Giá trị đơn hàng đã được trừ toàn bộ bằng điểm eXU."
+                  : "This order is fully covered by your eXU points."}
               </p>
               <p className="mt-1 text-sm text-emerald-600">
                 {lang === "vi"
@@ -904,12 +907,12 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
                 <Coins className="w-5 h-5 text-emerald-600 flex-shrink-0" />
                 <div>
                   <p className="text-sm font-medium text-emerald-700">
-                    {lang === "vi" ? "Nhận" : "Earn"} {cashbackVnd.toLocaleString("vi-VN")} eXU
+                    {lang === "vi" ? "Tích" : "Earn"} {formatExu(cashbackVnd, lang)}
                   </p>
                   <p className="text-xs text-emerald-600">
                     {lang === "vi"
-                      ? `${cashbackPercent}% hoàn tiền vào ví eXU sau khi thanh toán`
-                      : `${cashbackPercent}% cashback to your eXU wallet after payment`}
+                      ? `Tích ${cashbackPercent}% giá trị đơn thành điểm eXU sau khi thanh toán`
+                      : `Earn ${cashbackPercent}% of the order value as eXU points after payment`}
                   </p>
                 </div>
               </div>

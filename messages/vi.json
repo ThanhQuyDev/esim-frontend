@@ -302,8 +302,8 @@
     ]
   },
   "referFriend": {
-    "title": "Giới thiệu bạn bè, nhận {reward}đ eXU!",
-    "description": "Bạn bè được giảm 10.000đ cho đơn đầu tiên, còn bạn nhận {reward}đ eXU theo hạng thành viên khi giới thiệu thành công.",
+    "title": "Giới thiệu bạn bè, nhận {reward} điểm eXU!",
+    "description": "Bạn bè được giảm 10.000đ cho đơn đầu tiên, còn bạn nhận {reward} điểm eXU theo hạng thành viên khi giới thiệu thành công.",
     "cta": "Tìm hiểu thêm",
     "imageAlt": "Một nhóm người vui mừng sau khi giới thiệu bạn bè đến esim.vn."
   },
@@ -1413,8 +1413,8 @@
       "footnoteDisclaimer": "** esim.vn® không liên kết với các hàng hóa hoặc dịch vụ được so sánh."
     },
     "freeCredits": {
-      "title": "Nhận tiền vào ví eXU miễn phí",
-      "description": "Mời bạn bè và gia đình dùng thử esim.vn và nhận ngay 10.000đ vào ví eXU cho mỗi lượt giới thiệu thành công.",
+      "title": "Nhận điểm eXU miễn phí",
+      "description": "Mời bạn bè và gia đình dùng thử esim.vn và nhận ngay 10.000 điểm eXU cho mỗi lượt giới thiệu thành công.",
       "cta": "Tìm hiểu thêm",
       "disclaimer": "Để biết thêm thông tin, hãy xem",
       "disclaimerLink": "điều khoản và điều kiện",
@@ -1526,10 +1526,10 @@
       "title": "Giới thiệu bạn bè, nhận thêm eXU",
       "description": "Bạn bè được giảm 10.000đ cho đơn eSIM đầu tiên. Sau khi đơn được thanh toán thành công, bạn nhận thưởng eXU theo hạng thành viên hiện tại.",
       "perks": [
-        "Du khách: 10.000đ eXU mỗi lượt giới thiệu",
-        "Du khách bạc: 12.000đ eXU mỗi lượt giới thiệu",
-        "Du khách vàng: 15.000đ eXU mỗi lượt giới thiệu",
-        "Du khách bạch kim: 20.000đ eXU mỗi lượt giới thiệu"
+        "Du khách: 10.000 điểm eXU mỗi lượt giới thiệu",
+        "Du khách bạc: 12.000 điểm eXU mỗi lượt giới thiệu",
+        "Du khách vàng: 15.000 điểm eXU mỗi lượt giới thiệu",
+        "Du khách bạch kim: 20.000 điểm eXU mỗi lượt giới thiệu"
       ],
       "termsPrefix": "Người được giới thiệu được giảm cố định 10.000đ cho đơn đầu tiên. ",
       "termsLink": "Xem điều khoản",
@@ -1602,7 +1602,7 @@
         {
           "number": "3",
           "title": "Bạn bè được giảm, bạn nhận eXU theo hạng",
-          "description": "Người dùng mã giới thiệu của bạn được giảm 10.000đ cho đơn eSIM đầu tiên. Bạn nhận 10.000đ, 12.000đ, 15.000đ hoặc 20.000đ eXU tùy theo hạng thành viên khi đơn được tạo.",
+          "description": "Người dùng mã giới thiệu của bạn được giảm 10.000đ cho đơn eSIM đầu tiên. Bạn nhận 10.000, 12.000, 15.000 hoặc 20.000 điểm eXU tùy theo hạng thành viên khi đơn được tạo.",
           "termsLink": "Xem điều khoản",
           "termsHref": "/legal/referral-program-terms-and-conditions/",
           "imageAlt": "Màn hình ứng dụng esim.vn hiển thị số dư 100.000đ với nút \"Rút thưởng\" màu vàng.",

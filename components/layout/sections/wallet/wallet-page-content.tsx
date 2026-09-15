@@ -32,6 +32,7 @@ import {
   useReferralProfile,
   useUpdateReferralCode,
   getTransactionLabel,
+  formatExu,
   type WalletTransaction,
 } from "@/lib/hooks";
 import { walletTranslations, type WalletDict } from "./translations";
@@ -46,14 +47,6 @@ interface WalletPageContentProps {
 }
 
 type Tab = "wallet" | "referral";
-
-function formatVnd(amount: number): string {
-  return new Intl.NumberFormat("vi-VN", {
-    style: "currency",
-    currency: "VND",
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
 
 function formatDate(iso: string): string {
   const d = new Date(iso);
@@ -248,10 +241,11 @@ function WalletTab({ t, lang }: { t: WalletDict; lang: string }) {
             <Wallet className="w-5 h-5 opacity-80" />
             <span className="text-base sm:text-sm font-medium opacity-90">{t.balanceTitle}</span>
           </div>
-          <p className="text-3xl font-medium tracking-tight">{formatVnd(wallet.balanceVnd)}</p>
+          {/* Points, not dong: eXU is not money (#052). */}
+          <p className="text-3xl font-medium tracking-tight">{formatExu(wallet.balanceVnd, lang)}</p>
           {wallet.availableBalanceVnd !== wallet.balanceVnd && (
             <p className="text-base sm:text-sm mt-1 opacity-80">
-              {t.availableBalance}: {formatVnd(wallet.availableBalanceVnd)}
+              {t.availableBalance}: {formatExu(wallet.availableBalanceVnd, lang)}
             </p>
           )}
         </div>
@@ -357,10 +351,10 @@ function WalletTab({ t, lang }: { t: WalletDict; lang: string }) {
                   </div>
                   <div className="text-right flex-shrink-0">
                     <p className={`text-base sm:text-sm font-semibold ${credit ? "text-emerald-600" : "text-red-500"}`}>
-                      {credit ? "+" : ""}{formatVnd(tx.amountVnd)}
+                      {credit ? "+" : ""}{formatExu(tx.amountVnd, lang)}
                     </p>
                     <p className="text-sm text-gray-400">
-                      {t.availableBalance}: {formatVnd(tx.balanceAfterVnd)}
+                      {t.availableBalance}: {formatExu(tx.balanceAfterVnd, lang)}
                     </p>
                   </div>
                 </div>
@@ -633,7 +627,7 @@ function ReferralTab({ t, lang }: { t: WalletDict; lang: string }) {
               title: t.howStep3,
               desc: t.howStep3Desc.replace(
                 "{reward}",
-                formatVnd(wallet?.referralRewardVnd ?? 10_000)
+                formatExu(wallet?.referralRewardVnd ?? 10_000, lang)
               ),
               icon: <Gift className="w-5 h-5" />,
             },

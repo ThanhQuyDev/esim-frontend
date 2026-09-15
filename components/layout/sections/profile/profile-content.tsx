@@ -10,6 +10,7 @@ import {
   useWalletMe,
   useReferralProfile,
   usePartnerMe,
+  formatExu,
   type MembershipTier,
 } from "@/lib/hooks";
 import { profileTranslations } from "./translations";
@@ -253,7 +254,7 @@ export function ProfileContent({ lang }: ProfileContentProps) {
                       <div className="flex items-center gap-2 text-emerald-700 mb-1">
                         <Coins className="w-4 h-4" />
                         <span className="text-sm">
-                          {lang === "vi" ? "Hoàn tiền" : "Cashback"}
+                          {lang === "vi" ? "Tích điểm" : "Points back"}
                         </span>
                       </div>
                       <p className="text-lg font-semibold text-emerald-800">
@@ -268,7 +269,7 @@ export function ProfileContent({ lang }: ProfileContentProps) {
                         </span>
                       </div>
                       <p className="text-lg font-semibold text-blue-800">
-                        {formatVnd(wallet.referralRewardVnd)} eXU
+                        {formatExu(wallet.referralRewardVnd, lang)}
                       </p>
                     </div>
                   </div>
@@ -330,10 +331,11 @@ export function ProfileContent({ lang }: ProfileContentProps) {
                     <Wallet className="w-4 h-4 opacity-80" />
                     <span className="text-base sm:text-sm font-medium opacity-90">{t.walletBalance}</span>
                   </div>
-                  <p className="text-[1.7rem] sm:text-2xl font-medium tracking-tight">{formatVnd(wallet.balanceVnd)}</p>
+                  {/* Points, not dong: eXU is not money (#052). */}
+                  <p className="text-[1.7rem] sm:text-2xl font-medium tracking-tight">{formatExu(wallet.balanceVnd, lang)}</p>
                   {wallet.availableBalanceVnd !== wallet.balanceVnd && (
                     <p className="text-sm mt-1 opacity-80">
-                      {t.availableBalance}: {formatVnd(wallet.availableBalanceVnd)}
+                      {t.availableBalance}: {formatExu(wallet.availableBalanceVnd, lang)}
                     </p>
                   )}
                 </div>

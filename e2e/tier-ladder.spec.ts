@@ -88,7 +88,8 @@ test.describe("Membership ladder", () => {
 
     await expect(page.getByTestId("tier-rung-traveler")).toContainText("2% eXU");
     await expect(page.getByTestId("tier-rung-platinum")).toContainText("7% eXU");
-    await expect(page.getByTestId("tier-rung-platinum")).toContainText("20.000₫");
+    // Referral reward is eXU points, not dong (#052).
+    await expect(page.getByTestId("tier-rung-platinum")).toContainText("20.000 điểm eXU");
   });
 
   test("points out which level the customer is on", async ({ page }) => {

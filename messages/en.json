@@ -302,8 +302,8 @@
     ]
   },
   "referFriend": {
-    "title": "Refer a friend and earn {reward} VND in eXU!",
-    "description": "Your friend gets 10,000 VND off their first order, while you earn {reward} VND in eXU based on your membership tier after a successful referral.",
+    "title": "Refer a friend and earn {reward} eXU points!",
+    "description": "Your friend gets 10,000 VND off their first order, while you earn {reward} eXU points based on your membership tier after a successful referral.",
     "cta": "Learn More",
     "imageAlt": "A group of people celebrating after referring friends to esim.vn."
   },
@@ -1413,8 +1413,8 @@
       "footnoteDisclaimer": "** esim.vn® is unaffiliated with the goods or services to which it is being compared."
     },
     "freeCredits": {
-      "title": "Receive funds in your eXU wallet for free.",
-      "description": "Invite your friends and family to try esim.vn and earn 10,000 VND in your eXU wallet for every successful referral.",
+      "title": "Earn eXU points for free.",
+      "description": "Invite your friends and family to try esim.vn and earn 10,000 eXU points for every successful referral.",
       "cta": "Learn more",
       "disclaimer": "For more information, check out the",
       "disclaimerLink": "terms and conditions",
@@ -1526,10 +1526,10 @@
       "title": "Refer friends and earn more eXU",
       "description": "Your friend gets 10,000 VND off their first eSIM order. After the order is paid successfully, you earn eXU based on your current membership tier.",
       "perks": [
-        "Traveler: 10,000 VND in eXU per referral",
-        "Silver Traveler: 12,000 VND in eXU per referral",
-        "Gold Traveler: 15,000 VND in eXU per referral",
-        "Platinum Traveler: 20,000 VND in eXU per referral"
+        "Traveler: 10,000 eXU points per referral",
+        "Silver Traveler: 12,000 eXU points per referral",
+        "Gold Traveler: 15,000 eXU points per referral",
+        "Platinum Traveler: 20,000 eXU points per referral"
       ],
       "termsPrefix": "The referred friend always gets 10,000 VND off their first order. ",
       "termsLink": "Terms apply",
@@ -1602,7 +1602,7 @@
         {
           "number": "3",
           "title": "Your friend saves, you earn by tier",
-          "description": "Anyone using your referral code gets 10,000 VND off their first eSIM order. You earn 10,000, 12,000, 15,000, or 20,000 VND in eXU based on your membership tier when the order is created.",
+          "description": "Anyone using your referral code gets 10,000 VND off their first eSIM order. You earn 10,000, 12,000, 15,000, or 20,000 eXU points based on your membership tier when the order is created.",
           "termsLink": "Terms apply",
           "termsHref": "/legal/referral-program-terms-and-conditions/",
           "imageAlt": "An esim.vn app screen showing a US$50 credit balance with a yellow \"Cash out\" button.",

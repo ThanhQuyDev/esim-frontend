@@ -556,8 +556,16 @@ export function usePublicCoupons() {
 export function formatVnd(amount: number): string {
   return amount.toLocaleString("vi-VN") + "₫";
 }
-export function formatExu(amount: number): string {
-  return amount.toLocaleString("vi-VN") + " eXU";
+/**
+ * eXU is a reward-points balance, never money (#052): it is shown as points
+ * ("10.000 điểm eXU" / "10,000 eXU points"), not as đồng in an e-wallet, so it
+ * cannot be read as virtual currency.
+ */
+export function formatExu(amount: number, lang: string = "vi"): string {
+  const value = Math.round(Number(amount) || 0);
+  return lang === "en"
+    ? `${value.toLocaleString("en-US")} eXU points`
+    : `${value.toLocaleString("vi-VN")} điểm eXU`;
 }
 
 // ===== Why Choose Us Hooks =====
@@ -1595,7 +1603,7 @@ const TRANSACTION_LABELS_VI: Record<WalletTransactionType, string> = {
   order_cashback_reversal: "Thu hồi eXU do hoàn đơn",
   referral_reward: "Thưởng giới thiệu bạn bè",
   referral_reward_reversal: "Thu hồi thưởng giới thiệu",
-  refund_to_wallet: "Hoàn tiền vào ví",
+  refund_to_wallet: "Hoàn điểm eXU",
   manual_credit: "Admin cộng eXU",
   manual_debit: "Admin trừ eXU",
   manual_cancel: "Admin hủy số dư",
@@ -1609,7 +1617,7 @@ const TRANSACTION_LABELS_EN: Record<WalletTransactionType, string> = {
   order_cashback_reversal: "eXU reversed (refund)",
   referral_reward: "Referral reward",
   referral_reward_reversal: "Referral reward reversed",
-  refund_to_wallet: "Refund to wallet",
+  refund_to_wallet: "eXU points returned",
   manual_credit: "Admin credit",
   manual_debit: "Admin debit",
   manual_cancel: "Admin cancelled",
