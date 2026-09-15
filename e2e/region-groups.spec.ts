@@ -96,6 +96,116 @@ async function mockApi(page: Page) {
   });
 }
 
+/**
+ * Plans for whichever region slug is requested, recording each slug so a test
+ * can tell which pack's plans were loaded.
+ */
+async function mockRegionPlans(page: Page, requested: string[]) {
+  await page.route(`${API_BASE}/api/v1/plans/by-region/**`, async (route) => {
+    const slug = decodeURIComponent(
+      new URL(route.request().url()).pathname.split("/").pop() ?? "",
+    );
+    requested.push(slug);
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        dataPlans: [
+          {
+            id: slug.length,
+            provider: "esimaccess",
+            providerPlanId: slug,
+            name: `${slug} 3GB / 30day`,
+            durationDays: 30,
+            dataMb: 3072,
+            costPrice: 0,
+            price: 2,
+            retailPrice: 2.6,
+            currency: "USD",
+            sms: 0,
+            call: 0,
+            type: "fixed",
+            topUp: false,
+            isCheapest: false,
+            isActive: true,
+            createdAt: "",
+            updatedAt: "",
+            vndPrice: 150000,
+            isNonHkIp: false,
+          },
+        ],
+        slowUnlimited: [],
+        fastUnlimited: [],
+        dailyUnlimited: [],
+        smsCallEsim: [],
+        localEsim: [],
+      }),
+    });
+  });
+}
+
+test.describe("Region group page — packs as tabs (#004)", () => {
+  test("switches between packs in place without changing the URL", async ({
+    page,
+  }) => {
+    const requested: string[] = [];
+    await mockApi(page);
+    await mockRegionPlans(page, requested);
+
+    await page.goto("/esim-noi-dia/test?view=region-tabs&slug=esim-chau-a&lang=vi");
+
+    const tab13 = page.getByTestId("region-variant-tab-esim-chau-a-13-quoc-gia");
+    const tab20 = page.getByTestId("region-variant-tab-esim-chau-a-20-quoc-gia");
+    await expect(page.getByRole("tab")).toHaveCount(2);
+    await expect(tab13).toContainText("13 quốc gia");
+    await expect(tab20).toContainText("20 quốc gia");
+    await expect(tab20).toContainText("99.000");
+
+    // The pack with the fewest countries opens first, with its own plans.
+    await expect(tab13).toHaveAttribute("aria-selected", "true");
+    await expect.poll(() => requested).toContain("esim-chau-a-13-quoc-gia");
+
+    const urlBefore = page.url();
+    await tab20.click();
+
+    await expect(tab20).toHaveAttribute("aria-selected", "true");
+    await expect(tab13).toHaveAttribute("aria-selected", "false");
+    await expect.poll(() => requested).toContain("esim-chau-a-20-quoc-gia");
+    // Tabs, not links: nothing navigated.
+    expect(page.url()).toBe(urlBefore);
+  });
+
+  test("arrow keys move between the pack tabs", async ({ page }) => {
+    await mockApi(page);
+    await mockRegionPlans(page, []);
+
+    await page.goto("/esim-noi-dia/test?view=region-tabs&slug=esim-chau-a&lang=vi");
+
+    const tab13 = page.getByTestId("region-variant-tab-esim-chau-a-13-quoc-gia");
+    const tab20 = page.getByTestId("region-variant-tab-esim-chau-a-20-quoc-gia");
+    await tab13.focus();
+    await page.keyboard.press("ArrowRight");
+
+    await expect(tab20).toHaveAttribute("aria-selected", "true");
+    await expect(tab20).toBeFocused();
+  });
+
+  test("a variant's own page opens on that pack", async ({ page }) => {
+    const requested: string[] = [];
+    await mockApi(page);
+    await mockRegionPlans(page, requested);
+
+    await page.goto(
+      "/esim-noi-dia/test?view=region-tabs&slug=esim-chau-a-20-quoc-gia&lang=vi",
+    );
+
+    await expect(
+      page.getByTestId("region-variant-tab-esim-chau-a-20-quoc-gia"),
+    ).toHaveAttribute("aria-selected", "true");
+    await expect.poll(() => requested).toContain("esim-chau-a-20-quoc-gia");
+  });
+});
+
 test.describe("Region grouping — same name, different country count", () => {
   test("lists one card for the group and links to the group slug", async ({
     page,

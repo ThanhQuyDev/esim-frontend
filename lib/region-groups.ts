@@ -1,4 +1,4 @@
-import type { Region } from "./api";
+import type { Destination, Region } from "./api";
 import type { Locale } from "./i18n-config";
 import { localizedSlug } from "./slug";
 import { normalizeSearchTerm } from "./text";
@@ -179,6 +179,31 @@ export function toRegionListItems(
       variantCount: group.members.length,
     };
   });
+}
+
+/** "13 quốc gia" / "13 countries" — the label that tells the packs apart. */
+export function countryCountLabel(count: number, lang: Locale): string {
+  if (lang === "vi") return `${count} quốc gia`;
+  return `${count} ${count === 1 ? "country" : "countries"}`;
+}
+
+/** A region in the Destination shape the shared plan components expect. */
+export function regionAsDestination(region: Region): Destination {
+  return {
+    id: region.id,
+    name: region.name,
+    slug: region.slug,
+    countryCode: "",
+    avatarUrl: region.avatarUrl,
+    title: region.title,
+    titleVi: region.titleVi,
+    description: region.description,
+    descriptionVi: region.descriptionVi,
+    isPopular: false,
+    isActive: region.isActive,
+    createdAt: region.createdAt,
+    updatedAt: region.updatedAt,
+  };
 }
 
 /** Subtitle fragment for a grouped card: "3 lựa chọn" / "3 options". */

@@ -52,6 +52,8 @@ import { DestinationPlans } from "@/components/layout/sections/destination/desti
 import { useLocalPlansByCarrier, useDestinationBySlug, useRegions, usePlansBySlug } from "@/lib/hooks";
 import { RegionSuggestions } from "@/components/layout/sections/destination/region-suggestions";
 import { buildRegionSuggestions } from "@/lib/region-suggestions";
+import { RegionVariantTabs } from "@/components/layout/sections/region-group/region-variant-tabs";
+import { findRegionGroupBySlug } from "@/lib/region-groups";
 import { HowItWorksSection } from "@/components/layout/sections/how-it-works";
 import { buildHowItWorksDict } from "@/lib/how-it-works";
 import { FAQSection } from "@/components/layout/sections/faq";
@@ -106,6 +108,33 @@ function RegionSuggestionsProbe({
         countries: messages.allDestinations.countries,
       }}
       lang={lang}
+    />
+  );
+}
+
+/**
+ * Resolves a region group from the mocked `/regions` list the same way the
+ * server page does and mounts the real variant tabs (#004), so switching packs
+ * in place can be exercised against a mocked `/plans/by-region/:slug`.
+ */
+function RegionTabsProbe({ slug, lang }: { slug: string; lang: Locale }) {
+  const messages = useMessages() as Record<string, any>;
+  const regions = useRegions(undefined, undefined, undefined, 500);
+
+  if (!regions.data) {
+    return <p data-testid="region-tabs-loading">loading</p>;
+  }
+
+  const group = findRegionGroupBySlug(regions.data, slug, lang);
+  if (!group) return <p data-testid="region-tabs-none">no group</p>;
+
+  return (
+    <RegionVariantTabs
+      members={group.members}
+      lang={lang}
+      dict={messages.destinationPage as DestinationDict}
+      fromLabel={messages.allDestinations.from}
+      initialSlug={group.slug === slug ? undefined : slug}
     />
   );
 }
@@ -306,6 +335,18 @@ export default function LocalEsimTestPage() {
           view=how-it-works slug={slug} lang={lang}
         </p>
         <HowItWorksProbe slug={slug} lang={lang} />
+      </main>
+    );
+  }
+
+  if (view === "region-tabs") {
+    const slug = params.get("slug") ?? "esim-chau-a";
+    return (
+      <main role="main" style={{ padding: 12 }}>
+        <p data-testid="local-test-meta">
+          view=region-tabs slug={slug} lang={lang}
+        </p>
+        <RegionTabsProbe slug={slug} lang={lang} />
       </main>
     );
   }

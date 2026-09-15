@@ -12,9 +12,10 @@ import { localizedSlug } from "@/lib/slug";
 import {
   findRegionGroupBySlug,
   groupRegions,
+  regionAsDestination,
   type RegionGroup,
 } from "@/lib/region-groups";
-import { RegionVariantPicker } from "@/components/layout/sections/region-group/region-variant-picker";
+import { RegionVariantTabs } from "@/components/layout/sections/region-group/region-variant-tabs";
 import { RegionSuggestions } from "@/components/layout/sections/destination/region-suggestions";
 import { buildRegionSuggestions } from "@/lib/region-suggestions";
 import { buildHowItWorksDict } from "@/lib/how-it-works";
@@ -269,6 +270,10 @@ export default async function UnifiedSlugPage({
   if (!entity) {
     const group = await resolveRegionGroup(params.slug, locale);
     if (group && group.slug === params.slug) {
+      const groupFaqSlugs = [
+        localizedPath(params.slug, locale),
+        locale === "vi" ? "/region" : `/${locale}/region`,
+      ];
       return (
         <main role="main">
           <Breadcrumb
@@ -281,22 +286,29 @@ export default async function UnifiedSlugPage({
             ]}
             lang={locale}
           />
-          <div className="mx-4 sm:mx-auto">
-            <div className="container mx-auto py-10">
-              <h1 className="heading-xl mb-3">{group.label}</h1>
-              <p className="body-md text-text-secondary mb-8">
-                {locale === "vi"
-                  ? "Chọn gói theo số lượng quốc gia bạn cần."
-                  : "Choose the pack by how many countries you need."}
-              </p>
-              <RegionVariantPicker
-                group={group}
-                lang={locale}
-                fromLabel={dict.allDestinations.from}
-              />
-            </div>
+          {/* Every pack of the group on one page: the tabs swap the plans in
+              place, so the URL stays `/esim-chau-a` (#004). The plan picker
+              renders the page's h1. */}
+          <RegionVariantTabs
+            members={group.members}
+            lang={locale}
+            dict={dict.destinationPage}
+            fromLabel={dict.allDestinations.from}
+          />
+          <div className="max-w-[1168px] mx-auto px-4 sm:px-0">
+            <LazyEsimComparison dict={dict.whatIsEsimPage.comparison} />
+            <LazyTestimonialsSection dict={dict.testimonials} />
+            <LazyDownloadAppSection dict={dict.downloadApp} />
+            <LazyFAQSection
+              dict={dict.faq}
+              lang={locale}
+              url={groupFaqSlugs[0]}
+              urls={groupFaqSlugs}
+              templateVars={{ name: group.label }}
+            />
+            <LazyReferFriendBanner dict={dict.referFriend} lang={locale} />
+            <LazyFooterSection dict={dict.footer} lang={locale} />
           </div>
-          <LazyFooterSection dict={dict.footer} lang={locale} />
         </main>
       );
     }
@@ -438,23 +450,6 @@ export default async function UnifiedSlugPage({
   // other packs.
   const variantGroup = await resolveRegionGroup(params.slug, locale);
 
-  // Adapt Region to Destination shape for shared components
-  const destination: Destination = {
-    id: region.id,
-    name: region.name,
-    slug: region.slug,
-    countryCode: "",
-    avatarUrl: region.avatarUrl,
-    title: region.title,
-    titleVi: region.titleVi,
-    description: region.description,
-    descriptionVi: region.descriptionVi,
-    isPopular: false,
-    isActive: region.isActive,
-    createdAt: region.createdAt,
-    updatedAt: region.updatedAt,
-  };
-
   return (
     <main role="main">
       <Breadcrumb
@@ -467,31 +462,29 @@ export default async function UnifiedSlugPage({
         ]}
         lang={locale}
       />
-      {variantGroup && (
-        <div className="mx-4 sm:mx-auto">
-          <div className="container mx-auto pb-6">
-            <h2 className="heading-sm mb-4">
-              {locale === "vi"
-                ? "Chọn theo số lượng quốc gia"
-                : "Choose by number of countries"}
-            </h2>
-            <RegionVariantPicker
-              group={variantGroup}
-              lang={locale}
-              activeSlug={params.slug}
-              fromLabel={dict.allDestinations.from}
-            />
-          </div>
-        </div>
+      {variantGroup ? (
+        // The other packs are tabs over the plans, switched in place (#004).
+        // The pack being viewed uses the full record fetched above rather than
+        // its list entry.
+        <RegionVariantTabs
+          members={variantGroup.members.map((m) =>
+            m.id === region.id ? region : m
+          )}
+          lang={locale}
+          dict={dict.destinationPage}
+          fromLabel={dict.allDestinations.from}
+          initialSlug={params.slug}
+        />
+      ) : (
+        <DestinationPlans
+          destination={regionAsDestination(region)}
+          slug={params.slug}
+          dict={dict.destinationPage}
+          lang={locale}
+          planSource="region"
+          initialRegion={region}
+        />
       )}
-      <DestinationPlans
-        destination={destination}
-        slug={params.slug}
-        dict={dict.destinationPage}
-        lang={locale}
-        planSource="region"
-        initialRegion={region}
-      />
       <div className="max-w-[1168px] mx-auto px-4 sm:px-0">
         <LazyHowItWorksSection dict={howItWorks} />
         <LazyFeaturesSection
