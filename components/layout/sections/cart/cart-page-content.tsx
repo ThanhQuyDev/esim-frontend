@@ -7,6 +7,7 @@ import {
   removeCoupon,
   getSavedCoupons,
   fetchApiCoupons,
+  fetchCouponByCode,
   getSubtotal,
   couponDiscountLabel,
   getDiscount,
@@ -155,9 +156,21 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
     if (!trimmed) return;
 
     // Check if it's a known coupon code
-    const foundCoupon = availableCoupons.find(
+    let foundCoupon = availableCoupons.find(
       (c) => c.code.toUpperCase() === trimmed
     );
+
+    // Not in the public list: it may be a private coupon, which is never listed
+    // but still works when typed in. Ask the server before deciding it must be
+    // a referral code — otherwise a valid private coupon was reported as an
+    // invalid referral code (#037).
+    if (!foundCoupon && user && token) {
+      try {
+        foundCoupon = (await fetchCouponByCode(trimmed, token)) ?? undefined;
+      } catch {
+        // Lookup failed — fall through to the referral check as before.
+      }
+    }
 
     if (foundCoupon) {
       // Validate coupon min amount

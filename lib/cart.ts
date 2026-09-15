@@ -241,6 +241,47 @@ function getDefaultCoupons(): Coupon[] {
 
 // ===== API Coupons =====
 
+/** An API coupon in the shape the cart works with. */
+export function toCartCoupon(c: any): Coupon {
+  return {
+    code: c.code,
+    discount: c.discountPercent,
+    description: `${c.discountPercent}% off`,
+    expiresAt: c.expiresAt,
+    minAmount: c.minOrderAmount || 0,
+    minOrderAmountVnd: c.minOrderAmount || 0,
+    isPopular: !!c.isPopular,
+    discountType: c.discountType === "fixed" ? "fixed" : "percent",
+    discountAmountVnd: Number(c.discountAmount ?? 0),
+    maxDiscountVnd:
+      c.maxDiscountAmount == null ? null : Number(c.maxDiscountAmount),
+  };
+}
+
+/**
+ * Look a typed-in code up on the server (#037).
+ *
+ * A private coupon is left out of the public list on purpose, so the cart could
+ * never recognise one: it fell through to the referral check and the customer
+ * was told "mã giới thiệu không hợp lệ" for a perfectly good coupon. Returns
+ * `null` when no coupon has that code, so the caller can try it as a referral.
+ */
+export async function fetchCouponByCode(
+  code: string,
+  token: string,
+): Promise<Coupon | null> {
+  const API_BASE_URL =
+    process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.saily.example.com";
+  const res = await fetch(
+    `${API_BASE_URL}/api/v1/coupons/code/${encodeURIComponent(code)}`,
+    { headers: { Authorization: `Bearer ${token}` } },
+  );
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error(`API ${res.status}`);
+  const coupon = await res.json();
+  return coupon?.code ? toCartCoupon(coupon) : null;
+}
+
 /** Fetch active coupons from /api/v1/coupons and map to cart Coupon type */
 export async function fetchApiCoupons(): Promise<Coupon[]> {
   const API_BASE_URL =
@@ -261,19 +302,7 @@ export async function fetchApiCoupons(): Promise<Coupon[]> {
           c.isPublic !== false &&
           (!c.expiresAt || new Date(c.expiresAt) > new Date()),
       )
-      .map((c: any) => ({
-        code: c.code,
-        discount: c.discountPercent,
-        description: `${c.discountPercent}% off`,
-        expiresAt: c.expiresAt,
-        minAmount: c.minOrderAmount || 0,
-        minOrderAmountVnd: c.minOrderAmount || 0,
-        isPopular: !!c.isPopular,
-        discountType: c.discountType === "fixed" ? "fixed" : "percent",
-        discountAmountVnd: Number(c.discountAmount ?? 0),
-        maxDiscountVnd:
-          c.maxDiscountAmount == null ? null : Number(c.maxDiscountAmount),
-      }));
+      .map(toCartCoupon);
   } catch (err) {
     console.warn("Failed to fetch API coupons, falling back to saved:", err);
     return getSavedCoupons();
