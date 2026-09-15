@@ -18,7 +18,7 @@ import {
   Zap,
   Apple,
 } from "lucide-react";
-import type { MyEsim } from "@/lib/hooks";
+import type { EsimDataUsage, MyEsim } from "@/lib/hooks";
 import { useEsimDataUsage } from "@/lib/hooks";
 import type { ProfileDict } from "./translations";
 import { QRCodeSVG } from "qrcode.react";
@@ -126,13 +126,19 @@ function QrCodeImage({ lpa }: { lpa: string }) {
   );
 }
 
-function DataUsageBar({ label, used, total, unit, isUnlimited }: {
+function DataUsageBar({ label, used, total, unit, isUnlimited, lang, integer = false }: {
   label: string;
   used: number;
   total: number;
   unit: string;
   isUnlimited: boolean;
+  lang: string;
+  /** Whole units only — days are counted, never "20.0 ngày" (#027). */
+  integer?: boolean;
 }) {
+  const vi = lang === "vi";
+  const format = (value: number) =>
+    integer ? String(Math.round(value)) : value.toFixed(value < 100 ? 1 : 0);
   if (isUnlimited) {
     return (
       <div className="space-y-1.5">
@@ -140,7 +146,7 @@ function DataUsageBar({ label, used, total, unit, isUnlimited }: {
           <span className="text-sm font-medium text-gray-600">{label}</span>
           <span className="inline-flex items-center gap-1 text-sm font-semibold text-indigo-600">
             <Infinity className="w-3.5 h-3.5" />
-            Unlimited
+            {vi ? "Không giới hạn" : "Unlimited"}
           </span>
         </div>
         <div className="w-full h-2 rounded-full bg-indigo-100">
@@ -160,7 +166,7 @@ function DataUsageBar({ label, used, total, unit, isUnlimited }: {
       <div className="flex items-center justify-between">
         <span className="text-sm font-medium text-gray-600">{label}</span>
         <span className="text-sm font-semibold text-gray-900">
-          {remaining.toFixed(remaining < 100 ? 1 : 0)} {unit} left
+          {format(remaining)} {unit} {vi ? "còn lại" : "left"}
         </span>
       </div>
       <div className={`w-full h-2 rounded-full ${barBg}`}>
@@ -170,8 +176,8 @@ function DataUsageBar({ label, used, total, unit, isUnlimited }: {
         />
       </div>
       <div className="flex justify-between text-sm text-gray-400">
-        <span>{used.toFixed(used < 100 ? 1 : 0)} {unit} used</span>
-        <span>{total.toFixed(total < 100 ? 1 : 0)} {unit} total</span>
+        <span>{vi ? "Đã dùng" : "Used"} {format(used)} {unit}</span>
+        <span>{vi ? "Tổng" : "Total"} {format(total)} {unit}</span>
       </div>
     </div>
   );
@@ -183,8 +189,11 @@ function statusLabel(status: string | undefined, lang: string): string {
   const labels: Record<string, { vi: string; en: string }> = {
     ACTIVE: { vi: "Đang dùng", en: "Active" },
     NOT_ACTIVE: { vi: "Chưa kích hoạt", en: "Not activated" },
+    INACTIVE: { vi: "Chưa kích hoạt", en: "Not activated" },
     EXPIRED: { vi: "Hết hạn", en: "Expired" },
     USED_UP: { vi: "Hết dung lượng", en: "Used up" },
+    FINISHED: { vi: "Đã kết thúc", en: "Finished" },
+    CANCELLED: { vi: "Đã huỷ", en: "Cancelled" },
   };
   const known = labels[key];
   if (known) return lang === "vi" ? known.vi : known.en;
@@ -192,7 +201,12 @@ function statusLabel(status: string | undefined, lang: string): string {
 }
 
 export function DataUsageSection({ esimId, lang }: { esimId: number; lang: string }) {
-  const { data: usage, isLoading, isError } = useEsimDataUsage(esimId);
+  const { data, isLoading, isError } = useEsimDataUsage(esimId);
+  // The API can report `remaining: null` (size unknown) and `usageAvailable:
+  // false` (provider has no usage API) — both were read as numbers before (#027).
+  const usage = data as
+    | (Omit<EsimDataUsage, "remaining"> & { remaining: number | null; usageAvailable?: boolean })
+    | undefined;
 
   if (isLoading) {
     return (
@@ -215,10 +229,29 @@ export function DataUsageSection({ esimId, lang }: { esimId: number; lang: strin
     );
   }
 
+  // Viettel and other local inventory expose no usage API: say so plainly
+  // rather than draw a full bar that was never measured (#027).
+  if (usage.usageAvailable === false) {
+    return (
+      <div className="border-t border-gray-100 pt-4 mt-4 space-y-2" data-testid="usage-unavailable">
+        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">
+          {lang === "vi" ? "Dữ liệu sử dụng" : "Data Usage"}
+        </h4>
+        <p className="text-sm text-gray-500">
+          {lang === "vi"
+            ? "Nhà mạng chưa cung cấp số liệu sử dụng trực tuyến cho eSIM này. Bạn có thể xem dung lượng còn lại trong phần cài đặt di động của điện thoại."
+            : "The carrier does not report live usage for this eSIM. You can check the remaining data in your phone's mobile settings."}
+        </p>
+      </div>
+    );
+  }
+
   // Convert MB to GB for display
   const totalGb = usage.total / 1024;
   const usedGb = usage.dataUsed / 1024;
-  const remainingGb = usage.remaining / 1024;
+  const remainingMb =
+    usage.remaining ?? (usage.total > 0 ? Math.max(0, usage.total - usage.dataUsed) : null);
+  const remainingGb = remainingMb === null ? null : remainingMb / 1024;
 
   // Time left runs from the moment the eSIM first connected — the plan clock
   // does not start at purchase (#062).
@@ -274,6 +307,7 @@ export function DataUsageSection({ esimId, lang }: { esimId: number; lang: strin
           total={totalGb}
           unit="GB"
           isUnlimited={usage.isUnlimited}
+          lang={lang}
         />
       ) : (
         <div data-testid="data-used-only" className="flex items-center justify-between">
@@ -295,8 +329,18 @@ export function DataUsageSection({ esimId, lang }: { esimId: number; lang: strin
             total={totalDays}
             unit={lang === "vi" ? "ngày" : "days"}
             isUnlimited={false}
+            lang={lang}
+            integer
           />
         </div>
+      ) : isActivated ? (
+        // In use, but no expiry reported yet — "not activated" would contradict
+        // the "Đang dùng" badge right above it (#027).
+        <p data-testid="time-unknown" className="text-sm text-gray-500">
+          {lang === "vi"
+            ? "eSIM đang được sử dụng — nhà cung cấp chưa gửi ngày hết hạn, thời gian còn lại sẽ hiện khi có số liệu."
+            : "This eSIM is in use — the provider has not sent an expiry yet; the time left will appear once it does."}
+        </p>
       ) : (
         <p data-testid="not-activated" className="text-sm text-gray-500">
           {lang === "vi"
@@ -312,10 +356,12 @@ export function DataUsageSection({ esimId, lang }: { esimId: number; lang: strin
             <Wifi className="w-3.5 h-3.5 text-blue-500" />
           </div>
           <p className="text-lg font-medium text-blue-700">
-            {usage.isUnlimited ? "∞" : `${remainingGb.toFixed(1)}`}
+            {usage.isUnlimited ? "∞" : remainingGb === null ? "—" : remainingGb.toFixed(1)}
           </p>
-          <p className="text-sm text-blue-500">
-            {usage.isUnlimited ? "Unlimited" : `GB ${lang === "vi" ? "còn lại" : "remaining"}`}
+          <p className="text-sm text-blue-500" data-testid="remaining-card">
+            {usage.isUnlimited
+              ? lang === "vi" ? "Không giới hạn" : "Unlimited"
+              : `GB ${lang === "vi" ? "còn lại" : "remaining"}`}
           </p>
         </div>
         <div className="bg-emerald-50 rounded-lg p-3 text-center">
