@@ -140,6 +140,35 @@ test.describe("FAQ context URLs", () => {
     expect(urls).toContain("/region");
   });
 
+  test("finds an English page's own FAQs under its Vietnamese slug (#019)", () => {
+    // The CMS keys FAQs by the Vietnamese path; `language` selects English.
+    const urls = faqCandidateUrls({
+      pathname: "/en/esim-china",
+      locale: "en",
+      entityType: "destination",
+      entitySlugs: ["esim-trung-quoc", "esim-china"],
+    });
+
+    expect(urls[0]).toBe("/en/esim-china");
+    const own = urls.indexOf("/esim-trung-quoc");
+    expect(own).toBeGreaterThan(-1);
+    // Own FAQs are asked for before either blanket record.
+    expect(own).toBeLessThan(urls.indexOf("/en/destination"));
+    expect(own).toBeLessThan(urls.indexOf("/destination"));
+    expect(urls[urls.length - 1]).toBe("/destination");
+  });
+
+  test("adds nothing new for a Vietnamese page already asked by its own slug", () => {
+    const urls = faqCandidateUrls({
+      pathname: "/esim-nhat-ban",
+      locale: "vi",
+      entityType: "destination",
+      entitySlugs: [null, "esim-nhat-ban"],
+    });
+
+    expect(urls).toEqual(["/esim-nhat-ban", "/destination"]);
+  });
+
   test("never repeats a candidate", () => {
     const urls = faqCandidateUrls({ pathname: "/ma-giam-gia", locale: "vi" });
 

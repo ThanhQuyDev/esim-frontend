@@ -40,6 +40,7 @@ export async function PageFaqSchema({ locale }: { locale: string }) {
   // name to substitute into templated questions.
   let entityType: 'destination' | 'region' | null = null;
   let name: string | null = null;
+  let entitySlugs: (string | null | undefined)[] = [];
 
   if (segments.length === 1) {
     const destination = await getDestinationBySlug(segments[0], locale);
@@ -48,11 +49,13 @@ export async function PageFaqSchema({ locale }: { locale: string }) {
       name =
         (locale === 'vi' ? destination.titleVi : destination.title) ||
         destination.name;
+      entitySlugs = [destination.slugVi, destination.slug];
     } else {
       const region = await getRegionBySlug(segments[0], locale);
       if (region) {
         entityType = 'region';
         name = (locale === 'vi' ? region.titleVi : region.title) || region.name;
+        entitySlugs = [region.slugVi, region.slug];
       }
     }
   }
@@ -60,7 +63,8 @@ export async function PageFaqSchema({ locale }: { locale: string }) {
   const urls = faqCandidateUrls({
     pathname: path,
     locale: locale as Locale,
-    entityType
+    entityType,
+    entitySlugs
   });
 
   const faqs = await getFaqs({ lang: locale, urls }).catch(() => ({

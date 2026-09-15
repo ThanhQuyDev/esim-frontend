@@ -16,6 +16,7 @@ import {
   type RegionGroup,
 } from "@/lib/region-groups";
 import { RegionVariantTabs } from "@/components/layout/sections/region-group/region-variant-tabs";
+import { faqCandidateUrls } from "@/lib/faq-urls";
 import { RegionSuggestions } from "@/components/layout/sections/destination/region-suggestions";
 import { buildRegionSuggestions } from "@/lib/region-suggestions";
 import { buildHowItWorksDict } from "@/lib/how-it-works";
@@ -270,10 +271,11 @@ export default async function UnifiedSlugPage({
   if (!entity) {
     const group = await resolveRegionGroup(params.slug, locale);
     if (group && group.slug === params.slug) {
-      const groupFaqSlugs = [
-        localizedPath(params.slug, locale),
-        locale === "vi" ? "/region" : `/${locale}/region`,
-      ];
+      const groupFaqSlugs = faqCandidateUrls({
+        pathname: localizedPath(params.slug, locale),
+        locale,
+        entityType: "region",
+      });
       return (
         <main role="main">
           <Breadcrumb
@@ -326,11 +328,14 @@ export default async function UnifiedSlugPage({
   const localizedName = pickLocalizedName(entity.data, locale);
 
   if (entity.type === "destination") {
-    const localePrefix = locale === "vi" ? "" : `/${locale}`;
-    const faqSlugs = [
-      localizedPath(params.slug, locale),
-      `${localePrefix}/destination`,
-    ];
+    // Same candidates, in the same priority, as the FAQPage schema in <head>:
+    // the page's own FAQs under any of its slugs, then the blanket ones (#019).
+    const faqSlugs = faqCandidateUrls({
+      pathname: localizedPath(params.slug, locale),
+      locale,
+      entityType: "destination",
+      entitySlugs: [entity.data.slugVi, entity.data.slug],
+    });
     const destination = entity.data;
     // The whole pool, so the draw below has something to draw from: the
     // default limit of 6 meant a seventh reason was never shown (#087).
@@ -418,11 +423,12 @@ export default async function UnifiedSlugPage({
   }
 
   // Region
-  const localePrefix = locale === "vi" ? "" : `/${locale}`;
-  const faqSlugs = [
-    localizedPath(params.slug, locale),
-    `${localePrefix}/region`,
-  ];
+  const faqSlugs = faqCandidateUrls({
+    pathname: localizedPath(params.slug, locale),
+    locale,
+    entityType: "region",
+    entitySlugs: [entity.data.slugVi, entity.data.slug],
+  });
   const region = entity.data;
   const whyChooseUsRes = await getWhyChooseUs({
     lang: locale,

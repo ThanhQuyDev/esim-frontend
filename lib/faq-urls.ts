@@ -37,8 +37,16 @@ export function faqCandidateUrls(opts: {
   locale: Locale;
   /** Set for a country/region page, which also has blanket FAQs to fall back on. */
   entityType?: "destination" | "region" | null;
+  /**
+   * The country/region's own slugs (`slugVi`, `slug`). The CMS keys FAQs by the
+   * Vietnamese page path and tells the languages apart with a `language` field,
+   * so the English page `/en/esim-china` keeps its English FAQs under
+   * `/esim-trung-quoc`. Without these keys the English page never found its own
+   * FAQs and fell back to the blanket ones — or showed none (#019).
+   */
+  entitySlugs?: (string | null | undefined)[];
 }): string[] {
-  const { pathname, locale, entityType } = opts;
+  const { pathname, locale, entityType, entitySlugs } = opts;
   const localePrefix = locale === routing.defaultLocale ? "" : `/${locale}`;
   const withoutPrefix =
     localePrefix && pathname.startsWith(localePrefix)
@@ -53,6 +61,13 @@ export function faqCandidateUrls(opts: {
     // The homepage is the exception: the CMS stores it as `/home`.
     withoutPrefix === "/" ? `${localePrefix}/home` : null,
     englishRoutePath(withoutPrefix, locale),
+    // The same page under each of its slugs, still ahead of anything shared.
+    ...(entitySlugs ?? [])
+      .filter((slug): slug is string => !!slug)
+      .flatMap((slug) => [
+        `/${slug}`,
+        localePrefix ? `${localePrefix}/${slug}` : null,
+      ]),
     // Blanket FAQs, last: only reached when the page has none of its own.
     entityType ? `${localePrefix}/${entityType}` : null,
     entityType ? `/${entityType}` : null,
