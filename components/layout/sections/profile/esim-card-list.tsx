@@ -392,6 +392,33 @@ export function DataUsageSection({ esimId, lang }: { esimId: number; lang: strin
 
 type EsimTab = "info" | "dataUsage";
 
+/**
+ * Providers the backend can actually recharge (#029). MicroEsim's API has no
+ * recharge endpoint and Viettel / local inventory has no provider API at all, so
+ * offering them a button would only lead to an empty or refused topup.
+ */
+const TOPUP_PROVIDERS = new Set(["airalo", "esimaccess", "gadgetkorea", "billion"]);
+
+/** Order states in which the eSIM is gone for good — nothing left to top up. */
+const TOPUP_BLOCKED_STATUSES = new Set(["refunded", "expired", "cancelled", "failed"]);
+
+/**
+ * Whether to offer the Top Up button on this eSIM (#029).
+ *
+ * The button was commented out while `plan.topUp` was unpopulated. It now is
+ * for Airalo, eSIM Access and Gadget Korea, and there it decides — a plan the
+ * provider marks non-rechargeable gets no button. Billion's catalogue import
+ * never sets the flag, yet every Billion eSIM recharges through F007, so the
+ * flag is not consulted for Billion.
+ */
+export function canTopUpEsim(esim: Pick<MyEsim, "provider" | "status" | "plan">): boolean {
+  const provider = (esim.provider ?? "").toLowerCase();
+  if (!TOPUP_PROVIDERS.has(provider)) return false;
+  if (TOPUP_BLOCKED_STATUSES.has((esim.status ?? "").toLowerCase())) return false;
+  if (provider === "billion") return true;
+  return esim.plan?.topUp === true;
+}
+
 function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" | "vi" }) {
   const [expanded, setExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState<EsimTab>("info");
@@ -456,8 +483,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
     },
   ];
 
-  // TODO: restore gate `esim.plan?.topUp === true` when backend populates plan.topUp
-  const canTopup = esim.plan?.topUp === true;
+  const canTopup = canTopUpEsim(esim);
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white overflow-hidden transition-shadow hover:shadow-sm">
@@ -698,17 +724,18 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                     </a>
                   )}
 
-                  {/* Top Up Button — only when the plan supports it */}
-                  {/* {canTopup && (
+                  {/* Top Up Button — only when this eSIM can really be recharged (#029) */}
+                  {canTopup && (
                     <button
                       type="button"
+                      data-testid="esim-topup-button"
                       onClick={() => setTopupOpen(true)}
                       className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-blue-600 text-white rounded-lg text-base sm:text-sm font-semibold hover:bg-blue-700 transition-colors shadow-sm"
                     >
                       <Zap className="w-4 h-4" />
                       {t.topup}
                     </button>
-                  )} */}
+                  )}
                 </div>
               </>
             ) : (

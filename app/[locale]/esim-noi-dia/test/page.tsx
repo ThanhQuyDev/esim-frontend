@@ -37,7 +37,7 @@
  * Guard: 404 in production — only renders under `next dev`.
  *
  * Query params:
- *   ?view=detail|tab|search|plans|region-suggest|how-it-works|faq|tier-ladder|esim-usage|orders|blog-nav|lang-cache|help-search|support-form|donut|plan-suggest|affiliate
+ *   ?view=detail|tab|search|plans|region-suggest|how-it-works|faq|tier-ladder|esim-usage|esim-cards|orders|blog-nav|lang-cache|help-search|support-form|donut|plan-suggest|affiliate
  *   ?slug=japan                       (plans view; default japan)
  *   ?carrier=wintel|itel|vnsky|...   (detail view; default wintel)
  *   ?lang=vi|en                       (defaults to the route locale)
@@ -63,7 +63,7 @@ import { HowItWorksSection } from "@/components/layout/sections/how-it-works";
 import { buildHowItWorksDict } from "@/lib/how-it-works";
 import { FAQSection } from "@/components/layout/sections/faq";
 import { TierLadder } from "@/components/layout/sections/profile/tier-ladder";
-import { DataUsageSection } from "@/components/layout/sections/profile/esim-card-list";
+import { DataUsageSection, EsimCardList } from "@/components/layout/sections/profile/esim-card-list";
 import { OrderList } from "@/components/layout/sections/profile/order-list";
 import { AffiliateTab } from "@/components/layout/sections/profile/affiliate-tab";
 import { BlogCategoryNav } from "@/components/layout/sections/blog-page";
@@ -277,6 +277,23 @@ export default function LocalEsimTestPage() {
       <main role="main" style={{ padding: 12 }}>
         <p data-testid="local-test-meta">view=esim-usage esimId={esimId}</p>
         <DataUsageSection esimId={esimId} lang={lang} />
+      </main>
+    );
+  }
+
+  if (view === "esim-cards") {
+    // "My eSIMs" list with the Top Up button (#029). The eSIMs are a query
+    // param so each provider / status / plan.topUp case can be rendered.
+    const esims = JSON.parse(params.get("esims") ?? "[]");
+    return (
+      <main role="main" style={{ padding: 12 }}>
+        <p data-testid="local-test-meta">view=esim-cards lang={lang}</p>
+        <EsimCardList
+          esims={esims}
+          isLoading={false}
+          t={profileTranslations[lang === "en" ? "en" : "vi"]}
+          lang={lang === "en" ? "en" : "vi"}
+        />
       </main>
     );
   }
