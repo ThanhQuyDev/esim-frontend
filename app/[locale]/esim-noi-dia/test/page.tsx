@@ -71,6 +71,7 @@ import { HelpCenterSearchBox } from "@/components/layout/sections/help-center/he
 import { SupportForm, type SupportFormDict } from "@/components/layout/sections/support";
 import { DonutChart } from "@/components/layout/sections/data-calculator/donut-chart";
 import { PlanSuggestions } from "@/components/layout/sections/data-calculator/plan-suggestions";
+import { DataCalculator } from "@/components/layout/sections/data-calculator/data-calculator";
 import { profileTranslations } from "@/components/layout/sections/profile/translations";
 import type { MembershipTier } from "@/lib/hooks";
 import type { DestinationDict } from "@/components/layout/sections/destination/types";
@@ -435,6 +436,19 @@ export default function LocalEsimTestPage() {
       <main role="main">
         <p data-testid="local-test-meta">view=search lang={lang}</p>
         <DestinationSearchModal lang={lang} open onClose={() => { }} />
+      </main>
+    );
+  }
+
+  if (view === "calculator") {
+    // The whole data calculator, for its "Đặt lại" behaviour (#036); the real
+    // page is a server component around it.
+    const calculatorDict = (messages.dataCalculator as { calculator: Record<string, any> })
+      .calculator;
+    return (
+      <main role="main" style={{ padding: 12 }}>
+        <p data-testid="local-test-meta">view=calculator lang={lang}</p>
+        <DataCalculator dict={calculatorDict} lang={lang} />
       </main>
     );
   }

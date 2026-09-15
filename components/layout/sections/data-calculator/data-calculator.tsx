@@ -52,6 +52,8 @@ export function DataCalculator({ dict, lang }: DataCalculatorProps) {
     () => PROFILE_PRESETS[0].values
   );
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState(true);
+  /** Bumped by "Đặt lại" so every control starts over from a clean slate (#036). */
+  const [resetKey, setResetKey] = useState(0);
 
   const handleProfileChange = useCallback((profileKey: string) => {
     setSelectedProfile(profileKey);
@@ -77,8 +79,18 @@ export function DataCalculator({ dict, lang }: DataCalculatorProps) {
     [selectedProfile]
   );
 
+  /**
+   * "Đặt lại" starts the customer over in custom mode (#036): the "Tùy chỉnh"
+   * profile, every activity at 0 hours, ready to be filled in from scratch.
+   * It used to jump to the "casual browser" preset, which pre-filled hours the
+   * customer then had to clear one by one.
+   */
   const handleReset = useCallback(() => {
-    handleProfileChange("casual_browser");
+    handleProfileChange("individual");
+    setMobileDropdownOpen(true);
+    // Remount the activity rows (their "Khác" toggle is local state) and the
+    // plan suggestions (their destination), so nothing from before lingers.
+    setResetKey((key) => key + 1);
   }, [handleProfileChange]);
 
   return (
@@ -143,7 +155,7 @@ export function DataCalculator({ dict, lang }: DataCalculatorProps) {
           </p>
 
           {ACTIVITIES.map((activity, idx) => (
-            <div key={activity.key}>
+            <div key={`${activity.key}-${resetKey}`}>
               {idx > 0 && <hr className="border-border-secondary mb-6" />}
               <ActivityControl
                 activity={activity}
@@ -166,7 +178,7 @@ export function DataCalculator({ dict, lang }: DataCalculatorProps) {
           </p>
           <DonutChart values={values} dict={dict} />
           {/* Which plan actually covers that estimate (#078) */}
-          <PlanSuggestions values={values} dict={dict} lang={lang} />
+          <PlanSuggestions key={resetKey} values={values} dict={dict} lang={lang} />
         </div>
 
         <button
@@ -180,6 +192,7 @@ export function DataCalculator({ dict, lang }: DataCalculatorProps) {
 
       {/* Mobile bottom bar */}
       <MobileBottomBar
+        key={resetKey}
         values={values}
         dict={dict}
         lang={lang}
