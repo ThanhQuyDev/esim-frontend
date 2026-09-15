@@ -5,6 +5,7 @@ import { useChatSocket, type ChatMessage, type ChatMessageQuote } from "@/lib/ch
 import { uploadToCloudinary, validateChatFile, type FileAttachment } from "@/lib/cloudinary";
 import { useAuth } from "@/lib/auth";
 import { MessageCircle, X, Send, Loader2, Paperclip, Image as ImageIcon, CornerUpLeft } from "lucide-react";
+import { splitChatLinks } from "@/lib/chat-links";
 
 // ===== Quoted-message helpers (#073) =====
 
@@ -457,7 +458,24 @@ function MessageBubble({
         )}
 
         {hasTextContent && (
-          <p className={`whitespace-pre-wrap break-words ${hasImage ? "mt-1.5 px-3.5" : ""}`}>{message.message}</p>
+          <p className={`whitespace-pre-wrap break-words ${hasImage ? "mt-1.5 px-3.5" : ""}`}>
+            {/* Links staff send (e.g. a destination page) are tappable (#050). */}
+            {splitChatLinks(message.message ?? "").map((part, index) =>
+              part.type === "link" ? (
+                <a
+                  key={index}
+                  href={part.value}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="break-all underline underline-offset-2"
+                >
+                  {part.value}
+                </a>
+              ) : (
+                <span key={index}>{part.value}</span>
+              )
+            )}
+          </p>
         )}
         <p
           className={`mt-1 text-[12px] ${
