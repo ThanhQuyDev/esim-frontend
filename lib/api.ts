@@ -321,7 +321,10 @@ export interface Footer {
   id: string;
   title: string;
   titleVi: string;
+  /** URL on the Vietnamese site. */
   url: string;
+  /** URL on the English site; falls back to `url` (#043). */
+  urlEn?: string | null;
   sortOrder?: number;
   /** Column heading, default/English — also the grouping key (#088). */
   categories?: string | null;

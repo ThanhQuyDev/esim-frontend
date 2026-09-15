@@ -38,6 +38,19 @@ export function pickLocalizedCategory(
   return (item.categories || item.categoriesVi || "").trim();
 }
 
+/**
+ * Link target for the reader's language (#043): the English site has its own
+ * URLs, so `urlEn` wins there; `url` is the Vietnamese one and the fallback.
+ */
+export function pickLocalizedUrl(
+  item: { url?: string | null; urlEn?: string | null },
+  locale?: string
+): string {
+  const vi = (item.url || "").trim();
+  if (locale === "vi") return vi;
+  return (item.urlEn || "").trim() || vi;
+}
+
 /** The column a row belongs to, regardless of which language it was typed in. */
 export function footerColumnKey(item: {
   categories?: string | null;
@@ -68,7 +81,7 @@ export function buildFooterColumns(
 
   for (const footerLink of ordered) {
     const label = pickLocalizedTitle(footerLink, lang).trim();
-    const href = footerLink.url?.trim();
+    const href = pickLocalizedUrl(footerLink, lang);
     if (!label || !href) continue;
 
     const key = footerColumnKey(footerLink) || "__default__";

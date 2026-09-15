@@ -3,6 +3,7 @@ import {
   buildFooterColumns,
   footerColumnKey,
   pickLocalizedCategory,
+  pickLocalizedUrl,
 } from "../lib/footer-groups";
 import type { Footer } from "../lib/api";
 
@@ -30,6 +31,25 @@ function link(overrides: Partial<Footer> = {}): Footer {
     ...overrides,
   };
 }
+
+test.describe("footer columns — URL per language (#043)", () => {
+  test("links the English site to the English URL", () => {
+    const rows = [link({ url: "https://esim.vn/gioi-thieu", urlEn: "https://esim.vn/en/about-us" })];
+
+    expect(buildFooterColumns(rows, "en", "Links")[0].links[0].href).toBe(
+      "https://esim.vn/en/about-us",
+    );
+    expect(buildFooterColumns(rows, "vi", "Liên kết")[0].links[0].href).toBe(
+      "https://esim.vn/gioi-thieu",
+    );
+  });
+
+  test("falls back to the Vietnamese URL while the English one is empty", () => {
+    expect(pickLocalizedUrl({ url: "/gioi-thieu", urlEn: null }, "en")).toBe("/gioi-thieu");
+    expect(pickLocalizedUrl({ url: "/gioi-thieu", urlEn: "  " }, "en")).toBe("/gioi-thieu");
+    expect(pickLocalizedUrl({ url: "/gioi-thieu" }, "en")).toBe("/gioi-thieu");
+  });
+});
 
 test.describe("footer columns — headings", () => {
   test("shows the Vietnamese heading on the Vietnamese site", () => {
