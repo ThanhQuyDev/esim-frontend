@@ -77,6 +77,11 @@ interface AuthContextValue {
   loginWithGoogle: (idToken: string) => Promise<AuthUser>;
   /** Set a password for an account that doesn't have one yet */
   setPassword: (password: string) => Promise<void>;
+  /**
+   * Apply fields the server changed on the signed-in user — a new email after
+   * an email change — so the whole site shows them without logging in again.
+   */
+  updateUser: (patch: Partial<AuthUser>) => void;
   /** Request a password reset email */
   forgotPassword: (email: string) => Promise<void>;
   logout: () => void;
@@ -335,6 +340,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [token]
   );
 
+  const updateUser = useCallback(
+    (patch: Partial<AuthUser>) => {
+      setUser((current) => {
+        if (!current) return current;
+        const next = { ...current, ...patch };
+        // The session token is unchanged; only the stored profile is refreshed.
+        if (token) persistAuth(token, next);
+        return next;
+      });
+    },
+    [token]
+  );
+
   const forgotPassword = useCallback(async (email: string) => {
     const res = await fetch(`${API_BASE_URL}/api/v1/auth/forgot/password`, {
       method: "POST",
@@ -374,6 +392,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loginWithPassword,
         loginWithGoogle,
         setPassword,
+        updateUser,
         forgotPassword,
         logout,
         openAuthModal,

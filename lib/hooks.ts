@@ -1784,7 +1784,15 @@ async function readApiError(res: Response, fallback: string): Promise<string> {
   return first || body?.message || fallback;
 }
 
-/** The new address a pending email change is waiting on, or null. */
+/** Which address the pending code was mailed to (#023). */
+export type EmailChangeStage = "current" | "new";
+
+export interface PendingEmailChange {
+  pendingEmail: string | null;
+  stage: EmailChangeStage | null;
+}
+
+/** The new address a pending email change is waiting on, and its step. */
 export function usePendingEmailChange() {
   const { token } = useAuth();
   return useQuery({
@@ -1796,8 +1804,8 @@ export function usePendingEmailChange() {
         token,
         { signal }
       );
-      if (!res.ok) return { pendingEmail: null as string | null };
-      return res.json() as Promise<{ pendingEmail: string | null }>;
+      if (!res.ok) return { pendingEmail: null, stage: null } as PendingEmailChange;
+      return res.json() as Promise<PendingEmailChange>;
     },
   });
 }
@@ -1825,9 +1833,37 @@ export function useRequestEmailChange() {
   });
 }
 
-/** Step 2: confirm the code; the account moves to the new address. */
-export function useConfirmEmailChange() {
+/**
+ * Step 2 of 3 (#023): confirm the code mailed to the CURRENT address; the
+ * server then mails a second code to the new address.
+ */
+export function useVerifyCurrentEmailChange() {
   const { token } = useAuth();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (code: string) => {
+      const res = await authFetch(
+        `${API_BASE_URL}/api/v1/auth/me/email/change/verify-current`,
+        token,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code }),
+        }
+      );
+      if (!res.ok) throw new Error(await readApiError(res, "verifyFailed"));
+      return res.json() as Promise<PendingEmailChange>;
+    },
+    onSuccess: (pending) => {
+      queryClient.setQueriesData({ queryKey: ["email-change", "pending"] }, pending);
+      queryClient.invalidateQueries({ queryKey: ["email-change", "pending"] });
+    },
+  });
+}
+
+/** Last step: confirm the code from the new address; the account moves there. */
+export function useConfirmEmailChange() {
+  const { token, updateUser } = useAuth();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (payload: { email: string; code: string }) => {
@@ -1841,9 +1877,13 @@ export function useConfirmEmailChange() {
         }
       );
       if (!res.ok) throw new Error(await readApiError(res, "confirmFailed"));
-      return res.json();
+      return res.json() as Promise<{ email?: string }>;
     },
-    onSuccess: () => {
+    onSuccess: (updated, payload) => {
+      // The signed-in user is held in the auth context (and localStorage): update
+      // it in place so the new email shows everywhere without logging in again
+      // (#023). The session stays valid — the account is keyed by id.
+      updateUser({ email: updated?.email ?? payload.email });
       queryClient.invalidateQueries({ queryKey: ["my-profile"] });
       queryClient.invalidateQueries({ queryKey: ["email-change", "pending"] });
     },
