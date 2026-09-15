@@ -2,7 +2,7 @@ import { BlogCard, BlogCategoryNav } from "@/components/layout/sections/blog-pag
 import { FooterSection } from "@/components/layout/sections/footer";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { getDictionary } from "@/lib/dictionaries";
-import { getBlogAuthor, getBlogsByAuthor } from "@/lib/api";
+import { getBlogAuthor, getBlogsByAuthor, localizedAuthor } from "@/lib/api";
 import { getLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import type { Locale } from "@/lib/i18n-config";
@@ -13,11 +13,15 @@ export async function generateMetadata({
 }: {
   params: { authorSlug: string };
 }): Promise<Metadata> {
-  const author = await getBlogAuthor(decodeURIComponent(params.authorSlug));
+  const [locale, author] = await Promise.all([
+    getLocale(),
+    getBlogAuthor(decodeURIComponent(params.authorSlug)),
+  ]);
   if (!author) return {};
+  const { name, description } = localizedAuthor(author, locale);
   return {
-    title: author.name,
-    description: author.description ?? `Articles by ${author.name}`,
+    title: name,
+    description: description ?? `Articles by ${name}`,
   };
 }
 
@@ -33,6 +37,7 @@ export default async function BlogAuthorPage({
     getBlogAuthor(authorSlug),
   ]);
   if (!author) notFound();
+  const { name, description } = localizedAuthor(author, locale);
 
   const blogs = (await getBlogsByAuthor(authorSlug, { lang: locale, limit: 20 })).data.filter(
     (blog) => blog.isPublished,
@@ -43,7 +48,7 @@ export default async function BlogAuthorPage({
       <BlogCategoryNav lang={locale} />
       <div className="bg-primary">
         <Breadcrumb
-          items={[{ label: "Blog", href: `/${locale}/blog/` }, { label: author.name }]}
+          items={[{ label: "Blog", href: `/${locale}/blog/` }, { label: name }]}
           lang={locale}
         />
       </div>
@@ -52,16 +57,16 @@ export default async function BlogAuthorPage({
           {author.avatar ? (
             <img
               src={author.avatar}
-              alt={author.name}
+              alt={name}
               className="h-24 w-24 rounded-full object-cover"
             />
           ) : (
             <div className="flex h-24 w-24 items-center justify-center rounded-full bg-tertiary text-3xl">
-              {author.name.charAt(0).toUpperCase()}
+              {name.charAt(0).toUpperCase()}
             </div>
           )}
-          <h1 className="text-[1.625rem] sm:text-[2rem]">{author.name}</h1>
-          {author.description && <p className="body-md max-w-2xl text-secondary">{author.description}</p>}
+          <h1 className="text-[1.625rem] sm:text-[2rem]">{name}</h1>
+          {description && <p className="body-md max-w-2xl text-secondary">{description}</p>}
         </header>
         {blogs.length === 0 ? (
           <p className="body-md text-secondary">

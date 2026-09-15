@@ -164,7 +164,7 @@ function BlogCard({ blog, lang }: { blog: Blog; lang: string }) {
         </div>
         <div>
           <AuthorLink
-            author={blog.authorProfile?.name ?? blog.author}
+            author={blog.author ?? blog.authorProfile?.name ?? null}
             authorSlug={blog.authorProfile?.slug ?? blog.authorSlug}
             lang={lang}
           />

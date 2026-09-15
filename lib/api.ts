@@ -78,9 +78,22 @@ export interface BlogAuthor {
   id: number;
   userId: number;
   name: string;
+  /** English name; empty means show the Vietnamese one (#025). */
+  nameEn?: string | null;
   slug: string;
   avatar?: string | null;
   description?: string | null;
+  /** English summary; empty means show the Vietnamese one (#025). */
+  descriptionEn?: string | null;
+}
+
+/** Author name and summary in the page's language, Vietnamese as fallback. */
+export function localizedAuthor(author: BlogAuthor, locale: string) {
+  const english = locale === "en";
+  return {
+    name: (english && author.nameEn?.trim()) || author.name,
+    description: (english && author.descriptionEn?.trim()) || author.description || null,
+  };
 }
 
 export interface Blog {
