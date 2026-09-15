@@ -20,6 +20,7 @@ import { NonHkIpToggle } from "./nonhkip-toggle";
 import { hasNonHkIpPlans, filterNonHkIpPlans } from "@/lib/plan-nonhkip";
 import { SimplePlanList } from "./simple-plan-list";
 import { EkycModal } from "./ekyc-modal";
+import { InstallBeforeTripNotice } from "./install-before-trip-notice";
 
 const EMPTY_PLANS: PlansByDestinationResponse = {
   dataPlans: [],
@@ -378,6 +379,14 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
               planLabel={planLabel}
             />
             <GreenBox dict={dict} line1Html={greenBoxLine1} />
+
+            {/* Turkey only: install the eSIM before leaving (#060) */}
+            <InstallBeforeTripNotice
+              destination={destinationData || destination}
+              lang={lang}
+              planSource={planSource}
+              className="mb-[18px]"
+            />
 
             {/* Inline KYC warning — clickable, opens the EkycModal */}
             {showInlineKyc && (

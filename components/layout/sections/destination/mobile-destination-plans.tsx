@@ -14,6 +14,7 @@ import { CategoryTabs, type PlanCategory } from "./category-tabs";
 import { NonHkIpToggle } from "./nonhkip-toggle";
 import type { SeoTemplateVars } from "@/lib/seo-vars";
 import { SimplePlanList } from "./simple-plan-list";
+import { InstallBeforeTripNotice } from "./install-before-trip-notice";
 
 export interface MobileDestinationPlansProps {
   destination: Destination;
@@ -235,6 +236,13 @@ export function MobileDestinationPlans({
 
         {/* 7. CTA + Trust */}
         <div>
+          {/* Turkey only: install the eSIM before leaving (#060) */}
+          <InstallBeforeTripNotice
+            destination={resolvedDestination}
+            lang={lang}
+            planSource={planSource}
+            className="mx-4 mt-3"
+          />
           <MobileCta
             selectedPlan={selectedPlan}
             days={days}
