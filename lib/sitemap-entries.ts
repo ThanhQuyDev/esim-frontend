@@ -56,6 +56,11 @@ export interface SitemapSources {
   blogs?: Blog[] | null;
   helpArticles?: HelpCenterArticle[] | null;
   carriers?: LocalCarrier[] | null;
+  /**
+   * Refund, delivery, privacy and terms pages (#048). Their slug differs per
+   * language (`/phap-ly/chinh-sach-hoan-tien`, `/en/legal/refund-policy`).
+   */
+  legalPolicies?: { urlSlug: { vi: string; en: string } }[] | null;
 }
 
 export interface BuildSitemapOptions {
@@ -205,6 +210,16 @@ export function buildSitemap(
         (locale) => path(locale, "/help-center/[slug]", { slug }),
         article?.updatedAt
       )
+    );
+  }
+
+  // The legal pages were published but never listed (#048).
+  for (const policy of sources.legalPolicies ?? []) {
+    push(
+      entryFor(baseUrl, (locale) => {
+        const slug = policy?.urlSlug?.[locale]?.trim();
+        return slug ? path(locale, "/legal/[slug]", { slug }) : null;
+      })
     );
   }
 

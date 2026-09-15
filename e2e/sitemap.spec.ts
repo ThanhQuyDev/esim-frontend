@@ -61,6 +61,26 @@ test.describe("sitemap — contents", () => {
     expect(urls).toContain(`${BASE}/destinations`);
   });
 
+  test("#048 — lists the legal pages under each language's own slug", () => {
+    const entries = buildSitemap(
+      {
+        legalPolicies: [
+          { urlSlug: { vi: "chinh-sach-hoan-tien", en: "refund-policy" } },
+          { urlSlug: { vi: "chinh-sach-bao-mat", en: "privacy-policy" } },
+        ],
+      },
+      { baseUrl: BASE, path },
+    );
+
+    const refund = entries.find((e) => e.url === `${BASE}/legal/chinh-sach-hoan-tien`);
+    expect(refund).toBeDefined();
+    expect(refund?.alternates?.languages).toEqual({
+      vi: `${BASE}/legal/chinh-sach-hoan-tien`,
+      en: `${BASE}/en/legal/refund-policy`,
+    });
+    expect(entries.map((e) => e.url)).toContain(`${BASE}/legal/chinh-sach-bao-mat`);
+  });
+
   test("gives every URL its language alternates", () => {
     const [entry] = buildSitemap(
       { destinations: [{ slug: "japan", slugVi: "esim-nhat-ban" } as never] },
@@ -157,6 +177,9 @@ test.describe("sitemap — served", () => {
     expect(body).toContain("/cong-cu-tinh-data");
     expect(body).toContain("/en/data-usage-calculator");
     expect(body).toContain("xhtml:link");
+    // Legal pages, through next-intl's real localized paths (#048).
+    expect(body).toContain("/phap-ly/chinh-sach-hoan-tien");
+    expect(body).toContain("/en/legal/refund-policy");
     // The excluded areas never appear.
     expect(body).not.toContain("<loc>http://localhost:3102/checkout</loc>");
   });

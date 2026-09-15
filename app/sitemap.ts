@@ -8,6 +8,7 @@ import {
   fetchHelpCenterArticles,
 } from "@/lib/api";
 import { buildSitemap, type SitemapSources } from "@/lib/sitemap-entries";
+import { LEGAL_POLICIES } from "@/components/layout/sections/legal";
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://esim.vn";
 
@@ -45,6 +46,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     blogs,
     helpArticles,
     carriers,
+    legalPolicies: LEGAL_POLICIES,
   };
 
   return buildSitemap(sources, {
