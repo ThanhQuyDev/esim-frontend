@@ -2,8 +2,11 @@ import { test, expect } from "@playwright/test";
 import {
   MAX_SCHEMA_FAQS,
   buildFaqSchema,
+  faqSchemaId,
   sanitizeAnswerHtml,
+  stripParagraphTags,
 } from "../lib/faq-schema";
+import { SITE_BASE_URL } from "../lib/hreflang";
 import { faqCandidateUrls } from "../lib/faq-urls";
 
 /**
@@ -84,6 +87,52 @@ test.describe("FAQPage schema", () => {
     expect(buildFaqSchema([])).toBeNull();
     expect(buildFaqSchema(null)).toBeNull();
     expect(buildFaqSchema([faq("1", "", "")])).toBeNull();
+  });
+
+  test("publishes @id and inLanguage for the page, like the reference schema (#021)", () => {
+    const schema = buildFaqSchema(
+      [faq("1", "What is a travel eSIM?", "<p>A travel eSIM is a type of eSIM.</p>")],
+      undefined,
+      { url: "/esim-han-quoc", lang: "vi" },
+    )!;
+
+    expect(schema["@id"]).toBe(`${SITE_BASE_URL}/esim-han-quoc#faq`);
+    expect(schema.inLanguage).toBe("vi");
+    // Same key order as the sample the SEO team sent.
+    expect(Object.keys(schema)).toEqual([
+      "@context",
+      "@type",
+      "@id",
+      "inLanguage",
+      "mainEntity",
+    ]);
+  });
+
+  test("uses the English page URL and language on the English site (#021)", () => {
+    const schema = buildFaqSchema([faq("1", "Q?", "A.")], undefined, {
+      url: "/en/esim-china",
+      lang: "en",
+    })!;
+
+    expect(schema["@id"]).toBe(`${SITE_BASE_URL}/en/esim-china#faq`);
+    expect(schema.inLanguage).toBe("en");
+    expect(faqSchemaId("/")).toBe(`${SITE_BASE_URL}/#faq`);
+  });
+
+  test("removes <p> tags from the answer text (#021)", () => {
+    const schema = buildFaqSchema([
+      faq("1", "Cài thế nào?", "<p>Bước 1: quét mã.</p><p>Bước 2: bật dữ liệu.</p>"),
+    ])!;
+    const text = (schema.mainEntity as Record<string, any>[])[0].acceptedAnswer
+      .text as string;
+
+    expect(text).not.toMatch(/<\/?p[\s>]/i);
+    // Paragraphs stay apart as lines rather than running together.
+    expect(text).toBe("Bước 1: quét mã.\nBước 2: bật dữ liệu.");
+    // Other formatting Google accepts is kept.
+    expect(stripParagraphTags('<p>Xem <a href="/x">đây</a></p>')).toBe(
+      'Xem <a href="/x">đây</a>',
+    );
   });
 
   test("caps how many questions it marks up", () => {

@@ -72,7 +72,10 @@ export async function PageFaqSchema({ locale }: { locale: string }) {
     hasNextPage: false
   }));
 
-  const jsonLd = buildFaqSchema(faqs.data, name ? { name } : undefined);
+  const jsonLd = buildFaqSchema(faqs.data, name ? { name } : undefined, {
+    url: path,
+    lang: locale
+  });
   if (!jsonLd) return null;
 
   return (
