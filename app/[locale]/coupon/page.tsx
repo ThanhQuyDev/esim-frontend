@@ -2,6 +2,7 @@ import {
   CouponHero,
   CouponHowToUse,
   CouponFreeCredits,
+  CouponList,
 } from "@/components/layout/sections/coupon-page";
 import { TestimonialsSection } from "@/components/layout/sections/testimonials";
 import { ReviewComparisonTable } from "@/components/layout/sections/review-page";
@@ -41,6 +42,8 @@ export default async function CouponPage() {
         lang={locale}
       />
       <CouponHero dict={coupon.hero} lang={locale} />
+      {/* Every featured code with its own copy button (#040). */}
+      <CouponList dict={coupon.couponList ?? {}} lang={locale} />
       <CouponHowToUse dict={coupon.howToUse} lang={locale} />
       <TestimonialsSection dict={testimonialsDict} />
       <ReviewComparisonTable dict={coupon.comparisonTable} lang={locale} />

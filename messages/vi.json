@@ -1359,6 +1359,10 @@
       "couponCode": "ESIMVN",
       "imageAlt": "Người phụ nữ mỉm cười áp dụng mã giảm giá esim.vn trong ứng dụng để được giảm giá cho gói eSIM."
     },
+    "couponList": {
+      "title": "Mã giảm giá đang có",
+      "subtitle": "Sao chép mã và nhập ở giỏ hàng để được giảm giá gói eSIM."
+    },
     "howToUse": {
       "title": "Cách sử dụng mã giảm giá esim.vn",
       "description": "Nếu bạn có mã giảm giá, bạn có thể đổi mã trong ứng dụng cũng như trên web:",

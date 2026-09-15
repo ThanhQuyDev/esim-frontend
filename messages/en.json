@@ -1359,6 +1359,10 @@
       "couponCode": "ESIMVN",
       "imageAlt": "Smiling woman applies a esim.vn coupon in the app to get a discount on her eSIM plan."
     },
+    "couponList": {
+      "title": "Available coupon codes",
+      "subtitle": "Copy a code and enter it in your cart to save on your eSIM plan."
+    },
     "howToUse": {
       "title": "How to use the esim.vn coupon code",
       "description": "If you have a coupon code, you can redeem it in the app as well as on the web:",
