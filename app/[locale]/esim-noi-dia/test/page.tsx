@@ -54,6 +54,11 @@ import { RegionSuggestions } from "@/components/layout/sections/destination/regi
 import { buildRegionSuggestions } from "@/lib/region-suggestions";
 import { RegionVariantTabs } from "@/components/layout/sections/region-group/region-variant-tabs";
 import { findRegionGroupBySlug } from "@/lib/region-groups";
+import {
+  getCmsSeoUrlForHome,
+  getCmsSeoUrlForPage,
+  resolveCmsSeoLookupPath,
+} from "@/lib/cms-seo-url";
 import { HowItWorksSection } from "@/components/layout/sections/how-it-works";
 import { buildHowItWorksDict } from "@/lib/how-it-works";
 import { FAQSection } from "@/components/layout/sections/faq";
@@ -335,6 +340,33 @@ export default function LocalEsimTestPage() {
           view=how-it-works slug={slug} lang={lang}
         </p>
         <HowItWorksProbe slug={slug} lang={lang} />
+      </main>
+    );
+  }
+
+  if (view === "seo-lookup") {
+    // The SEO-config URL each browser path looks up (#016), computed with the
+    // real next-intl routing — its prefix handling is exactly what broke /en.
+    const lookups = {
+      "vi /": resolveCmsSeoLookupPath("/", "vi"),
+      "en /en": resolveCmsSeoLookupPath("/en", "en"),
+      "en /en/": resolveCmsSeoLookupPath("/en/", "en"),
+      "vi /ma-giam-gia": resolveCmsSeoLookupPath("/ma-giam-gia", "vi"),
+      "en /en/coupon": resolveCmsSeoLookupPath("/en/coupon", "en"),
+      "vi /diem-den": resolveCmsSeoLookupPath("/diem-den", "vi"),
+      "en /en/destinations": resolveCmsSeoLookupPath("/en/destinations", "en"),
+      "vi /esim-han-quoc": resolveCmsSeoLookupPath("/esim-han-quoc", "vi"),
+      "en /en/esim-han-quoc": resolveCmsSeoLookupPath("/en/esim-han-quoc", "en"),
+      "page vi /about-us": getCmsSeoUrlForPage("/about-us", "vi"),
+      "page en /about-us": getCmsSeoUrlForPage("/about-us", "en"),
+      "page en /": getCmsSeoUrlForPage("/", "en"),
+      "home vi": getCmsSeoUrlForHome("vi"),
+      "home en": getCmsSeoUrlForHome("en"),
+    };
+    return (
+      <main role="main" style={{ padding: 12 }}>
+        <p data-testid="local-test-meta">view=seo-lookup</p>
+        <pre data-testid="seo-lookup-result">{JSON.stringify(lookups)}</pre>
       </main>
     );
   }

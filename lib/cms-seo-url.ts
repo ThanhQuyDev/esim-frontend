@@ -36,6 +36,25 @@ const STATIC_SEO_ROUTES: StaticPathname[] = [
 ];
 
 /**
+ * The localized pathname of a route WITHOUT any locale prefix.
+ *
+ * With `localePrefix: 'as-needed'`, next-intl's `getPathname` already returns
+ * `/en` for the English home and `/en/coupon` for English pages. Callers below
+ * add the prefix themselves, so the English home became `/en/en`: it was never
+ * recognised, the structured-data lookup asked for `/en` instead of the CMS
+ * row `/en/home`, and the English homepage lost its whole Script/Schema block
+ * — gtag and the Organization schema (#016). Stripping the prefix here makes
+ * the result the same whether or not the library added it.
+ */
+function unprefixedPathname(href: StaticPathname, locale: Locale): string {
+  const pathname = getPathname({ locale, href });
+  const prefix = `/${locale}`;
+  if (pathname === prefix) return "/";
+  if (pathname.startsWith(`${prefix}/`)) return pathname.slice(prefix.length);
+  return pathname;
+}
+
+/**
  * URL path stored in SEO Config (admin CMS), aligned with public routes.
  * vi: localized slug without locale prefix (e.g. `/ma-giam-gia`).
  * en: `/en` + localized path (e.g. `/en/coupon`).
@@ -44,7 +63,7 @@ export function getCmsSeoUrlForPage(
   href: StaticPathname,
   locale: Locale
 ): string {
-  const pathname = getPathname({ locale, href });
+  const pathname = unprefixedPathname(href, locale);
 
   if (locale === routing.defaultLocale) {
     return pathname;
@@ -63,7 +82,7 @@ export function getCmsSeoUrlForHome(locale: Locale): string {
 
 /** Public browser path (no query) for a static route. */
 export function getBrowserPathForPage(href: StaticPathname, locale: Locale): string {
-  const pathname = getPathname({ locale, href });
+  const pathname = unprefixedPathname(href, locale);
   if (locale === routing.defaultLocale) {
     return pathname === "/" ? "/" : pathname;
   }
