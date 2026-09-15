@@ -15,11 +15,12 @@ const TAG_STYLES: Record<PlanBadgeKind, string> = {
   "hot-deal": "bg-[#FFF1F2] text-[#BE123C] border border-[#FECDD3]",
 };
 
+// Vietnamese site reads Vietnamese labels, not the English tag names (#058).
 const TAG_LABELS_VI: Record<PlanBadgeKind, string> = {
   popular: "Phổ biến",
-  "best-seller": "Best Seller",
+  "best-seller": "Bán chạy",
   "new": "Mới",
-  "hot-deal": "Hot deal",
+  "hot-deal": "Giá sốc",
 };
 
 const TAG_LABELS_EN: Record<PlanBadgeKind, string> = {
@@ -28,6 +29,13 @@ const TAG_LABELS_EN: Record<PlanBadgeKind, string> = {
   "new": "New",
   "hot-deal": "Hot deal",
 };
+
+/** The label a tag shows in `lang`, or null for a tag that is not a marketing tag. */
+export function planTagLabel(raw: string, lang: string = "vi"): string | null {
+  const kind = normalizeTag(raw);
+  if (!kind) return null;
+  return (lang === "en" ? TAG_LABELS_EN : TAG_LABELS_VI)[kind];
+}
 
 function normalizeTag(raw: string): PlanBadgeKind | null {
   const s = String(raw).toLowerCase().trim().replace(/\s+/g, "-").replace(/_/g, "-");
