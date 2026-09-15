@@ -56,7 +56,12 @@ export async function submitTicket(
   const message =
     (isObject(body) && typeof body.message === "string" && body.message) ||
     `Request failed (${res.status})`;
-  return { ok: false, kind: "error", status: res.status, message };
+  // The server's spam guard says how long to wait (#033).
+  const retryAfterMs =
+    isObject(body) && typeof body.retryAfterSeconds === "number"
+      ? body.retryAfterSeconds * 1000
+      : undefined;
+  return { ok: false, kind: "error", status: res.status, message, retryAfterMs };
 }
 
 // ===== Helpers =====

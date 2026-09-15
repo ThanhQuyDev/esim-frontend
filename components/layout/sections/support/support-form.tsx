@@ -321,6 +321,9 @@ export function SupportForm({ lang, dict, successHref }: SupportFormProps) {
         iccid: values.iccid,
         planDestination: values.planDestination,
         attachments: uploadedUrls.length > 0 ? uploadedUrls : undefined,
+        // Sent so the server can refuse it too — the browser check alone is
+        // skipped by anything posting to the API directly (#033).
+        website: honeypot.trim() || undefined,
       });
       setPhase("idle");
 
@@ -392,6 +395,21 @@ export function SupportForm({ lang, dict, successHref }: SupportFormProps) {
         } else {
           setBanner({ kind: "error", title: dict.toast.errorGeneric });
         }
+        formTopRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+      }
+
+      // The server's own spam guard refused it (#033): use the same wording as
+      // the browser check, not a bare "Request failed (429)".
+      if (result.status === 429 || result.status === 409) {
+        setBanner({
+          kind: "error",
+          title: antiSpam.blockedTitle,
+          description:
+            result.status === 429
+              ? spamMessage("rateLimited", result.retryAfterMs ?? 60_000)
+              : spamMessage("duplicate", 0),
+        });
         formTopRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
         return;
       }

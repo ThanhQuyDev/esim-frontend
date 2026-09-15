@@ -17,6 +17,8 @@ export interface CreateTicketPayload {
   planDestination?: string;
   /** Mảng URL đã upload qua /api/v1/files/upload */
   attachments?: string[];
+  /** Honeypot — always empty for a person; the server refuses a filled one (#033). */
+  website?: string;
 }
 
 export type TicketStatus =
@@ -59,7 +61,14 @@ export interface ApiError {
 export type SubmitTicketResult =
   | { ok: true; ticket: Ticket }
   | { ok: false; kind: "validation"; errors: Record<string, string> }
-  | { ok: false; kind: "error"; status: number; message: string };
+  | {
+      ok: false;
+      kind: "error";
+      status: number;
+      message: string;
+      /** How long the server asks to wait, when it refused for rate (#033). */
+      retryAfterMs?: number;
+    };
 
 /** Local representation of a file in the upload queue */
 export interface AttachmentItem {

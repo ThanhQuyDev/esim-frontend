@@ -316,3 +316,60 @@ test.describe("support form spam guard — in the browser", () => {
     expect(posted).toBe(0);
   });
 });
+
+/**
+ * #033 — the server now enforces the same limits, so a request can get past the
+ * browser (another device, cleared storage) and still be refused. The form must
+ * then speak the same language as its own check, not "Request failed (429)".
+ */
+test.describe("support form spam guard — refused by the server", () => {
+  async function mockRefusal(page: Page, status: number, body: object) {
+    const seen: Array<Record<string, unknown>> = [];
+    await page.route(`${API_BASE}/**`, (route) =>
+      route.fulfill({ status: 200, contentType: "application/json", body: '{"data":[]}' }),
+    );
+    await page.route(`${API_BASE}/api/v1/tickets`, async (route) => {
+      seen.push(route.request().postDataJSON() as Record<string, unknown>);
+      await route.fulfill({
+        status,
+        contentType: "application/json",
+        body: JSON.stringify(body),
+      });
+    });
+    return seen;
+  }
+
+  test("explains a server rate limit with the minutes to wait", async ({ page }) => {
+    const seen = await mockRefusal(page, 429, {
+      status: 429,
+      errors: { ticket: "tooManyTickets" },
+      retryAfterSeconds: 7 * 60,
+    });
+
+    await page.goto(HARNESS);
+    await fillValidRequest(page);
+    await page.waitForTimeout(MIN_FILL_MS);
+    await page.getByRole("button", { name: /Gửi yêu cầu/ }).click();
+
+    await expect(page.getByText("Chưa gửi được yêu cầu")).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByText(/thử lại sau 7 phút/)).toBeVisible();
+    await expect(page.getByText(/Request failed/)).toHaveCount(0);
+    // An honest customer never fills the honeypot, so it is not sent at all.
+    expect(seen).toHaveLength(1);
+    expect(seen[0]).not.toHaveProperty("website");
+  });
+
+  test("explains a duplicate the server caught", async ({ page }) => {
+    await mockRefusal(page, 409, {
+      status: 409,
+      errors: { ticket: "duplicateTicket" },
+    });
+
+    await page.goto(HARNESS);
+    await fillValidRequest(page);
+    await page.waitForTimeout(MIN_FILL_MS);
+    await page.getByRole("button", { name: /Gửi yêu cầu/ }).click();
+
+    await expect(page.getByText(/vừa được gửi rồi/)).toBeVisible({ timeout: 15_000 });
+  });
+});
