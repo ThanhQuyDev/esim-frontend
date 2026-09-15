@@ -1,7 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Plan } from "@/lib/api";
-import { formatDataMb, formatPrice } from "./blog-detail-helpers";
+import { formatPrice } from "./blog-detail-helpers";
+import { formatBlogPlanData } from "@/lib/blog-plan-data";
 
 export function BlogCountryPlansList({ plans, lang }: { plans: Plan[]; lang: string }) {
   if (!plans || plans.length === 0) return null;
@@ -34,7 +35,8 @@ export function BlogCountryPlansList({ plans, lang }: { plans: Plan[]; lang: str
               <div className="absolute inset-0 border-md rounded-full pointer-events-none border-[rgba(0,0,0,0.1)]" />
             </div>
             <div className="md:flex md:gap-2 items-center">
-              <p className="body-md-medium scroll-mt-20 xl:scroll-mt-24">{formatDataMb(plan.dataMb)}</p>
+              {/* By plan type: "2 GB/ngày", "Không giới hạn" — never "0 MB" (#057). */}
+              <p className="body-md-medium scroll-mt-20 xl:scroll-mt-24">{formatBlogPlanData(plan, lang)}</p>
               <p className="body-sm-medium text-secondary scroll-mt-20 xl:scroll-mt-24">
                 {plan.durationDays} {lang === "vi" ? "ngày" : "days"}
               </p>
