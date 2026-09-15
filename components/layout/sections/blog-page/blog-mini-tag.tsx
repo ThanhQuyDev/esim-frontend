@@ -1,8 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { BlogMiniTag } from "@/lib/api";
+import { localizeMiniTag } from "@/lib/blog-localize";
 
-export function BlogMiniTagWidget({ miniTag }: { miniTag: BlogMiniTag }) {
+export function BlogMiniTagWidget({
+  miniTag: rawMiniTag,
+  lang = "vi",
+}: {
+  miniTag: BlogMiniTag;
+  lang?: string;
+}) {
+  // English posts read the English copy, falling back to Vietnamese (#059).
+  const miniTag = localizeMiniTag(rawMiniTag, lang);
   return (
     <div className="flex flex-col md:flex-row gap-4 md:gap-6 w-full p-4 md:p-6 rounded-sm bg-gray-100">
       {miniTag.image && (

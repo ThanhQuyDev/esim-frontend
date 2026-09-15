@@ -3,14 +3,18 @@ import Link from "next/link";
 import type { Plan } from "@/lib/api";
 import { formatPrice } from "./blog-detail-helpers";
 import { formatBlogPlanData } from "@/lib/blog-plan-data";
+import { blogPlanDestination } from "@/lib/blog-localize";
 
 export function BlogCountryPlansList({ plans, lang }: { plans: Plan[]; lang: string }) {
   if (!plans || plans.length === 0) return null;
 
   const firstPlan = plans[0];
   const countryCode = firstPlan.countryCode?.toLowerCase() || "";
-  const destinationName = firstPlan.destination?.name || "this country";
-  const destinationSlug = firstPlan.destination?.slug || "";
+  // Name and page in the post's language (#059).
+  const { name: destinationName, href: destinationHref } = blogPlanDestination(
+    firstPlan.destination,
+    lang
+  );
 
   return (
     <div className="flex flex-col w-full gap-6 max-md:px-4 p-6 rounded-sm md:rounded-md bg-[linear-gradient(#EEF1F6,#C9D6E9)] CountryPlansList">
@@ -45,11 +49,11 @@ export function BlogCountryPlansList({ plans, lang }: { plans: Plan[]; lang: str
           </li>
         ))}
       </ul>
-      {destinationSlug && (
+      {destinationHref && (
         <Link
           role="button"
           className="max-md:w-full text-center inline-block text-primary bg-accent hover:bg-bg-accent-hover pointer-fine:hover:bg-accent-hover border-md border-bg-accent-hover pointer-fine:hover:border-accent-hover active:bg-accent-active! active:border-accent-active! box-border touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7"
-          href={lang==="vi" ? `/${destinationSlug}`:`/${lang}/${destinationSlug}/`}
+          href={destinationHref}
         >
           {lang === "vi" ? "Xem Tất Cả Gói Cước" : "See All Data Plans"}
         </Link>

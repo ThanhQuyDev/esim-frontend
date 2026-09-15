@@ -72,6 +72,11 @@ export interface BlogMiniTag {
   description: string | null;
   contentButton: string | null;
   linkUrl: string | null;
+  /** English copy for English posts; each falls back to the field above (#059). */
+  titleEn?: string | null;
+  descriptionEn?: string | null;
+  contentButtonEn?: string | null;
+  linkUrlEn?: string | null;
 }
 
 export interface BlogAuthor {

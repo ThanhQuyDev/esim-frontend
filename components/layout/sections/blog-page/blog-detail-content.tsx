@@ -226,7 +226,7 @@ export function BlogDetailContent({ lang, slug, initialBlog }: BlogDetailContent
                       />
 
                       {/* Mini Tag Widget — only show if API returns miniTag */}
-                      {hasMiniTag && <BlogMiniTagWidget miniTag={blog.miniTag!} />}
+                      {hasMiniTag && <BlogMiniTagWidget miniTag={blog.miniTag!} lang={lang} />}
 
                       {/* Country Plans — only show if API returns plans */}
                       {hasPlans && <BlogCountryPlansList plans={blog.plans!} lang={lang} />}
