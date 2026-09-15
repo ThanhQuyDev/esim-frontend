@@ -15,8 +15,9 @@ import {
 } from "@/lib/data-calculator-chart";
 import {
   collectCandidates,
-  fallbackSuggestions,
-  suggestPlans,
+  groupSuggestions,
+  MONTH_DAYS,
+  type PlanKind,
   type PlanSuggestion,
 } from "@/lib/plan-suggestions";
 import type { Destination } from "@/lib/api";
@@ -41,12 +42,12 @@ function destinationName(destination: Destination, lang: string): string {
 }
 
 /**
- * "Which plan should I buy?" — answered right under the estimate (#078).
+ * "Which plan should I buy?" — answered right under the estimate (#078, #035).
  *
- * The calculator stopped at a number of gigabytes, leaving the customer to
- * work out which package covered it. Type a destination and every plan sold
- * there is measured against the estimate; the ones that cover it are listed
- * cheapest first.
+ * Type a destination and the plans sold there are listed in three groups, each
+ * matched the way that kind of plan is sold: fixed 30-day-plus packages holding
+ * a month of the estimate, daily plans whose per-day allowance covers a day of
+ * it, and the cheapest unlimited plans.
  */
 export function PlanSuggestions({ values, dict, lang }: PlanSuggestionsProps) {
   const t = (dict.suggestions ?? {}) as Record<string, string>;
@@ -73,14 +74,12 @@ export function PlanSuggestions({ values, dict, lang }: PlanSuggestionsProps) {
   const { data: plans, isFetching: isLoadingPlans } = usePlansBySlug(slug, lang);
   const { data: usdVndRate } = useExchangeRate();
 
-  const { covering, fallback } = useMemo(() => {
-    const candidates = collectCandidates(plans);
-    const cover = suggestPlans(candidates, { dailyMb });
-    return {
-      covering: cover,
-      fallback: cover.length > 0 ? [] : fallbackSuggestions(candidates, { dailyMb }),
-    };
-  }, [plans, dailyMb]);
+  const groups = useMemo(
+    () => groupSuggestions(collectCandidates(plans), { dailyMb }),
+    [plans, dailyMb],
+  );
+  const covered = groups.fixed.length + groups.daily.length;
+  const hasAnything = covered + groups.unlimited.length + groups.fallback.length > 0;
 
   const price = (vnd: number) => formatSalePrice(vnd, lang, usdVndRate);
   const destinationHref = destination
@@ -88,6 +87,36 @@ export function PlanSuggestions({ values, dict, lang }: PlanSuggestionsProps) {
       ? `/${slug}`
       : `/${lang}/${slug}`
     : "";
+
+  const days = (count: number) =>
+    interpolate(t.durationDays ?? "{{days}}", { days: count });
+
+  const headline = (suggestion: PlanSuggestion) => {
+    if (suggestion.kind === "unlimited") {
+      return (
+        <>
+          <InfinityIcon className="h-4 w-4 shrink-0" aria-hidden="true" />
+          {t.unlimited}
+        </>
+      );
+    }
+    if (suggestion.kind === "daily") {
+      return interpolate(t.dataPerDay ?? "{{data}}", {
+        data: formatData(suggestion.plan.dataMb),
+      });
+    }
+    return formatData(suggestion.plan.dataMb);
+  };
+
+  const detail = (suggestion: PlanSuggestion) => {
+    if (suggestion.kind === "fixed") {
+      return interpolate(t.coversDays ?? "{{days}}", { days: suggestion.coversDays });
+    }
+    if (suggestion.kind === "daily") {
+      return interpolate(t.coversDaily ?? "", { day: formatData(dailyMb) });
+    }
+    return t.unlimitedDetail ?? "";
+  };
 
   const renderSuggestion = (suggestion: PlanSuggestion) => (
     <li key={suggestion.plan.id}>
@@ -98,29 +127,12 @@ export function PlanSuggestions({ values, dict, lang }: PlanSuggestionsProps) {
       >
         <span className="flex flex-col flex-1 min-w-0">
           <span className="body-md-medium text-text-primary flex items-center gap-1.5">
-            {suggestion.isUnlimited ? (
-              <>
-                <InfinityIcon className="h-4 w-4 shrink-0" aria-hidden="true" />
-                {t.unlimited}
-              </>
-            ) : (
-              formatData(suggestion.plan.dataMb)
-            )}
+            {headline(suggestion)}
             <span className="body-sm text-text-tertiary">
-              · {interpolate(t.durationDays ?? "{{days}}", {
-                days: suggestion.plan.durationDays,
-              })}
+              · {days(suggestion.plan.durationDays)}
             </span>
           </span>
-          <span className="body-2xs text-text-tertiary truncate">
-            {suggestion.isUnlimited
-              ? interpolate(t.durationDays ?? "{{days}}", {
-                  days: suggestion.plan.durationDays,
-                })
-              : interpolate(t.coversDays ?? "{{days}}", {
-                  days: suggestion.coversDays,
-                })}
-          </span>
+          <span className="body-2xs text-text-tertiary truncate">{detail(suggestion)}</span>
         </span>
         <span className="flex flex-col items-end shrink-0">
           <span className="body-md-medium text-text-primary">
@@ -135,6 +147,14 @@ export function PlanSuggestions({ values, dict, lang }: PlanSuggestionsProps) {
       </Link>
     </li>
   );
+
+  const renderGroup = (kind: PlanKind, title: string | undefined, list: PlanSuggestion[]) =>
+    list.length > 0 ? (
+      <div className="flex flex-col gap-2" data-testid={`plan-suggestions-group-${kind}`}>
+        <p className="body-sm-medium text-text-secondary m-0">{title}</p>
+        <ul className="flex flex-col gap-2 list-none p-0 m-0">{list.map(renderSuggestion)}</ul>
+      </div>
+    ) : null;
 
   return (
     <section className="flex flex-col gap-3 w-full" data-testid="plan-suggestions">
@@ -218,41 +238,52 @@ export function PlanSuggestions({ values, dict, lang }: PlanSuggestionsProps) {
 
       {destination && dailyMb > 0 && (
         <>
-          {isLoadingPlans && covering.length === 0 && fallback.length === 0 ? (
+          {/* The thresholds the plans below are measured against. */}
+          <p className="body-2xs text-text-secondary m-0" data-testid="plan-suggestions-need">
+            {interpolate(t.needSummary ?? "", {
+              month: formatData(dailyMb * MONTH_DAYS),
+              day: formatData(dailyMb),
+            })}
+          </p>
+
+          {isLoadingPlans && !hasAnything ? (
             <p className="body-2xs text-text-tertiary m-0">{t.loadingPlans}</p>
-          ) : covering.length > 0 ? (
-            <ul className="flex flex-col gap-2 list-none p-0 m-0">
-              {covering.map(renderSuggestion)}
-            </ul>
-          ) : fallback.length > 0 ? (
-            <>
-              {/* Honest about the gap rather than pretending a small plan fits */}
-              <p
-                className="body-2xs text-text-tertiary m-0"
-                data-testid="plan-suggestions-none-cover"
+          ) : hasAnything ? (
+            <div className="flex flex-col gap-4">
+              {renderGroup("fixed", t.groupFixed, groups.fixed)}
+              {renderGroup("daily", t.groupDaily, groups.daily)}
+
+              {covered === 0 && groups.fallback.length > 0 && (
+                <div className="flex flex-col gap-2">
+                  {/* Honest about the gap rather than pretending a small plan fits */}
+                  <p
+                    className="body-2xs text-text-tertiary m-0"
+                    data-testid="plan-suggestions-none-cover"
+                  >
+                    {t.noneCover}
+                  </p>
+                  <ul className="flex flex-col gap-2 list-none p-0 m-0">
+                    {groups.fallback.map(renderSuggestion)}
+                  </ul>
+                </div>
+              )}
+
+              {renderGroup("unlimited", t.groupUnlimited, groups.unlimited)}
+
+              <Link
+                href={destinationHref}
+                data-testid="plan-suggestions-view-all"
+                className="body-2xs-medium text-text-secondary hover:text-text-primary underline underline-offset-2"
               >
-                {t.noneCover}
-              </p>
-              <ul className="flex flex-col gap-2 list-none p-0 m-0">
-                {fallback.map(renderSuggestion)}
-              </ul>
-            </>
+                {interpolate(t.viewAll ?? "", {
+                  name: destinationName(destination, lang),
+                })}
+              </Link>
+            </div>
           ) : (
             <p className="body-2xs text-text-tertiary m-0" data-testid="plan-suggestions-empty">
               {t.noPlans}
             </p>
-          )}
-
-          {(covering.length > 0 || fallback.length > 0) && (
-            <Link
-              href={destinationHref}
-              data-testid="plan-suggestions-view-all"
-              className="body-2xs-medium text-text-secondary hover:text-text-primary underline underline-offset-2"
-            >
-              {interpolate(t.viewAll ?? "", {
-                name: destinationName(destination, lang),
-              })}
-            </Link>
           )}
         </>
       )}

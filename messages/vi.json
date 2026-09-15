@@ -612,7 +612,14 @@
         "durationDays": "{{days}} ngày",
         "perDay": "~ {{price}}/ngày",
         "viewAll": "Xem tất cả gói {{name}}",
-        "change": "Đổi điểm đến"
+        "change": "Đổi điểm đến",
+        "needSummary": "Nhu cầu của bạn: khoảng {{month}}/tháng · {{day}}/ngày",
+        "groupFixed": "Gói cố định từ 30 ngày, đủ data cho 1 tháng",
+        "groupDaily": "Gói theo ngày, đủ data mỗi ngày",
+        "groupUnlimited": "Gói không giới hạn giá tốt",
+        "dataPerDay": "{{data}}/ngày",
+        "coversDaily": "Đủ cho mức {{day}}/ngày của bạn",
+        "unlimitedDetail": "Dùng thoải mái, không lo hết data"
       },
       "perDay": "mỗi ngày",
       "hoursPerDay": "{{hours}} giờ/ngày",

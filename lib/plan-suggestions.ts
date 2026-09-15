@@ -1,15 +1,28 @@
 import type { Plan, PlansByDestinationResponse } from "@/lib/api";
 
 /**
- * Turn a data estimate into "buy this plan" (#078).
+ * Turn a data estimate into "buy this plan" (#078, #035).
  *
- * The calculator used to stop at a number of gigabytes, which is the least
- * useful place to stop: the customer still has to guess which package covers
- * it. Given a destination, every plan we sell there is measured against the
- * estimate and the ones that actually cover it are offered, cheapest first.
+ * Given a destination, the plans we sell there are sorted into the three ways a
+ * customer can buy data, and each kind is matched against the estimate the way
+ * it is actually sold:
+ *
+ *   - fixed plans — a 30-day-or-longer package holding at least a month of the
+ *     estimated usage (34.8 GB/month → 35 GB and up, 30 or 180 days);
+ *   - daily plans — a per-day allowance at least as big as the daily estimate
+ *     (1.2 GB/day → 1.5 GB/day and up);
+ *   - unlimited plans — a few of the cheapest, since any of them covers it.
+ *
+ * The by-destination payload names its buckets after the old UI, not after what
+ * is in them: `slowUnlimited` holds the DAILY plans (`dataMb` is the allowance
+ * per day). Reading every non-fixed bucket as unlimited listed a 500 MB/day plan
+ * as "Không giới hạn" that always covered the estimate — the inaccuracy #035
+ * reported.
  */
 
 export type PlanBucket = "data" | "slowUnlimited" | "fastUnlimited" | "dailyUnlimited";
+
+export type PlanKind = "fixed" | "daily" | "unlimited";
 
 export interface CandidatePlan {
   plan: Plan;
@@ -19,15 +32,30 @@ export interface CandidatePlan {
 export interface PlanSuggestion {
   plan: Plan;
   bucket: PlanBucket;
-  /** True for the unlimited buckets, where the data allowance is not a number. */
+  kind: PlanKind;
+  /** True only for genuinely unlimited plans. */
   isUnlimited: boolean;
-  /** MB the estimate needs across the plan's own duration. */
+  /** MB the estimate needs to be covered by this plan. */
   requiredMb: number;
-  /** Days this plan's allowance lasts at the estimated daily usage. */
+  /** Days this plan's data lasts at the estimated usage (its duration, for daily/unlimited). */
   coversDays: number;
   /** VND per day, so plans of different lengths can be compared honestly. */
   vndPerDay: number;
 }
+
+export interface GroupedSuggestions {
+  fixed: PlanSuggestion[];
+  daily: PlanSuggestion[];
+  unlimited: PlanSuggestion[];
+  /** When no fixed or daily plan covers: the biggest fixed allowance, to be honest about the gap. */
+  fallback: PlanSuggestion[];
+}
+
+/** A fixed plan must last at least this long to be suggested. */
+export const FIXED_MIN_DAYS = 30;
+
+/** The estimate a fixed plan must hold: a month of usage. */
+export const MONTH_DAYS = 30;
 
 /** Flatten the by-destination payload, remembering which bucket each came from. */
 export function collectCandidates(
@@ -37,8 +65,8 @@ export function collectCandidates(
 
   const buckets: [PlanBucket, Plan[] | undefined][] = [
     ["data", plans.dataPlans],
-    ["fastUnlimited", plans.fastUnlimited],
     ["slowUnlimited", plans.slowUnlimited],
+    ["fastUnlimited", plans.fastUnlimited],
     ["dailyUnlimited", plans.dailyUnlimited],
   ];
 
@@ -58,102 +86,91 @@ export function collectCandidates(
   return candidates;
 }
 
-export function isUnlimitedBucket(bucket: PlanBucket): boolean {
-  return bucket !== "data";
+/**
+ * What a plan really is. The plan's own `type` decides when it is set; the
+ * bucket is the fallback for payloads that carry no type.
+ */
+export function planKind({ plan, bucket }: CandidatePlan): PlanKind {
+  const type = (plan.type ?? "").toLowerCase();
+  if (type === "fixed") return "fixed";
+  if (type === "daily") return "daily";
+  if (type.startsWith("unlimited")) return "unlimited";
+  if (bucket === "data") return "fixed";
+  if (bucket === "slowUnlimited") return "daily";
+  return "unlimited";
 }
 
 export interface SuggestOptions {
   /** Estimated data per day, in MB, from the calculator. */
   dailyMb: number;
-  /** How many suggestions to return. */
-  limit?: number;
+  /** How many plans to list per group. */
+  perGroup?: number;
 }
 
-/**
- * Pick the plans that cover the estimate.
- *
- * Each plan is judged over **its own duration** — a 7-day plan has to carry
- * seven days of the estimated usage, a 30-day plan thirty — so the customer
- * does not have to tell us how long the trip is before seeing anything. An
- * unlimited plan always covers, by definition.
- *
- * Sorted by price, because two plans that both cover the trip differ only in
- * what they cost; ties go to the shorter plan, which is the cheaper commitment.
- */
-export function suggestPlans(
-  candidates: CandidatePlan[],
-  { dailyMb, limit = 3 }: SuggestOptions,
-): PlanSuggestion[] {
-  if (!(dailyMb > 0)) return [];
-
-  return candidates
-    .filter(({ plan }) => plan && plan.isActive !== false && plan.vndPrice > 0)
-    .map(({ plan, bucket }) => {
-      const days = plan.durationDays > 0 ? plan.durationDays : 1;
-      const unlimited = isUnlimitedBucket(bucket);
-      return {
-        plan,
-        bucket,
-        isUnlimited: unlimited,
-        requiredMb: dailyMb * days,
-        coversDays: unlimited ? days : Math.floor(plan.dataMb / dailyMb),
-        vndPerDay: Math.round(plan.vndPrice / days),
-      } satisfies PlanSuggestion;
-    })
-    .filter(
-      (suggestion) =>
-        suggestion.isUnlimited || suggestion.plan.dataMb >= suggestion.requiredMb,
-    )
-    .sort(
-      (a, b) =>
-        a.plan.vndPrice - b.plan.vndPrice ||
-        a.plan.durationDays - b.plan.durationDays ||
-        a.plan.id - b.plan.id,
-    )
-    .slice(0, limit);
-}
-
-/**
- * What to offer when nothing covers the estimate — a heavy user on a
- * destination that only sells small packages. The largest allowance and the
- * cheapest unlimited plan are the two honest answers; showing nothing is not.
- */
-export function fallbackSuggestions(
-  candidates: CandidatePlan[],
-  { dailyMb, limit = 2 }: SuggestOptions,
-): PlanSuggestion[] {
-  if (!(dailyMb > 0)) return [];
-
-  const priced = candidates.filter(
-    ({ plan }) => plan && plan.isActive !== false && plan.vndPrice > 0,
-  );
-
-  const describe = ({ plan, bucket }: CandidatePlan): PlanSuggestion => {
-    const days = plan.durationDays > 0 ? plan.durationDays : 1;
-    const unlimited = isUnlimitedBucket(bucket);
-    return {
-      plan,
-      bucket,
-      isUnlimited: unlimited,
-      requiredMb: dailyMb * days,
-      coversDays: unlimited ? days : Math.floor(plan.dataMb / dailyMb),
-      vndPerDay: Math.round(plan.vndPrice / days),
-    };
+function describe(candidate: CandidatePlan, dailyMb: number): PlanSuggestion {
+  const { plan, bucket } = candidate;
+  const kind = planKind(candidate);
+  const days = plan.durationDays > 0 ? plan.durationDays : 1;
+  return {
+    plan,
+    bucket,
+    kind,
+    isUnlimited: kind === "unlimited",
+    requiredMb: kind === "fixed" ? dailyMb * MONTH_DAYS : dailyMb,
+    coversDays: kind === "fixed" ? Math.floor(plan.dataMb / dailyMb) : days,
+    vndPerDay: Math.round(plan.vndPrice / days),
   };
+}
 
-  const biggest = priced
-    .filter(({ bucket }) => bucket === "data")
-    .sort((a, b) => b.plan.dataMb - a.plan.dataMb || a.plan.vndPrice - b.plan.vndPrice)
-    .slice(0, 1)
-    .map(describe);
+const byPrice = (a: PlanSuggestion, b: PlanSuggestion) =>
+  a.plan.vndPrice - b.plan.vndPrice ||
+  a.plan.durationDays - b.plan.durationDays ||
+  a.plan.id - b.plan.id;
 
-  const cheapestUnlimited = priced
-    .filter(({ bucket }) => isUnlimitedBucket(bucket))
-    .sort((a, b) => a.plan.vndPrice - b.plan.vndPrice)
-    .slice(0, 1)
-    .map(describe);
+const byPricePerDay = (a: PlanSuggestion, b: PlanSuggestion) =>
+  a.vndPerDay - b.vndPerDay || byPrice(a, b);
 
-  return [...biggest, ...cheapestUnlimited]
-    .sort((a, b) => a.plan.vndPrice - b.plan.vndPrice)
-    .slice(0, limit);
+/**
+ * Sort a destination's plans into what covers the estimate, per kind of plan.
+ */
+export function groupSuggestions(
+  candidates: CandidatePlan[],
+  { dailyMb, perGroup = 3 }: SuggestOptions,
+): GroupedSuggestions {
+  const empty: GroupedSuggestions = { fixed: [], daily: [], unlimited: [], fallback: [] };
+  if (!(dailyMb > 0)) return empty;
+
+  const priced = candidates
+    .filter(({ plan }) => plan && plan.isActive !== false && plan.vndPrice > 0)
+    .map((candidate) => describe(candidate, dailyMb));
+
+  const fixed = priced
+    .filter(
+      (s) =>
+        s.kind === "fixed" &&
+        s.plan.durationDays >= FIXED_MIN_DAYS &&
+        s.plan.dataMb >= s.requiredMb,
+    )
+    .sort(byPrice)
+    .slice(0, perGroup);
+
+  const daily = priced
+    .filter((s) => s.kind === "daily" && s.plan.dataMb >= dailyMb)
+    .sort(byPricePerDay)
+    .slice(0, perGroup);
+
+  const unlimited = priced
+    .filter((s) => s.kind === "unlimited")
+    .sort(byPricePerDay)
+    .slice(0, perGroup);
+
+  const fallback =
+    fixed.length === 0 && daily.length === 0
+      ? priced
+          .filter((s) => s.kind === "fixed")
+          .sort((a, b) => b.plan.dataMb - a.plan.dataMb || byPrice(a, b))
+          .slice(0, 1)
+      : [];
+
+  return { fixed, daily, unlimited, fallback };
 }

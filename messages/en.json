@@ -612,7 +612,14 @@
         "durationDays": "{{days}} days",
         "perDay": "~ {{price}}/day",
         "viewAll": "See all {{name}} plans",
-        "change": "Change destination"
+        "change": "Change destination",
+        "needSummary": "You need about {{month}}/month · {{day}}/day",
+        "groupFixed": "Fixed plans of 30+ days with a month of data",
+        "groupDaily": "Daily plans with enough data each day",
+        "groupUnlimited": "Best-value unlimited plans",
+        "dataPerDay": "{{data}}/day",
+        "coversDaily": "Covers your {{day}}/day",
+        "unlimitedDetail": "Use as much as you like"
       },
       "perDay": "per day",
       "hoursPerDay": "{{hours}} h/day",

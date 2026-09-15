@@ -1,18 +1,20 @@
 import { test, expect, type Page } from "@playwright/test";
 import {
   collectCandidates,
-  fallbackSuggestions,
-  suggestPlans,
+  groupSuggestions,
+  planKind,
 } from "../lib/plan-suggestions";
 import type { Plan, PlansByDestinationResponse } from "../lib/api";
 
 /**
- * #078 — turn the data estimate into a plan to buy.
+ * #078, #035 — turn the data estimate into a plan to buy.
  *
- * The calculator stopped at a number of gigabytes and left the customer to
- * work out which package covered it. With a destination entered, every plan we
- * sell there is measured against the estimate over the plan's own duration,
- * and the ones that cover it are offered cheapest first.
+ * With a destination entered, the plans sold there are matched the way each is
+ * sold (the rule from the #035 test note):
+ *   - fixed plans of 30+ days holding a month of the estimate
+ *     (34.8 GB/month → 50 GB · 30 days, 100 GB · 180 days);
+ *   - daily plans whose per-day allowance covers a day (1.2 GB/day → 1.5 GB/day+);
+ *   - the cheapest unlimited plans.
  *
  * The calculator page is a server component, so the real suggestion box is
  * mounted through the client harness (`?view=plan-suggest`) against mocked
@@ -20,7 +22,14 @@ import type { Plan, PlansByDestinationResponse } from "../lib/api";
  */
 
 const API_BASE = "http://localhost:3001";
-const HARNESS = "/esim-noi-dia/test?view=plan-suggest&lang=vi";
+const HARNESS_BASE = "/esim-noi-dia/test?view=plan-suggest&lang=vi";
+/**
+ * The harness defaults to 2h video + 1h social (2.15 GB/day); pin 1h + 1h so the
+ * on-screen cases share {@link DAILY_MB} with the matching cases.
+ */
+const HARNESS = `${HARNESS_BASE}&values=videoCalls:1,socialMedia:1`;
+
+test.describe.configure({ mode: "serial", timeout: 120_000 });
 
 function plan(overrides: Partial<Plan>): Plan {
   return {
@@ -29,8 +38,8 @@ function plan(overrides: Partial<Plan>): Plan {
     providerPlanId: "p",
     name: "Plan",
     slug: "plan",
-    durationDays: 7,
-    dataMb: 5120,
+    durationDays: 30,
+    dataMb: 51_200,
     costPrice: 0,
     price: 2,
     retailPrice: 3,
@@ -56,7 +65,7 @@ function payload(overrides: Partial<PlansByDestinationResponse> = {}): PlansByDe
   };
 }
 
-/** 1h video call (1000MB) + 1h social (150MB) = 1150 MB/day. */
+/** 1h video call (1000MB) + 1h social (150MB) = 1150 MB/day → 34.5 GB/month. */
 const DAILY_MB = 1150;
 
 const JAPAN = {
@@ -97,235 +106,227 @@ async function mockApi(
   );
 }
 
+async function pickJapan(page: Page) {
+  await page.goto(HARNESS, { waitUntil: "domcontentloaded" });
+  const input = page.getByTestId("plan-suggestions-input");
+  const option = page.getByTestId("plan-suggestions-option-esim-japan");
+  // Typing before hydration is lost, so keep typing until the option shows.
+  await expect(async () => {
+    if (!(await option.isVisible())) {
+      await input.fill("");
+      await input.fill("nhật");
+    }
+    await expect(option).toBeVisible({ timeout: 3_000 });
+  }).toPass({ timeout: 60_000 });
+  await option.click();
+}
+
 test.describe("plan suggestions — matching", () => {
-  test("offers only plans that carry the estimate for their own duration", () => {
-    // 1150 MB/day: a 7-day plan needs 8.05GB, a 30-day plan needs 34.5GB.
-    const candidates = collectCandidates(
-      payload({
-        dataPlans: [
-          plan({ id: 1, dataMb: 5120, durationDays: 7, vndPrice: 150_000 }),
-          plan({ id: 2, dataMb: 10_240, durationDays: 7, vndPrice: 250_000 }),
-          plan({ id: 3, dataMb: 20_480, durationDays: 30, vndPrice: 600_000 }),
-          plan({ id: 4, dataMb: 51_200, durationDays: 30, vndPrice: 900_000 }),
-        ],
-      }),
+  test("offers fixed plans of 30+ days that hold a month of the estimate", () => {
+    const groups = groupSuggestions(
+      collectCandidates(
+        payload({
+          dataPlans: [
+            plan({ id: 1, dataMb: 10_240, durationDays: 7, vndPrice: 150_000 }),
+            plan({ id: 2, dataMb: 20_480, durationDays: 30, vndPrice: 400_000 }),
+            plan({ id: 3, dataMb: 51_200, durationDays: 30, vndPrice: 700_000 }),
+            plan({ id: 4, dataMb: 102_400, durationDays: 180, vndPrice: 1_200_000 }),
+          ],
+        }),
+      ),
+      { dailyMb: DAILY_MB },
     );
 
-    const suggestions = suggestPlans(candidates, { dailyMb: DAILY_MB });
-
-    // 5GB/7d and 20GB/30d fall short; the other two cover, cheapest first.
-    expect(suggestions.map((s) => s.plan.id)).toEqual([2, 4]);
+    // 7 days is too short; 20 GB is less than 34.5 GB; 50 GB·30d and 100 GB·180d fit.
+    expect(groups.fixed.map((s) => s.plan.id)).toEqual([3, 4]);
   });
 
-  test("counts an unlimited plan as covering whatever the estimate is", () => {
-    const candidates = collectCandidates(
-      payload({
-        dataPlans: [plan({ id: 1, dataMb: 1024, durationDays: 7, vndPrice: 90_000 })],
-        fastUnlimited: [plan({ id: 5, dataMb: 0, durationDays: 7, vndPrice: 300_000 })],
-      }),
+  test("offers daily plans whose per-day allowance covers a day", () => {
+    const groups = groupSuggestions(
+      collectCandidates(
+        payload({
+          slowUnlimited: [
+            plan({ id: 11, type: "daily", dataMb: 1024, durationDays: 1, vndPrice: 30_000 }),
+            plan({ id: 12, type: "daily", dataMb: 2048, durationDays: 7, vndPrice: 280_000 }),
+            plan({ id: 13, type: "daily", dataMb: 5120, durationDays: 1, vndPrice: 60_000 }),
+          ],
+        }),
+      ),
+      { dailyMb: DAILY_MB },
     );
 
-    const suggestions = suggestPlans(candidates, { dailyMb: DAILY_MB });
-
-    expect(suggestions.map((s) => s.plan.id)).toEqual([5]);
-    expect(suggestions[0].isUnlimited).toBe(true);
+    // 1 GB/day is short of 1.15 GB/day; the others are sorted by price per day.
+    expect(groups.daily.map((s) => s.plan.id)).toEqual([12, 13]);
+    expect(groups.daily.every((s) => !s.isUnlimited)).toBe(true);
   });
 
-  test("sorts by price, then by the shorter commitment", () => {
-    const candidates = collectCandidates(
-      payload({
-        dataPlans: [
-          plan({ id: 1, dataMb: 51_200, durationDays: 30, vndPrice: 400_000 }),
-          plan({ id: 2, dataMb: 51_200, durationDays: 15, vndPrice: 400_000 }),
-          plan({ id: 3, dataMb: 51_200, durationDays: 30, vndPrice: 300_000 }),
-        ],
-      }),
-    );
+  test("never passes a daily plan off as unlimited (the #035 bug)", () => {
+    const candidate = {
+      plan: plan({ id: 20, type: "daily", dataMb: 500, durationDays: 1 }),
+      bucket: "slowUnlimited" as const,
+    };
 
-    expect(
-      suggestPlans(candidates, { dailyMb: DAILY_MB }).map((s) => s.plan.id),
-    ).toEqual([3, 2, 1]);
+    expect(planKind(candidate)).toBe("daily");
+
+    const groups = groupSuggestions([candidate], { dailyMb: DAILY_MB });
+    expect(groups.unlimited).toHaveLength(0);
+    expect(groups.daily).toHaveLength(0);
   });
 
-  test("says how long an allowance lasts and what a day costs", () => {
-    const candidates = collectCandidates(
-      payload({
-        dataPlans: [plan({ id: 1, dataMb: 10_240, durationDays: 7, vndPrice: 210_000 })],
-      }),
+  test("lists a few of the cheapest unlimited plans", () => {
+    const groups = groupSuggestions(
+      collectCandidates(
+        payload({
+          fastUnlimited: [
+            plan({ id: 31, type: "unlimited-reduce", dataMb: 3072, durationDays: 10, vndPrice: 500_000 }),
+            plan({ id: 32, type: "unlimited-reduce", dataMb: 2048, durationDays: 5, vndPrice: 150_000 }),
+          ],
+          dailyUnlimited: [
+            plan({ id: 33, type: "unlimited", dataMb: 0, durationDays: 7, vndPrice: 700_000 }),
+            plan({ id: 34, type: "unlimited", dataMb: 0, durationDays: 30, vndPrice: 3_000_000 }),
+          ],
+        }),
+      ),
+      { dailyMb: DAILY_MB, perGroup: 3 },
     );
 
-    const [suggestion] = suggestPlans(candidates, { dailyMb: DAILY_MB });
-
-    expect(suggestion.requiredMb).toBe(DAILY_MB * 7);
-    expect(suggestion.coversDays).toBe(Math.floor(10_240 / DAILY_MB)); // 8 days
-    expect(suggestion.vndPerDay).toBe(30_000);
+    // Price per day: 30k, 50k, 100k, 100k — the three cheapest.
+    expect(groups.unlimited.map((s) => s.plan.id)).toEqual([32, 31, 33]);
+    expect(groups.unlimited.every((s) => s.isUnlimited)).toBe(true);
   });
 
   test("never lists the same plan twice when buckets overlap", () => {
     const shared = plan({ id: 7, dataMb: 51_200, durationDays: 30, vndPrice: 500_000 });
-    const candidates = collectCandidates(
-      payload({ dataPlans: [shared], fastUnlimited: [shared] }),
-    );
+    const candidates = collectCandidates(payload({ dataPlans: [shared], fastUnlimited: [shared] }));
 
     expect(candidates).toHaveLength(1);
-    expect(suggestPlans(candidates, { dailyMb: DAILY_MB })).toHaveLength(1);
   });
 
   test("skips plans with no price rather than offering a free eSIM", () => {
-    const candidates = collectCandidates(
-      payload({
-        dataPlans: [
-          plan({ id: 1, dataMb: 51_200, durationDays: 30, vndPrice: 0 }),
-          plan({ id: 2, dataMb: 51_200, durationDays: 30, vndPrice: 700_000 }),
-        ],
-      }),
+    const groups = groupSuggestions(
+      collectCandidates(
+        payload({
+          dataPlans: [
+            plan({ id: 1, dataMb: 51_200, vndPrice: 0 }),
+            plan({ id: 2, dataMb: 51_200, vndPrice: 700_000 }),
+          ],
+        }),
+      ),
+      { dailyMb: DAILY_MB },
     );
 
-    expect(
-      suggestPlans(candidates, { dailyMb: DAILY_MB }).map((s) => s.plan.id),
-    ).toEqual([2]);
+    expect(groups.fixed.map((s) => s.plan.id)).toEqual([2]);
   });
 
-  test("falls back to the biggest allowance when every plan falls short", () => {
-    // No unlimited plan here — an unlimited one always covers, so the fallback
-    // only ever runs on a destination that sells fixed data alone.
-    const candidates = collectCandidates(
-      payload({
-        dataPlans: [
-          plan({ id: 1, dataMb: 1024, durationDays: 7, vndPrice: 90_000 }),
-          plan({ id: 2, dataMb: 3072, durationDays: 7, vndPrice: 140_000 }),
-        ],
-      }),
+  test("falls back to the biggest fixed plan when no fixed or daily plan covers", () => {
+    const groups = groupSuggestions(
+      collectCandidates(
+        payload({
+          dataPlans: [
+            plan({ id: 1, dataMb: 5120, durationDays: 30, vndPrice: 90_000 }),
+            plan({ id: 2, dataMb: 20_480, durationDays: 30, vndPrice: 300_000 }),
+          ],
+          dailyUnlimited: [plan({ id: 3, type: "unlimited", dataMb: 0, durationDays: 7, vndPrice: 260_000 })],
+        }),
+      ),
+      { dailyMb: DAILY_MB },
     );
 
-    expect(suggestPlans(candidates, { dailyMb: DAILY_MB })).toHaveLength(0);
-    expect(
-      fallbackSuggestions(candidates, { dailyMb: DAILY_MB }).map((s) => s.plan.id),
-    ).toEqual([2]);
-  });
-
-  test("keeps the cheapest unlimited alongside the biggest allowance", () => {
-    const candidates = collectCandidates(
-      payload({
-        dataPlans: [plan({ id: 2, dataMb: 3072, durationDays: 7, vndPrice: 140_000 })],
-        slowUnlimited: [
-          plan({ id: 3, dataMb: 0, durationDays: 7, vndPrice: 260_000 }),
-          plan({ id: 4, dataMb: 0, durationDays: 7, vndPrice: 380_000 }),
-        ],
-      }),
-    );
-
-    expect(
-      fallbackSuggestions(candidates, { dailyMb: DAILY_MB }).map((s) => s.plan.id),
-    ).toEqual([2, 3]);
+    expect(groups.fixed).toHaveLength(0);
+    expect(groups.fallback.map((s) => s.plan.id)).toEqual([2]);
+    // The unlimited plan is still offered alongside.
+    expect(groups.unlimited.map((s) => s.plan.id)).toEqual([3]);
   });
 
   test("suggests nothing at all when no data has been estimated", () => {
-    const candidates = collectCandidates(
-      payload({ dataPlans: [plan({ id: 1, dataMb: 51_200, durationDays: 30 })] }),
+    const groups = groupSuggestions(
+      collectCandidates(payload({ dataPlans: [plan({ id: 1 })] })),
+      { dailyMb: 0 },
     );
 
-    expect(suggestPlans(candidates, { dailyMb: 0 })).toEqual([]);
-    expect(fallbackSuggestions(candidates, { dailyMb: 0 })).toEqual([]);
+    expect(groups).toEqual({ fixed: [], daily: [], unlimited: [], fallback: [] });
   });
 });
 
 test.describe("plan suggestions — on screen", () => {
-  test("looks up a destination and lists the plans that cover the estimate", async ({
-    page,
-  }) => {
+  test("shows the need and the three groups for a destination", async ({ page }) => {
     await mockApi(
       page,
       payload({
         dataPlans: [
-          plan({ id: 1, dataMb: 5120, durationDays: 7, vndPrice: 150_000 }),
-          plan({ id: 2, dataMb: 10_240, durationDays: 7, vndPrice: 250_000 }),
+          plan({ id: 1, dataMb: 20_480, durationDays: 30, vndPrice: 400_000 }),
+          plan({ id: 2, dataMb: 51_200, durationDays: 30, vndPrice: 700_000 }),
+        ],
+        slowUnlimited: [
+          plan({ id: 11, type: "daily", dataMb: 1024, durationDays: 1, vndPrice: 30_000 }),
+          plan({ id: 12, type: "daily", dataMb: 2048, durationDays: 1, vndPrice: 45_000 }),
+        ],
+        dailyUnlimited: [
+          plan({ id: 21, type: "unlimited", dataMb: 0, durationDays: 7, vndPrice: 500_000 }),
         ],
       }),
     );
 
-    await page.goto(HARNESS);
-    await page.getByTestId("plan-suggestions-input").fill("nhật");
-    await page.getByTestId("plan-suggestions-option-esim-japan").click({ timeout: 20_000 });
+    await pickJapan(page);
 
     await expect(page.getByTestId("plan-suggestions-destination")).toHaveText("Nhật Bản");
-    // Only the 10GB plan carries 7 × 1.15GB.
-    await expect(page.getByTestId("plan-suggestion-2")).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByTestId("plan-suggestions-need")).toContainText("/tháng");
+
+    const fixed = page.getByTestId("plan-suggestions-group-fixed");
+    await expect(fixed.getByTestId("plan-suggestion-2")).toBeVisible({ timeout: 30_000 });
     await expect(page.getByTestId("plan-suggestion-1")).toHaveCount(0);
-    await expect(page.getByTestId("plan-suggestion-2")).toContainText("10.2 GB");
-    await expect(page.getByTestId("plan-suggestion-2")).toContainText("250.000đ");
+
+    const daily = page.getByTestId("plan-suggestions-group-daily");
+    await expect(daily.getByTestId("plan-suggestion-12")).toContainText("/ngày");
+    await expect(page.getByTestId("plan-suggestion-11")).toHaveCount(0);
+
+    const unlimited = page.getByTestId("plan-suggestions-group-unlimited");
+    await expect(unlimited.getByTestId("plan-suggestion-21")).toContainText("Không giới hạn");
   });
 
-  test("links a suggestion to the destination page in the reader's language", async ({
-    page,
-  }) => {
-    await mockApi(
-      page,
-      payload({
-        dataPlans: [plan({ id: 2, dataMb: 10_240, durationDays: 7, vndPrice: 250_000 })],
-      }),
-    );
+  test("links a suggestion to the destination page in the reader's language", async ({ page }) => {
+    await mockApi(page, payload({ dataPlans: [plan({ id: 2 })] }));
 
-    await page.goto(HARNESS);
-    await page.getByTestId("plan-suggestions-input").fill("nhật");
-    await page.getByTestId("plan-suggestions-option-esim-japan").click({ timeout: 20_000 });
+    await pickJapan(page);
 
     // Vietnamese reader → the Vietnamese slug, no locale prefix.
-    await expect(page.getByTestId("plan-suggestion-2")).toHaveAttribute(
-      "href",
-      "/esim-nhat-ban",
-    );
+    await expect(page.getByTestId("plan-suggestion-2")).toHaveAttribute("href", "/esim-nhat-ban", {
+      timeout: 30_000,
+    });
   });
 
   test("admits when nothing covers and shows the closest instead", async ({ page }) => {
     await mockApi(
       page,
-      payload({
-        dataPlans: [plan({ id: 1, dataMb: 3072, durationDays: 7, vndPrice: 140_000 })],
-      }),
+      payload({ dataPlans: [plan({ id: 1, dataMb: 3072, durationDays: 30, vndPrice: 140_000 })] }),
     );
 
-    await page.goto(HARNESS);
-    await page.getByTestId("plan-suggestions-input").fill("nhật");
-    await page.getByTestId("plan-suggestions-option-esim-japan").click({ timeout: 20_000 });
+    await pickJapan(page);
 
-    await expect(page.getByTestId("plan-suggestions-none-cover")).toBeVisible({
-      timeout: 20_000,
-    });
+    await expect(page.getByTestId("plan-suggestions-none-cover")).toBeVisible({ timeout: 30_000 });
     await expect(page.getByTestId("plan-suggestion-1")).toBeVisible();
   });
 
   test("asks for some usage first when nothing has been estimated", async ({ page }) => {
     await mockApi(page, payload());
 
-    await page.goto(`${HARNESS}&values=socialMedia:0`);
+    await page.goto(`${HARNESS_BASE}&values=socialMedia:0`, { waitUntil: "domcontentloaded" });
 
-    await expect(page.getByTestId("plan-suggestions-need-usage")).toBeVisible({
-      timeout: 20_000,
-    });
+    await expect(page.getByTestId("plan-suggestions-need-usage")).toBeVisible({ timeout: 30_000 });
   });
 
   test("says so when the destination sells nothing yet", async ({ page }) => {
     await mockApi(page, payload());
 
-    await page.goto(HARNESS);
-    await page.getByTestId("plan-suggestions-input").fill("nhật");
-    await page.getByTestId("plan-suggestions-option-esim-japan").click({ timeout: 20_000 });
+    await pickJapan(page);
 
-    await expect(page.getByTestId("plan-suggestions-empty")).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByTestId("plan-suggestions-empty")).toBeVisible({ timeout: 30_000 });
   });
 
   test("lets the customer pick a different destination", async ({ page }) => {
-    await mockApi(
-      page,
-      payload({
-        dataPlans: [plan({ id: 2, dataMb: 10_240, durationDays: 7, vndPrice: 250_000 })],
-      }),
-    );
+    await mockApi(page, payload({ dataPlans: [plan({ id: 2 })] }));
 
-    await page.goto(HARNESS);
-    await page.getByTestId("plan-suggestions-input").fill("nhật");
-    await page.getByTestId("plan-suggestions-option-esim-japan").click({ timeout: 20_000 });
+    await pickJapan(page);
     await expect(page.getByTestId("plan-suggestions-destination")).toBeVisible();
 
     await page.getByTestId("plan-suggestions-change").click();
