@@ -217,7 +217,7 @@ export function MobileFeatures({
   const hasEkyc = !!selectedPlan?.isKyc;
   const hasTopup = selectedPlan?.topUp ?? true
   const durations = selectedPlan ? selectedPlan?.durationDays : false
-  const isHostSpotAllDay = selectedPlan?.type === "fixed" || selectedPlan?.provider === "japantravelsim"
+  const isHostSpotAllDay = selectedPlan?.type === "fixed"
   const operatorName = selectedPlan?.operatorName || null;
   const speed = selectedPlan?.speed || null;;
 

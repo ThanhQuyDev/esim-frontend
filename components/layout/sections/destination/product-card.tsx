@@ -115,7 +115,7 @@ export function ProductCard({
   const hasEkyc = !!selectedPlan?.isKyc;
   const hasTopup = selectedPlan ? selectedPlan.topUp : false;
   const durations = selectedPlan ? selectedPlan?.durationDays : false
-  const isHostSpotAllDay = selectedPlan?.type === "fixed" || selectedPlan?.provider === "japantravelsim"
+  const isHostSpotAllDay = selectedPlan?.type === "fixed"
 
   const operatorName = selectedPlan?.operatorName || null;
   const speed = selectedPlan?.speed || null;
