@@ -13,6 +13,16 @@ const AuthModal = dynamic(
   { ssr: false }
 );
 
+// Binds a KOL link to the signed-in account so the attribution survives a
+// change of device (#034).
+const PartnerLinkBind = dynamic(
+  () =>
+    import("@/components/layout/partner-link-bind").then(
+      (mod) => mod.PartnerLinkBind
+    ),
+  { ssr: false }
+);
+
 const ChatBubble = dynamic(
   () => import("@/components/layout/chat-bubble").then((mod) => mod.ChatBubble),
   { ssr: false }
@@ -30,6 +40,7 @@ export function LayoutClientWidgets({ lang }: { lang: Locale }) {
       <AuthModal lang={lang} />
       <ChatBubble />
       <ReferralCapture />
+      <PartnerLinkBind />
     </>
   );
 }
