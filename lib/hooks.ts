@@ -841,6 +841,11 @@ export interface CheckoutPayload {
    * back to its own click log.
    */
   partnerLinkClickedAt?: string;
+  /**
+   * This browser's own id, from the `esim_visitor_id` cookie. Used only so the
+   * API can flag several affiliate orders coming from one device (#036).
+   */
+  visitorId?: string;
   useWalletAmountVnd?: number;
   phoneNumber?: string;
   email?: string;
@@ -1014,7 +1019,7 @@ export function useCheckout() {
   });
 }
 
-// ===== Bank transfer (SePay / Techcombank) =====
+// ===== Bank transfer (SePay) =====
 
 /** Payment instructions returned by both bank-transfer checkout endpoints. */
 export interface BankTransferCheckoutResponse {
