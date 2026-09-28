@@ -1,4 +1,5 @@
 import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { trackJourney } from "@/lib/journey-tracking";
 import { useCallback, useMemo } from "react";
 import type {
   Destination,
@@ -1279,6 +1280,8 @@ export function useCart() {
 
   const addItem = useCallback(
     async (item: Omit<CartItem, "quantity">, quantity = 1) => {
+      // One step of the buying journey (#040); never awaited, never blocking.
+      trackJourney("add_to_cart", String(item.planId ?? item.id));
       if (isLoggedIn) {
         await addApiCartItem(
           token!,

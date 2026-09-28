@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
+import { trackJourney } from "@/lib/journey-tracking";
 import type { Plan, PlansByDestinationResponse } from "@/lib/api";
 import { useLocalPlansByCarrier, useLocalCarriers, formatVnd } from "@/lib/hooks";
 import { isPlanSoldOut, soldOutLabel } from "@/lib/plan-stock";
@@ -84,6 +85,16 @@ export function LocalEsimDetail({ carrier, dict, lang, initialPlans }: LocalEsim
   const unlimited = useMemo(() => allPlans.filter(isUnlimited), [allPlans]);
 
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
+
+  // Steps of the buying journey, same as the destination pages (#040).
+  useEffect(() => {
+    trackJourney("plan_list", carrier);
+  }, [carrier]);
+
+  const handleSelectPlan = (plan: Plan) => {
+    trackJourney("plan_view", String(plan.id));
+    setSelectedPlan(plan);
+  };
   const [quantity, setQuantity] = useState(1);
   const [ekycOpen, setEkycOpen] = useState(false);
 
@@ -260,7 +271,7 @@ export function LocalEsimDetail({ carrier, dict, lang, initialPlans }: LocalEsim
               title={lang === "vi" ? "Gói Data tốc độ cao" : "High-speed data"}
               plans={highSpeed}
               selectedPlan={selectedPlan}
-              onSelect={setSelectedPlan}
+              onSelect={handleSelectPlan}
               lang={lang}
             />
           )}
@@ -269,7 +280,7 @@ export function LocalEsimDetail({ carrier, dict, lang, initialPlans }: LocalEsim
               title={lang === "vi" ? "Gói Data không giới hạn" : "Unlimited data"}
               plans={unlimited}
               selectedPlan={selectedPlan}
-              onSelect={setSelectedPlan}
+              onSelect={handleSelectPlan}
               lang={lang}
             />
           )}

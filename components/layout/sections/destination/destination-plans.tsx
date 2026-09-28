@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect, useRef, useCallback } from "react";
+import { trackJourney } from "@/lib/journey-tracking";
 import type { Plan, PlansByDestinationResponse } from "@/lib/api";
 import { usePlansBySlug, usePlansByRegionSlug, useRegionBySlug, useDestinationBySlug, useExchangeRate } from "@/lib/hooks";
 import { buildSeoTemplateVars } from "@/lib/seo-vars";
@@ -163,12 +164,20 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
     }
   }, [activeCategory, plans]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Arriving on a destination's plan list is the first step of the journey
+  // (#040) — an order with none of these steps behind it is worth a look.
+  useEffect(() => {
+    trackJourney("plan_list", slug || undefined);
+  }, [slug]);
+
   const handleCategoryChange = (category: PlanCategory) => {
     setActiveCategory(category);
     setSelectedPlan(null);
   };
 
   const handleSelectPlan = (plan: Plan) => {
+    // A plan the visitor actually opened (#040).
+    trackJourney("plan_view", String(plan.id));
     setSelectedPlan(plan);
     if (!plan.isAbleMultidate) {
       setDays(plan.durationDays);

@@ -29,6 +29,7 @@ import { BankTransferPanel } from "@/components/layout/sections/payment/bank-tra
 import { useAuth } from "@/lib/auth";
 import { getOrCreateVisitorId } from "@/lib/visitor-id";
 import { readPartnerClickId } from "@/lib/partner-click-id";
+import { trackJourney } from "@/lib/journey-tracking";
 import { walletTranslations } from "@/components/layout/sections/wallet/translations";
 import Link from "next/link";
 import { localizedHref } from "@/lib/route-mapping";
@@ -141,6 +142,10 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
     } catch {
       // ignore
     }
+
+    // The last step of the journey (#040): reaching the payment screen. An
+    // order that has only this step and nothing before it is worth a look.
+    trackJourney("checkout_start");
   }, []);
 
   // Auto-fill email + phone from logged-in user profile
