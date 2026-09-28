@@ -3,6 +3,8 @@
 import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 
+import { rememberPartnerClickId } from "@/lib/partner-click-id";
+
 /**
  * Captures ?ref=CODE from the URL and stores it in localStorage.
  * The cart and checkout pages will read this value to auto-fill the referral code.
@@ -30,10 +32,17 @@ export function ReferralCapture() {
     }
 
     // Fire and forget: nothing on the page depends on the answer, and a failure
-    // must never interrupt the visit.
+    // must never interrupt the visit. The answer does carry the server-minted
+    // click id when the code turned out to be a partner link — there is no
+    // redirect to hang it on for this link shape, so it is stored here (#039).
     void fetch(`/api/ref/${encodeURIComponent(code)}`, {
       cache: "no-store",
-    }).catch(() => {});
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((body: { clickId?: string | null } | null) => {
+        rememberPartnerClickId(body?.clickId);
+      })
+      .catch(() => {});
   }, [searchParams]);
 
   return null;

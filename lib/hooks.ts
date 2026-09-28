@@ -842,6 +842,12 @@ export interface CheckoutPayload {
    */
   partnerLinkClickedAt?: string;
   /**
+   * The click id the server minted at `/go/<code>` and put in the redirect URL
+   * (#039). Outranks `partnerLinkCode`: it never depended on a cookie living
+   * long enough, which is what Safari and iOS break.
+   */
+  partnerClickId?: string;
+  /**
    * This browser's own id, from the `esim_visitor_id` cookie. Used only so the
    * API can flag several affiliate orders coming from one device (#036).
    */

@@ -7,6 +7,10 @@ import {
   hashClientIp,
   recordPartnerLinkClick,
 } from "@/lib/partner-link";
+import {
+  PARTNER_CLICK_ID_COOKIE_NAME,
+  PARTNER_CLICK_ID_PARAM,
+} from "@/lib/partner-click-id";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.saily.example.com";
@@ -45,6 +49,12 @@ export async function GET(
     ? new URL(result.targetPath, origin)
     : new URL("/", origin);
 
+  // The id travels in the URL, which is the point of #039: an iOS browser that
+  // trims the cookie weeks before the window is up cannot trim this.
+  if (result?.clickId) {
+    redirectUrl.searchParams.set(PARTNER_CLICK_ID_PARAM, result.clickId);
+  }
+
   const response = NextResponse.redirect(redirectUrl);
   // Set even when the click could not be recorded: an unreachable API must not
   // cost the partner an attribution the visitor genuinely earned them, and the
@@ -59,6 +69,15 @@ export async function GET(
     new Date().toISOString(),
     PARTNER_LINK_COOKIE_OPTIONS
   );
+  // Fallback only, for a visitor who checks out before the page script has
+  // moved the id out of the URL into storage.
+  if (result?.clickId) {
+    response.cookies.set(
+      PARTNER_CLICK_ID_COOKIE_NAME,
+      result.clickId,
+      PARTNER_LINK_COOKIE_OPTIONS
+    );
+  }
 
   return response;
 }

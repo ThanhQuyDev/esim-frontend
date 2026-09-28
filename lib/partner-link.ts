@@ -43,6 +43,8 @@ export function hashClientIp(
 /** What the backend answers for a code that matches an active partner link. */
 export interface PartnerLinkClickResult {
   targetPath: string | null;
+  /** The id the server minted for this click (#039). */
+  clickId?: string | null;
 }
 
 /**

@@ -28,6 +28,15 @@ const ChatBubble = dynamic(
   { ssr: false }
 );
 
+// Lifts the server-minted click id out of the landing URL (#039).
+const PartnerClickCapture = dynamic(
+  () =>
+    import("@/components/layout/partner-click-capture").then(
+      (mod) => mod.PartnerClickCapture
+    ),
+  { ssr: false }
+);
+
 const ReferralCapture = dynamic(
   () => import("@/components/layout/referral-capture").then((mod) => mod.ReferralCapture),
   { ssr: false }
@@ -40,6 +49,7 @@ export function LayoutClientWidgets({ lang }: { lang: Locale }) {
       <AuthModal lang={lang} />
       <ChatBubble />
       <ReferralCapture />
+      <PartnerClickCapture />
       <PartnerLinkBind />
     </>
   );

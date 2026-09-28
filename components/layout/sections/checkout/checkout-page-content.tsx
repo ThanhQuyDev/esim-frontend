@@ -28,6 +28,7 @@ import { useExchangeRate, useCheckout, useBankTransferCheckout, useCart, convert
 import { BankTransferPanel } from "@/components/layout/sections/payment/bank-transfer-panel";
 import { useAuth } from "@/lib/auth";
 import { getOrCreateVisitorId } from "@/lib/visitor-id";
+import { readPartnerClickId } from "@/lib/partner-click-id";
 import { walletTranslations } from "@/components/layout/sections/wallet/translations";
 import Link from "next/link";
 import { localizedHref } from "@/lib/route-mapping";
@@ -294,6 +295,9 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
         referralCode: referralApplied ? referralCode : undefined,
         partnerLinkCode,
         partnerLinkClickedAt,
+        // The server-minted click id, which outranks the cookie above: it was
+        // never the browser's to lose (#039).
+        partnerClickId: readPartnerClickId() ?? undefined,
         // Lets the API flag several affiliate orders from one device (#036);
         // it never changes whether the order earns commission.
         visitorId: getOrCreateVisitorId() ?? undefined,

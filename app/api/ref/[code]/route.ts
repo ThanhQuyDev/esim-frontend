@@ -7,6 +7,7 @@ import {
   hashClientIp,
   recordPartnerLinkClick,
 } from "@/lib/partner-link";
+import { PARTNER_CLICK_ID_COOKIE_NAME } from "@/lib/partner-click-id";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.saily.example.com";
@@ -53,7 +54,12 @@ export async function GET(
     return NextResponse.json({ attributed: false });
   }
 
-  const response = NextResponse.json({ attributed: true });
+  // No redirect to hang the click id on here, so it goes back in the body for
+  // ReferralCapture to store (#039).
+  const response = NextResponse.json({
+    attributed: true,
+    clickId: result.clickId ?? null,
+  });
   response.cookies.set(
     PARTNER_LINK_COOKIE_NAME,
     code,
@@ -64,6 +70,13 @@ export async function GET(
     new Date().toISOString(),
     PARTNER_LINK_COOKIE_OPTIONS
   );
+  if (result.clickId) {
+    response.cookies.set(
+      PARTNER_CLICK_ID_COOKIE_NAME,
+      result.clickId,
+      PARTNER_LINK_COOKIE_OPTIONS
+    );
+  }
 
   return response;
 }
