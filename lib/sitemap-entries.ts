@@ -28,6 +28,9 @@ export const STATIC_ROUTES = [
   "/destinations",
   "/review",
   "/data-calculator",
+  // Self-service eSIM lookup (#003): the form is worth indexing; a lookup link
+  // carries a token and is never linked from the site itself.
+  "/check-esim",
   "/what-is-esim",
   "/coupon",
   "/blog",

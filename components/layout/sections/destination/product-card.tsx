@@ -9,6 +9,9 @@ import type { Destination, Plan, Region } from "@/lib/api";
 import { getCloudinaryTransformedUrl } from "@/lib/image-utils";
 import type { DestinationDict } from "./types";
 import { CountriesModal } from "./countries-modal";
+import { activationDeadlineText } from "@/lib/plan-activation";
+import { dailyResetText } from "@/lib/plan-daily-reset";
+import { refundRule } from "@/lib/plan-refund";
 
 interface ProductCardProps {
   destination: Destination;
@@ -42,14 +45,6 @@ const ClockChip = () => (
     <polyline points="12 6 12 12 16 14" />
   </svg>
 );
-const WarnIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D97706" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 mt-px">
-    <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-    <line x1="12" y1="9" x2="12" y2="13" />
-    <line x1="12" y1="17" x2="12.01" y2="17" />
-  </svg>
-);
-
 function flagEmoji(countryCode?: string): string {
   if (!countryCode || countryCode.length !== 2) return "🌐";
   const codePoints = countryCode
@@ -114,6 +109,9 @@ export function ProductCard({
   const hasLocalNumber = voice.hasVoice;
   const hasEkyc = !!selectedPlan?.isKyc;
   const hasTopup = selectedPlan ? selectedPlan.topUp : false;
+  // When the daily allowance starts over; null means there is nothing truthful
+  // to show and the row is dropped (#071).
+  const resetText = dailyResetText(selectedPlan, lang);
   const durations = selectedPlan ? selectedPlan?.durationDays : false
   const isHostSpotAllDay = selectedPlan?.type === "fixed"
 
@@ -365,9 +363,12 @@ export function ProductCard({
               <div className="flex items-center justify-between py-[13px] border-b border-[#f3f4f6] gap-3">
                 <span className="text-base sm:text-sm text-[#374151]">{dict.delivery.activationPeriod}</span>
                 <span className="text-base sm:text-sm font-medium">
-                  {selectedPlan?.provider === 'viettel'
-                    ? (lang === "vi" ? "15 ngày kể từ ngày mua" : "15 days from purchase")
-                    : dict.delivery.activationDesc}
+                  {/* The supplier's own deadline when it stated one (#070); the
+                      old generic wording only as a fallback. */}
+                  {activationDeadlineText(selectedPlan, lang) ??
+                    (selectedPlan?.provider === 'viettel'
+                      ? (lang === "vi" ? "15 ngày kể từ ngày mua" : "15 days from purchase")
+                      : dict.delivery.activationDesc)}
                 </span>
               </div>
               {/* #039: how the usage period is counted, and that an
@@ -387,13 +388,31 @@ export function ProductCard({
                       )}
                 </span>
               </div>
+              {/* #071: when the daily allowance comes back. Omitted entirely when
+                  the supplier has not stated the cycle, or when the plan is one
+                  total pool of data and has no daily reset to describe. */}
+              {resetText && (
+                <div className="flex items-start justify-between py-[13px] border-b border-[#f3f4f6] gap-3">
+                  <span className="text-base sm:text-sm text-[#374151]">
+                    {dict.delivery.dailyReset}
+                  </span>
+                  <span className="text-base sm:text-sm font-medium text-right max-w-[60%]">
+                    {resetText}
+                  </span>
+                </div>
+              )}
               <div className="flex items-start justify-between py-[13px] border-b border-[#f3f4f6] gap-3">
                 <span className="text-base sm:text-sm text-[#374151]">
                   {dict.delivery.refundTitle}
                 </span>
                 <div className="flex flex-col items-end gap-1 text-right max-w-[60%]">
+                  {/* #072: the rule depends on the supplier. Viettel, the
+                      domestic eSIMs and MicroEsim's local packages are not
+                      refundable, and this row used to promise all three a refund. */}
                   <span className="text-base sm:text-sm font-medium">
-                    {dict.delivery.refundUnactivated}
+                    {refundRule(selectedPlan) === "fast-if-unactivated"
+                      ? dict.delivery.refundFast
+                      : dict.delivery.refundNotSupported}
                   </span>
                   <a
                     href={lang === "vi" ? "/phap-ly/chinh-sach-hoan-tien" : "/en/legal/refund-policy"}
@@ -402,12 +421,6 @@ export function ProductCard({
                     {dict.delivery.refundPolicyLink}
                   </a>
                 </div>
-              </div>
-              <div className="flex items-start gap-2.5 mt-2.5 p-3 bg-[#FFFBEB] border border-[#FDE68A] rounded-sm">
-                <WarnIcon />
-                <p className="text-base sm:text-sm text-[#92400E] leading-normal">
-                  <strong className="text-[#78350F]">{dict.note.title}</strong> {dict.note.text}
-                </p>
               </div>
             </div>
           )}

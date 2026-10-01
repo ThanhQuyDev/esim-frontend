@@ -70,7 +70,7 @@ export const queryKeys = {
     all: ["destinations"] as const,
     list: (filters?: string) => ["destinations", "list", filters] as const,
     search: (query: string) => ["destinations", "search", query] as const,
-    top: ["destinations", "top"] as const,
+    top: (limit: number) => ["destinations", "top", limit] as const,
     detail: (id: string) => ["destinations", "detail", id] as const,
   },
   regions: {
@@ -108,7 +108,10 @@ export const queryKeys = {
 
 export function useTopDestinations(limit = 10) {
   return useQuery({
-    queryKey: queryKeys.destinations.top,
+    // The limit is part of the key: callers ask for different sizes (the navbar
+    // dropdown wants 10, the search modal 12) and they must not share one cache
+    // entry, otherwise whoever fetches first caps the other.
+    queryKey: queryKeys.destinations.top(limit),
     queryFn: ({ signal }) =>
       clientFetch<PaginatedResponse<Destination>>(
         "/api/v1/destinations",
@@ -1420,6 +1423,9 @@ export interface MyEsimPlan {
   durationDays?: number;
   dataMb?: number;
   topUp?: boolean;
+  /** Call minutes / SMS included with the plan; absent or 0 means data-only (#023). */
+  call?: number | null;
+  sms?: number | null;
   /** Plan type: "fixed" | "daily" | "unlimited normal speed" | "unlimited highspeed" */
   type?: string;
   /** Operator / carrier names (nhà mạng), comma-separated, e.g. "True,AIS" */
@@ -1466,6 +1472,14 @@ export interface MyEsim {
   phoneNumber?: string | null;
   /** Plan info attached by the backend (`GET /esims/my/list` includes `plan`). */
   plan?: MyEsimPlan | null;
+  /**
+   * Topups applied to this eSIM, derived server-side from the paid topup orders
+   * (#031). 0 / null means it has never been topped up.
+   */
+  topupCount?: number;
+  lastTopupAt?: string | null;
+  /** Package names, newest first, comma-separated. */
+  topupPackageNames?: string | null;
 }
 
 interface MyEsimsResponse {
@@ -1500,6 +1514,88 @@ export function useEsimDataUsage(esimId: number | null) {
       return res.json();
     },
     staleTime: 30_000, // cache for 30s
+  });
+}
+
+// ===== Public eSIM lookup (#003) =====
+
+/**
+ * What `/tra-cuu-esim` may show. Narrower than {@link EsimDataUsage}: no
+ * activation data and no provider name, because the link is public and gets
+ * forwarded to family.
+ */
+export interface EsimLookupResult {
+  iccidMasked: string | null;
+  planName: string | null;
+  status: string;
+  isUnlimited: boolean;
+  totalMb: number;
+  usedMb: number;
+  remainingMb: number | null;
+  durationDays: number | null;
+  activatedAt: string | null;
+  expiredAt: string | null;
+  lastUpdateTime: string | null;
+  usageAvailable: boolean;
+  callMinutes: number | null;
+  smsCount: number | null;
+}
+
+/**
+ * Exchanges a typed ICCID for the signed token the page navigates to.
+ *
+ * Returns a result instead of throwing so the form can tell "we don't know this
+ * ICCID" apart from "the request failed" — the two need different copy.
+ */
+export type EsimLookupTokenResult =
+  | { ok: true; token: string }
+  | { ok: false; reason: "notFound" | "invalid" | "error" };
+
+export async function fetchEsimLookupToken(
+  iccid: string,
+  signal?: AbortSignal,
+): Promise<EsimLookupTokenResult> {
+  let res: Response;
+  try {
+    res = await fetch(`${API_BASE_URL}/api/v1/esims/lookup/token`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({ iccid }),
+      signal,
+    });
+  } catch {
+    return { ok: false, reason: "error" };
+  }
+  if (res.status === 404) return { ok: false, reason: "notFound" };
+  // The DTO rejects anything that is not 18–22 digits (422 from the global
+  // validation pipe, 400 from some proxies).
+  if (res.status === 422 || res.status === 400) {
+    return { ok: false, reason: "invalid" };
+  }
+  if (!res.ok) return { ok: false, reason: "error" };
+  try {
+    const json: { token?: string } = await res.json();
+    return json.token ? { ok: true, token: json.token } : { ok: false, reason: "error" };
+  } catch {
+    return { ok: false, reason: "error" };
+  }
+}
+
+/** Usage behind a lookup token. No auth — the signed token is the credential. */
+export function useEsimLookup(token: string | null) {
+  return useQuery({
+    queryKey: ["esim-lookup", token],
+    enabled: !!token,
+    retry: false,
+    queryFn: async ({ signal }): Promise<EsimLookupResult> => {
+      const res = await fetch(
+        `${API_BASE_URL}/api/v1/esims/lookup?token=${encodeURIComponent(token!)}`,
+        { signal },
+      );
+      if (!res.ok) throw new Error(`API error: ${res.status}`);
+      return res.json();
+    },
+    staleTime: 30_000,
   });
 }
 
@@ -1550,7 +1646,19 @@ export interface TopupCheckoutPayload {
   iccid: string;
   packageId: string;
   provider: TopupProvider;
-  paymentMethod: "ONEPAY";
+  /** EXU_WALLET settles from the eXu balance with no gateway step (#028). */
+  paymentMethod: "ONEPAY" | "EXU_WALLET";
+  /** VAT invoice details, when the customer asked for one (#028). */
+  invoice?: TopupInvoicePayload;
+}
+
+/** Same fields the normal eSIM checkout collects for a VAT invoice (#028). */
+export interface TopupInvoicePayload {
+  companyName: string;
+  taxCode: string;
+  address: string;
+  invoicePhone: string;
+  invoiceEmail: string;
 }
 
 export interface TopupCheckoutResponse {
@@ -1601,6 +1709,41 @@ export function useTopupCheckout() {
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.message || `Topup checkout failed: ${res.status}`);
+      }
+      return res.json();
+    },
+  });
+}
+
+/** Outcome of a topup paid from the eXu balance (#028) — settled server-side. */
+export interface TopupWalletResponse {
+  success: boolean;
+  orderId: string;
+  status: string;
+  vndAmount: number;
+  walletSpentVndAmount: number;
+}
+
+/**
+ * Pay a topup out of the customer's eXu balance (#028).
+ *
+ * There is no redirect: the balance is held, the order is marked paid and the
+ * recharge runs server-side, so the response already carries the final outcome.
+ */
+export function useTopupWalletCheckout() {
+  const { token } = useAuth();
+  return useMutation({
+    mutationFn: async (
+      payload: TopupCheckoutPayload
+    ): Promise<TopupWalletResponse> => {
+      const res = await authFetch(`${API_BASE_URL}/api/v1/topup/wallet`, token, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || `Topup wallet checkout failed: ${res.status}`);
       }
       return res.json();
     },

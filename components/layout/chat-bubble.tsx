@@ -384,6 +384,14 @@ function MessageBubble({
   });
 
   const hasImage = !!(message.fileUrl && message.fileType?.startsWith("image/"));
+  const hasVideo = !!(message.fileUrl && message.fileType?.startsWith("video/"));
+  /**
+   * An attachment-led bubble: the media carries the message, so the bubble drops
+   * its padding and coloured pill and lets the media's own frame show. Video used
+   * to be left out of this, which put a `rounded-2xl` coloured pill around every
+   * clip — the over-rounded frame #039 is about.
+   */
+  const hasMedia = hasImage || hasVideo;
   const hasTextContent = !!(message.message && message.message !== "📎");
 
   return (
@@ -404,7 +412,7 @@ function MessageBubble({
       )}
       <div
         className={`max-w-[75%] rounded-2xl text-base sm:text-sm leading-relaxed ${
-          hasImage && !hasTextContent
+          hasMedia && !hasTextContent
             ? "p-0 bg-transparent"
             : isOwn
               ? "px-3.5 py-2 bg-[#5353ff] text-white rounded-br-md"
@@ -418,7 +426,7 @@ function MessageBubble({
             onClick={() => onJumpToQuoted?.(message.replyTo!.id)}
             data-testid={`chat-quote-${message.id}`}
             className={`mb-1.5 block w-full border-l-2 pl-2 text-left ${
-              hasImage && !hasTextContent ? "px-3.5 pt-2" : ""
+              hasMedia && !hasTextContent ? "px-3.5 pt-2" : ""
             } ${isOwn ? "border-white/60" : "border-[#5353ff]"}`}
             title="Xem tin nhắn gốc"
           >
@@ -448,16 +456,23 @@ function MessageBubble({
             />
           </a>
         )}
-        {message.fileUrl && message.fileType?.startsWith("video/") && (
+        {hasVideo && (
           <video
-            src={message.fileUrl}
+            src={message.fileUrl!}
             controls
-            className="max-w-full rounded-lg max-h-[200px] mb-1.5"
+            data-testid={`chat-video-${message.id}`}
+            // `rounded-sm`, the same barely-there radius the image sibling uses:
+            // a video frame reads as a screen, and `rounded-lg` on top of the
+            // bubble's own radius looked like a bubble inside a bubble (#039).
+            className={`max-w-full rounded-sm max-h-[200px] ${hasTextContent ? "mb-1.5" : ""}`}
             preload="metadata"
           />
         )}
 
         {hasTextContent && (
+          // Only the image case re-adds padding here: a video with a caption
+          // already sits inside the bubble's own px-3.5, and adding more would
+          // indent the caption twice.
           <p className={`whitespace-pre-wrap break-words ${hasImage ? "mt-1.5 px-3.5" : ""}`}>
             {/* Links staff send (e.g. a destination page) are tappable (#050). */}
             {splitChatLinks(message.message ?? "").map((part, index) =>

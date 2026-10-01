@@ -2,11 +2,18 @@ import { headers } from 'next/headers';
 import { resolveCmsSeoLookupPath } from '@/lib/cms-seo-url';
 import {
   fetchSeoConfigByUrl,
+  getBlogBySlug,
   getDestinationBySlug,
   getRegionBySlug,
   getPlansByDestinationSlug,
   getPlansByRegionSlug
 } from '@/lib/api';
+import {
+  buildItemPageSchema,
+  buildServiceSchema,
+  buildWebSiteSchema
+} from '@/lib/site-schema';
+import { buildArticleSchema } from '@/lib/article-schema';
 import { buildSeoTemplateVars } from '@/lib/seo-vars';
 import { buildProductSchema, hasProductSchema } from '@/lib/product-schema';
 import { getUsdVndRate } from '@/lib/exchange-rate';
@@ -132,6 +139,36 @@ export async function PageStructuredData({ locale }: { locale: string }) {
     cmsBlock = fallbackSeo?.structuredData ?? null;
   }
 
+  // ── Site-level markup that was missing entirely (#076) ──────────────
+  // Homepage: who the site is and what it sells. Product pages: that the page is
+  // about one item. Blog posts: the article and who wrote it.
+  const isHomepage = normalizedPath === (localePrefix || '/');
+
+  const siteSchemas: Record<string, unknown>[] = isHomepage
+    ? [buildWebSiteSchema(locale), buildServiceSchema(locale)]
+    : [];
+
+  if (entity) {
+    siteSchemas.push(
+      buildItemPageSchema({
+        path: normalizedPath,
+        name: entity.name,
+        description: entity.description,
+        lang: locale
+      })
+    );
+  }
+
+  // A `/blog/<slug>` path is a post only when there is a post under that slug —
+  // the same route also serves category listings, which are not articles.
+  const blogSlug = blogSlugFromPath(pathWithoutLocale);
+  const blog = blogSlug ? await getBlogBySlug(blogSlug, locale) : null;
+  if (blog) {
+    siteSchemas.push(
+      buildArticleSchema({ blog, path: normalizedPath, lang: locale })
+    );
+  }
+
   // ── Product + Offer, generated from the plans actually on sale (#051) ──
   // Skipped when the CMS block already declares a Product: two Products on one
   // page make Google pick between them arbitrarily.
@@ -148,7 +185,7 @@ export async function PageStructuredData({ locale }: { locale: string }) {
         })
       : null;
 
-  if (!cmsBlock && !productSchema) return null;
+  if (!cmsBlock && !productSchema && siteSchemas.length === 0) return null;
 
   return (
     <>
@@ -162,6 +199,28 @@ export async function PageStructuredData({ locale }: { locale: string }) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
         />
       )}
+      {siteSchemas.map((schema, index) => (
+        <script
+          key={index}
+          type='application/ld+json'
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        />
+      ))}
     </>
   );
+}
+
+/**
+ * The slug of a blog post path, or null when the path is not a post URL.
+ *
+ * `/blog/<slug>` only; the nested `/blog/<category>/<parent>` listings and the
+ * blog index are not articles.
+ */
+function blogSlugFromPath(pathWithoutLocale: string): string | null {
+  const segments = pathWithoutLocale.split('/').filter(Boolean);
+  if (segments.length !== 2 || segments[0] !== 'blog') return null;
+  const slug = decodeURIComponent(segments[1]);
+  // `/blog/search` and `/blog/author` are routes, not posts.
+  if (slug === 'search' || slug === 'author') return null;
+  return slug;
 }

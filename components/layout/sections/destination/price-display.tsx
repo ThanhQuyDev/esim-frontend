@@ -2,7 +2,13 @@
 
 import type { Plan } from "@/lib/api";
 import type { DestinationDict } from "./types";
-import { calcTotalVndPrice, calcTotalVndRetailPrice, getFixedVndPrice } from "./types";
+import {
+  calcTotalVndPrice,
+  calcTotalVndRetailPrice,
+  getFixedVndPrice,
+  hasVisibleDiscount,
+  savingPercent,
+} from "./types";
 import { formatVnd } from "@/lib/hooks";
 import { roundVndToThousands } from "@/lib/utils";
 import { VoucherPrice } from "./voucher-price";
@@ -55,7 +61,9 @@ export function PriceDisplay({
     totalRetail = calcTotalVndRetailPrice(selectedPlan, days) * quantity;
   }
 
-  const savePercent = totalRetail > 0 ? Math.round(((totalRetail - totalPrice) / totalRetail) * 100) : 0;
+  const savePercent = savingPercent(totalRetail, totalPrice);
+  // See hasVisibleDiscount: a sub-1% gap used to render a red "-0%" badge (#077).
+  const hasDiscount = hasVisibleDiscount(totalRetail, totalPrice);
 
   // Calculate per-day cost
   const totalDays = isFixed ? selectedPlan.durationDays : days;
@@ -67,7 +75,7 @@ export function PriceDisplay({
         <span className="text-[2rem] font-extrabold text-[#111] tracking-[-1px]">
           {formatVnd(totalPrice)}
         </span>
-        {totalRetail > totalPrice && (
+        {hasDiscount && (
           <>
             <span className="text-xl sm:text-base text-[#6b7280] line-through font-medium">
               {formatVnd(totalRetail)}
@@ -97,6 +105,12 @@ export function PriceDisplay({
 interface GreenBoxProps {
   dict: DestinationDict;
   line1Html: string;
+  /**
+   * The apps line, worked out from the uploaded APN table (#068). Null means the
+   * table says nothing about this plan — outside China it is simply not listed —
+   * and the existing wording stands rather than being turned into a denial.
+   */
+  appsLine?: string | null;
 }
 
 const GreenCheck = () => (
@@ -106,7 +120,7 @@ const GreenCheck = () => (
   </svg>
 );
 
-export function GreenBox({ dict, line1Html }: GreenBoxProps) {
+export function GreenBox({ dict, line1Html, appsLine }: GreenBoxProps) {
   return (
     <div className="bg-[#f0fdf4] border border-[#bbf7d0] rounded-xl px-3.5 py-[13px] mb-[18px] flex flex-col gap-[9px]">
       <div className="flex items-start gap-[9px] text-base sm:text-sm text-[#166534] leading-normal">
@@ -115,7 +129,7 @@ export function GreenBox({ dict, line1Html }: GreenBoxProps) {
       </div>
       <div className="flex items-start gap-[9px] text-base sm:text-sm text-[#166534] leading-normal">
         <GreenCheck />
-        <span>{dict.greenBox.line3}</span>
+        <span data-testid='green-box-apps'>{appsLine ?? dict.greenBox.line3}</span>
       </div>
     </div>
   );

@@ -8,9 +8,10 @@ import { LayoutClientWidgets } from "@/components/layout/layout-client-widgets";
 import { PageStructuredData } from "@/components/page-structured-data";
 import { PageBreadcrumbSchema } from "@/components/page-breadcrumb-schema";
 import { PageFaqSchema } from "@/components/page-faq-schema";
+import { SiteScripts } from "@/components/site-scripts";
 import { QueryProvider } from "@/lib/query-provider";
 import { AuthProvider } from "@/lib/auth";
-import { getTopBars } from "@/lib/api";
+import { getMenuSlides, getTopBars } from "@/lib/api";
 import { getDictionary } from "@/lib/dictionaries";
 import { buildLanguageAlternates, SITE_BASE_URL } from "@/lib/hreflang";
 import { cn } from "@/lib/utils";
@@ -57,10 +58,13 @@ export default async function LocaleLayout({
     notFound();
   }
 
-  const [messages, dict, topBars] = await Promise.all([
+  const [messages, dict, topBars, menuSlides] = await Promise.all([
     getMessages(),
     getDictionary(locale),
     getTopBars({ lang: locale }),
+    // The mega-menu "Explore" carousels, managed from the CMS (#073). Fetched
+    // alongside the rest so the menu costs no extra round trip.
+    getMenuSlides({ lang: locale }),
   ]);
 
   return (
@@ -83,6 +87,9 @@ export default async function LocaleLayout({
         <PageBreadcrumbSchema locale={locale} />
         <PageFaqSchema locale={locale} />
         <PageStructuredData locale={locale} />
+        {/* Site-wide analytics and tag snippets, on every page (#075). Last in
+            the head so a page's own schema is not pushed below them. */}
+        <SiteScripts placement='head' />
       </head>
       <body
         className={cn(
@@ -92,12 +99,20 @@ export default async function LocaleLayout({
         <NextIntlClientProvider messages={messages}>
           <QueryProvider>
             <AuthProvider>
-              <Navbar lang={locale} dict={dict.nav} topBars={topBars} />
+              <Navbar
+                lang={locale}
+                dict={dict.nav}
+                topBars={topBars}
+                menuSlides={menuSlides}
+              />
               {children}
               <LayoutClientWidgets lang={locale} />
             </AuthProvider>
           </QueryProvider>
         </NextIntlClientProvider>
+        {/* Snippets the admin marked "end of body" — anything that must not hold
+            up the first paint (#075). */}
+        <SiteScripts placement='bodyEnd' />
       </body>
     </html>
   );

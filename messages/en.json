@@ -1262,13 +1262,11 @@
       "usagePeriod": "How the usage period is counted",
       "usagePeriodFixed": "{days} consecutive days, counted from the first time the eSIM connects to a network — not from purchase",
       "usagePeriodDaily": "Counted per day of use, starting the first time the eSIM connects to a network — not from purchase",
-      "refundTitle": "Refund",
-      "refundUnactivated": "Refundable while the eSIM is still unactivated and unused",
+      "dailyReset": "Daily reset",
+      "refundTitle": "Refund guidance",
+      "refundFast": "Fast refund while the eSIM is still unactivated",
+      "refundNotSupported": "No refunds — warranty, setup and usage support only",
       "refundPolicyLink": "See the refund policy"
-    },
-    "note": {
-      "title": "Note:",
-      "text": "eSIM does not support regular calls and SMS. Use WhatsApp, Zalo, Messenger once connected to data. Please check your device is eSIM-compatible before purchasing."
     },
     "planTabs": {
       "data": "Data",
@@ -1731,6 +1729,46 @@
       }
     }
   },
+  "esimLookup": {
+    "metadata": {
+      "title": "Check eSIM | esim.vn",
+      "description": "Enter your ICCID to see remaining data, expiry date and allowances on your eSIM — no sign-in needed."
+    },
+    "hero": {
+      "title": "Check eSIM",
+      "subtitle": "Enter your ICCID to see the data left and the expiry date of your eSIM. You can forward this link so whoever is travelling can check it themselves."
+    },
+    "form": {
+      "label": "ICCID",
+      "placeholder": "e.g. 8901234567890123456",
+      "submit": "Check",
+      "hint": "The ICCID is 18–22 digits and is in the email we sent with your eSIM."
+    },
+    "loading": "Loading eSIM data...",
+    "errors": {
+      "invalid": "That ICCID doesn't look right — please enter 18–22 digits.",
+      "notFound": "No eSIM found for that ICCID.",
+      "tokenInvalid": "This lookup link is no longer valid. Please enter the ICCID again.",
+      "generic": "We couldn't run the lookup just now, please try again later."
+    },
+    "result": {
+      "iccid": "ICCID",
+      "data": "Data",
+      "used": "Used",
+      "period": "Usage period",
+      "daysUnit": "days",
+      "unlimited": "Unlimited",
+      "gbRemaining": "GB remaining",
+      "daysLeft": "days left",
+      "callMinutes": "call minutes",
+      "sms": "SMS",
+      "expires": "Expires:",
+      "lastUpdate": "Last updated:",
+      "notActivated": "Not activated yet — the usage period starts when the eSIM first connects to a network.",
+      "expiryUnknown": "This eSIM is in use — the provider has not sent an expiry yet; the time left will appear once it does.",
+      "usageUnavailable": "The carrier does not report live usage for this eSIM. You can check the remaining data in your phone's mobile settings."
+    }
+  },
   "breadcrumb": {
     "home": "Home",
     "domesticEsim": "Domestic eSIM",
@@ -1741,6 +1779,7 @@
     "cart": "Cart",
     "checkout": "Checkout",
     "dataCalculator": "Data Calculator",
+    "checkEsim": "Check eSIM",
     "coupon": "Coupons",
     "destination": "Destination",
     "whatIsEsim": "What is eSIM",

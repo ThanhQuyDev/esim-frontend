@@ -36,11 +36,15 @@ export interface DestinationDict {
     usagePeriod: string;
     usagePeriodFixed: string;
     usagePeriodDaily: string;
+    /** Label for the "when does the daily allowance reset" row (#071). */
+    dailyReset: string;
     refundTitle: string;
-    refundUnactivated: string;
+    /** Shown for suppliers that take an unactivated eSIM back (#072). */
+    refundFast: string;
+    /** Shown for Viettel, domestic eSIMs and MicroEsim's local packages (#072). */
+    refundNotSupported: string;
     refundPolicyLink: string;
   };
-  note: { title: string; text: string };
   planTabs: { data: string; dataCalls: string; localSim: string };
   planSections: { fixed: string; daily: string; unlimited: string };
   speed: { normal: string; high: string };
@@ -221,6 +225,32 @@ export function calcTotalRetailPrice(plan: Plan, days: number): number {
     return Number(plan.retailPrice) * days;
   }
   return Number(plan.retailPrice);
+}
+
+/**
+ * The saving to advertise, as a whole percent.
+ */
+export function savingPercent(totalRetail: number, totalPrice: number): number {
+  if (totalRetail <= 0) return 0;
+  return Math.round(((totalRetail - totalPrice) / totalRetail) * 100);
+}
+
+/**
+ * Whether the struck-out price and the "-N%" badge should appear at all (#077).
+ *
+ * They used to appear whenever retail was a single đồng above the price, at which
+ * point the percentage rounded to zero: a red "-0%" next to a struck-out price,
+ * telling the customer they save nothing while the styling claims a discount.
+ * Rounding in the per-day and round-to-thousands maths makes gaps that small
+ * routine, so the test is the percentage rather than the raw difference.
+ *
+ * Shared by the desktop and mobile price blocks, which both drew the same badge.
+ */
+export function hasVisibleDiscount(
+  totalRetail: number,
+  totalPrice: number,
+): boolean {
+  return totalRetail > totalPrice && savingPercent(totalRetail, totalPrice) >= 1;
 }
 
 /**

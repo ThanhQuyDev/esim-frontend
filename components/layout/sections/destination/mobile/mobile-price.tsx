@@ -2,7 +2,13 @@
 
 import type { Plan } from "@/lib/api";
 import type { DestinationDict } from "../types";
-import { calcTotalVndPrice, calcTotalVndRetailPrice, getFixedVndPrice } from "../types";
+import {
+  calcTotalVndPrice,
+  calcTotalVndRetailPrice,
+  getFixedVndPrice,
+  hasVisibleDiscount,
+  savingPercent,
+} from "../types";
 import { formatVnd } from "@/lib/hooks";
 import { roundVndToThousands } from "@/lib/utils";
 import { VoucherPrice } from "../voucher-price";
@@ -16,6 +22,8 @@ interface MobilePriceProps {
   planLabel: string;
   dataLabel: string;
   greenBoxLine1: string;
+  /** Apps line from the APN table; null keeps the existing wording (#068). */
+  greenBoxApps?: string | null;
   /** Open the eKYC guide modal (shown only when selectedPlan.isKyc). */
   onOpenEkyc?: () => void;
   lang?: string;
@@ -42,6 +50,7 @@ export function MobilePrice({
   isFixed,
   planLabel,
   greenBoxLine1,
+  greenBoxApps,
   onOpenEkyc,
   lang = "vi",
 }: MobilePriceProps) {
@@ -68,8 +77,9 @@ export function MobilePrice({
     }
   }
 
-  const savePercent =
-    totalRetail > 0 ? Math.round(((totalRetail - totalPrice) / totalRetail) * 100) : 0;
+  const savePercent = savingPercent(totalRetail, totalPrice);
+  // See hasVisibleDiscount: a sub-1% gap used to render a red "-0%" badge (#077).
+  const hasDiscount = hasVisibleDiscount(totalRetail, totalPrice);
   const totalDays = selectedPlan ? (isFixed ? selectedPlan.durationDays : days) : 0;
   const perDayPrice = totalDays > 0 ? Math.round(totalPrice / totalDays) : 0;
 
@@ -83,7 +93,7 @@ export function MobilePrice({
           <span className="text-[34px] font-extrabold text-[#1a1a1a] tracking-[-1px]">
             {selectedPlan ? formatVnd(totalPrice) : "—"}
           </span>
-          {totalRetail > totalPrice && (
+          {hasDiscount && (
             <>
               <span className="text-base text-[#6b7280] line-through">
                 {formatVnd(totalRetail)}
@@ -117,7 +127,9 @@ export function MobilePrice({
         </div>
         <div className="flex items-start gap-[9px] text-xs sm:text-sm text-[#166534] leading-normal">
           <GreenCheck />
-          <span>{dict.greenBox.line3}</span>
+          <span data-testid="green-box-apps">
+            {greenBoxApps ?? dict.greenBox.line3}
+          </span>
         </div>
       </div>
 

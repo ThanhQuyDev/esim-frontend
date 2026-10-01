@@ -18,6 +18,7 @@ const STATIC_SEO_ROUTES: StaticPathname[] = [
   "/checkout",
   "/review",
   "/data-calculator",
+  "/check-esim",
   "/what-is-esim",
   "/coupon",
   "/blog",

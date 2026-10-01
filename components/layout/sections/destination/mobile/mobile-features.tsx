@@ -6,6 +6,8 @@ import { VoiceFeatureRow } from "../voice-feature-row";
 import type { Destination, Plan, Region, SupportedDevicesResponse } from "@/lib/api";
 import { localizedHref } from "@/lib/route-mapping";
 import type { DestinationDict } from "../types";
+import { activationDeadlineText } from "@/lib/plan-activation";
+import { dailyResetText } from "@/lib/plan-daily-reset";
 
 interface MobileFeaturesProps {
   destination: Destination;
@@ -210,6 +212,8 @@ export function MobileFeatures({
   // Determine feature values from selected plan
   const hasHotspot = selectedPlan?.hotSpot ?? false;
   const hotSpotAllowGb = selectedPlan?.hotSpotAllow ?? null;
+  // When the daily allowance starts over; null means the row is dropped (#071).
+  const resetText = dailyResetText(selectedPlan, lang);
   const voice = planVoiceInfo(selectedPlan);
   // A plan with calls or SMS necessarily has a phone number (#045). This row
   // used to be hardcoded "no", which contradicted the Calls & SMS row above it.
@@ -428,23 +432,26 @@ export function MobileFeatures({
         <div className="flex items-center justify-between py-[13px] border-b border-[#f3f4f6] gap-3">
           <span className="text-sm text-[#374151]">{dict.delivery.activationPeriod}</span>
           <span className="text-sm font-bold">
-            {selectedPlan?.provider === 'viettel'
-              ? (lang === "vi" ? "15 ngày kể từ ngày mua" : "15 days from purchase")
-              : dict.delivery.activationDesc}
+            {/* The supplier's own deadline when it stated one (#070); the old
+                generic wording only as a fallback. */}
+            {activationDeadlineText(selectedPlan, lang) ??
+              (selectedPlan?.provider === 'viettel'
+                ? (lang === "vi" ? "15 ngày kể từ ngày mua" : "15 days from purchase")
+                : dict.delivery.activationDesc)}
           </span>
         </div>
 
-        {/* Warning box */}
-        <div className="flex items-start gap-2.5 mt-[13px] p-[13px] bg-[#FFFBEB] border border-[#FDE68A] rounded-sm">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#D97706" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 mt-px">
-            <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-            <line x1="12" y1="9" x2="12" y2="13" />
-            <line x1="12" y1="17" x2="12.01" y2="17" />
-          </svg>
-          <p className="text-sm text-[#92400e] leading-[1.55]">
-            <strong className="text-[#78350f]">{dict.note.title}:</strong> {dict.note.text}
-          </p>
-        </div>
+        {/* Daily reset (#071) — dropped when the supplier has not stated the
+            cycle, or the plan is one total pool with no daily reset. */}
+        {resetText && (
+          <div className="flex items-start justify-between py-[13px] border-b border-[#f3f4f6] gap-3">
+            <span className="text-sm text-[#374151]">{dict.delivery.dailyReset}</span>
+            <span className="text-sm font-bold text-right max-w-[60%]">
+              {resetText}
+            </span>
+          </div>
+        )}
+
       </div>
     </>
   );

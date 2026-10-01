@@ -1262,13 +1262,11 @@
       "usagePeriod": "Cách tính chu kỳ sử dụng",
       "usagePeriodFixed": "{days} ngày liên tục, tính từ khi eSIM kết nối mạng lần đầu — không tính từ lúc mua",
       "usagePeriodDaily": "Tính theo từng ngày sử dụng, bắt đầu từ khi eSIM kết nối mạng lần đầu — không tính từ lúc mua",
-      "refundTitle": "Hoàn tiền",
-      "refundUnactivated": "Hoàn tiền nếu eSIM chưa kích hoạt, chưa qua sử dụng",
+      "dailyReset": "Giờ làm mới mỗi ngày",
+      "refundTitle": "Hướng dẫn hoàn tiền",
+      "refundFast": "Hoàn tiền nhanh nếu eSIM chưa kích hoạt",
+      "refundNotSupported": "Không hỗ trợ hoàn tiền, chỉ bảo hành và hỗ trợ cài đặt, sử dụng",
       "refundPolicyLink": "Xem chính sách hoàn tiền"
-    },
-    "note": {
-      "title": "Lưu ý:",
-      "text": "eSIM không hỗ trợ gọi điện và nhắn tin thông thường. Sử dụng WhatsApp, Zalo, Messenger khi đã có kết nối data. Vui lòng kiểm tra thiết bị tương thích eSIM trước khi mua."
     },
     "planTabs": {
       "data": "Data",
@@ -1731,6 +1729,46 @@
       }
     }
   },
+  "esimLookup": {
+    "metadata": {
+      "title": "Tra cứu eSIM | esim.vn",
+      "description": "Nhập ICCID để kiểm tra dung lượng còn lại, ngày hết hạn và ưu đãi của eSIM — không cần đăng nhập."
+    },
+    "hero": {
+      "title": "Tra cứu eSIM",
+      "subtitle": "Nhập mã ICCID để xem dung lượng còn lại và ngày hết hạn của eSIM. Bạn có thể gửi link này cho người thân để họ tự kiểm tra."
+    },
+    "form": {
+      "label": "Mã ICCID",
+      "placeholder": "Ví dụ: 8901234567890123456",
+      "submit": "Tra cứu",
+      "hint": "ICCID gồm 18–22 chữ số, nằm trong email chúng tôi gửi kèm eSIM."
+    },
+    "loading": "Đang tải dữ liệu eSIM...",
+    "errors": {
+      "invalid": "ICCID không hợp lệ — vui lòng nhập 18–22 chữ số.",
+      "notFound": "Không tìm thấy eSIM với mã ICCID này.",
+      "tokenInvalid": "Link tra cứu không còn hợp lệ. Vui lòng nhập lại ICCID.",
+      "generic": "Không tra cứu được lúc này, vui lòng thử lại sau."
+    },
+    "result": {
+      "iccid": "ICCID",
+      "data": "Dữ liệu",
+      "used": "Đã dùng",
+      "period": "Thời gian sử dụng",
+      "daysUnit": "ngày",
+      "unlimited": "Không giới hạn",
+      "gbRemaining": "GB còn lại",
+      "daysLeft": "ngày còn lại",
+      "callMinutes": "phút gọi",
+      "sms": "tin nhắn SMS",
+      "expires": "Hết hạn:",
+      "lastUpdate": "Cập nhật lúc:",
+      "notActivated": "Chưa kích hoạt — thời gian sử dụng bắt đầu tính từ khi eSIM kết nối mạng lần đầu.",
+      "expiryUnknown": "eSIM đang được sử dụng — nhà cung cấp chưa gửi ngày hết hạn, thời gian còn lại sẽ hiện khi có số liệu.",
+      "usageUnavailable": "Nhà mạng chưa cung cấp số liệu sử dụng trực tuyến cho eSIM này. Bạn có thể xem dung lượng còn lại trong phần cài đặt di động của điện thoại."
+    }
+  },
   "breadcrumb": {
     "home": "Trang chủ",
     "domesticEsim": "eSIM nội địa",
@@ -1741,6 +1779,7 @@
     "cart": "Giỏ hàng",
     "checkout": "Thanh toán",
     "dataCalculator": "Công cụ tính data",
+    "checkEsim": "Tra cứu eSIM",
     "coupon": "Mã giảm giá",
     "destination": "Điểm đến",
     "whatIsEsim": "eSIM là gì",

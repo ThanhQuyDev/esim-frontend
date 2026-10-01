@@ -13,13 +13,13 @@ import {
   QrCode,
   Wifi,
   Calendar,
-  Infinity,
   Info,
   Zap,
   Apple,
 } from "lucide-react";
 import type { EsimDataUsage, MyEsim } from "@/lib/hooks";
 import { useEsimDataUsage } from "@/lib/hooks";
+import { DataUsageBar, statusLabel, USAGE_STATUS_COLOR } from "./usage-bar";
 import type { ProfileDict } from "./translations";
 import { QRCodeSVG } from "qrcode.react";
 import { TopupModal } from "./topup-modal";
@@ -126,80 +126,6 @@ function QrCodeImage({ lpa }: { lpa: string }) {
   );
 }
 
-function DataUsageBar({ label, used, total, unit, isUnlimited, lang, integer = false }: {
-  label: string;
-  used: number;
-  total: number;
-  unit: string;
-  isUnlimited: boolean;
-  lang: string;
-  /** Whole units only — days are counted, never "20.0 ngày" (#027). */
-  integer?: boolean;
-}) {
-  const vi = lang === "vi";
-  const format = (value: number) =>
-    integer ? String(Math.round(value)) : value.toFixed(value < 100 ? 1 : 0);
-  if (isUnlimited) {
-    return (
-      <div className="space-y-1.5">
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-gray-600">{label}</span>
-          <span className="inline-flex items-center gap-1 text-sm font-semibold text-indigo-600">
-            <Infinity className="w-3.5 h-3.5" />
-            {vi ? "Không giới hạn" : "Unlimited"}
-          </span>
-        </div>
-        <div className="w-full h-2 rounded-full bg-indigo-100">
-          <div className="h-full rounded-full bg-indigo-400 w-full" />
-        </div>
-      </div>
-    );
-  }
-
-  const remaining = Math.max(0, total - used);
-  const pct = total > 0 ? Math.min(100, (used / total) * 100) : 0;
-  const barColor = pct > 80 ? "bg-red-500" : pct > 50 ? "bg-amber-500" : "bg-emerald-500";
-  const barBg = pct > 80 ? "bg-red-100" : pct > 50 ? "bg-amber-100" : "bg-emerald-100";
-
-  return (
-    <div className="space-y-1.5">
-      <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-gray-600">{label}</span>
-        <span className="text-sm font-semibold text-gray-900">
-          {format(remaining)} {unit} {vi ? "còn lại" : "left"}
-        </span>
-      </div>
-      <div className={`w-full h-2 rounded-full ${barBg}`}>
-        <div
-          className={`h-full rounded-full ${barColor} transition-all duration-500`}
-          style={{ width: `${pct}%` }}
-        />
-      </div>
-      <div className="flex justify-between text-sm text-gray-400">
-        <span>{vi ? "Đã dùng" : "Used"} {format(used)} {unit}</span>
-        <span>{vi ? "Tổng" : "Total"} {format(total)} {unit}</span>
-      </div>
-    </div>
-  );
-}
-
-/** Provider status codes are English enum values; customers read Vietnamese. */
-function statusLabel(status: string | undefined, lang: string): string {
-  const key = (status ?? "").toUpperCase();
-  const labels: Record<string, { vi: string; en: string }> = {
-    ACTIVE: { vi: "Đang dùng", en: "Active" },
-    NOT_ACTIVE: { vi: "Chưa kích hoạt", en: "Not activated" },
-    INACTIVE: { vi: "Chưa kích hoạt", en: "Not activated" },
-    EXPIRED: { vi: "Hết hạn", en: "Expired" },
-    USED_UP: { vi: "Hết dung lượng", en: "Used up" },
-    FINISHED: { vi: "Đã kết thúc", en: "Finished" },
-    CANCELLED: { vi: "Đã huỷ", en: "Cancelled" },
-  };
-  const known = labels[key];
-  if (known) return lang === "vi" ? known.vi : known.en;
-  return status || (lang === "vi" ? "Không rõ" : "Unknown");
-}
-
 export function DataUsageSection({ esimId, lang }: { esimId: number; lang: string }) {
   const { data, isLoading, isError } = useEsimDataUsage(esimId);
   // The API can report `remaining: null` (size unknown) and `usageAvailable:
@@ -277,11 +203,7 @@ export function DataUsageSection({ esimId, lang }: { esimId: number; lang: strin
       ? Math.min(totalDays, Math.max(0, totalDays - daysRemaining))
       : null;
 
-  const statusColor: Record<string, string> = {
-    ACTIVE: "bg-emerald-100 text-emerald-700",
-    EXPIRED: "bg-red-100 text-red-700",
-    NOT_ACTIVE: "bg-gray-100 text-gray-500",
-  };
+  const statusColor = USAGE_STATUS_COLOR;
 
   return (
     <div className="border-t border-gray-100 pt-4 mt-4 space-y-4">
@@ -456,6 +378,15 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
     .map((s) => s.trim())
     .filter(Boolean);
 
+  // Allowance comes from the plan — an eSIM has no minutes of its own (#023).
+  const callMinutes = Number(esim.plan?.call) || 0;
+  const smsCount = Number(esim.plan?.sms) || 0;
+
+  // Topups applied to this eSIM, counted server-side from the paid topup orders
+  // (#031) — so an admin-granted topup shows up exactly like a customer's own.
+  const topupCount = Number(esim.topupCount) || 0;
+  const topupPackages = esim.topupPackageNames?.trim() || "";
+
   // Activation validity: viettel uses 15 days, others use 180 days from createdAt
   const activationDeadline = (() => {
     if (!esim.updatedAt) return null;
@@ -486,7 +417,11 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
   const canTopup = canTopUpEsim(esim);
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white overflow-hidden transition-shadow hover:shadow-sm">
+    <div
+      data-testid="esim-card"
+      data-esim-id={esim.id}
+      className="rounded-xl border border-gray-200 bg-white overflow-hidden transition-shadow hover:shadow-sm"
+    >
       {/* Header */}
       <button
         onClick={() => setExpanded(!expanded)}
@@ -500,6 +435,16 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
             <p className="text-base sm:text-sm font-semibold text-gray-900 truncate font-mono">
               {esim.plan?.name}
             </p>
+            {/* TOPUP next to the product name, so a topped-up eSIM is obvious
+                without expanding the card (#031). */}
+            {topupCount > 0 && (
+              <span
+                data-testid="esim-topup-badge"
+                className="inline-flex shrink-0 items-center rounded-full bg-amber-100 px-2 py-0.5 text-sm font-semibold text-amber-800"
+              >
+                TOPUP{topupCount > 1 ? ` ×${topupCount}` : ""}
+              </span>
+            )}
             <span className={`inline-flex items-center px-2 py-0.5 text-sm font-medium rounded-full ${getStatusStyle(esim.status)}`}>
               {getStatusLabel(esim.status, t)}
             </span>
@@ -663,6 +608,56 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                           )}
                         </div>
                       </div>
+                      {/* What was topped up (#031). Spans both columns because a
+                          package name is long and there can be several. */}
+                      {topupCount > 0 && (
+                        <div className="sm:col-span-2">
+                          <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">
+                            {lang === "vi" ? "Gói đã topup" : "Topped-up packages"}
+                          </p>
+                          <div
+                            className="bg-amber-50 rounded-lg px-3 py-2"
+                            data-testid="esim-topup-packages"
+                          >
+                            <p className="text-base sm:text-sm text-gray-900">
+                              {topupPackages ||
+                                (lang === "vi"
+                                  ? `${topupCount} lần topup`
+                                  : `${topupCount} top-up(s)`)}
+                            </p>
+                            {esim.lastTopupAt && (
+                              <p className="text-sm text-gray-500 mt-0.5">
+                                {lang === "vi" ? "Lần cuối" : "Last"}:{" "}
+                                {formatDate(esim.lastTopupAt, lang)}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                      {/* Minutes / SMS. A call-and-SMS eSIM never said so
+                          anywhere the customer could see it (#023). Only shown
+                          when the plan actually includes an allowance. */}
+                      {(callMinutes > 0 || smsCount > 0) && (
+                        <div>
+                          <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">
+                            {lang === "vi" ? "Phút gọi & SMS" : "Calls & SMS"}
+                          </p>
+                          <div className="bg-gray-50 rounded-lg px-3 py-2">
+                            <div className="flex flex-wrap gap-1">
+                              {callMinutes > 0 && (
+                                <span className="inline-flex items-center px-2 py-0.5 text-sm font-medium rounded-full bg-sky-50 text-sky-700">
+                                  {callMinutes} {lang === "vi" ? "phút gọi" : "call min"}
+                                </span>
+                              )}
+                              {smsCount > 0 && (
+                                <span className="inline-flex items-center px-2 py-0.5 text-sm font-medium rounded-full bg-violet-50 text-violet-700">
+                                  {smsCount} SMS
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      )}
                       <div>
                         <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">
                           {lang === "vi" ? "Thời hạn kích hoạt" : "Activation Validity"}

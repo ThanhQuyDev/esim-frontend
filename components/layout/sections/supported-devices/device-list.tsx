@@ -15,6 +15,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { useDebounce } from "@/lib/use-debounce";
+import { brandNote } from "@/lib/brand-note";
 
 interface TabDict {
   label: string;
@@ -526,9 +527,12 @@ export function DeviceList({ initialData, dict, lang }: DeviceListProps) {
                                                   )
                                                 )}
                                               </ul>
-                                              {dict.infoNote &&
-                                                manufacturer.manufacturer ===
-                                                "iPhone" && (
+                                              {/* #079: the brand's own note from
+                                                  the CMS. The locale string is
+                                                  kept as a fallback for iPhone so
+                                                  the page reads the same before
+                                                  anything is configured. */}
+                                              {brandNote(manufacturer, dict.infoNote) && (
                                                   <div className="mt-3">
                                                     <div
                                                       data-testid="notification-neutral"
@@ -537,7 +541,7 @@ export function DeviceList({ initialData, dict, lang }: DeviceListProps) {
                                                       <Info className="w-4 h-4 text-primary shrink-0" />
                                                       <div className="flex flex-col ml-2 text-primary">
                                                         <span className="body-xs-medium">
-                                                          {dict.infoNote}
+                                                          {brandNote(manufacturer, dict.infoNote)}
                                                         </span>
                                                       </div>
                                                     </div>

@@ -4,6 +4,11 @@ import { useState } from "react";
 import type { Plan } from "@/lib/api";
 import type { DestinationDict } from "../types";
 import { CalendarModal } from "../calendar-modal";
+import {
+  POPULAR_DAYS_MOBILE,
+  flexibleDayOptions,
+  trimToPopularDays,
+} from "../day-options";
 
 interface MobilePlanConfigProps {
   days: number;
@@ -22,8 +27,6 @@ interface MobilePlanConfigProps {
   getTotalForDays?: (days: number) => number;
 }
 
-const QUICK_DAYS = [3, 5, 7, 10, 15, 20, 30, 180, 365];
-
 export function MobilePlanConfig({
   days,
   quantity,
@@ -38,7 +41,15 @@ export function MobilePlanConfig({
   getTotalForDays,
 }: MobilePlanConfigProps) {
   const [calOpen, setCalOpen] = useState(false);
-  const dayOptions = isFlexibleDays ? QUICK_DAYS : availableDays;
+  // A fixed package (one duration, or a domestic eSIM sold per package) has no
+  // calendar, so its chips are the only way to pick a duration and must stay
+  // complete. Everything else pairs a trimmed chip row with the calendar.
+  const canPickAnyDay = !isFixed;
+  const dayOptions = isFlexibleDays
+    ? flexibleDayOptions(POPULAR_DAYS_MOBILE)
+    : canPickAnyDay
+      ? trimToPopularDays(availableDays, POPULAR_DAYS_MOBILE, days)
+      : availableDays;
   const isLocalEsim = selectedPlan?.isLocalInventory
 
   return (
@@ -59,14 +70,12 @@ export function MobilePlanConfig({
           </div>
           <button
             type="button"
-            onClick={() => isFlexibleDays && setCalOpen(true)}
-            disabled={isFixed || !isFlexibleDays}
+            onClick={() => canPickAnyDay && setCalOpen(true)}
+            disabled={!canPickAnyDay}
             className={`w-full flex items-center justify-between px-1 border rounded-[30px] h-[50px] ${
               isFixed
                 ? "border-[#e5e7eb] bg-[#f9fafb] cursor-not-allowed opacity-60"
-                : isFlexibleDays
-                  ? "border-[#e5e7eb] cursor-pointer"
-                  : "border-[#e5e7eb] bg-[#f9fafb] cursor-default"
+                : "border-[#e5e7eb] cursor-pointer"
             }`}
           >
             <span className="w-[38px] shrink-0" />
@@ -74,7 +83,7 @@ export function MobilePlanConfig({
               {days} {dict.daysUnit}
             </span>
             <span className={`w-[38px] h-[38px] rounded-full flex items-center justify-center shrink-0 ${
-              isFixed || !isFlexibleDays ? "opacity-40" : ""
+              !canPickAnyDay ? "opacity-40" : ""
             }`}>
               <svg width="17" height="17" viewBox="0 0 16 16" fill="none">
                 <rect x="1.5" y="3" width="13" height="11.5" rx="2" stroke="#374151" strokeWidth="1.4" />
@@ -129,7 +138,7 @@ export function MobilePlanConfig({
         </div>
       )}
 
-      {isFlexibleDays && (
+      {canPickAnyDay && (
         <CalendarModal
           open={calOpen}
           onClose={() => setCalOpen(false)}

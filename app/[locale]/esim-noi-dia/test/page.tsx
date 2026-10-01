@@ -76,6 +76,7 @@ import { DataCalculator } from "@/components/layout/sections/data-calculator/dat
 import { FeaturesSection } from "@/components/layout/sections/features";
 import type { WhyChooseUs } from "@/lib/api";
 import { profileTranslations } from "@/components/layout/sections/profile/translations";
+import { TopupModal } from "@/components/layout/sections/profile/topup-modal";
 import type { MembershipTier } from "@/lib/hooks";
 import type { DestinationDict } from "@/components/layout/sections/destination/types";
 import type { Destination } from "@/lib/api";
@@ -298,6 +299,33 @@ export default function LocalEsimTestPage() {
       <main role="main" style={{ padding: 12 }}>
         <p data-testid="local-test-meta">view=esim-usage esimId={esimId}</p>
         <DataUsageSection esimId={esimId} lang={lang} />
+      </main>
+    );
+  }
+
+  if (view === "topup") {
+    // The topup popup on its own, already open (#029). `iccid` and an optional
+    // `planName` are query params so the header can be asserted.
+    const iccid = params.get("iccid") ?? "8934079000000000001";
+    const planName = params.get("planName") ?? "Vietnam 3GB / 3 days";
+    return (
+      <main role="main" style={{ padding: 12 }}>
+        <p data-testid="local-test-meta">view=topup iccid={iccid}</p>
+        <TopupModal
+          esim={
+            {
+              id: 1,
+              iccid,
+              status: "sold",
+              provider: "microesim",
+              plan: { name: planName },
+            } as never
+          }
+          open
+          onClose={() => {}}
+          t={profileTranslations[lang === "en" ? "en" : "vi"]}
+          lang={lang === "en" ? "en" : "vi"}
+        />
       </main>
     );
   }

@@ -21,6 +21,10 @@ interface DestinationSearchModalProps {
   onClose: () => void;
 }
 
+// "Điểm đến phổ biến nhất" fills the 3-column grid with 4 full rows, so the
+// admin can flag up to 12 countries/regions as popular and see all of them.
+const POPULAR_LIMIT = 12;
+
 export function DestinationSearchModal({
   lang,
   open,
@@ -33,9 +37,9 @@ export function DestinationSearchModal({
 
   // Fetch top/popular destinations
   const { data: topDestinations = [], isLoading: isLoadingTop } =
-    useTopDestinations(10);
+    useTopDestinations(POPULAR_LIMIT);
 
-  // Fetch regions (for combining popular ones in Top 10)
+  // Fetch regions (for combining popular ones in the default list)
   const { data: allRegions = [], isLoading: isLoadingRegions } = useRegions(
     JSON.stringify({ isPopular: true }),
     "name",
@@ -66,11 +70,12 @@ export function DestinationSearchModal({
   const groupedPopularRegions = toRegionListItems(allRegions, lang);
   const groupedSearchRegions = toRegionListItems(searchRegions, lang);
 
-  // Combined Top 10: popular destinations + regions
-  const top10Combined = (() => {
+  // Default list: popular destinations + popular regions, capped at
+  // POPULAR_LIMIT so the 3-column grid fills exactly 4 rows.
+  const popularCombined = (() => {
     const countryItems = topDestinations.map((d: any) => ({ ...d, _type: "destination" as const }));
     const regionItems = groupedPopularRegions.map((r: any) => ({ ...r, _type: "region" as const }));
-    return [...countryItems, ...regionItems].slice(0, 10);
+    return [...countryItems, ...regionItems].slice(0, POPULAR_LIMIT);
   })();
 
   // Focus input on open
@@ -458,7 +463,7 @@ export function DestinationSearchModal({
                       ? "Điểm đến phổ biến nhất"
                       : "Most popular destinations"}
                   </p>
-                  {top10Combined.map((item: any) => {
+                  {popularCombined.map((item: any) => {
                     const isRegionItem = item._type === "region";
                     const priceStr = (item.minPrice || item.fromPrice)
                       ? formatPrice(item.minPrice || item.fromPrice)

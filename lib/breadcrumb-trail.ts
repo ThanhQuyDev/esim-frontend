@@ -31,6 +31,7 @@ const ROUTE_LABELS: Record<string, { key: string; parent?: string }> = {
   "/checkout": { key: "checkout" },
   "/review": { key: "review" },
   "/data-calculator": { key: "dataCalculator" },
+  "/check-esim": { key: "checkEsim" },
   "/what-is-esim": { key: "whatIsEsim" },
   "/coupon": { key: "coupon" },
   "/blog": { key: "blog" },

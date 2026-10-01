@@ -46,6 +46,12 @@ export const routing = defineRouting({
       en: '/review',
     },
 
+    // Public eSIM usage lookup by ICCID — no sign-in (#003)
+    '/check-esim': {
+      vi: '/tra-cuu-esim',
+      en: '/check-esim',
+    },
+
     // Data Calculator
     '/data-calculator': {
       vi: '/cong-cu-tinh-data',

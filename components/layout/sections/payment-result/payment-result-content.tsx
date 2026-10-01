@@ -18,7 +18,7 @@ import Link from "next/link";
 import { localizedHref } from "@/lib/route-mapping";
 import { Button } from "@/components/ui/button";
 import { getResponseCodeMessage } from "@/lib/onepay";
-import { formatExu, useOrderByNumber, useCart } from "@/lib/hooks";
+import { formatExu, useOrderByNumber, useCart, type EsimInfo } from "@/lib/hooks";
 import { clearCart as clearLocalCart } from "@/lib/cart";
 import { OrderInfoCard } from "./order-info-card";
 import { EsimLoadingState } from "./esim-loading-state";
@@ -83,13 +83,46 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
   const isTopupAwaiting =
     isTopup && (isPolling || orderStatus === "pending" || orderStatus === "paid");
 
-  // Flatten all eSIMs from order items
-  const allEsims = useMemo(() => {
-    if (!orderData?.items) return [];
-    return orderData.items.flatMap((item) => item.esims || []);
-  }, [orderData]);
+  /**
+   * Every eSIM in the order, each labelled with the package it came from (#044).
+   *
+   * `#n` is appended only when the customer bought more than one of THAT
+   * package, and the count is taken per plan rather than per order item: a
+   * Gadget Korea purchase is split into one order item per unit, so counting
+   * within an item would label every eSIM as the only one of its kind.
+   */
+  const esimEntries = useMemo(() => {
+    const items = orderData?.items ?? [];
 
-  const hasEsims = allEsims.length > 0;
+    const planKeyOf = (item: (typeof items)[number]) =>
+      String(item.planId ?? item.plan?.id ?? item.plan?.name ?? "unknown");
+
+    const countByPlan = new Map<string, number>();
+    for (const item of items) {
+      const key = planKeyOf(item);
+      countByPlan.set(key, (countByPlan.get(key) ?? 0) + (item.esims?.length ?? 0));
+    }
+
+    const seenByPlan = new Map<string, number>();
+    const entries: { esim: EsimInfo; title: string }[] = [];
+    for (const item of items) {
+      const key = planKeyOf(item);
+      // No plan on the item (an older order, or a provider payload without it)
+      // falls back to the previous generic heading rather than showing nothing.
+      const name = item.plan?.name?.trim() || t.esimDetails;
+      for (const esim of item.esims ?? []) {
+        const position = (seenByPlan.get(key) ?? 0) + 1;
+        seenByPlan.set(key, position);
+        entries.push({
+          esim,
+          title: (countByPlan.get(key) ?? 0) > 1 ? `${name} #${position}` : name,
+        });
+      }
+    }
+    return entries;
+  }, [orderData, t.esimDetails]);
+
+  const hasEsims = esimEntries.length > 0;
   const pollingFinished = !isPolling && dataUpdatedAt > 0 && !hasEsims;
 
   // Load last order info for eXU/referral display
@@ -322,12 +355,12 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
 
         {/* eSIM Cards */}
         {hasEsims &&
-          allEsims.map((esim, idx) => (
+          esimEntries.map(({ esim, title }, idx) => (
             <EsimCard
               key={esim.iccid || idx}
               esim={esim}
+              title={title}
               index={idx}
-              totalCount={allEsims.length}
               copiedField={copiedField}
               onCopy={copyToClipboard}
               t={t}

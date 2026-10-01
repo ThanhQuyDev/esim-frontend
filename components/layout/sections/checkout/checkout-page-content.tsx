@@ -611,44 +611,13 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
             </div>
           )}
 
+          {/* QR first, card second (#043). The QR route confirms itself through
+              the SePay webhook in seconds, so it is the one to put in front of
+              the customer. */}
           <div className="space-y-3">
-            {/* OnePay */}
+            {/* Bank Transfer (VietQR) */}
             <label
-              aria-disabled={isWalletOnlyPayment}
-              className={`flex items-center gap-4 rounded-xl border p-4 transition-colors ${isWalletOnlyPayment
-                  ? "cursor-not-allowed border-border-primary bg-bg-secondary opacity-45 grayscale"
-                  : paymentMethod === "onepay"
-                    ? "cursor-pointer border-[var(--bg-accent)] bg-yellow-50/30"
-                    : "cursor-pointer border-border-primary hover:bg-bg-secondary"
-                }`}
-            >
-              <input
-                type="radio"
-                name="payment"
-                value="onepay"
-                checked={paymentMethod === "onepay"}
-                disabled={isWalletOnlyPayment}
-                onChange={() => setPaymentMethod("onepay")}
-                className="h-4 w-4 accent-[var(--bg-accent)] disabled:cursor-not-allowed"
-              />
-              <div className="flex items-center gap-3 flex-1">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50">
-                  <CreditCard className="h-5 w-5 text-blue-600" />
-                </div>
-                <div>
-                  <p className="text-base sm:text-sm font-semibold text-text-primary">
-                    {dict.cardPayment || "Pay by card"}
-                  </p>
-                  <p className="text-sm text-text-tertiary">
-                    {dict.cardPaymentDescription ||
-                      "Domestic ATM, Visa, Mastercard or JCB via the OnePay gateway"}
-                  </p>
-                </div>
-              </div>
-            </label>
-
-            {/* Bank Transfer */}
-            <label
+              data-testid="payment-method-bank_transfer"
               aria-disabled={isWalletOnlyPayment}
               className={`flex items-center gap-4 rounded-xl border p-4 transition-colors ${isWalletOnlyPayment
                   ? "cursor-not-allowed border-border-primary bg-bg-secondary opacity-45 grayscale"
@@ -681,6 +650,42 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
                   <p className="text-sm text-text-tertiary">
                     {dict.qrPaymentDescription ||
                       "Scan the VietQR code in your banking app — confirmed automatically in seconds"}
+                  </p>
+                </div>
+              </div>
+            </label>
+
+            {/* OnePay */}
+            <label
+              data-testid="payment-method-onepay"
+              aria-disabled={isWalletOnlyPayment}
+              className={`flex items-center gap-4 rounded-xl border p-4 transition-colors ${isWalletOnlyPayment
+                  ? "cursor-not-allowed border-border-primary bg-bg-secondary opacity-45 grayscale"
+                  : paymentMethod === "onepay"
+                    ? "cursor-pointer border-[var(--bg-accent)] bg-yellow-50/30"
+                    : "cursor-pointer border-border-primary hover:bg-bg-secondary"
+                }`}
+            >
+              <input
+                type="radio"
+                name="payment"
+                value="onepay"
+                checked={paymentMethod === "onepay"}
+                disabled={isWalletOnlyPayment}
+                onChange={() => setPaymentMethod("onepay")}
+                className="h-4 w-4 accent-[var(--bg-accent)] disabled:cursor-not-allowed"
+              />
+              <div className="flex items-center gap-3 flex-1">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50">
+                  <CreditCard className="h-5 w-5 text-blue-600" />
+                </div>
+                <div>
+                  <p className="text-base sm:text-sm font-semibold text-text-primary">
+                    {dict.cardPayment || "Pay by card"}
+                  </p>
+                  <p className="text-sm text-text-tertiary">
+                    {dict.cardPaymentDescription ||
+                      "Domestic ATM, Visa, Mastercard or JCB via the OnePay gateway"}
                   </p>
                 </div>
               </div>

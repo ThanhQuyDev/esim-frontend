@@ -12,39 +12,12 @@ import type { Plan, PlansByDestinationResponse } from "./api";
  * "(nonhkip)" marker. See #041.
  */
 
-/** Every plan list on a destination/region page, in render order. */
-const PLAN_GROUPS = [
-  "localEsim",
-  "dataPlans",
-  "fastUnlimited",
-  "slowUnlimited",
-  "dailyUnlimited",
-  "smsCallEsim",
-] as const;
-
-export function isNonHkIpPlan(plan: Pick<Plan, "isNonHkIp">): boolean {
-  return plan.isNonHkIp === true;
-}
-
-/** True when the destination/region has at least one local-IP plan to offer. */
-export function hasNonHkIpPlans(plans: PlansByDestinationResponse): boolean {
-  return PLAN_GROUPS.some((group) => (plans[group] ?? []).some(isNonHkIpPlan));
-}
-
 /**
- * Keep only the local-IP plans. Groups the provider has no local-IP variant for
- * come back empty, which is intentional: the customer asked to see nothing else.
+ * NOTE (#068): the filtering that used to live here has moved to
+ * `lib/plan-tiktok.ts`, which decides support from the uploaded APN table instead
+ * of the esimaccess-only `isNonHkIp` flag. Only the toggle's copy is still read
+ * from this file.
  */
-export function filterNonHkIpPlans(
-  plans: PlansByDestinationResponse
-): PlansByDestinationResponse {
-  const filtered = { ...plans };
-  for (const group of PLAN_GROUPS) {
-    const list = plans[group];
-    if (list) filtered[group] = list.filter(isNonHkIpPlan);
-  }
-  return filtered;
-}
 
 /**
  * Hard-coded copy, per Thọ's note on #041 ("fix cứng thông tin"). The app names

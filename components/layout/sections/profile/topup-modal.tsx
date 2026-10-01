@@ -14,8 +14,11 @@ import {
   useTopupPackages,
   useTopupCheckout,
   useTopupBankTransfer,
+  useTopupWalletCheckout,
+  useWalletMe,
   type BankTransferCheckoutResponse,
   type MyEsim,
+  type TopupInvoicePayload,
   type TopupPackage,
 } from "@/lib/hooks";
 import type { ProfileDict } from "./translations";
@@ -29,13 +32,9 @@ interface TopupModalProps {
   lang: "en" | "vi";
 }
 
-const PROVIDER_LABEL: Record<string, string> = {
-  AIRALO: "Airalo",
-  ESIM_ACCESS: "eSIMAccess",
-  GADGET_KOREA: "Gadget Korea",
-  BILLION: "Billion",
-  MICRO_ESIM: "MicroEsim",
-};
+// The supplier-name map is gone (#029): naming our wholesaler to the customer is
+// a commercial leak, and nothing on this screen needs it. `provider` is still
+// sent to the API — it just never reaches the page.
 
 function formatVnd(amount: number): string {
   return new Intl.NumberFormat("vi-VN").format(amount) + " đ";
@@ -46,6 +45,26 @@ function formatUsd(amount: number): string {
 }
 
 /**
+ * Wholesaler names that must never reach a customer's screen (#029).
+ *
+ * The backend writes them into its own error text — "Provider MICRO_ESIM does not
+ * support topup…" — and this component used to print unrecognised messages
+ * verbatim, which leaked the supplier through the error channel even once the
+ * badge was gone.
+ */
+const SUPPLIER_NAMES = [
+  "airalo",
+  "esim_access",
+  "esimaccess",
+  "gadget_korea",
+  "gadgetkorea",
+  "billion",
+  "micro_esim",
+  "microesim",
+  "viettel",
+];
+
+/**
  * Map a backend error message to a user-facing translation.
  * Backend returns English messages like "Provider mismatch", "not available", "not found", etc.
  */
@@ -54,11 +73,19 @@ function mapTopupError(message: string, t: ProfileDict): string {
   if (lower.includes("provider") && lower.includes("mismatch")) {
     return t.topupErrorProviderMismatch;
   }
+  if (lower.includes("does not support")) {
+    return t.topupNotSupported;
+  }
   if (lower.includes("not available") || lower.includes("unavailable")) {
     return t.topupErrorPackageUnavailable;
   }
   if (lower.includes("not found")) {
     return t.topupErrorIccidNotFound;
+  }
+  // Anything unrecognised is shown as-is, so it must be checked first: a raw
+  // message naming a supplier becomes the generic error instead.
+  if (SUPPLIER_NAMES.some((name) => lower.includes(name))) {
+    return t.topupErrorGeneric;
   }
   return message || t.topupErrorGeneric;
 }
@@ -77,8 +104,23 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
 
   const checkoutMutation = useTopupCheckout();
   const bankTransferMutation = useTopupBankTransfer();
+  const walletMutation = useTopupWalletCheckout();
   const [bankTransfer, setBankTransfer] =
     useState<BankTransferCheckoutResponse | null>(null);
+
+  // eXu balance, so the button can show what is available and be disabled before
+  // the customer discovers the shortfall server-side (#028).
+  const { data: wallet } = useWalletMe();
+
+  // VAT invoice, same five fields as the normal eSIM checkout (#028).
+  const [wantInvoice, setWantInvoice] = useState(false);
+  const [invoice, setInvoice] = useState<TopupInvoicePayload>({
+    companyName: "",
+    taxCode: "",
+    address: "",
+    invoicePhone: "",
+    invoiceEmail: "",
+  });
 
   // Reset state when modal closes/opens with different eSIM
   useEffect(() => {
@@ -86,8 +128,17 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
       setSelectedPackageId(null);
       setErrorMessage(null);
       setBankTransfer(null);
+      setWantInvoice(false);
+      setInvoice({
+        companyName: "",
+        taxCode: "",
+        address: "",
+        invoicePhone: "",
+        invoiceEmail: "",
+      });
       checkoutMutation.reset();
       bankTransferMutation.reset();
+      walletMutation.reset();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, esim.iccid]);
@@ -123,12 +174,16 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
       return;
     }
 
+    const invoicePayload = invoiceIfRequested();
+    if (invoicePayload === "invalid") return;
+
     try {
       const res = await bankTransferMutation.mutateAsync({
         iccid: esim.iccid,
         packageId: selectedPackage.packageId,
         provider,
         paymentMethod: "ONEPAY",
+        ...(invoicePayload ? { invoice: invoicePayload } : {}),
       });
       setBankTransfer(res);
 
@@ -159,12 +214,16 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
       return;
     }
 
+    const invoicePayload = invoiceIfRequested();
+    if (invoicePayload === "invalid") return;
+
     try {
       const res = await checkoutMutation.mutateAsync({
         iccid: esim.iccid,
         packageId: selectedPackage.packageId,
         provider,
         paymentMethod: "ONEPAY",
+        ...(invoicePayload ? { invoice: invoicePayload } : {}),
       });
 
       // Persist orderId so the return page can poll status even if vpc_MerchTxnRef is missing.
@@ -191,16 +250,92 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
     }
   };
 
+  /**
+   * Pay from the eXu balance (#028). No redirect: the server holds the balance,
+   * marks the order paid and runs the recharge, so the result is final here.
+   */
+  const handleWalletPay = async () => {
+    setErrorMessage(null);
+    if (!selectedPackage || !provider) {
+      setErrorMessage(t.topupSelectPackage);
+      return;
+    }
+    const invoicePayload = invoiceIfRequested();
+    if (invoicePayload === "invalid") return;
+
+    try {
+      const res = await walletMutation.mutateAsync({
+        iccid: esim.iccid,
+        packageId: selectedPackage.packageId,
+        provider,
+        paymentMethod: "EXU_WALLET",
+        ...(invoicePayload ? { invoice: invoicePayload } : {}),
+      });
+      // The recharge already ran; close and let the profile page refresh.
+      if (res.success) {
+        onClose();
+        return;
+      }
+      // Paid but the provider has not applied it yet — say so rather than
+      // leaving the modal looking like nothing happened.
+      setErrorMessage(
+        lang === "vi"
+          ? "Đã trừ eXU và ghi nhận đơn, nhà cung cấp đang xử lý. Vui lòng kiểm tra lại sau ít phút."
+          : "Your eXU was charged and the order recorded; the provider is still applying it. Please check back in a few minutes."
+      );
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : t.topupErrorGeneric;
+      setErrorMessage(mapTopupError(msg, t));
+    }
+  };
+
+  /**
+   * The invoice block, validated. Returns `undefined` when the customer did not
+   * ask for one and `"invalid"` when a field is missing, so a half-filled form
+   * cannot be sent as a valid invoice request.
+   */
+  function invoiceIfRequested(): TopupInvoicePayload | undefined | "invalid" {
+    if (!wantInvoice) return undefined;
+    const trimmed: TopupInvoicePayload = {
+      companyName: invoice.companyName.trim(),
+      taxCode: invoice.taxCode.trim(),
+      address: invoice.address.trim(),
+      invoicePhone: invoice.invoicePhone.trim(),
+      invoiceEmail: invoice.invoiceEmail.trim(),
+    };
+    if (Object.values(trimmed).some((value) => !value)) {
+      setErrorMessage(
+        lang === "vi"
+          ? "Vui lòng nhập đủ thông tin xuất hóa đơn."
+          : "Please fill in every invoice field."
+      );
+      return "invalid";
+    }
+    return trimmed;
+  }
+
   const isCheckingOut = checkoutMutation.isPending;
-  const canConfirm = !!selectedPackage && !isCheckingOut;
+  const priceVnd = selectedPackage?.vndPrice ?? 0;
+  const walletBalance = wallet?.availableBalanceVnd ?? 0;
+  const walletCovers = priceVnd > 0 && walletBalance >= priceVnd;
+  const anyPending =
+    isCheckingOut || bankTransferMutation.isPending || walletMutation.isPending;
+  const canConfirm = !!selectedPackage && !anyPending;
 
   return (
     <div
       className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
       onClick={isCheckingOut ? undefined : onClose}
     >
+      {/* Wider than the original `sm:max-w-lg` (#030): that had to fit four
+          buttons — Huỷ / eXU / Chuyển khoản / thẻ — plus the invoice block, and
+          squeezed the QR panel into a column too narrow to read. The QR step gets
+          more room again, since it shows a QR code next to the bank details. */}
       <div
-        className="relative w-full sm:max-w-lg max-h-[92vh] sm:max-h-[85vh] bg-white sm:rounded-2xl rounded-t-2xl shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom duration-300"
+        data-testid="topup-modal"
+        className={`relative w-full ${
+          bankTransfer ? "sm:max-w-3xl" : "sm:max-w-2xl"
+        } max-h-[92vh] sm:max-h-[85vh] bg-white sm:rounded-2xl rounded-t-2xl shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom duration-300`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -209,13 +344,14 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
             <h2 className="text-xl sm:text-base font-semibold text-gray-900 truncate">
               {t.topupTitle}
             </h2>
+            {/* ICCID and the product name — never the supplier (#029). The
+                badge here named the wholesaler we buy from, which is ours to
+                know and not the customer's. */}
+            {esim.plan?.name && (
+              <p className="text-sm text-gray-700 mt-0.5 truncate">{esim.plan.name}</p>
+            )}
             <p className="text-sm text-gray-500 mt-0.5 truncate font-mono">
               {esim.iccid}
-              {provider && (
-                <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded bg-white border border-gray-200 text-[12px] text-gray-600 font-sans">
-                  {PROVIDER_LABEL[provider] ?? provider}
-                </span>
-              )}
             </p>
           </div>
           <button
@@ -290,17 +426,82 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
                 <p className="text-sm text-red-700 leading-relaxed">{errorMessage}</p>
               </div>
             )}
-            <div className="flex items-center gap-2">
+            {/* VAT invoice, same fields as the normal eSIM checkout (#028). */}
+            <div className="rounded-lg border border-gray-200 bg-white p-3">
+              <label className="flex cursor-pointer items-center gap-2 text-base sm:text-sm font-medium text-gray-800">
+                <input
+                  type="checkbox"
+                  checked={wantInvoice}
+                  onChange={(e) => setWantInvoice(e.target.checked)}
+                  className="h-4 w-4 rounded border-gray-300"
+                  data-testid="topup-want-invoice"
+                />
+                {lang === "vi" ? "Xuất hóa đơn cho đơn topup" : "Request a VAT invoice"}
+              </label>
+              {wantInvoice && (
+                <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                  {(
+                    [
+                      ["companyName", lang === "vi" ? "Tên công ty" : "Company name"],
+                      ["taxCode", lang === "vi" ? "Mã số thuế" : "Tax code"],
+                      ["address", lang === "vi" ? "Địa chỉ" : "Address"],
+                      ["invoicePhone", lang === "vi" ? "Số điện thoại" : "Phone"],
+                      ["invoiceEmail", lang === "vi" ? "Email nhận hóa đơn" : "Invoice email"],
+                    ] as const
+                  ).map(([field, label]) => (
+                    <input
+                      key={field}
+                      value={invoice[field]}
+                      onChange={(e) =>
+                        setInvoice((prev) => ({ ...prev, [field]: e.target.value }))
+                      }
+                      placeholder={label}
+                      aria-label={label}
+                      className={`h-10 rounded-lg border border-gray-300 px-3 text-base sm:text-sm outline-none focus:border-gray-500 ${
+                        field === "address" ? "sm:col-span-2" : ""
+                      }`}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2">
               <button
                 onClick={onClose}
-                disabled={isCheckingOut}
+                disabled={anyPending}
                 className="px-4 py-2.5 rounded-xl text-base sm:text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {t.topupCancel}
               </button>
+              {/* Pay from the eXu balance (#028). Disabled — with the balance
+                  shown — when it cannot cover the package, so the shortfall is
+                  obvious before clicking. */}
+              <button
+                onClick={handleWalletPay}
+                disabled={!selectedPackage || !walletCovers || anyPending}
+                data-testid="topup-wallet-btn"
+                title={
+                  selectedPackage && !walletCovers
+                    ? lang === "vi"
+                      ? `Số dư eXU (${formatVnd(walletBalance)}) không đủ`
+                      : `eXU balance (${formatVnd(walletBalance)}) is not enough`
+                    : undefined
+                }
+                className="px-4 py-2.5 rounded-xl text-base sm:text-sm font-semibold border border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+              >
+                {walletMutation.isPending ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <>
+                    {lang === "vi" ? "Trả bằng eXU" : "Pay with eXU"}
+                    <span className="ml-1 font-medium">· {formatVnd(walletBalance)}</span>
+                  </>
+                )}
+              </button>
               <button
                 onClick={handleBankTransfer}
-                disabled={!selectedPackage || bankTransferMutation.isPending}
+                disabled={!selectedPackage || anyPending}
                 data-testid="topup-bank-transfer-btn"
                 className="px-4 py-2.5 rounded-xl text-base sm:text-sm font-semibold border border-gray-300 bg-white text-gray-800 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
               >
@@ -315,7 +516,8 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
               <button
                 onClick={handleConfirm}
                 disabled={!canConfirm}
-                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-base sm:text-sm font-semibold bg-blue-600 text-white hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                data-testid="topup-card-btn"
+                className="flex-1 min-w-[180px] inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-base sm:text-sm font-semibold bg-blue-600 text-white hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isCheckingOut ? (
                   <>
@@ -360,6 +562,7 @@ function TopupPackageItem({ pkg, selected, onSelect, t, lang }: TopupPackageItem
     <button
       type="button"
       onClick={onSelect}
+      data-testid={`topup-package-${pkg.packageId}`}
       className={`w-full text-left rounded-xl border p-3.5 transition-all ${
         selected
           ? "border-blue-500 bg-blue-50/60 ring-2 ring-blue-100"

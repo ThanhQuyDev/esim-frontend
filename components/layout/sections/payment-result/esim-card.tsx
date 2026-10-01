@@ -9,8 +9,13 @@ import type { PaymentResultDict } from "./translations";
 
 interface EsimCardProps {
   esim: EsimInfo;
+  /**
+   * What this eSIM is called — the package the customer bought, with `#n`
+   * appended only when they bought more than one of it (#044).
+   */
+  title: string;
+  /** Position in the whole order; only used to key the copy buttons. */
   index: number;
-  totalCount: number;
   copiedField: string | null;
   onCopy: (text: string, field: string) => void;
   t: PaymentResultDict;
@@ -32,7 +37,7 @@ function LpaQrCode({ lpa, scanLabel }: { lpa: string; scanLabel: string }) {
   );
 }
 
-export function EsimCard({ esim, index, totalCount, copiedField, onCopy, t }: EsimCardProps) {
+export function EsimCard({ esim, title, index, copiedField, onCopy, t }: EsimCardProps) {
   return (
     <div className="rounded-2xl border border-emerald-200 bg-white p-6 mb-6 shadow-sm">
       {/* Header */}
@@ -41,8 +46,10 @@ export function EsimCard({ esim, index, totalCount, copiedField, onCopy, t }: Es
           <Smartphone className="w-5 h-5 text-emerald-600" />
         </div>
         <div>
-          <h3 className="font-medium text-gray-900">
-            {t.esimDetails} {totalCount > 1 ? `#${index + 1}` : ""}
+          {/* The package name, not "eSIM #1": a buyer who ordered Japan and
+              Korea together could not tell which card was which (#044). */}
+          <h3 className="font-medium text-gray-900" data-testid={`esim-title-${index}`}>
+            {title}
           </h3>
           {esim.status && (
             <span className={`inline-block mt-1 text-sm font-medium px-2 py-0.5 rounded-full ${esim.status === "available" ? "bg-emerald-100 text-emerald-700" :

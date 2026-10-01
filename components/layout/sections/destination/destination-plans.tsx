@@ -18,7 +18,12 @@ import { DesktopStickyBar } from "./desktop-sticky-bar";
 import { MobileDestinationPlans } from "./mobile-destination-plans";
 import { CategoryTabs, type PlanCategory } from "./category-tabs";
 import { NonHkIpToggle } from "./nonhkip-toggle";
-import { hasNonHkIpPlans, filterNonHkIpPlans } from "@/lib/plan-nonhkip";
+import {
+  appsLine,
+  filterTiktokPlans,
+  hasTiktokPlans,
+  isChinaProductPage,
+} from "@/lib/plan-tiktok";
 import { SimplePlanList } from "./simple-plan-list";
 import { EkycModal } from "./ekyc-modal";
 import { InstallBeforeTripNotice } from "./install-before-trip-notice";
@@ -60,11 +65,22 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
   const [onlyNonHkIp, setOnlyNonHkIp] = useState(false);
   const desktopCtaRef = useRef<HTMLDivElement>(null);
 
-  // Local-exit-IP filter (#041). Every memo and child below reads `plans`, so
-  // narrowing it here is enough — the day list, price and CTA all follow.
-  const showNonHkIpToggle = useMemo(() => hasNonHkIpPlans(allPlans), [allPlans]);
+  // "Works with TikTok & ChatGPT" filter (#068, data from #065/#067). Every memo
+  // and child below reads `plans`, so narrowing it here is enough — the day list,
+  // price and CTA all follow.
+  //
+  // Only offered on China pages: nothing is blocked elsewhere, so the checkbox
+  // would imply a problem that does not exist there (#064).
+  const isChinaPage = useMemo(
+    () => isChinaProductPage({ destination: destinationData, region: regionData }),
+    [destinationData, regionData]
+  );
+  const showNonHkIpToggle = useMemo(
+    () => isChinaPage && hasTiktokPlans(allPlans),
+    [isChinaPage, allPlans]
+  );
   const plans = useMemo(
-    () => (onlyNonHkIp ? filterNonHkIpPlans(allPlans) : allPlans),
+    () => (onlyNonHkIp ? filterTiktokPlans(allPlans) : allPlans),
     [allPlans, onlyNonHkIp]
   );
 
@@ -284,6 +300,14 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
     return template.replace("{data}", dataLabel).replace("{fupSpeed}", fupSpeed);
   }, [selectedPlan, plans, dataLabel, dict]);
 
+  // The green box's apps line, from the APN table rather than the blanket
+  // "supports TikTok, ChatGPT…" that used to show for every plan (#068). Null when
+  // the table says nothing about this plan, and the old wording then stands.
+  const greenBoxApps = useMemo(
+    () => appsLine(selectedPlan, lang),
+    [selectedPlan, lang]
+  );
+
   // KYC inline banner (shown next to the price block)
   const showInlineKyc = !!selectedPlan?.isKyc;
 
@@ -310,6 +334,7 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
           planLabel={planLabel}
           dataLabel={dataLabel}
           greenBoxLine1={greenBoxLine1}
+          greenBoxApps={greenBoxApps}
           region={regionData}
           destinationData={destinationData}
           activeCategory={activeCategory}
@@ -387,7 +412,7 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
               isFixed={isFixed}
               planLabel={planLabel}
             />
-            <GreenBox dict={dict} line1Html={greenBoxLine1} />
+            <GreenBox dict={dict} line1Html={greenBoxLine1} appsLine={greenBoxApps} />
 
             {/* Turkey only: install the eSIM before leaving (#060) */}
             <InstallBeforeTripNotice

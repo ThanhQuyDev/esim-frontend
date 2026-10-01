@@ -39,8 +39,10 @@ import { localizedSlug } from "@/lib/slug";
 import {
   pickLocalizedTitle,
   resolveFileUrl,
+  type GroupedMenuSlides,
   type TopBar,
 } from "@/lib/api";
+import { withCmsMenuSlides } from "@/lib/menu-slides";
 
 // Swiper
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -52,6 +54,8 @@ interface NavbarProps {
   lang: Locale;
   dict: Record<string, any>;
   topBars?: TopBar[];
+  /** Mega-menu Explore slides from the CMS, by panel (#073). */
+  menuSlides?: GroupedMenuSlides;
 }
 
 interface MenuLink {
@@ -156,6 +160,7 @@ const ICON_SVG: Record<string, string> = {
     "M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-2 0v6h6M16 13H8m8 4H8m2-8H8",
   "triangle-alert":
     "M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4m0 4h.01",
+  search: "M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zm5 12l5 5",
 };
 
 /* ===== Menu Data ===== */
@@ -201,6 +206,15 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
             ? "Kiểm tra thiết bị của bạn có hỗ trợ eSIM hay không."
             : "Check if your device supports eSIM.",
           href: localizedHref(lang, 'esim-supported-devices'),
+        },
+        // Last in the Tools column, as specified in #003.
+        {
+          icon: "search",
+          title: isVi ? "Tra cứu eSIM" : "Check eSIM",
+          desc: isVi
+            ? "Nhập ICCID để xem dung lượng còn lại và ngày hết hạn."
+            : "Enter your ICCID to see data left and expiry date.",
+          href: localizedHref(lang, 'check-esim'),
         },
       ],
       explore: [
@@ -514,7 +528,7 @@ export function Navbar(props: NavbarProps) {
   return <MainNavbar {...props} />;
 }
 
-function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
+function MainNavbar({ lang, dict, topBars = [], menuSlides }: NavbarProps) {
   const pathname = useNextPathname();
   const isVi = lang === 'vi';
   const homeHref = isVi ? '/' : `/${lang}`;
@@ -549,7 +563,9 @@ function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
     ? apiCartItems.length
     : (typeof window !== "undefined" ? getLocalCartData().items.length : 0);
 
-  const menuData = getMenuData(lang);
+  // CMS slides replace the built-in Explore cards for any panel that has them,
+  // and panels with none keep rendering what they render today (#073).
+  const menuData = withCmsMenuSlides(getMenuData(lang), menuSlides);
   const firstTopBar = topBars[0];
   const announcementText = firstTopBar
     ? pickLocalizedTitle(firstTopBar, lang).trim()
@@ -943,6 +959,7 @@ function MainNavbar({ lang, dict, topBars = [] }: NavbarProps) {
                   lang={lang}
                   dict={dict}
                   onLangChange={handleLangChange}
+                  menuSlides={menuSlides}
                 />
               </div>
             </nav>
@@ -1154,16 +1171,18 @@ function MobileSidebar({
   lang,
   dict,
   onLangChange,
+  menuSlides,
 }: {
   lang: Locale;
   dict: Record<string, any>;
   onLangChange: (val: string) => void;
+  menuSlides?: GroupedMenuSlides;
 }) {
   const [open, setOpen] = useState(false);
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
   const { user, openAuthModal, logout } = useAuth();
 
-  const menuData = getMenuData(lang);
+  const menuData = withCmsMenuSlides(getMenuData(lang), menuSlides);
   const isVi = lang === 'vi';
   const homeHref = isVi ? '/' : `/${lang}`;
   const localePrefix = isVi ? '' : `/${lang}`;

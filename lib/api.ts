@@ -140,6 +140,12 @@ export interface Device {
 export interface Manufacturer {
   manufacturer: string;
   devices: Device[];
+  /**
+   * An extra note for this brand, managed in the CMS (#079). Absent when the
+   * brand has none — the page used to show a single note from the locale file,
+   * hard-coded to appear under iPhone.
+   */
+  note?: string | null;
 }
 
 export interface DeviceType {
@@ -218,11 +224,48 @@ export interface Plan {
   /** True when the plan requires KYC verification before activation. */
   isKyc?: boolean;
   /**
+   * The date the eSIM has to be activated by, as `yyyy-mm-dd` in Vietnam time
+   * (#070). Computed by the API from the day the customer views the product, or
+   * taken from the printed expiry of local stock. Absent when the supplier has
+   * not stated a window — show the generic wording then, never a guessed date.
+   */
+  activationDeadline?: string | null;
+  /** Days the supplier allows for activation, if stated (#070). */
+  activationValidityDays?: number | null;
+  /**
+   * When the daily allowance starts over (#063, shown by #071). `"rolling_24h"`
+   * is a 24-hour cycle from installation; `"calendar_day"` ends at 23:59 in
+   * `dailyResetUtcOffset`. Absent when the supplier has not stated it.
+   */
+  dailyResetPolicy?: "rolling_24h" | "calendar_day" | null;
+  /** Hours east of UTC a calendar-day reset is counted in, e.g. 7 or 8. */
+  dailyResetUtcOffset?: number | null;
+  /**
    * True for a plan whose traffic exits on a local IP instead of being routed
    * through Hong Kong — the variant TikTok / ChatGPT work on. Captured at sync
    * time from the provider package name; see lib/plan-nonhkip.ts (#041).
    */
   isNonHkIp?: boolean;
+  /**
+   * Whether TikTok and ChatGPT work on this plan, decided by the API from the
+   * uploaded APN table or the esimaccess "nonhkip" marker (#065, #067).
+   *
+   * `tiktokAllDevices` is the only one safe to put behind a filter: TikTok differs
+   * by device platform (APN `cmhk` works on iPhone, not on Android) and the page
+   * does not know what the visitor is holding.
+   */
+  appSupport?: {
+    tiktokIos: boolean;
+    tiktokAndroid: boolean;
+    tiktokAllDevices: boolean;
+    chatGpt: boolean;
+    /**
+     * Whether the APN table had an answer at all. All-false with `known: false`
+     * means "not listed" — true of every plan outside China — and must never be
+     * printed as "TikTok does not work" (#068).
+     */
+    known: boolean;
+  } | null;
   /** Whether the plan allows hotspot / tethering. */
   hotSpot?: boolean;
   /** Hotspot data allowance in GB per day (e.g. 2 means 2 GB/day). */
@@ -243,6 +286,13 @@ export interface PlansByDestinationResponse {
   dailyUnlimited: Plan[];
   smsCallEsim?: Plan[];
   localEsim?: Plan[];
+  /**
+   * Fixed-data plans that work with TikTok but lost the price de-duplication
+   * (#067). They are NOT part of the default view — `dataPlans` stays exactly the
+   * de-duplicated list it is today — and are merged in only when the customer asks
+   * to see plans that work with TikTok (#068).
+   */
+  tiktokHiddenByPrice?: Plan[];
 }
 
 /**
@@ -279,7 +329,21 @@ export function normalizePlansByDestination(
     r.smsCallEsim ?? r.SmsCallEsim ?? r.SMSCallEsim ?? r.smscallesim ?? null;
   const smsCallEsim = Array.isArray(smsCallRaw) ? (smsCallRaw as Plan[]) : [];
 
-  return { dataPlans, slowUnlimited, fastUnlimited, dailyUnlimited, smsCallEsim, localEsim };
+  // Carried through explicitly: this function builds a fresh object, so a group
+  // it does not name is dropped on the floor (#067).
+  const tiktokHiddenByPrice = Array.isArray(r.tiktokHiddenByPrice)
+    ? (r.tiktokHiddenByPrice as Plan[])
+    : [];
+
+  return {
+    dataPlans,
+    slowUnlimited,
+    fastUnlimited,
+    dailyUnlimited,
+    smsCallEsim,
+    localEsim,
+    tiktokHiddenByPrice
+  };
 }
 
 export interface PaginatedResponse<T> {
@@ -532,6 +596,79 @@ export async function getTopBars(
     { limit: 10, ...options },
     300
   );
+}
+
+/** A third-party snippet injected on every page, managed from the CMS (#075). */
+export interface SiteScript {
+  id: string;
+  name: string;
+  content: string;
+  placement: string;
+  isActive: boolean;
+  sortOrder: number;
+}
+
+/** Active snippets grouped by where they belong in the document. */
+export interface SiteScriptsByPlacement {
+  head?: SiteScript[];
+  bodyEnd?: SiteScript[];
+}
+
+/**
+ * The site-wide scripts (#075).
+ *
+ * Analytics has to be on every page, and before this it could only be attached to
+ * one page at a time through the SEO record. Returns `{}` on failure: a page must
+ * still render when the API is down, and losing a pageview beats losing the page.
+ */
+export async function getSiteScripts(): Promise<SiteScriptsByPlacement> {
+  try {
+    return await apiFetch<SiteScriptsByPlacement>(
+      "/api/v1/site-scripts/active",
+      {},
+      300
+    );
+  } catch {
+    return {};
+  }
+}
+
+/** One card in a mega-menu "Explore" carousel, managed from the CMS (#073). */
+export interface MenuSlide {
+  id: string;
+  menuKey: string;
+  title: string;
+  description: string;
+  href: string;
+  image: string;
+  imageAlt?: string | null;
+  language: string;
+  sortOrder: number;
+  isActive: boolean;
+}
+
+/** The four mega-menu panels, each with its slides in display order. */
+export type GroupedMenuSlides = Record<string, MenuSlide[]>;
+
+/**
+ * Slides for every mega-menu panel in one request (#073).
+ *
+ * Returns `{}` rather than throwing when the API is unreachable: the navbar is on
+ * every page, and a menu that renders its built-in cards is better than a page
+ * that fails to render at all.
+ */
+export async function getMenuSlides(
+  options: FetchOptions = {}
+): Promise<GroupedMenuSlides> {
+  try {
+    return await apiFetch<GroupedMenuSlides>(
+      "/api/v1/menu-slides/grouped",
+      options,
+      300
+    );
+  } catch {
+    return {};
+  }
 }
 
 export async function getDestinations(

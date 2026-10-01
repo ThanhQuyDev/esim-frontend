@@ -35,6 +35,8 @@ export interface MobileDestinationPlansProps {
   planLabel: string;
   dataLabel: string;
   greenBoxLine1: string;
+  /** Apps line from the APN table; null keeps the existing wording (#068). */
+  greenBoxApps?: string | null;
   region?: Region | null;
   destinationData?: Destination | null;
   activeCategory: PlanCategory;
@@ -74,6 +76,7 @@ export function MobileDestinationPlans({
   planLabel,
   dataLabel,
   greenBoxLine1,
+  greenBoxApps,
   region,
   destinationData,
   activeCategory,
@@ -120,6 +123,7 @@ export function MobileDestinationPlans({
             planLabel={planLabel}
             dataLabel={dataLabel}
             greenBoxLine1={greenBoxLine1}
+            greenBoxApps={greenBoxApps}
             onOpenEkyc={onOpenEkyc}
             lang={lang}
           />
