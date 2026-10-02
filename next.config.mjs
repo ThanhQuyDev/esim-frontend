@@ -4,6 +4,11 @@ const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Bản tự host trên VPS (esim.vn) chạy từ một server bundle standalone, còn
+  // bản Vercel thì không — nên bật theo biến môi trường thay vì bật cứng như
+  // nhánh `main`. `BUILD_STANDALONE=true npm run build` tạo `.next/standalone`
+  // để đóng gói lên VPS; build cho Vercel giữ nguyên như trước.
+  output: process.env.BUILD_STANDALONE === 'true' ? 'standalone' : undefined,
   // A KOL hands out esim.vn/go/<code>; the handler lives at /api/go/<code>.
   // Without this the only working link carried an /api/ segment in front of
   // customers.
