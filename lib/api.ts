@@ -217,6 +217,14 @@ export interface Plan {
   /** True when the plan uses local provider inventory (e.g. Viettel) — show a provider badge. */
   isLocalInventory?: boolean;
   /**
+   * eSIM nội địa — SIM data dùng trong nước, thuộc tab riêng ở trang chủ.
+   *
+   * Khác `isLocalInventory`, cờ đó chỉ nói "giá niêm yết bằng VND" và eSIM du
+   * lịch của Viettel cũng mang nó. Việc chia nhóm do backend làm, nên trang bán
+   * hàng hiếm khi cần đọc cờ này — có ở đây để kiểu dữ liệu khớp API.
+   */
+  isDomesticEsim?: boolean;
+  /**
    * Unsold eSIMs left for a local-inventory plan. Undefined for API
    * providers, which create an eSIM on demand and can never be out of stock.
    */
@@ -972,7 +980,9 @@ export async function getPlansByRegionSlug(
 }
 
 /**
- * A domestic (local-inventory) carrier, grouped from `isLocalInventory` plans.
+ * A domestic carrier for the "eSIM nội địa" tab, grouped from `isDomesticEsim`
+ * plans. Viettel is NOT one of these: it only sells travel eSIMs, which list
+ * under Quốc gia → Việt Nam.
  * `fromVndPrice` is the cheapest plan price so the card can show "Từ {n}đ".
  */
 export interface LocalCarrier {
