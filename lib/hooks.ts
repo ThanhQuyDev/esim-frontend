@@ -1395,9 +1395,32 @@ export interface MyOrder {
   productQuantity?: number;
 }
 
-interface MyOrdersResponse {
-  data: MyOrder[];
-  hasNextPage: boolean;
+
+/**
+ * Every page of one of the customer's own lists. These endpoints page at 10 by
+ * default, so a customer with more orders or eSIMs only ever saw the first 10 —
+ * e.g. two Viettel eSIMs bought in a 5-item order were missing from the profile
+ * (v3 #002).
+ */
+async function fetchAllMyPages<T>(
+  path: string,
+  token: string | null,
+  signal: AbortSignal,
+  label: string,
+): Promise<T[]> {
+  const all: T[] = [];
+  for (let page = 1; page <= 20; page++) {
+    const res = await authFetch(
+      `${API_BASE_URL}${path}?page=${page}&limit=100`,
+      token,
+      { signal },
+    );
+    if (!res.ok) throw new Error(`Failed to fetch ${label}: ${res.status}`);
+    const json: { data: T[]; hasNextPage: boolean } = await res.json();
+    all.push(...json.data);
+    if (!json.hasNextPage) break;
+  }
+  return all;
 }
 
 export function useMyOrders() {
@@ -1405,12 +1428,8 @@ export function useMyOrders() {
   return useQuery({
     queryKey: ["my-orders", token],
     enabled: !!token,
-    queryFn: async ({ signal }): Promise<MyOrder[]> => {
-      const res = await authFetch(`${API_BASE_URL}/api/v1/orders/my/list`, token, { signal });
-      if (!res.ok) throw new Error(`Failed to fetch orders: ${res.status}`);
-      const json: MyOrdersResponse = await res.json();
-      return json.data;
-    },
+    queryFn: ({ signal }): Promise<MyOrder[]> =>
+      fetchAllMyPages<MyOrder>("/api/v1/orders/my/list", token, signal, "orders"),
   });
 }
 
@@ -1482,10 +1501,6 @@ export interface MyEsim {
   topupPackageNames?: string | null;
 }
 
-interface MyEsimsResponse {
-  data: MyEsim[];
-  hasNextPage: boolean;
-}
 
 // ===== eSIM Data Usage =====
 
@@ -1604,12 +1619,8 @@ export function useMyEsims() {
   return useQuery({
     queryKey: ["my-esims", token],
     enabled: !!token,
-    queryFn: async ({ signal }): Promise<MyEsim[]> => {
-      const res = await authFetch(`${API_BASE_URL}/api/v1/esims/my/list`, token, { signal });
-      if (!res.ok) throw new Error(`Failed to fetch eSIMs: ${res.status}`);
-      const json: MyEsimsResponse = await res.json();
-      return json.data;
-    },
+    queryFn: ({ signal }): Promise<MyEsim[]> =>
+      fetchAllMyPages<MyEsim>("/api/v1/esims/my/list", token, signal, "eSIMs"),
   });
 }
 
