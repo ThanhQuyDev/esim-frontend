@@ -103,6 +103,29 @@ async function resolveRegionGroup(
 }
 
 /**
+ * Each pack of a region group with its full record. The region list carries no
+ * `destinations`, so a tab other than the one first opened lost its list of
+ * covered countries (v3 #003). Groups are 2–4 packs and the lookups are cached
+ * like the page's own, so this is a handful of fetches at build/revalidate time.
+ */
+async function withCountryLists(
+  members: Region[],
+  locale: Locale,
+  known?: Region
+): Promise<Region[]> {
+  return Promise.all(
+    members.map(async (member) => {
+      if (known && member.id === known.id) return known;
+      const full = await getRegionBySlug(
+        localizedSlug(member, locale) || member.slug,
+        locale
+      );
+      return full ?? member;
+    })
+  );
+}
+
+/**
  * These pages are statically generated, so their SEO lookup has to be cached
  * (an uncached one made every destination page answer 500). A CMS edit reaches
  * them within this window.
@@ -292,7 +315,7 @@ export default async function UnifiedSlugPage({
               place, so the URL stays `/esim-chau-a` (#004). The plan picker
               renders the page's h1. */}
           <RegionVariantTabs
-            members={group.members}
+            members={await withCountryLists(group.members, locale)}
             lang={locale}
             dict={dict.destinationPage}
             fromLabel={dict.allDestinations.from}
@@ -475,9 +498,7 @@ export default async function UnifiedSlugPage({
         // The pack being viewed uses the full record fetched above rather than
         // its list entry.
         <RegionVariantTabs
-          members={variantGroup.members.map((m) =>
-            m.id === region.id ? region : m
-          )}
+          members={await withCountryLists(variantGroup.members, locale, region)}
           lang={locale}
           dict={dict.destinationPage}
           fromLabel={dict.allDestinations.from}
