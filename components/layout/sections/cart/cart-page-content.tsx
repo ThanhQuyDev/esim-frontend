@@ -10,6 +10,7 @@ import {
   fetchCouponByCode,
   getSubtotal,
   couponDiscountLabel,
+  couponListBadge,
   getDiscount,
   getTotal,
   getVndDiscount,
@@ -582,9 +583,9 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
                           setPromoInput(coupon.code);
                           validateAndApplyPromo(coupon.code);
                         }}
-                        className="w-full flex items-center justify-between rounded-xl border border-dashed border-border-secondary p-3 text-left transition-colors hover:bg-bg-secondary cursor-pointer"
+                        className="w-full flex items-center justify-between gap-3 rounded-xl border border-dashed border-border-secondary p-3 text-left transition-colors hover:bg-bg-secondary cursor-pointer"
                       >
-                        <div>
+                        <div className="min-w-0">
                           <span className="text-base sm:text-sm font-semibold text-text-primary">
                             {coupon.code}
                           </span>
@@ -600,8 +601,9 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
                             </p>
                           ) : null}
                         </div>
-                        <span className="text-base sm:text-sm font-medium text-green-600">
-                          {couponDiscountLabel(coupon)}
+                        {/* One line, never squeezed: the code's details wrap instead. */}
+                        <span className="shrink-0 whitespace-nowrap text-base sm:text-sm font-medium text-green-600">
+                          {couponListBadge(coupon)}
                         </span>
                       </button>
                     ))}
