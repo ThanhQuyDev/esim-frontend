@@ -619,7 +619,14 @@
         "groupUnlimited": "Best-value unlimited plans",
         "dataPerDay": "{{data}}/day",
         "coversDaily": "Covers your {{day}}/day",
-        "unlimitedDetail": "Use as much as you like"
+        "unlimitedDetail": "Use as much as you like",
+        "tripDaysPlaceholder": "Days of use (e.g. 7)",
+        "clear": "Clear",
+        "needTripSummary": "You need about {{total}} for {{days}} days · {{day}}/day",
+        "groupFixedTrip": "Fixed plans with enough data for {{days}} days",
+        "groupDailyTrip": "Daily plans lasting {{days}} days with enough data each day",
+        "groupUnlimitedTrip": "Best-value unlimited plans lasting {{days}} days",
+        "addToCart": "Add to cart"
       },
       "perDay": "per day",
       "hoursPerDay": "{{hours}} h/day",

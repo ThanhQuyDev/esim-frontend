@@ -619,7 +619,14 @@
         "groupUnlimited": "Gói không giới hạn giá tốt",
         "dataPerDay": "{{data}}/ngày",
         "coversDaily": "Đủ cho mức {{day}}/ngày của bạn",
-        "unlimitedDetail": "Dùng thoải mái, không lo hết data"
+        "unlimitedDetail": "Dùng thoải mái, không lo hết data",
+        "tripDaysPlaceholder": "Số ngày sử dụng (vd: 7)",
+        "clear": "Xóa",
+        "needTripSummary": "Nhu cầu của bạn: khoảng {{total}} cho {{days}} ngày · {{day}}/ngày",
+        "groupFixedTrip": "Gói cố định đủ data cho {{days}} ngày",
+        "groupDailyTrip": "Gói theo ngày dùng được {{days}} ngày, đủ data mỗi ngày",
+        "groupUnlimitedTrip": "Gói không giới hạn dùng được {{days}} ngày, giá tốt",
+        "addToCart": "Thêm vào giỏ hàng"
       },
       "perDay": "mỗi ngày",
       "hoursPerDay": "{{hours}} giờ/ngày",

@@ -103,11 +103,21 @@ export function planKind({ plan, bucket }: CandidatePlan): PlanKind {
 export interface SuggestOptions {
   /** Estimated data per day, in MB, from the calculator. */
   dailyMb: number;
+  /**
+   * How many days the customer travels, when they said (v3 #013). Without it
+   * the plans are matched against a month, which listed many plans that were
+   * far longer — or shorter — than the trip.
+   */
+  tripDays?: number;
   /** How many plans to list per group. */
   perGroup?: number;
 }
 
-function describe(candidate: CandidatePlan, dailyMb: number): PlanSuggestion {
+function describe(
+  candidate: CandidatePlan,
+  dailyMb: number,
+  needDays: number,
+): PlanSuggestion {
   const { plan, bucket } = candidate;
   const kind = planKind(candidate);
   const days = plan.durationDays > 0 ? plan.durationDays : 1;
@@ -116,7 +126,7 @@ function describe(candidate: CandidatePlan, dailyMb: number): PlanSuggestion {
     bucket,
     kind,
     isUnlimited: kind === "unlimited",
-    requiredMb: kind === "fixed" ? dailyMb * MONTH_DAYS : dailyMb,
+    requiredMb: kind === "fixed" ? dailyMb * needDays : dailyMb,
     coversDays: kind === "fixed" ? Math.floor(plan.dataMb / dailyMb) : days,
     vndPerDay: Math.round(plan.vndPrice / days),
   };
@@ -130,38 +140,54 @@ const byPrice = (a: PlanSuggestion, b: PlanSuggestion) =>
 const byPricePerDay = (a: PlanSuggestion, b: PlanSuggestion) =>
   a.vndPerDay - b.vndPerDay || byPrice(a, b);
 
+/** What the customer pays for the whole trip: a multi-day plan is priced per day. */
+export function tripPriceVnd(plan: Plan, tripDays: number): number {
+  return plan.isAbleMultidate ? plan.vndPrice * tripDays : plan.vndPrice;
+}
+
+const byTripPrice = (tripDays: number) => (a: PlanSuggestion, b: PlanSuggestion) =>
+  tripPriceVnd(a.plan, tripDays) - tripPriceVnd(b.plan, tripDays) || byPrice(a, b);
+
 /**
  * Sort a destination's plans into what covers the estimate, per kind of plan.
  */
 export function groupSuggestions(
   candidates: CandidatePlan[],
-  { dailyMb, perGroup = 3 }: SuggestOptions,
+  { dailyMb, tripDays, perGroup = 3 }: SuggestOptions,
 ): GroupedSuggestions {
   const empty: GroupedSuggestions = { fixed: [], daily: [], unlimited: [], fallback: [] };
   if (!(dailyMb > 0)) return empty;
 
+  const trip = tripDays && tripDays > 0 ? Math.round(tripDays) : 0;
   const priced = candidates
     .filter(({ plan }) => plan && plan.isActive !== false && plan.vndPrice > 0)
-    .map((candidate) => describe(candidate, dailyMb));
+    .map((candidate) => describe(candidate, dailyMb, trip || MONTH_DAYS));
 
+  // A plan lasts the trip when it runs at least that long; a multi-day plan
+  // is bought for exactly the trip, so it always does.
+  const lastsTrip = (s: PlanSuggestion) =>
+    !trip || s.plan.isAbleMultidate || s.plan.durationDays >= trip;
+
+  // With a trip length the cheapest plan that covers it wins, which also picks
+  // the duration closest to the trip; without one, a month's worth as before.
   const fixed = priced
     .filter(
       (s) =>
         s.kind === "fixed" &&
-        s.plan.durationDays >= FIXED_MIN_DAYS &&
+        s.plan.durationDays >= (trip || FIXED_MIN_DAYS) &&
         s.plan.dataMb >= s.requiredMb,
     )
     .sort(byPrice)
     .slice(0, perGroup);
 
   const daily = priced
-    .filter((s) => s.kind === "daily" && s.plan.dataMb >= dailyMb)
-    .sort(byPricePerDay)
+    .filter((s) => s.kind === "daily" && s.plan.dataMb >= dailyMb && lastsTrip(s))
+    .sort(trip ? byTripPrice(trip) : byPricePerDay)
     .slice(0, perGroup);
 
   const unlimited = priced
-    .filter((s) => s.kind === "unlimited")
-    .sort(byPricePerDay)
+    .filter((s) => s.kind === "unlimited" && lastsTrip(s))
+    .sort(trip ? byTripPrice(trip) : byPricePerDay)
     .slice(0, perGroup);
 
   const fallback =

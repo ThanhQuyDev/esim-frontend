@@ -141,6 +141,46 @@ test.describe("plan suggestions — matching", () => {
     expect(groups.fixed.map((s) => s.plan.id)).toEqual([3, 4]);
   });
 
+  // v3 #013 — "Làm thêm ô nhập số ngày sử dụng … truy vấn được các kết quả gói
+  // ưu đãi chính xác hơn thay vì đoán mò 15-20-30 ngày".
+  test("matches fixed plans to the trip length when it is given", () => {
+    const groups = groupSuggestions(
+      collectCandidates(
+        payload({
+          dataPlans: [
+            plan({ id: 1, dataMb: 5_120, durationDays: 7, vndPrice: 120_000 }),
+            plan({ id: 2, dataMb: 10_240, durationDays: 7, vndPrice: 150_000 }),
+            plan({ id: 3, dataMb: 10_240, durationDays: 5, vndPrice: 100_000 }),
+            plan({ id: 4, dataMb: 51_200, durationDays: 30, vndPrice: 700_000 }),
+          ],
+        }),
+      ),
+      { dailyMb: DAILY_MB, tripDays: 7 },
+    );
+
+    // 7 days need 8.05 GB: 5 GB is short, 5 days is too short; the cheapest
+    // plan that lasts the trip comes first.
+    expect(groups.fixed.map((s) => s.plan.id)).toEqual([2, 4]);
+  });
+
+  test("keeps daily and unlimited plans that last the trip, priced for it", () => {
+    const groups = groupSuggestions(
+      collectCandidates(
+        payload({
+          slowUnlimited: [
+            plan({ id: 21, type: "daily", dataMb: 2048, durationDays: 3, vndPrice: 90_000 }),
+            plan({ id: 22, type: "daily", dataMb: 2048, durationDays: 7, vndPrice: 280_000 }),
+            // Bought per day for the trip: 7 × 30k = 210k for the whole trip.
+            plan({ id: 23, type: "daily", dataMb: 2048, durationDays: 1, vndPrice: 30_000, isAbleMultidate: true }),
+          ],
+        }),
+      ),
+      { dailyMb: DAILY_MB, tripDays: 7 },
+    );
+
+    expect(groups.daily.map((s) => s.plan.id)).toEqual([23, 22]);
+  });
+
   test("offers daily plans whose per-day allowance covers a day", () => {
     const groups = groupSuggestions(
       collectCandidates(
@@ -284,15 +324,37 @@ test.describe("plan suggestions — on screen", () => {
     await expect(unlimited.getByTestId("plan-suggestion-21")).toContainText("Không giới hạn");
   });
 
-  test("links a suggestion to the destination page in the reader's language", async ({ page }) => {
-    await mockApi(page, payload({ dataPlans: [plan({ id: 2 })] }));
+  // v3 #013 — tapping a plan puts it in the cart instead of opening the
+  // destination page, where it had to be found and picked again.
+  test("puts a suggestion in the cart and offers to check out", async ({ page }) => {
+    await mockApi(page, payload({ dataPlans: [plan({ id: 2, dataMb: 51_200 })] }));
 
     await pickJapan(page);
+    await page.getByTestId("plan-suggestion-2").click({ timeout: 30_000 });
 
-    // Vietnamese reader → the Vietnamese slug, no locale prefix.
-    await expect(page.getByTestId("plan-suggestion-2")).toHaveAttribute("href", "/esim-nhat-ban", {
-      timeout: 30_000,
+    await expect(page.getByText("Thanh toán ngay")).toBeVisible({ timeout: 15_000 });
+  });
+
+  // v3 #013 — "gói 15GB thì hệ thống đang hiện là 15.4GB".
+  test("shows a plan's size in the units it is sold in", async ({ page }) => {
+    await mockApi(page, payload({ dataPlans: [plan({ id: 2, dataMb: 15_360, durationDays: 30, vndPrice: 400_000 })] }));
+    await page.goto(`${HARNESS_BASE}&values=videoCalls:0,socialMedia:1`, {
+      waitUntil: "domcontentloaded",
     });
+    const input = page.getByTestId("plan-suggestions-input");
+    const option = page.getByTestId("plan-suggestions-option-esim-japan");
+    await expect(async () => {
+      if (!(await option.isVisible())) {
+        await input.fill("");
+        await input.fill("nhật");
+      }
+      await expect(option).toBeVisible({ timeout: 3_000 });
+    }).toPass({ timeout: 60_000 });
+    await option.click();
+
+    const suggestion = page.getByTestId("plan-suggestion-2");
+    await expect(suggestion).toContainText("15 GB", { timeout: 30_000 });
+    await expect(suggestion).not.toContainText("15.4");
   });
 
   test("admits when nothing covers and shows the closest instead", async ({ page }) => {

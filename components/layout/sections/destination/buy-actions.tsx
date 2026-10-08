@@ -5,9 +5,10 @@ import { useRouter } from "next/navigation";
 import { localizedHref } from "@/lib/route-mapping";
 import type { Plan } from "@/lib/api";
 import type { DestinationDict } from "./types";
-import { calcTotalPrice, calcTotalVndPrice, getFixedPrice, getFixedVndPrice } from "./types";
+import { calcTotalVndPrice, getFixedVndPrice } from "./types";
 import { formatVnd, useCart } from "@/lib/hooks";
 import { CartConfirmDialog } from "./cart-confirm-dialog";
+import { planCartItem } from "./cart-item";
 
 interface BuyActionsProps {
   selectedPlan: Plan | null;
@@ -35,27 +36,7 @@ export function BuyActions({ selectedPlan, days, quantity, isFixed, dict, lang, 
 
   const doAddToCart = async () => {
     if (!selectedPlan) return;
-    const isMultidate = !!selectedPlan.isAbleMultidate;
-    const unitPrice = isFixed ? getFixedPrice(selectedPlan) : calcTotalPrice(selectedPlan, days);
-    const unitVndPrice = isFixed ? getFixedVndPrice(selectedPlan) : calcTotalVndPrice(selectedPlan, days);
-    const originalVndPrice = isFixed ? Number(selectedPlan.vndPrice) : (isMultidate ? Number(selectedPlan.vndPrice) * days : Number(selectedPlan.vndPrice));
-    const cartDurationDays = isMultidate ? days : undefined;
-    const displayDays = isFixed ? selectedPlan.durationDays : (isMultidate ? days : selectedPlan.durationDays);
-    await addItem(
-      {
-        id: `${selectedPlan.id}:${cartDurationDays ?? "fixed"}`,
-        planId: selectedPlan.id,
-        name: selectedPlan.name || `eSIM ${destination || ""}`.trim(),
-        description: `${(selectedPlan.type === 'unlimited' || selectedPlan.type === 'unlimited-reduce') ? 'Unlimited' : selectedPlan.dataMb >= 1024 ? `${parseFloat((selectedPlan.dataMb / 1024).toFixed(1))} GB` : `${selectedPlan.dataMb} MB`} / ${displayDays} days`,
-        price: unitPrice,
-        vndPrice: unitVndPrice,
-        destination: destination,
-        dataMb: Number(selectedPlan.dataMb),
-        durationDays: cartDurationDays,
-        ...(selectedPlan.discount != null && selectedPlan.discount > 0 ? { discount: selectedPlan.discount, originalVndPrice } : {}),
-      },
-      quantity
-    );
+    await addItem(planCartItem(selectedPlan, { days, isFixed, destination }), quantity);
   };
 
   const handleAddToCart = async () => {

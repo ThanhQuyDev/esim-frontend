@@ -2,10 +2,19 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { MapPin, Search, X, Infinity as InfinityIcon } from "lucide-react";
+import { CalendarDays, MapPin, Search, ShoppingCart, X, Infinity as InfinityIcon } from "lucide-react";
 import { useDebounce } from "@/lib/use-debounce";
-import { useExchangeRate, usePlansBySlug, useSearchDestinations } from "@/lib/hooks";
+import {
+  formatVnd,
+  useCart,
+  useExchangeRate,
+  usePlansBySlug,
+  useSearchDestinations,
+} from "@/lib/hooks";
 import { formatSalePrice } from "@/lib/price-locale";
+import { formatDataSize } from "@/lib/blog-plan-data";
+import { CartConfirmDialog } from "@/components/layout/sections/destination/cart-confirm-dialog";
+import { planCartItem } from "@/components/layout/sections/destination/cart-item";
 import { localizedSlug } from "@/lib/slug";
 import { DATA_RATES } from "./calculator-data";
 import {
@@ -17,6 +26,7 @@ import {
   collectCandidates,
   groupSuggestions,
   MONTH_DAYS,
+  tripPriceVnd,
   type PlanKind,
   type PlanSuggestion,
 } from "@/lib/plan-suggestions";
@@ -55,6 +65,11 @@ export function PlanSuggestions({ values, dict, lang }: PlanSuggestionsProps) {
   const [query, setQuery] = useState("");
   const [destination, setDestination] = useState<Destination | null>(null);
   const debouncedQuery = useDebounce(query, 300);
+  /** Trip length, so the plans match it rather than a guessed month (v3 #013). */
+  const [daysInput, setDaysInput] = useState("");
+  const tripDays = Math.min(365, Math.max(0, parseInt(daysInput, 10) || 0));
+  const { addItem } = useCart();
+  const [added, setAdded] = useState<{ name: string; totalVnd: number } | null>(null);
 
   const dailyMb = useMemo(
     () =>
@@ -75,8 +90,8 @@ export function PlanSuggestions({ values, dict, lang }: PlanSuggestionsProps) {
   const { data: usdVndRate } = useExchangeRate();
 
   const groups = useMemo(
-    () => groupSuggestions(collectCandidates(plans), { dailyMb }),
-    [plans, dailyMb],
+    () => groupSuggestions(collectCandidates(plans), { dailyMb, tripDays }),
+    [plans, dailyMb, tripDays],
   );
   const covered = groups.fixed.length + groups.daily.length;
   const hasAnything = covered + groups.unlimited.length + groups.fallback.length > 0;
@@ -100,12 +115,14 @@ export function PlanSuggestions({ values, dict, lang }: PlanSuggestionsProps) {
         </>
       );
     }
+    // A plan's size is in binary units like everywhere else on the site; the
+    // calculator's decimal formatter turned 15 GB (15360 MB) into "15.4 GB".
     if (suggestion.kind === "daily") {
       return interpolate(t.dataPerDay ?? "{{data}}", {
-        data: formatData(suggestion.plan.dataMb),
+        data: formatDataSize(suggestion.plan.dataMb),
       });
     }
-    return formatData(suggestion.plan.dataMb);
+    return formatDataSize(suggestion.plan.dataMb);
   };
 
   const detail = (suggestion: PlanSuggestion) => {
@@ -118,25 +135,49 @@ export function PlanSuggestions({ values, dict, lang }: PlanSuggestionsProps) {
     return t.unlimitedDetail ?? "";
   };
 
+  /**
+   * Tapping a plan puts it in the cart and offers "pay now / keep shopping",
+   * instead of opening the destination page where the plan had to be found
+   * and picked all over again (v3 #013).
+   */
+  const addToCart = async (suggestion: PlanSuggestion) => {
+    const plan = suggestion.plan;
+    const days = plan.isAbleMultidate ? tripDays || plan.durationDays || 1 : plan.durationDays;
+    const item = planCartItem(plan, {
+      days,
+      isFixed: !plan.isAbleMultidate,
+      destination: destination ? destinationName(destination, lang) : undefined,
+    });
+    await addItem(item);
+    setAdded({ name: item.name, totalVnd: item.vndPrice ?? 0 });
+  };
+
   const renderSuggestion = (suggestion: PlanSuggestion) => (
     <li key={suggestion.plan.id}>
-      <Link
-        href={destinationHref}
+      <button
+        type="button"
+        onClick={() => void addToCart(suggestion)}
         data-testid={`plan-suggestion-${suggestion.plan.id}`}
-        className="flex items-center gap-3 rounded-sm border border-border-secondary bg-bg-primary p-3 no-underline transition-colors hover:border-border-focus"
+        aria-label={`${t.addToCart ?? ""}: ${suggestion.plan.name ?? ""}`}
+        className="flex w-full items-center gap-3 rounded-sm border border-border-secondary bg-bg-primary p-3 text-left transition-colors hover:border-border-focus cursor-pointer"
       >
         <span className="flex flex-col flex-1 min-w-0">
           <span className="body-md-medium text-text-primary flex items-center gap-1.5">
             {headline(suggestion)}
             <span className="body-sm text-text-tertiary">
-              · {days(suggestion.plan.durationDays)}
+              ·{" "}
+              {days(
+                suggestion.plan.isAbleMultidate && tripDays
+                  ? tripDays
+                  : suggestion.plan.durationDays,
+              )}
             </span>
           </span>
           <span className="body-2xs text-text-tertiary truncate">{detail(suggestion)}</span>
         </span>
         <span className="flex flex-col items-end shrink-0">
           <span className="body-md-medium text-text-primary">
-            {price(suggestion.plan.vndPrice)}
+            {price(tripDays ? tripPriceVnd(suggestion.plan, tripDays) : suggestion.plan.vndPrice)}
           </span>
           <span className="body-2xs text-text-tertiary">
             {interpolate(t.perDay ?? "{{price}}", {
@@ -144,7 +185,8 @@ export function PlanSuggestions({ values, dict, lang }: PlanSuggestionsProps) {
             })}
           </span>
         </span>
-      </Link>
+        <ShoppingCart className="h-4 w-4 shrink-0 text-text-tertiary" aria-hidden="true" />
+      </button>
     </li>
   );
 
@@ -199,8 +241,20 @@ export function PlanSuggestions({ values, dict, lang }: PlanSuggestionsProps) {
             placeholder={t.placeholder}
             aria-label={t.placeholder}
             data-testid="plan-suggestions-input"
-            className="w-full rounded-sm border-md border-border-secondary bg-bg-primary py-[11px] pl-9 pr-3 body-md text-text-primary placeholder-text-tertiary outline-hidden hover:border-border-focus focus:border-border-focus"
+            className="w-full rounded-sm border-md border-border-secondary bg-bg-primary py-[11px] pl-9 pr-9 body-md text-text-primary placeholder-text-tertiary outline-hidden hover:border-border-focus focus:border-border-focus"
           />
+          {query && (
+            <button
+              type="button"
+              onClick={() => setQuery("")}
+              data-testid="plan-suggestions-clear"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1 text-text-tertiary transition-colors hover:text-text-primary"
+              aria-label={t.clear}
+              title={t.clear}
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
 
           {hasQuery && (
             <div className="absolute left-0 right-0 top-full z-20 mt-1 max-h-56 overflow-y-auto rounded-sm border border-border-secondary bg-bg-primary shadow-lg">
@@ -229,6 +283,37 @@ export function PlanSuggestions({ values, dict, lang }: PlanSuggestionsProps) {
         </div>
       )}
 
+      <div className="relative">
+        <CalendarDays
+          className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-tertiary pointer-events-none"
+          aria-hidden="true"
+        />
+        <input
+          type="number"
+          inputMode="numeric"
+          min={1}
+          max={365}
+          value={daysInput}
+          onChange={(e) => setDaysInput(e.target.value.replace(/\D/g, "").slice(0, 3))}
+          placeholder={t.tripDaysPlaceholder}
+          aria-label={t.tripDaysPlaceholder}
+          data-testid="plan-suggestions-days"
+          className="w-full rounded-sm border-md border-border-secondary bg-bg-primary py-[11px] pl-9 pr-9 body-md text-text-primary placeholder-text-tertiary outline-hidden hover:border-border-focus focus:border-border-focus [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+        />
+        {daysInput && (
+          <button
+            type="button"
+            onClick={() => setDaysInput("")}
+            data-testid="plan-suggestions-days-clear"
+            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1 text-text-tertiary transition-colors hover:text-text-primary"
+            aria-label={t.clear}
+            title={t.clear}
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
+      </div>
+
       {/* Nothing to match against until the customer has entered some hours. */}
       {dailyMb <= 0 && (
         <p className="body-2xs text-text-tertiary m-0" data-testid="plan-suggestions-need-usage">
@@ -240,18 +325,32 @@ export function PlanSuggestions({ values, dict, lang }: PlanSuggestionsProps) {
         <>
           {/* The thresholds the plans below are measured against. */}
           <p className="body-2xs text-text-secondary m-0" data-testid="plan-suggestions-need">
-            {interpolate(t.needSummary ?? "", {
-              month: formatData(dailyMb * MONTH_DAYS),
-              day: formatData(dailyMb),
-            })}
+            {tripDays
+              ? interpolate(t.needTripSummary ?? "", {
+                  total: formatData(dailyMb * tripDays),
+                  days: tripDays,
+                  day: formatData(dailyMb),
+                })
+              : interpolate(t.needSummary ?? "", {
+                  month: formatData(dailyMb * MONTH_DAYS),
+                  day: formatData(dailyMb),
+                })}
           </p>
 
           {isLoadingPlans && !hasAnything ? (
             <p className="body-2xs text-text-tertiary m-0">{t.loadingPlans}</p>
           ) : hasAnything ? (
             <div className="flex flex-col gap-4">
-              {renderGroup("fixed", t.groupFixed, groups.fixed)}
-              {renderGroup("daily", t.groupDaily, groups.daily)}
+              {renderGroup(
+                "fixed",
+                tripDays ? interpolate(t.groupFixedTrip ?? "", { days: tripDays }) : t.groupFixed,
+                groups.fixed,
+              )}
+              {renderGroup(
+                "daily",
+                tripDays ? interpolate(t.groupDailyTrip ?? "", { days: tripDays }) : t.groupDaily,
+                groups.daily,
+              )}
 
               {covered === 0 && groups.fallback.length > 0 && (
                 <div className="flex flex-col gap-2">
@@ -268,7 +367,13 @@ export function PlanSuggestions({ values, dict, lang }: PlanSuggestionsProps) {
                 </div>
               )}
 
-              {renderGroup("unlimited", t.groupUnlimited, groups.unlimited)}
+              {renderGroup(
+                "unlimited",
+                tripDays
+                  ? interpolate(t.groupUnlimitedTrip ?? "", { days: tripDays })
+                  : t.groupUnlimited,
+                groups.unlimited,
+              )}
 
               <Link
                 href={destinationHref}
@@ -287,6 +392,13 @@ export function PlanSuggestions({ values, dict, lang }: PlanSuggestionsProps) {
           )}
         </>
       )}
+      <CartConfirmDialog
+        open={!!added}
+        onClose={() => setAdded(null)}
+        lang={lang}
+        itemName={added?.name ?? "eSIM"}
+        totalLabel={formatVnd(added?.totalVnd ?? 0)}
+      />
     </section>
   );
 }

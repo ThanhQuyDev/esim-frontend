@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { localizedHref } from "@/lib/route-mapping";
 import type { Plan } from "@/lib/api";
 import type { DestinationDict } from "./types";
-import { calcTotalPrice, calcTotalVndPrice, getFixedPrice, getFixedVndPrice } from "./types";
+import { calcTotalVndPrice, getFixedVndPrice } from "./types";
+import { planCartItem } from "./cart-item";
 import { formatVnd, useCart } from "@/lib/hooks";
 import Image from "next/image";
 
@@ -121,32 +122,11 @@ export function DesktopStickyBar({
 
   const handleAddToCart = async () => {
     if (!selectedPlan) return;
-    const isMultidate = !!selectedPlan.isAbleMultidate;
-    const unitPrice = isFixed ? getFixedPrice(selectedPlan) : calcTotalPrice(selectedPlan, days);
-    const unitVndPrice = isFixed ? getFixedVndPrice(selectedPlan) : calcTotalVndPrice(selectedPlan, days);
-    const originalVndPrice = isFixed ? Number(selectedPlan.vndPrice) : (isMultidate ? Number(selectedPlan.vndPrice) * days : Number(selectedPlan.vndPrice));
-    const cartDurationDays = isMultidate ? days : undefined;
-    const displayDays = isFixed ? selectedPlan.durationDays : (isMultidate ? days : selectedPlan.durationDays);
-    await addItem(
-      {
-        id: `${selectedPlan.id}:${cartDurationDays ?? "fixed"}`,
-        planId: selectedPlan.id,
-        name: selectedPlan.name || `eSIM ${destination || ""}`.trim(),
-        description: `${selectedPlan.type === 'unlimited' || selectedPlan.type === 'unlimited-reduce' ? 'Unlimited' : selectedPlan.dataMb >= 1024 ? `${parseFloat((selectedPlan.dataMb / 1024).toFixed(1))} GB` : `${selectedPlan.dataMb} MB`} / ${displayDays} days`,
-        price: unitPrice,
-        vndPrice: unitVndPrice,
-        destination: destination,
-        dataMb: Number(selectedPlan.dataMb),
-        durationDays: cartDurationDays,
-        ...(selectedPlan.discount != null && selectedPlan.discount > 0 ? { discount: selectedPlan.discount, originalVndPrice } : {}),
-      },
-      quantity
-    );
+    await addItem(planCartItem(selectedPlan, { days, isFixed, destination }), quantity);
     router.push(localizedHref(lang, "cart"));
   };
 
   if (!selectedPlan) return null;
-  console
   return (
     <div
       className="fixed bottom-0 left-0 right-0 z-[300] bg-white border-t border-[#e5e7eb] shadow-[0_-4px_24px_rgba(0,0,0,0.08)] transition-transform duration-[280ms] ease-[cubic-bezier(.4,0,.2,1)] hidden min-[841px]:block"
