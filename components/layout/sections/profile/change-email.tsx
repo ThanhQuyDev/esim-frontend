@@ -89,6 +89,13 @@ export function ChangeEmail({ currentEmail, lang }: ChangeEmailProps) {
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
   const [doneEmail, setDoneEmail] = useState("");
+  /**
+   * "Để sau" was pressed on a change still awaiting its code. Closing used to
+   * do nothing visible — the code step stays on screen whenever a change is
+   * pending — so the form looked stuck (v3 #010). The change itself is kept:
+   * "Tiếp tục" brings the code step back.
+   */
+  const [later, setLater] = useState(false);
 
   // A change already awaiting a code survives a page reload.
   const target =
@@ -145,7 +152,7 @@ export function ChangeEmail({ currentEmail, lang }: ChangeEmailProps) {
     });
   };
 
-  if (!open && !target) {
+  if ((!open && !target) || later) {
     return (
       <div className="flex items-center justify-between gap-3 border-t border-gray-100 px-6 py-3.5">
         <p className="text-sm text-gray-500" data-testid="change-email-status">
@@ -153,14 +160,19 @@ export function ChangeEmail({ currentEmail, lang }: ChangeEmailProps) {
             ? vi
               ? `Đã đổi email thành công. Tài khoản đang dùng ${doneEmail}.`
               : `Your email has been changed. The account now uses ${doneEmail}.`
-            : vi
-              ? "Đổi email đăng nhập của tài khoản này."
-              : "Change the email you sign in with."}
+            : target
+              ? vi
+                ? `Yêu cầu đổi sang ${target} đang chờ xác nhận mã.`
+                : `Your change to ${target} is waiting for its code.`
+              : vi
+                ? "Đổi email đăng nhập của tài khoản này."
+                : "Change the email you sign in with."}
         </p>
         <button
           type="button"
           onClick={() => {
             setOpen(true);
+            setLater(false);
             setDoneEmail("");
             setError("");
           }}
@@ -168,7 +180,13 @@ export function ChangeEmail({ currentEmail, lang }: ChangeEmailProps) {
           className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 cursor-pointer"
         >
           <Pencil className="h-3.5 w-3.5" />
-          {vi ? "Đổi email" : "Change email"}
+          {target
+            ? vi
+              ? "Tiếp tục"
+              : "Continue"
+            : vi
+              ? "Đổi email"
+              : "Change email"}
         </button>
       </div>
     );
@@ -252,8 +270,10 @@ export function ChangeEmail({ currentEmail, lang }: ChangeEmailProps) {
               type="button"
               onClick={() => {
                 setOpen(false);
+                setLater(true);
                 resetForm();
               }}
+              data-testid="change-email-later"
               className="rounded-lg px-3 py-2 text-sm text-gray-500 hover:text-gray-800 cursor-pointer"
             >
               {vi ? "Để sau" : "Later"}
