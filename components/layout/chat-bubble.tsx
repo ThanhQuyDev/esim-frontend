@@ -1,11 +1,70 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback, type FormEvent, type ChangeEvent } from "react";
+import {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  type CSSProperties,
+  type FormEvent,
+  type ChangeEvent,
+} from "react";
 import { useChatSocket, type ChatMessage, type ChatMessageQuote } from "@/lib/chat-socket";
 import { uploadToCloudinary, validateChatFile, type FileAttachment } from "@/lib/cloudinary";
 import { useAuth } from "@/lib/auth";
 import { MessageCircle, X, Send, Loader2, Paperclip, Image as ImageIcon, CornerUpLeft } from "lucide-react";
 import { splitChatLinks } from "@/lib/chat-links";
+
+// ===== Mobile layout (v3 #006) =====
+
+/** Phones get the chat full screen; the 360px floating card was cramped there. */
+const MOBILE_QUERY = "(max-width: 640px)";
+
+function useMediaQuery(query: string): boolean {
+  const [matches, setMatches] = useState(false);
+  useEffect(() => {
+    const media = window.matchMedia(query);
+    const update = () => setMatches(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, [query]);
+  return matches;
+}
+
+/**
+ * The part of the screen the keyboard leaves visible. A full-screen chat sized
+ * by `100vh` sits partly under the keyboard on iOS and gets shoved up, which is
+ * what made the old window "nhỏ lại còn bị đẩy lên" — so it follows the visual
+ * viewport instead.
+ */
+function useVisualViewportBox(enabled: boolean): CSSProperties | undefined {
+  const [box, setBox] = useState<CSSProperties>();
+  useEffect(() => {
+    const viewport = window.visualViewport;
+    if (!enabled || !viewport) {
+      setBox(undefined);
+      return;
+    }
+    const update = () => setBox({ top: viewport.offsetTop, height: viewport.height });
+    update();
+    viewport.addEventListener("resize", update);
+    viewport.addEventListener("scroll", update);
+    return () => {
+      viewport.removeEventListener("resize", update);
+      viewport.removeEventListener("scroll", update);
+    };
+  }, [enabled]);
+  return box;
+}
+
+/**
+ * Touch keyboards have no Shift+Enter, so there Enter must stay a line break and
+ * the send button sends — the same rule the admin chat uses (#007, v3 #006).
+ */
+function useEnterSends(): boolean {
+  return !useMediaQuery("(pointer: coarse)");
+}
 
 // ===== Quoted-message helpers (#073) =====
 
@@ -163,8 +222,31 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
   /** Message being quoted, cleared once the reply is sent (#073). */
   const [replyTo, setReplyTo] = useState<ChatMessage | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  /** The image being viewed in place, instead of a new Cloudinary tab. */
+  const [viewingImage, setViewingImage] = useState<{ url: string; alt: string } | null>(null);
+  const isMobile = useMediaQuery(MOBILE_QUERY);
+  const viewportBox = useVisualViewportBox(isMobile);
+  const enterSends = useEnterSends();
+
+  // A full-screen chat over a scrollable page lets the page scroll underneath.
+  useEffect(() => {
+    if (!isMobile) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, [isMobile]);
+
+  // Grow with the message up to ~5 lines, then scroll inside the box.
+  useEffect(() => {
+    const box = inputRef.current;
+    if (!box) return;
+    box.style.height = "auto";
+    box.style.height = `${Math.min(box.scrollHeight, 120)}px`;
+  }, [input]);
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {
@@ -179,7 +261,7 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (!input.trim()) return;
+    if (!input.trim() || !connected) return;
     sendMessage(input, undefined, replyTo?.id);
     setInput("");
     setReplyTo(null);
@@ -220,10 +302,16 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
 
   return (
     <div
-      className="fixed bottom-24 right-6 z-50 flex w-[360px] max-[480px]:w-[calc(100vw-2rem)] max-[480px]:right-4 flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl"
-      style={{ height: "480px" }}
+      className={
+        isMobile
+          ? "fixed inset-x-0 top-0 z-50 flex h-[100dvh] w-full flex-col overflow-hidden bg-white"
+          : "fixed bottom-24 right-6 z-50 flex w-[360px] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl"
+      }
+      style={isMobile ? viewportBox : { height: "480px" }}
       role="dialog"
       aria-label="Support chat"
+      data-testid="chat-window"
+      data-fullscreen={isMobile ? "true" : undefined}
     >
       {/* Header */}
       <div className="flex items-center justify-between bg-[#1a1a1a] px-4 py-3 text-white">
@@ -271,6 +359,7 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
             viewerId={userId}
             onReply={startReply}
             onJumpToQuoted={jumpToMessage}
+            onViewImage={setViewingImage}
           />
         ))}
 
@@ -311,7 +400,7 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
             setReplyTo(null);
           }
         }}
-        className="flex items-center gap-2 border-t border-gray-200 bg-white px-3 py-2"
+        className="flex items-end gap-2 border-t border-gray-200 bg-white px-3 py-2"
       >
         {/* File attachment button */}
         <button
@@ -336,15 +425,27 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
           aria-hidden="true"
         />
 
-        <input
+        {/* A textarea, so a message can span lines (v3 #006). 16px text on
+            phones: iOS zooms into anything smaller and stays zoomed. */}
+        <textarea
           ref={inputRef}
-          type="text"
+          rows={1}
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => {
+            // Never send mid-composition: Vietnamese IMEs (Telex/VNI) use Enter
+            // to commit the word being typed.
+            if (e.key === "Enter" && !e.shiftKey && enterSends && !e.nativeEvent.isComposing) {
+              e.preventDefault();
+              e.currentTarget.form?.requestSubmit();
+            }
+          }}
+          enterKeyHint={enterSends ? "send" : "enter"}
           placeholder="Nhập tin nhắn…"
-          className="flex-1 rounded-full border border-gray-200 bg-gray-50 px-4 py-2 text-base sm:text-sm outline-none transition-colors focus:border-[#1a1a1a] focus:bg-white"
+          className="max-h-[120px] min-h-[40px] flex-1 resize-none overflow-y-auto rounded-2xl border border-gray-200 bg-gray-50 px-4 py-2 text-base leading-6 outline-none transition-colors focus:border-[#1a1a1a] focus:bg-white sm:text-sm"
           disabled={!connected}
           aria-label="Chat message input"
+          data-testid="chat-input"
         />
         <button
           type="submit"
@@ -359,6 +460,55 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
           )}
         </button>
       </form>
+
+      {viewingImage && (
+        <ImageViewer
+          url={viewingImage.url}
+          alt={viewingImage.alt}
+          onClose={() => setViewingImage(null)}
+        />
+      )}
+    </div>
+  );
+}
+
+// ===== In-place image viewer (v3 #006) =====
+
+/**
+ * Opens an attached image over the chat. A link to the Cloudinary file used to
+ * leave the site, and on a phone the only way back was closing that tab.
+ */
+function ImageViewer({ url, alt, onClose }: { url: string; alt: string; onClose: () => void }) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  return (
+    <div
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90 p-4"
+      role="dialog"
+      aria-label="Xem hình ảnh"
+      data-testid="chat-image-viewer"
+      onClick={onClose}
+    >
+      <button
+        type="button"
+        onClick={onClose}
+        className="absolute right-3 top-3 rounded-full bg-white/10 p-2 text-white transition-colors hover:bg-white/25"
+        aria-label="Đóng"
+      >
+        <X className="h-5 w-5" />
+      </button>
+      <img
+        src={url}
+        alt={alt}
+        className="max-h-full max-w-full object-contain"
+        onClick={(e) => e.stopPropagation()}
+      />
     </div>
   );
 }
@@ -371,12 +521,14 @@ function MessageBubble({
   viewerId,
   onReply,
   onJumpToQuoted,
+  onViewImage,
 }: {
   message: ChatMessage;
   isOwn: boolean;
   viewerId: number | null;
   onReply?: (message: ChatMessage) => void;
   onJumpToQuoted?: (messageId: number) => void;
+  onViewImage?: (image: { url: string; alt: string }) => void;
 }) {
   const time = new Date(message.createdAt).toLocaleTimeString("vi-VN", {
     hour: "2-digit",
@@ -447,14 +599,22 @@ function MessageBubble({
 
         {/* File attachment preview */}
         {message.fileUrl && message.fileType?.startsWith("image/") && (
-          <a href={message.fileUrl} target="_blank" rel="noopener noreferrer" className="block">
+          <button
+            type="button"
+            onClick={() =>
+              onViewImage?.({ url: message.fileUrl!, alt: message.fileName || "Hình ảnh" })
+            }
+            className="block cursor-zoom-in"
+            aria-label="Xem hình ảnh"
+            data-testid={`chat-image-${message.id}`}
+          >
             <img
               src={message.fileUrl}
               alt={message.fileName || "Image"}
               className="max-w-full rounded-sm max-h-[200px] object-cover"
               loading="lazy"
             />
-          </a>
+          </button>
         )}
         {hasVideo && (
           <video
