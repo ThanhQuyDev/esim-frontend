@@ -76,18 +76,34 @@ export function HeroSection({ dict, heroBanners = [], lang }: HeroSectionProps) 
     <div className="relative">
       {/* Background gradient + hero image */}
       <div className="absolute -top-[72px] bottom-0 w-full flex flex-col items-center overflow-hidden bg-[linear-gradient(#9FCFF2,#E9F2FF)]">
-        <div className="absolute bottom-0 min-w-[1038px] md:min-w-[1153px] lg:min-w-[1372px] xl:min-w-[1716px] md:translate-x-[18%] lg:translate-x-[21%] xl:translate-x-[23%]">
-          <div>
-            <HeroImage
-              alt="The esim.vn international eSIM app."
-              apiImageUrl={heroImageUrl}
-              fallbackSrc={HERO_IMAGE_URL}
-              width={1716}
-              height={908}
-              style={{ color: "transparent" }}
-            />
+        {heroImageUrl ? (
+          // A banner uploaded in the CMS fills the whole hero (v3 #016). It used
+          // to sit in the default illustration's slot — fixed width, pushed a
+          // quarter to the right — so a full-width 3840×1400 banner never
+          // covered the screen.
+          <HeroImage
+            alt={title}
+            apiImageUrl={heroImageUrl}
+            fallbackSrc={HERO_IMAGE_URL}
+            width={3840}
+            height={1400}
+            className="absolute inset-0 h-full w-full object-cover object-center"
+            style={{ color: "transparent" }}
+          />
+        ) : (
+          <div className="absolute bottom-0 min-w-[1038px] md:min-w-[1153px] lg:min-w-[1372px] xl:min-w-[1716px] md:translate-x-[18%] lg:translate-x-[21%] xl:translate-x-[23%]">
+            <div>
+              <HeroImage
+                alt="The esim.vn international eSIM app."
+                apiImageUrl={null}
+                fallbackSrc={HERO_IMAGE_URL}
+                width={1716}
+                height={908}
+                style={{ color: "transparent" }}
+              />
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Content */}
