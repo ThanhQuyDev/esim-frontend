@@ -264,6 +264,7 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
     if (!input.trim() || !connected) return;
     sendMessage(input, undefined, replyTo?.id);
     setInput("");
+    if (inputRef.current) inputRef.current.style.height = "";
     setReplyTo(null);
   };
 
@@ -431,7 +432,14 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
           ref={inputRef}
           rows={1}
           value={input}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={(e) => {
+            setInput(e.target.value);
+            // Grow with the text (up to max-h) so a line started with
+            // Shift+Enter is actually visible while typing (#005, round 4).
+            const el = e.currentTarget;
+            el.style.height = "auto";
+            el.style.height = `${el.scrollHeight}px`;
+          }}
           onKeyDown={(e) => {
             // Never send mid-composition: Vietnamese IMEs (Telex/VNI) use Enter
             // to commit the word being typed.
@@ -441,7 +449,7 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
             }
           }}
           enterKeyHint={enterSends ? "send" : "enter"}
-          placeholder="Nhập tin nhắn…"
+          placeholder={enterSends ? "Nhập tin nhắn… (Shift+Enter để xuống dòng)" : "Nhập tin nhắn…"}
           className="max-h-[120px] min-h-[40px] flex-1 resize-none overflow-y-auto rounded-2xl border border-gray-200 bg-gray-50 px-4 py-2 text-base leading-6 outline-none transition-colors focus:border-[#1a1a1a] focus:bg-white sm:text-sm"
           disabled={!connected}
           aria-label="Chat message input"
@@ -530,10 +538,13 @@ function MessageBubble({
   onJumpToQuoted?: (messageId: number) => void;
   onViewImage?: (image: { url: string; alt: string }) => void;
 }) {
-  const time = new Date(message.createdAt).toLocaleTimeString("vi-VN", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  // Time WITH the date, "14:05 10/10/2026", so an old message can be told
+  // from today's (#005, test round 4).
+  const sent = new Date(message.createdAt);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const time =
+    `${pad(sent.getHours())}:${pad(sent.getMinutes())} ` +
+    `${pad(sent.getDate())}/${pad(sent.getMonth() + 1)}/${sent.getFullYear()}`;
 
   const hasImage = !!(message.fileUrl && message.fileType?.startsWith("image/"));
   const hasVideo = !!(message.fileUrl && message.fileType?.startsWith("video/"));
