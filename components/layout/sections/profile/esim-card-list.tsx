@@ -16,6 +16,7 @@ import {
   Info,
   Zap,
   Apple,
+  ShoppingCart,
 } from "lucide-react";
 import type { EsimDataUsage, MyEsim } from "@/lib/hooks";
 import { useEsimDataUsage } from "@/lib/hooks";
@@ -23,6 +24,9 @@ import { DataUsageBar, statusLabel, USAGE_STATUS_COLOR } from "./usage-bar";
 import type { ProfileDict } from "./translations";
 import { QRCodeSVG } from "qrcode.react";
 import { TopupModal } from "./topup-modal";
+import { useRouter } from "next/navigation";
+import { useCart } from "@/lib/hooks";
+import { planDisplayName, planSummary } from "@/lib/plan-display-name";
 
 interface EsimCardListProps {
   esims: MyEsim[];
@@ -62,6 +66,30 @@ function getStatusStyle(status: string) {
       return "bg-amber-100 text-amber-700";
   }
 }
+
+/**
+ * What the customer reads (#025, test round 4): Mới (bought, not installed /
+ * no data used yet), Đang sử dụng (running), Hết hạn (over). A local eSIM
+ * (Viettel, domestic) is running from the moment it is sold — no Vietnamese
+ * carrier reports activation — and a domestic one never expires.
+ */
+function customerEsimStatus(esim: MyEsim): "new" | "inUse" | "expired" | "refunded" {
+  const stored = (esim.status ?? "").toLowerCase();
+  if (stored === "refunded") return "refunded";
+  const local = esim.provider === "viettel" || esim.provider === "itel" || esim.provider === "wintel" || esim.provider === "vnsky";
+  const expires = esim.expiresAt ? new Date(esim.expiresAt).getTime() : null;
+  if (expires !== null && !Number.isNaN(expires) && expires < Date.now() && stored !== "available") return "expired";
+  if (stored === "expired") return "expired";
+  if (local || esim.activatedAt || stored === "active") return "inUse";
+  return "new";
+}
+
+const CUSTOMER_STATUS: Record<ReturnType<typeof customerEsimStatus>, { vi: string; en: string; style: string }> = {
+  new: { vi: "Mới", en: "New", style: "bg-blue-50 text-blue-700" },
+  inUse: { vi: "Đang sử dụng", en: "In use", style: "bg-emerald-50 text-emerald-700" },
+  expired: { vi: "Hết hạn", en: "Expired", style: "bg-gray-100 text-gray-500" },
+  refunded: { vi: "Đã hoàn tiền", en: "Refunded", style: "bg-red-50 text-red-600" },
+};
 
 function getStatusLabel(status: string, t: ProfileDict) {
   const map: Record<string, string> = {
@@ -299,6 +327,30 @@ export function DataUsageSection({ esimId, lang }: { esimId: number; lang: strin
         </div>
       </div>
 
+      {/* Minutes / SMS left, where the provider reports them (#025). */}
+      {!!usage.voiceTotal && usage.voiceRemaining != null && (
+        <DataUsageBar
+          label={lang === "vi" ? "Phút gọi" : "Call minutes"}
+          used={Math.max(0, usage.voiceTotal - usage.voiceRemaining)}
+          total={usage.voiceTotal}
+          unit={lang === "vi" ? "phút" : "min"}
+          isUnlimited={false}
+          lang={lang}
+          integer
+        />
+      )}
+      {!!usage.smsTotal && usage.smsRemaining != null && (
+        <DataUsageBar
+          label="SMS"
+          used={Math.max(0, usage.smsTotal - usage.smsRemaining)}
+          total={usage.smsTotal}
+          unit="SMS"
+          isUnlimited={false}
+          lang={lang}
+          integer
+        />
+      )}
+
       {/* Expiry info */}
       {usage.expiredAt && (
         <p className="text-sm text-gray-400 text-center">
@@ -308,6 +360,12 @@ export function DataUsageSection({ esimId, lang }: { esimId: number; lang: strin
           })}
         </p>
       )}
+
+      <p className="border-t border-gray-100 pt-3 text-center text-xs text-gray-400" data-testid="usage-delay-note">
+        {lang === "vi"
+          ? "Dữ liệu sử dụng (usage data) được cập nhật từ nhà cung cấp dịch vụ roaming có độ trễ 1 - 2 giờ."
+          : "Usage data comes from the roaming provider and can be 1 - 2 hours behind."}
+      </p>
     </div>
   );
 }
@@ -345,6 +403,33 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
   const [expanded, setExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState<EsimTab>("info");
   const [topupOpen, setTopupOpen] = useState(false);
+  const router = useRouter();
+  const { addItem } = useCart();
+  const [buyingAgain, setBuyingAgain] = useState(false);
+  const lifecycle = CUSTOMER_STATUS[customerEsimStatus(esim)];
+  const displayName = planDisplayName(esim.plan) || esim.plan?.name || "";
+
+  // "Mua lại eSIM" (#025): the same plan straight into the cart, then the cart.
+  const buyAgain = async (event?: { stopPropagation: () => void }) => {
+    event?.stopPropagation();
+    const planId = Number(esim.plan?.id);
+    if (!planId || buyingAgain) return;
+    setBuyingAgain(true);
+    try {
+      await addItem({
+        id: String(planId),
+        planId,
+        name: esim.plan?.name ?? "",
+        description: "",
+        price: 0,
+        dataMb: esim.plan?.dataMb,
+        durationDays: esim.plan?.durationDays,
+      });
+      router.push(lang === "vi" ? "/gio-hang" : "/en/cart");
+    } finally {
+      setBuyingAgain(false);
+    }
+  };
 
   // --- Derived plan info ---
   const planTypeLabel = (() => {
@@ -400,6 +485,10 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
     : null;
 
   const fields: { label: string; value: string; copyable?: boolean }[] = [
+    // The purchase order first, for support and warranty (#025, round 4).
+    ...(esim.orderNumber
+      ? [{ label: lang === "vi" ? "Mã đơn hàng" : "Order number", value: esim.orderNumber, copyable: true }]
+      : []),
     { label: "ICCID", value: esim.iccid, copyable: true },
     // LPA equivalent of ICCID — shown so users can copy the full activation
     // string when configuring an eSIM manually.
@@ -432,8 +521,8 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-0.5">
-            <p className="text-base sm:text-sm font-semibold text-gray-900 truncate font-mono">
-              {esim.plan?.name}
+            <p className="text-base sm:text-sm font-semibold text-gray-900 truncate font-mono" title={displayName}>
+              {displayName}
             </p>
             {/* TOPUP next to the product name, so a topped-up eSIM is obvious
                 without expanding the card (#031). */}
@@ -445,10 +534,32 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                 TOPUP{topupCount > 1 ? ` ×${topupCount}` : ""}
               </span>
             )}
-            <span className={`inline-flex items-center px-2 py-0.5 text-sm font-medium rounded-full ${getStatusStyle(esim.status)}`}>
-              {getStatusLabel(esim.status, t)}
+            <span
+              data-testid="esim-status"
+              className={`inline-flex shrink-0 items-center px-2 py-0.5 text-sm font-medium rounded-full ${lifecycle.style}`}
+            >
+              {lifecycle[lang]}
             </span>
+            {esim.plan?.id && (
+              <span
+                role="button"
+                tabIndex={0}
+                data-testid="esim-buy-again-inline"
+                onClick={(e) => void buyAgain(e)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") void buyAgain(e);
+                }}
+                className="ml-auto hidden shrink-0 items-center gap-1 rounded-full border border-gray-200 px-2.5 py-0.5 text-sm font-medium text-gray-700 hover:bg-gray-50 sm:inline-flex"
+              >
+                <ShoppingCart className="h-3.5 w-3.5" />
+                {lang === "vi" ? "Mua lại eSIM" : "Buy again"}
+              </span>
+            )}
           </div>
+          {/* Quick summary under the name (#025): data · days · minutes · SMS. */}
+          <p className="text-sm text-gray-700" data-testid="esim-plan-summary">
+            {planSummary(esim.plan, lang)}
+          </p>
           <p className="text-sm text-gray-500">
             {lang === "vi" ? "Tạo ngày" : "Created"}: {formatDate(esim.createdAt, lang)}
             {esim.expiresAt && esim.provider !== 'viettel' && (
@@ -687,8 +798,8 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                         {t.status}
                       </p>
                       <div className="bg-gray-50 rounded-lg px-3 py-2">
-                        <span className={`inline-flex items-center px-2 py-0.5 text-sm font-medium rounded-full ${getStatusStyle(esim.status)}`}>
-                          {getStatusLabel(esim.status, t)}
+                        <span className={`inline-flex items-center px-2 py-0.5 text-sm font-medium rounded-full ${lifecycle.style}`}>
+                          {lifecycle[lang]}
                         </span>
                       </div>
                     </div>
@@ -706,17 +817,20 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                     )}
                   </div>
 
-                  {/* Apple Install Link */}
-                  {esim.directAppleInstallationUrl && (
-                    <a
-                      href={esim.directAppleInstallationUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-gray-900 text-white rounded-lg text-base sm:text-sm font-medium hover:bg-gray-800 transition-colors"
+                  {/* The supplier's own "Install on iPhone" link used to sit here
+                      too; it repeated the install steps above (#025). */}
+                  {/* Buy the same plan again, straight into the cart (#025). */}
+                  {esim.plan?.id && (
+                    <button
+                      type="button"
+                      data-testid="esim-buy-again-button"
+                      onClick={() => void buyAgain()}
+                      disabled={buyingAgain}
+                      className="flex items-center justify-center gap-2 w-full px-4 py-2.5 border border-gray-300 bg-white text-gray-900 rounded-lg text-base sm:text-sm font-semibold hover:bg-gray-50 transition-colors disabled:opacity-60"
                     >
-                      <ExternalLink className="w-4 h-4" />
-                      {lang === "vi" ? "Cài đặt trên iPhone" : "Install on iPhone"}
-                    </a>
+                      <ShoppingCart className="w-4 h-4" />
+                      {lang === "vi" ? "Mua lại eSIM" : "Buy this eSIM again"}
+                    </button>
                   )}
 
                   {/* Top Up Button — only when this eSIM can really be recharged (#029) */}

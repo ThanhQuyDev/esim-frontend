@@ -1499,6 +1499,8 @@ export interface MyEsim {
   lastTopupAt?: string | null;
   /** Package names, newest first, comma-separated. */
   topupPackageNames?: string | null;
+  /** The order it was bought in, shown above the ICCID (#025, test round 4). */
+  orderNumber?: string | null;
 }
 
 
@@ -1516,6 +1518,11 @@ export interface EsimDataUsage {
   activatedAt?: string | null;
   /** Plan length in days, for the time bar. */
   durationDays?: number | null;
+  /** Minutes / SMS the provider reports, where it does (#025, round 4). */
+  voiceTotal?: number | null;
+  voiceRemaining?: number | null;
+  smsTotal?: number | null;
+  smsRemaining?: number | null;
 }
 
 export function useEsimDataUsage(esimId: number | null) {
