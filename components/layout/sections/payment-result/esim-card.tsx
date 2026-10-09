@@ -1,10 +1,10 @@
 "use client";
 
 import { esimQrLogoSettings } from "@/lib/esim-qr";
-import { Smartphone, Globe, Wifi, Calendar, QrCode } from "lucide-react";
+import { Smartphone, Wifi, Calendar, QrCode, Phone, MessageSquare } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { CopyableField } from "./copyable-field";
-import type { EsimInfo } from "@/lib/hooks";
+import type { EsimInfo, OrderItemPlan } from "@/lib/hooks";
 import type { PaymentResultDict } from "./translations";
 
 interface EsimCardProps {
@@ -19,6 +19,45 @@ interface EsimCardProps {
   copiedField: string | null;
   onCopy: (text: string, field: string) => void;
   t: PaymentResultDict;
+  /** The package it came from: data, days, minutes, SMS (#033, test round 4). */
+  plan?: OrderItemPlan | null;
+  lang?: "vi" | "en";
+}
+
+/** "3072" → "3GB", "500" → "500MB"; text that already has a unit is kept. */
+export function formatDataAmount(value: number | string | null | undefined): string {
+  if (value === null || value === undefined || value === "") return "";
+  const text = String(value).trim();
+  if (!/^\d+(\.\d+)?$/.test(text)) return text;
+  const mb = Number(text);
+  return mb >= 1024 ? `${parseFloat((mb / 1024).toFixed(1))}GB` : `${mb}MB`;
+}
+
+/** The badges under the title: data with its unit, days of use, minutes, SMS. */
+export function esimBadges(
+  esim: Pick<EsimInfo, "dataTotal">,
+  plan: OrderItemPlan | null | undefined,
+  lang: "vi" | "en",
+) {
+  const vi = lang === "vi";
+  const mb = Number(plan?.dataMb) || 0;
+  const perDay = !!plan?.type && plan.type !== "fixed";
+  const data = plan
+    ? mb > 0
+      ? `${formatDataAmount(mb)}${perDay ? (vi ? "/ngày" : "/day") : ""}`
+      : vi
+        ? "Không giới hạn"
+        : "Unlimited"
+    : formatDataAmount(esim.dataTotal);
+  const days = Number(plan?.durationDays) || 0;
+  const call = Number(plan?.call) || 0;
+  const sms = Number(plan?.sms) || 0;
+  return {
+    data,
+    days: days > 0 ? (vi ? `${days} ngày sử dụng` : `${days} day${days > 1 ? "s" : ""} of use`) : "",
+    call: call > 0 ? (vi ? `${call} phút gọi` : `${call} min calls`) : "",
+    sms: sms > 0 ? `${sms} SMS` : "",
+  };
 }
 
 
@@ -37,7 +76,8 @@ function LpaQrCode({ lpa, scanLabel }: { lpa: string; scanLabel: string }) {
   );
 }
 
-export function EsimCard({ esim, title, index, copiedField, onCopy, t }: EsimCardProps) {
+export function EsimCard({ esim, title, index, copiedField, onCopy, t, plan, lang = "vi" }: EsimCardProps) {
+  const badges = esimBadges(esim, plan, lang);
   return (
     <div className="rounded-2xl border border-emerald-200 bg-white p-6 mb-6 shadow-sm">
       {/* Header */}
@@ -62,19 +102,32 @@ export function EsimCard({ esim, title, index, copiedField, onCopy, t }: EsimCar
         </div>
       </div>
 
-      {/* Data usage badges */}
-      {(esim.dataTotal || esim.dataUsed) && (
-        <div className="flex flex-wrap gap-2 mb-5">
-          {esim.dataTotal && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple-50 text-purple-700 text-sm font-medium">
+      {/* Data with its unit, days of use, minutes and SMS (#033, test round 4) —
+          the old badges showed a bare "3072" and "data used" under a calendar. */}
+      {(badges.data || badges.days || badges.call || badges.sms) && (
+        <div className="flex flex-wrap gap-2 mb-5" data-testid={`esim-badges-${index}`}>
+          {badges.data && (
+            <span data-testid={`esim-data-${index}`} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple-50 text-purple-700 text-sm font-medium">
               <Wifi className="w-3.5 h-3.5" />
-              {esim.dataTotal}
+              {badges.data}
             </span>
           )}
-          {esim.dataUsed && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 text-amber-700 text-sm font-medium">
+          {badges.days && (
+            <span data-testid={`esim-days-${index}`} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 text-amber-700 text-sm font-medium">
               <Calendar className="w-3.5 h-3.5" />
-              {t.data}: {esim.dataUsed}
+              {badges.days}
+            </span>
+          )}
+          {badges.call && (
+            <span data-testid={`esim-call-${index}`} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sky-50 text-sky-700 text-sm font-medium">
+              <Phone className="w-3.5 h-3.5" />
+              {badges.call}
+            </span>
+          )}
+          {badges.sms && (
+            <span data-testid={`esim-sms-${index}`} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 text-sm font-medium">
+              <MessageSquare className="w-3.5 h-3.5" />
+              {badges.sms}
             </span>
           )}
         </div>
@@ -118,17 +171,6 @@ export function EsimCard({ esim, title, index, copiedField, onCopy, t }: EsimCar
             copiedLabel={t.copied}
           />
         )}
-        {esim.matchId && (
-          <CopyableField
-            label={t.matchingId}
-            value={esim.matchId}
-            fieldKey={`matching-${index}`}
-            copiedField={copiedField}
-            onCopy={onCopy}
-            copyLabel={t.copy}
-            copiedLabel={t.copied}
-          />
-        )}
         {esim.iccid && (
           <CopyableField
             label={t.iccid}
@@ -140,17 +182,7 @@ export function EsimCard({ esim, title, index, copiedField, onCopy, t }: EsimCar
             copiedLabel={t.copied}
           />
         )}
-        {esim.directAppleInstallationUrl && (
-          <CopyableField
-            label="Apple Install URL"
-            value={esim.directAppleInstallationUrl}
-            fieldKey={`apple-${index}`}
-            copiedField={copiedField}
-            onCopy={onCopy}
-            copyLabel={t.copy}
-            copiedLabel={t.copied}
-          />
-        )}
+        {/* Matching ID and Apple Install URL (Airalo) are not shown (#033). */}
       </div>
     </div>
   );

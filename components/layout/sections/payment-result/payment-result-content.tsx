@@ -1,5 +1,6 @@
 "use client";
 
+import { planDisplayName } from "@/lib/plan-display-name";
 import { useState, useMemo, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import {
@@ -18,7 +19,7 @@ import Link from "next/link";
 import { localizedHref } from "@/lib/route-mapping";
 import { Button } from "@/components/ui/button";
 import { getResponseCodeMessage } from "@/lib/onepay";
-import { formatExu, useOrderByNumber, useCart, type EsimInfo } from "@/lib/hooks";
+import { formatExu, useOrderByNumber, useCart, type EsimInfo, type OrderItemPlan } from "@/lib/hooks";
 import { clearCart as clearLocalCart } from "@/lib/cart";
 import { OrderInfoCard } from "./order-info-card";
 import { EsimLoadingState } from "./esim-loading-state";
@@ -104,18 +105,20 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
     }
 
     const seenByPlan = new Map<string, number>();
-    const entries: { esim: EsimInfo; title: string }[] = [];
+    const entries: { esim: EsimInfo; title: string; plan: OrderItemPlan | null }[] = [];
     for (const item of items) {
       const key = planKeyOf(item);
       // No plan on the item (an older order, or a provider payload without it)
       // falls back to the previous generic heading rather than showing nothing.
-      const name = item.plan?.name?.trim() || t.esimDetails;
+      // Named like the CMS, minutes / SMS spelled out (#033, test round 4).
+      const name = planDisplayName(item.plan) || t.esimDetails;
       for (const esim of item.esims ?? []) {
         const position = (seenByPlan.get(key) ?? 0) + 1;
         seenByPlan.set(key, position);
         entries.push({
           esim,
           title: (countByPlan.get(key) ?? 0) > 1 ? `${name} #${position}` : name,
+          plan: item.plan ?? null,
         });
       }
     }
@@ -355,8 +358,10 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
 
         {/* eSIM Cards */}
         {hasEsims &&
-          esimEntries.map(({ esim, title }, idx) => (
+          esimEntries.map(({ esim, title, plan }, idx) => (
             <EsimCard
+              plan={plan}
+              lang={lang}
               key={esim.iccid || idx}
               esim={esim}
               title={title}

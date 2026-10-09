@@ -19,14 +19,14 @@ function esim(n: number) {
     smdpAddress: "rsp.truphone.com",
     activationCode: `AC-${n}`,
     lpa: `LPA:1$rsp.truphone.com$AC-${n}`,
-    matchId: "",
+    matchId: "MATCH-123",
     qrcode: "",
-    directAppleInstallationUrl: "",
+    directAppleInstallationUrl: "https://esimsetup.apple.com/x",
     apnValue: "",
     isRoaming: false,
     status: "available",
     dataUsed: "",
-    dataTotal: "3GB",
+    dataTotal: "3072",
     expiresAt: null,
     activatedAt: null,
     createdAt: "2026-09-01T00:00:00.000Z",
@@ -40,6 +40,11 @@ type Item = {
   planId: number;
   planName: string;
   esimCount: number;
+  call?: number;
+  sms?: number;
+  durationDays?: number;
+  dataMb?: number;
+  type?: string;
 };
 
 async function openResult(page: Page, items: Item[]) {
@@ -76,8 +81,11 @@ async function openResult(page: Page, items: Item[]) {
         id: item.planId,
         name: item.planName,
         slug: `plan-${item.planId}`,
-        durationDays: 7,
-        dataMb: 3072,
+        durationDays: item.durationDays ?? 7,
+        dataMb: item.dataMb ?? 3072,
+        type: item.type ?? "fixed",
+        call: item.call ?? null,
+        sms: item.sms ?? null,
         price: "6",
         vndPrice: 179000,
         currency: "USD",
@@ -200,4 +208,44 @@ test("falls back to the generic heading when the item has no plan", async ({ pag
   await expect(page.getByTestId("esim-title-0")).toHaveText("Thông tin eSIM", {
     timeout: 60_000,
   });
+});
+
+/**
+ * #033 (test round 4) — plan name with minutes / SMS, data with its unit, the
+ * calendar showing days of use, and no Airalo Matching ID / Apple Install URL.
+ */
+test("shows minutes, SMS, data unit and days; hides Airalo fields", async ({ page }) => {
+  await openResult(page, [
+    {
+      id: 1,
+      planId: 21,
+      planName: "United States 2GB / 15day",
+      esimCount: 1,
+      call: 20,
+      sms: 20,
+      durationDays: 15,
+      dataMb: 2048,
+    },
+  ]);
+
+  await expect(page.getByTestId("esim-title-0")).toHaveText(
+    "United States 2GB / 15day - 20Mins - 20SMS",
+  );
+  await expect(page.getByTestId("esim-data-0")).toHaveText("2GB");
+  await expect(page.getByTestId("esim-days-0")).toHaveText("15 ngày sử dụng");
+  await expect(page.getByTestId("esim-call-0")).toHaveText("20 phút gọi");
+  await expect(page.getByTestId("esim-sms-0")).toHaveText("20 SMS");
+  await expect(page.getByText("MATCH-123")).toHaveCount(0);
+  await expect(page.getByText("Apple Install URL")).toHaveCount(0);
+  await expect(page.getByText(/Matching ID/i)).toHaveCount(0);
+});
+
+test("per-day plan shows data per day; 0 MB is unlimited", async ({ page }) => {
+  await openResult(page, [
+    { id: 1, planId: 31, planName: "Japan 1GB/day", esimCount: 1, dataMb: 1024, type: "daily", durationDays: 5 },
+    { id: 2, planId: 32, planName: "Korea Unlimited", esimCount: 1, dataMb: 0, durationDays: 3 },
+  ]);
+  await expect(page.getByTestId("esim-data-0")).toHaveText("1GB/ngày");
+  await expect(page.getByTestId("esim-data-1")).toHaveText("Không giới hạn");
+  await expect(page.getByTestId("esim-badges-0")).not.toContainText("3072");
 });

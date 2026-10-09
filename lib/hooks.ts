@@ -977,6 +977,10 @@ export interface OrderItemPlan {
   speed?: string;
   operatorName?: string;
   countryCode?: string;
+  /** "fixed" or a per-day type — "2GB/ngày" vs "2GB" (#033). */
+  type?: string | null;
+  call?: number | null;
+  sms?: number | null;
 }
 
 export interface OrderItem {
