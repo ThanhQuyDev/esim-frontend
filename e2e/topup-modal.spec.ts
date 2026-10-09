@@ -184,8 +184,68 @@ test("a supplier-naming error from the API is replaced with a generic message", 
 
   await page.getByTestId("topup-package-vn-3d-3gb").click();
   await page.getByTestId("topup-wallet-btn").click();
+  // eXU asks for confirmation first (#028, round 4).
+  await page.getByTestId("topup-exu-confirm-btn").click();
 
   const modal = page.getByTestId("topup-modal");
   const text = (await modal.textContent()) ?? "";
   expect(text).not.toContain("MICRO_ESIM");
+});
+
+test("paying with eXU asks for confirmation before charging anything (#028)", async ({ page }) => {
+  await seedAuth(page);
+  await mockTopupPackages(page);
+  await mockWalletBalance(page);
+  let charged = 0;
+  await page.route(`${API_BASE}/api/v1/topup/wallet`, (route) => {
+    charged += 1;
+    return route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ success: true }) });
+  });
+
+  await page.goto(`/esim-noi-dia/test?view=topup&iccid=${ICCID}`, { waitUntil: "domcontentloaded" });
+  await page.getByTestId("topup-package-vn-3d-3gb").click();
+  await page.getByTestId("topup-wallet-btn").click();
+
+  await expect(page.getByTestId("topup-exu-confirm")).toContainText("không thể khôi phục");
+  expect(charged).toBe(0);
+
+  // Back returns to the packages without paying.
+  await page.getByTestId("topup-exu-back").click();
+  await expect(page.getByTestId("topup-wallet-btn")).toBeVisible();
+  expect(charged).toBe(0);
+
+  await page.getByTestId("topup-wallet-btn").click();
+  await page.getByTestId("topup-exu-confirm-btn").click();
+  await expect.poll(() => charged).toBe(1);
+});
+
+test("the bank transfer step can go back to the packages (#028)", async ({ page }) => {
+  await seedAuth(page);
+  await mockTopupPackages(page);
+  await page.route(`${API_BASE}/api/v1/topup/bank-transfer`, (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        success: true,
+        orderId: "TOPUP-1",
+        bankTransferCode: "ESIM123",
+        qrUrl: "https://img.vietqr.io/image/test.png",
+        amount: 179000,
+        accountNumber: "19001234567890",
+        accountName: "CONG TY ESIM VN",
+        bankCode: "TCB",
+      }),
+    }),
+  );
+
+  await page.goto(`/esim-noi-dia/test?view=topup&iccid=${ICCID}`, { waitUntil: "domcontentloaded" });
+  await page.getByTestId("topup-package-vn-3d-3gb").click();
+  await page.getByTestId("topup-bank-transfer-btn").click();
+  await expect(page.getByTestId("bank-transfer-panel")).toBeVisible();
+
+  await page.getByTestId("topup-bank-back").click();
+  await expect(page.getByTestId("bank-transfer-panel")).toHaveCount(0);
+  await expect(page.getByTestId("topup-package-vn-3d-3gb")).toBeVisible();
+  await expect(page.getByTestId("topup-bank-transfer-btn")).toBeVisible();
 });

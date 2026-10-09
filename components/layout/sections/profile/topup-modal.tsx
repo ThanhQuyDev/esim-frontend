@@ -104,6 +104,8 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
 
   const checkoutMutation = useTopupCheckout();
   const bankTransferMutation = useTopupBankTransfer();
+  // eXU pays 100% and cannot be undone, so it asks first (#028, round 4).
+  const [confirmingExu, setConfirmingExu] = useState(false);
   const walletMutation = useTopupWalletCheckout();
   const [bankTransfer, setBankTransfer] =
     useState<BankTransferCheckoutResponse | null>(null);
@@ -128,6 +130,7 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
       setSelectedPackageId(null);
       setErrorMessage(null);
       setBankTransfer(null);
+      setConfirmingExu(false);
       setWantInvoice(false);
       setInvoice({
         companyName: "",
@@ -316,6 +319,16 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
 
   const isCheckingOut = checkoutMutation.isPending;
   const priceVnd = selectedPackage?.vndPrice ?? 0;
+  // The country / region the eSIM is for, so the customer knows which trip a
+  // package recharges (#028, test round 4).
+  const destinationOfEsim = (() => {
+    const dest = esim.plan?.destination;
+    const region = esim.plan?.region;
+    if (dest?.name) return { name: dest.name, flagUrl: dest.flagUrl ?? null };
+    if (region?.name) return { name: region.name, flagUrl: null };
+    return null;
+  })();
+
   const walletBalance = wallet?.availableBalanceVnd ?? 0;
   const walletCovers = priceVnd > 0 && walletBalance >= priceVnd;
   const anyPending =
@@ -367,7 +380,74 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
         {/* Content */}
         <div className="flex-1 overflow-y-auto px-5 py-4">
           {bankTransfer ? (
-            <BankTransferPanel info={bankTransfer} lang={lang} />
+            <>
+              <BankTransferPanel info={bankTransfer} lang={lang} />
+              {/* Back to the packages, or close the topup (#028, round 4). */}
+              <div className="mt-4 flex justify-between gap-2 border-t border-gray-100 pt-3">
+                <button
+                  type="button"
+                  onClick={() => setBankTransfer(null)}
+                  data-testid="topup-bank-back"
+                  className="px-4 py-2.5 rounded-xl text-base sm:text-sm font-medium border border-gray-300 text-gray-700 hover:bg-gray-50"
+                >
+                  {lang === "vi" ? "← Quay lại" : "← Back"}
+                </button>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  data-testid="topup-bank-cancel"
+                  className="px-4 py-2.5 rounded-xl text-base sm:text-sm font-medium text-gray-600 hover:bg-gray-100"
+                >
+                  {lang === "vi" ? "Hủy" : "Cancel"}
+                </button>
+              </div>
+            </>
+          ) : confirmingExu && selectedPackage ? (
+            /* Paying in eXU is final: say so, and ask (#028, test round 4). */
+            <div className="space-y-4 py-2" data-testid="topup-exu-confirm">
+              <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm leading-relaxed text-amber-900">
+                <p className="mb-1 font-semibold">
+                  {lang === "vi" ? "Xác nhận thanh toán bằng eXU" : "Confirm paying with eXU"}
+                </p>
+                <p>
+                  {lang === "vi"
+                    ? `100% giá trị gói ${selectedPackage.name} (${formatVnd(selectedPackage.vndPrice ?? 0)}) sẽ được thanh toán bằng điểm eXU. Thao tác này không thể khôi phục, hoàn tiền hoặc hủy bỏ.`
+                    : `100% of ${selectedPackage.name} (${formatVnd(selectedPackage.vndPrice ?? 0)}) will be paid with eXU points. This cannot be undone, refunded or cancelled.`}
+                </p>
+              </div>
+              {errorMessage && <p className="text-sm text-red-700">{errorMessage}</p>}
+              <div className="flex flex-wrap justify-between gap-2">
+                <button
+                  type="button"
+                  onClick={() => setConfirmingExu(false)}
+                  disabled={walletMutation.isPending}
+                  data-testid="topup-exu-back"
+                  className="px-4 py-2.5 rounded-xl text-base sm:text-sm font-medium border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                >
+                  {lang === "vi" ? "← Quay lại" : "← Back"}
+                </button>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    disabled={walletMutation.isPending}
+                    className="px-4 py-2.5 rounded-xl text-base sm:text-sm font-medium text-gray-600 hover:bg-gray-100 disabled:opacity-50"
+                  >
+                    {lang === "vi" ? "Hủy" : "Cancel"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleWalletPay}
+                    disabled={walletMutation.isPending}
+                    data-testid="topup-exu-confirm-btn"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-base sm:text-sm font-semibold bg-amber-500 text-white hover:bg-amber-600 disabled:opacity-60"
+                  >
+                    {walletMutation.isPending && <Loader2 className="w-4 h-4 animate-spin" />}
+                    {lang === "vi" ? "Xác nhận thanh toán" : "Confirm payment"}
+                  </button>
+                </div>
+              </div>
+            </div>
           ) : packagesLoading ? (
             <div className="flex items-center justify-center py-16">
               <Loader2 className="w-6 h-6 animate-spin text-blue-500" />
@@ -410,6 +490,7 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
                     }}
                     t={t}
                     lang={lang}
+                    destination={destinationOfEsim}
                   />
                 ))}
               </div>
@@ -418,7 +499,7 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
         </div>
 
         {/* Footer / Action */}
-        {!bankTransfer && !packagesLoading && !packagesError && packages.length > 0 && (
+        {!bankTransfer && !confirmingExu && !packagesLoading && !packagesError && packages.length > 0 && (
           <div className="border-t border-gray-100 bg-gray-50/80 px-5 py-3 space-y-2.5">
             {errorMessage && (
               <div className="flex items-start gap-2 rounded-lg bg-red-50 border border-red-100 p-2.5">
@@ -427,7 +508,7 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
               </div>
             )}
             {/* VAT invoice, same fields as the normal eSIM checkout (#028). */}
-            <div className="rounded-lg border border-gray-200 bg-white p-3">
+            <div className="rounded-md border border-gray-200 bg-white p-3">
               <label className="flex cursor-pointer items-center gap-2 text-base sm:text-sm font-medium text-gray-800">
                 <input
                   type="checkbox"
@@ -455,8 +536,10 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
                       onChange={(e) =>
                         setInvoice((prev) => ({ ...prev, [field]: e.target.value }))
                       }
-                      placeholder={label}
-                      aria-label={label}
+                      // Every field is required once an invoice is asked for (#028).
+                      placeholder={`${label} *`}
+                      aria-label={`${label} (bắt buộc)`}
+                      aria-required="true"
                       className={`h-10 rounded-lg border border-gray-300 px-3 text-base sm:text-sm outline-none focus:border-gray-500 ${
                         field === "address" ? "sm:col-span-2" : ""
                       }`}
@@ -478,7 +561,15 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
                   shown — when it cannot cover the package, so the shortfall is
                   obvious before clicking. */}
               <button
-                onClick={handleWalletPay}
+                onClick={() => {
+                  setErrorMessage(null);
+                  if (!selectedPackage) {
+                    setErrorMessage(t.topupSelectPackage);
+                    return;
+                  }
+                  if (invoiceIfRequested() === "invalid") return;
+                  setConfirmingExu(true);
+                }}
                 disabled={!selectedPackage || !walletCovers || anyPending}
                 data-testid="topup-wallet-btn"
                 title={
@@ -546,6 +637,8 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
 }
 
 interface TopupPackageItemProps {
+  /** Where the eSIM works — flag + name before the data label (#028). */
+  destination?: { name: string; flagUrl?: string | null } | null;
   pkg: TopupPackage;
   selected: boolean;
   onSelect: () => void;
@@ -553,7 +646,7 @@ interface TopupPackageItemProps {
   lang: "en" | "vi";
 }
 
-function TopupPackageItem({ pkg, selected, onSelect, t, lang }: TopupPackageItemProps) {
+function TopupPackageItem({ pkg, selected, onSelect, t, lang, destination }: TopupPackageItemProps) {
   const priceLabel = pkg.vndPrice
     ? formatVnd(pkg.vndPrice)
     : formatUsd(pkg.retailPrice);
@@ -571,7 +664,20 @@ function TopupPackageItem({ pkg, selected, onSelect, t, lang }: TopupPackageItem
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2 mb-1.5">
+          <div className="flex flex-wrap items-center gap-2 mb-1.5">
+            {destination?.name && (
+              <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-gray-800" data-testid="topup-destination">
+                {destination.flagUrl && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={destination.flagUrl}
+                    alt=""
+                    className="h-5 w-5 rounded-full border border-gray-200 object-cover"
+                  />
+                )}
+                {destination.name}
+              </span>
+            )}
             {pkg.isUnlimited ? (
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 text-sm font-semibold">
                 <InfinityIcon className="w-3 h-3" />
