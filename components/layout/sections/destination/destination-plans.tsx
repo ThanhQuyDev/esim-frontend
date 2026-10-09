@@ -27,6 +27,7 @@ import {
 import { SimplePlanList } from "./simple-plan-list";
 import { EkycModal } from "./ekyc-modal";
 import { InstallBeforeTripNotice } from "./install-before-trip-notice";
+import { useDeviceVariant } from "@/lib/device-variant-context";
 
 const EMPTY_PLANS: PlansByDestinationResponse = {
   dataPlans: [],
@@ -311,10 +312,14 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
   // KYC inline banner (shown next to the price block)
   const showInlineKyc = !!selectedPlan?.isKyc;
 
+  // One layout per device, never both in the HTML — each carries an <h1> (#001).
+  const deviceVariant = useDeviceVariant();
+
   return (
     <div className="bg-white max-w-[100vw]">
       {/* ── MOBILE VIEW (≤840px) ── */}
-      <div className="min-[841px]:hidden max-w-full">
+      {deviceVariant === "mobile" && (
+      <div className="max-w-full">
         <MobileDestinationPlans
           destination={destinationData || destination}
           plans={plans}
@@ -349,9 +354,11 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
           getTotalForDays={getTotalForDays}
         />
       </div>
+      )}
 
       {/* ── DESKTOP VIEW (>840px) ── */}
-      <div className="hidden min-[841px]:block">
+      {deviceVariant === "desktop" && (
+      <div>
         <div className="max-w-[1168px] mx-auto pb-[60px] grid grid-cols-[360px_minmax(0,1fr)] xl:grid-cols-[468px_minmax(0,1fr)] gap-8 items-start max-[1100px]:grid-cols-2 max-[1100px]:px-5 max-[1100px]:gap-6">
           {/* ── LEFT COLUMN — connected ProductCard + DeviceChecker ── */}
           <div className="flex flex-col gap-4 min-w-0">
@@ -586,6 +593,7 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
           ctaRef={desktopCtaRef}
         />
       </div>
+      )}
 
       {/* eKYC modal — single instance shared by desktop banner + mobile inline */}
       <EkycModal open={ekycModalOpen} onClose={() => setEkycModalOpen(false)} lang={lang} />

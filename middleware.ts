@@ -2,6 +2,7 @@ import createMiddleware from 'next-intl/middleware';
 import { NextResponse, type NextRequest } from 'next/server';
 import { routing } from './i18n/routing';
 import { resolveGeoLocaleRedirect } from './i18n/geo-locale';
+import { isDirectVariantRequest, isMobileUserAgent, mobileVariantPath } from './i18n/device-variant';
 
 const handleI18nRouting = createMiddleware(routing);
 
@@ -28,11 +29,30 @@ export default function middleware(request: NextRequest) {
     return redirect;
   }
 
+  // The mobile variant route is internal only — never a second public URL.
+  if (isDirectVariantRequest(request.nextUrl.pathname)) {
+    const url = request.nextUrl.clone();
+    url.pathname = '/vi/__not-found';
+    return NextResponse.rewrite(url, { status: 404 });
+  }
+
   const response = handleI18nRouting(request);
   // Expose the current request path to server components so per-page SEO /
   // structured-data lookups know exactly which page is being rendered.
   // next-intl does not set this header on its own.
   response.headers.set('x-pathname', request.nextUrl.pathname);
+
+  // Phones get the product page's mobile-only render, so the HTML carries a
+  // single layout and a single <h1> (#001) — see `i18n/device-variant.ts`.
+  if (response.status < 300 && isMobileUserAgent(request.headers.get('user-agent'))) {
+    const rewritten = response.headers.get('x-middleware-rewrite');
+    const internal = rewritten ? new URL(rewritten) : request.nextUrl.clone();
+    const variant = mobileVariantPath(internal.pathname);
+    if (variant) {
+      internal.pathname = variant;
+      response.headers.set('x-middleware-rewrite', internal.toString());
+    }
+  }
   return response;
 }
 
