@@ -362,50 +362,20 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
         <div className="max-w-[1168px] mx-auto pb-[60px] grid grid-cols-[360px_minmax(0,1fr)] xl:grid-cols-[468px_minmax(0,1fr)] gap-8 items-start max-[1100px]:grid-cols-2 max-[1100px]:px-5 max-[1100px]:gap-6">
           {/* ── LEFT COLUMN — connected ProductCard + DeviceChecker ── */}
           <div className="flex flex-col gap-4 min-w-0">
-            {isLoading ? (
-              <>
-                {/* ProductCard skeleton */}
-                <div className="h-[400px] bg-gray-100 rounded-xl animate-pulse p-5 flex flex-col gap-4">
-                  <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 rounded-full bg-gray-200" />
-                    <div className="flex-1 space-y-2">
-                      <div className="h-4 w-2/3 rounded-md bg-gray-200" />
-                      <div className="h-3 w-1/3 rounded-md bg-gray-200" />
-                    </div>
-                  </div>
-                  <div className="h-px w-full bg-gray-200" />
-                  <div className="space-y-3">
-                    <div className="h-3 w-full rounded-md bg-gray-200" />
-                    <div className="h-3 w-5/6 rounded-md bg-gray-200" />
-                    <div className="h-3 w-4/6 rounded-md bg-gray-200" />
-                  </div>
-                  <div className="mt-auto space-y-3">
-                    <div className="h-10 w-full rounded-lg bg-gray-200" />
-                    <div className="h-10 w-full rounded-lg bg-gray-200" />
-                  </div>
-                </div>
-                {/* DeviceChecker skeleton */}
-                <div className="h-[180px] bg-gray-100 rounded-xl animate-pulse p-5 flex flex-col gap-3">
-                  <div className="h-4 w-1/2 rounded-md bg-gray-200" />
-                  <div className="h-3 w-3/4 rounded-md bg-gray-200" />
-                  <div className="mt-auto h-10 w-full rounded-lg bg-gray-200" />
-                </div>
-              </>
-            ) : (
-              <>
-                <ProductCard
-                  destination={destinationData || destination}
-                  dict={dict}
-                  lang={lang}
-                  planSource={planSource}
-                  selectedPlan={selectedPlan}
-                  region={regionData}
-                  descriptionVars={descriptionVars}
-                  onOpenEkyc={() => setEkycModalOpen(true)}
-                />
-                <DeviceChecker dict={dict} lang={lang} />
-              </>
-            )}
+            {/* Rendered straight away, not behind the plans skeleton: it carries
+                the page's <h1>, which must be in the server HTML (#001). It copes
+                with no selected plan yet, like the mobile hero does. */}
+            <ProductCard
+              destination={destinationData || destination}
+              dict={dict}
+              lang={lang}
+              planSource={planSource}
+              selectedPlan={selectedPlan}
+              region={regionData}
+              descriptionVars={descriptionVars}
+              onOpenEkyc={() => setEkycModalOpen(true)}
+            />
+            <DeviceChecker dict={dict} lang={lang} />
           </div>
 
           {/* ── RIGHT COLUMN ── */}
