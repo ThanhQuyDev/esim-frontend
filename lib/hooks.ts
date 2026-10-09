@@ -1554,6 +1554,9 @@ export interface EsimLookupResult {
   usageAvailable: boolean;
   callMinutes: number | null;
   smsCount: number | null;
+  /** Left, as the provider reports it (#015, round 4); null when it does not. */
+  callMinutesRemaining?: number | null;
+  smsRemaining?: number | null;
 }
 
 /**

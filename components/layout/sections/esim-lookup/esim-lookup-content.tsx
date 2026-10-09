@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Calendar, Loader2, MessageSquare, PhoneCall, Search, Wifi } from "lucide-react";
+import { Calendar, Loader2, MessageSquare, PhoneCall, RefreshCw, Search, Wifi } from "lucide-react";
 import { fetchEsimLookupToken, useEsimLookup } from "@/lib/hooks";
 import type { EsimLookupResult } from "@/lib/hooks";
 import {
@@ -35,7 +35,7 @@ export function EsimLookupContent({
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  const { data, isLoading, isError } = useEsimLookup(token);
+  const { data, isLoading, isError, refetch, isFetching } = useEsimLookup(token);
 
   // A token that no longer resolves (rotated secret, deleted eSIM) must not
   // leave the visitor staring at a spinner-free blank: fall back to the form.
@@ -125,7 +125,13 @@ export function EsimLookupContent({
       )}
 
       {token && !isLoading && !isError && data && (
-        <LookupResult data={data} dict={dict} lang={lang} />
+        <LookupResult
+          data={data}
+          dict={dict}
+          lang={lang}
+          onRefresh={() => void refetch()}
+          refreshing={isFetching}
+        />
       )}
     </div>
   );
@@ -135,10 +141,15 @@ function LookupResult({
   data,
   dict,
   lang,
+  onRefresh,
+  refreshing,
 }: {
   data: EsimLookupResult;
   dict: EsimLookupDict;
   lang: string;
+  /** Ask the provider again — the page does not poll (#015, test round 4). */
+  onRefresh: () => void;
+  refreshing: boolean;
 }) {
   // Same derivations as the signed-in profile card, so the two never disagree:
   // the clock starts when the eSIM first connects, not at purchase (#062).
@@ -185,14 +196,27 @@ function LookupResult({
             </p>
           )}
         </div>
-        <span
-          className={`inline-flex shrink-0 items-center rounded-full px-2 py-0.5 text-sm font-medium ${
-            USAGE_STATUS_COLOR[data.status?.toUpperCase()] || "bg-gray-100 text-gray-500"
-          }`}
-          data-testid="lookup-status"
-        >
-          {statusLabel(data.status, lang)}
-        </span>
+        <div className="flex shrink-0 items-center gap-2">
+          <span
+            className={`inline-flex items-center rounded-full px-2 py-0.5 text-sm font-medium ${
+              USAGE_STATUS_COLOR[data.status?.toUpperCase()] || "bg-gray-100 text-gray-500"
+            }`}
+            data-testid="lookup-status"
+          >
+            {statusLabel(data.status, lang)}
+          </span>
+          <button
+            type="button"
+            onClick={onRefresh}
+            disabled={refreshing}
+            title={dict.result.refresh}
+            aria-label={dict.result.refresh}
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 text-gray-500 transition-colors hover:bg-gray-50 hover:text-gray-900 disabled:opacity-60"
+            data-testid="lookup-refresh"
+          >
+            <RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
+          </button>
+        </div>
       </div>
 
       {!data.usageAvailable ? (
@@ -260,21 +284,44 @@ function LookupResult({
         </>
       )}
 
-      {/* Minutes / SMS allowance, which the eSIM pages used to omit entirely (#023). */}
-      {(data.callMinutes || data.smsCount) && (
-        <div className="flex flex-wrap gap-4 border-t border-gray-100 pt-3">
-          {!!data.callMinutes && (
-            <span className="inline-flex items-center gap-1.5 text-sm text-gray-600">
-              <PhoneCall className="h-3.5 w-3.5 text-gray-400" />
-              {data.callMinutes} {dict.result.callMinutes}
-            </span>
-          )}
-          {!!data.smsCount && (
-            <span className="inline-flex items-center gap-1.5 text-sm text-gray-600">
-              <MessageSquare className="h-3.5 w-3.5 text-gray-400" />
-              {data.smsCount} {dict.result.sms}
-            </span>
-          )}
+      {/* Minutes / SMS (#023): a bar like the data one when the provider
+          reports what is left (#015, test round 4), the allowance otherwise. */}
+      {(!!data.callMinutes || !!data.smsCount) && (
+        <div className="space-y-3 border-t border-gray-100 pt-3" data-testid="lookup-voice-sms">
+          {!!data.callMinutes &&
+            (data.callMinutesRemaining != null ? (
+              <DataUsageBar
+                label={dict.result.callBar}
+                used={Math.max(0, data.callMinutes - data.callMinutesRemaining)}
+                total={data.callMinutes}
+                unit={dict.result.minutesUnit}
+                isUnlimited={false}
+                lang={lang}
+                integer
+              />
+            ) : (
+              <span className="inline-flex items-center gap-1.5 text-sm text-gray-600">
+                <PhoneCall className="h-3.5 w-3.5 text-gray-400" />
+                {data.callMinutes} {dict.result.callMinutes}
+              </span>
+            ))}
+          {!!data.smsCount &&
+            (data.smsRemaining != null ? (
+              <DataUsageBar
+                label={dict.result.smsBar}
+                used={Math.max(0, data.smsCount - data.smsRemaining)}
+                total={data.smsCount}
+                unit={dict.result.smsUnit}
+                isUnlimited={false}
+                lang={lang}
+                integer
+              />
+            ) : (
+              <span className="ml-4 inline-flex items-center gap-1.5 text-sm text-gray-600">
+                <MessageSquare className="h-3.5 w-3.5 text-gray-400" />
+                {data.smsCount} {dict.result.sms}
+              </span>
+            ))}
         </div>
       )}
 
@@ -297,6 +344,10 @@ function LookupResult({
           {new Date(data.lastUpdateTime).toLocaleString(lang === "vi" ? "vi-VN" : "en-US")}
         </p>
       )}
+
+      <p className="border-t border-gray-100 pt-3 text-center text-xs text-gray-400" data-testid="lookup-delay-note">
+        {dict.result.delayNote}
+      </p>
     </div>
   );
 }

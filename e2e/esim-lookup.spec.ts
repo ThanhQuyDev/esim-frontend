@@ -145,3 +145,29 @@ test("minutes and SMS allowances are shown when the plan has them", async ({ pag
   await expect(page.getByTestId("lookup-result")).toContainText("30 phút gọi");
   await expect(page.getByTestId("lookup-result")).toContainText("100 tin nhắn SMS");
 });
+
+test("minutes and SMS left are drawn as bars, with a refresh button and the delay note (#015)", async ({ page }) => {
+  let calls = 0;
+  await page.route(`${API_BASE}/api/v1/esims/lookup**`, (route) => {
+    if (route.request().method() !== "GET") return route.fallback();
+    calls += 1;
+    return route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify(
+        lookup({ callMinutes: 30, callMinutesRemaining: 20, smsCount: 100, smsRemaining: 75 }),
+      ),
+    });
+  });
+
+  await page.goto(`/tra-cuu-esim?token=${TOKEN}`, { waitUntil: "domcontentloaded" });
+
+  const voiceSms = page.getByTestId("lookup-voice-sms");
+  await expect(voiceSms).toContainText("Phút gọi");
+  await expect(voiceSms).toContainText("Tin nhắn SMS");
+  await expect(page.getByTestId("lookup-delay-note")).toContainText("độ trễ 1 - 2 giờ");
+
+  const before = calls;
+  await page.getByTestId("lookup-refresh").click();
+  await expect.poll(() => calls).toBeGreaterThan(before);
+});
