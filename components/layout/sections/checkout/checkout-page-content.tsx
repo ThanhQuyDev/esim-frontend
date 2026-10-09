@@ -55,7 +55,9 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
   const [coupon, setCoupon] = useState<Coupon | null>(null);
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("onepay");
+  // QR bank transfer is ticked by default — it is the method listed first
+  // (#032, test round 4); the card (OnePay) is the alternative.
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("bank_transfer");
   const [wantInvoice, setWantInvoice] = useState(false);
   const [showInvoiceForm, setShowInvoiceForm] = useState(false);
   const [invoiceInfo, setInvoiceInfo] = useState<InvoiceInfo>({
@@ -217,7 +219,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
     if (isWalletOnlyPayment && paymentMethod !== "wallet") {
       setPaymentMethod("wallet");
     } else if (!isWalletOnlyPayment && paymentMethod === "wallet") {
-      setPaymentMethod("onepay");
+      setPaymentMethod("bank_transfer");
     }
   }, [isWalletOnlyPayment, paymentMethod]);
 

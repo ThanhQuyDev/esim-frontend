@@ -88,3 +88,14 @@ test("keeps the QR row above the card row on a phone width", async ({ page }) =>
   expect(card).not.toBeNull();
   expect(qr!.y).toBeLessThan(card!.y);
 });
+
+test("ticks the QR method by default (#032, test round 4)", async ({ page }) => {
+  await openCheckout(page);
+
+  await expect(
+    page.getByTestId("payment-method-bank_transfer").locator('input[type="radio"]'),
+  ).toBeChecked();
+  await expect(
+    page.getByTestId("payment-method-onepay").locator('input[type="radio"]'),
+  ).not.toBeChecked();
+});
