@@ -1501,6 +1501,16 @@ export interface MyEsim {
   topupPackageNames?: string | null;
   /** The order it was bought in, shown above the ICCID (#025, test round 4). */
   orderNumber?: string | null;
+  /** Each topup applied, newest first — "Thông tin nạp thêm" (#030). */
+  topups?: Array<{
+    orderNumber: string;
+    packageName: string | null;
+    packageId?: string | null;
+    dataText: string | null;
+    durationDays: number | null;
+    isUnlimited: boolean;
+    createdAt: string;
+  }>;
 }
 
 

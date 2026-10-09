@@ -50,6 +50,21 @@ const CARDS = [
   }),
   // #5 topped up before the snapshot existed (#015): no package name to show.
   esim(5, { topupCount: 2, topupPackageNames: null }),
+  // #6 the full "Thông tin nạp thêm" detail (#030, round 4).
+  esim(6, {
+    topupCount: 1,
+    topupPackageNames: "3 GB - 30 SMS - 30 Mins - 7 days",
+    topups: [
+      {
+        orderNumber: "TOPUP-6",
+        packageName: "3 GB - 30 SMS - 30 Mins - 7 days",
+        dataText: "3 GB",
+        durationDays: 7,
+        isUnlimited: false,
+        createdAt: "2026-10-03T00:00:00.000Z",
+      },
+    ],
+  }),
 ];
 
 function card(page: Page, id: number): Locator {
@@ -95,17 +110,17 @@ test.beforeEach(async ({ page }) => {
 });
 
 test("shows a TOPUP badge beside the product name once topped up", async ({ page }) => {
-  await expect(card(page, 1).getByTestId("esim-topup-badge")).toHaveText("TOPUP");
+  await expect(card(page, 1).getByTestId("esim-topup-badge")).toHaveText("Đã nạp thêm");
 });
 
 test("counts repeated topups in the badge", async ({ page }) => {
-  await expect(card(page, 2).getByTestId("esim-topup-badge")).toHaveText("TOPUP ×3");
+  await expect(card(page, 2).getByTestId("esim-topup-badge")).toHaveText("Đã nạp thêm ×3");
 });
 
 test("shows no badge on an eSIM that was never topped up", async ({ page }) => {
   await expect(card(page, 3).getByTestId("esim-topup-badge")).toHaveCount(0);
   // ...while its neighbours do have one, so this is not an empty page passing.
-  await expect(page.getByTestId("esim-topup-badge")).toHaveCount(4);
+  await expect(page.getByTestId("esim-topup-badge")).toHaveCount(5);
 });
 
 test("names the topped-up package in the info tab", async ({ page }) => {
@@ -122,4 +137,11 @@ test("falls back to the count when the package name is missing", async ({ page }
   await expand(page, 5);
 
   await expect(card(page, 5).getByTestId("esim-topup-packages")).toContainText("2 lần topup");
+});
+
+test("lists each topup with its data, days, minutes and SMS (#030)", async ({ page }) => {
+  await expand(page, 6);
+  const details = card(page, 6).getByTestId("esim-topup-packages");
+  await expect(details).toContainText("3 GB - 30 SMS - 30 Mins - 7 days");
+  await expect(details).toContainText("3 GB · 7 ngày · 30 phút gọi · 30 SMS");
 });
