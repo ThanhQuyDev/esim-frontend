@@ -249,3 +249,25 @@ test("the bank transfer step can go back to the packages (#028)", async ({ page 
   await expect(page.getByTestId("topup-package-vn-3d-3gb")).toBeVisible();
   await expect(page.getByTestId("topup-bank-transfer-btn")).toBeVisible();
 });
+
+test("the pay button keeps its amount on one line on a desktop screen (#029)", async ({ page }) => {
+  await page.setViewportSize({ width: 1366, height: 800 });
+  await seedAuth(page);
+  await mockTopupPackages(page);
+  await mockWalletBalance(page);
+  await page.goto(`/esim-noi-dia/test?view=topup&iccid=${ICCID}`, { waitUntil: "domcontentloaded" });
+  await page.getByTestId("topup-package-vn-3d-3gb").click();
+
+  const button = page.getByTestId("topup-card-btn");
+  await expect(button).toContainText("đ");
+  // One line of text: no taller than a single-line button of the same padding.
+  const height = await button.evaluate((el) => el.getBoundingClientRect().height);
+  expect(height).toBeLessThan(48);
+  // And the three payment buttons share one row.
+  const tops = await Promise.all(
+    ["topup-wallet-btn", "topup-bank-transfer-btn", "topup-card-btn"].map((id) =>
+      page.getByTestId(id).evaluate((el) => Math.round(el.getBoundingClientRect().top)),
+    ),
+  );
+  expect(Math.max(...tops) - Math.min(...tops)).toBeLessThanOrEqual(2);
+});

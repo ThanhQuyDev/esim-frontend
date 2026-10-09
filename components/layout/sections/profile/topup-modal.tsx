@@ -347,7 +347,9 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
       <div
         data-testid="topup-modal"
         className={`relative w-full ${
-          bankTransfer ? "sm:max-w-3xl" : "sm:max-w-2xl"
+          // Wide enough for "Tiếp tục thanh toán · 179.000đ" on one line beside
+          // the eXU and transfer buttons (#029, test round 4).
+          bankTransfer ? "sm:max-w-4xl" : "sm:max-w-3xl"
         } max-h-[92vh] sm:max-h-[85vh] bg-white sm:rounded-2xl rounded-t-2xl shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom duration-300`}
         onClick={(e) => e.stopPropagation()}
       >
@@ -508,7 +510,9 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
               </div>
             )}
             {/* VAT invoice, same fields as the normal eSIM checkout (#028). */}
-            <div className="rounded-md border border-gray-200 bg-white p-3">
+            {/* A squarer frame (#028): this site's rounded-md / -lg are 20 / 40px,
+                which turned the box into a pill around inputs already rounded. */}
+            <div className="rounded-[6px] border border-gray-200 bg-white p-3">
               <label className="flex cursor-pointer items-center gap-2 text-base sm:text-sm font-medium text-gray-800">
                 <input
                   type="checkbox"
@@ -608,7 +612,7 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
                 onClick={handleConfirm}
                 disabled={!canConfirm}
                 data-testid="topup-card-btn"
-                className="flex-1 min-w-[180px] inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-base sm:text-sm font-semibold bg-blue-600 text-white hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 min-w-[220px] inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-base sm:text-sm font-semibold bg-blue-600 text-white hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
               >
                 {isCheckingOut ? (
                   <>
