@@ -40,6 +40,7 @@ import Link from "next/link";
 import { localizedHref } from "@/lib/route-mapping";
 import { SITE_BASE_URL } from "@/lib/hreflang";
 import QRCode from "qrcode";
+import { useSignOut } from "@/lib/use-sign-out";
 
 interface WalletPageContentProps {
   lang: "en" | "vi";
@@ -117,7 +118,8 @@ function isCredit(type: WalletTransaction["type"]): boolean {
 
 export function WalletPageContent({ lang, embedded }: WalletPageContentProps) {
   const t = walletTranslations[lang];
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
+  const signOut = useSignOut(lang);
   const [activeTab, setActiveTab] = useState<Tab>("wallet");
 
   if (!user) {
@@ -179,7 +181,7 @@ export function WalletPageContent({ lang, embedded }: WalletPageContentProps) {
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-[1.7rem] sm:text-2xl font-medium text-gray-900">{t.pageTitle}</h1>
           <button
-            onClick={logout}
+            onClick={signOut}
             className="inline-flex items-center gap-1.5 px-3 py-1.5 text-base sm:text-sm text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
           >
             <LogOut className="w-4 h-4" />

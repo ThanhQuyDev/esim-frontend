@@ -47,6 +47,7 @@ import { withCmsMenuSlides } from "@/lib/menu-slides";
 // Swiper
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Autoplay, EffectFade } from "swiper/modules";
+import { useSignOut } from "@/lib/use-sign-out";
 
 /* ===== Types ===== */
 
@@ -557,7 +558,8 @@ function MainNavbar({ lang, dict, topBars = [], menuSlides }: NavbarProps) {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [destinationsOpen, setDestinationsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const { user, openAuthModal, logout } = useAuth();
+  const { user, openAuthModal } = useAuth();
+  const signOut = useSignOut(lang);
   const { apiCartItems, isApiCart, getLocalCartData } = useCart();
   const cartCount = isApiCart
     ? apiCartItems.length
@@ -922,7 +924,7 @@ function MainNavbar({ lang, dict, topBars = [], menuSlides }: NavbarProps) {
                         </span>
                       </Link>
                       <button
-                        onClick={logout}
+                        onClick={signOut}
                         className="flex items-center gap-1 px-3 py-[7px] text-text-tertiary transition-colors rounded-lg cursor-pointer hover:bg-[rgba(0,0,0,0.06)] hover:text-text-primary"
                         aria-label={lang === "vi" ? "Đăng xuất" : "Sign out"}
                       >
@@ -1180,7 +1182,8 @@ function MobileSidebar({
 }) {
   const [open, setOpen] = useState(false);
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
-  const { user, openAuthModal, logout } = useAuth();
+  const { user, openAuthModal } = useAuth();
+  const signOut = useSignOut(lang);
 
   const menuData = withCmsMenuSlides(getMenuData(lang), menuSlides);
   const isVi = lang === 'vi';
@@ -1641,7 +1644,7 @@ function MobileSidebar({
                     {user.firstName || user.email}
                   </Link>
                   <button
-                    onClick={() => { logout(); setOpen(false); }}
+                    onClick={() => { setOpen(false); signOut(); }}
                     className="flex items-center justify-center gap-2 w-full px-5 py-3 border-md border-border-focus text-text-primary body-md-medium rounded-full cursor-pointer hover:bg-bg-primary transition-colors"
                   >
                     <LogOut className="w-4 h-4" />
