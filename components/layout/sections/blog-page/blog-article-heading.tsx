@@ -3,7 +3,7 @@ import Image from "next/image";
 import { Calendar, BookOpen } from "lucide-react";
 import type { Blog } from "@/lib/api";
 import { formatDate, formatTimeRead, authorSlug, authorHref, type SocialLink } from "./blog-detail-helpers";
-import { SocialIconsCol, SocialIconsRow } from "./blog-social-icons";
+import { BlogShareButtons } from "./blog-share-buttons";
 
 export function BlogArticleHeading({ blog, lang, socialLinks = [] }: { blog: Blog; lang: string; socialLinks?: SocialLink[] }) {
   const category = blog.category;
@@ -38,7 +38,8 @@ export function BlogArticleHeading({ blog, lang, socialLinks = [] }: { blog: Blo
                     </div>
                   </div>
                   <div>
-                    <SocialIconsCol links={socialLinks} />
+                    {/* Share this post, not links to our own profiles (#034). */}
+                    <BlogShareButtons title={blog.title} lang={lang} direction="col" className="hidden sm:flex" />
                   </div>
                 </div>
               </div>
@@ -47,7 +48,7 @@ export function BlogArticleHeading({ blog, lang, socialLinks = [] }: { blog: Blo
               <div className="col-span-12 lg:col-start-2 lg:col-span-10">
                 <div className="flex flex-col-reverse sm:flex-row justify-between w-full h-full">
                   {/* Mobile social icons */}
-                  <SocialIconsRow links={socialLinks} className="sm:hidden mt-6" />
+                  <BlogShareButtons title={blog.title} lang={lang} className="sm:hidden mt-6" />
 
                   {/* Author */}
                   <div className="flex">

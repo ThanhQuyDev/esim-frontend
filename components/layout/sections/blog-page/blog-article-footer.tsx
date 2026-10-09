@@ -3,7 +3,7 @@ import Image from "next/image";
 import { BookOpen } from "lucide-react";
 import type { Blog } from "@/lib/api";
 import { formatDate, formatTimeRead, authorSlug, authorHref, categorySlug, blogDetailHref, type SocialLink } from "./blog-detail-helpers";
-import { SocialIconsRow } from "./blog-social-icons";
+import { BlogShareButtons } from "./blog-share-buttons";
 
 function RelatedArticle({ article, lang }: { article: Blog; lang: string }) {
   return (
@@ -102,7 +102,7 @@ export function BlogArticleFooter({ blog, lang, socialLinks }: { blog: Blog; lan
                 <div className="h-full w-full group/stack [&>div:empty]:hidden flex-col text-start items-start justify-start gap-y-6 grid grid-cols-1">
                   {/* Social Icons */}
                   <div>
-                    <SocialIconsRow links={socialLinks} />
+                    <BlogShareButtons title={blog.title} lang={lang} />
                   </div>
 
                   {/* Divider */}
