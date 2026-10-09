@@ -1311,6 +1311,7 @@
       "line1Fast": "Data <strong>{data}</strong> tốc độ cao → Tốc độ {fupSpeed} không giới hạn.",
       "line1Fixed": "Data <strong>{data} / {days} ngày</strong> tốc độ cao – Hết lưu lượng, ngừng truy cập",
       "line1UnlimitedHigh": "Không giới hạn data tốc độ <strong>{fupSpeed}</strong>",
+      "line1UnlimitedFull": "Không giới hạn data <strong>tốc độ cao</strong>",
       "line3": "Hỗ trợ truy cập TikTok, Chat GPT, Zalo, Facebook, YouTube…"
     },
     "disclaimer": "Kiểm tra thiết bị tương thích trước khi thanh toán.",

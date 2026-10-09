@@ -290,6 +290,16 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
         .replace("{fupSpeed}", fupSpeed);
     }
     if (plans.dailyUnlimited.some((p) => p.id === selectedPlan.id)) {
+      // Three kinds share the "unlimited" type (#002, test round 4): a daily
+      // high-speed quota then a usable speed ("1GB/day → 5Mbps"), a speed-only
+      // cap ("unlimited at 10Mbps"), and unlimited at every speed.
+      if (selectedPlan.dataMb > 0 && selectedPlan.fupSpeed) {
+        const template = (dict.greenBox as any).line1Fast || (dict.greenBox as any).line1;
+        return template.replace("{data}", dataLabel).replace("{fupSpeed}", fupSpeed);
+      }
+      if (!selectedPlan.fupSpeed) {
+        return (dict.greenBox as any).line1UnlimitedFull || "";
+      }
       const template = (dict.greenBox as any).line1UnlimitedHigh || (dict.greenBox as any).line1;
       return template.replace("{data}", dataLabel).replace("{fupSpeed}", fupSpeed);
     }

@@ -1311,6 +1311,7 @@
       "line1Fast": "Data <strong>{data}</strong> high speed → {fupSpeed} unlimited.",
       "line1Fixed": "Data <strong>{data} / {days} days</strong> high speed – Out of data, access stopped",
       "line1UnlimitedHigh": "Unlimited data at <strong>{fupSpeed}</strong> speed",
+      "line1UnlimitedFull": "Unlimited <strong>high-speed</strong> data",
       "line3": "Supports TikTok, ChatGPT, Zalo, Facebook, YouTube…"
     },
     "disclaimer": "Make sure your device is eSIM-compatible before purchasing.",
