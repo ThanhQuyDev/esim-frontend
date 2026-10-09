@@ -176,6 +176,20 @@ export const routing = defineRouting({
       en: '/terms-of-service',
     },
 
+    // Landing pages of the account emails (#012, test round 4)
+    '/password-change': {
+      vi: '/password-change',
+      en: '/password-change',
+    },
+    '/confirm-email': {
+      vi: '/confirm-email',
+      en: '/confirm-email',
+    },
+    '/confirm-new-email': {
+      vi: '/confirm-new-email',
+      en: '/confirm-new-email',
+    },
+
     // Legal policies (refund, delivery, terms, privacy)
     '/legal/[slug]': {
       vi: '/phap-ly/[slug]',
