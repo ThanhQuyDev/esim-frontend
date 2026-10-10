@@ -2,7 +2,9 @@ import { headers } from 'next/headers';
 import { resolveCmsSeoLookupPath } from '@/lib/cms-seo-url';
 import {
   fetchSeoConfigByUrl,
+  getBlogAuthor,
   getBlogBySlug,
+  getBlogsByAuthor,
   getDestinationBySlug,
   getRegionBySlug,
   getPlansByDestinationSlug,
@@ -14,6 +16,7 @@ import {
   buildWebSiteSchema
 } from '@/lib/site-schema';
 import { buildArticleSchema } from '@/lib/article-schema';
+import { authorSlugFromPath, buildAuthorPageSchema } from '@/lib/author-schema';
 import { buildSeoTemplateVars } from '@/lib/seo-vars';
 import { buildProductSchema, hasProductSchema } from '@/lib/product-schema';
 import { getUsdVndRate } from '@/lib/exchange-rate';
@@ -167,6 +170,20 @@ export async function PageStructuredData({ locale }: { locale: string }) {
     siteSchemas.push(
       buildArticleSchema({ blog, path: normalizedPath, lang: locale })
     );
+  }
+
+  // An author page: who the author is, and what they wrote (#050, test round 4).
+  const authorSlug = authorSlugFromPath(pathWithoutLocale);
+  if (authorSlug) {
+    const author = await getBlogAuthor(authorSlug).catch(() => null);
+    if (author) {
+      const blogs = await getBlogsByAuthor(authorSlug, { lang: locale, limit: 20 })
+        .then((res) => res.data.filter((b) => b.isPublished))
+        .catch(() => []);
+      siteSchemas.push(
+        buildAuthorPageSchema({ author, blogs, path: normalizedPath, lang: locale })
+      );
+    }
   }
 
   // ── Product + Offer, generated from the plans actually on sale (#051) ──

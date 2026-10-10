@@ -132,7 +132,7 @@ test.describe("which plans the filter keeps", () => {
     const filtered = filterTiktokPlans(
       payload({
         dailyUnlimited: [plan(1, IPHONE_ONLY)],
-        tiktokHiddenByPrice: [{ ...plan(77, WORKS, 300000), type: "unlimited" }],
+        tiktokHiddenByPrice: [{ ...(plan(77, WORKS, 300000) as object), type: "unlimited" } as never],
       }),
     );
 
