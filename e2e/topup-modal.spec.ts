@@ -75,6 +75,10 @@ test("the popup header shows the product name and ICCID, never the supplier", as
   const modal = page.getByTestId("topup-modal");
   await expect(modal).toBeVisible();
   await expect(modal).toContainText(ICCID);
+  // The ICCID sits in the title itself (#062, test round 4).
+  await expect(page.getByTestId("topup-title")).toHaveText(
+    `Nạp thêm dữ liệu vào ICCID: ${ICCID}`,
+  );
 
   const text = (await modal.textContent()) ?? "";
   for (const name of SUPPLIER_NAMES) {

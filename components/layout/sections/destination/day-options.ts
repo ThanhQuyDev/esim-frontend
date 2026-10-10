@@ -14,24 +14,21 @@ export const POPULAR_DAYS_DESKTOP = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 20, 
 /** Popular durations for the narrow layout (≤840px) — fewer chips, fewer rows. */
 export const POPULAR_DAYS_MOBILE = [1, 3, 5, 7, 10, 12, 15, 20, 30];
 
-/** Long-stay shortcuts kept on top of the popular list for pay-per-day plans. */
-const LONG_STAY_DAYS = [180, 365];
-
 /**
- * Chips for a plan priced per day (`isFlexibleDays`): the popular list plus the
- * long-stay shortcuts, since any other value is one calendar tap away.
+ * Chips for a plan priced per day (`isFlexibleDays`): the popular list only —
+ * the 180 / 365 shortcuts were dropped (#061, test round 4); any other value is
+ * one calendar tap away.
  */
 export function flexibleDayOptions(popular: number[]): number[] {
-  return [...popular, ...LONG_STAY_DAYS];
+  return [...popular];
 }
 
 /**
  * Chips for a plan sold as one package per duration.
  *
  * Only values the provider actually sells may be offered, so the popular list is
- * used as a filter, never as a source. Durations beyond the popular list (60, 90,
- * 365…) are always kept: they are few, and no nearby chip stands in for them.
- * The selected duration is kept as well, so the highlighted chip stays visible
+ * used as a filter, never as a source. Longer durations (60, 90, 180, 365…) are
+ * reached through the calendar (#061). The selected duration is kept as well, so the highlighted chip stays visible
  * after the calendar snaps to a value the list would otherwise hide.
  *
  * @param availableDays durations the provider sells, ascending
@@ -44,8 +41,9 @@ export function trimToPopularDays(
   selectedDays?: number
 ): number[] {
   if (availableDays.length === 0) return availableDays;
-  const longest = popular[popular.length - 1];
-  const kept = availableDays.filter((d) => popular.includes(d) || d > longest);
+  // Only the popular values (#061, test round 4: no 60 / 90 / 180 / 365 chips);
+  // longer durations are still on sale and picked from the calendar.
+  const kept = availableDays.filter((d) => popular.includes(d));
   if (
     selectedDays !== undefined &&
     availableDays.includes(selectedDays) &&

@@ -164,7 +164,8 @@ test.describe("Topup modal — billion", () => {
 
     // Header shows the ICCID and the new provider label.
     await expect(page.getByText(iccid).first()).toBeVisible();
-    await expect(page.getByText("Billion", { exact: true })).toBeVisible();
+    // The supplier is never named to the customer (#029).
+    await expect(page.getByText("Billion", { exact: true })).toHaveCount(0);
 
     // Both mocked packages render.
     await expect(page.getByText("Billion 3GB - 30 Days")).toBeVisible();
@@ -232,7 +233,8 @@ test.describe("Topup modal — microesim (recharge NOT supported)", () => {
 
     // Header still shows the ICCID + the new MicroEsim label.
     await expect(page.getByText(iccid).first()).toBeVisible();
-    await expect(page.getByText("MicroEsim", { exact: true })).toBeVisible();
+    // The supplier is never named to the customer (#029).
+    await expect(page.getByText("MicroEsim", { exact: true })).toHaveCount(0);
 
     // Lands on the empty state — no packages, no confirm button.
     await expect(

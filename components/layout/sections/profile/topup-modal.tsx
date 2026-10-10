@@ -356,8 +356,14 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
         {/* Header */}
         <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-gradient-to-r from-blue-50 to-indigo-50">
           <div className="min-w-0 flex-1">
-            <h2 className="text-xl sm:text-base font-semibold text-gray-900 truncate">
-              {t.topupTitle}
+            {/* The ICCID in the title itself (#062, test round 4):
+                "Nạp thêm dữ liệu vào ICCID: 8985…". */}
+            <h2
+              className="text-xl sm:text-base font-semibold text-gray-900 break-all"
+              data-testid="topup-title"
+            >
+              {lang === "vi" ? "Nạp thêm dữ liệu vào ICCID: " : "Top up data on ICCID: "}
+              <span className="font-mono">{esim.iccid}</span>
             </h2>
             {/* ICCID and the product name — never the supplier (#029). The
                 badge here named the wholesaler we buy from, which is ours to
@@ -365,9 +371,6 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
             {esim.plan?.name && (
               <p className="text-sm text-gray-700 mt-0.5 truncate">{esim.plan.name}</p>
             )}
-            <p className="text-sm text-gray-500 mt-0.5 truncate font-mono">
-              {esim.iccid}
-            </p>
           </div>
           <button
             onClick={onClose}
