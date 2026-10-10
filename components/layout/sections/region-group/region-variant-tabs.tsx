@@ -1,11 +1,15 @@
 "use client";
 
-import { useState, type KeyboardEvent } from "react";
+import { useMemo, useState, type KeyboardEvent } from "react";
 import { DestinationPlans } from "@/components/layout/sections/destination/destination-plans";
 import type { DestinationDict } from "@/components/layout/sections/destination/types";
 import type { Region } from "@/lib/api";
 import type { Locale } from "@/lib/i18n-config";
-import { countryCountLabel, regionAsDestination } from "@/lib/region-groups";
+import {
+  countryCountLabel,
+  groupCountries,
+  regionAsDestination,
+} from "@/lib/region-groups";
 import { localizedSlug } from "@/lib/slug";
 
 interface RegionVariantTabsProps {
@@ -38,9 +42,29 @@ export function RegionVariantTabs({
   const [activeIndex, setActiveIndex] = useState(() =>
     Math.max(
       0,
-      members.findIndex((m) => localizedSlug(m, lang) === initialSlug)
-    )
+      members.findIndex((m) => localizedSlug(m, lang) === initialSlug),
+    ),
   );
+
+  // "Chọn quốc gia cần đến" (#067, test round 4): every country any pack of
+  // the group covers; picking one moves to the smallest pack that has it and
+  // dims the packs that do not.
+  const countries = useMemo(
+    () => groupCountries(members, lang),
+    [members, lang],
+  );
+  const [country, setCountry] = useState<string>("");
+  const coveringIds =
+    countries.find((c) => c.countryCode === country)?.memberIds ?? null;
+  const pickCountry = (code: string) => {
+    setCountry(code);
+    const ids = countries.find((c) => c.countryCode === code)?.memberIds;
+    if (!ids?.length) return;
+    const current = members[activeIndex];
+    if (current && ids.includes(current.id)) return;
+    const first = members.findIndex((m) => ids.includes(m.id));
+    if (first >= 0) setActiveIndex(first);
+  };
 
   const active = members[activeIndex] ?? members[0];
   if (!active) return null;
@@ -63,6 +87,46 @@ export function RegionVariantTabs({
       {members.length > 1 && (
         <div className="mx-4 sm:mx-auto">
           <div className="container mx-auto pt-4 pb-2">
+            {countries.length > 0 && (
+              <div className="mb-3 flex flex-wrap items-center gap-2">
+                <label
+                  htmlFor="region-country-picker"
+                  className="text-[.875rem] font-medium text-[#555]"
+                >
+                  {lang === "vi"
+                    ? "Chọn quốc gia cần đến"
+                    : "Where are you going?"}
+                </label>
+                <select
+                  id="region-country-picker"
+                  data-testid="region-country-picker"
+                  value={country}
+                  onChange={(e) => pickCountry(e.target.value)}
+                  className="min-w-[220px] rounded-full border border-[#EFEFEF] bg-white px-4 py-2 text-[.875rem]"
+                >
+                  <option value="">
+                    {lang === "vi"
+                      ? `Tất cả ${countries.length} quốc gia`
+                      : `All ${countries.length} countries`}
+                  </option>
+                  {countries.map((c) => (
+                    <option key={c.countryCode} value={c.countryCode}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+                {coveringIds && (
+                  <span
+                    className="text-[.8rem] text-[#888]"
+                    data-testid="region-country-note"
+                  >
+                    {lang === "vi"
+                      ? `Có trong ${coveringIds.length}/${members.length} gói`
+                      : `In ${coveringIds.length} of ${members.length} packs`}
+                  </span>
+                )}
+              </div>
+            )}
             <p
               id="region-variant-tabs-label"
               className="text-[.875rem] font-medium text-[#555] mb-2"
@@ -94,11 +158,16 @@ export function RegionVariantTabs({
                     tabIndex={selected ? 0 : -1}
                     data-testid={`region-variant-tab-${slug}`}
                     onClick={() => setActiveIndex(index)}
+                    data-covers-country={
+                      coveringIds
+                        ? String(coveringIds.includes(member.id))
+                        : undefined
+                    }
                     className={`shrink-0 text-center py-2 px-4 cursor-pointer border-none rounded-full transition-all font-[inherit] whitespace-nowrap ${
                       selected
                         ? "bg-[#111] text-white"
                         : "bg-transparent text-[#555] hover:bg-[#e0e0e0] hover:text-[#111]"
-                    }`}
+                    } ${coveringIds && !coveringIds.includes(member.id) ? "opacity-40" : ""}`}
                   >
                     <span className="block text-[.875rem] font-medium">
                       {countryCountLabel(member.destinationCount ?? 0, lang)}

@@ -27,7 +27,7 @@ export interface RegionGroup {
 /** Title a region card shows — same precedence the storefront already uses. */
 export function regionDisplayTitle(
   region: Pick<Region, "name" | "title" | "titleVi">,
-  lang: Locale
+  lang: Locale,
 ): string {
   return (lang === "vi" ? region.titleVi : region.title) || region.name;
 }
@@ -37,7 +37,8 @@ export function regionDisplayTitle(
  * "eSIM Châu Á 13 quốc gia", "Asia (20 countries)", "Châu Á - 13 nước".
  * Matched against the ALREADY normalized (accent-free, lowercased) title.
  */
-const COUNT_SUFFIX = /[\s\-–—(]*\d+\s*(?:quoc gia|nuoc|countries|country)\s*\)?\s*$/;
+const COUNT_SUFFIX =
+  /[\s\-–—(]*\d+\s*(?:quoc gia|nuoc|countries|country)\s*\)?\s*$/;
 
 /**
  * Key that decides which regions belong together: the displayed title with any
@@ -47,7 +48,7 @@ const COUNT_SUFFIX = /[\s\-–—(]*\d+\s*(?:quoc gia|nuoc|countries|country)\s*
  */
 export function regionGroupKey(
   region: Pick<Region, "name" | "title" | "titleVi">,
-  lang: Locale
+  lang: Locale,
 ): string {
   const normalized = normalizeSearchTerm(regionDisplayTitle(region, lang));
   return normalized.replace(COUNT_SUFFIX, "").trim() || normalized;
@@ -56,7 +57,7 @@ export function regionGroupKey(
 /** Same as {@link regionGroupKey} but keeping the original casing/accents. */
 function baseLabel(
   region: Pick<Region, "name" | "title" | "titleVi">,
-  lang: Locale
+  lang: Locale,
 ): string {
   const title = regionDisplayTitle(region, lang);
   // Strip the suffix from the display title by locating it on the normalized
@@ -128,7 +129,7 @@ export function groupRegions(regions: Region[], lang: Locale): RegionGroup[] {
   return Array.from(byKey.values()).map((group) => {
     group.members.sort((a, b) => memberCount(a) - memberCount(b));
     group.slug = regionGroupSlug(
-      group.members.map((m) => localizedSlug(m, lang)).filter(Boolean)
+      group.members.map((m) => localizedSlug(m, lang)).filter(Boolean),
     );
     const prices = group.members
       .map((m) => Number(m.fromPrice))
@@ -155,7 +156,7 @@ export interface RegionListItem extends Region {
  */
 export function toRegionListItems(
   regions: Region[],
-  lang: Locale
+  lang: Locale,
 ): RegionListItem[] {
   return groupRegions(regions, lang).map((group) => {
     const [first] = group.members;
@@ -174,7 +175,7 @@ export function toRegionListItems(
       fromPrice: group.fromPrice,
       // Widest pack, so the card promises at least what the customer can get.
       destinationCount: Math.max(
-        ...group.members.map((m) => m.destinationCount ?? 0)
+        ...group.members.map((m) => m.destinationCount ?? 0),
       ),
       variantCount: group.members.length,
     };
@@ -220,17 +221,59 @@ export function variantCountLabel(count: number, lang: Locale): string {
 export function findRegionGroupBySlug(
   regions: Region[],
   slug: string,
-  lang: Locale
+  lang: Locale,
 ): RegionGroup | null {
   const groups = groupRegions(regions, lang).filter(
-    (g) => g.members.length > 1
+    (g) => g.members.length > 1,
   );
 
   return (
     groups.find(
       (g) =>
         g.slug === slug ||
-        g.members.some((m) => localizedSlug(m, lang) === slug)
+        g.members.some((m) => localizedSlug(m, lang) === slug),
     ) ?? null
+  );
+}
+
+/** One country a region group covers, and which of its packs include it. */
+export interface GroupCountry {
+  countryCode: string;
+  name: string;
+  /** Ids of the packs (regions) that cover this country, fewest countries first. */
+  memberIds: number[];
+}
+
+/**
+ * Every country any pack of a group covers (#067, test round 4): "eSIM Châu Á"
+ * sold as a 15- and a 20-country pack lists the union of both, so a customer
+ * picks where they are going first and the page tells them which pack has it.
+ * Sorted by name in the page's language.
+ */
+export function groupCountries(
+  members: Pick<Region, "id" | "destinations">[],
+  lang: Locale,
+): GroupCountry[] {
+  const byCode = new Map<string, GroupCountry>();
+  for (const member of members) {
+    for (const destination of member.destinations ?? []) {
+      const code = (destination.countryCode || "").toUpperCase();
+      if (!code) continue;
+      const entry =
+        byCode.get(code) ??
+        ({
+          countryCode: code,
+          name:
+            (lang === "vi"
+              ? destination.titleVi || destination.title
+              : destination.title || destination.titleVi) || destination.name,
+          memberIds: [],
+        } as GroupCountry);
+      if (!entry.memberIds.includes(member.id)) entry.memberIds.push(member.id);
+      byCode.set(code, entry);
+    }
+  }
+  return Array.from(byCode.values()).sort((a, b) =>
+    a.name.localeCompare(b.name, lang === "vi" ? "vi" : "en"),
   );
 }

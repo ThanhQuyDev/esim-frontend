@@ -31,6 +31,16 @@ function region(overrides: Record<string, unknown>) {
   };
 }
 
+function dest(countryCode: string, title: string, titleVi: string) {
+  return {
+    countryCode,
+    name: title,
+    title,
+    titleVi,
+    slug: countryCode.toLowerCase(),
+  };
+}
+
 /** Two same-named Asia packs + one unrelated Europe region. */
 function regions() {
   return [
@@ -43,6 +53,10 @@ function regions() {
       slugVi: "esim-chau-a-13-quoc-gia",
       destinationCount: 13,
       fromPrice: 120000,
+      destinations: [
+        dest("JP", "Japan", "Nhật Bản"),
+        dest("TH", "Thailand", "Thái Lan"),
+      ],
     }),
     region({
       id: 2,
@@ -53,6 +67,11 @@ function regions() {
       slugVi: "esim-chau-a-20-quoc-gia",
       destinationCount: 20,
       fromPrice: 99000,
+      destinations: [
+        dest("JP", "Japan", "Nhật Bản"),
+        dest("TH", "Thailand", "Thái Lan"),
+        dest("IN", "India", "Ấn Độ"),
+      ],
     }),
     region({
       id: 3,
@@ -152,10 +171,16 @@ test.describe("Region group page — packs as tabs (#004)", () => {
     await mockApi(page);
     await mockRegionPlans(page, requested);
 
-    await page.goto("/esim-noi-dia/test?view=region-tabs&slug=esim-chau-a&lang=vi");
+    await page.goto(
+      "/esim-noi-dia/test?view=region-tabs&slug=esim-chau-a&lang=vi",
+    );
 
-    const tab13 = page.getByTestId("region-variant-tab-esim-chau-a-13-quoc-gia");
-    const tab20 = page.getByTestId("region-variant-tab-esim-chau-a-20-quoc-gia");
+    const tab13 = page.getByTestId(
+      "region-variant-tab-esim-chau-a-13-quoc-gia",
+    );
+    const tab20 = page.getByTestId(
+      "region-variant-tab-esim-chau-a-20-quoc-gia",
+    );
     await expect(page.getByRole("tab")).toHaveCount(2);
     await expect(tab13).toContainText("13 quốc gia");
     await expect(tab20).toContainText("20 quốc gia");
@@ -179,15 +204,62 @@ test.describe("Region group page — packs as tabs (#004)", () => {
     await mockApi(page);
     await mockRegionPlans(page, []);
 
-    await page.goto("/esim-noi-dia/test?view=region-tabs&slug=esim-chau-a&lang=vi");
+    await page.goto(
+      "/esim-noi-dia/test?view=region-tabs&slug=esim-chau-a&lang=vi",
+    );
 
-    const tab13 = page.getByTestId("region-variant-tab-esim-chau-a-13-quoc-gia");
-    const tab20 = page.getByTestId("region-variant-tab-esim-chau-a-20-quoc-gia");
+    const tab13 = page.getByTestId(
+      "region-variant-tab-esim-chau-a-13-quoc-gia",
+    );
+    const tab20 = page.getByTestId(
+      "region-variant-tab-esim-chau-a-20-quoc-gia",
+    );
     await tab13.focus();
     await page.keyboard.press("ArrowRight");
 
     await expect(tab20).toHaveAttribute("aria-selected", "true");
     await expect(tab20).toBeFocused();
+  });
+
+  test("the country picker lists every pack's countries and opens the pack that has it (#067)", async ({
+    page,
+  }) => {
+    const requested: string[] = [];
+    await mockApi(page);
+    await mockRegionPlans(page, requested);
+
+    await page.goto(
+      "/esim-noi-dia/test?view=region-tabs&slug=esim-chau-a&lang=vi",
+    );
+
+    const picker = page.getByTestId("region-country-picker");
+    // Union of both packs: JP, TH (both) + IN (20-country pack only).
+    await expect(picker.locator("option")).toHaveCount(4);
+    await expect(picker.locator("option").first()).toHaveText(
+      "Tất cả 3 quốc gia",
+    );
+    await expect(picker).toContainText("Ấn Độ");
+
+    const tab13 = page.getByTestId(
+      "region-variant-tab-esim-chau-a-13-quoc-gia",
+    );
+    const tab20 = page.getByTestId(
+      "region-variant-tab-esim-chau-a-20-quoc-gia",
+    );
+    await expect(tab13).toHaveAttribute("aria-selected", "true");
+
+    await picker.selectOption("IN");
+    await expect(tab20).toHaveAttribute("aria-selected", "true");
+    await expect(tab13).toHaveAttribute("data-covers-country", "false");
+    await expect(page.getByTestId("region-country-note")).toHaveText(
+      "Có trong 1/2 gói",
+    );
+    await expect.poll(() => requested).toContain("esim-chau-a-20-quoc-gia");
+
+    // A country both packs have keeps the pack the customer is on.
+    await picker.selectOption("JP");
+    await expect(tab20).toHaveAttribute("aria-selected", "true");
+    await expect(tab13).toHaveAttribute("data-covers-country", "true");
   });
 
   test("a variant's own page opens on that pack", async ({ page }) => {
