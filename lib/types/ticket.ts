@@ -25,6 +25,7 @@ export type TicketStatus =
   | "open"
   | "pending"
   | "in_progress"
+  | "need_info"
   | "resolved"
   | "closed";
 
