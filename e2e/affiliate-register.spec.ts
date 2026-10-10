@@ -172,3 +172,43 @@ test("tells the applicant to expect an email either way", async ({ page }) => {
   await expect(success).toContainText("chờ duyệt");
   await expect(success).toContainText("email");
 });
+
+/**
+ * #053 (test round 4) — partners sign up here rather than on the partner
+ * portal, choosing tiếp thị, phân phối or tích hợp API with a radio button.
+ */
+for (const [kind, partnerType] of [
+  ["distribution", "distribution"],
+  ["api", "distribution"],
+] as const) {
+  test(`sends a ${kind} application with the choice kept`, async ({ page }) => {
+    let body: Record<string, unknown> | null = null;
+    await page.route(APPLY_URL, async (route) => {
+      body = route.request().postDataJSON();
+      await route.fulfill({
+        status: 201,
+        contentType: "application/json",
+        body: JSON.stringify({ partnerId: 9, userId: 42 }),
+      });
+    });
+
+    await page.goto(PAGE);
+    await page.getByTestId(`partner-kind-${kind}`).check();
+    await expect(page.getByTestId(`partner-kind-${kind}`)).toBeChecked();
+    await fillRequiredFields(page);
+    await page.getByTestId("affiliate-register-submit").click();
+
+    await expect(page.getByTestId("affiliate-register-success")).toBeVisible({
+      timeout: 15000,
+    });
+    expect(body).toMatchObject({ partnerType, requestedType: kind });
+    expect(body).not.toHaveProperty("channelInfo");
+  });
+}
+
+test("defaults to a marketing partner and asks for the channel", async ({ page }) => {
+  await page.goto(PAGE);
+  await expect(page.getByTestId("partner-kind-kol")).toBeChecked();
+  await expect(page.getByTestId("partner-kind-distribution")).not.toBeChecked();
+  await expect(page.getByTestId("partner-kind-api")).not.toBeChecked();
+});

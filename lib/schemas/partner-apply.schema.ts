@@ -58,6 +58,8 @@ export function createPartnerApplySchema(
 
   return z
     .object({
+      // Tiếp thị / phân phối / tích hợp API (#053, test round 4).
+      partnerKind: z.enum(["kol", "distribution", "api"]),
       legalType: z.enum(["individual", "company"]),
 
       contactName: z
@@ -159,6 +161,7 @@ export type PartnerApplyFormValues = z.infer<
 
 /** Input shape, before the schema's transforms. */
 export const partnerApplyDefaultValues = {
+  partnerKind: "kol" as const,
   legalType: "individual" as const,
   contactName: "",
   contactEmail: "",

@@ -43,6 +43,13 @@ export interface AffiliateRegisterDict {
   sectionAccountHelp: string;
   sectionChannel: string;
   sectionChannelHelp: string;
+  partnerKind: string;
+  partnerKindKol: string;
+  partnerKindKolHelp: string;
+  partnerKindDistribution: string;
+  partnerKindDistributionHelp: string;
+  partnerKindApi: string;
+  partnerKindApiHelp: string;
   legalType: string;
   legalTypeIndividual: string;
   legalTypeIndividualHelp: string;
@@ -130,6 +137,7 @@ export function AffiliateRegisterForm({
   });
 
   const legalType = form.watch("legalType");
+  const partnerKind = form.watch("partnerKind");
   const isCompany = legalType === "company";
 
   const onSubmit = useCallback(
@@ -140,12 +148,18 @@ export function AffiliateRegisterForm({
       // Channel details travel as one free-form object — the API stores
       // `channelInfo` as jsonb, so an empty channel adds nothing rather than
       // writing a row of nulls an admin has to read past.
-      const channelInfo: Record<string, unknown> = { channel: values.channel };
-      if (values.channelUrl) channelInfo.url = values.channelUrl;
-      if (values.followers) channelInfo.followers = Number(values.followers);
+      const isKol = values.partnerKind === "kol";
+      const channelInfo: Record<string, unknown> | undefined = isKol
+        ? { channel: values.channel }
+        : undefined;
+      if (channelInfo && values.channelUrl) channelInfo.url = values.channelUrl;
+      if (channelInfo && values.followers) channelInfo.followers = Number(values.followers);
 
       const result = await applyAsPartner({
-        partnerType: "kol",
+        // An API partner runs as a distribution partner; the exact choice
+        // travels as requestedType for the admin (#053, test round 4).
+        partnerType: isKol ? "kol" : "distribution",
+        requestedType: values.partnerKind,
         legalType: values.legalType,
         contactName: values.contactName,
         contactPhone: values.contactPhone,
@@ -270,6 +284,63 @@ export function AffiliateRegisterForm({
             </div>
           )}
         </div>
+
+        {/* ---- Which partnership (#053, test round 4) ---- */}
+        <section className="space-y-3" data-testid="partner-kind">
+          <FormField
+            control={form.control}
+            name="partnerKind"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-lg font-semibold text-gray-900">
+                  {dict.partnerKind} <span className="text-red-500">*</span>
+                </FormLabel>
+                <div className="grid gap-3 sm:grid-cols-3">
+                  {(
+                    [
+                      { value: "kol", label: dict.partnerKindKol, help: dict.partnerKindKolHelp },
+                      {
+                        value: "distribution",
+                        label: dict.partnerKindDistribution,
+                        help: dict.partnerKindDistributionHelp,
+                      },
+                      { value: "api", label: dict.partnerKindApi, help: dict.partnerKindApiHelp },
+                    ] as const
+                  ).map((option) => (
+                    <label
+                      key={option.value}
+                      className={cn(
+                        "flex cursor-pointer items-start gap-3 rounded-xl border p-4 transition",
+                        field.value === option.value
+                          ? "border-primary bg-primary/5"
+                          : "border-gray-200 hover:border-gray-300"
+                      )}
+                    >
+                      <input
+                        type="radio"
+                        name="partnerKind"
+                        className="mt-1 h-4 w-4 accent-primary"
+                        value={option.value}
+                        checked={field.value === option.value}
+                        onChange={() => field.onChange(option.value)}
+                        data-testid={`partner-kind-${option.value}`}
+                      />
+                      <span className="min-w-0">
+                        <span className="block text-sm font-medium text-gray-900">
+                          {option.label}
+                        </span>
+                        <span className="mt-0.5 block text-xs text-gray-500">
+                          {option.help}
+                        </span>
+                      </span>
+                    </label>
+                  ))}
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </section>
 
         {/* ---- Who is applying ---- */}
         <section className="space-y-5">
@@ -530,87 +601,93 @@ export function AffiliateRegisterForm({
 
         {/* ---- How they will promote ---- */}
         <section className="space-y-5">
-          <div>
-            <h2 className="text-lg font-semibold text-gray-900">
-              {dict.sectionChannel}
-            </h2>
-            <p className="mt-1 text-sm text-gray-500">
-              {dict.sectionChannelHelp}
-            </p>
-          </div>
+          {/* Channel details only mean something for a marketing partner;
+              the notes below are for everyone (#053, test round 4). */}
+          {partnerKind === "kol" && (
+            <>
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">
+                {dict.sectionChannel}
+              </h2>
+              <p className="mt-1 text-sm text-gray-500">
+                {dict.sectionChannelHelp}
+              </p>
+            </div>
 
-          <div className="grid gap-5 sm:grid-cols-2">
+            <div className="grid gap-5 sm:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="channel"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      {dict.channel} <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <select
+                        className="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                        data-testid="channel-select"
+                        {...field}
+                      >
+                        {PARTNER_CHANNELS.map((channel) => (
+                          <option key={channel} value={channel}>
+                            {dict.channelOptions[channel] ?? channel}
+                          </option>
+                        ))}
+                      </select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="followers"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      {dict.followers}{" "}
+                      <span className="text-gray-400">({dict.optional})</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        inputMode="numeric"
+                        placeholder={dict.followersPlaceholder}
+                        {...field}
+                        value={field.value ?? ""}
+                      />
+                    </FormControl>
+                    <FormDescription>{dict.followersHelp}</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
             <FormField
               control={form.control}
-              name="channel"
+              name="channelUrl"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    {dict.channel} <span className="text-red-500">*</span>
-                  </FormLabel>
-                  <FormControl>
-                    <select
-                      className="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-                      data-testid="channel-select"
-                      {...field}
-                    >
-                      {PARTNER_CHANNELS.map((channel) => (
-                        <option key={channel} value={channel}>
-                          {dict.channelOptions[channel] ?? channel}
-                        </option>
-                      ))}
-                    </select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="followers"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    {dict.followers}{" "}
+                    {dict.channelUrl}{" "}
                     <span className="text-gray-400">({dict.optional})</span>
                   </FormLabel>
                   <FormControl>
                     <Input
-                      inputMode="numeric"
-                      placeholder={dict.followersPlaceholder}
+                      type="url"
+                      placeholder={dict.channelUrlPlaceholder}
                       {...field}
                       value={field.value ?? ""}
                     />
                   </FormControl>
-                  <FormDescription>{dict.followersHelp}</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
-          </div>
-
-          <FormField
-            control={form.control}
-            name="channelUrl"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>
-                  {dict.channelUrl}{" "}
-                  <span className="text-gray-400">({dict.optional})</span>
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    type="url"
-                    placeholder={dict.channelUrlPlaceholder}
-                    {...field}
-                    value={field.value ?? ""}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            </>
+          )}
 
           <FormField
             control={form.control}

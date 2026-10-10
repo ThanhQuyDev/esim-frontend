@@ -7,7 +7,9 @@ export interface PartnerApplyPayload {
    * Always `kol` from this page: it is the affiliate programme. Resellers and
    * travel agencies (`distribution`) join through a different flow — see #094.
    */
-  partnerType: "kol";
+  partnerType: "kol" | "distribution";
+  /** The partnership picked on the form (#053, test round 4). */
+  requestedType?: "kol" | "distribution" | "api";
   legalType: "individual" | "company";
   contactName: string;
   contactPhone: string;
