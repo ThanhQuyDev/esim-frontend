@@ -128,6 +128,18 @@ test.describe("which plans the filter keeps", () => {
     expect(filtered.dataPlans.map((p) => p.id)).toEqual([99, 1]);
   });
 
+  test("puts a recovered unlimited plan in its own tab (#045, round 4)", () => {
+    const filtered = filterTiktokPlans(
+      payload({
+        dailyUnlimited: [plan(1, IPHONE_ONLY)],
+        tiktokHiddenByPrice: [{ ...plan(77, WORKS, 300000), type: "unlimited" }],
+      }),
+    );
+
+    expect(filtered.dailyUnlimited.map((p) => p.id)).toEqual([77]);
+    expect(filtered.dataPlans.map((p) => p.id)).toEqual([]);
+  });
+
   test("does not add back something that is not capable", () => {
     const filtered = filterTiktokPlans(
       payload({

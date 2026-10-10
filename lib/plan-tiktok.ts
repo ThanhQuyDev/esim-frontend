@@ -16,6 +16,14 @@ import type { Destination, Plan, PlansByDestinationResponse, Region } from "./ap
 /** Mainland China. Hong Kong and Macao do not block these apps. */
 const CHINA_COUNTRY_CODE = "CN";
 
+/** Which tab a plan of each type is listed in. */
+const GROUP_BY_TYPE: Record<string, "dataPlans" | "slowUnlimited" | "fastUnlimited" | "dailyUnlimited"> = {
+  fixed: "dataPlans",
+  daily: "slowUnlimited",
+  "unlimited-reduce": "fastUnlimited",
+  unlimited: "dailyUnlimited",
+};
+
 /** Every plan list on a destination / region page, in render order. */
 const PLAN_GROUPS = [
   "localEsim",
@@ -86,12 +94,15 @@ export function filterTiktokPlans(
     worksWithTiktokAndChatGpt,
   );
 
-  if (recovered.length) {
-    const seen = new Set(filtered.dataPlans.map((p) => p.id));
-    filtered.dataPlans = [
-      ...filtered.dataPlans,
-      ...recovered.filter((p) => !seen.has(p.id)),
-    ].sort((a, b) => Number(a.vndPrice ?? 0) - Number(b.vndPrice ?? 0));
+  // The API hands back the cheapest capable plan of each group whose default
+  // plan does not work (#045, test round 4); each goes into the tab of its type.
+  for (const plan of recovered) {
+    const group = GROUP_BY_TYPE[plan.type ?? "fixed"] ?? "dataPlans";
+    const list = filtered[group] ?? [];
+    if (list.some((p) => p.id === plan.id)) continue;
+    filtered[group] = [...list, plan].sort(
+      (a, b) => Number(a.vndPrice ?? 0) - Number(b.vndPrice ?? 0),
+    );
   }
 
   return filtered;
