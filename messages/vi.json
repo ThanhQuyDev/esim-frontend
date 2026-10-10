@@ -1265,7 +1265,7 @@
       "instant": "Nhận ngay lập tức",
       "instantDesc": "Gửi qua email ngay sau khi mua",
       "activationPeriod": "Thời hạn kích hoạt gói",
-      "activationDesc": "180 ngày kể từ ngày mua",
+      "activationDesc": "Theo quy định của nhà cung cấp (ghi trong email nhận eSIM)",
       "usagePeriod": "Cách tính chu kỳ sử dụng",
       "usagePeriodFixed": "{days} ngày liên tục, tính từ khi eSIM kết nối mạng lần đầu — không tính từ lúc mua",
       "usagePeriodDaily": "Tính theo từng ngày sử dụng, bắt đầu từ khi eSIM kết nối mạng lần đầu — không tính từ lúc mua",

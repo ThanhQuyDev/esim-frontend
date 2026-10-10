@@ -1265,7 +1265,7 @@
       "instant": "Instant delivery",
       "instantDesc": "Sent via email right after purchase",
       "activationPeriod": "Activation period",
-      "activationDesc": "180 days from purchase date",
+      "activationDesc": "Per the supplier's terms (stated in your eSIM email)",
       "usagePeriod": "How the usage period is counted",
       "usagePeriodFixed": "{days} consecutive days, counted from the first time the eSIM connects to a network — not from purchase",
       "usagePeriodDaily": "Counted per day of use, starting the first time the eSIM connects to a network — not from purchase",
