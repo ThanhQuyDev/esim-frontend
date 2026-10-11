@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import type { LocalCarrier } from "@/lib/api";
 import { getCarrierMeta, carrierInitial, type CarrierMeta } from "../carrier-meta";
 import { Ic } from "./nd-icons";
-import { planLabel, phonePrefixLabel } from "./nd-model";
+import { planLabel, phonePrefixLabel, techOf, variantFor } from "./nd-model";
 import { vnd, type DomesticPurchase } from "./nd-state";
 import {
   AccItem,
@@ -54,6 +54,46 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb }
   const prefix = phonePrefixLabel(meta, plan);
   const line = planCycleLine(plan, p.months);
   const tag = [meta.network ? `Dùng hạ tầng ${meta.network}` : null, prefix].filter(Boolean).join(" – ");
+
+  // "Xem thêm N gói 5G": on a page that sells both, 5G cards fold away until
+  // asked for — the chosen one always stays in view (design's #moreBtn).
+  const [more, setMore] = useState(false);
+  const is5g = (g: (typeof p.highSpeed)[number]) => techOf(variantFor(g, p.months)) === "5G";
+  const foldable = p.highSpeed.some((g) => !is5g(g)) && p.highSpeed.some(is5g);
+  const folded = foldable ? p.highSpeed.filter((g) => is5g(g) && !more && p.group?.key !== g.key).length : 0;
+
+  // The buy bar shows once the page is scrolled and the plans are in reach.
+  const buyRef = useRef<HTMLDivElement>(null);
+  const plansRef = useRef<HTMLDivElement>(null);
+  const [buyShow, setBuyShow] = useState(false);
+  const [tight, setTight] = useState(0);
+  useEffect(() => {
+    const update = () => {
+      const bar = buyRef.current;
+      const plans = plansRef.current;
+      if (!bar || !plans) return;
+      setBuyShow(scrollY > 0 && plans.getBoundingClientRect().top < innerHeight - bar.offsetHeight);
+    };
+    addEventListener("scroll", update, { passive: true });
+    addEventListener("resize", update);
+    requestAnimationFrame(update);
+    return () => {
+      removeEventListener("scroll", update);
+      removeEventListener("resize", update);
+    };
+  }, []);
+  // Shrink the price text when the plan line and price do not fit (is-tight).
+  useEffect(() => {
+    const info = buyRef.current?.querySelector<HTMLElement>(".m-buy-info");
+    if (!info) return;
+    setTight(0);
+    requestAnimationFrame(() => {
+      if (info.scrollWidth > info.clientWidth) {
+        setTight(1);
+        requestAnimationFrame(() => info.scrollWidth > info.clientWidth && setTight(2));
+      }
+    });
+  }, [p.net, p.quantity, p.months, p.plan?.id]);
 
   const pickFromKeys = (el: HTMLElement) => {
     const g = [...p.highSpeed, ...p.unlimited].find((x) => x.variants.some((v) => `p${v.providerPlanId}` === el.id));
@@ -156,7 +196,7 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb }
             <span>Chọn gói cước</span>
             <Tip text="Tất cả eSIM đều có chức năng sử dụng Data + Gọi + SMS" w={16} extra="tip--h" />
           </h2>{" "}
-          <div id="plans" role="radiogroup" aria-labelledby="step1" onKeyDown={(e) => radioKeys(e, pickFromKeys)}>
+          <div id="plans" role="radiogroup" aria-labelledby="step1" ref={plansRef} onKeyDown={(e) => radioKeys(e, pickFromKeys)}>
             {p.highSpeed.length > 0 && (
               <div className="pg" role="group" aria-labelledby="pg1">
                 {" "}
@@ -167,10 +207,35 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb }
                   </h3>
                 </div>{" "}
                 <div className="plan-list">
-                  {p.highSpeed.map((g) => (
-                    <PlanCard key={g.key} group={g} months={p.months} selected={p.group?.key === g.key} onSelect={() => p.selectGroup(g)} mobile />
-                  ))}
+                  {p.highSpeed.map((g) => {
+                    const extra = foldable && is5g(g);
+                    return (
+                      <PlanCard
+                        key={g.key}
+                        group={g}
+                        months={p.months}
+                        selected={p.group?.key === g.key}
+                        onSelect={() => p.selectGroup(g)}
+                        mobile
+                        extra={extra}
+                        hidden={extra && !more && p.group?.key !== g.key}
+                      />
+                    );
+                  })}
                 </div>{" "}
+                {foldable && (
+                  <button
+                    className={`nd-more${more ? " is-open" : ""}`}
+                    type="button"
+                    aria-expanded={more}
+                    id="moreBtn"
+                    hidden={!more && folded === 0}
+                    onClick={() => setMore(!more)}
+                  >
+                    <span id="moreTxt">{more ? "Thu gọn gói 5G" : `Xem thêm ${folded} gói 5G`}</span>
+                    <Ic name="ic-chev-down" w={14} />
+                  </button>
+                )}
               </div>
             )}
             {p.unlimited.length > 0 && (
@@ -295,7 +360,13 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb }
           </section>
         )}{" "}
       </main>
-      <div className="m-buy" id="mBuy" role="region" aria-label="Mua nhanh">
+      <div
+        className={`m-buy${buyShow ? " show" : ""}${tight ? " is-tight" : ""}${tight > 1 ? " is-tight2" : ""}`}
+        id="mBuy"
+        role="region"
+        aria-label="Mua nhanh"
+        ref={buyRef}
+      >
         {" "}
         <div className="m-buy-info">
           <div className="m-buy-plan">

@@ -192,12 +192,17 @@ export function PlanCard({
   selected,
   onSelect,
   mobile,
+  extra,
+  hidden,
 }: {
   group: OfferGroup;
   months: number;
   selected: boolean;
   onSelect: () => void;
   mobile?: boolean;
+  /** Mobile: a 5G card folded behind "Xem thêm N gói 5G" (`.xtra`). */
+  extra?: boolean;
+  hidden?: boolean;
 }) {
   const plan = variantFor(group, months);
   const soldOut = groupSoldOut(group);
@@ -236,8 +241,9 @@ export function PlanCard({
   );
   return (
     <div
-      className={`plan-btn${mobile ? " plan-btn--m" : ""}`}
+      className={`plan-btn${mobile ? " plan-btn--m" : ""}${extra ? " xtra" : ""}`}
       id={`p${plan.providerPlanId}`}
+      hidden={hidden}
       role="radio"
       aria-checked={selected}
       aria-disabled={soldOut || undefined}
