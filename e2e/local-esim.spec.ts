@@ -117,6 +117,22 @@ test.describe("Homepage — eSIM nội địa tab", () => {
       "/en/domestic-esim/wintel",
     );
   });
+
+  test("matches the final design: wordmark logos, note line, flag on the tab (#066)", async ({ page }) => {
+    await mockLocalApi(page);
+    await page.goto("/esim-noi-dia/test?view=tab&lang=vi");
+    const tab = page.getByTestId("country-list-tab-chip-local");
+    await tab.click();
+
+    await expect(tab.locator("svg")).toHaveCount(1);
+    await expect(page.getByTestId("local-tab-note")).toContainText(
+      "Chọn eSIM theo nhà mạng nội địa tại Việt Nam",
+    );
+    // The carrier's wordmark, not two-letter initials ("WI", "IT").
+    await expect(page.getByTestId("local-carrier-card-wintel").locator("span").first()).toHaveText("Wintel");
+    await expect(page.getByTestId("local-carrier-card-itel").locator("span").first()).toHaveText("itel");
+    await expect(page.getByTestId("local-carrier-card-vnsky")).toContainText("Hạ tầng MobiFone");
+  });
 });
 
 test.describe("Search — domestic eSIM suggestions", () => {

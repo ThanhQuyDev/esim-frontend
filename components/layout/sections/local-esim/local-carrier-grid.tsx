@@ -20,26 +20,6 @@ interface LocalCarrierGridProps {
   carriers?: LocalCarrier[];
 }
 
-function ChevronRightIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      role="img"
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
-      className={className}
-    >
-      <title>Chevron right</title>
-      <path
-        fill="currentColor"
-        fillRule="evenodd"
-        d="M13.2151 6.8326L8.43758 11.4101C8.27758 11.5451 8.12758 11.6001 8.00008 11.6001C7.87258 11.6001 7.70083 11.5446 7.58533 11.4329L2.78533 6.8326C2.54543 6.6051 2.53763 6.2026 2.76733 5.9851C2.99546 5.74447 3.37683 5.73665 3.61508 5.96713L8.00008 10.1701L12.3851 5.9701C12.6226 5.73962 13.0046 5.74745 13.2328 5.98807C13.4626 6.2026 13.4551 6.6051 13.2151 6.8326Z"
-      />
-    </svg>
-  );
-}
-
 /**
  * Grid of domestic-eSIM carrier cards, grouped dynamically from the
  * `isLocalInventory` plans' `provider` values (not hardcoded). Each card links
@@ -72,8 +52,10 @@ export function LocalCarrierGrid({
     );
   }
 
+  // Card row of the final design "trang-chu-tab-esim-noi-dia.html" (#066):
+  // white card with a light border, the carrier's wordmark in the round logo.
   return (
-    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-6 w-full">
+    <div className="grid grid-cols-1 min-[56.3125rem]:grid-cols-3 gap-[0.875rem] w-full">
       {carriers.map((carrier) => {
         const meta = getCarrierMeta(carrier.provider);
         const href = localCarrierHref(lang, carrier.provider);
@@ -86,32 +68,32 @@ export function LocalCarrierGrid({
             key={carrier.provider}
             href={href}
             data-testid={`local-carrier-card-${carrier.provider}`}
-            className="align-bottom focus-visible:outline-hidden focus-visible:shadow-focus text-text-primary block group ease-out h-full rounded-sm transition-colors bg-bg-primary"
+            className="group flex items-center gap-4 bg-white border-[0.09375rem] border-[#E5E7EB] rounded-[0.75rem] py-5 px-[1.375rem] no-underline text-[#111] transition-[border-color,box-shadow,transform] duration-150 hover:border-[#9ca3af] hover:shadow-[0_0.5rem_1.5rem_rgba(0,0,0,.06)] hover:-translate-y-[0.1875rem] focus-visible:outline-hidden focus-visible:shadow-focus"
           >
-            <div className="flex items-center gap-4 border border-transparent p-4 h-full rounded-sm transition-all hover:bg-gray-100 hover:-translate-y-[3px] hover:shadow-md bg-gray-50">
-              {/* Carrier logo */}
-              <div
-                className="w-[52px] h-[52px] shrink-0 rounded-full flex items-center justify-center text-white font-bold text-sm overflow-hidden"
-                style={{ backgroundColor: meta.logoBg }}
-              >
-                <span className={meta.italic ? "italic" : undefined}>
-                  {meta.label.slice(0, 2).toUpperCase()}
-                </span>
-              </div>
-
-              {/* Name + price/infra */}
-              <div className="flex flex-col gap-0.5 min-w-0">
-                <p className="body-lg-medium truncate">
-                  {localCarrierTitle(lang, carrier.provider)}
-                </p>
-                <p className="body-md text-text-tertiary truncate">{sub}</p>
-              </div>
-
-              {/* Arrow */}
-              <div className="ml-auto shrink-0">
-                <ChevronRightIcon className="-rotate-90 text-text-tertiary group-hover:text-text-primary transition-colors" />
-              </div>
-            </div>
+            <span
+              className={`w-[3.25rem] h-[3.25rem] rounded-full text-white flex items-center justify-center font-bold shrink-0 ${meta.italic ? "italic" : ""}`}
+              style={{
+                backgroundColor: meta.logoBg,
+                fontSize: `${meta.wordmarkSize ?? 0.6875}rem`,
+                letterSpacing: meta.wordmark === "VNSKY" ? "0.02rem" : undefined,
+              }}
+              aria-hidden="true"
+            >
+              {meta.wordmark ?? meta.label}
+            </span>
+            <span className="flex-1 min-w-0">
+              <span className="block text-[1.125rem] font-medium text-[#111]">
+                {localCarrierTitle(lang, carrier.provider)}
+              </span>
+              <span className="block text-[0.875rem] text-[#6B7280] mt-[0.1875rem]">{sub}</span>
+            </span>
+            <svg
+              className="w-[1.125rem] h-[1.125rem] stroke-[#6B7280] [stroke-width:2] fill-none shrink-0 transition-[transform,stroke] duration-150 group-hover:translate-x-[0.1875rem] group-hover:stroke-[#111]"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path d="M9 6l6 6-6 6" />
+            </svg>
           </a>
         );
       })}

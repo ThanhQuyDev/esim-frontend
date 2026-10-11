@@ -123,8 +123,18 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
                         }`}
                     >
 
-                      {tab.label}
-
+                      {/* VN flag on the domestic tab, as in the design (#066). */}
+                      {tab.key === "local" ? (
+                        <span className="inline-flex items-center gap-2">
+                          <svg width="21" height="14" viewBox="0 0 30 20" aria-hidden="true" className="rounded-[0.125rem] shrink-0">
+                            <rect width="30" height="20" fill="#DA251D" />
+                            <path d="M15 4.392 16.392 8.676 20.897 8.676 17.252 11.324 18.644 15.608 15 12.96 11.356 15.608 12.748 11.324 9.103 8.676 13.608 8.676Z" fill="#FFDE00" />
+                          </svg>
+                          {tab.label}
+                        </span>
+                      ) : (
+                        tab.label
+                      )}
                     </button>
                   ))}
                 </div>
@@ -132,6 +142,19 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
 
               {/* Destination/Region/Local Grid */}
               {activeTab === "local" ? (
+                <>
+                <p
+                  data-testid="local-tab-note"
+                  className="flex items-center gap-[0.5625rem] text-[0.875rem] text-[#374151] -mt-6 mb-6"
+                >
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="shrink-0" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9" />
+                    <path d="M12 8h.01M11 12h1v4h1" />
+                  </svg>
+                  {lang === "vi"
+                    ? "Chọn eSIM theo nhà mạng nội địa tại Việt Nam — dành cho thuê bao dùng lâu dài trong nước."
+                    : "Pick an eSIM by Vietnamese carrier — for a long-term local subscription."}
+                </p>
                 <LocalCarrierGrid
                   lang={lang}
                   fromLabel={dict.from}
@@ -141,6 +164,7 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
                       : "No domestic eSIMs available yet."
                   }
                 />
+                </>
               ) : isLoading ? (
                 <div className="flex items-center justify-center py-16">
                   <Loader2 className="w-8 h-8 text-text-tertiary animate-spin" />
