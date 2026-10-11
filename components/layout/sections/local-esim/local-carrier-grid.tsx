@@ -55,7 +55,7 @@ export function LocalCarrierGrid({
   // Card row of the final design "trang-chu-tab-esim-noi-dia.html" (#066):
   // white card with a light border, the carrier's wordmark in the round logo.
   return (
-    <div className="grid grid-cols-1 min-[56.3125rem]:grid-cols-3 gap-[0.875rem] w-full">
+    <div className="grid grid-cols-1 min-[901px]:grid-cols-3 gap-[0.875rem] w-full">
       {carriers.map((carrier) => {
         const meta = getCarrierMeta(carrier.provider);
         const href = localCarrierHref(lang, carrier.provider);
