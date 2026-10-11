@@ -193,20 +193,24 @@ test.describe("Detail — LocalEsimDetail (via client harness)", () => {
     await page.goto("/en/esim-noi-dia/test?carrier=wintel&lang=en");
     await expect(page.getByTestId("local-test-meta")).toBeVisible();
 
+    // The page renders the design's desktop and mobile layouts; at this
+    // viewport the desktop one (.ndd) is the visible one (#066).
+    const d = page.locator(".ndd");
+
     // High-speed + unlimited plan cards render.
-    await expect(page.getByTestId("local-plan-101")).toBeVisible();
-    await expect(page.getByTestId("local-plan-102")).toBeVisible();
-    await expect(page.getByTestId("local-plan-201")).toBeVisible();
+    await expect(d.getByTestId("local-plan-101")).toBeVisible();
+    await expect(d.getByTestId("local-plan-102")).toBeVisible();
+    await expect(d.getByTestId("local-plan-201")).toBeVisible();
 
     // Carrier phone-prefix pill (Wintel = 055) from carrier-meta.
-    await expect(page.getByText("Prefix 055")).toBeVisible();
+    await expect(d.getByText("Đầu số 055")).toBeVisible();
 
     // First plan auto-selected → price header shows its vndPrice (69.000).
-    await expect(page.getByText("69.000", { exact: false }).first()).toBeVisible();
+    await expect(d.locator("#priceNet")).toContainText("69.000");
 
     // Select the unlimited plan → price updates to its vndPrice (129.000), not multiplied.
-    await page.getByTestId("local-plan-201").click();
-    await expect(page.getByText("129.000", { exact: false }).first()).toBeVisible();
+    await d.getByTestId("local-plan-201").click();
+    await expect(d.locator("#priceNet")).toContainText("129.000");
   });
 
   /**
@@ -221,7 +225,7 @@ test.describe("Detail — LocalEsimDetail (via client harness)", () => {
     await page.goto("/en/esim-noi-dia/test?carrier=wintel&lang=en");
     await expect(page.getByTestId("local-test-meta")).toBeVisible();
 
-    await expect(page.getByText("7GB/day")).toBeVisible();
+    await expect(page.locator(".ndd #specHotspot")).toHaveText("7 GB/ngày");
     await expect(page.getByText(/GBGB/)).toHaveCount(0);
   });
 
@@ -238,7 +242,7 @@ test.describe("Detail — LocalEsimDetail (via client harness)", () => {
     await page.goto("/en/esim-noi-dia/test?carrier=wintel&lang=en");
     await expect(page.getByTestId("local-test-meta")).toBeVisible();
 
-    await expect(page.getByText("W", { exact: true })).toBeVisible();
+    await expect(page.locator(".ndd .pic-title-row .nd-logo")).toHaveText("W");
     await expect(page.getByText("WI", { exact: true })).toHaveCount(0);
   });
 
@@ -296,14 +300,15 @@ test.describe("Domestic stock — sold-out plans", () => {
     await page.goto("/esim-noi-dia/test?carrier=wintel&lang=vi");
     await expect(page.getByTestId("local-test-meta")).toBeVisible();
 
-    const soldOut = page.getByTestId("local-plan-302");
+    const d = page.locator(".ndd");
+    const soldOut = d.getByTestId("local-plan-302");
     await expect(soldOut).toBeVisible();
     await expect(soldOut).toHaveAttribute("data-sold-out", "true");
     await expect(soldOut).toBeDisabled();
     await expect(soldOut).toContainText("Tạm hết hàng");
 
     // The in-stock one stays fully usable.
-    const inStock = page.getByTestId("local-plan-301");
+    const inStock = d.getByTestId("local-plan-301");
     await expect(inStock).toBeEnabled();
     await expect(inStock).not.toHaveAttribute("data-sold-out", "true");
   });
@@ -323,7 +328,7 @@ test.describe("Domestic stock — sold-out plans", () => {
     await expect(page.getByTestId("local-test-meta")).toBeVisible();
 
     // Price header shows the in-stock plan's price, not the sold-out one's.
-    await expect(page.getByText("69.000", { exact: false }).first()).toBeVisible();
+    await expect(page.locator(".ndd #priceNet")).toContainText("69.000");
   });
 
   test("never marks an API provider's plan as sold out", async ({ page }) => {
@@ -345,6 +350,86 @@ test.describe("Domestic stock — sold-out plans", () => {
     await page.goto("/esim-noi-dia/test?carrier=wintel&lang=vi");
     await expect(page.getByTestId("local-test-meta")).toBeVisible();
 
-    await expect(page.getByTestId("local-plan-401")).toBeEnabled();
+    await expect(page.locator(".ndd").getByTestId("local-plan-401")).toBeEnabled();
+  });
+});
+
+test.describe("Domestic template perks and cycles (#066)", () => {
+  function offer(overrides: Record<string, unknown>) {
+    return {
+      firstCycleDataMb: 7168,
+      recurringDataMb: 7168,
+      dataPeriod: "daily",
+      bundleType: "daily",
+      offNetMinutes: 30,
+      onNetMinutes: 300,
+      domesticMinutes: 0,
+      offNetSms: 0,
+      onNetSms: 0,
+      zeroRatedSocial: false,
+      cycleFeeVnd: 119000,
+      cycleMonths: 1,
+      supportPhone: "Đầu số 055",
+      ...overrides,
+    };
+  }
+
+  async function mockOffers(page: Page) {
+    await page.route(`${API_BASE}/api/v1/plans/local-carriers`, async (route) => {
+      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(carriers()) });
+    });
+    await page.route(`${API_BASE}/api/v1/plans/local/wintel**`, async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          dataPlans: [], slowUnlimited: [], fastUnlimited: [], dailyUnlimited: [], smsCallEsim: [],
+          localEsim: [
+            // Same offer sold for 1 and for 12 months → one card, two cycles.
+            plan({ id: 501, providerPlanId: "WIN119P", type: "daily", vndPrice: 219000, domesticOffer: offer({}) }),
+            plan({ id: 502, providerPlanId: "12WIN119P", type: "daily", vndPrice: 1500000, durationDays: 360, domesticOffer: offer({ cycleFeeVnd: 1428000, cycleMonths: 12 }) }),
+            // Less data from the second month on.
+            plan({ id: 503, providerPlanId: "5G109C", type: "daily", speed: "5G", vndPrice: 209000, domesticOffer: offer({ recurringDataMb: 4096, offNetMinutes: 0, onNetMinutes: 0, domesticMinutes: 10, zeroRatedSocial: true }) }),
+          ],
+        }),
+      });
+    });
+  }
+
+  test("shows minutes by network and the second-cycle data", async ({ page }) => {
+    await mockOffers(page);
+    await page.goto("/esim-noi-dia/test?carrier=wintel&lang=vi");
+    const d = page.locator(".ndd");
+
+    const win = d.getByTestId("local-plan-501");
+    await expect(win).toContainText("7 GB/ngày");
+    await expect(win).toContainText("30 phút ngoại mạng");
+    await expect(win).toContainText("300 phút nội mạng");
+    await expect(win).toContainText("Miễn phí gói 1 tháng đầu");
+
+    const vnsky = d.getByTestId("local-plan-503");
+    await expect(vnsky).toContainText("10 phút trong nước");
+    await expect(vnsky).toContainText("Miễn phí data mạng xã hội");
+    await expect(vnsky).toContainText("Từ tháng thứ 2: 4 GB/ngày");
+    await expect(vnsky.locator(".tech")).toHaveText("5G");
+
+    // Only two cards: the 12-month variant lives in the cycle picker.
+    await expect(d.locator(".plan-btn")).toHaveCount(2);
+    await expect(d.locator("#specFee")).toHaveText("119.000₫/1 tháng");
+  });
+
+  test("the cycle picker switches to the 12-month plan and its price", async ({ page }) => {
+    await mockOffers(page);
+    await page.goto("/esim-noi-dia/test?carrier=wintel&lang=vi");
+    const d = page.locator(".ndd");
+
+    await expect(d.locator("#priceNet")).toContainText("219.000");
+    await d.locator("#cycBtn").click();
+    await d.locator('.dopt[data-m="12"]').click();
+
+    await expect(d.locator("#cycV")).toHaveText("12 tháng");
+    await expect(d.locator("#priceNet")).toContainText("1.500.000");
+    await expect(d.getByTestId("local-plan-502")).toContainText("Miễn phí gói 12 tháng đầu");
+    await expect(d.locator("#specFee")).toHaveText("1.428.000₫/12 tháng");
   });
 });

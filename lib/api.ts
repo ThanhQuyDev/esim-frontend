@@ -284,6 +284,34 @@ export interface Plan {
    * "GB" and render "10GBGB/ngày".
    */
   hotSpotAllow?: string | null;
+  /** Perks of a domestic eSIM plan, from the domestic import template (#066). */
+  domesticOffer?: DomesticOffer | null;
+}
+
+/**
+ * What a domestic (eSIM nội địa) plan includes beyond data (#066): minutes by
+ * network, first-cycle data, free social data, renewal fee and cycle length.
+ * Mirrors `DomesticOffer` in the backend (src/plans/domestic-offer.ts).
+ */
+export interface DomesticOffer {
+  /** MB in the first cycle — per day when `dataPeriod` is daily; null = unlimited. */
+  firstCycleDataMb: number | null;
+  /** MB from the second cycle on; null = unlimited. */
+  recurringDataMb: number | null;
+  dataPeriod: "daily" | "month";
+  bundleType: "daily" | "month" | "unlimited" | "unlimited-reduce";
+  offNetMinutes: number;
+  onNetMinutes: number;
+  /** Minutes to any network ("phút gọi trong nước"). */
+  domesticMinutes: number;
+  offNetSms: number;
+  onNetSms: number;
+  zeroRatedSocial: boolean;
+  /** Renewal fee for one cycle, VND. */
+  cycleFeeVnd: number | null;
+  cycleMonths: number;
+  /** E.g. "Đầu số 087". */
+  supportPhone: string | null;
 }
 
 /** Response shape from /api/v1/plans/by-destination/{slug} */

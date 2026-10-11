@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import { getLocalPlansByCarrier, getLocalCarriers } from "@/lib/api";
 import { getDictionary } from "@/lib/dictionaries";
-import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { LocalEsimDetail } from "@/components/layout/sections/local-esim/local-esim-detail";
 import { getCarrierMeta } from "@/components/layout/sections/local-esim/carrier-meta";
 import {
@@ -110,13 +109,7 @@ export default async function DomesticEsimCarrierPage({
 
   return (
     <main role="main">
-      <Breadcrumb
-        items={[
-          { label: dict.breadcrumb.domesticEsim },
-          { label: `eSIM ${meta.label}` },
-        ]}
-        lang={locale}
-      />
+      {/* The breadcrumb is part of the design (#066) and drawn by LocalEsimDetail. */}
       <LocalEsimDetail
         carrier={carrier}
         dict={dict.destinationPage}
