@@ -12,10 +12,9 @@ import { localizedSlug } from "@/lib/slug";
 import {
   findRegionGroupBySlug,
   groupRegions,
-  regionAsDestination,
   type RegionGroup,
 } from "@/lib/region-groups";
-import { RegionVariantTabs } from "@/components/layout/sections/region-group/region-variant-tabs";
+import { RegionDesign } from "@/components/layout/sections/region-group/region-design";
 import { faqCandidateUrls } from "@/lib/faq-urls";
 import { RegionSuggestions } from "@/components/layout/sections/destination/region-suggestions";
 import { buildRegionSuggestions } from "@/lib/region-suggestions";
@@ -115,12 +114,19 @@ async function withCountryLists(
 ): Promise<Region[]> {
   return Promise.all(
     members.map(async (member) => {
-      if (known && member.id === known.id) return known;
+      // The detail record has the country list but not the list entry's
+      // "from" price, which the coverage step shows (#067): keep both.
+      const keep = (full: Region) => ({
+        ...full,
+        fromPrice: full.fromPrice ?? member.fromPrice,
+        destinationCount: full.destinationCount ?? member.destinationCount,
+      });
+      if (known && member.id === known.id) return keep(known);
       const full = await getRegionBySlug(
         localizedSlug(member, locale) || member.slug,
         locale
       );
-      return full ?? member;
+      return full ? keep(full) : member;
     })
   );
 }
@@ -301,24 +307,14 @@ export default async function UnifiedSlugPage({
       });
       return (
         <main role="main">
-          <Breadcrumb
-            items={[
-              {
-                label: dict.breadcrumb.destinations,
-                href: locale === "vi" ? "/diem-den" : `/${locale}/destinations`,
-              },
-              { label: group.label },
-            ]}
-            lang={locale}
-          />
-          {/* Every pack of the group on one page: the tabs swap the plans in
-              place, so the URL stays `/esim-chau-a` (#004). The plan picker
-              renders the page's h1. */}
-          <RegionVariantTabs
+          {/* Every pack of the group on one page, as in the final design
+              (#067): the coverage step swaps the plans in place, so the URL
+              stays `/esim-chau-a` (#004). The design draws its own breadcrumb
+              and the page's h1. */}
+          <RegionDesign
             members={await withCountryLists(group.members, locale)}
+            label={group.label}
             lang={locale}
-            dict={dict.destinationPage}
-            fromLabel={dict.allDestinations.from}
           />
           <div className="max-w-[1168px] mx-auto px-4 sm:px-0">
             <LazyEsimComparison dict={dict.whatIsEsimPage.comparison} />
@@ -483,37 +479,19 @@ export default async function UnifiedSlugPage({
 
   return (
     <main role="main">
-      <Breadcrumb
-        items={[
-          {
-            label: dict.breadcrumb.destinations,
-            href: (locale === "vi" ? '/diem-den' : `/${locale}/destinations`),
-          },
-          { label: localizedName },
-        ]}
+      {/* The final region design (#067). Same-named packs are the coverage
+          step, switched in place (#004); the pack being viewed uses the full
+          record fetched above rather than its list entry. */}
+      <RegionDesign
+        members={
+          variantGroup
+            ? await withCountryLists(variantGroup.members, locale, region)
+            : [region]
+        }
+        label={variantGroup?.label ?? localizedName}
         lang={locale}
+        initialSlug={params.slug}
       />
-      {variantGroup ? (
-        // The other packs are tabs over the plans, switched in place (#004).
-        // The pack being viewed uses the full record fetched above rather than
-        // its list entry.
-        <RegionVariantTabs
-          members={await withCountryLists(variantGroup.members, locale, region)}
-          lang={locale}
-          dict={dict.destinationPage}
-          fromLabel={dict.allDestinations.from}
-          initialSlug={params.slug}
-        />
-      ) : (
-        <DestinationPlans
-          destination={regionAsDestination(region)}
-          slug={params.slug}
-          dict={dict.destinationPage}
-          lang={locale}
-          planSource="region"
-          initialRegion={region}
-        />
-      )}
       <div className="max-w-[1168px] mx-auto px-4 sm:px-0">
         <LazyHowItWorksSection dict={howItWorks} />
         <LazyFeaturesSection

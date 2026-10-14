@@ -1,0 +1,1779 @@
+"use client";
+
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import type { Destination, Plan } from "@/lib/api";
+import { worksWithTiktokAndChatGpt } from "@/lib/plan-tiktok";
+import { formatActivationDate } from "@/lib/plan-activation";
+import { dailyResetText } from "@/lib/plan-daily-reset";
+import { refundRule } from "@/lib/plan-refund";
+import { planVoiceInfo } from "@/lib/plan-voice";
+import { localizedSlug } from "@/lib/slug";
+import { Ic } from "../../local-esim/design/nd-icons";
+import { AccItem, Overlay, Tip, radioKeys } from "../../local-esim/design/nd-parts";
+import { vnd } from "../../local-esim/design/nd-state";
+import { SPRITE_FLAGS } from "./rg-icons";
+import {
+  badgeFor,
+  gbLabel,
+  joinVi,
+  perDay,
+  planForDays,
+  priceOf,
+  type Badge,
+  type Opt,
+  type Tier,
+} from "./rg-model";
+import { countOf, type RegionPurchase } from "./rg-state";
+
+/* ───────────── small pieces ───────────── */
+
+/** A country flag: the design's own drawing when it has one, else the image. */
+export function Flag({ code, url, w, h, cls = "flag" }: { code: string; url?: string; w: number; h: number; cls?: string }) {
+  const c = code.toLowerCase();
+  if (SPRITE_FLAGS.has(c)) return <Ic name={`fl-${c}`} w={w} h={h} cls={cls} />;
+  if (!url) return <span className={cls} style={{ display: "inline-block", width: w, height: h }} aria-hidden="true" />;
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img className={`${cls} rg-flag-img`} src={url} alt="" width={w} height={h} loading="lazy" decoding="async" />;
+}
+
+export function Pbi({ b }: { b: Badge | null }) {
+  return b ? <span className={`pbi ${b.cls}`}>{b.label}</span> : null;
+}
+
+const count = (p: RegionPurchase, i: number) => countOf(p.members[i]);
+
+/** "18 nước · 1 GB – 7 ngày" and friends (design's `y`). */
+export function planText(p: RegionPurchase): string {
+  if (!p.plan) return "";
+  if (p.need && p.tier) return `${p.tier.gb} – chưa chọn số ngày`;
+  return `${optLabel(p)}${p.perDayKind ? ` · ${p.days} ngày` : ""}`;
+}
+
+/** The chip's own label (design's `data-label`). */
+export function optLabel(p: RegionPurchase): string {
+  if (p.tier && p.plan) return `${p.tier.gb} – ${p.plan.durationDays} ngày`;
+  const o = p.opt;
+  if (!o || !p.plan) return "";
+  if (o.kind === "combo") return comboLabel(p.plan);
+  if (o.kind === "daily") return `${o.gb}/ngày`;
+  if (o.gb) return `${o.gb}/ngày · sau đó ${o.throttle}`;
+  return o.throttle ? `Không giới hạn · ${o.throttle}` : "Không giới hạn · tốc độ cao nhất";
+}
+
+function comboLabel(plan: Plan): string {
+  const parts = [gbLabel(Number(plan.dataMb))];
+  if (plan.call) parts.push(`${plan.call} phút`);
+  if (plan.sms) parts.push(`${plan.sms} SMS`);
+  return `${parts.filter(Boolean).join(" + ")} – ${plan.durationDays} ngày`;
+}
+
+/* ───────────── step 1: coverage variants ───────────── */
+
+export function Variants({ p }: { p: RegionPurchase }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [edge, setEdge] = useState({ l: false, r: false });
+  const fit = p.fit;
+
+  // Keep the chosen variant in view and show the edge fades (design's G/F).
+  useEffect(() => {
+    const n = ref.current;
+    if (!n) return;
+    const upd = () => {
+      const max = n.scrollWidth - n.clientWidth;
+      setEdge({ l: n.scrollLeft > 2, r: n.scrollLeft < max - 2 });
+    };
+    const el = n.querySelector<HTMLElement>('[aria-checked="true"]');
+    if (el && n.scrollWidth > n.clientWidth) {
+      const pad = parseFloat(getComputedStyle(n).scrollPaddingLeft) || 0;
+      const left = el.offsetLeft - pad;
+      const right = el.offsetLeft + el.offsetWidth + pad;
+      if (left < n.scrollLeft) n.scrollTo({ left, behavior: "smooth" });
+      else if (right > n.scrollLeft + n.clientWidth) n.scrollTo({ left: right - n.clientWidth, behavior: "smooth" });
+    }
+    upd();
+    n.addEventListener("scroll", upd, { passive: true });
+    addEventListener("resize", upd);
+    return () => {
+      n.removeEventListener("scroll", upd);
+      removeEventListener("resize", upd);
+    };
+  }, [p.active]);
+
+  return (
+    <div
+      className={`rng${edge.l ? " is-l" : ""}${edge.r ? " is-r" : ""}`}
+      id="variants"
+      role="radiogroup"
+      aria-labelledby="stepV"
+      ref={ref}
+      onKeyDown={(e) => radioKeys(e, (el) => p.setActive(Number(el.dataset.i)))}
+      onWheel={(e) => {
+        const n = ref.current;
+        if (!n) return;
+        const max = n.scrollWidth - n.clientWidth;
+        if (!max || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+        if ((e.deltaY > 0 && n.scrollLeft < max - 1) || (e.deltaY < 0 && n.scrollLeft > 0)) n.scrollLeft += e.deltaY;
+      }}
+    >
+      {p.members.map((m, i) => {
+        const codes = (m.destinations ?? []).map((d) => (d.countryCode || "").toUpperCase());
+        const miss = p.picked.some((c) => !codes.includes(c));
+        const price = Number(m.fromPrice);
+        return (
+          <div
+            key={m.id}
+            className="rng-o"
+            id={`v${m.id}`}
+            data-i={i}
+            role="radio"
+            aria-checked={i === p.active}
+            tabIndex={i === p.active ? 0 : -1}
+            data-miss={miss || undefined}
+            data-cover={p.picked.length > 0 && !miss ? "" : undefined}
+            data-fit={fit === i ? "" : undefined}
+            onClick={() => p.setActive(i)}
+          >
+            <span className="rng-n">{count(p, i)} nước</span>
+            {price > 0 && <span className="rng-p">từ {vnd(price)}</span>}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/* ───────────── step 1: coverage, country picker, result line ───────────── */
+
+const fold = (s: string) =>
+  s
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[đĐ]/g, "d")
+    .toLowerCase();
+
+/** "Có trong gói" / "Có ở gói 28 nước" for one country (design's `.dp-s`). */
+function pickNote(p: RegionPurchase, code: string): string {
+  if (p.codes.includes(code)) return "Có trong gói";
+  const c = p.countries.find((x) => x.code === code);
+  if (!c?.in.length) return "";
+  const cheapest = c.in.reduce((a, b) => (Number(p.members[b].fromPrice) < Number(p.members[a].fromPrice) ? b : a));
+  return `Có ở gói ${count(p, cheapest)} nước`;
+}
+
+export function CountryOptions({
+  p,
+  query,
+  activeIdx,
+  sheet,
+  onPicked,
+}: {
+  p: RegionPurchase;
+  query: string;
+  activeIdx: number;
+  sheet?: boolean;
+  onPicked?: () => void;
+}) {
+  const q = fold(query.trim());
+  const list = p.countries.filter((c) => !q || fold(c.name).includes(q) || c.code.toLowerCase() === q);
+  return (
+    <ul
+      className={`dp-list${sheet ? " dp-list--sheet" : ""}`}
+      id="dpList"
+      aria-label="Chọn nước bạn sẽ đến"
+      aria-multiselectable="true"
+      role="listbox"
+      onMouseDown={(e) => e.preventDefault()}
+    >
+      {list.map((c, i) => (
+        <li
+          key={c.code}
+          className={`dp-o${p.codes.includes(c.code) ? " is-in" : ""}${i === activeIdx ? " is-act" : ""}`}
+          id={`dpo-${c.code.toLowerCase()}`}
+          role="option"
+          aria-selected={p.picked.includes(c.code)}
+          data-code={c.code}
+          onClick={() => {
+            p.togglePick(c.code);
+            onPicked?.();
+          }}
+        >
+          <span className="dp-ck" />
+          <Flag code={c.code} url={c.flagUrl} w={24} h={18} />
+          <span className="dp-n">{c.name}</span>
+          <span className="dp-s">{pickNote(p, c.code)}</span>
+        </li>
+      ))}
+      <li className="dp-empty" hidden={list.length > 0} role="presentation">
+        Không tìm thấy nước phù hợp
+      </li>
+    </ul>
+  );
+}
+
+function Tags({ p }: { p: RegionPurchase }) {
+  return (
+    <span className="dp-tags" id="dpTags">
+      {p.picked.map((code) => {
+        const miss = !p.codes.includes(code);
+        const name = p.nameOf(code);
+        const c = p.countries.find((x) => x.code === code);
+        return (
+          <button
+            key={code}
+            type="button"
+            className={`dp-tag${miss ? " is-miss" : ""}`}
+            data-code={code}
+            aria-label={`Bỏ ${name}${miss ? " (gói đang chọn không có)" : ""}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              p.togglePick(code, false);
+            }}
+          >
+            <Flag code={code} url={c?.flagUrl} w={18} h={13.5} />
+            {name}
+            <Ic name="ic-close" w={10} />
+          </button>
+        );
+      })}
+    </span>
+  );
+}
+
+/** Desktop picker: tags + combobox input + dropdown list (design's `#destPick`). */
+export function DestPicker({ p }: { p: RegionPurchase }) {
+  const [query, setQuery] = useState("");
+  const [open, setOpen] = useState(false);
+  const [act, setAct] = useState(-1);
+  const input = useRef<HTMLInputElement>(null);
+  const box = useRef<HTMLDivElement>(null);
+  const [multi, setMulti] = useState(false);
+
+  const q = fold(query.trim());
+  const visible = p.countries.filter((c) => !q || fold(c.name).includes(q));
+
+  useEffect(() => {
+    if (!open) return;
+    const off = (e: MouseEvent) => {
+      const t = e.target as HTMLElement;
+      if (t.isConnected && !t.closest("#destPick")) setOpen(false);
+    };
+    document.addEventListener("click", off);
+    return () => document.removeEventListener("click", off);
+  }, [open]);
+
+  useEffect(() => {
+    const b = box.current;
+    if (!b || typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver(() => setMulti(b.offsetHeight > parseFloat(getComputedStyle(b).minHeight) + 6));
+    ro.observe(b);
+    return () => ro.disconnect();
+  }, []);
+
+  useEffect(() => {
+    document.getElementById(`dpo-${visible[act]?.code.toLowerCase()}`)?.scrollIntoView({ block: "nearest" });
+  }, [act]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  return (
+    <div className="dp" id="destPick">
+      {" "}
+      <div
+        className={`dp-box${multi ? " is-multi" : ""}`}
+        ref={box}
+        onMouseDown={(e) => {
+          const t = e.target as HTMLElement;
+          if (t === input.current || t.closest(".dp-tag")) return;
+          e.preventDefault();
+          input.current?.focus();
+        }}
+      >
+        <Ic name="ic-search" w={16} />
+        <Tags p={p} />
+        <input
+          ref={input}
+          aria-label="Nước bạn sẽ đến"
+          autoComplete="off"
+          placeholder={p.picked.length ? "Thêm nước khác…" : "Bạn sẽ đến nước nào? Nhập tên nước để kiểm tra"}
+          id="dpInput"
+          aria-autocomplete="list"
+          aria-controls="dpList"
+          aria-expanded={open}
+          aria-activedescendant={act >= 0 && visible[act] ? `dpo-${visible[act].code.toLowerCase()}` : undefined}
+          className="dp-in"
+          role="combobox"
+          spellCheck={false}
+          value={query}
+          onFocus={() => setOpen(true)}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            setOpen(true);
+            setAct(e.target.value ? 0 : -1);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "ArrowDown") {
+              e.preventDefault();
+              setOpen(true);
+              setAct((a) => Math.min(a + 1, visible.length - 1));
+            } else if (e.key === "ArrowUp") {
+              e.preventDefault();
+              setAct((a) => Math.max(a - 1, -1));
+            } else if (e.key === "Enter") {
+              const c = visible[act];
+              if (c && open) {
+                e.preventDefault();
+                p.togglePick(c.code);
+                if (query) setQuery("");
+              }
+            } else if (e.key === "Escape") {
+              if (open) {
+                e.stopPropagation();
+                setOpen(false);
+              }
+            } else if (e.key === "Backspace" && !query && p.picked.length) {
+              p.togglePick(p.picked[p.picked.length - 1], false);
+            } else if (e.key === "Tab") setOpen(false);
+          }}
+        />
+        <button
+          className="search-clr dp-x"
+          type="button"
+          aria-label="Xoá chữ đang nhập"
+          id="dpX"
+          hidden={!query}
+          onClick={() => {
+            setQuery("");
+            input.current?.focus();
+          }}
+        >
+          <Ic name="ic-close" w={14} />
+        </button>
+        <button
+          className="dp-clr"
+          type="button"
+          aria-label="Xóa hết nước đã chọn"
+          id="dpClear"
+          hidden={!p.picked.length || !!query}
+          onMouseDown={(e) => e.stopPropagation()}
+          onClick={(e) => {
+            e.stopPropagation();
+            p.clearPicked();
+          }}
+        >
+          Xóa hết
+        </button>
+      </div>{" "}
+      {open && (
+        <CountryOptions
+          p={p}
+          query={query}
+          activeIdx={act}
+          onPicked={() => {
+            if (query) setQuery("");
+          }}
+        />
+      )}{" "}
+    </div>
+  );
+}
+
+/** Mobile picker: tags + a button that opens the picker sheet (`#dpOv`). */
+export function DestTrigger({ p, onOpen }: { p: RegionPurchase; onOpen: () => void }) {
+  return (
+    <div className="dp" id="destPick">
+      {" "}
+      <div
+        className="dp-box"
+        onClick={(e) => {
+          if (!(e.target as HTMLElement).closest(".dp-tag,.dp-trig,.dp-clr")) onOpen();
+        }}
+      >
+        <Ic name="ic-search" w={16} />
+        <Tags p={p} />
+        <button className="dp-trig" type="button" id="dpTrig" aria-haspopup="dialog" onClick={onOpen}>
+          {p.picked.length ? "Thêm nước" : "Bạn sẽ đến nước nào?"}
+        </button>
+        <button className="dp-clr" type="button" id="dpClear" aria-label="Xóa hết nước đã chọn" hidden={!p.picked.length} onClick={p.clearPicked}>
+          Xóa hết
+        </button>
+      </div>{" "}
+    </div>
+  );
+}
+
+export function PickerSheet({ p, open, onClose }: { p: RegionPurchase; open: boolean; onClose: () => void }) {
+  const [query, setQuery] = useState("");
+  useEffect(() => {
+    if (open) setQuery("");
+  }, [open]);
+  const fit = p.fit;
+  return (
+    <Overlay id="dpOv" open={open} onClose={onClose}>
+      <div className="modal" role="dialog" aria-labelledby="dpTitle" aria-modal="true">
+        <div className="modal-hd">
+          <div className="modal-top">
+            <div>
+              <div className="modal-title modal-title--sm" id="dpTitle">
+                Bạn sẽ đến nước nào?
+              </div>
+              <p className="modal-desc">Chọn một hoặc nhiều nước — gói rẻ nhất phủ đủ được chọn sẵn.</p>
+            </div>
+            <button className="btn-close" type="button" aria-label="Đóng" data-close="">
+              <Ic name="ic-x" w={24} />
+            </button>
+          </div>
+          <div className="search dp-search">
+            <Ic name="ic-search" w={16} />
+            <input
+              aria-label="Tìm nước"
+              autoComplete="off"
+              placeholder="Tìm tên nước…"
+              type="search"
+              id="dpInput"
+              aria-autocomplete="list"
+              aria-controls="dpList"
+              aria-expanded="true"
+              className="dp-in"
+              role="combobox"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+            <button className="search-clr" type="button" id="dpX" aria-label="Xoá chữ đang tìm" hidden={!query} onClick={() => setQuery("")}>
+              <Ic name="ic-close" w={14} />
+            </button>
+          </div>
+        </div>
+        <div className="modal-body" tabIndex={0}>
+          <CountryOptions p={p} query={query} activeIdx={-1} sheet />
+        </div>
+        <div className="modal-ft">
+          <p className={`dp-sum${p.picked.length ? (fit !== null ? " is-ok" : " is-warn") : ""}`} id="dpSum" aria-live="polite">
+            {p.picked.length ? (
+              fit !== null ? (
+                <>
+                  <Ic name="ic-check-circle" w={14} />
+                  <span>
+                    Gói <b>{count(p, fit)} nước</b> phủ đủ {p.picked.length} nước bạn chọn
+                  </span>
+                </>
+              ) : (
+                <>
+                  <Ic name="ic-warning" w={14} />
+                  <span>Chưa có gói phủ đủ các nước này</span>
+                </>
+              )
+            ) : (
+              "Chọn nước để được gợi ý gói rẻ nhất."
+            )}
+          </p>
+          <button className="btn btn-block btn-dark" type="button" data-close="">
+            Xong
+          </button>
+        </div>
+      </div>
+    </Overlay>
+  );
+}
+
+/** The verdict under the picker (design's `j()` → `#destRes`). */
+export function DestRes({ p }: { p: RegionPurchase }) {
+  const n = p.picked;
+  if (!n.length) return <p className="dest-res" id="destRes" aria-live="polite" hidden role="status" />;
+  const cur = p.active;
+  const fit = p.fit;
+  const missing = n.filter((c) => !p.codes.includes(c));
+  const names = (list: string[]) => joinVi(list.map(p.nameOf));
+  const go = (i: number, text: string) => (
+    <button type="button" className="res-go" onClick={() => p.setActive(i)}>
+      {text}
+      <Ic name="ic-chev-right" w={12} />
+    </button>
+  );
+  const line = (icon: string, body: ReactNode) => (
+    <span className="res-t">
+      <Ic name={`ic-${icon}`} w={14} />
+      <span>{body}</span>
+    </span>
+  );
+  const priceRatio = (a: number, b: number) => {
+    const pa = Number(p.members[a].fromPrice);
+    const pb = Number(p.members[b].fromPrice);
+    return pa > 0 && pb > 0 ? Math.round(100 * (1 - pa / pb)) : 0;
+  };
+  let body: ReactNode;
+  if (missing.length) {
+    body = (
+      <>
+        {line(
+          "warning",
+          `Gói ${count(p, cur)} nước ${missing.length < 3 ? `chưa có ${names(missing)}` : `thiếu ${missing.length}/${n.length} nước bạn chọn`}`,
+        )}
+        {fit !== null && go(fit, `Đổi sang gói ${count(p, fit)} nước`)}
+      </>
+    );
+  } else {
+    const ok = line(
+      "check-circle",
+      <>
+        Gói <strong>{count(p, cur)} nước</strong> phủ đủ {n.length < 3 ? names(n) : `cả ${n.length} nước bạn chọn`}
+      </>,
+    );
+    if (fit !== null && fit !== cur) {
+      const save = priceRatio(fit, cur);
+      body = (
+        <>
+          {ok}
+          {go(fit, `Đổi sang gói ${count(p, fit)} nước${save > 0 ? `, rẻ hơn ${save}%` : ""}`)}
+        </>
+      );
+    } else {
+      const save = cur !== 0 ? priceRatio(cur, 0) : 0;
+      body = (
+        <>
+          {ok}
+          {save > 0 && <span className="res-save">Rẻ hơn {save}% so với gói {count(p, 0)} nước</span>}
+        </>
+      );
+    }
+  }
+  return (
+    <p className={`dest-res ${missing.length ? "is-warn" : "is-ok"}`} id="destRes" aria-live="polite" role="status">
+      {body}
+    </p>
+  );
+}
+
+/** Flags of the chosen variant (`#covFlags`), at most `max` then "+N". */
+export function CovFlags({ p, max }: { p: RegionPurchase; max: number }) {
+  const list = p.member?.destinations ?? [];
+  const shown = list.length > max + 1 ? max : list.length;
+  return (
+    <span className="cov-flags" id="covFlags" aria-hidden="true" data-max={max}>
+      {list.slice(0, shown).map((d) => (
+        <span className="cov-f" key={d.id}>
+          <Flag code={d.countryCode || ""} url={d.flagUrl} w={29} h={22} />
+        </span>
+      ))}
+      {list.length > shown && <span className="cov-more">+{list.length - shown}</span>}
+    </span>
+  );
+}
+
+/* ───────────── step 2: tabs, app filter, plans ───────────── */
+
+export function SegTabs({ p }: { p: RegionPurchase }) {
+  const nData = p.plans.dataPlans.length + p.plans.slowUnlimited.length + p.plans.fastUnlimited.length + p.plans.dailyUnlimited.length;
+  const nCombo = p.plans.smsCallEsim?.length ?? 0;
+  if (!nCombo) return null;
+  const tab = (key: "data" | "combo", icon: string, label: string, n: number) => (
+    <button
+      className="seg-btn"
+      type="button"
+      id={`tab-${key}`}
+      aria-controls={key === "data" ? "paneData" : "paneCombo"}
+      aria-selected={p.tab === key}
+      tabIndex={p.tab === key ? 0 : -1}
+      role="tab"
+      onClick={() => p.switchTab(key)}
+      onKeyDown={(e) => {
+        if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+          e.preventDefault();
+          const next = key === "data" ? "combo" : "data";
+          p.switchTab(next);
+          document.getElementById(`tab-${next}`)?.focus();
+        }
+      }}
+    >
+      <Ic name={icon} w={15} />
+      {label}
+      <span className="seg-n">
+        <span id={key === "data" ? "nData" : "nCombo"}>{n}</span>
+        <span className="sr-only"> gói</span>
+      </span>
+    </button>
+  );
+  return (
+    <div className="seg" id="segType" role="tablist" aria-label="Loại gói">
+      {tab("data", "ic-wifi", "Chỉ Data", nData)} {tab("combo", "ic-phone", "Data + Gọi + SMS", nCombo)}
+    </div>
+  );
+}
+
+export function AppFilter({ p, mobile }: { p: RegionPurchase; mobile?: boolean }) {
+  const [ping, setPing] = useState(false);
+  const hint = !p.appFilter && p.picked.includes("CN");
+  const was = useRef(false);
+  useEffect(() => {
+    if (hint && !was.current) setPing(true);
+    was.current = hint;
+  }, [hint]);
+  if (!p.showFilter) return null;
+  const tabPlans =
+    p.tab === "combo"
+      ? (p.all.smsCallEsim ?? [])
+      : [...p.all.dataPlans, ...p.all.slowUnlimited, ...p.all.fastUnlimited, ...p.all.dailyUnlimited];
+  const ok = tabPlans.filter(worksWithTiktokAndChatGpt).length;
+  const of = <b>{`${ok}/${tabPlans.length} eSIM`}</b>;
+  return (
+    <button
+      className={`af${hint ? " is-hint" : ""}${ping ? " is-ping" : ""}`}
+      type="button"
+      id="appFilter"
+      role="switch"
+      aria-checked={p.appFilter}
+      aria-describedby="afSub"
+      aria-labelledby="afH"
+      onClick={() => p.toggleAppFilter(!p.appFilter)}
+      onAnimationEnd={() => setPing(false)}
+    >
+      {!mobile && (
+        <span className="af-ic">
+          <Ic name="ic-unlock" w={18} />
+        </span>
+      )}
+      <span className="af-t">
+        <span className="af-h" id="afH">
+          Lọc eSIM dùng được{" "}
+          <span className="af-apps">
+            <span className="af-app">TikTok</span>
+            <span className="sr-only">, </span>
+            <span className="af-app">ChatGPT</span>
+            <span className="sr-only"> và </span>
+            <span className="af-app">Claude</span>
+          </span>
+        </span>
+        <span className="af-s" id="afSub">
+          <span className="af-s1">Đi Trung Quốc? Bật để xem {of} vẫn dùng được</span>
+          <span className="af-s2">Đã lọc {of}. Tắt lọc để xem tất cả</span>
+          <span className="af-s3">Đến Trung Quốc: bật để xem {of} vẫn dùng được</span>
+        </span>
+      </span>
+      <span className="af-sw" aria-hidden="true" />
+    </button>
+  );
+}
+
+function KycIcon({ show }: { show: boolean }) {
+  return show ? (
+    <span className="chip-kyc" role="img" aria-label="Cần xác thực danh tính">
+      <Ic name="ic-passport" w={14} />
+    </span>
+  ) : null;
+}
+
+function PgHead({
+  id,
+  icon,
+  title,
+  tip,
+  n,
+  of,
+}: {
+  id: string;
+  icon: string;
+  title: string;
+  tip: string;
+  n: number;
+  of: number | null;
+}) {
+  return (
+    <div className="pg-hd">
+      <Ic name={icon} w={14} />
+      <h3 className="pg-title" id={id}>
+        {title}
+      </h3>
+      <Tip text={`${title}: ${tip}`} w={14} extra="tip--pg" />
+      <span className="pg-line" aria-hidden="true" />
+      <span className="pg-count">{of !== null ? `${n}/${of} gói` : `${n} gói`}</span>
+    </div>
+  );
+}
+
+const TIPS = {
+  fixed: "Chọn mức data trước, rồi chọn số ngày dùng ở khung bên dưới. Giá thay đổi theo số ngày.",
+  daily:
+    "Mỗi ngày có sẵn một lượng data tốc độ cao; sang ngày mới được cấp lại. Dùng hết trong ngày, tuỳ gói mà mạng ngừng truy cập hoặc hạ tốc độ đến hết ngày.",
+  unl: "Không giới hạn dung lượng, mạng không bị cắt. Thẻ “X GB/ngày ∞ Y Mbps”: mỗi ngày có X GB tốc độ cao, dùng hết thì giảm còn Y Mbps. Thẻ “∞ Y Mbps”: luôn dùng ở tốc độ Y.",
+  combo: "Gồm data tốc độ cao, phút gọi và tin nhắn SMS, kèm số điện thoại riêng — dùng trong số ngày ghi trên thẻ.",
+};
+
+/** The fixed-plan dropdown (`#dsel`): days of the chosen size with prices. */
+function DaySelect({ p, tier, open, setOpen }: { p: RegionPurchase; tier: Tier; open: boolean; setOpen: (o: boolean) => void }) {
+  const btn = useRef<HTMLButtonElement>(null);
+  const list = useRef<HTMLDivElement>(null);
+  const cur = p.tier?.key === tier.key ? p.plan : null;
+  useEffect(() => {
+    if (!open) return;
+    const off = (e: MouseEvent) => {
+      // Buttons that lead to the days (buy while days are missing, the days
+      // field, "Chọn ngay") open it themselves — not an outside click.
+      if (!(e.target as HTMLElement).closest("#dsel,.tier,[data-dgo]")) setOpen(false);
+    };
+    document.addEventListener("click", off);
+    list.current?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    return () => document.removeEventListener("click", off);
+  }, [open, setOpen]);
+  const opts = tier.plans;
+  const pick = (d: number) => {
+    p.selectFixedDays(tier, d);
+    setOpen(false);
+  };
+  return (
+    <div className="dsel" id="dsel">
+      <button
+        className="dsel-btn"
+        type="button"
+        id="dselBtn"
+        aria-controls="dselList"
+        aria-expanded={open}
+        ref={btn}
+        onClick={() => setOpen(!open)}
+        onKeyDown={(e) => {
+          if (e.key === "ArrowDown" && !open) {
+            e.preventDefault();
+            setOpen(true);
+          }
+        }}
+      >
+        <span className="dsel-v" id="dselV">
+          {p.need || !cur ? "Chọn số ngày" : `${cur.durationDays} ngày`}
+        </span>
+        <span className="dsel-p" id="dselP" hidden={p.need || !cur}>
+          {cur ? vnd(priceOf(cur, cur.durationDays).price) : ""}
+        </span>
+        <Ic name="ic-chev-down" w={16} />
+      </button>
+      <div
+        className="dsel-list"
+        id="dselList"
+        hidden={!open}
+        ref={list}
+        onKeyDown={(e) => {
+          const items = Array.from(list.current?.querySelectorAll<HTMLElement>(".chip") ?? []);
+          const i = items.indexOf(document.activeElement as HTMLElement);
+          const next = { ArrowDown: items[(i + 1) % items.length], ArrowUp: items[(i - 1 + items.length) % items.length], Home: items[0], End: items[items.length - 1] }[
+            e.key as "ArrowDown"
+          ];
+          if (next) {
+            e.preventDefault();
+            next.focus();
+          } else if (e.key === "Escape") {
+            e.stopPropagation();
+            setOpen(false);
+            btn.current?.focus();
+          } else if (e.key === "Tab") setOpen(false);
+        }}
+      >
+        <div className="dsel-tp" role="group" aria-label={`Số ngày của gói ${tier.gb}`}>
+          {opts.map((plan) => {
+            const { price } = priceOf(plan, plan.durationDays);
+            const d = plan.durationDays;
+            const checked = !p.need && cur?.durationDays === d;
+            const per = d > 1 ? `≈ ${vnd(perDay(price, d))}/ngày` : "";
+            const b = badgeFor(plan, false);
+            return (
+              <span
+                key={plan.id}
+                className="chip dopt"
+                role="radio"
+                aria-checked={checked}
+                tabIndex={checked ? 0 : -1}
+                data-days={d}
+                onClick={() => pick(d)}
+                onKeyDown={(e) => {
+                  if (e.key === " " || e.key === "Enter") {
+                    e.preventDefault();
+                    pick(d);
+                  }
+                }}
+              >
+                <span className="dopt-k" />
+                <span className="dopt-d">{d} ngày</span>
+                <span className="dopt-p">{vnd(price)}</span>
+                <span className="dopt-b">
+                  <Pbi b={b} />
+                </span>
+                <span className="dopt-pd">{per}</span>
+              </span>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** What the chosen plan gives (`#planNote`): data rule + apps line. */
+export function PlanNote({ p }: { p: RegionPurchase }) {
+  if (!p.plan) return null;
+  const b = (t: string) => <b>{t}</b>;
+  const o = p.opt;
+  let icon = "ic-calendar";
+  let text: ReactNode;
+  if (o?.kind === "unl") {
+    icon = "ic-infinity";
+    text = o.gb ? (
+      <>
+        Mỗi ngày dùng {b(o.gb)} tốc độ cao. Hết {o.gb}, mạng không bị cắt: tự giảm còn {b(o.throttle)}
+        {speedUse(o.throttle)} và dùng tiếp không giới hạn.
+      </>
+    ) : o.throttle ? (
+      <>
+        Không giới hạn dung lượng, luôn dùng ở tốc độ {b(o.throttle)}
+        {speedUse(o.throttle)}.
+      </>
+    ) : (
+      <>Không giới hạn dung lượng, luôn dùng tốc độ cao nhất của mạng 4G/5G — không giảm tốc.</>
+    );
+  } else if (o?.kind === "daily") {
+    icon = "ic-clock";
+    text = (
+      <>
+        Data {b(`${o.gb}/ngày`)} tốc độ cao — hết dung lượng trong ngày thì{" "}
+        {o.throttle ? <>hạ xuống {b(o.throttle)}</> : <>{b("ngừng truy cập")} đến hết ngày</>}.
+      </>
+    );
+  } else if (o?.kind === "combo") {
+    icon = "ic-phone";
+    text = (
+      <>
+        {b(gbLabel(Number(p.plan.dataMb)))} data tốc độ cao{p.plan.call ? <> + {b(`${p.plan.call} phút`)} gọi</> : null}
+        {p.plan.sms ? <> + {b(`${p.plan.sms} SMS`)}</> : null}, dùng trong {p.plan.durationDays} ngày — kèm số điện thoại riêng.
+      </>
+    );
+  } else {
+    text = (
+      <>
+        Tổng {b(p.tier?.gb ?? gbLabel(Number(p.plan.dataMb)))} tốc độ cao, dùng trong {b(`${p.plan.durationDays} ngày`)} — hết dung lượng có
+        thể nạp thêm.
+      </>
+    );
+  }
+  const apps = p.apps;
+  return (
+    <div className="plan-note" id="planNote" aria-live="polite" hidden={p.need}>
+      <p className="pn-r" id="pnData">
+        <Ic name={icon} w={15} />
+        <span>{text}</span>
+      </p>
+      <p className="pn-r">
+        <Ic name={apps === "all" || apps === "unknown" ? "ic-check-circle" : "ic-no"} w={15} />
+        <span>
+          {apps === "notiktok" ? (
+            <>
+              Hỗ trợ sử dụng ChatGPT, Gemini, Claude… <b className="pn-no">Không dùng được TikTok.</b>
+            </>
+          ) : apps === "none" ? (
+            <>
+              Hỗ trợ sử dụng Google, Gemini, Claude… <b className="pn-no">Không dùng được TikTok, ChatGPT.</b>
+            </>
+          ) : (
+            "Hỗ trợ sử dụng TikTok, ChatGPT, Gemini, Claude…"
+          )}
+          {p.showFilter && apps !== "all" && apps !== "unknown" && (
+            <button className="pn-go" type="button" id="pnGo" onClick={() => p.toggleAppFilter(true)}>
+              <span className="pn-go-t">Lọc eSIM dùng được</span>
+              <Ic name="ic-chev-right" w={12} />
+            </button>
+          )}
+        </span>
+      </p>
+    </div>
+  );
+}
+
+const SPEED_USE: Record<number, string> = {
+  1: "đủ nhắn tin, xem bản đồ, lướt web nhẹ",
+  2: "lướt web, xem video chất lượng thấp",
+  3: "lướt web mượt, xem video chất lượng chuẩn",
+  5: "xem video HD, gọi video ổn định",
+  10: "xem video Full HD, tải file nhanh",
+};
+function speedUse(throttle: string): string {
+  const n = parseFloat(throttle) || 0;
+  return /mbps/i.test(throttle) && SPEED_USE[n] ? ` (${SPEED_USE[n]})` : "";
+}
+
+export function EkycNote({ p, onOpen, oneLine }: { p: RegionPurchase; onOpen: () => void; oneLine?: boolean }) {
+  if (!p.needsKyc || p.need) return null;
+  return (
+    <button className={`ekyc-note${oneLine ? " ekyc-note--1l" : ""}`} type="button" id="ekycNote" aria-haspopup="dialog" onClick={onOpen}>
+      <Ic name="ic-passport" w={18} />
+      <span className="ekyc-note-c">
+        <span className="ekyc-note-t">
+          eSIM này cần xác thực danh tính{p.kycWhere.length ? " tại " : ""}
+          {p.kycWhere.length > 0 && <span className="ekyc-where">{joinVi(p.kycWhere)}</span>}
+        </span>
+        <span className="ekyc-note-l">
+          Xem hướng dẫn
+          <Ic name="ic-chev-right" w={12} />
+        </span>
+      </span>
+    </button>
+  );
+}
+
+/** Step 2 body: the data pane (fixed / daily / unlimited) and the combo pane. */
+export function PlanPanes({
+  p,
+  dselOpen,
+  setDselOpen,
+  onEkyc,
+  mobile,
+  plansRef,
+}: {
+  p: RegionPurchase;
+  dselOpen: boolean;
+  setDselOpen: (o: boolean) => void;
+  onEkyc: () => void;
+  mobile?: boolean;
+  plansRef?: React.Ref<HTMLDivElement>;
+}) {
+  const filtered = p.appFilter && p.showFilter;
+  const allCount = (list: Plan[]) => (filtered ? list.length : null);
+  const kycHere = p.kycWhere.length > 0;
+  const days = p.days;
+  const noteIn = (where: "fixed" | "daily" | "unl" | "combo") =>
+    (p.sel?.kind === where || (where === "fixed" && p.sel?.kind === "fixed")) ? (
+      <>
+        <PlanNote p={p} />
+        <EkycNote p={p} onOpen={onEkyc} oneLine={mobile} />
+      </>
+    ) : null;
+
+  const chip = (o: Opt, label: ReactNode) => {
+    const plan = planForDays(o, days);
+    const selected = p.opt?.key === o.key;
+    return (
+      <span
+        key={o.key}
+        className="chip"
+        id={o.key}
+        role="radio"
+        aria-checked={selected}
+        tabIndex={selected ? 0 : -1}
+        onClick={() => p.selectOpt(o)}
+      >
+        {label} <Pbi b={badgeFor(plan) ?? badgeFor(o.plans.find((x) => badgeFor(x)))} />
+        <KycIcon show={kycHere && o.plans.some((x) => x.isKyc)} />
+      </span>
+    );
+  };
+
+  const pickFromKeys = (el: HTMLElement) => {
+    const o = [...p.daily, ...p.unl, ...p.combo].find((x) => x.key === el.id);
+    if (o) p.selectOpt(o);
+  };
+
+  return (
+    <div id="plans" role="radiogroup" aria-labelledby="step1" ref={plansRef} onKeyDown={(e) => radioKeys(e, pickFromKeys)}>
+      {" "}
+      <div id="paneData" role="tabpanel" aria-labelledby="tab-data" hidden={p.tab !== "data"}>
+        {p.tiers.length > 0 && (
+          <div className="pg pg--scroll pg--tier" role="group" aria-labelledby="pgd1">
+            <PgHead id="pgd1" icon="ic-calendar" title="Gói cố định" tip={TIPS.fixed} n={p.plans.dataPlans.length} of={allCount(p.all.dataPlans)} />{" "}
+            <div className="tier-grid" id="tierGrid" role="group" aria-label="Chọn dung lượng và số ngày dùng">
+              {p.tiers.map((t) => {
+                const on = p.tier?.key === t.key;
+                return (
+                  <button
+                    key={t.key}
+                    className="tier"
+                    type="button"
+                    id={t.key}
+                    aria-controls="dselList"
+                    tabIndex={on || (!p.tier && t === p.tiers[0]) ? 0 : -1}
+                    aria-pressed={on}
+                    onClick={() => {
+                      if (on) setDselOpen(!dselOpen);
+                      else {
+                        p.selectTier(t);
+                        setDselOpen(true);
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      const step = ({ ArrowLeft: -1, ArrowRight: 1 } as Record<string, number>)[e.key];
+                      if (!step) return;
+                      e.preventDefault();
+                      const i = p.tiers.indexOf(t);
+                      document.getElementById(p.tiers[(i + step + p.tiers.length) % p.tiers.length].key)?.focus();
+                    }}
+                  >
+                    {t.gb}
+                    <Pbi b={t.badge} />
+                  </button>
+                );
+              })}{" "}
+              {p.tier && (
+                <div className={`dock${p.need ? " is-need" : ""}`} id="dock">
+                  <div className="dock-l">
+                    <p className="dock-q">
+                      Tổng <b id="dockGb">{p.tier.gb}</b> dùng trong bao nhiêu ngày?
+                    </p>
+                    <p className="dock-s">
+                      <span id="dockS" hidden={p.need}>
+                        Data dùng chung cả gói, không chia theo ngày.
+                      </span>
+                      <span className="dock-need" id="dockNeed" role="status" hidden={!p.need}>
+                        Chọn số ngày để tiếp tục mua hàng
+                      </span>
+                    </p>
+                  </div>
+                  <DaySelect p={p} tier={p.tier} open={dselOpen} setOpen={setDselOpen} />
+                </div>
+              )}
+            </div>
+            {noteIn("fixed")}
+          </div>
+        )}
+        {p.daily.length > 0 && (
+          <div className="pg pg--scroll" role="group" aria-labelledby="pgd2">
+            <PgHead id="pgd2" icon="ic-clock" title="Gói theo ngày" tip={TIPS.daily} n={p.daily.length} of={filtered ? null : null} />{" "}
+            <div className="chip-grid">{p.daily.map((o) => chip(o, `${o.gb}/ngày`))}</div>
+            {noteIn("daily")}
+          </div>
+        )}
+        {p.unl.length > 0 && (
+          <div className="pg pg--scroll" role="group" aria-labelledby="pgd3">
+            <PgHead id="pgd3" icon="ic-infinity" title="Gói không giới hạn" tip={TIPS.unl} n={p.unl.length} of={null} />{" "}
+            <div className="chip-grid">
+              {p.unl.map((o) =>
+                chip(
+                  o,
+                  o.gb ? (
+                    <>
+                      {o.gb}/ngày{" "}
+                      <span className="chip-sub">
+                        <Ic name="ic-infinity" w={14} />
+                        {o.throttle}
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <Ic name="ic-infinity" w={14} />
+                      {o.throttle || "Tốc độ cao"}
+                    </>
+                  ),
+                ),
+              )}
+            </div>
+            {noteIn("unl")}
+          </div>
+        )}
+        {p.tiers.length + p.daily.length + p.unl.length === 0 && !p.isLoading && (
+          <p className="pg-empty">{p.appFilter ? "Không có gói nào dùng được TikTok, ChatGPT ở phạm vi này." : "Phạm vi này hiện chưa có gói nào."}</p>
+        )}
+      </div>{" "}
+      <div id="paneCombo" role="tabpanel" aria-labelledby="tab-combo" hidden={p.tab !== "combo"}>
+        {p.combo.length > 0 && (
+          <div className="pg pg--scroll" role="group" aria-labelledby="pgc1">
+            <PgHead id="pgc1" icon="ic-phone" title="Gói Data + Gọi + SMS" tip={TIPS.combo} n={p.combo.length} of={allCount(p.all.smsCallEsim ?? [])} />{" "}
+            <div className="chip-grid">{p.combo.map((o) => chip(o, comboLabel(o.plans[0])))}</div>
+            {noteIn("combo")}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ───────────── step 3: days ───────────── */
+
+const DESK_DAYS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 20, 25, 30];
+const MOB_DAYS = [1, 3, 5, 7, 10, 12, 15, 20, 30];
+
+/** Days field mode: calendar for per-day plans, dropdown jump for fixed sizes. */
+export function daysMode(p: RegionPurchase): "cal" | "go" | "" {
+  if (p.perDayKind) return p.allowed === "any" ? "cal" : "";
+  return p.tier ? "go" : "";
+}
+
+export function DaysField({
+  p,
+  onCal,
+  onGo,
+  cls,
+}: {
+  p: RegionPurchase;
+  onCal: () => void;
+  onGo: () => void;
+  cls: string;
+}) {
+  const mode = daysMode(p);
+  return (
+    <button
+      className={`${cls}${p.need ? " is-ph" : ""}`}
+      type="button"
+      id="daysField"
+      data-dgo=""
+      aria-disabled={!mode}
+      data-mode={mode}
+      aria-haspopup={mode === "cal" ? "dialog" : undefined}
+      onClick={(e) => {
+        if (mode === "cal") onCal();
+        else if (mode === "go") {
+          e.stopPropagation();
+          onGo();
+        }
+      }}
+    >
+      <span id="daysVal">{p.need ? "Chọn số ngày" : `${p.days} ngày${mode || p.perDayKind ? "" : " (theo gói)"}`}</span>
+      <Ic name={mode === "go" ? "ic-chev-down" : "ic-calendar"} w={16} />
+    </button>
+  );
+}
+
+export function DayChips({ p, mobile, onCal }: { p: RegionPurchase; mobile?: boolean; onCal: () => void }) {
+  if (!p.perDayKind) return <div className="day-chips" id="dayChips" hidden />;
+  const base = mobile ? MOB_DAYS : DESK_DAYS;
+  const list = p.allowed === "any" ? base : (p.allowed ?? []);
+  const exact = list.includes(p.days);
+  return (
+    <div className={`day-chips${mobile ? "" : " day-chips--row"}`} id="dayChips" role="group" aria-labelledby="daysLbl">
+      {list.map((d) => (
+        <button key={d} className="day-chip" type="button" aria-label={`${d} ngày`} aria-pressed={p.days === d} data-days={d} onClick={() => p.setDays(d)}>
+          {d}
+        </button>
+      ))}
+      {p.allowed === "any" && (
+        <button className="day-chip day-chip--cal" type="button" aria-pressed={!exact} aria-haspopup="dialog" onClick={onCal}>
+          <Ic name="ic-calendar" w={14} />
+          <span className="day-chip-t">{!exact ? `${p.days} ngày` : "Khác"}</span>
+        </button>
+      )}
+    </div>
+  );
+}
+
+export function NeedHint({ p, onGo }: { p: RegionPurchase; onGo: () => void }) {
+  return (
+    <div className="alert alert--sm alert--warning qstock need-hint" id="needHint" role="status" hidden={!p.need}>
+      <Ic name="ic-calendar" w={15} />
+      <span>
+        Chọn <b>số ngày dùng</b> ở bước 2 để tiếp tục mua hàng.
+      </span>
+      <button className="need-go" type="button" id="needGo" data-dgo="" onClick={onGo}>
+        Chọn ngay
+      </button>
+    </div>
+  );
+}
+
+/* ───────────── calendar (#calOv) — the design's rangeCalendar ───────────── */
+
+const MONTHS = ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"];
+const dmy = (d: Date) => `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}/${d.getFullYear()}`;
+
+export function CalendarModal({ p, open, onClose }: { p: RegionPurchase; open: boolean; onClose: () => void }) {
+  const today = useMemo(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }, []);
+  const [month, setMonth] = useState(() => new Date(today.getFullYear(), today.getMonth(), 1));
+  const [start, setStart] = useState<Date | null>(null);
+  const [end, setEnd] = useState<Date | null>(null);
+  useEffect(() => {
+    if (!open) return;
+    setStart(null);
+    setEnd(null);
+    setMonth(new Date(today.getFullYear(), today.getMonth(), 1));
+  }, [open, today]);
+  const same = (a: Date | null, b: Date | null) => !!a && !!b && a.getTime() === b.getTime();
+  const days = start && end ? Math.round((end.getTime() - start.getTime()) / 864e5) + 1 : start ? 1 : 0;
+  const click = (d: Date) => {
+    if (!start || end) {
+      setStart(d);
+      setEnd(null);
+    } else if (d < start) {
+      setEnd(start);
+      setStart(d);
+    } else setEnd(d);
+  };
+  const opt = p.opt;
+  const plan = opt ? planForDays(opt, days || 1) : null;
+  const tot = plan && days ? priceOf(plan, days).price * p.quantity : 0;
+  const perDayPrice = plan ? priceOf(plan, 1).price : 0;
+  const range = start && end && !same(start, end);
+
+  const monthGrid = (n: number) => {
+    const first = new Date(month.getFullYear(), month.getMonth() + n, 1);
+    const y = first.getFullYear();
+    const m = first.getMonth();
+    const len = new Date(y, m + 1, 0).getDate();
+    const cells: ReactNode[] = [];
+    for (let i = 0; i < first.getDay(); i++) cells.push(<span key={`e${i}`} />);
+    for (let d = 1; d <= len; d++) {
+      const t = new Date(y, m, d);
+      const past = t < today;
+      let cls = "cday";
+      if (!past) {
+        if (same(t, today)) cls += " today";
+        if (same(t, start)) cls += " sel-s" + (range ? " has-e" : "");
+        if (same(t, end)) cls += " sel-e" + (range ? " has-s" : "");
+        if (range && t > start! && t < end!) cls += " in-range";
+      }
+      const pressed = same(t, start) || same(t, end);
+      cells.push(
+        <button
+          key={d}
+          type="button"
+          className={cls}
+          disabled={past}
+          aria-label={`${d} ${MONTHS[m]} ${y}`}
+          aria-pressed={pressed || undefined}
+          onClick={() => click(t)}
+        >
+          <span>{d}</span>
+        </button>,
+      );
+    }
+    return (
+      <div className="cal-month" data-idx={n} key={n}>
+        <div className="cal-hd">
+          <span className="cal-title">
+            {MONTHS[m]} năm {y}
+          </span>
+        </div>
+        <div className="cal-dh">
+          {["CN", "T2", "T3", "T4", "T5", "T6", "T7"].map((x) => (
+            <span key={x}>{x}</span>
+          ))}
+        </div>
+        <div className="cal-grid">{cells}</div>
+      </div>
+    );
+  };
+  const net = (() => {
+    if (!tot || !p.voucher) return null;
+    const pct = p.voucher.discountPercent;
+    const off = Math.min(Math.round((tot * pct) / 100), p.voucherMax ?? Infinity);
+    return tot - off;
+  })();
+
+  return (
+    <Overlay id="calOv" open={open} onClose={onClose}>
+      <div className="modal modal--xl" role="dialog" aria-labelledby="calTitle" aria-modal="true">
+        <div className="modal-hd">
+          <div className="modal-top">
+            <div className="modal-title modal-title--sm" id="calTitle">
+              Chọn ngày đi và ngày về
+            </div>
+            <button className="btn-close" type="button" aria-label="Đóng" data-close="">
+              <Ic name="ic-x" w={24} />
+            </button>
+          </div>
+          <div className="cal-tip">
+            <Ic name="ic-info" w={15} />
+            <span>Số ngày được tính cả ngày đi và ngày về. Gói chỉ bắt đầu tính khi eSIM kết nối mạng tại điểm đến.</span>
+          </div>
+        </div>
+        <div className="cal-body" id="cal">
+          <button
+            className="cal-nav cal-nav--prev"
+            type="button"
+            aria-label="Tháng trước"
+            disabled={month <= new Date(today.getFullYear(), today.getMonth(), 1)}
+            onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))}
+          >
+            <Ic name="ic-chev-left" w={18} />
+          </button>
+          <button
+            className="cal-nav cal-nav--next"
+            type="button"
+            aria-label="Tháng sau"
+            onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))}
+          >
+            <Ic name="ic-chev-right" w={18} />
+          </button>
+          {monthGrid(0)}
+          <div className="cal-divider" />
+          {monthGrid(1)}
+        </div>
+        <div className="modal-ft modal-ft--row">
+          <div className="cal-info">
+            <div className="cal-info-plan" id="calPlan">
+              {end && start ? (
+                <>
+                  Chuyến đi {days} ngày<span className="cal-dot"> &ensp;·&ensp; </span>
+                  <span className="cal-rng">
+                    Từ {dmy(start)} – {dmy(end)}
+                  </span>
+                </>
+              ) : start ? (
+                "Chọn ngày về"
+              ) : (
+                "Chọn ngày đi"
+              )}
+            </div>
+            <div className="cal-info-price" id="calPrice">
+              {end && tot ? (
+                <>
+                  Tổng: <b>{vnd(tot)}</b> ({days} ngày × {vnd(perDayPrice)}/ngày × {p.quantity} eSIM)
+                </>
+              ) : null}
+            </div>
+            <div className="cal-info-net" id="calNet" hidden={!end || net === null || net === tot}>
+              <Ic name="ic-ticket" w={13} />
+              Giá sau voucher: <b>{net !== null ? vnd(net) : ""}</b>
+            </div>
+          </div>
+          <button
+            className="btn btn-primary btn-md"
+            type="button"
+            id="calOk"
+            disabled={!end}
+            onClick={() => {
+              if (end && days) p.setDays(days);
+              onClose();
+            }}
+          >
+            Xác nhận
+          </button>
+        </div>
+      </div>
+    </Overlay>
+  );
+}
+
+/* ───────────── left column rows ───────────── */
+
+const yes = (t: ReactNode) => (
+  <span className="v-yes">
+    <Ic name="ic-yes" w={16} />
+    {t}
+  </span>
+);
+const no = (t: ReactNode) => (
+  <span className="v-no">
+    <Ic name="ic-no" w={16} />
+    {t}
+  </span>
+);
+
+/** Networks of the plan, as many as fit on one line, then "+N nhà mạng". */
+function Nets({ plan, onMore }: { plan: Plan | null; onMore: () => void }) {
+  const nets = (plan?.operatorName ?? "")
+    .split(/[,;/]/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const ref = useRef<HTMLDivElement>(null);
+  const [shown, setShown] = useState(2);
+  const [long, setLong] = useState(true);
+  useEffect(() => {
+    // The design tries 2 names with "+N nhà mạng", then 1, then 1 with "+N".
+    setShown(2);
+    setLong(true);
+  }, [plan?.id]);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !el.offsetParent) return;
+    const kids = Array.from(el.children) as HTMLElement[];
+    const row = el.closest(".sr")?.querySelector<HTMLElement>(".sl");
+    const lh = row ? parseFloat(getComputedStyle(row).lineHeight) || 20 : 20;
+    const fits =
+      kids.every((k) => k.offsetTop === kids[0].offsetTop) && (!row || row.offsetHeight < lh * 1.5) && el.scrollWidth <= el.clientWidth + 1;
+    if (fits) return;
+    if (shown === 2) setShown(1);
+    else if (long) setLong(false);
+  }, [shown, long, plan?.id]);
+  if (!nets.length) return null;
+  const rest = nets.length - shown;
+  return (
+    <div className="sr sr--nets">
+      <span className="sl">Nhà mạng hỗ trợ</span>
+      <div className="nets" id="specNets" ref={ref}>
+        {nets.slice(0, shown).map((n) => (
+          <span className="net" key={n}>
+            {n}
+          </span>
+        ))}
+        {rest > 0 && (
+          <button type="button" className="net net--more" onClick={onMore} aria-label={long ? undefined : `Xem thêm ${rest} nhà mạng`}>
+            +{rest}
+            {long ? " nhà mạng" : ""}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export function FeatureRows({ p, onEkyc, onCountries }: { p: RegionPurchase; onEkyc: () => void; onCountries: () => void }) {
+  const [open, setOpen] = useState(false);
+  const plan = p.plan;
+  const voice = planVoiceInfo(plan);
+  const o = p.opt;
+  const hotspot = !plan
+    ? ""
+    : !plan.hotSpot && !plan.hotSpotAllow
+      ? null
+      : p.tier
+        ? `Tổng ${p.tier.gb}${p.need ? "" : ` – ${plan.durationDays} ngày`}`
+        : o?.kind === "combo"
+          ? "Có"
+          : o && !o.gb
+            ? "Không giới hạn"
+            : `${o?.gb}/ngày`;
+  return (
+    <>
+      <Nets plan={plan} onMore={onCountries} />{" "}
+      <div className="sr">
+        <span className="sl">Chia sẻ kết nối / Hotspot</span>
+        {hotspot ? (
+          <span className="pill pill--info">
+            <Ic name="ic-wifi" w={13} />
+            <span id="specHotspot">{hotspot}</span>
+          </span>
+        ) : (
+          <span id="specHotspot">{no("Không")}</span>
+        )}
+      </div>{" "}
+      <div className="sr">
+        <span className="sl">Gọi & Nhắn tin</span>
+        <span id="specCalls">
+          {voice.hasVoice && plan ? yes([plan.call ? `${plan.call} phút gọi` : null, plan.sms ? `${plan.sms} SMS` : null].filter(Boolean).join(" · ") || "Có") : no("Không")}
+        </span>
+      </div>{" "}
+      <div className="sr">
+        <span className="sl">Số điện thoại</span>
+        <span id="specNumber">{voice.hasVoice ? yes("Có") : no("Không")}</span>
+      </div>{" "}
+      <div className="sr">
+        <span className="sl">Nạp thêm dữ liệu (Topup)</span>
+        {plan?.topUp === false ? no("Không") : yes("Có")}
+      </div>{" "}
+      <div className="sr">
+        <span className="sl">Xác thực danh tính</span>
+        <span id="specEkyc">
+          {p.needsKyc ? (
+            <button type="button" className="pill pill--danger pill--sm" aria-haspopup="dialog" onClick={onEkyc}>
+              {p.kycWhere.length ? `Bắt buộc tại ${p.kycWhere.length} điểm đến` : "Bắt buộc"}
+            </button>
+          ) : (
+            yes("Không cần")
+          )}
+        </span>
+      </div>
+      {p.needsKyc && !p.need && (
+        <div className="ekyc-banner" id="ekycBanner">
+          {" "}
+          <button className="ekyc-banner-hd" type="button" aria-expanded={open} aria-controls="ekycBannerBody" onClick={() => setOpen(!open)}>
+            {" "}
+            <span className="ekyc-banner-icon">
+              <Ic name="ic-passport" w={16} />
+            </span>{" "}
+            <span className="ekyc-banner-title">
+              Gói này cần xác thực danh tính{p.kycWhere.length ? " tại " : ""}
+              <span className="ekyc-where">{joinVi(p.kycWhere)}</span>
+            </span>{" "}
+            <span className="ekyc-banner-toggle">
+              <Ic name="ic-chev-down" w={14} />
+            </span>{" "}
+          </button>{" "}
+          <div className="ekyc-banner-body" id="ekycBannerBody" hidden={!open}>
+            <ol className="ekyc-steps">
+              <li className="ekyc-step">
+                <span className="ekyc-step-num">1</span>
+                <span>Mua eSIM & nhận mã QR qua email.</span>
+              </li>
+              <li className="ekyc-step">
+                <span className="ekyc-step-num">2</span>
+                <span>Quét mã QR để cài đặt vào thiết bị.</span>
+              </li>
+              <li className="ekyc-step">
+                <span className="ekyc-step-num">3</span>
+                <span>
+                  <strong>Hoàn tất xác thực danh tính</strong> (Hộ chiếu) → Bắt đầu sử dụng.
+                </span>
+              </li>
+            </ol>
+            <button className="btn btn-block btn-danger btn-sm" type="button" onClick={onEkyc}>
+              <Ic name="ic-file" w={15} />
+              Xem hướng dẫn đăng ký chi tiết
+              <Ic name="ic-chev-right" w={13} />
+            </button>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+export function DeliveryRows({ plan }: { plan: Plan | null }) {
+  const deadline = plan?.activationDeadline ? formatActivationDate(plan.activationDeadline) : null;
+  const reset = dailyResetText(plan, "vi");
+  const refundable = refundRule(plan) === "fast-if-unactivated";
+  return (
+    <>
+      <div className="sr">
+        <span className="sl">Thời gian nhận eSIM</span>
+        <span className="pill pill--sm dlv-pill pill--success">
+          <Ic name="ic-bolt" w={12} />
+          Nhận ngay lập tức qua email
+        </span>
+      </div>{" "}
+      <div className="sr">
+        <span className="sl">Thời hạn kích hoạt</span>
+        {deadline ? (
+          <span className="sv-text">
+            Trước ngày <strong id="activateBy">{deadline}</strong>
+          </span>
+        ) : (
+          <span className="sv-text">Theo quy định của nhà cung cấp (ghi trong email nhận eSIM)</span>
+        )}
+      </div>{" "}
+      {reset && plan?.dailyResetPolicy && (
+        <div className="sr">
+          <span className="sl">Giờ làm mới mỗi ngày</span>
+          <span className="sv-2" id="cycleTxt">
+            {plan.dailyResetPolicy === "rolling_24h" ? (
+              <>
+                <b>Sau mỗi 24 giờ</b>
+                <small>tính từ lúc cài eSIM</small>
+              </>
+            ) : (
+              <>
+                <b>
+                  23:59 (UTC{(plan.dailyResetUtcOffset ?? 8) >= 0 ? "+" : "-"}
+                  {Math.abs(plan.dailyResetUtcOffset ?? 8)})
+                </b>
+                <small>dù bạn ở múi giờ nào</small>
+              </>
+            )}
+          </span>
+        </div>
+      )}{" "}
+      <div className="sr">
+        <span className="sl">Hướng dẫn hoàn tiền</span>
+        <span className="sv-2">
+          {refundable ? (
+            <>
+              <b>Hoàn tiền nhanh</b>
+              <small>nếu eSIM chưa kích hoạt</small>
+            </>
+          ) : (
+            <>
+              <b>Không hỗ trợ hoàn tiền</b>
+              <small>theo chính sách nhà cung cấp</small>
+            </>
+          )}
+        </span>
+      </div>
+    </>
+  );
+}
+
+/* ───────────── modals ───────────── */
+
+/** "Quốc gia & nhà mạng" (#ctrOv): the chosen variant's countries. */
+export function CountriesModal({ p, open, onClose }: { p: RegionPurchase; open: boolean; onClose: () => void }) {
+  const [q, setQ] = useState("");
+  useEffect(() => {
+    if (open) setQ("");
+  }, [open]);
+  const list: Destination[] = p.member?.destinations ?? [];
+  const nets = (p.plan?.operatorName ?? "").trim();
+  const shown = list.filter((d) => !q.trim() || fold(nameOf(d)).includes(fold(q.trim())));
+  return (
+    <Overlay id="ctrOv" open={open} onClose={onClose}>
+      <div className="modal modal--md" role="dialog" aria-labelledby="ctrTitle" aria-modal="true">
+        <div className="modal-hd">
+          <div className="modal-top">
+            <div>
+              <div className="modal-title modal-title--sm" id="ctrTitle">
+                Quốc gia & nhà mạng
+              </div>
+              <p className="modal-desc">
+                <span id="ctrDesc">{list.length}</span> điểm đến tại {p.regionName} được hỗ trợ
+              </p>
+            </div>
+            <button className="btn-close" type="button" aria-label="Đóng" data-close="">
+              <Ic name="ic-x" w={24} />
+            </button>
+          </div>
+          <div className="search">
+            <Ic name="ic-search" w={16} />
+            <input aria-label="Tìm quốc gia" autoComplete="off" placeholder="Tìm quốc gia…" type="search" value={q} onChange={(e) => setQ(e.target.value)} />
+            <button className="search-clr" type="button" aria-label="Xoá tìm kiếm" hidden={!q} onClick={() => setQ("")}>
+              <Ic name="ic-close" w={14} />
+            </button>
+          </div>
+        </div>
+        <div className="modal-body" tabIndex={0}>
+          <ul className="ctr-list" id="ctrList">
+            {shown.map((d) => (
+              <li className="ctr-item" key={d.id} data-code={d.countryCode?.toLowerCase()}>
+                <Flag code={d.countryCode || ""} url={d.flagUrl} w={32} h={24} />
+                <div>
+                  <div className="ctr-name">{nameOf(d)}</div>
+                </div>
+              </li>
+            ))}
+          </ul>
+          <div className="ctr-empty" id="ctrEmpty" hidden={shown.length > 0}>
+            <Ic name="ic-search" w={28} />
+            <p>Không tìm thấy kết quả phù hợp.</p>
+          </div>
+        </div>
+        <div className="modal-ft">
+          <p className="modal-note">{nets ? `Nhà mạng của gói đang chọn: ${nets}.` : "* Gói có icon hộ chiếu đỏ cần xác thực danh tính (ảnh hộ chiếu) khi dùng tại điểm đến tương ứng."}</p>
+        </div>
+      </div>
+    </Overlay>
+  );
+}
+
+function nameOf(d: Destination): string {
+  return d.titleVi || d.title || d.name;
+}
+
+const KYC_LINKS: Record<string, { name: string; region: string }> = {
+  TW: { name: "Đài Loan", region: "tw" },
+  HK: { name: "Hồng Kông", region: "hk" },
+  MO: { name: "Macau", region: "hkmo" },
+};
+
+/** "Xác thực danh tính để dùng eSIM" (#ekycOv). */
+export function EkycModal({ p, open, onClose, lang }: { p: RegionPurchase; open: boolean; onClose: () => void; lang: string }) {
+  const guide = (region: string) => `${lang === "vi" ? "" : `/${lang}`}/kyc-guide?region=${region}`;
+  return (
+    <Overlay id="ekycOv" open={open} onClose={onClose} top>
+      <div className="modal modal--kyc" role="dialog" aria-labelledby="ekycTitle" aria-modal="true">
+        <div className="modal-hd modal-hd--danger">
+          <div className="modal-top">
+            <span className="modal-badge">
+              <Ic name="ic-passport" w={14} />
+              Hướng dẫn xác thực danh tính
+            </span>
+            <button className="btn-close" type="button" aria-label="Đóng" data-close="">
+              <Ic name="ic-x" w={24} />
+            </button>
+          </div>
+          <div className="modal-title" id="ekycTitle">
+            Xác thực danh tính để dùng eSIM
+          </div>
+          <ul className="modal-sub">
+            <li>
+              <Ic name="ic-check-circle" w={15} />
+              <span>Theo quy định tại một số điểm đến, bạn cần xác minh danh tính để kích hoạt eSIM.</span>
+            </li>
+            <li>
+              <Ic name="ic-check-circle" w={15} />
+              <span>eSIM phải được cài đặt trên thiết bị trước khi đăng ký tại điểm đến được chỉ định.</span>
+            </li>
+          </ul>
+          <div className="modal-stats">
+            <div className="modal-stat">
+              <b>3–5&apos;</b>
+              <span>Thời gian hoàn tất</span>
+            </div>
+            <div className="modal-stat">
+              <b>100%</b>
+              <span>An toàn & bảo mật</span>
+            </div>
+            <div className="modal-stat">
+              <b>24/7</b>
+              <span>Hỗ trợ trực tuyến</span>
+            </div>
+          </div>
+        </div>
+        <div className="modal-body">
+          <div className="notice">
+            📌 <strong>Lưu ý:</strong> Bạn <strong>không cần xác thực</strong> nếu không dùng eSIM tại các điểm đến dưới đây. Thủ tục chỉ mất{" "}
+            <strong>3–5 phút</strong>.
+          </div>
+          <div className="section-lbl">Điểm đến bắt buộc xác thực</div>
+          <div className="opt-grid">
+            {Object.entries(KYC_LINKS).map(([code, k]) => (
+              <a
+                key={code}
+                href={guide(k.region)}
+                className="opt-card opt-card--link"
+                rel="noopener"
+                target="_blank"
+                data-code={code.toLowerCase()}
+                data-out={!p.codes.includes(code) || undefined}
+              >
+                <span className="opt-ico">
+                  <Flag code={code} w={44} h={33} />
+                </span>
+                <span className="opt-name">{k.name}</span>
+                <span className="opt-link">
+                  Xem hướng dẫn <Ic name="ic-chev-right" w={12} />
+                </span>
+                <span className="sr-only"> (mở trang hướng dẫn trong tab mới)</span>
+              </a>
+            ))}
+          </div>
+          <div className="acc acc--line">
+            <div className="acc-title">Câu hỏi thường gặp</div>
+            {[
+              [
+                "Thông tin của tôi có được bảo mật không?",
+                "Hoàn toàn. Dữ liệu được mã hoá đầu cuối và chỉ dùng để đáp ứng yêu cầu pháp lý. esim.vn không lưu trữ hay chia sẻ thông tin với bên thứ ba.",
+              ],
+              ["Tôi có thể dùng hộ chiếu nước ngoài không?", "Có. Hệ thống chấp nhận hộ chiếu quốc tế còn hiệu lực. Chỉ cần chụp trang thông tin cá nhân rõ nét, đủ ánh sáng."],
+              [
+                "Nếu xác thực thất bại, tôi phải làm gì?",
+                "Bạn có thể thử lại tối đa 3 lần. Nếu vẫn thất bại, liên hệ hỗ trợ 24/7 qua chat trong ứng dụng hoặc email hotro@esim.com.vn.",
+              ],
+              [
+                "Xác thực mất bao lâu để được duyệt?",
+                "Thông thường hệ thống xử lý trong vài phút. Sau khi được duyệt, bạn sẽ nhận thông báo qua email hoặc SMS và sử dụng eSIM ngay.",
+              ],
+            ].map(([q, a]) => (
+              <AccItem
+                key={q}
+                q={
+                  <>
+                    {q}
+                    <Ic name="ic-chev-down" w={16} />
+                  </>
+                }
+              >
+                {a}
+              </AccItem>
+            ))}
+          </div>
+        </div>
+        <div className="modal-ft">
+          <button className="btn btn-block btn-danger btn-lg" type="button" data-close="">
+            <Ic name="ic-check-circle" w={18} />
+            Đã hiểu, tiếp tục mua eSIM
+          </button>
+          <p className="modal-note">
+            <Ic name="ic-chat" w={14} />
+            Cần hỗ trợ? Liên hệ qua Chat hoặc email hotro@esim.com.vn
+          </p>
+        </div>
+      </div>
+    </Overlay>
+  );
+}
+
+/* ───────────── cross-sell ───────────── */
+
+/** Country pages of the region's best-known countries (`.cross-card`). */
+export function CrossCards({ p, lang, limit = 3 }: { p: RegionPurchase; lang: string; limit?: number }) {
+  const list = [...(p.member?.destinations ?? [])]
+    .sort((a, b) => Number(b.isPopular) - Number(a.isPopular))
+    .slice(0, limit);
+  return (
+    <>
+      {list.map((d) => {
+        const slug = localizedSlug(d, lang as "vi");
+        return (
+          <a key={d.id} href={lang === "vi" ? `/${slug}` : `/${lang}/${slug}`} className="cross-card">
+            <span className="cross-logo">
+              <Flag code={d.countryCode || ""} url={d.flagUrl} w={59} h={44.2} />
+            </span>
+            <div className="cross-txt">
+              <h3 className="cross-title">eSIM {nameOf(d)}</h3>
+              <span className="cross-price">Xem các gói eSIM riêng cho {nameOf(d)}</span>
+            </div>
+            <Ic name="ic-chev-right" w={18} cls="ic cross-arrow" />
+          </a>
+        );
+      })}
+    </>
+  );
+}

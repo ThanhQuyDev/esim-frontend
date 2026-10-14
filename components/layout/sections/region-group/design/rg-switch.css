@@ -1,0 +1,15 @@
+/* #067: one layout is rendered per device (#001, useDeviceVariant), so no
+   width switch here — unlike the domestic page, which ships both. */
+
+/* The design was drawn on the browser's own defaults; the site's Tailwind
+   preflight resets some of them. Put those back inside the page only, at
+   :where() strength so every rule of the design still wins. */
+.rgd :where(h1,h2,h3,h4,h5,h6),.rgm :where(h1,h2,h3,h4,h5,h6){font-weight:bold}
+.rgd :where(svg),.rgm :where(svg){vertical-align:baseline}
+.rgd :where(button,input,select),.rgm :where(button,input,select){font-size:13.3333px;line-height:normal;color:#000}
+.rgd :where(*,::before,::after),.rgm :where(*,::before,::after){border-style:none}
+.rgd :where(ol),.rgm :where(ol){list-style:decimal}
+.rgd :where(ul),.rgm :where(ul){list-style:disc}
+
+/* Countries the design has no drawn flag for use the destination's image. */
+.rgd img.flag,.rgm img.flag{object-fit:cover;display:inline-block}

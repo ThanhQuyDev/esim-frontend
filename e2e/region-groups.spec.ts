@@ -163,7 +163,14 @@ async function mockRegionPlans(page: Page, requested: string[]) {
   });
 }
 
-test.describe("Region group page — packs as tabs (#004)", () => {
+test.describe("Region group page — packs as the coverage step (#004, #067)", () => {
+  // The final design (#067): packs are the radios of step 1 "Chọn phạm vi phủ
+  // sóng", widest coverage first; plans swap in place under the same URL.
+  const harness = (slug = "esim-chau-a") =>
+    `/esim-noi-dia/test?view=region-tabs&slug=${slug}&lang=vi`;
+  const pack = (page: Page, n: number) =>
+    page.locator(".rgd .rng-o").filter({ hasText: `${n} nước` });
+
   test("switches between packs in place without changing the URL", async ({
     page,
   }) => {
@@ -171,95 +178,75 @@ test.describe("Region group page — packs as tabs (#004)", () => {
     await mockApi(page);
     await mockRegionPlans(page, requested);
 
-    await page.goto(
-      "/esim-noi-dia/test?view=region-tabs&slug=esim-chau-a&lang=vi",
-    );
+    await page.goto(harness());
 
-    const tab13 = page.getByTestId(
-      "region-variant-tab-esim-chau-a-13-quoc-gia",
-    );
-    const tab20 = page.getByTestId(
-      "region-variant-tab-esim-chau-a-20-quoc-gia",
-    );
-    await expect(page.getByRole("tab")).toHaveCount(2);
-    await expect(tab13).toContainText("13 quốc gia");
-    await expect(tab20).toContainText("20 quốc gia");
-    await expect(tab20).toContainText("99.000");
+    const p20 = pack(page, 20);
+    const p13 = pack(page, 13);
+    await expect(page.locator(".rgd .rng-o")).toHaveCount(2);
+    await expect(page.locator(".rgd .rng-o").first()).toContainText("20 nước");
+    await expect(p20).toContainText("99.000");
 
-    // The pack with the fewest countries opens first, with its own plans.
-    await expect(tab13).toHaveAttribute("aria-selected", "true");
-    await expect.poll(() => requested).toContain("esim-chau-a-13-quoc-gia");
+    // The widest pack opens first, with its own plans.
+    await expect(p20).toHaveAttribute("aria-checked", "true");
+    await expect(page.locator(".rgd #vBadge")).toHaveText("20 quốc gia");
+    await expect.poll(() => requested).toContain("esim-chau-a-20-quoc-gia");
 
     const urlBefore = page.url();
-    await tab20.click();
+    await p13.click();
 
-    await expect(tab20).toHaveAttribute("aria-selected", "true");
-    await expect(tab13).toHaveAttribute("aria-selected", "false");
-    await expect.poll(() => requested).toContain("esim-chau-a-20-quoc-gia");
-    // Tabs, not links: nothing navigated.
+    await expect(p13).toHaveAttribute("aria-checked", "true");
+    await expect(p20).toHaveAttribute("aria-checked", "false");
+    await expect(page.locator(".rgd #vBadge")).toHaveText("13 quốc gia");
+    await expect.poll(() => requested).toContain("esim-chau-a-13-quoc-gia");
+    // Radios, not links: nothing navigated.
     expect(page.url()).toBe(urlBefore);
   });
 
-  test("arrow keys move between the pack tabs", async ({ page }) => {
+  test("arrow keys move between the packs", async ({ page }) => {
     await mockApi(page);
     await mockRegionPlans(page, []);
 
-    await page.goto(
-      "/esim-noi-dia/test?view=region-tabs&slug=esim-chau-a&lang=vi",
-    );
+    await page.goto(harness());
 
-    const tab13 = page.getByTestId(
-      "region-variant-tab-esim-chau-a-13-quoc-gia",
-    );
-    const tab20 = page.getByTestId(
-      "region-variant-tab-esim-chau-a-20-quoc-gia",
-    );
-    await tab13.focus();
+    const p20 = pack(page, 20);
+    const p13 = pack(page, 13);
+    await p20.focus();
     await page.keyboard.press("ArrowRight");
 
-    await expect(tab20).toHaveAttribute("aria-selected", "true");
-    await expect(tab20).toBeFocused();
+    await expect(p13).toHaveAttribute("aria-checked", "true");
+    await expect(p13).toBeFocused();
   });
 
-  test("the country picker lists every pack's countries and opens the pack that has it (#067)", async ({
+  test("the country picker lists every pack's countries and opens the pack that covers them (#067)", async ({
     page,
   }) => {
     const requested: string[] = [];
     await mockApi(page);
     await mockRegionPlans(page, requested);
 
-    await page.goto(
-      "/esim-noi-dia/test?view=region-tabs&slug=esim-chau-a&lang=vi",
-    );
+    await page.goto(harness("esim-chau-a-13-quoc-gia"));
+    const p20 = pack(page, 20);
+    const p13 = pack(page, 13);
+    await expect(p13).toHaveAttribute("aria-checked", "true");
 
-    const picker = page.getByTestId("region-country-picker");
+    await page.locator(".rgd #dpInput").click();
+    const options = page.locator(".rgd .dp-o");
     // Union of both packs: JP, TH (both) + IN (20-country pack only).
-    await expect(picker.locator("option")).toHaveCount(4);
-    await expect(picker.locator("option").first()).toHaveText(
-      "Tất cả 3 quốc gia",
-    );
-    await expect(picker).toContainText("Ấn Độ");
+    await expect(options).toHaveCount(3);
+    await expect(options.filter({ hasText: "Ấn Độ" })).toContainText("Có ở gói 20 nước");
 
-    const tab13 = page.getByTestId(
-      "region-variant-tab-esim-chau-a-13-quoc-gia",
-    );
-    const tab20 = page.getByTestId(
-      "region-variant-tab-esim-chau-a-20-quoc-gia",
-    );
-    await expect(tab13).toHaveAttribute("aria-selected", "true");
-
-    await picker.selectOption("IN");
-    await expect(tab20).toHaveAttribute("aria-selected", "true");
-    await expect(tab13).toHaveAttribute("data-covers-country", "false");
-    await expect(page.getByTestId("region-country-note")).toHaveText(
-      "Có trong 1/2 gói",
-    );
+    await options.filter({ hasText: "Ấn Độ" }).click();
+    await expect(p20).toHaveAttribute("aria-checked", "true");
+    await expect(p13).toHaveAttribute("data-miss", "true");
+    await expect(page.locator(".rgd .dp-tag")).toHaveText("Ấn Độ");
+    await expect(page.locator(".rgd #destRes")).toContainText("Gói 20 nước phủ đủ Ấn Độ");
     await expect.poll(() => requested).toContain("esim-chau-a-20-quoc-gia");
 
-    // A country both packs have keeps the pack the customer is on.
-    await picker.selectOption("JP");
-    await expect(tab20).toHaveAttribute("aria-selected", "true");
-    await expect(tab13).toHaveAttribute("data-covers-country", "true");
+    // Back on the smaller pack, the missing country is flagged with a way out.
+    await p13.click();
+    await expect(page.locator(".rgd #destRes")).toContainText("Gói 13 nước chưa có Ấn Độ");
+    await page.locator(".rgd #destRes .res-go").click();
+    await expect(p20).toHaveAttribute("aria-checked", "true");
   });
 
   test("a variant's own page opens on that pack", async ({ page }) => {
@@ -267,14 +254,22 @@ test.describe("Region group page — packs as tabs (#004)", () => {
     await mockApi(page);
     await mockRegionPlans(page, requested);
 
-    await page.goto(
-      "/esim-noi-dia/test?view=region-tabs&slug=esim-chau-a-20-quoc-gia&lang=vi",
-    );
+    await page.goto(harness("esim-chau-a-13-quoc-gia"));
 
-    await expect(
-      page.getByTestId("region-variant-tab-esim-chau-a-20-quoc-gia"),
-    ).toHaveAttribute("aria-selected", "true");
-    await expect.poll(() => requested).toContain("esim-chau-a-20-quoc-gia");
+    await expect(pack(page, 13)).toHaveAttribute("aria-checked", "true");
+    await expect.poll(() => requested).toContain("esim-chau-a-13-quoc-gia");
+  });
+
+  test("a fixed size asks for its days before it can be bought (#067)", async ({ page }) => {
+    await mockApi(page);
+    await mockRegionPlans(page, []);
+
+    await page.goto(harness());
+    const tier = page.locator(".rgd .tier").first();
+    await expect(tier).toHaveText("3 GB");
+    await expect(tier).toHaveAttribute("aria-pressed", "true");
+    await expect(page.locator(".rgd #dselV")).toHaveText("30 ngày");
+    await expect(page.locator(".rgd #priceNet")).toContainText("150.000");
   });
 });
 

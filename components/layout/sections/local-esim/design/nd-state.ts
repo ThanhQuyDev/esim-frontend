@@ -132,6 +132,23 @@ export function useDomesticPurchase(plans: Plan[], carrier: string, lang: string
 
 export type DomesticPurchase = ReturnType<typeof useDomesticPurchase>;
 
+/**
+ * The price and quantity fields the shared design parts read (quantity
+ * stepper, stock alert, voucher breakdown) — the region page (#067) feeds
+ * them from its own state.
+ */
+export interface PriceState {
+  quantity: number;
+  setQty: (n: number) => void;
+  atMax: boolean;
+  stock: number;
+  total: number;
+  listTotal: number;
+  voucher: ReturnType<typeof pickBestVoucher>;
+  voucherMax: number | null;
+  net: number;
+}
+
 /** "dd/mm/yyyy" `days` from today — the design's activation deadline. */
 export function dateAfter(days: number): string {
   const d = new Date();

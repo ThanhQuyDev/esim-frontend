@@ -33,7 +33,7 @@ import {
   variantFor,
   type OfferGroup,
 } from "./nd-model";
-import { vnd, type DomesticPurchase } from "./nd-state";
+import { vnd, type DomesticPurchase, type PriceState } from "./nd-state";
 import type { CarrierMeta } from "../carrier-meta";
 
 /* ───────────── modal (.ov) — the design's openModal/closeModal ───────────── */
@@ -364,7 +364,7 @@ export function Qty({
   compact,
   className = "qty-sel",
 }: {
-  p: DomesticPurchase;
+  p: PriceState;
   labelId?: string;
   ids?: [string, string, string];
   compact?: boolean;
@@ -399,7 +399,7 @@ export function Qty({
   );
 }
 
-export function StockAlert({ p }: { p: DomesticPurchase }) {
+export function StockAlert({ p }: { p: PriceState }) {
   return (
     <div className="alert alert--sm alert--warning qstock" id="qStock" role="status" hidden={!p.atMax || p.stock === Infinity}>
       <Ic name="ic-package" w={15} />
@@ -415,7 +415,7 @@ export function StockAlert({ p }: { p: DomesticPurchase }) {
 /* ───────────── voucher price breakdown (.vpop-bd) ───────────── */
 
 /** The price lines (`dl.vpop-bd`) and the voucher note — shared by popover and modal. */
-export function VoucherRows({ p }: { p: DomesticPurchase }) {
+export function VoucherRows({ p }: { p: PriceState }) {
   const [ok, copy] = useCopied();
   const orig = p.listTotal > p.total ? p.listTotal : p.total;
   const disc = orig - p.total;
@@ -477,7 +477,7 @@ export function VoucherRows({ p }: { p: DomesticPurchase }) {
 }
 
 /** Desktop popover content (`#vchPop`). */
-export function VoucherBreakdown({ p, planLine }: { p: DomesticPurchase; planLine: string }) {
+export function VoucherBreakdown({ p, planLine }: { p: PriceState; planLine: string }) {
   return (
     <>
       <div className="vpop-hd">
