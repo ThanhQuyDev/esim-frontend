@@ -75,4 +75,16 @@ test.describe("eSIM setup guide (#065)", () => {
     await M.locator("#m-drawerToc .toc-l[href='#m-faq']").click();
     await expect(M.locator("#m-drawerToc")).not.toHaveClass(/open/);
   });
+
+  test("a phone's user agent still gets the guide, not a product page (#001 routes)", async ({ browser }) => {
+    const ctx = await browser.newContext({
+      viewport: { width: 390, height: 844 },
+      userAgent:
+        "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
+    });
+    const page = await ctx.newPage();
+    await open(page);
+    await expect(page.locator(".igm h1")).toContainText("Hướng dẫn cài đặt eSIM");
+    await ctx.close();
+  });
 });

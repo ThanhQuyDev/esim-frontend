@@ -37,6 +37,7 @@ export const STATIC_TOP_LEVEL_ROUTES = new Set([
   "esim-noi-dia",
   "esim-supported-devices",
   "help-center",
+  "install-guide",
   "kyc-guide",
   "legal",
   "password-change",
