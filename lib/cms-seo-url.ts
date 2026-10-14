@@ -27,6 +27,7 @@ const STATIC_SEO_ROUTES: StaticPathname[] = [
   "/help-center",
   "/esim-supported-devices",
   "/kyc-guide",
+  "/install-guide",
   "/refer-a-friend",
   "/terms-of-service",
   "/blog/search",

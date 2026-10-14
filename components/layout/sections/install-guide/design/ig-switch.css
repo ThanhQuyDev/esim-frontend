@@ -1,0 +1,31 @@
+/* #065: both design layouts are rendered; show one by width (the mobile file
+   is the phone/tablet layout, as for the domestic-eSIM page). */
+.ig-page .igm{display:none}
+@media (max-width:56.25rem){
+  .ig-page .igd{display:none}
+  .ig-page .igm{display:block}
+}
+
+/* The design was drawn on the browser's own defaults; the site's Tailwind
+   preflight resets some of them. Put those back inside the guide only, at
+   :where() strength so every rule of the design still wins. */
+.igd :where(h1,h2,h3,h4,h5,h6),
+.igm :where(h1,h2,h3,h4,h5,h6){font-weight:bold}
+.igd :where(svg),.igm :where(svg){vertical-align:baseline}
+.igd :where(button),.igm :where(button){font-size:13.3333px;line-height:normal;color:#000}
+.igd :where(*,::before,::after),.igm :where(*,::before,::after){border-style:none}
+.igd :where(ol),.igm :where(ol){list-style:decimal}
+.igd :where(ul),.igm :where(ul){list-style:disc}
+
+/* Fitting the design under the site's own header (72px desktop, 56px phone;
+   the design's own bar was 58px / 52px): same gaps below it as in the design. */
+.ig-page .igd .side,.ig-page .igd .pbar{top:5.75rem}
+.ig-page .igm{--navh:3.5rem;overflow-x:clip}
+html:has(.ig-page){scroll-padding-top:6.375rem}
+@media (max-width:56.25rem){html:has(.ig-page){scroll-padding-top:4rem}}
+@media (prefers-reduced-motion:no-preference){html:has(.ig-page){scroll-behavior:smooth}}
+
+/* The guide's sticky bars sit at z-index 200–300; keep them under the site
+   header's menus, but let an open modal or drawer cover the whole screen. */
+.ig-page{position:relative;z-index:0}
+.ig-page:has(.ov.open,.drawer.open){z-index:10000}

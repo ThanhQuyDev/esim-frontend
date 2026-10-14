@@ -32,6 +32,7 @@ export const STATIC_ROUTES = [
   // carries a token and is never linked from the site itself.
   "/check-esim",
   "/what-is-esim",
+  "/install-guide",
   "/coupon",
   "/blog",
   "/about-us",

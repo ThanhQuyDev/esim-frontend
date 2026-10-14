@@ -442,6 +442,14 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
       ],
       col2: [
         {
+          icon: "mobile-check",
+          title: isVi ? "Hướng dẫn cài đặt eSIM" : "eSIM Setup Guide",
+          desc: isVi
+            ? "Cài đặt eSIM trên iPhone (iOS) và Android từng bước, dùng ngay khi đến nơi"
+            : "Install eSIM on iPhone (iOS) and Android, step by step",
+          href: localizedHref(lang, "install-guide"),
+        },
+        {
           icon: "message-dots",
           title: isVi ? "Câu hỏi thường gặp" : "FAQ",
           desc: isVi

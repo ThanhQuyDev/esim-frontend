@@ -64,6 +64,12 @@ export const routing = defineRouting({
       en: '/what-is-esim',
     },
 
+    // eSIM setup guide (#065)
+    '/install-guide': {
+      vi: '/huong-dan-cai-dat-esim',
+      en: '/how-to-install-esim',
+    },
+
     // Coupon
     '/coupon': {
       vi: '/ma-giam-gia',
