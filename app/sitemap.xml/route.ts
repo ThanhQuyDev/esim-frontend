@@ -1,4 +1,3 @@
-import { MetadataRoute } from "next";
 import { getPathname } from "@/i18n/navigation";
 import {
   getBlogs,
@@ -7,7 +6,7 @@ import {
   getRegions,
   fetchHelpCenterArticles,
 } from "@/lib/api";
-import { buildSitemap, type SitemapSources } from "@/lib/sitemap-entries";
+import { buildSitemap, renderSitemapXml, type SitemapSources } from "@/lib/sitemap-entries";
 import { LEGAL_POLICIES } from "@/components/layout/sections/legal";
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://esim.vn";
@@ -31,7 +30,13 @@ async function safely<T>(load: () => Promise<T>, fallback: T): Promise<T> {
   }
 }
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+/**
+ * /sitemap.xml, written by hand rather than through `app/sitemap.ts` so it can
+ * match the reference file (common-issue #004): an `xml-stylesheet` line
+ * pointing at /sitemap.xsl, a comment header per group, and one `<url>` per
+ * language with `x-default`. The metadata route can produce none of those.
+ */
+export async function GET(): Promise<Response> {
   const [destinations, regions, blogs, helpArticles, carriers] = await Promise.all([
     safely(() => getDestinations({ limit: CATALOGUE_LIMIT }).then((r) => r.data), []),
     safely(() => getRegions({ limit: CATALOGUE_LIMIT }).then((r) => r.data), []),
@@ -49,7 +54,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     legalPolicies: LEGAL_POLICIES,
   };
 
-  return buildSitemap(sources, {
+  const entries = buildSitemap(sources, {
     baseUrl,
     // next-intl owns the localized path for every route key, dynamic ones
     // included — so `/blog/x` becomes `/en/blog/x` and a carrier page picks
@@ -66,5 +71,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       }
     },
     lastModified: new Date(),
+  });
+
+  return new Response(renderSitemapXml(entries), {
+    headers: {
+      "Content-Type": "application/xml; charset=utf-8",
+      "Cache-Control": "public, max-age=3600, s-maxage=86400",
+    },
   });
 }

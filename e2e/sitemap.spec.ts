@@ -3,6 +3,7 @@ import {
   buildSitemap,
   entitySlug,
   entryFor,
+  renderSitemapXml,
   EXCLUDED_ROUTES,
   STATIC_ROUTES,
 } from "../lib/sitemap-entries";
@@ -193,5 +194,57 @@ test.describe("sitemap — served", () => {
     expect(body).toContain("sitemap.xml");
     expect(body).toContain("Disallow: /checkout");
     expect(body).toContain("Disallow: /profile");
+  });
+});
+
+test.describe("sitemap — laid out like the reference file (common-issue #004)", () => {
+  const entries = buildSitemap(
+    {
+      destinations: [
+        { slug: "japan", slugVi: "esim-nhat-ban", isPopular: true, updatedAt: "2026-09-11T08:00:00Z" } as never,
+        { slug: "libya", slugVi: "esim-libya", isPopular: false } as never,
+      ],
+      regions: [{ slug: "europe-42", slugVi: "esim-chau-au-42-quoc-gia" } as never],
+      blogs: [{ slug: "esim-trung-quoc-la-gi" } as never],
+      helpArticles: [{ slug: "khai-niem-ve-esim" } as never],
+      carriers: [{ provider: "viettel" } as never],
+    },
+    { baseUrl: BASE, path },
+  );
+  const xml = renderSitemapXml(entries);
+
+  test("is styled by /sitemap.xsl and grouped in the reference's order", () => {
+    expect(xml).toContain('<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>');
+    const headers = [
+      "TRANG TĨNH / STATIC PAGES",
+      "TRANG QUỐC GIA (1 nước)",
+      "GÓI ĐA QUỐC GIA / KHU VỰC",
+      "ESIM NỘI ĐỊA",
+      "BLOG",
+      "TRUNG TÂM TRỢ GIÚP",
+    ].map((h) => xml.indexOf(`<!-- ============ ${h} ============ -->`));
+    expect(headers.every((i) => i > 0)).toBe(true);
+    expect([...headers].sort((a, b) => a - b)).toEqual(headers);
+  });
+
+  test("lists every language as its own <url>, each with x-default", () => {
+    expect(xml).toContain(`<loc>${BASE}/esim-nhat-ban</loc>`);
+    expect(xml).toContain(`<loc>${BASE}/en/japan</loc>`);
+    const block = xml.split("<url>").find((u) => u.includes(`<loc>${BASE}/en/japan</loc>`))!;
+    expect(block).toContain(`hreflang="vi" href="${BASE}/esim-nhat-ban"`);
+    expect(block).toContain(`hreflang="x-default" href="${BASE}/esim-nhat-ban"`);
+    expect(block).toContain("<lastmod>2026-09-11</lastmod>");
+  });
+
+  test("uses the reference's changefreq and priority per group", () => {
+    const block = (loc: string) => xml.split("<url>").find((u) => u.includes(`<loc>${BASE}${loc}</loc>`))!;
+    expect(block("")).toMatch(/<changefreq>daily<\/changefreq>\s*<priority>1\.0<\/priority>/);
+    expect(block("/esim-nhat-ban")).toMatch(/weekly<\/changefreq>\s*<priority>0\.9</);
+    expect(block("/esim-libya")).toMatch(/weekly<\/changefreq>\s*<priority>0\.7</);
+    expect(block("/esim-chau-au-42-quoc-gia")).toMatch(/<priority>0\.85</);
+    expect(block("/esim-noi-dia/viettel")).toMatch(/<priority>0\.75</);
+    expect(block("/blog/esim-trung-quoc-la-gi")).toMatch(/weekly<\/changefreq>\s*<priority>0\.7</);
+    expect(block("/help-center/khai-niem-ve-esim")).toMatch(/monthly<\/changefreq>\s*<priority>0\.6</);
+    expect(block("/terms-of-service")).toMatch(/yearly<\/changefreq>\s*<priority>0\.3</);
   });
 });
