@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 
-import { rememberPartnerClickId } from "@/lib/partner-click-id";
+import { fetchPartnerClickToken } from "@/lib/partner-click-id";
 
 /**
  * Captures ?ref=CODE from the URL and stores it in localStorage.
@@ -39,8 +39,10 @@ export function ReferralCapture() {
       cache: "no-store",
     })
       .then((res) => (res.ok ? res.json() : null))
-      .then((body: { clickId?: string | null } | null) => {
-        rememberPartnerClickId(body?.clickId);
+      .then(() => {
+        // The click now lives in the signed HttpOnly cookie the response set;
+        // nothing to keep on the page (doitac-1410 #026).
+        void fetchPartnerClickToken(true);
       })
       .catch(() => {});
   }, [searchParams]);

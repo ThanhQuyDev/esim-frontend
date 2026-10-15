@@ -1,79 +1,22 @@
 import { test, expect } from "@playwright/test";
 
 /**
- * The 30-day affiliate attribution window (#095, ý 3).
+ * The marketing-link redirect (#095, #039, doitac-1410 #026).
  *
- * An order counts for the partner when it is placed within 30 days of the
- * buyer's most recent visit to the marketing link. The redirect used to record
- * only WHICH link was visited, never WHEN — the window lived entirely in the
- * cookie's max-age, and the API had no way to check it, so a cookie that
- * outlived its expiry went on paying commission forever.
+ * The click is now a token the API signs, kept in an HttpOnly cookie that the
+ * page cannot read or rewrite, and never written on the landing URL. These
+ * tests run without the click API, which pins the parts that must hold even
+ * then: the visitor always gets through, nothing readable is ever set as
+ * attribution, a HEAD request or a link-preview bot is not a click, and the
+ * landing URL carries no click id to share.
  *
- * The redirect now stamps the visit time as well; these tests pin the two
- * properties the rule depends on: the stamp is written, and it is rewritten on
- * every visit so the window runs from the LATEST visit rather than the first.
- *
- * The click API is not up during e2e, so the redirect falls back to the
- * homepage — which is exactly the "best effort, never block the visitor" path
- * worth exercising anyway.
- *
- * Every navigation here uses the PUBLIC `/go/<code>` form, the one a partner
- * actually hands out. It reaches the handler through a rewrite (next.config)
- * and an exclusion in the i18n middleware; driving `/api/go/<code>` directly
- * would keep passing even if either of those broke and every shared link in
- * the wild started 404ing.
+ * Every navigation uses the PUBLIC `/go/<code>` form, the one a partner hands
+ * out. It reaches the handler through a rewrite (next.config) and an exclusion
+ * in the i18n middleware; driving `/api/go/<code>` directly would keep passing
+ * even if either of those broke.
  */
 
 const CODE = "E2ELINK01";
-const THIRTY_DAYS_S = 30 * 24 * 60 * 60;
-
-test("a marketing link records which partner sent the visitor and when", async ({
-  page,
-  context,
-}) => {
-  await page.goto(`/go/${CODE}`);
-
-  const cookies = await context.cookies();
-  const linkCookie = cookies.find((c) => c.name === "esim_partner_link");
-  const stampCookie = cookies.find((c) => c.name === "esim_partner_link_at");
-
-  expect(linkCookie?.value).toBe(CODE);
-  expect(stampCookie).toBeTruthy();
-
-  // The stamp must be a real instant the API can compare against, not a label.
-  const stampedAt = new Date(decodeURIComponent(stampCookie!.value)).getTime();
-  expect(Number.isNaN(stampedAt)).toBe(false);
-  expect(Math.abs(Date.now() - stampedAt)).toBeLessThan(5 * 60 * 1000);
-
-  // Both carry the same 30-day life, so neither outlives the other and leaves
-  // the API with a code it cannot date.
-  const secondsLeft = (c: { expires: number }) => c.expires - Date.now() / 1000;
-  expect(secondsLeft(linkCookie!)).toBeGreaterThan(THIRTY_DAYS_S - 3600);
-  expect(secondsLeft(stampCookie!)).toBeGreaterThan(THIRTY_DAYS_S - 3600);
-});
-
-test("returning through the link restarts the 30 days from the newest visit", async ({
-  page,
-  context,
-}) => {
-  await page.goto(`/go/${CODE}`);
-  const first = (await context.cookies()).find(
-    (c) => c.name === "esim_partner_link_at"
-  );
-
-  await page.goto(`/go/${CODE}`);
-  const second = (await context.cookies()).find(
-    (c) => c.name === "esim_partner_link_at"
-  );
-
-  const firstAt = new Date(decodeURIComponent(first!.value)).getTime();
-  const secondAt = new Date(decodeURIComponent(second!.value)).getTime();
-
-  // A visitor who first clicked months ago but came back today is inside the
-  // window: the stamp moves forward instead of pinning the original click.
-  expect(secondAt).toBeGreaterThanOrEqual(firstAt);
-  expect(second!.expires).toBeGreaterThanOrEqual(first!.expires);
-});
 
 test("an unreachable click API still lets the visitor through", async ({
   page,
@@ -82,4 +25,58 @@ test("an unreachable click API still lets the visitor through", async ({
 
   // Never a dead end: the redirect falls back to the homepage.
   await expect(page).toHaveURL(/\/(en)?$|\/$/);
+});
+
+test("never sets an attribution cookie a script could read or edit", async ({
+  page,
+  context,
+}) => {
+  await page.goto(`/go/${CODE}`);
+
+  const cookies = await context.cookies();
+  // The plain code and time used to sit in readable cookies anybody could
+  // forge (cookie stuffing). Only the signed HttpOnly token may exist now.
+  expect(cookies.find((c) => c.name === "esim_partner_link")).toBeUndefined();
+  expect(cookies.find((c) => c.name === "esim_partner_link_at")).toBeUndefined();
+  expect(cookies.find((c) => c.name === "esim_partner_click")).toBeUndefined();
+  for (const c of cookies.filter((c) => c.name === "esim_partner_ct")) {
+    expect(c.httpOnly).toBe(true);
+  }
+});
+
+test("puts no click id on the landing URL", async ({ page }) => {
+  await page.goto(`/go/${CODE}`);
+
+  // A URL gets shared, screenshotted and sent in Referer headers; whoever
+  // receives it must not inherit the visitor's click.
+  expect(page.url()).not.toMatch(/[?&](pcid|subid)=/);
+});
+
+test("a HEAD request is redirected without counting as a visit", async ({
+  request,
+}) => {
+  const res = await request.head(`/go/${CODE}`, { maxRedirects: 0 });
+
+  expect([301, 302, 303, 307, 308]).toContain(res.status());
+  expect(res.headers()["set-cookie"] ?? "").not.toContain("esim_partner");
+});
+
+test("a link-preview bot is redirected without counting as a visit", async ({
+  request,
+}) => {
+  const res = await request.get(`/go/${CODE}`, {
+    maxRedirects: 0,
+    headers: { "User-Agent": "facebookexternalhit/1.1" },
+  });
+
+  expect([301, 302, 303, 307, 308]).toContain(res.status());
+  expect(res.headers()["set-cookie"] ?? "").not.toContain("esim_partner");
+});
+
+test("hands the page no click token when there is none", async ({ request }) => {
+  const res = await request.get("/api/partner-attribution");
+
+  expect(res.status()).toBe(200);
+  expect(await res.json()).toEqual({ clickToken: null });
+  expect(res.headers()["cache-control"]).toContain("no-store");
 });

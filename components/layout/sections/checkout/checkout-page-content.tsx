@@ -28,7 +28,7 @@ import { useExchangeRate, useCheckout, useBankTransferCheckout, useCart, convert
 import { BankTransferPanel } from "@/components/layout/sections/payment/bank-transfer-panel";
 import { useAuth } from "@/lib/auth";
 import { getOrCreateVisitorId } from "@/lib/visitor-id";
-import { readPartnerClickId } from "@/lib/partner-click-id";
+import { partnerClickForOrder } from "@/lib/partner-click-id";
 import { trackJourney } from "@/lib/journey-tracking";
 import { walletTranslations } from "@/components/layout/sections/wallet/translations";
 import Link from "next/link";
@@ -277,7 +277,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // If user is not logged in, show auth modal
     if (!user) {
       openAuthModal();
@@ -285,6 +285,10 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
     }
 
     if (!validate()) return;
+
+    // The signed click lives in an HttpOnly cookie the page cannot read; our
+    // server hands it over for the order (doitac-1410 #026).
+    const partnerClick = await partnerClickForOrder();
 
     const checkoutItems = items.map((item) => ({
       planId: item.planId ?? Number(item.id),
@@ -302,9 +306,10 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
         referralCode: referralApplied ? referralCode : undefined,
         partnerLinkCode,
         partnerLinkClickedAt,
-        // The server-minted click id, which outranks the cookie above: it was
-        // never the browser's to lose (#039).
-        partnerClickId: readPartnerClickId() ?? undefined,
+        // The server-signed click from the HttpOnly cookie (#039, doitac-1410
+        // #026); it outranks the code above, which now only counts when this
+        // device really clicked that link.
+        partnerClickId: partnerClick ?? undefined,
         // Lets the API flag several affiliate orders from one device (#036);
         // it never changes whether the order earns commission.
         visitorId: getOrCreateVisitorId() ?? undefined,

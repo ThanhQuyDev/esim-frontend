@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import {
-  PARTNER_LINK_CLICKED_AT_COOKIE_NAME,
-  PARTNER_LINK_COOKIE_NAME,
-  PARTNER_LINK_COOKIE_OPTIONS,
+  applyPartnerClick,
   hashClientIp,
+  isLinkPreviewBot,
   recordPartnerLinkClick,
 } from "@/lib/partner-link";
-import { PARTNER_CLICK_ID_COOKIE_NAME } from "@/lib/partner-click-id";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.saily.example.com";
@@ -37,9 +35,15 @@ export async function GET(
   { params }: { params: Promise<{ code: string }> }
 ) {
   const { code } = await params;
+  const userAgent = request.headers.get("user-agent");
+
+  // A crawler rendering the page is not a visit (doitac-1410 #026).
+  if (isLinkPreviewBot(userAgent)) {
+    return NextResponse.json({ attributed: false });
+  }
 
   const result = await recordPartnerLinkClick(API_BASE_URL, code, {
-    userAgent: request.headers.get("user-agent") || undefined,
+    userAgent: userAgent || undefined,
     referrer: request.headers.get("referer") || undefined,
     ipHash:
       hashClientIp(
@@ -54,29 +58,9 @@ export async function GET(
     return NextResponse.json({ attributed: false });
   }
 
-  // No redirect to hang the click id on here, so it goes back in the body for
-  // ReferralCapture to store (#039).
-  const response = NextResponse.json({
-    attributed: true,
-    clickId: result.clickId ?? null,
-  });
-  response.cookies.set(
-    PARTNER_LINK_COOKIE_NAME,
-    code,
-    PARTNER_LINK_COOKIE_OPTIONS
-  );
-  response.cookies.set(
-    PARTNER_LINK_CLICKED_AT_COOKIE_NAME,
-    new Date().toISOString(),
-    PARTNER_LINK_COOKIE_OPTIONS
-  );
-  if (result.clickId) {
-    response.cookies.set(
-      PARTNER_CLICK_ID_COOKIE_NAME,
-      result.clickId,
-      PARTNER_LINK_COOKIE_OPTIONS
-    );
-  }
-
+  // The click stays in the signed HttpOnly cookie; nothing of it goes back to
+  // the page (doitac-1410 #026).
+  const response = NextResponse.json({ attributed: true });
+  applyPartnerClick(response, result);
   return response;
 }

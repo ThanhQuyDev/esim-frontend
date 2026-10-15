@@ -12,7 +12,7 @@
  */
 
 import { getOrCreateVisitorId } from "@/lib/visitor-id";
-import { readPartnerClickId } from "@/lib/partner-click-id";
+import { fetchPartnerClickToken, readPartnerClickId } from "@/lib/partner-click-id";
 
 export type JourneyEvent =
   | "plan_list"
@@ -52,7 +52,7 @@ function post(body: string): void {
   }).catch(() => {});
 }
 
-function flush(): void {
+async function flush(): Promise<void> {
   timer = null;
   const events = queue;
   queue = [];
@@ -64,7 +64,9 @@ function flush(): void {
   } catch {
     // No id to group the session by; the click id below may still carry it.
   }
-  const clickId = readPartnerClickId();
+  // The signed token from the HttpOnly cookie (doitac-1410 #026); a bare id
+  // only for a click from before tokens.
+  const clickId = (await fetchPartnerClickToken()) ?? readPartnerClickId();
   if (!visitorId && !clickId) return;
 
   post(JSON.stringify({ visitorId, clickId, events }));

@@ -55,3 +55,26 @@ export function readPartnerClickId(): string | null {
   const fromCookie = match ? decodeURIComponent(match[1]!) : null;
   return fromCookie && isWellFormed(fromCookie) ? fromCookie : null;
 }
+
+let tokenRequest: Promise<string | null> | null = null;
+
+/**
+ * The signed click token kept in the HttpOnly cookie (doitac-1410 #026), asked
+ * of our own server — the page cannot read that cookie itself. Asked once per
+ * page; `refresh` asks again (after a new link was opened in this tab).
+ */
+export function fetchPartnerClickToken(refresh = false): Promise<string | null> {
+  if (typeof window === "undefined") return Promise.resolve(null);
+  if (!tokenRequest || refresh) {
+    tokenRequest = fetch("/api/partner-attribution", { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((body: { clickToken?: string | null } | null) => body?.clickToken ?? null)
+      .catch(() => null);
+  }
+  return tokenRequest;
+}
+
+/** What to send as the click: the signed token, else a pre-token bare id. */
+export async function partnerClickForOrder(): Promise<string | null> {
+  return (await fetchPartnerClickToken(true)) ?? readPartnerClickId();
+}

@@ -3,28 +3,22 @@
 import { useEffect } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 
-import {
-  PARTNER_CLICK_ID_PARAM,
-  rememberPartnerClickId,
-} from "@/lib/partner-click-id";
+import { PARTNER_CLICK_ID_PARAM } from "@/lib/partner-click-id";
 
 /**
- * Takes the server-minted click id out of the landing URL (#039).
+ * Clears a click id from the address bar (#039, doitac-1410 #026).
  *
- * `/go/<code>` redirects here with `?pcid=<id>`. Moving it into storage right
- * away means the attribution no longer rides on a cookie that iOS will trim,
- * and clearing it from the address bar means the visitor cannot hand their own
- * attribution to somebody else by pasting the link they landed on.
+ * `/go/<code>` no longer puts the click on the landing URL — it lives in a
+ * signed HttpOnly cookie — so a `?pcid=` that still turns up is from a link
+ * somebody shared. It is dropped, never stored: a pasted URL must not hand the
+ * visitor's click to whoever opens it.
  */
 export function PartnerClickCapture() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
   useEffect(() => {
-    const clickId = searchParams.get(PARTNER_CLICK_ID_PARAM);
-    if (!clickId) return;
-
-    rememberPartnerClickId(clickId);
+    if (!searchParams.get(PARTNER_CLICK_ID_PARAM)) return;
 
     const remaining = new URLSearchParams(searchParams.toString());
     remaining.delete(PARTNER_CLICK_ID_PARAM);

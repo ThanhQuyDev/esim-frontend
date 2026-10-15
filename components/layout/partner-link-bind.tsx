@@ -3,10 +3,7 @@
 import { useEffect } from "react";
 
 import { useAuth } from "@/lib/auth";
-import {
-  PARTNER_LINK_CLICKED_AT_COOKIE_NAME,
-  PARTNER_LINK_COOKIE_NAME,
-} from "@/lib/partner-link";
+import { fetchPartnerClickToken } from "@/lib/partner-click-id";
 
 /**
  * Ties a KOL's marketing link to the signed-in customer's account (#034).
@@ -19,59 +16,57 @@ import {
  *
  * Every fresh click binds again, even to the same link (#037, #038): the later
  * link has to replace the earlier one, and re-opening the same link restarts
- * that partner's window — neither happens if the browser decides it has
- * already bound this code once.
+ * that partner's window.
+ *
+ * doitac-1410 #026: what is bound is the visitor's own signed click, read by
+ * our server from its HttpOnly cookie — not a link code the page could be
+ * told to send.
  *
  * Fire and forget: nothing on the page depends on the answer, and the backend
  * re-checks the attribution window at order time anyway.
  */
 const BOUND_KEY = "esim_partner_link_bound";
 
-function readCookie(name: string): string | null {
-  const match = document.cookie.match(
-    new RegExp(`(?:^|; )${name}=([^;]*)`)
-  );
-  return match ? decodeURIComponent(match[1]!) : null;
-}
-
 export function PartnerLinkBind() {
   const { token, user } = useAuth();
 
   useEffect(() => {
     if (!token) return;
+    let cancelled = false;
 
-    const code = readCookie(PARTNER_LINK_COOKIE_NAME);
-    if (!code) return;
+    void fetchPartnerClickToken().then((clickToken) => {
+      if (cancelled || !clickToken) return;
 
-    // One bind per click per account — not per code. The account is in the key
-    // because two people sharing a browser are two customers, and the click
-    // timestamp is in it because a second click on the same link is a new
-    // click, which has to push the partner's window forward (#037, #038).
-    const clickedAt = readCookie(PARTNER_LINK_CLICKED_AT_COOKIE_NAME) ?? "";
-    const visit = `${user?.id ?? "?"}:${code}@${clickedAt}`;
+      // One bind per click per account: two people sharing a browser are two
+      // customers, and a new click is a new token.
+      const visit = `${user?.id ?? "?"}:${clickToken.slice(-16)}`;
+      let alreadyBound: string | null = null;
+      try {
+        alreadyBound = localStorage.getItem(BOUND_KEY);
+      } catch {
+        // Private mode: binding again is harmless, the row is upserted.
+      }
+      if (alreadyBound === visit) return;
 
-    let alreadyBound: string | null = null;
-    try {
-      alreadyBound = localStorage.getItem(BOUND_KEY);
-    } catch {
-      // Private mode: binding again is harmless, the row is upserted.
-    }
-    if (alreadyBound === visit) return;
-
-    void fetch(`/api/partner-links/${encodeURIComponent(code)}/bind`, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
-      cache: "no-store",
-    })
-      .then((res) => {
-        if (!res.ok) return;
-        try {
-          localStorage.setItem(BOUND_KEY, visit);
-        } catch {
-          // Nothing to do; the next page view simply binds again.
-        }
+      void fetch("/api/partner-links/bind", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        cache: "no-store",
       })
-      .catch(() => {});
+        .then((res) => {
+          if (!res.ok) return;
+          try {
+            localStorage.setItem(BOUND_KEY, visit);
+          } catch {
+            // Nothing to do; the next page view simply binds again.
+          }
+        })
+        .catch(() => {});
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [token, user?.id]);
 
   return null;
