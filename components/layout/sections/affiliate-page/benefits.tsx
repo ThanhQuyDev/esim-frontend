@@ -1,8 +1,14 @@
 import {
   BarChart3,
+  Code2,
   Globe2,
   Link2,
+  Mail,
+  Package,
+  RefreshCw,
+  ShieldCheck,
   Sparkles,
+  Store,
   Ticket,
   Wallet,
 } from "lucide-react";
@@ -28,6 +34,13 @@ const ICONS: Record<string, typeof Globe2> = {
   globe: Globe2,
   ticket: Ticket,
   sparkles: Sparkles,
+  // The distribution and API partner pages (doitac-1410 #014).
+  mail: Mail,
+  code: Code2,
+  package: Package,
+  refresh: RefreshCw,
+  shield: ShieldCheck,
+  store: Store,
 };
 
 export function AffiliateBenefits({ dict }: AffiliateBenefitsProps) {

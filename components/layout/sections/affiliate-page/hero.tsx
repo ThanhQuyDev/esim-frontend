@@ -7,6 +7,8 @@ import { localizedHref } from "@/lib/route-mapping";
 interface AffiliateHeroProps {
   dict: Record<string, any>;
   lang: string;
+  /** Where "Đăng ký" leads; the distribution and API pages preselect their kind (doitac-1410 #014). */
+  registerHref?: string;
 }
 
 /**
@@ -17,7 +19,7 @@ interface AffiliateHeroProps {
  * would leave a broken box at the top of the page. The stat strip carries the
  * visual weight until a real asset exists.
  */
-export function AffiliateHero({ dict, lang }: AffiliateHeroProps) {
+export function AffiliateHero({ dict, lang, registerHref }: AffiliateHeroProps) {
   const perks: string[] = dict.perks ?? [];
   const stats: { value: string; label: string }[] = dict.stats ?? [];
 
@@ -49,7 +51,7 @@ export function AffiliateHero({ dict, lang }: AffiliateHeroProps) {
               <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
                 <Button asChild size="lg" className="cursor-pointer">
                   <Link
-                    href={localizedHref(lang, "/affiliate/register")}
+                    href={registerHref ?? localizedHref(lang, "/affiliate/register")}
                     data-testid="affiliate-hero-cta"
                   >
                     {dict.ctaPrimary}

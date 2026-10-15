@@ -57,6 +57,9 @@ export const STATIC_ROUTE_SEO: Record<string, [ChangeFrequency, number]> = {
   "/kyc-guide": ["monthly", 0.6],
   "/refer-a-friend": ["monthly", 0.6],
   "/affiliate": ["monthly", 0.6],
+  // The other two kinds of partner (doitac-1410 #014).
+  "/distribution-partners": ["monthly", 0.6],
+  "/api-partners": ["monthly", 0.6],
   "/affiliate/register": ["monthly", 0.5],
   "/terms-of-service": ["yearly", 0.3],
 };
@@ -96,6 +99,8 @@ export const STATIC_ROUTES = [
   "/refer-a-friend",
   // Affiliate programme: pages people are meant to find by searching (#095).
   "/affiliate",
+  "/distribution-partners",
+  "/api-partners",
   "/affiliate/register",
   "/terms-of-service",
 ] as const;

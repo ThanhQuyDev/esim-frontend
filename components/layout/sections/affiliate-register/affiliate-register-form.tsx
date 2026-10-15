@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -183,6 +183,15 @@ export function AffiliateRegisterForm({
       partnerApplyDefaultValues as unknown as PartnerApplyFormValues,
     mode: "onBlur",
   });
+
+  // The distribution and API partner pages send their readers here with
+  // "?loai=distribution|api", so the form opens on that kind (doitac-1410 #014).
+  useEffect(() => {
+    const kind = new URLSearchParams(window.location.search).get("loai");
+    if (kind === "kol" || kind === "distribution" || kind === "api") {
+      form.setValue("partnerKind", kind as PartnerApplyFormValues["partnerKind"]);
+    }
+  }, [form]);
 
   const legalType = form.watch("legalType");
   const partnerKind = form.watch("partnerKind");

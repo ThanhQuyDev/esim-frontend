@@ -171,6 +171,16 @@ export const routing = defineRouting({
       vi: '/affiliate',
       en: '/affiliate',
     },
+    // The other two kinds of partner, beside the affiliate programme, under
+    // the "Đối tác" menu (doitac-1410 #014).
+    '/distribution-partners': {
+      vi: '/doi-tac-phan-phoi',
+      en: '/distribution-partners',
+    },
+    '/api-partners': {
+      vi: '/doi-tac-tich-hop-api',
+      en: '/api-partners',
+    },
     // Its own address, not under /affiliate: the form now takes every kind
     // of partner (doitac-1410 #013). The old paths redirect in middleware.ts.
     '/affiliate/register': {

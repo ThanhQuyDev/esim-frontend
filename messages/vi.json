@@ -22,6 +22,7 @@
     "resources": "Tài nguyên",
     "offers": "Ưu đãi",
     "help": "Trợ giúp",
+    "partners": "Đối tác",
     "login": "Đăng nhập",
     "downloadApp": "Xem tất cả điểm đến",
     "getStarted": "Dùng esim.vn",
@@ -2139,6 +2140,288 @@
       "description": "Điền hồ sơ trong vài phút. Được duyệt là bạn có ngay link giới thiệu đầu tiên.",
       "cta": "Đăng ký làm đối tác",
       "note": "Miễn phí tham gia · Không cam kết doanh số · Huỷ bất cứ lúc nào"
+    }
+  },
+  "distributionPage": {
+    "breadcrumb": "Đối tác phân phối",
+    "metadata": {
+      "title": "Đối tác phân phối eSIM esim.vn — Giá đại lý, bán eSIM dưới thương hiệu của bạn",
+      "description": "Trở thành đối tác phân phối eSIM du lịch esim.vn: nhập eSIM theo giá đại lý, gửi mã QR cho khách mang logo của bạn, quản lý đơn và eSIM trong cổng đối tác."
+    },
+    "hero": {
+      "badge": "Đối tác phân phối",
+      "title": "Bán eSIM du lịch cho khách hàng của bạn, theo giá đại lý",
+      "description": "Dành cho đại lý vé, công ty du lịch, cửa hàng và doanh nghiệp muốn bán hoặc phân phối eSIM cho khách hàng. Bạn nạp ký quỹ, đặt mua eSIM ngay trong cổng đối tác và gửi mã QR thẳng tới khách.",
+      "perks": [
+        "Giá đại lý theo hạng đối tác, hạng càng cao giá càng tốt",
+        "Đặt mua eSIM bất cứ lúc nào bằng số dư ký quỹ, nhận mã ngay",
+        "Email gửi mã QR cho khách mang logo thương hiệu của bạn",
+        "Quản lý toàn bộ eSIM đã bán, nạp thêm dung lượng khi khách cần"
+      ],
+      "ctaPrimary": "Đăng ký đối tác phân phối",
+      "ctaSecondary": "Xem cách hoạt động",
+      "stats": [
+        {
+          "value": "200+",
+          "label": "quốc gia và vùng lãnh thổ có gói eSIM"
+        },
+        {
+          "value": "24/7",
+          "label": "đặt mua và nhận mã eSIM trong cổng đối tác"
+        },
+        {
+          "value": "0đ",
+          "label": "phí đăng ký và duy trì tài khoản"
+        }
+      ]
+    },
+    "howItWorks": {
+      "title": "Cách hoạt động",
+      "subtitle": "Không cần tích hợp kỹ thuật — mọi việc làm trong cổng đối tác.",
+      "steps": [
+        {
+          "title": "Đăng ký và chờ duyệt",
+          "description": "Gửi hồ sơ với thông tin doanh nghiệp hoặc cá nhân và mô hình bán hàng. Chúng tôi xét duyệt thủ công và báo kết quả qua email trong 1-3 ngày làm việc."
+        },
+        {
+          "title": "Nạp ký quỹ",
+          "description": "Sau khi được duyệt, bạn nạp tiền vào ví ký quỹ bằng chuyển khoản. Số dư dùng để đặt mua eSIM theo giá đại lý của hạng bạn."
+        },
+        {
+          "title": "Đặt mua và giao eSIM",
+          "description": "Chọn gói, số lượng, nhập email khách — hệ thống gửi mã QR tới khách với logo của bạn. Đơn và eSIM đều được lưu lại để bạn theo dõi."
+        }
+      ],
+      "windowNote": "Mọi đơn đều trừ thẳng vào số dư ký quỹ, không công nợ. Nếu eSIM lỗi do nhà cung cấp, bạn báo lỗi ngay trong cổng đối tác để esim.vn kiểm tra và hoàn tiền vào ví."
+    },
+    "benefits": {
+      "title": "Vì sao nên trở thành đối tác phân phối",
+      "subtitle": "Chúng tôi lo nguồn eSIM, kết nối nhà mạng và hỗ trợ kỹ thuật. Bạn tập trung bán hàng.",
+      "items": [
+        {
+          "icon": "wallet",
+          "title": "Giá đại lý theo hạng",
+          "description": "Giá nhập riêng cho đối tác, tự động tốt hơn khi doanh số của bạn tăng và lên hạng."
+        },
+        {
+          "icon": "mail",
+          "title": "Thương hiệu của bạn",
+          "description": "Email gửi mã QR cho khách mang logo đối tác bạn đã cấu hình, khách nhận eSIM như từ chính bạn."
+        },
+        {
+          "icon": "package",
+          "title": "Kho gói đa dạng",
+          "description": "Hàng trăm gói cho hơn 200 điểm đến: gói theo ngày, gói dung lượng, không giới hạn, có gọi/SMS."
+        },
+        {
+          "icon": "refresh",
+          "title": "Nạp thêm dung lượng",
+          "description": "Khách dùng hết data giữa chuyến? Bạn nạp thêm cho đúng eSIM đó ngay trong cổng đối tác."
+        },
+        {
+          "icon": "chart",
+          "title": "Báo cáo rõ ràng",
+          "description": "Doanh thu, số đơn, eSIM đã kích hoạt và lịch sử giao dịch ví — xuất Excel khi cần đối soát."
+        },
+        {
+          "icon": "shield",
+          "title": "Hỗ trợ khi eSIM lỗi",
+          "description": "Báo lỗi từng eSIM ngay trong cổng, esim.vn kiểm tra và hoàn tiền vào ví ký quỹ nếu lỗi từ nhà cung cấp."
+        }
+      ]
+    },
+    "audience": {
+      "title": "Dành cho ai",
+      "items": [
+        {
+          "title": "Công ty du lịch, bán tour",
+          "description": "Tặng hoặc bán kèm eSIM trong gói tour, khách có mạng ngay khi hạ cánh."
+        },
+        {
+          "title": "Đại lý vé máy bay, visa",
+          "description": "Bán thêm eSIM cho khách đang chuẩn bị đi nước ngoài — đúng lúc họ cần nhất."
+        },
+        {
+          "title": "Cửa hàng và điểm bán",
+          "description": "Cửa hàng điện thoại, sim số, phụ kiện du lịch muốn có thêm sản phẩm số không cần tồn kho."
+        },
+        {
+          "title": "Doanh nghiệp và đội ngũ đi công tác",
+          "description": "Chủ động cấp eSIM cho nhân viên đi công tác với giá đại lý và quản lý tập trung."
+        }
+      ]
+    },
+    "faq": {
+      "title": "Câu hỏi thường gặp",
+      "items": [
+        {
+          "question": "Cá nhân có đăng ký làm đối tác phân phối được không?",
+          "answer": "Được. Bạn chọn tư cách Cá nhân hoặc Doanh nghiệp khi đăng ký; doanh nghiệp cần thêm tên công ty và mã số thuế."
+        },
+        {
+          "question": "Tôi cần nạp ký quỹ bao nhiêu?",
+          "answer": "Mức nạp tối thiểu do chương trình quy định và hiện rõ trong cổng đối tác khi bạn nạp. Số dư chỉ dùng để mua eSIM, không mất phí duy trì."
+        },
+        {
+          "question": "Giá đại lý được tính thế nào?",
+          "answer": "Mỗi hạng đối tác có mức giá đại lý riêng. Giá bạn trả cho từng gói hiện ngay trong trang Sản phẩm & bảng giá của cổng đối tác."
+        },
+        {
+          "question": "Khách nhận eSIM bằng cách nào?",
+          "answer": "Khi đặt mua, bạn nhập email của khách: hệ thống gửi mã QR kèm hướng dẫn cài đặt tới khách, mang logo thương hiệu bạn đã cấu hình."
+        },
+        {
+          "question": "Nếu eSIM không dùng được thì sao?",
+          "answer": "Bạn báo lỗi eSIM đó trong cổng đối tác. esim.vn kiểm tra với nhà cung cấp và hoàn tiền vào ví ký quỹ nếu lỗi không do người dùng."
+        },
+        {
+          "question": "Tôi có thể vừa phân phối vừa làm tiếp thị liên kết không?",
+          "answer": "Có. Đối tác phân phối có thể được esim.vn cấp thêm quyền affiliate để dùng link, mã giới thiệu và nhận hoa hồng."
+        }
+      ]
+    },
+    "cta": {
+      "title": "Bắt đầu phân phối eSIM",
+      "description": "Gửi hồ sơ trong vài phút. Được duyệt là bạn có ngay cổng đối tác để nạp ký quỹ và đặt mua.",
+      "cta": "Đăng ký đối tác phân phối",
+      "note": "Miễn phí đăng ký · Xét duyệt thủ công · Không công nợ"
+    }
+  },
+  "apiPage": {
+    "breadcrumb": "Đối tác tích hợp API",
+    "metadata": {
+      "title": "Đối tác tích hợp API eSIM esim.vn — Đưa eSIM vào website và ứng dụng của bạn",
+      "description": "Tích hợp kho gói eSIM, đặt hàng và quản lý eSIM của esim.vn vào website, ứng dụng hay hệ thống của bạn qua API. Đăng ký để được trao đổi tài liệu API và môi trường thử nghiệm."
+    },
+    "hero": {
+      "badge": "Đối tác tích hợp API",
+      "title": "Đưa eSIM du lịch vào website và ứng dụng của bạn",
+      "description": "Dành cho nền tảng du lịch, ứng dụng, sàn thương mại điện tử và đơn vị công nghệ muốn bán eSIM ngay trong sản phẩm của mình. Tích hợp kho sản phẩm, đặt hàng và quản lý eSIM qua API.",
+      "perks": [
+        "Kho gói eSIM cho hơn 200 điểm đến, cập nhật từ esim.vn",
+        "Đặt hàng và nhận thông tin eSIM tự động trong hệ thống của bạn",
+        "Môi trường thử nghiệm trước khi chạy thật",
+        "Đầu mối hỗ trợ kỹ thuật riêng trong quá trình tích hợp"
+      ],
+      "ctaPrimary": "Đăng ký đối tác API",
+      "ctaSecondary": "Xem quy trình hợp tác",
+      "stats": [
+        {
+          "value": "200+",
+          "label": "quốc gia và vùng lãnh thổ có gói eSIM"
+        },
+        {
+          "value": "1-3 ngày",
+          "label": "xét duyệt hồ sơ đăng ký"
+        },
+        {
+          "value": "0đ",
+          "label": "phí đăng ký hợp tác"
+        }
+      ]
+    },
+    "howItWorks": {
+      "title": "Quy trình hợp tác",
+      "subtitle": "Từ hồ sơ đăng ký tới khi bán eSIM trên hệ thống của bạn.",
+      "steps": [
+        {
+          "title": "Đăng ký và xét duyệt",
+          "description": "Gửi hồ sơ với thông tin doanh nghiệp, sản phẩm sẽ tích hợp và email đầu mối kỹ thuật. Chúng tôi xét duyệt thủ công trong 1-3 ngày làm việc."
+        },
+        {
+          "title": "Trao đổi tài liệu và thử nghiệm",
+          "description": "Sau khi được duyệt, đội ngũ esim.vn trao đổi về tài liệu API, môi trường thử nghiệm, luồng đặt hàng và đầu mối hỗ trợ kỹ thuật."
+        },
+        {
+          "title": "Chạy thật",
+          "description": "Hoàn tất thử nghiệm là bạn bán eSIM ngay trong sản phẩm của mình, theo chính sách giá của đối tác."
+        }
+      ],
+      "windowNote": "Tài liệu API và thông tin kết nối chỉ được cung cấp cho đối tác đã được duyệt, để bảo đảm an toàn cho hệ thống của cả hai bên."
+    },
+    "benefits": {
+      "title": "Vì sao tích hợp với esim.vn",
+      "subtitle": "Một đầu mối cho nhiều nhà mạng và điểm đến, thay vì tự kết nối từng nơi.",
+      "items": [
+        {
+          "icon": "package",
+          "title": "Kho sản phẩm sẵn có",
+          "description": "Gói theo ngày, gói dung lượng, không giới hạn, có gọi/SMS — cho hơn 200 điểm đến."
+        },
+        {
+          "icon": "code",
+          "title": "Tích hợp qua API",
+          "description": "Lấy danh sách gói, đặt hàng và nhận thông tin eSIM tự động, không cần thao tác tay."
+        },
+        {
+          "icon": "wallet",
+          "title": "Giá dành cho đối tác",
+          "description": "Chính sách giá riêng cho đối tác tích hợp, trao đổi cụ thể khi hồ sơ được duyệt."
+        },
+        {
+          "icon": "refresh",
+          "title": "Quản lý eSIM sau bán",
+          "description": "Theo dõi trạng thái eSIM và hỗ trợ khách nạp thêm dung lượng khi cần."
+        },
+        {
+          "icon": "shield",
+          "title": "Hỗ trợ kỹ thuật",
+          "description": "Có đầu mối kỹ thuật đồng hành từ thử nghiệm tới khi chạy thật."
+        },
+        {
+          "icon": "globe",
+          "title": "Mở rộng sản phẩm",
+          "description": "Thêm eSIM vào hành trình của khách: đặt vé, đặt phòng, bảo hiểm — tăng giá trị mỗi đơn."
+        }
+      ]
+    },
+    "audience": {
+      "title": "Dành cho ai",
+      "items": [
+        {
+          "title": "Nền tảng và ứng dụng du lịch",
+          "description": "Website đặt vé, đặt phòng, tour — bán eSIM như một phần của chuyến đi."
+        },
+        {
+          "title": "Sàn thương mại điện tử",
+          "description": "Thêm danh mục eSIM du lịch với hàng trăm gói, giao hàng hoàn toàn tự động."
+        },
+        {
+          "title": "Ví điện tử, ngân hàng, fintech",
+          "description": "Mang eSIM vào hệ sinh thái dịch vụ của bạn cho khách hàng hay đi nước ngoài."
+        },
+        {
+          "title": "Đơn vị công nghệ, nhà mạng ảo",
+          "description": "Kết nối kho eSIM quốc tế vào hệ thống sẵn có của bạn."
+        }
+      ]
+    },
+    "faq": {
+      "title": "Câu hỏi thường gặp",
+      "items": [
+        {
+          "question": "Khi nào tôi nhận được tài liệu API?",
+          "answer": "Sau khi hồ sơ được duyệt, đội ngũ esim.vn liên hệ qua email đầu mối kỹ thuật để gửi tài liệu và thông tin môi trường thử nghiệm."
+        },
+        {
+          "question": "Có môi trường thử nghiệm không?",
+          "answer": "Có. Bạn thử luồng đặt hàng trên môi trường thử nghiệm trước khi chạy thật."
+        },
+        {
+          "question": "Chi phí tích hợp là bao nhiêu?",
+          "answer": "Đăng ký hợp tác miễn phí. Chính sách giá cho đối tác tích hợp được trao đổi cụ thể sau khi hồ sơ được duyệt."
+        },
+        {
+          "question": "Cần chuẩn bị gì trước khi đăng ký?",
+          "answer": "Thông tin doanh nghiệp, website hoặc ứng dụng sẽ tích hợp, sản lượng ước tính và email của người phụ trách kỹ thuật."
+        }
+      ]
+    },
+    "cta": {
+      "title": "Sẵn sàng tích hợp eSIM?",
+      "description": "Gửi hồ sơ đăng ký, đội ngũ esim.vn sẽ liên hệ để trao đổi tài liệu và môi trường thử nghiệm.",
+      "cta": "Đăng ký đối tác API",
+      "note": "Miễn phí đăng ký · Xét duyệt thủ công · Hỗ trợ kỹ thuật riêng"
     }
   }
 }

@@ -7,10 +7,12 @@ import { localizedHref } from "@/lib/route-mapping";
 interface AffiliateCtaProps {
   dict: Record<string, any>;
   lang: string;
+  /** Where "Đăng ký" leads; the distribution and API pages preselect their kind (doitac-1410 #014). */
+  registerHref?: string;
 }
 
 /** Closing call to action — the second entry point to the sign-up form. */
-export function AffiliateCta({ dict, lang }: AffiliateCtaProps) {
+export function AffiliateCta({ dict, lang, registerHref }: AffiliateCtaProps) {
   return (
     <div
       data-section="affiliate-cta"
@@ -28,7 +30,7 @@ export function AffiliateCta({ dict, lang }: AffiliateCtaProps) {
               <div className="mt-8">
                 <Button asChild size="lg" className="cursor-pointer">
                   <Link
-                    href={localizedHref(lang, "/affiliate/register")}
+                    href={registerHref ?? localizedHref(lang, "/affiliate/register")}
                     data-testid="affiliate-cta-button"
                   >
                     {dict.cta}

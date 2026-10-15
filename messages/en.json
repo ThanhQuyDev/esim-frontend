@@ -22,6 +22,7 @@
     "resources": "Resources",
     "offers": "Offers",
     "help": "Help",
+    "partners": "Partners",
     "login": "Log in",
     "downloadApp": "View all destination",
     "getStarted": "Get esim.vn",
@@ -2100,6 +2101,288 @@
       "description": "The form takes a few minutes. Once approved, your first referral link is waiting.",
       "cta": "Apply to join",
       "note": "Free to join · No sales commitment · Leave any time"
+    }
+  },
+  "distributionPage": {
+    "breadcrumb": "Distribution partners",
+    "metadata": {
+      "title": "esim.vn eSIM distribution partners — Reseller prices, your own brand",
+      "description": "Become an esim.vn eSIM distribution partner: buy travel eSIMs at reseller prices, send QR codes to customers under your logo, and manage orders and eSIMs in the partner portal."
+    },
+    "hero": {
+      "badge": "Distribution partners",
+      "title": "Sell travel eSIMs to your customers at reseller prices",
+      "description": "For ticket agents, travel companies, shops and businesses that sell or distribute eSIMs. Top up a deposit, buy eSIMs in the partner portal and send the QR code straight to your customer.",
+      "perks": [
+        "Reseller prices by partner tier — the higher the tier, the better the price",
+        "Buy eSIMs any time from your deposit and get the codes instantly",
+        "QR code emails to customers carry your brand's logo",
+        "Manage every eSIM sold and top up data when customers need it"
+      ],
+      "ctaPrimary": "Apply as a distribution partner",
+      "ctaSecondary": "See how it works",
+      "stats": [
+        {
+          "value": "200+",
+          "label": "countries and regions covered"
+        },
+        {
+          "value": "24/7",
+          "label": "buy and receive eSIMs in the partner portal"
+        },
+        {
+          "value": "0₫",
+          "label": "to sign up and keep an account"
+        }
+      ]
+    },
+    "howItWorks": {
+      "title": "How it works",
+      "subtitle": "No technical integration — everything happens in the partner portal.",
+      "steps": [
+        {
+          "title": "Apply and get reviewed",
+          "description": "Send your business or personal details and how you sell. We review every application by hand and email the result within 1-3 working days."
+        },
+        {
+          "title": "Top up your deposit",
+          "description": "Once approved, top up your deposit wallet by bank transfer. The balance buys eSIMs at your tier's reseller price."
+        },
+        {
+          "title": "Buy and deliver",
+          "description": "Pick a plan and quantity, enter the customer's email — they receive the QR code under your logo. Every order and eSIM is kept for you to track."
+        }
+      ],
+      "windowNote": "Every order is paid straight from your deposit — no credit. If an eSIM fails on the provider's side, report it in the portal and esim.vn checks it and refunds your wallet."
+    },
+    "benefits": {
+      "title": "Why become a distribution partner",
+      "subtitle": "We handle eSIM supply, carrier connections and technical support. You focus on selling.",
+      "items": [
+        {
+          "icon": "wallet",
+          "title": "Reseller prices by tier",
+          "description": "Partner-only buying prices that improve automatically as your sales grow and you move up a tier."
+        },
+        {
+          "icon": "mail",
+          "title": "Your own brand",
+          "description": "QR code emails carry the logo you configured, so customers receive the eSIM from you."
+        },
+        {
+          "icon": "package",
+          "title": "A wide range of plans",
+          "description": "Hundreds of plans for 200+ destinations: daily, data packs, unlimited, with calls/SMS."
+        },
+        {
+          "icon": "refresh",
+          "title": "Data top-ups",
+          "description": "Customer ran out of data mid-trip? Top up that exact eSIM from the partner portal."
+        },
+        {
+          "icon": "chart",
+          "title": "Clear reports",
+          "description": "Revenue, orders, activated eSIMs and wallet history — export to Excel for reconciliation."
+        },
+        {
+          "icon": "shield",
+          "title": "Support when an eSIM fails",
+          "description": "Report a faulty eSIM in the portal; esim.vn checks it and refunds your deposit if the provider is at fault."
+        }
+      ]
+    },
+    "audience": {
+      "title": "Who it's for",
+      "items": [
+        {
+          "title": "Travel and tour companies",
+          "description": "Bundle or sell eSIMs with tours so travellers are online the moment they land."
+        },
+        {
+          "title": "Ticket and visa agents",
+          "description": "Offer eSIMs to customers who are about to travel — exactly when they need one."
+        },
+        {
+          "title": "Shops and points of sale",
+          "description": "Phone, SIM and travel-accessory shops adding a digital product with no stock to hold."
+        },
+        {
+          "title": "Businesses with travelling teams",
+          "description": "Issue eSIMs to staff on business trips at reseller prices, managed in one place."
+        }
+      ]
+    },
+    "faq": {
+      "title": "Frequently asked questions",
+      "items": [
+        {
+          "question": "Can an individual become a distribution partner?",
+          "answer": "Yes. Choose Individual or Company when you apply; companies also give their name and tax code."
+        },
+        {
+          "question": "How much do I need to deposit?",
+          "answer": "The minimum top-up is set by the programme and shown in the partner portal when you top up. The balance is only used to buy eSIMs and has no maintenance fee."
+        },
+        {
+          "question": "How are reseller prices set?",
+          "answer": "Each partner tier has its own reseller prices. The price you pay for each plan is shown on the Products & prices page of the partner portal."
+        },
+        {
+          "question": "How does my customer receive the eSIM?",
+          "answer": "You enter the customer's email when buying: they receive the QR code and setup instructions under your configured brand."
+        },
+        {
+          "question": "What if an eSIM doesn't work?",
+          "answer": "Report it in the partner portal. esim.vn checks with the provider and refunds your deposit if the fault is not the user's."
+        },
+        {
+          "question": "Can I distribute and do affiliate marketing too?",
+          "answer": "Yes. esim.vn can grant a distribution partner affiliate access to use referral links and codes and earn commission."
+        }
+      ]
+    },
+    "cta": {
+      "title": "Start distributing eSIMs",
+      "description": "Apply in a few minutes. Once approved, the partner portal is yours to top up and buy.",
+      "cta": "Apply as a distribution partner",
+      "note": "Free to join · Reviewed by hand · No credit"
+    }
+  },
+  "apiPage": {
+    "breadcrumb": "API partners",
+    "metadata": {
+      "title": "esim.vn eSIM API partners — Put eSIMs in your website and app",
+      "description": "Integrate esim.vn's eSIM catalogue, ordering and eSIM management into your website, app or system via API. Apply to receive the API documentation and a test environment."
+    },
+    "hero": {
+      "badge": "API partners",
+      "title": "Bring travel eSIMs into your website and app",
+      "description": "For travel platforms, apps, marketplaces and tech companies that want to sell eSIMs inside their own product. Integrate the catalogue, ordering and eSIM management through an API.",
+      "perks": [
+        "eSIM plans for 200+ destinations, kept up to date by esim.vn",
+        "Orders and eSIM details delivered automatically into your system",
+        "A test environment before going live",
+        "A dedicated technical contact during integration"
+      ],
+      "ctaPrimary": "Apply as an API partner",
+      "ctaSecondary": "See the process",
+      "stats": [
+        {
+          "value": "200+",
+          "label": "countries and regions covered"
+        },
+        {
+          "value": "1-3 days",
+          "label": "to review an application"
+        },
+        {
+          "value": "0₫",
+          "label": "to apply"
+        }
+      ]
+    },
+    "howItWorks": {
+      "title": "How we work together",
+      "subtitle": "From application to selling eSIMs in your system.",
+      "steps": [
+        {
+          "title": "Apply and get reviewed",
+          "description": "Send your company details, the product you will integrate and a technical contact email. We review by hand within 1-3 working days."
+        },
+        {
+          "title": "Documentation and testing",
+          "description": "Once approved, the esim.vn team goes through the API documentation, test environment, order flow and technical contact with you."
+        },
+        {
+          "title": "Go live",
+          "description": "After testing, you sell eSIMs inside your own product under the partner pricing policy."
+        }
+      ],
+      "windowNote": "API documentation and connection details are only shared with approved partners, to keep both systems safe."
+    },
+    "benefits": {
+      "title": "Why integrate with esim.vn",
+      "subtitle": "One connection for many carriers and destinations, instead of integrating each one yourself.",
+      "items": [
+        {
+          "icon": "package",
+          "title": "A ready catalogue",
+          "description": "Daily plans, data packs, unlimited, calls/SMS — for 200+ destinations."
+        },
+        {
+          "icon": "code",
+          "title": "API integration",
+          "description": "Fetch plans, place orders and receive eSIM details automatically, with no manual steps."
+        },
+        {
+          "icon": "wallet",
+          "title": "Partner pricing",
+          "description": "A pricing policy for integration partners, discussed once your application is approved."
+        },
+        {
+          "icon": "refresh",
+          "title": "After-sales eSIM management",
+          "description": "Track eSIM status and help customers top up data when they need it."
+        },
+        {
+          "icon": "shield",
+          "title": "Technical support",
+          "description": "A technical contact alongside you from testing to going live."
+        },
+        {
+          "icon": "globe",
+          "title": "Grow your product",
+          "description": "Add eSIMs to your customers' journey — flights, hotels, insurance — and raise the value of every order."
+        }
+      ]
+    },
+    "audience": {
+      "title": "Who it's for",
+      "items": [
+        {
+          "title": "Travel platforms and apps",
+          "description": "Flight, hotel and tour sites selling eSIMs as part of the trip."
+        },
+        {
+          "title": "Marketplaces",
+          "description": "Add a travel eSIM category with hundreds of plans, delivered fully automatically."
+        },
+        {
+          "title": "E-wallets, banks, fintech",
+          "description": "Bring eSIMs into your service ecosystem for customers who travel abroad."
+        },
+        {
+          "title": "Tech companies and MVNOs",
+          "description": "Connect an international eSIM catalogue to your existing system."
+        }
+      ]
+    },
+    "faq": {
+      "title": "Frequently asked questions",
+      "items": [
+        {
+          "question": "When do I get the API documentation?",
+          "answer": "Once your application is approved, the esim.vn team contacts your technical email with the documentation and test environment details."
+        },
+        {
+          "question": "Is there a test environment?",
+          "answer": "Yes. You test the order flow in a test environment before going live."
+        },
+        {
+          "question": "What does integration cost?",
+          "answer": "Applying is free. Pricing for integration partners is discussed once your application is approved."
+        },
+        {
+          "question": "What should I prepare before applying?",
+          "answer": "Your company details, the website or app to integrate, estimated volume and your technical lead's email."
+        }
+      ]
+    },
+    "cta": {
+      "title": "Ready to integrate eSIMs?",
+      "description": "Send your application and the esim.vn team will get in touch about documentation and testing.",
+      "cta": "Apply as an API partner",
+      "note": "Free to apply · Reviewed by hand · Dedicated technical support"
     }
   }
 }

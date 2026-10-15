@@ -413,6 +413,66 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
         href: localizedHref(lang, 'destinations'),
       },
     },
+    // "Đối tác": the three kinds of partner (doitac-1410 #014).
+    partners: {
+      col1: [
+        {
+          icon: "thumbs-up",
+          title: isVi ? "Tiếp thị liên kết (Affiliate)" : "Affiliate marketing",
+          desc: isVi
+            ? "Giới thiệu eSIM bằng link, mã riêng và nhận hoa hồng mỗi đơn."
+            : "Share eSIMs with your own links and codes, earn commission per order.",
+          href: localizedHref(lang, "/affiliate"),
+        },
+        {
+          icon: "briefcase",
+          title: isVi ? "Đối tác phân phối" : "Distribution partners",
+          desc: isVi
+            ? "Bán eSIM cho khách của bạn theo giá đại lý, gửi mã mang logo của bạn."
+            : "Sell eSIMs to your customers at reseller prices, under your logo.",
+          href: localizedHref(lang, "/distribution-partners"),
+        },
+      ],
+      col2: [
+        {
+          icon: "network-wired",
+          title: isVi ? "Đối tác tích hợp API" : "API partners",
+          desc: isVi
+            ? "Đưa kho eSIM, đặt hàng và quản lý eSIM vào website, ứng dụng của bạn."
+            : "Bring eSIM plans, ordering and management into your site or app.",
+          href: localizedHref(lang, "/api-partners"),
+        },
+        {
+          icon: "pen",
+          title: isVi ? "Đăng ký đối tác" : "Become a partner",
+          desc: isVi
+            ? "Gửi hồ sơ đăng ký trong vài phút, xét duyệt trong 1-3 ngày làm việc."
+            : "Apply in a few minutes, reviewed within 1-3 working days.",
+          href: localizedHref(lang, "/affiliate/register"),
+        },
+      ],
+      explore: [
+        {
+          title: isVi ? "Tính dữ liệu sử dụng" : "Data usage calculator",
+          desc: isVi
+            ? "Tìm hiểu bạn cần bao nhiêu dữ liệu cho chuyến đi."
+            : "Find out how much data you'll need on your trip.",
+          href: localizedHref(lang, 'data-calculator'),
+          image:
+            "https://sb.nordcdn.com/m/6c224dbf48f13441/original/mega-menu-explore-data-usage-calculator.png",
+          imageAlt: "A woman uses esim.vn's data usage calculator.",
+        },
+      ],
+      bottomLeft: {
+        icon: true,
+        text: isVi ? "eSIM là gì?" : "What is an eSIM?",
+        href: localizedHref(lang, 'what-is-esim'),
+      },
+      bottomRight: {
+        text: isVi ? "Đăng ký đối tác" : "Become a partner",
+        href: localizedHref(lang, "/affiliate/register"),
+      },
+    },
     help: {
       col1: [
         {
@@ -503,7 +563,8 @@ function getMenuData(lang: Locale): Record<string, MegaMenuData> {
   };
 }
 
-const NAV_ITEMS = ["product", "resources", "offers", "help"] as const;
+// "partners" is the "Đối tác" menu (doitac-1410 #014).
+const NAV_ITEMS = ["product", "resources", "offers", "partners", "help"] as const;
 
 // localStorage key remembering that the user closed the promo/announcement bar.
 // The stored value is the dismissal timestamp (ms); the bar reappears after
@@ -826,8 +887,8 @@ function MainNavbar({ lang, dict, topBars = [], menuSlides }: NavbarProps) {
               className="flex items-center justify-between max-w-[1600px] h-6 lg:h-8 mx-auto"
               aria-label="Main navigation"
             >
-              {/* Logo */}
-              <div className="pr-12">
+              {/* Logo — never squeezed by the menu beside it (doitac-1410 #014). */}
+              <div className="shrink-0 pr-6 xl:pr-12">
                 <Link href={homeHref} className="block">
                   <SailyLogo />
                   <span className="sr-only">esim.vn</span>
@@ -835,7 +896,7 @@ function MainNavbar({ lang, dict, topBars = [], menuSlides }: NavbarProps) {
               </div>
 
               {/* Desktop Nav */}
-              <div className="flex gap-4 items-center">
+              <div className="flex gap-2 xl:gap-4 items-center">
                 <div className="hidden lg:flex gap-1">
                   {NAV_ITEMS.map((item) => (
                     <button
@@ -847,14 +908,15 @@ function MainNavbar({ lang, dict, topBars = [], menuSlides }: NavbarProps) {
                         setDestinationsOpen(false);
                       }}
                       className={cn(
-                        "px-3 py-1.5 body-sm-medium text-text-primary bg-transparent rounded-md cursor-pointer flex gap-2 items-center transition-colors duration-200 hover:bg-[rgba(0,0,0,0.06)]",
+                        "px-2 xl:px-3 py-1.5 body-sm-medium whitespace-nowrap text-text-primary bg-transparent rounded-md cursor-pointer flex gap-1.5 xl:gap-2 items-center transition-colors duration-200 hover:bg-[rgba(0,0,0,0.06)]",
                         openDropdown === item && "bg-[rgba(0,0,0,0.06)]"
                       )}
                       aria-expanded={openDropdown === item}
                     >
                       {dict[item]}
+                      {/* The "Mới" badge waits for room: below 1280px it pushed the bar past the screen. */}
                       {item === "product" && (
-                        <span className="text-center whitespace-nowrap rounded-full inline-block border-md border-border-focus text-text-primary py-0.5 px-2 body-2xs-medium">
+                        <span className="text-center whitespace-nowrap rounded-full hidden xl:inline-block border-md border-border-focus text-text-primary py-0.5 px-2 body-2xs-medium">
                           {dict.new}
                         </span>
                       )}
@@ -875,13 +937,17 @@ function MainNavbar({ lang, dict, topBars = [], menuSlides }: NavbarProps) {
                     setOpenDropdown(null);
                   }}
                   className={cn(
-                    "hidden lg:flex items-center gap-2 px-6 py-[5.5px] text-text-primary border border-black rounded-full body-sm-medium cursor-pointer transition-all duration-200 hover:bg-bg-dark hover:text-text-primary-on-color hover:border-bg-dark group",
+                    "hidden lg:flex items-center gap-2 px-4 xl:px-6 py-[5.5px] whitespace-nowrap text-text-primary border border-black rounded-full body-sm-medium cursor-pointer transition-all duration-200 hover:bg-bg-dark hover:text-text-primary-on-color hover:border-bg-dark group",
                   )}
+                  aria-label={lang === "vi" ? "Điểm đến" : "Destinations"}
                 >
                   <Search className={cn(
                     "w-3 h-3 transition-colors group-hover:text-text-primary-on-color",
                   )} />
-                  {lang === "vi" ? "Điểm đến" : "Destinations"}
+                  {/* Icon only below 1280px, where five menus leave no room (doitac-1410 #014). */}
+                  <span className="hidden xl:inline">
+                    {lang === "vi" ? "Điểm đến" : "Destinations"}
+                  </span>
                 </button>
 
                 {/* Cart Button */}
@@ -942,7 +1008,7 @@ function MainNavbar({ lang, dict, topBars = [], menuSlides }: NavbarProps) {
                   ) : (
                     <button
                       onClick={openAuthModal}
-                      className="flex items-center gap-2 px-5 py-[5.5px] text-text-primary-on-color bg-bg-dark hover:bg-gray-700 border-md border-bg-dark rounded-full transition-colors body-sm-medium cursor-pointer"
+                      className="flex items-center gap-2 px-4 xl:px-5 py-[5.5px] whitespace-nowrap text-text-primary-on-color bg-bg-dark hover:bg-gray-700 border-md border-bg-dark rounded-full transition-colors body-sm-medium cursor-pointer"
                     >
                       <User className="w-3.5 h-3.5" />
                       {lang === "vi" ? "Đăng nhập" : "Sign In"}
