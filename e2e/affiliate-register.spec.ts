@@ -12,7 +12,7 @@ import { test, expect } from "@playwright/test";
 
 const API_BASE = "http://localhost:3001";
 const APPLY_URL = `${API_BASE}/api/v1/partners/apply`;
-const PAGE = "/affiliate/dang-ky";
+const PAGE = "/dang-ky-doi-tac";
 
 async function fillRequiredFields(page: import("@playwright/test").Page) {
   await page.getByTestId("contact-name").fill("Nguyễn Văn A");
@@ -211,4 +211,91 @@ test("defaults to a marketing partner and asks for the channel", async ({ page }
   await expect(page.getByTestId("partner-kind-kol")).toBeChecked();
   await expect(page.getByTestId("partner-kind-distribution")).not.toBeChecked();
   await expect(page.getByTestId("partner-kind-api")).not.toBeChecked();
+});
+
+// ── doitac-1410 #013: own address, and documents ──────────────────────────
+
+test("moved address: the old /affiliate/dang-ky link still lands on the form", async ({
+  page,
+}) => {
+  await page.goto("/affiliate/dang-ky");
+  await expect(page).toHaveURL(/\/dang-ky-doi-tac$/);
+  await expect(page.getByTestId("affiliate-register-form")).toBeVisible();
+});
+
+test("attaches the chosen documents with the application's own token", async ({
+  page,
+}) => {
+  await page.route(APPLY_URL, async (route) => {
+    await route.fulfill({
+      status: 201,
+      contentType: "application/json",
+      body: JSON.stringify({
+        partnerId: 9,
+        userId: 42,
+        documentUploadToken: "tok-9",
+      }),
+    });
+  });
+  let uploadToken: string | null = null;
+  let uploadBody = "";
+  await page.route(`${APPLY_URL}/documents`, async (route) => {
+    uploadToken = route.request().headers()["x-application-token"] ?? null;
+    uploadBody = route.request().postData() ?? "";
+    await route.fulfill({
+      status: 201,
+      contentType: "application/json",
+      body: JSON.stringify({ documents: [] }),
+    });
+  });
+
+  await page.goto(PAGE);
+  await fillRequiredFields(page);
+  const picker = page
+    .getByTestId("affiliate-register-documents")
+    .locator('input[type="file"]');
+  await picker.setInputFiles([
+    { name: "giay-phep.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.4") },
+    { name: "virus.exe", mimeType: "application/x-msdownload", buffer: Buffer.from("MZ") },
+  ]);
+  // The wrong kind of file is turned away before anything is sent.
+  await expect(page.getByText(/virus\.exe: chỉ nhận PDF/)).toBeVisible();
+  await expect(page.getByText("giay-phep.pdf")).toBeVisible();
+
+  await page.getByTestId("affiliate-register-submit").click();
+  await expect(page.getByTestId("affiliate-register-success")).toBeVisible({
+    timeout: 15000,
+  });
+  expect(uploadToken).toBe("tok-9");
+  expect(uploadBody).toContain("giay-phep.pdf");
+  expect(uploadBody).not.toContain("virus.exe");
+  await expect(page.getByTestId("affiliate-register-upload-warning")).toHaveCount(0);
+});
+
+test("still confirms the application when the documents fail to upload", async ({
+  page,
+}) => {
+  await page.route(APPLY_URL, (route) =>
+    route.fulfill({
+      status: 201,
+      contentType: "application/json",
+      body: JSON.stringify({ partnerId: 9, userId: 42, documentUploadToken: "t" }),
+    })
+  );
+  await page.route(`${APPLY_URL}/documents`, (route) =>
+    route.fulfill({ status: 500, contentType: "application/json", body: "{}" })
+  );
+
+  await page.goto(PAGE);
+  await fillRequiredFields(page);
+  await page
+    .getByTestId("affiliate-register-documents")
+    .locator('input[type="file"]')
+    .setInputFiles({ name: "cccd.png", mimeType: "image/png", buffer: Buffer.from("png") });
+  await page.getByTestId("affiliate-register-submit").click();
+
+  await expect(page.getByTestId("affiliate-register-success")).toBeVisible({
+    timeout: 15000,
+  });
+  await expect(page.getByTestId("affiliate-register-upload-warning")).toBeVisible();
 });

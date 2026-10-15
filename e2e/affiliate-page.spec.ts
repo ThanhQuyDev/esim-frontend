@@ -32,15 +32,15 @@ test("sends the reader to the sign-up form from both ends of the page", async ({
 
   await expect(page.getByTestId("affiliate-hero-cta")).toHaveAttribute(
     "href",
-    "/affiliate/dang-ky"
+    "/dang-ky-doi-tac"
   );
   await expect(page.getByTestId("affiliate-cta-button")).toHaveAttribute(
     "href",
-    "/affiliate/dang-ky"
+    "/dang-ky-doi-tac"
   );
 
   await page.getByTestId("affiliate-hero-cta").click();
-  await expect(page).toHaveURL(/\/affiliate\/dang-ky$/);
+  await expect(page).toHaveURL(/\/dang-ky-doi-tac$/);
   await expect(page.getByTestId("affiliate-register-form")).toBeVisible({
     timeout: 15000,
   });
@@ -91,6 +91,6 @@ test("reads in English on the English site and keeps its links localized", async
   );
   await expect(page.getByTestId("affiliate-hero-cta")).toHaveAttribute(
     "href",
-    "/en/affiliate/register"
+    "/en/partner-register"
   );
 });

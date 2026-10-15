@@ -171,9 +171,11 @@ export const routing = defineRouting({
       vi: '/affiliate',
       en: '/affiliate',
     },
+    // Its own address, not under /affiliate: the form now takes every kind
+    // of partner (doitac-1410 #013). The old paths redirect in middleware.ts.
     '/affiliate/register': {
-      vi: '/affiliate/dang-ky',
-      en: '/affiliate/register',
+      vi: '/dang-ky-doi-tac',
+      en: '/partner-register',
     },
 
     // Terms of Service

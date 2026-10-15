@@ -7,15 +7,19 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   AlertTriangle,
   CheckCircle2,
+  FileText,
   Home,
   Loader2,
   LogIn,
+  Paperclip,
   Send,
+  X,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import {
   Form,
   FormControl,
@@ -34,7 +38,13 @@ import {
   type PartnerApplyFormValues,
   type PartnerApplyValidationMessages,
 } from "@/lib/schemas/partner-apply.schema";
-import { applyAsPartner } from "@/lib/services/partners.service";
+import {
+  PARTNER_DOCUMENT_MAX_BYTES,
+  PARTNER_DOCUMENT_MAX_FILES,
+  PARTNER_DOCUMENT_TYPES,
+  applyAsPartner,
+  uploadPartnerDocuments,
+} from "@/lib/services/partners.service";
 
 export interface AffiliateRegisterDict {
   pageTitle: string;
@@ -81,6 +91,16 @@ export interface AffiliateRegisterDict {
   followersHelp: string;
   notes: string;
   notesPlaceholder: string;
+  /** Attachments (doitac-1410 #013). */
+  documents: string;
+  documentsHint: string;
+  documentsChoose: string;
+  documentsRemove: string;
+  documentsTooMany: string;
+  documentsBadType: string;
+  documentsTooBig: string;
+  documentsUploading: string;
+  documentsUploadFailed: string;
   channelOptions: Record<string, string>;
   acceptTerms: string;
   acceptTermsLink: string;
@@ -128,6 +148,34 @@ export function AffiliateRegisterForm({
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Optional attachments, sent after the application with its own token
+  // (doitac-1410 #013).
+  const [files, setFiles] = useState<File[]>([]);
+  const [fileError, setFileError] = useState<string | null>(null);
+  const [uploadWarning, setUploadWarning] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+
+  const addFiles = (picked: FileList | null) => {
+    if (!picked) return;
+    setFileError(null);
+    const next = [...files];
+    for (const file of Array.from(picked)) {
+      if (!PARTNER_DOCUMENT_TYPES.includes(file.type)) {
+        setFileError(`${file.name}: ${dict.documentsBadType}`);
+        continue;
+      }
+      if (file.size > PARTNER_DOCUMENT_MAX_BYTES) {
+        setFileError(`${file.name}: ${dict.documentsTooBig}`);
+        continue;
+      }
+      if (next.length >= PARTNER_DOCUMENT_MAX_FILES) {
+        setFileError(dict.documentsTooMany);
+        break;
+      }
+      next.push(file);
+    }
+    setFiles(next);
+  };
 
   const form = useForm<PartnerApplyFormValues>({
     resolver: zodResolver(createPartnerApplySchema(dict.validation)),
@@ -177,6 +225,22 @@ export function AffiliateRegisterForm({
       setSubmitting(false);
 
       if (result.ok) {
+        // The application stands on its own; a failed upload only means the
+        // documents have to reach esim.vn another way, so it is said, not
+        // treated as a failure of the whole form.
+        if (files.length > 0) {
+          if (result.documentUploadToken) {
+            setUploading(true);
+            const failure = await uploadPartnerDocuments(
+              result.documentUploadToken,
+              files
+            );
+            setUploading(false);
+            if (failure) setUploadWarning(`${dict.documentsUploadFailed} (${failure})`);
+          } else {
+            setUploadWarning(dict.documentsUploadFailed);
+          }
+        }
         setSubmitted(true);
         return;
       }
@@ -220,7 +284,7 @@ export function AffiliateRegisterForm({
 
       setError(result.message || dict.errorGeneric);
     },
-    [dict.apiErrors, dict.errorGeneric, form, isCompany]
+    [dict.apiErrors, dict.errorGeneric, dict.documentsUploadFailed, files, form, isCompany]
   );
 
   if (submitted) {
@@ -244,6 +308,14 @@ export function AffiliateRegisterForm({
         <p className="mx-auto mt-3 max-w-md text-base sm:text-sm text-gray-500">
           {dict.success.emailNotice}
         </p>
+        {uploadWarning && (
+          <p
+            className="mx-auto mt-3 max-w-md rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800"
+            data-testid="affiliate-register-upload-warning"
+          >
+            {uploadWarning}
+          </p>
+        )}
         <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Button asChild className="cursor-pointer">
             <Link href={localizedHref(lang, "/profile")}>
@@ -710,6 +782,61 @@ export function AffiliateRegisterForm({
               </FormItem>
             )}
           />
+
+          {/* Optional attachments (doitac-1410 #013). */}
+          <div className="space-y-2" data-testid="affiliate-register-documents">
+            {/* Same type as the form's own labels, which run larger on phones. */}
+            <Label>
+              {dict.documents}{" "}
+              <span className="text-gray-400">({dict.optional})</span>
+            </Label>
+            <p className="text-base sm:text-sm text-muted-foreground">{dict.documentsHint}</p>
+            {files.length > 0 && (
+              <ul className="space-y-1.5">
+                {files.map((file, index) => (
+                  <li
+                    key={`${file.name}-${index}`}
+                    className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                  >
+                    <FileText className="h-4 w-4 shrink-0 text-gray-400" aria-hidden="true" />
+                    <span className="min-w-0 flex-1 truncate">{file.name}</span>
+                    <span className="shrink-0 text-xs text-gray-400">
+                      {(file.size / 1024 / 1024).toFixed(1)} MB
+                    </span>
+                    <button
+                      type="button"
+                      className="cursor-pointer rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-700"
+                      aria-label={`${dict.documentsRemove} ${file.name}`}
+                      onClick={() => setFiles(files.filter((_, i) => i !== index))}
+                    >
+                      <X className="h-4 w-4" aria-hidden="true" />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {files.length < PARTNER_DOCUMENT_MAX_FILES && (
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-700 hover:border-primary hover:text-primary">
+                <Paperclip className="h-4 w-4" aria-hidden="true" />
+                {dict.documentsChoose}
+                <input
+                  type="file"
+                  multiple
+                  className="sr-only"
+                  accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp"
+                  onChange={(e) => {
+                    addFiles(e.target.files);
+                    e.target.value = "";
+                  }}
+                />
+              </label>
+            )}
+            {fileError && (
+              <p className="text-sm text-red-600" role="alert">
+                {fileError}
+              </p>
+            )}
+          </div>
         </section>
 
         <FormField
@@ -744,13 +871,13 @@ export function AffiliateRegisterForm({
         <Button
           type="submit"
           className="w-full cursor-pointer sm:w-auto"
-          disabled={submitting}
+          disabled={submitting || uploading}
           data-testid="affiliate-register-submit"
         >
-          {submitting ? (
+          {submitting || uploading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
-              {dict.submitting}
+              {uploading ? dict.documentsUploading : dict.submitting}
             </>
           ) : (
             <>

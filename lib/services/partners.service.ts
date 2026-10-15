@@ -23,7 +23,13 @@ export interface PartnerApplyPayload {
 }
 
 export type PartnerApplyResult =
-  | { ok: true; partnerId: number; userId: number }
+  | {
+      ok: true;
+      partnerId: number;
+      userId: number;
+      /** Opens the document upload for this application, for an hour (doitac-1410 #013). */
+      documentUploadToken?: string;
+    }
   | { ok: false; kind: "validation"; errors: Record<string, string> }
   | { ok: false; kind: "error"; status: number; message: string };
 
@@ -64,11 +70,13 @@ export async function applyAsPartner(
     const body = (await res.json().catch(() => null)) as {
       partnerId?: number;
       userId?: number;
+      documentUploadToken?: string;
     } | null;
     return {
       ok: true,
       partnerId: body?.partnerId ?? 0,
       userId: body?.userId ?? 0,
+      documentUploadToken: body?.documentUploadToken,
     };
   }
 
@@ -87,6 +95,40 @@ export async function applyAsPartner(
     (isObject(body) && typeof body.message === "string" && body.message) ||
     `Request failed (${res.status})`;
   return { ok: false, kind: "error", status: res.status, message };
+}
+
+/** What an applicant may attach (doitac-1410 #013) — the server checks it too. */
+export const PARTNER_DOCUMENT_TYPES = [
+  "application/pdf",
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+];
+export const PARTNER_DOCUMENT_MAX_FILES = 5;
+export const PARTNER_DOCUMENT_MAX_BYTES = 5 * 1024 * 1024;
+
+/**
+ * Attach documents to the application just sent (doitac-1410 #013), with the
+ * token that application returned. Resolves to an error message, or null.
+ */
+export async function uploadPartnerDocuments(
+  token: string,
+  files: File[]
+): Promise<string | null> {
+  const body = new FormData();
+  for (const file of files) body.append("files", file);
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/v1/partners/apply/documents`, {
+      method: "POST",
+      headers: { "x-application-token": token },
+      body,
+    });
+    if (res.ok) return null;
+    const data = (await res.json().catch(() => null)) as { message?: unknown } | null;
+    return typeof data?.message === "string" ? data.message : `HTTP ${res.status}`;
+  } catch (err) {
+    return err instanceof Error ? err.message : "Network error";
+  }
 }
 
 function stripUndefined(obj: Record<string, unknown>): Record<string, unknown> {

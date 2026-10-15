@@ -6,7 +6,24 @@ import { isDirectVariantRequest, isMobileUserAgent, mobileVariantPath } from './
 
 const handleI18nRouting = createMiddleware(routing);
 
+/**
+ * Addresses that moved, so links already shared keep working
+ * (doitac-1410 #013: the partner sign-up left /affiliate).
+ */
+const MOVED: Record<string, string> = {
+  '/affiliate/dang-ky': '/dang-ky-doi-tac',
+  '/vi/affiliate/dang-ky': '/dang-ky-doi-tac',
+  '/en/affiliate/register': '/en/partner-register',
+};
+
 export default function middleware(request: NextRequest) {
+  const moved = MOVED[request.nextUrl.pathname.replace(/\/$/, '')];
+  if (moved) {
+    const url = request.nextUrl.clone();
+    url.pathname = moved;
+    return NextResponse.redirect(url, 308);
+  }
+
   // Visitors outside Vietnam landing on the ambiguous home page get the
   // English homepage instead of the Vietnamese default. Every other URL keeps
   // stating its own language — see `i18n/geo-locale.ts` for why this is
