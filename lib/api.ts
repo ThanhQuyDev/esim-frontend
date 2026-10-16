@@ -37,6 +37,9 @@ export interface Destination {
   titleVi?: string;
   description?: string;
   descriptionVi?: string;
+  /** Admin's note at the top of the page, HTML (doitac-1410 #078). */
+  notice?: string | null;
+  noticeVi?: string | null;
   createdAt: string;
   updatedAt: string;
   deletedAt?: string;
@@ -170,6 +173,9 @@ export interface Region {
   titleVi?: string;
   description?: string;
   descriptionVi?: string;
+  /** Admin's note at the top of the page, HTML (doitac-1410 #078). */
+  notice?: string | null;
+  noticeVi?: string | null;
   isActive: boolean;
   fromPrice?: number | null;
   createdAt: string;

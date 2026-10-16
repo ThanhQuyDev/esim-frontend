@@ -45,6 +45,8 @@ import type { Locale } from "@/lib/i18n-config";
 import type { Metadata } from "next";
 import type { Destination, Region } from "@/lib/api";
 import { PartnerBar } from "@/components/layout/sections/partner-bar";
+import { EntityNotice } from "@/components/layout/sections/destination/entity-notice";
+import { entityNoticeHtml, firstEntityNoticeHtml } from "@/lib/entity-notice";
 
 function pickLocalizedName(
   entity: { name: string; title?: string | null; titleVi?: string | null },
@@ -311,6 +313,8 @@ export default async function UnifiedSlugPage({
               (#067): the coverage step swaps the plans in place, so the URL
               stays `/esim-chau-a` (#004). The design draws its own breadcrumb
               and the page's h1. */}
+          {/* The admin's note on the region, at the top (doitac-1410 #078) */}
+          <EntityNotice html={firstEntityNoticeHtml(group.members, locale)} className="pt-4" />
           <RegionDesign
             members={await withCountryLists(group.members, locale)}
             label={group.label}
@@ -399,6 +403,8 @@ export default async function UnifiedSlugPage({
           ]}
           lang={locale}
         />
+        {/* The admin's note on the destination, at the top (doitac-1410 #078) */}
+        <EntityNotice html={entityNoticeHtml(destination, locale)} className="mb-3" />
         <DestinationPlans
           destination={destination}
           slug={params.slug}
@@ -482,6 +488,8 @@ export default async function UnifiedSlugPage({
       {/* The final region design (#067). Same-named packs are the coverage
           step, switched in place (#004); the pack being viewed uses the full
           record fetched above rather than its list entry. */}
+      {/* The admin's note on the region, at the top (doitac-1410 #078) */}
+      <EntityNotice html={entityNoticeHtml(region, locale)} className="pt-4" />
       <RegionDesign
         members={
           variantGroup
