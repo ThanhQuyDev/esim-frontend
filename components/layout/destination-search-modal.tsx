@@ -1,4 +1,5 @@
 "use client";
+import { useMoney } from "@/lib/money";
 
 import { localizedHref } from "@/lib/route-mapping";
 import { localizedSlug } from "@/lib/slug";
@@ -30,6 +31,8 @@ export function DestinationSearchModal({
   open,
   onClose,
 }: DestinationSearchModalProps) {
+  // Dollars on the English site (doitac-1410 #073).
+  const money = useMoney();
   const [query, setQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const debouncedQuery = useDebounce(query, 300);
@@ -129,7 +132,8 @@ export function DestinationSearchModal({
   const formatPrice = (price: number | string | undefined) => {
     const num = Number(price);
     if (!num || isNaN(num)) return null;
-    return `${num.toLocaleString("vi-VN")}₫`;
+    // Dollars on the English site (doitac-1410 #073).
+    return money.format(num);
   };
 
   // Merge search results: destinations first, then regions

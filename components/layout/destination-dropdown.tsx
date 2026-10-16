@@ -1,4 +1,5 @@
 "use client";
+import { useMoney } from "@/lib/money";
 
 import { useState } from "react";
 import { Search, X, Info, MapPin, Loader2 } from "lucide-react";
@@ -94,10 +95,12 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
   ];
 
   /* Format price with locale */
+  const money = useMoney();
   const formatPrice = (price: number | string) => {
     const num = Number(price);
     if (!num || isNaN(num)) return null;
-    return `${num.toLocaleString("vi-VN")}₫`;
+    // Dollars on the English site (doitac-1410 #073).
+    return money.format(num);
   };
 
   return (

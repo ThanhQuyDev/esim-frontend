@@ -1,4 +1,5 @@
 "use client";
+import { useMoney } from "@/lib/money";
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Minus, Plus, Trash2, Tag, ShoppingCart, ArrowRight, Ticket, Gift, AlertTriangle, CheckCircle2, Wallet, Coins } from "lucide-react";
@@ -18,7 +19,7 @@ import {
   type Cart,
   type Coupon,
 } from "@/lib/cart";
-import { useExchangeRate, convertUsdToVnd, formatVnd, useCart, useReferralProfile, useWalletMe, formatExu, useValidateReferral } from "@/lib/hooks";
+import { useExchangeRate, convertUsdToVnd, useCart, useReferralProfile, useWalletMe, formatExu, useValidateReferral } from "@/lib/hooks";
 import { useAuth } from "@/lib/auth";
 import { walletTranslations } from "@/components/layout/sections/wallet/translations";
 import Link from "next/link";
@@ -30,6 +31,8 @@ interface CartPageContentProps {
 }
 
 export function CartPageContent({ dict, lang }: CartPageContentProps) {
+  // Dollars on the English site; still charged in đồng (doitac-1410 #073).
+  const money = useMoney();
   const [cart, setCart] = useState<Cart>({ items: [], appliedCoupon: null });
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [showCoupons, setShowCoupons] = useState(false);
@@ -142,7 +145,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
       setCart((prev) => ({ ...prev, appliedCoupon: null }));
       setPromoApplied(null);
       const minDisplay = coupon.minOrderAmountVnd
-        ? `${coupon.minOrderAmountVnd.toLocaleString("vi-VN")}₫`
+        ? `${money.format(coupon.minOrderAmountVnd)}`
         : `$${coupon.minAmount}`;
       setPromoError(
         lang === "vi"
@@ -178,8 +181,8 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
       if (foundCoupon.minOrderAmountVnd && foundCoupon.minOrderAmountVnd > 0) {
         if (vndSubtotalValue < foundCoupon.minOrderAmountVnd) {
           setPromoError(
-            dict.couponMinAmount?.replace("{amount}", `${foundCoupon.minOrderAmountVnd.toLocaleString("vi-VN")}₫`) ||
-              `Minimum order ${foundCoupon.minOrderAmountVnd.toLocaleString("vi-VN")}₫`
+            dict.couponMinAmount?.replace("{amount}", `${money.format(foundCoupon.minOrderAmountVnd)}`) ||
+              `Minimum order ${money.format(foundCoupon.minOrderAmountVnd)}`
           );
           return;
         }
@@ -400,16 +403,16 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
     }
   };
 
-  const formatPrice = (usd: number) => formatVnd(convertUsdToVnd(usd, usdToVndRate));
+  const formatPrice = (usd: number) => money.format(convertUsdToVnd(usd, usdToVndRate));
 
   const displaySubtotal = hasVndPricing
-    ? `${vndSubtotalValue.toLocaleString("vi-VN")}₫`
+    ? `${money.format(vndSubtotalValue)}`
     : formatPrice(subtotal);
   const displayDiscount = hasVndPricing
-    ? `${vndDiscountValue.toLocaleString("vi-VN")}₫`
+    ? `${money.format(vndDiscountValue)}`
     : formatPrice(discount);
   const displayTotal = hasVndPricing
-    ? `${vndTotalValue.toLocaleString("vi-VN")}₫`
+    ? `${money.format(vndTotalValue)}`
     : formatPrice(total);
 
   if (cart.items.length === 0) {
@@ -520,7 +523,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
                   </div>
                   <span className="text-sm text-green-600">
                     {promoApplied.type === "referral"
-                      ? `-${formatVnd(promoApplied.discountVnd)}`
+                      ? `-${money.format(promoApplied.discountVnd)}`
                       : cart.appliedCoupon
                         ? couponDiscountLabel(cart.appliedCoupon)
                         : ""}
@@ -596,7 +599,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
                             <p className="text-sm text-text-tertiary">
                               {dict.minOrder || "Min order"}:{" "}
                               {coupon.minOrderAmountVnd
-                                ? `${coupon.minOrderAmountVnd.toLocaleString("vi-VN")}₫`
+                                ? `${money.format(coupon.minOrderAmountVnd)}`
                                 : `$${coupon.minAmount}`}
                             </p>
                           ) : null}
@@ -631,7 +634,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
           {promoApplied?.type === "referral" && promoDiscountVnd > 0 && (
             <div className="flex justify-between text-base sm:text-sm">
               <span className="text-blue-600">{wt.referralDiscount}</span>
-              <span className="font-medium text-blue-600">-{formatVnd(promoDiscountVnd)}</span>
+              <span className="font-medium text-blue-600">-{money.format(promoDiscountVnd)}</span>
             </div>
           )}
 
@@ -735,13 +738,15 @@ function CartItemRow({
   formatPrice: (usd: number) => string;
   dict: Record<string, any>;
 }) {
+  // Dollars on the English site; still charged in đồng (doitac-1410 #073).
+  const money = useMoney();
   const displayPrice = item.vndPrice
-    ? `${(item.vndPrice * item.quantity).toLocaleString("vi-VN")}₫`
+    ? `${money.format((item.vndPrice * item.quantity))}`
     : formatPrice(item.price * item.quantity);
 
   const hasItemDiscount = item.discount != null && item.discount > 0 && item.originalVndPrice;
   const displayOriginalPrice = hasItemDiscount
-    ? `${(item.originalVndPrice! * item.quantity).toLocaleString("vi-VN")}₫`
+    ? `${money.format((item.originalVndPrice! * item.quantity))}`
     : null;
 
   return (

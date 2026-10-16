@@ -1,4 +1,5 @@
 "use client";
+import { useMoney } from "@/lib/money";
 
 import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
@@ -58,6 +59,8 @@ function DestinationCard({
   dict: Record<string, any>;
   isRegion: boolean;
 }) {
+  // Dollars on the English site (doitac-1410 #073).
+  const money = useMoney();
   return (
     <div>
       <a
@@ -99,7 +102,7 @@ function DestinationCard({
               </p>
               <p className="body-md text-text-tertiary scroll-mt-20 xl:scroll-mt-24">
                 <span className="whitespace-nowrap">
-                  {dict.from} {Number(item.fromPrice).toLocaleString("vi-VN") || "20.000"}đ
+                  {dict.from} {money.format(Number(item.fromPrice) || 20000)}
                 </span>
                 {item.variantCount > 1 ? (
                   <>

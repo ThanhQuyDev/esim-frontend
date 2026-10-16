@@ -9,7 +9,7 @@ import {
   hasVisibleDiscount,
   savingPercent,
 } from "../types";
-import { formatVnd } from "@/lib/hooks";
+import { useMoney } from "@/lib/money";
 import { roundVndToThousands } from "@/lib/utils";
 import { VoucherPrice } from "../voucher-price";
 
@@ -54,6 +54,8 @@ export function MobilePrice({
   onOpenEkyc,
   lang = "vi",
 }: MobilePriceProps) {
+  // Dollars on the English site, đồng on the Vietnamese one (doitac-1410 #073).
+  const formatVnd = useMoney().format;
   let totalPrice = 0;
   let totalRetail = 0;
 

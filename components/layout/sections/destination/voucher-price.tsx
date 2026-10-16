@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { Ticket, Copy, Check } from "lucide-react";
-import { formatVnd, usePublicCoupons } from "@/lib/hooks";
+import { usePublicCoupons } from "@/lib/hooks";
+import { useMoney } from "@/lib/money";
 import { pickBestVoucher } from "@/lib/voucher-preview";
 import type { DestinationDict } from "./types";
 
@@ -28,6 +29,8 @@ export function VoucherPrice({
   dict,
   className = "",
 }: VoucherPriceProps) {
+  // Dollars on the English site, đồng on the Vietnamese one (doitac-1410 #073).
+  const formatVnd = useMoney().format;
   const { data: coupons } = usePublicCoupons();
   const [copied, setCopied] = useState(false);
 

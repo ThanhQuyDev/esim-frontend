@@ -6,7 +6,8 @@ import { localizedHref } from "@/lib/route-mapping";
 import type { Plan } from "@/lib/api";
 import type { DestinationDict } from "../types";
 import { calcTotalPrice, calcTotalVndPrice, getFixedPrice, getFixedVndPrice } from "../types";
-import { formatVnd, useCart } from "@/lib/hooks";
+import { useCart } from "@/lib/hooks";
+import { useMoney } from "@/lib/money";
 import { CartConfirmDialog } from "../cart-confirm-dialog";
 import Image from "next/image";
 
@@ -42,6 +43,8 @@ export function MobileStickyBar({
   ctaRef,
   onOpenEkyc,
 }: MobileStickyBarProps) {
+  // Dollars on the English site, đồng on the Vietnamese one (doitac-1410 #073).
+  const formatVnd = useMoney().format;
   const router = useRouter();
   const { addItem } = useCart();
   const [visible, setVisible] = useState(false);

@@ -6,7 +6,8 @@ import { localizedHref } from "@/lib/route-mapping";
 import type { Plan } from "@/lib/api";
 import type { DestinationDict } from "./types";
 import { calcTotalVndPrice, getFixedVndPrice } from "./types";
-import { formatVnd, useCart } from "@/lib/hooks";
+import { useCart } from "@/lib/hooks";
+import { useMoney } from "@/lib/money";
 import { CartConfirmDialog } from "./cart-confirm-dialog";
 import { planCartItem } from "./cart-item";
 
@@ -21,6 +22,8 @@ interface BuyActionsProps {
 }
 
 export function BuyActions({ selectedPlan, days, quantity, isFixed, dict, lang, destination }: BuyActionsProps) {
+  // Dollars on the English site, đồng on the Vietnamese one (doitac-1410 #073).
+  const formatVnd = useMoney().format;
   const router = useRouter();
   const { addItem } = useCart();
   const [showConfirm, setShowConfirm] = useState(false);

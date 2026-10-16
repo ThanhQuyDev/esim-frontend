@@ -96,6 +96,14 @@ async function mockLocalApi(page: Page, carrier = "wintel") {
 test.describe("Homepage — eSIM nội địa tab", () => {
   test("renders carrier cards grouped from provider", async ({ page }) => {
     await mockLocalApi(page);
+    // A fixed rate, so the dollar price below does not drift with the market.
+    await page.route("https://open.er-api.com/**", (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ conversion_rates: { VND: 25500 } }),
+      }),
+    );
 
     // Homepage is a server component whose SSR landing fetch would throw when
     // the backend is down, so we mount the real DestinationsSection via the
@@ -108,8 +116,10 @@ test.describe("Homepage — eSIM nội địa tab", () => {
     await expect(page.getByTestId("local-carrier-card-itel")).toBeVisible();
     await expect(page.getByTestId("local-carrier-card-vnsky")).toBeVisible();
 
-    // Card shows the "from" price + infra.
-    await expect(page.getByTestId("local-carrier-card-wintel")).toContainText("49.000đ");
+    // Card shows the "from" price + infra — in dollars on the English site
+    // (doitac-1410 #073); 49.000đ at the fallback rate of 25.500đ.
+    await expect(page.getByTestId("local-carrier-card-wintel")).toContainText("$1.92");
+    await expect(page.getByTestId("local-carrier-card-wintel")).not.toContainText("đ");
 
     // Card links to the detail route.
     await expect(page.getByTestId("local-carrier-card-wintel")).toHaveAttribute(

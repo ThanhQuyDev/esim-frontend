@@ -7,7 +7,8 @@ import type { Plan } from "@/lib/api";
 import type { DestinationDict } from "./types";
 import { calcTotalVndPrice, getFixedVndPrice } from "./types";
 import { planCartItem } from "./cart-item";
-import { formatVnd, useCart } from "@/lib/hooks";
+import { useCart } from "@/lib/hooks";
+import { useMoney } from "@/lib/money";
 import Image from "next/image";
 
 interface DesktopStickyBarProps {
@@ -41,6 +42,8 @@ export function DesktopStickyBar({
   ctaRef,
   planSource,
 }: DesktopStickyBarProps) {
+  // Dollars on the English site, đồng on the Vietnamese one (doitac-1410 #073).
+  const formatVnd = useMoney().format;
   const router = useRouter();
   const { addItem } = useCart();
   const [visible, setVisible] = useState(false);

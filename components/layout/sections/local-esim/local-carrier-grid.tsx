@@ -1,4 +1,5 @@
 "use client";
+import { useMoney } from "@/lib/money";
 
 import { Loader2 } from "lucide-react";
 import { useLocalCarriers } from "@/lib/hooks";
@@ -32,6 +33,8 @@ export function LocalCarrierGrid({
   emptyLabel,
   carriers: carriersProp,
 }: LocalCarrierGridProps) {
+  // Dollars on the English site (doitac-1410 #073).
+  const money = useMoney();
   const { data: fetchedCarriers = [], isLoading: isFetching } = useLocalCarriers();
   const carriers = carriersProp ?? fetchedCarriers;
   const isLoading = carriersProp ? false : isFetching;
@@ -59,7 +62,7 @@ export function LocalCarrierGrid({
       {carriers.map((carrier) => {
         const meta = getCarrierMeta(carrier.provider);
         const href = localCarrierHref(lang, carrier.provider);
-        const priceLabel = `${fromLabel} ${carrier.fromVndPrice.toLocaleString("vi-VN")}đ`;
+        const priceLabel = `${fromLabel} ${money.format(carrier.fromVndPrice)}`;
         const infra = carrierInfra(meta, lang);
         const sub = infra ? `${priceLabel} · ${infra}` : priceLabel;
 

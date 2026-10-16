@@ -1,4 +1,5 @@
 "use client";
+import { useMoney } from "@/lib/money";
 
 import { useMemo, useState } from "react";
 import { MapPin, Loader2 } from "lucide-react";
@@ -36,6 +37,8 @@ function ChevronDownIcon({ className }: { className?: string }) {
 }
 
 export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
+  // Dollars on the English site (doitac-1410 #073).
+  const money = useMoney();
   const [activeTab, setActiveTab] = useState<"country" | "region" | "ultra" | "local">("country");
 
   const { data: destinations = [], isLoading: isLoadingDestinations } = useDestinations(
@@ -217,11 +220,11 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
                               <p className="body-md text-text-tertiary">
                                 <span className="whitespace-nowrap">
                                   {showRegions
-                                    ? `${item.fromPrice ? `${dict.from} ${Number(item.fromPrice).toLocaleString("vi-VN")}₫ · ` : ""}${item.variantCount > 1
+                                    ? `${item.fromPrice ? `${dict.from} ${money.format(Number(item.fromPrice))} · ` : ""}${item.variantCount > 1
                                       ? variantCountLabel(item.variantCount, lang)
                                       : `${item.destinationCount} ${item.destinationCount === 1 ? (lang === "vi" ? "quốc gia" : "country") : (lang === "vi" ? "quốc gia" : "countries")}`}`
                                     : item.fromPrice
-                                      ? `${dict.from} ${Number(item.fromPrice).toLocaleString("vi-VN")}₫`
+                                      ? `${dict.from} ${money.format(Number(item.fromPrice))}`
                                       : ""
                                   }
                                 </span>

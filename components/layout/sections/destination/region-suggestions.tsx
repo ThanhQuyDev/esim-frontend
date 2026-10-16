@@ -1,3 +1,4 @@
+import { formatSalePrice } from "@/lib/price-locale";
 import Link from "next/link";
 import { ChevronRight, Globe, MapPin } from "lucide-react";
 import { localizedSlug } from "@/lib/slug";
@@ -101,7 +102,8 @@ export function RegionSuggestions({
                   {item.fromPrice ? (
                     <span className="whitespace-nowrap">
                       {dict.from}{" "}
-                      {Number(item.fromPrice).toLocaleString("vi-VN")}đ
+                      {/* Dollars on the English site (doitac-1410 #073). */}
+                      {formatSalePrice(Number(item.fromPrice), lang)}
                     </span>
                   ) : null}
                   {item.variantCount > 1 && (

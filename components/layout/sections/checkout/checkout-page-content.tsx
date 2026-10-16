@@ -1,4 +1,5 @@
 "use client";
+import { useMoney } from "@/lib/money";
 
 import { useState, useEffect } from "react";
 import {
@@ -51,6 +52,8 @@ interface InvoiceInfo {
 }
 
 export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
+  // Dollars on the English site; still charged in đồng (doitac-1410 #073).
+  const money = useMoney();
   const [items, setItems] = useState<CartItem[]>([]);
   const [coupon, setCoupon] = useState<Coupon | null>(null);
   const [email, setEmail] = useState("");
@@ -167,7 +170,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
   const subtotal = getSubtotal(items);
   const discount = getDiscount(subtotal, coupon);
   const total = getTotal(items, coupon);
-  const formatPrice = (usd: number) => formatVnd(convertUsdToVnd(usd, usdToVndRate));
+  const formatPrice = (usd: number) => money.format(convertUsdToVnd(usd, usdToVndRate));
 
   // VND-aware subtotal/total for checkout display
   const hasVndPricing = items.some((i) => i.vndPrice);
@@ -224,13 +227,13 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
   }, [isWalletOnlyPayment, paymentMethod]);
 
   const checkoutDisplaySubtotal = hasVndPricing
-    ? `${vndSubtotal.toLocaleString("vi-VN")}₫`
+    ? money.format(vndSubtotal)
     : formatPrice(subtotal);
   const checkoutDisplayDiscount = hasVndPricing
-    ? `${vndDiscount.toLocaleString("vi-VN")}₫`
+    ? money.format(vndDiscount)
     : formatPrice(discount);
   const checkoutDisplayTotal = hasVndPricing
-    ? `${finalVndTotal.toLocaleString("vi-VN")}₫`
+    ? money.format(finalVndTotal)
     : formatPrice(total);
 
   const cashbackPercent = wallet?.cashbackPercent ?? 2;
@@ -868,7 +871,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
           <div className="space-y-3 max-h-60 overflow-y-auto">
             {items.map((item) => {
               const itemPrice = item.vndPrice
-                ? `${(item.vndPrice * item.quantity).toLocaleString("vi-VN")}₫`
+                ? money.format(item.vndPrice * item.quantity)
                 : formatPrice(item.price * item.quantity);
               return (
                 <div key={item.id} className="flex justify-between text-base sm:text-sm">
@@ -907,7 +910,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
             {referralApplied && (
               <div className="flex justify-between text-base sm:text-sm">
                 <span className="text-blue-600">{wt.referralDiscount}</span>
-                <span className="font-medium text-blue-600">-{formatVnd(referralDiscountAmount)}</span>
+                <span className="font-medium text-blue-600">-{money.format(referralDiscountAmount)}</span>
               </div>
             )}
 
@@ -915,7 +918,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
             {actualExuUsed > 0 && (
               <div className="flex justify-between text-base sm:text-sm">
                 <span className="text-emerald-600">{wt.exuSpent}</span>
-                <span className="font-medium text-emerald-600">-{formatVnd(actualExuUsed)}</span>
+                <span className="font-medium text-emerald-600">-{money.format(actualExuUsed)}</span>
               </div>
             )}
 
@@ -926,6 +929,15 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
               </span>
               <span className="text-xl font-medium text-text-primary">{checkoutDisplayTotal}</span>
             </div>
+            {/* The English site shows dollars, but the order is paid in đồng
+                (doitac-1410 #073) — say exactly how much will be taken. */}
+            {money.isUsd && (
+              <p className="text-sm text-text-tertiary" data-testid="checkout-vnd-charge">
+                You will be charged <span className="font-medium text-text-primary">{formatVnd(finalVndTotal)}</span>{" "}
+                (Vietnamese đồng). The dollar prices are converted at today&apos;s rate (1 USD ≈{" "}
+                {Math.round(money.usdToVnd).toLocaleString("vi-VN")}₫).
+              </p>
+            )}
 
             {/* eXU Cashback Preview */}
             {cashbackVnd > 0 && (
