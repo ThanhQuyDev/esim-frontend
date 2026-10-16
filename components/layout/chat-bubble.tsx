@@ -188,7 +188,9 @@ export function ChatBubble() {
             handleOpen();
           }
         }}
-        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#1a1a1a] text-white shadow-lg transition-transform hover:scale-105 active:scale-95"
+        // On a phone the open chat fills the screen and has its own close
+        // button; the floating one would only sit over the send box (#070).
+        className={`fixed bottom-6 right-6 z-50 h-14 w-14 items-center justify-center rounded-full bg-[#1a1a1a] text-white shadow-lg transition-transform hover:scale-105 active:scale-95 ${open ? "hidden sm:flex" : "flex"}`}
         aria-label={open ? "Close chat" : "Open support chat"}
         id="chat-bubble-toggle"
       >
@@ -231,12 +233,34 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
   const enterSends = useEnterSends();
 
   // A full-screen chat over a scrollable page lets the page scroll underneath.
+  // `overflow: hidden` on the body alone does not stop that on phones (iOS
+  // Safari above all): the page kept moving behind the chat and jumped when the
+  // keyboard opened (doitac-1410 #070). So the page is pinned where the reader
+  // was, and put back exactly there when the chat closes.
   useEffect(() => {
     if (!isMobile) return;
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    const scrollY = window.scrollY;
+    const body = document.body.style;
+    const html = document.documentElement.style;
+    const previous = {
+      bodyOverflow: body.overflow,
+      bodyPosition: body.position,
+      bodyTop: body.top,
+      bodyWidth: body.width,
+      htmlOverflow: html.overflow,
+    };
+    html.overflow = "hidden";
+    body.overflow = "hidden";
+    body.position = "fixed";
+    body.top = `-${scrollY}px`;
+    body.width = "100%";
     return () => {
-      document.body.style.overflow = previous;
+      html.overflow = previous.htmlOverflow;
+      body.overflow = previous.bodyOverflow;
+      body.position = previous.bodyPosition;
+      body.top = previous.bodyTop;
+      body.width = previous.bodyWidth;
+      window.scrollTo(0, scrollY);
     };
   }, [isMobile]);
 
@@ -335,7 +359,9 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
       </div>
 
       {/* Messages area */}
-      <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 bg-gray-50">
+      {/* overscroll-contain: reaching the end of the messages must not drag
+          the page behind along with it (doitac-1410 #070). */}
+      <div className="flex-1 overflow-y-auto overscroll-contain px-4 py-3 space-y-3 bg-gray-50">
         {messages.length === 0 && !error && (
           <div className="flex h-full items-center justify-center">
             <p className="text-base sm:text-sm text-gray-400 text-center">
