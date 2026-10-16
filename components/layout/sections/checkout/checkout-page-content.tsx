@@ -482,7 +482,8 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
             {dict.contactInfo || "Contact Information"}
           </h3>
           <p className="text-base sm:text-sm text-text-tertiary">
-            {dict.contactInfoDescription || "We'll send your order confirmation here."}
+            {dict.contactInfoDescription ||
+              "Your eSIM QR codes and order confirmation will be sent to this email."}
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

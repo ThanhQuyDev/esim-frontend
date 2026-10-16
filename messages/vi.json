@@ -1847,7 +1847,7 @@
     "title": "Thanh toán",
     "backToCart": "Quay lại giỏ hàng",
     "contactInfo": "Thông tin liên hệ",
-    "contactInfoDescription": "Chúng tôi sẽ gửi xác nhận đơn hàng đến đây.",
+    "contactInfoDescription": "Mã QR eSIM và xác nhận đơn hàng sẽ được gửi tới email này. Bạn có thể nhập email khác với email đăng nhập.",
     "email": "Email",
     "emailPlaceholder": "email@cuaban.com",
     "emailRequired": "Vui lòng nhập email",
