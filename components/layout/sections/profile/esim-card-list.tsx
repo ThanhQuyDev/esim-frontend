@@ -19,7 +19,7 @@ import {
   ShoppingCart,
 } from "lucide-react";
 import type { EsimDataUsage, MyEsim } from "@/lib/hooks";
-import { useEsimDataUsage } from "@/lib/hooks";
+import { useEsimDataUsage, useTopupPackages } from "@/lib/hooks";
 import { DataUsageBar, statusLabel, USAGE_STATUS_COLOR } from "./usage-bar";
 import type { ProfileDict } from "./translations";
 import { QRCodeSVG } from "qrcode.react";
@@ -388,8 +388,9 @@ const TOPUP_BLOCKED_STATUSES = new Set(["refunded", "expired", "cancelled", "fai
  * The button was commented out while `plan.topUp` was unpopulated. It now is
  * for Airalo, eSIM Access and Gadget Korea, and there it decides — a plan the
  * provider marks non-rechargeable gets no button. Billion's catalogue import
- * never sets the flag, yet every Billion eSIM recharges through F007, so the
- * flag is not consulted for Billion.
+ * never sets the flag: whether a Billion eSIM takes a topup is known only from
+ * its own recharge products, so the card asks for them first
+ * (doitac-1410 #064) and shows the button only when there are some.
  */
 export function canTopUpEsim(esim: Pick<MyEsim, "provider" | "status" | "plan">): boolean {
   const provider = (esim.provider ?? "").toLowerCase();
@@ -503,7 +504,14 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
     },
   ];
 
-  const canTopup = canTopUpEsim(esim);
+  // Billion: the button only when this eSIM has recharge products (#064).
+  const isBillion = (esim.provider ?? "").toLowerCase() === "billion";
+  const { data: billionTopups } = useTopupPackages(
+    esim.iccid ?? null,
+    isBillion && canTopUpEsim(esim)
+  );
+  const canTopup =
+    canTopUpEsim(esim) && (!isBillion || (billionTopups?.packages?.length ?? 0) > 0);
 
   return (
     <div

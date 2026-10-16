@@ -5,8 +5,9 @@ import { test, expect, type Page } from "@playwright/test";
  *
  * The button existed but was commented out while `plan.topUp` was unpopulated.
  * It is back, shown only where a recharge can really go through: a provider the
- * backend can recharge, an eSIM that is not refunded/expired, and — except for
- * Billion, whose catalogue never sets the flag — a plan marked rechargeable.
+ * backend can recharge, an eSIM that is not refunded/expired, and a plan marked
+ * rechargeable — or, for Billion, whose catalogue never sets the flag, an eSIM
+ * that has recharge products of its own (doitac-1410 #064).
  */
 
 const API_BASE = "http://localhost:3001";
@@ -85,9 +86,23 @@ function esim(overrides: Record<string, unknown> = {}) {
   };
 }
 
-async function openCard(page: Page, card: Record<string, unknown>) {
+async function openCard(
+  page: Page,
+  card: Record<string, unknown>,
+  opts: { noPackages?: boolean } = {},
+) {
   await seedAuth(page);
   await stubApi(page);
+  if (opts.noPackages) {
+    // Registered last, so it wins: this eSIM takes no topup (doitac-1410 #064).
+    await page.route(`${API_BASE}/api/v1/topup/packages**`, (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ iccid: card.iccid, provider: "BILLION", packages: [] }),
+      }),
+    );
+  }
   const esims = encodeURIComponent(JSON.stringify([card]));
   await page.goto(`/esim-noi-dia/test?view=esim-cards&lang=vi&esims=${esims}`, {
     waitUntil: "domcontentloaded",
@@ -118,7 +133,7 @@ test.describe("Top Up button on My eSIMs", () => {
     await expect(page.getByText("Japan 1GB - 7 Days")).toBeVisible();
   });
 
-  test("is offered on a Billion eSIM even though its plan flag is unset", async ({
+  test("is offered on a Billion eSIM that has recharge products (doitac-1410 #064)", async ({
     page,
   }) => {
     await openCard(
@@ -127,6 +142,20 @@ test.describe("Top Up button on My eSIMs", () => {
     );
 
     await expect(page.getByTestId("esim-topup-button")).toBeVisible();
+  });
+
+  test("is not offered on a Billion eSIM Billion gives no recharge product (doitac-1410 #064)", async ({
+    page,
+  }) => {
+    await openCard(
+      page,
+      esim({ provider: "billion", plan: { id: 7, name: "Billion China 3GB", topUp: false } }),
+      { noPackages: true },
+    );
+
+    await expect(page.getByText("8900000000000000001").first()).toBeVisible();
+    await page.waitForTimeout(1500);
+    await expect(page.getByTestId("esim-topup-button")).toHaveCount(0);
   });
 
   for (const [label, card] of [
