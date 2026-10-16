@@ -1942,6 +1942,8 @@
     "followers": "Số người theo dõi",
     "followersPlaceholder": "50000",
     "followersHelp": "Con số ước lượng cũng được.",
+    "monthlyVisits": "Lượng truy cập mỗi tháng",
+    "monthlyVisitsHelp": "Tổng lượt truy cập website/cửa hàng mỗi tháng, con số ước lượng cũng được.",
     "notes": "Bạn muốn nói thêm điều gì?",
     "notesPlaceholder": "Ví dụ: mình làm nội dung du lịch Nhật - Hàn, thường ra video vào cuối tuần...",
     "documents": "Tài liệu đính kèm",
@@ -1992,7 +1994,7 @@
       "companyNameRequired": "Vui lòng nhập tên công ty.",
       "taxCodeRequired": "Vui lòng nhập mã số thuế.",
       "channelUrlInvalid": "Đường dẫn cần bắt đầu bằng http:// hoặc https://",
-      "followersInvalid": "Số người theo dõi chỉ gồm chữ số.",
+      "followersInvalid": "Chỉ được nhập chữ số.",
       "notesMax": "Nội dung tối đa 2000 ký tự.",
       "termsRequired": "Bạn cần đồng ý với điều khoản để tiếp tục."
     }

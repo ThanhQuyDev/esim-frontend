@@ -1903,6 +1903,8 @@
     "followers": "Followers",
     "followersPlaceholder": "50000",
     "followersHelp": "A rough number is fine.",
+    "monthlyVisits": "Monthly visits",
+    "monthlyVisitsHelp": "Total monthly visits to your website or store; a rough number is fine.",
     "notes": "Anything else you want to tell us?",
     "notesPlaceholder": "For example: I make travel content about Japan and Korea, posting every weekend...",
     "documents": "Supporting documents",
@@ -1953,7 +1955,7 @@
       "companyNameRequired": "Please enter the company name.",
       "taxCodeRequired": "Please enter the tax code.",
       "channelUrlInvalid": "The link must start with http:// or https://",
-      "followersInvalid": "Followers must be digits only.",
+      "followersInvalid": "Digits only.",
       "notesMax": "At most 2000 characters.",
       "termsRequired": "Please accept the terms to continue."
     }

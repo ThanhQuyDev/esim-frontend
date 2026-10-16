@@ -196,13 +196,19 @@ for (const [kind, partnerType] of [
     await page.getByTestId(`partner-kind-${kind}`).check();
     await expect(page.getByTestId(`partner-kind-${kind}`)).toBeChecked();
     await fillRequiredFields(page);
+    // The channel section stays for every kind; for a distribution or API
+    // applicant the audience is monthly traffic (doitac-1410 #049).
+    await page.getByLabel(/Lượng truy cập mỗi tháng/).fill("120000");
     await page.getByTestId("affiliate-register-submit").click();
 
     await expect(page.getByTestId("affiliate-register-success")).toBeVisible({
       timeout: 15000,
     });
-    expect(body).toMatchObject({ partnerType, requestedType: kind });
-    expect(body).not.toHaveProperty("channelInfo");
+    expect(body).toMatchObject({
+      partnerType,
+      requestedType: kind,
+      channelInfo: { followers: 120000 },
+    });
   });
 }
 
