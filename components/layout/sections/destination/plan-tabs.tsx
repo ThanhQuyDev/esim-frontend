@@ -5,6 +5,7 @@ import type { Plan } from "@/lib/api";
 import type { DestinationDict, CategorizedPlans } from "./types";
 import { getUniqueDataMb, findBestPlan, getUniqueFupSpeeds, findBestDailyUnlimitedPlan } from "./types";
 import { PlanTagBadges, ProviderBadge } from "./plan-badges";
+import { FixedPlanPicker } from "./fixed-plan-picker";
 
 interface PlanTabsProps {
   plans: CategorizedPlans;
@@ -21,43 +22,6 @@ function formatDataLabel(mb: number): string {
     return Number.isInteger(gb) ? `${gb}GB` : `${parseFloat(gb.toFixed(1))}GB`;
   }
   return `${mb}MB`;
-}
-
-/* ── Small chip for fixed plans — shows data / days + tags + provider ── */
-function PlanChip({
-  plan,
-  isSelected,
-  onSelect,
-  lang,
-}: {
-  plan: Plan;
-  isSelected: boolean;
-  onSelect: () => void;
-  lang: string;
-}) {
-  const label = `${formatDataLabel(Number(plan.dataMb))} – ${plan.durationDays} ${lang === "en" ? "days" : "ngày"}`;
-
-  return (
-    <button
-      type="button"
-      onClick={onSelect}
-      data-testid="plan-chip"
-      data-plan-id={plan.id}
-      className={`inline-flex items-center gap-[7px] px-[15px] py-[9px] rounded-[30px] text-[.875rem] font-medium border cursor-pointer transition-colors whitespace-nowrap font-[inherit] ${isSelected
-        ? "bg-white text-[#1a1a1a] border-[#1a1a1a] font-semibold shadow-[0_0_0_1px_#1a1a1a]"
-        : "bg-white text-[#374151] border-[#e5e7eb] hover:bg-[#f3f4f6] hover:border-[#9ca3af]"
-        }`}
-    >
-      {label}
-      <PlanTagBadges tags={plan.tags as string[] | undefined} lang={lang} />
-      {plan.discount != null && plan.discount > 0 && (
-        <span className="text-[11px] font-medium tracking-wide px-[5px] py-[2px] rounded leading-tight shrink-0 bg-[#DCFCE7] text-[#166534] border border-[#BBF7D0]">
-          –{Number(plan.discount).toFixed()}%
-        </span>
-      )}
-      <ProviderBadge plan={plan} />
-    </button>
-  );
 }
 
 /* ── GB chip for daily plan groups (delegates tag rendering to the best plan in the group) ── */
@@ -435,17 +399,13 @@ export function PlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }: Plan
             }
             label={dict.planSections.fixed}
           />
-          <div className="flex flex-wrap gap-2">
-            {plans.dataPlans.map((p) => (
-              <PlanChip
-                key={p.id}
-                plan={p}
-                isSelected={activeSection === "fixed" && selectedPlan?.id === p.id}
-                onSelect={() => handleSelectFixed(p)}
-                lang={lang}
-              />
-            ))}
-          </div>
+          <FixedPlanPicker
+            plans={plans.dataPlans}
+            selectedPlan={selectedPlan}
+            isActive={activeSection === "fixed"}
+            onSelect={handleSelectFixed}
+            lang={lang}
+          />
         </div>
       )}
 
