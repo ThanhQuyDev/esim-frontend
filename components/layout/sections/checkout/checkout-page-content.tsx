@@ -415,7 +415,15 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
   if (bankTransfer) {
     return (
       <div className="mx-auto w-full max-w-2xl py-6">
-        <BankTransferPanel info={bankTransfer} lang={lang as "en" | "vi"} />
+        <BankTransferPanel
+          info={bankTransfer}
+          lang={lang as "en" | "vi"}
+          // Once SePay confirms the transfer, go on to the same result page a
+          // OnePay payment lands on: it shows the success state and the eSIMs.
+          onPaid={(orderNumber) => {
+            window.location.href = `${localizedHref(lang, "payment/result")}?orderNumber=${encodeURIComponent(orderNumber)}&method=bank_transfer`;
+          }}
+        />
       </div>
     );
   }
