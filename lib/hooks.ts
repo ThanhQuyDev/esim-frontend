@@ -1177,6 +1177,8 @@ export function useOrderByNumber(orderNumber: string, enabled: boolean) {
 interface ApiCartItemPlan {
   id: number;
   name: string;
+  /** The name under the one naming rule (vande #020). */
+  standardName?: string | null;
   slug: string;
   dataMb: number;
   durationDays: number;
@@ -1292,7 +1294,7 @@ export function useCart() {
         return {
           id: String(item.id),
           planId: item.planId,
-          name: item.plan?.name || `Plan #${item.planId}`,
+          name: item.plan?.standardName || item.plan?.name || `Plan #${item.planId}`,
           description: `${(item.plan?.type === 'unlimited' || item.plan?.type === 'unlimited-reduce') ? 'Unlimited' : item.plan?.dataMb ? dataLabel : "?"} / ${(item.periodNum ?? item.plan?.durationDays) || "?"} days`,
           price: 0,
           quantity: item.quantity,

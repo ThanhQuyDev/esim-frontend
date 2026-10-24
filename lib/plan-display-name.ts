@@ -4,9 +4,14 @@
  * name does not already say is added.
  */
 export function planDisplayName(
-  plan: { name?: string | null; call?: number | null; sms?: number | null } | null | undefined,
+  plan:
+    | { name?: string | null; standardName?: string | null; call?: number | null; sms?: number | null }
+    | null
+    | undefined,
 ): string {
-  const base = plan?.name?.trim() ?? "";
+  // The name under the one naming rule when the plan has one (vande #020):
+  // "China - Total 5 GB - 7 days", not the supplier's "China 5GB / 7day".
+  const base = (plan?.standardName || plan?.name)?.trim() ?? "";
   if (!base) return "";
   const parts = [base];
   const call = Number(plan?.call) || 0;

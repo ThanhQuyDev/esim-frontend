@@ -35,7 +35,7 @@ export function planCartItem(
   return {
     id: `${plan.id}:${cartDurationDays ?? "fixed"}`,
     planId: plan.id,
-    name: plan.name || `eSIM ${destination || ""}`.trim(),
+    name: plan.standardName || plan.name || `eSIM ${destination || ""}`.trim(),
     description: `${data} / ${displayDays} days`,
     price: unitPrice,
     vndPrice: unitVndPrice,

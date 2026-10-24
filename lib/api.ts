@@ -191,6 +191,8 @@ export interface Plan {
   provider: string;
   providerPlanId: string;
   name: string;
+  /** The name under the one naming rule (vande #020); `name` is the supplier's. */
+  standardName?: string | null;
   slug: string;
   countryCode?: string;
   destinationId?: number;

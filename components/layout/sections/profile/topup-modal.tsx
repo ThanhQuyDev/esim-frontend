@@ -23,6 +23,7 @@ import {
 } from "@/lib/hooks";
 import type { ProfileDict } from "./translations";
 import { BankTransferPanel } from "../payment/bank-transfer-panel";
+import { planDisplayName } from "@/lib/plan-display-name";
 
 interface TopupModalProps {
   esim: MyEsim;
@@ -369,7 +370,7 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
                 badge here named the wholesaler we buy from, which is ours to
                 know and not the customer's. */}
             {esim.plan?.name && (
-              <p className="text-sm text-gray-700 mt-0.5 truncate">{esim.plan.name}</p>
+              <p className="text-sm text-gray-700 mt-0.5 truncate">{planDisplayName(esim.plan)}</p>
             )}
           </div>
           <button
