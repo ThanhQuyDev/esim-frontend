@@ -1,6 +1,7 @@
 "use client";
 
 import { esimQrLogoSettings } from "@/lib/esim-qr";
+import { isDomesticProvider } from "@/lib/api";
 import { useState, useEffect } from "react";
 import {
   Copy,
@@ -77,10 +78,12 @@ function customerEsimStatus(esim: MyEsim): "new" | "inUse" | "expired" | "refund
   const stored = (esim.status ?? "").toLowerCase();
   if (stored === "refunded") return "refunded";
   const local = esim.provider === "viettel" || esim.provider === "itel" || esim.provider === "wintel" || esim.provider === "vnsky";
+  // Domestic eSIMs carry the supplier "<carrier>-noidia" (vande #001).
+  const isLocal = local || isDomesticProvider(esim.provider);
   const expires = esim.expiresAt ? new Date(esim.expiresAt).getTime() : null;
   if (expires !== null && !Number.isNaN(expires) && expires < Date.now() && stored !== "available") return "expired";
   if (stored === "expired") return "expired";
-  if (local || esim.activatedAt || stored === "active") return "inUse";
+  if (isLocal || esim.activatedAt || stored === "active") return "inUse";
   return "new";
 }
 

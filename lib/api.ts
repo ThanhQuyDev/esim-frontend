@@ -1020,9 +1020,38 @@ export async function getPlansByRegionSlug(
  * `fromVndPrice` is the cheapest plan price so the card can show "Từ {n}đ".
  */
 export interface LocalCarrier {
+  /**
+   * The bare carrier slug ("itel") — the key of the /esim-noi-dia/[carrier]
+   * URL and of the carrier artwork. The API's supplier slug ("itel-noidia",
+   * vande #001) is mapped back to this by {@link toLocalCarriers}.
+   */
   provider: string;
   fromVndPrice: number;
   planCount: number;
+}
+
+/** "itel-noidia" → "itel". Domestic plans carry their own supplier (vande #001). */
+export function carrierSlug(provider: string): string {
+  return provider.replace(/-noidia$/, "");
+}
+
+/** True for a domestic eSIM's supplier ("itel-noidia"). */
+export function isDomesticProvider(provider: string | null | undefined): boolean {
+  return /-noidia$/.test(provider ?? "");
+}
+
+/**
+ * The API's carrier rows keyed by the bare carrier. Prefers the API's own
+ * `carrier` field and falls back to stripping the suffix, so it also works
+ * against a backend that does not send `carrier` yet.
+ */
+export function toLocalCarriers(
+  rows: (LocalCarrier & { carrier?: string })[] | null | undefined,
+): LocalCarrier[] {
+  return (rows ?? []).map(({ carrier, ...row }) => ({
+    ...row,
+    provider: carrier || carrierSlug(row.provider),
+  }));
 }
 
 /**
@@ -1031,10 +1060,8 @@ export interface LocalCarrier {
  */
 export async function getLocalCarriers(): Promise<LocalCarrier[]> {
   try {
-    return await apiFetch<LocalCarrier[]>(
-      "/api/v1/plans/local-carriers",
-      {},
-      300
+    return toLocalCarriers(
+      await apiFetch<LocalCarrier[]>("/api/v1/plans/local-carriers", {}, 300)
     );
   } catch {
     return [];

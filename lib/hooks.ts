@@ -12,7 +12,7 @@ import type {
   PlansByDestinationResponse,
   LocalCarrier,
 } from "./api";
-import { normalizePlansByDestination } from "./api";
+import { normalizePlansByDestination, toLocalCarriers } from "./api";
 import { i18n, type Locale } from "./i18n-config";
 import { useAuth, authFetch } from "./auth";
 import {
@@ -451,12 +451,14 @@ export function usePlansByRegionSlug(slug: string, lang?: string, initialData?: 
 export function useLocalCarriers() {
   return useQuery({
     queryKey: ["local-carriers"],
-    queryFn: ({ signal }) =>
-      clientFetch<LocalCarrier[]>(
-        "/api/v1/plans/local-carriers",
-        undefined,
-        undefined,
-        signal
+    queryFn: async ({ signal }) =>
+      toLocalCarriers(
+        await clientFetch<LocalCarrier[]>(
+          "/api/v1/plans/local-carriers",
+          undefined,
+          undefined,
+          signal
+        )
       ),
     staleTime: 5 * 60 * 1000,
   });
