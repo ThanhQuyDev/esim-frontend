@@ -219,8 +219,11 @@ export function PlanTabs({ plans, dict, selectedPlan, onSelectPlan, days }: Plan
   const localEsimPlans = useMemo(() => plans.localEsim ?? [], [plans.localEsim]);
   const hasLocalEsim = localEsimPlans.length > 0;
   const localProviderLabel = useMemo(() => {
+    // "eSIM Viettel" — the carrier's own travel eSIMs, above the other plans
+    // (vande #015).
     const first = localEsimPlans[0];
-    return (first?.provider || "").toUpperCase() || "LOCAL";
+    const carrier = (first?.operatorName || first?.provider || "").replace(/-noidia$/i, "");
+    return carrier ? `eSIM ${carrier.charAt(0).toUpperCase()}${carrier.slice(1)}` : "eSIM";
   }, [localEsimPlans]);
   const hasDataPlans = plans.dataPlans.length > 0;
   const hasSlowUnlimited = plans.slowUnlimited.length > 0;
