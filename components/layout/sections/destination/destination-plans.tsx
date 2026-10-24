@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { trackJourney } from "@/lib/journey-tracking";
 import type { Plan, PlansByDestinationResponse } from "@/lib/api";
-import { usePlansBySlug, usePlansByRegionSlug, useRegionBySlug, useDestinationBySlug, useExchangeRate } from "@/lib/hooks";
+import { usePlansBySlug, usePlansByRegionSlug, useRegionBySlug, useDestinationBySlug, useExchangeRate, useMultidayTiers } from "@/lib/hooks";
 import { buildSeoTemplateVars } from "@/lib/seo-vars";
 import { hasMultidatePlan, findBestPlan, findBestDailyUnlimitedPlan, calcTotalVndPrice, buildPlanLabel } from "./types";
 import type { DestinationPlansProps } from "./types";
@@ -39,6 +39,8 @@ const EMPTY_PLANS: PlansByDestinationResponse = {
 };
 
 export function DestinationPlans({ destination, slug, dict, lang, planSource = "destination", initialPlans, initialRegion }: DestinationPlansProps) {
+  // Day-pass prices follow the checkout formula once the tiers arrive (#014).
+  useMultidayTiers();
   const destQuery = usePlansBySlug(
     planSource === "destination" ? slug : "",
     lang,

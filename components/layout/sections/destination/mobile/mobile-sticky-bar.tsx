@@ -1,5 +1,6 @@
 "use client";
 
+import { multidayVnd } from "@/lib/multiday-price";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { localizedHref } from "@/lib/route-mapping";
@@ -135,7 +136,7 @@ export function MobileStickyBar({
     const isMultidate = !!selectedPlan.isAbleMultidate;
     const unitPrice = isFixed ? getFixedPrice(selectedPlan) : calcTotalPrice(selectedPlan, days);
     const unitVndPrice = isFixed ? getFixedVndPrice(selectedPlan) : calcTotalVndPrice(selectedPlan, days);
-    const originalVndPrice = isFixed ? Number(selectedPlan.vndPrice) : (isMultidate ? Number(selectedPlan.vndPrice) * days : Number(selectedPlan.vndPrice));
+    const originalVndPrice = isFixed ? Number(selectedPlan.vndPrice) : (isMultidate ? multidayVnd(selectedPlan, days) : Number(selectedPlan.vndPrice));
     // Only pass durationDays (periodNum) for isAbleMultidate plans
     const cartDurationDays = isMultidate ? days : undefined;
     const displayDays = isFixed ? selectedPlan.durationDays : (isMultidate ? days : selectedPlan.durationDays);

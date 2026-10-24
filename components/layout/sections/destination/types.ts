@@ -1,4 +1,5 @@
 import type { Destination, Plan, PlansByDestinationResponse, Region } from "@/lib/api";
+import { multidayFactor, multidayVnd } from "@/lib/multiday-price";
 import { roundVndToThousands } from "@/lib/utils";
 
 // ===== Dictionary shape for destinationPage =====
@@ -173,7 +174,7 @@ export function findBestPlan(plans: Plan[], dataMb: number, days: number): Plan 
   for (const p of sameMb) {
     if (p.isAbleMultidate) {
       // Can be purchased multiple times — one per day
-      candidates.push({ plan: p, totalCost: Number(p.price) * days });
+      candidates.push({ plan: p, totalCost: Number(p.price) * multidayFactor(p, days) });
     } else if (p.durationDays === days) {
       // Exact match only — plan duration must equal requested days
       candidates.push({ plan: p, totalCost: Number(p.price) });
@@ -212,7 +213,10 @@ function applyDiscount(price: number, plan: Plan, roundAfterDiscount = false): n
  * Applies plan discount if present.
  */
 export function calcTotalPrice(plan: Plan, days: number): number {
-  const base = plan.isAbleMultidate ? Number(plan.price) * days : Number(plan.price);
+  // Day passes: margin once on the whole cost (vande #014), not per day.
+  const base = plan.isAbleMultidate
+    ? Number(plan.price) * multidayFactor(plan, days)
+    : Number(plan.price);
   return applyDiscount(base, plan);
 }
 
@@ -222,7 +226,7 @@ export function calcTotalPrice(plan: Plan, days: number): number {
  */
 export function calcTotalRetailPrice(plan: Plan, days: number): number {
   if (plan.isAbleMultidate) {
-    return Number(plan.retailPrice) * days;
+    return Number(plan.retailPrice) * multidayFactor(plan, days);
   }
   return Number(plan.retailPrice);
 }
@@ -258,7 +262,7 @@ export function hasVisibleDiscount(
  * Applies plan discount if present.
  */
 export function calcTotalVndPrice(plan: Plan, days: number): number {
-  const base = plan.isAbleMultidate ? Number(plan.vndPrice) * days : Number(plan.vndPrice);
+  const base = plan.isAbleMultidate ? multidayVnd(plan, days) : Number(plan.vndPrice);
   return applyDiscount(base, plan, true);
 }
 
@@ -270,7 +274,7 @@ export function calcTotalVndPrice(plan: Plan, days: number): number {
 export function calcTotalVndRetailPrice(plan: Plan, days: number): number {
   if (plan.discount != null && plan.discount > 0) {
     // Original (undiscounted) vndPrice serves as the "retail" strikethrough
-    const base = plan.isAbleMultidate ? Number(plan.vndPrice) * days : Number(plan.vndPrice);
+    const base = plan.isAbleMultidate ? multidayVnd(plan, days) : Number(plan.vndPrice);
     return base;
   }
   const price = Number(plan.price);
@@ -279,7 +283,7 @@ export function calcTotalVndRetailPrice(plan: Plan, days: number): number {
   // Derive VND retail from the USD ratio
   const vndRetail = price > 0 ? roundVndToThousands((vndPrice * retailPrice) / price) : 0;
   if (plan.isAbleMultidate) {
-    return vndRetail * days;
+    return roundVndToThousands(vndRetail * multidayFactor(plan, days));
   }
   return vndRetail;
 }

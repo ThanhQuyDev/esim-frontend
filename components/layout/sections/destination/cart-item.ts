@@ -1,4 +1,5 @@
 import type { Plan } from "@/lib/api";
+import { multidayVnd } from "@/lib/multiday-price";
 import type { CartItem } from "@/lib/cart";
 import { calcTotalPrice, calcTotalVndPrice, getFixedPrice, getFixedVndPrice } from "./types";
 
@@ -20,7 +21,7 @@ export function planCartItem(
   const originalVndPrice = isFixed
     ? Number(plan.vndPrice)
     : isMultidate
-      ? Number(plan.vndPrice) * days
+      ? multidayVnd(plan, days)
       : Number(plan.vndPrice);
   const cartDurationDays = isMultidate ? days : undefined;
   const displayDays = isFixed ? plan.durationDays : isMultidate ? days : plan.durationDays;

@@ -1,3 +1,4 @@
+import { multidayVnd } from "./multiday-price";
 import type { Plan, PlansByDestinationResponse } from "@/lib/api";
 
 /**
@@ -142,7 +143,8 @@ const byPricePerDay = (a: PlanSuggestion, b: PlanSuggestion) =>
 
 /** What the customer pays for the whole trip: a multi-day plan is priced per day. */
 export function tripPriceVnd(plan: Plan, tripDays: number): number {
-  return plan.isAbleMultidate ? plan.vndPrice * tripDays : plan.vndPrice;
+  // Margin once on the whole cost for a day pass (vande #014).
+  return plan.isAbleMultidate ? multidayVnd(plan, tripDays) : plan.vndPrice;
 }
 
 const byTripPrice = (tripDays: number) => (a: PlanSuggestion, b: PlanSuggestion) =>

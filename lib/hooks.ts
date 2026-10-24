@@ -13,6 +13,7 @@ import type {
   LocalCarrier,
 } from "./api";
 import { normalizePlansByDestination, toLocalCarriers } from "./api";
+import { setMultidayTiers, type MarginTier } from "./multiday-price";
 import { i18n, type Locale } from "./i18n-config";
 import { useAuth, authFetch } from "./auth";
 import {
@@ -448,6 +449,30 @@ export function usePlansByRegionSlug(slug: string, lang?: string, initialData?: 
  * List domestic eSIM carriers, grouped from active isLocalInventory plans.
  * Powers the "eSIM nội địa" tab card grid on the homepage / all-destinations.
  */
+/**
+ * Margin tiers for multi-day pass prices (vande #014). Loaded once and handed
+ * to `lib/multiday-price`; the component that calls this re-renders when they
+ * arrive, so the prices under it switch to the checkout figure.
+ */
+export function useMultidayTiers() {
+  const query = useQuery({
+    queryKey: ["multiday-pricing"],
+    queryFn: async ({ signal }) => {
+      const tiers = await clientFetch<MarginTier[]>(
+        "/api/v1/plans/multiday-pricing",
+        undefined,
+        undefined,
+        signal
+      );
+      setMultidayTiers(tiers);
+      return tiers;
+    },
+    staleTime: 30 * 60 * 1000,
+  });
+  if (query.data) setMultidayTiers(query.data);
+  return query.data ?? null;
+}
+
 export function useLocalCarriers() {
   return useQuery({
     queryKey: ["local-carriers"],
