@@ -1,2 +1,7 @@
 /* One layout at a time: the page renders only the layout for the device
    (vande #030, useDeviceVariant), so no width switch is needed here any more. */
+
+/* "Giờ làm mới mỗi ngày" is a whole sentence (vande #033): let it wrap on
+   phones instead of clipping, as on the region page (rg-switch.css). */
+.ndm.m .sr>.sv-text.sv-wrap,.ndm .sr>.sv-text.sv-wrap,.ndd .sr>.sv-text.sv-wrap{flex:1 1 auto;min-width:0;white-space:normal}
+.ndm .sr:has(>.sv-wrap)>.sl,.ndd .sr:has(>.sv-wrap)>.sl{flex:0 0 auto;max-width:45%}

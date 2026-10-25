@@ -16,6 +16,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import type { Plan, SupportedDevicesResponse } from "@/lib/api";
 import { formatActivationDate } from "@/lib/plan-activation";
+import { dailyResetText } from "@/lib/plan-daily-reset";
 import { localizedHref } from "@/lib/route-mapping";
 import { Ic } from "./nd-icons";
 import {
@@ -27,7 +28,6 @@ import {
   hotspotLabel,
   monthLabel,
   networkLabel,
-  perLabel,
   phonePrefixLabel,
   priceVnd,
   renewalLabel,
@@ -613,7 +613,10 @@ export function FeatureRows({
 export function DeliveryRows({ plan }: { plan: Plan | null }) {
   const tx = useT();
   const deadline = plan?.activationDeadline ? formatActivationDate(plan.activationDeadline) : null;
-  const daily = plan ? perLabel(plan, "vi") === tx("ngày") : true;
+  // From the plan's own reset data (vande #033), in the page's language: the
+  // old check compared a Vietnamese label with a translated one, so the row
+  // never showed in English and always said UTC+7.
+  const reset = dailyResetText(plan, useDesignLang());
   return (
     <>
       <div className="sr">
@@ -630,13 +633,10 @@ export function DeliveryRows({ plan }: { plan: Plan | null }) {
           <span className="sv-text">{tx("Theo quy định của nhà cung cấp (ghi trong email nhận eSIM)")}</span>
         )}
       </div>{" "}
-      {daily && (
+      {reset && (
         <div className="sr">
-          <span className="sl">{tx("Làm mới data theo ngày")}</span>
-          <span className="sv-2">
-            <b>{tx("00:00 mỗi ngày")}</b>
-            <small>{tx("giờ Việt Nam (UTC+7)")}</small>
-          </span>
+          <span className="sl">{tx("Giờ làm mới mỗi ngày")}</span>
+          <span className="sv-text sv-wrap">{reset}</span>
         </div>
       )}{" "}
       <div className="sr">

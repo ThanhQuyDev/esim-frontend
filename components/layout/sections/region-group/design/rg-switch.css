@@ -13,3 +13,9 @@
 
 /* Countries the design has no drawn flag for use the destination's image. */
 .rgd img.flag,.rgm img.flag{object-fit:cover;display:inline-block}
+
+/* "Giờ làm mới mỗi ngày" is a whole sentence (vande #033), longer than any
+   value the design drew; the phone layout keeps row values on one line, which
+   clipped it and squeezed the label to one word per line. Let it wrap. */
+.rgm.m .sr>.sv-text.sv-wrap,.rgm .sr>.sv-text.sv-wrap,.rgd .sr>.sv-text.sv-wrap{flex:1 1 auto;min-width:0;white-space:normal}
+.rgm .sr:has(>.sv-wrap)>.sl,.rgd .sr:has(>.sv-wrap)>.sl{flex:0 0 auto;max-width:45%}

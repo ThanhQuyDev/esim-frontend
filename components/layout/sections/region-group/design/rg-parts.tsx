@@ -3,7 +3,7 @@
 
 
 import { tr } from "../../local-esim/design/design-i18n-core";
-import { useT } from "../../local-esim/design/design-i18n";
+import { useDesignLang, useT } from "../../local-esim/design/design-i18n";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { Destination, Plan } from "@/lib/api";
 import { worksWithTiktokAndChatGpt } from "@/lib/plan-tiktok";
@@ -1490,7 +1490,8 @@ export function FeatureRows({ p, onEkyc, onCountries }: { p: RegionPurchase; onE
 export function DeliveryRows({ plan }: { plan: Plan | null }) {
   const tx = useT();
   const deadline = plan?.activationDeadline ? formatActivationDate(plan.activationDeadline) : null;
-  const reset = dailyResetText(plan, "vi");
+  const lang = useDesignLang();
+  const reset = dailyResetText(plan, lang);
   const refundable = refundRule(plan) === "fast-if-unactivated";
   return (
     <>
@@ -1508,24 +1509,13 @@ export function DeliveryRows({ plan }: { plan: Plan | null }) {
           <span className="sv-text">{tx("Theo quy định của nhà cung cấp (ghi trong email nhận eSIM)")}</span>
         )}
       </div>{" "}
-      {reset && plan?.dailyResetPolicy && (
+      {reset && (
         <div className="sr">
           <span className="sl">{tx("Giờ làm mới mỗi ngày")}</span>
-          <span className="sv-2" id="cycleTxt">
-            {plan.dailyResetPolicy === "rolling_24h" ? (
-              <>
-                <b>{tx("Sau mỗi 24 giờ")}</b>
-                <small>{tx("tính từ lúc cài eSIM")}</small>
-              </>
-            ) : (
-              <>
-                <b>
-                  23:59 (UTC{(plan.dailyResetUtcOffset ?? 8) >= 0 ? "+" : "-"}
-                  {Math.abs(plan.dailyResetUtcOffset ?? 8)})
-                </b>
-                <small>{tx("dù bạn ở múi giờ nào")}</small>
-              </>
-            )}
+          {/* The exact sentence the ticket asks for (vande #033), not a short
+              form: when the data comes back is what customers ask about. */}
+          <span className="sv-text sv-wrap" id="cycleTxt">
+            {reset}
           </span>
         </div>
       )}{" "}
