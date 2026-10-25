@@ -168,7 +168,10 @@ export function ProfileContent({ lang }: ProfileContentProps) {
 
   return (
     <main className="min-h-screen bg-gray-50 pt-24 pb-16">
-      <div className="max-w-2xl mx-auto px-4 sm:px-6">
+      {/* Wider than the 672px it was (vande #050): the eSIM rows now carry
+          plan name, status, dates and actions, and the names were cut short.
+          Now the site container, lined up with the breadcrumb above. */}
+      <div className="md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1168px] px-4 sm:px-0 mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-[1.7rem] sm:text-2xl font-medium text-gray-900">{t.pageTitle}</h1>
