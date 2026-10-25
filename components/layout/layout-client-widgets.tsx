@@ -37,6 +37,12 @@ const PartnerClickCapture = dynamic(
   { ssr: false }
 );
 
+// One visit a day per browser, for the CMS audience charts (vande #059).
+const VisitBeacon = dynamic(
+  () => import("@/components/layout/visit-beacon").then((mod) => mod.VisitBeacon),
+  { ssr: false }
+);
+
 const ReferralCapture = dynamic(
   () => import("@/components/layout/referral-capture").then((mod) => mod.ReferralCapture),
   { ssr: false }
@@ -51,6 +57,7 @@ export function LayoutClientWidgets({ lang }: { lang: Locale }) {
       <ReferralCapture />
       <PartnerClickCapture />
       <PartnerLinkBind />
+      <VisitBeacon />
     </>
   );
 }
