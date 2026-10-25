@@ -713,7 +713,9 @@ export async function getMenuSlides(
     return await apiFetch<GroupedMenuSlides>(
       "/api/v1/menu-slides/grouped",
       options,
-      300
+      // A minute, not five: a slide just saved in the CMS should show soon
+      // after (vande #039).
+      60
     );
   } catch {
     return {};

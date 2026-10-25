@@ -1044,6 +1044,7 @@ function MainNavbar({ lang, dict, topBars = [], menuSlides }: NavbarProps) {
           {/* ===== Mega Menu Dropdown ===== */}
           {openDropdown && menuData[openDropdown] && (
             <MegaMenuDropdown
+              exploreLabel={lang === "vi" ? "Khám phá" : "Explore"}
               data={menuData[openDropdown]}
               onClose={() => setOpenDropdown(null)}
             />
@@ -1081,9 +1082,12 @@ function MainNavbar({ lang, dict, topBars = [], menuSlides }: NavbarProps) {
 function MegaMenuDropdown({
   data,
   onClose,
+  exploreLabel = "Explore",
 }: {
   data: MegaMenuData;
   onClose: () => void;
+  /** "Khám phá" on the Vietnamese site (vande #039). */
+  exploreLabel?: string;
 }) {
   return (
     <div className="hidden lg:block absolute w-full px-6 top-full left-0 rounded-b-md bg-white shadow-[0_8px_12px_-6px_rgba(149,157,165,0.2)] z-[60] animate-fade-in">
@@ -1114,7 +1118,7 @@ function MegaMenuDropdown({
 
           {/* Explore Swiper */}
           <div className="flex flex-col gap-4 lg:w-[296px] xl:w-[300px]">
-            <span className="body-xs-medium text-text-tertiary">Explore</span>
+            <span className="body-xs-medium text-text-tertiary">{exploreLabel}</span>
             <Swiper
               modules={[Pagination, Autoplay]}
               spaceBetween={24}
@@ -1678,6 +1682,40 @@ function MobileSidebar({
                                     </div>
                                   </Link>
                                 ))}
+                              </div>
+                            )}
+                            {/* The CMS slides (vande #039): only the desktop
+                                menu had them, so a slide added in the CMS never
+                                showed on a phone. Swiped sideways here. */}
+                            {data.explore.length > 0 && (
+                              <div className="flex flex-col gap-3" data-testid="mobile-menu-explore">
+                                <span className="body-xs-medium text-text-tertiary">
+                                  {isVi ? "Khám phá" : "Explore"}
+                                </span>
+                                <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1">
+                                  {data.explore.map((card) => (
+                                    <Link
+                                      key={card.title}
+                                      href={card.href}
+                                      onClick={() => setOpen(false)}
+                                      className="block w-[240px] shrink-0 snap-start"
+                                    >
+                                      <div className="h-[120px] w-[240px] overflow-hidden rounded-sm">
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img
+                                          alt={card.imageAlt}
+                                          src={card.image}
+                                          width={240}
+                                          height={120}
+                                          loading="lazy"
+                                          className="h-full w-full object-cover"
+                                        />
+                                      </div>
+                                      <p className="body-sm-medium mt-2 text-left text-text-primary">{card.title}</p>
+                                      <p className="body-xs text-left text-text-tertiary">{card.desc}</p>
+                                    </Link>
+                                  ))}
+                                </div>
                               </div>
                             )}
                           </div>
