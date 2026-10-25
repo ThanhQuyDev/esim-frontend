@@ -268,6 +268,13 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
   useEffect(() => {
     const box = inputRef.current;
     if (!box) return;
+    // Empty: one line (vande #046). Measuring an empty box sized it to the
+    // placeholder, which wraps to two lines on a phone, so the box was drawn
+    // taller and snapped down on the first key.
+    if (!input) {
+      box.style.height = "";
+      return;
+    }
     box.style.height = "auto";
     box.style.height = `${Math.min(box.scrollHeight, 120)}px`;
   }, [input]);
@@ -476,7 +483,10 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
           }}
           enterKeyHint={enterSends ? "send" : "enter"}
           placeholder={enterSends ? "Nhập tin nhắn… (Shift+Enter để xuống dòng)" : "Nhập tin nhắn…"}
-          className="max-h-[120px] min-h-[40px] flex-1 resize-none overflow-y-auto rounded-2xl border border-gray-200 bg-gray-50 px-4 py-2 text-base leading-6 outline-none transition-colors focus:border-[#1a1a1a] focus:bg-white sm:text-sm"
+          // One line high from the start (vande #046): with no height set the
+          // empty box was drawn 56–64px tall and snapped to 40px on the first
+          // key, jolting the chat. Typing still grows it via the inline style.
+          className="h-10 max-h-[120px] min-h-[40px] flex-1 resize-none overflow-y-auto rounded-2xl border border-gray-200 bg-gray-50 px-4 py-2 text-base leading-6 outline-none transition-colors focus:border-[#1a1a1a] focus:bg-white sm:text-sm"
           disabled={!connected}
           aria-label="Chat message input"
           data-testid="chat-input"
