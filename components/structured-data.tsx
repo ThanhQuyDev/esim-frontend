@@ -30,7 +30,18 @@ export function StructuredData({
   return (
     <>
       {scripts.map((script, index) => {
-        if (!script.content) return <script key={index} {...script.props} />;
+        if (!script.content) {
+          // React turns `<script async src>` into a resource and moves it to
+          // the top of <head>, away from the inline part of the same snippet
+          // — and out of <body> for an "end of body" snippet (vande #049).
+          // `itemProp` is the switch React offers to emit a script where it
+          // stands; the empty attribute means nothing to the browser.
+          const props =
+            script.props.async && script.props.src
+              ? { ...script.props, itemProp: "" }
+              : script.props;
+          return <script key={index} {...props} />;
+        }
 
         const content =
           vars && isJsonLd(script)

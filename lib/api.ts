@@ -677,7 +677,8 @@ export async function getSiteScripts(): Promise<SiteScriptsByPlacement> {
     return await apiFetch<SiteScriptsByPlacement>(
       "/api/v1/site-scripts/active",
       {},
-      300
+      // A minute: a script just saved in the CMS should show soon (vande #049).
+      60
     );
   } catch {
     return {};
