@@ -925,7 +925,8 @@ export type WalletTransactionType =
   | "redemption_release"
   | "expiry_debit";
 
-export type MembershipTier = "traveler" | "silver" | "gold" | "platinum";
+/** traveler, silver, gold, platinum — or a tier an admin added (vande #066). */
+export type MembershipTier = string;
 export type TierSource = "automatic" | "override";
 
 export interface TierBenefits {
@@ -2156,6 +2157,9 @@ export function useConfirmEmailChange() {
 
 export interface MembershipTierRung {
   tier: MembershipTier;
+  /** The name the admin gave it, e.g. "Kim cương" (vande #066). */
+  name: string;
+  nameEn: string | null;
   minimumSpendVnd: number;
   cashbackPercent: number;
   referralRewardVnd: number;

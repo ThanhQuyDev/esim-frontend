@@ -11,13 +11,14 @@ import {
   useReferralProfile,
   usePartnerMe,
   formatExu,
-  type MembershipTier,
+  useMembershipTiers,
 } from "@/lib/hooks";
 import { profileTranslations } from "./translations";
 import { OrderList } from "./order-list";
 import { EsimCardList } from "./esim-card-list";
 import { ChangeEmail } from "./change-email";
 import { TierLadder } from "./tier-ladder";
+import { tierAccent, tierName } from "./tier-names";
 import { PersonalInfo } from "./personal-info";
 import { AffiliateTab } from "./affiliate-tab";
 import { WalletPageContent } from "@/components/layout/sections/wallet/wallet-page-content";
@@ -43,38 +44,6 @@ function formatVnd(amount: number): string {
   }).format(amount);
 }
 
-/**
- * Tier name and colour.
- *
- * Both look the tier up in a table of the four known values and used to index
- * the result straight away: `labels[tier][lang]`. A tier the frontend does not
- * know — a fifth one added in the backend, or a wallet response that arrives
- * without one — made that `undefined[lang]`, which threw and took the WHOLE
- * profile page down to an unhandled runtime error. A customer with a name we
- * cannot spell should still see their orders and eSIMs.
- */
-function getTierLabel(tier: MembershipTier, lang: "en" | "vi"): string {
-  const labels: Record<MembershipTier, { en: string; vi: string }> = {
-    traveler: { en: "Traveler", vi: "Du khách" },
-    silver: { en: "Silver Traveler", vi: "Du khách bạc" },
-    gold: { en: "Gold Traveler", vi: "Du khách vàng" },
-    platinum: { en: "Platinum Traveler", vi: "Du khách bạch kim" },
-  };
-
-  return labels[tier]?.[lang] ?? labels.traveler[lang];
-}
-
-function getTierGradient(tier: MembershipTier): string {
-  const gradients: Record<MembershipTier, string> = {
-    traveler: "from-sky-500 to-blue-600",
-    silver: "from-slate-400 to-slate-600",
-    gold: "from-amber-400 to-orange-500",
-    platinum: "from-violet-500 to-indigo-700",
-  };
-
-  return gradients[tier] ?? gradients.traveler;
-}
-
 function getExpiryColor(daysLeft: number | null): string {
   if (daysLeft === null) return "text-gray-400";
   if (daysLeft <= 0) return "text-gray-400";
@@ -98,6 +67,8 @@ export function ProfileContent({ lang }: ProfileContentProps) {
   const { data: orders = [], isLoading: ordersLoading } = useMyOrders();
   const { data: esims = [], isLoading: esimsLoading } = useMyEsims();
   const { data: wallet } = useWalletMe();
+  // Tier names as the admin set them (vande #066).
+  const { data: tierRungs } = useMembershipTiers();
   const { data: referral } = useReferralProfile();
   // Null for an ordinary customer, so the tab simply never appears (#095).
   const { data: partner } = usePartnerMe();
@@ -232,7 +203,7 @@ export function ProfileContent({ lang }: ProfileContentProps) {
 
             {wallet && (
               <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
-                <div className={`bg-gradient-to-r ${getTierGradient(wallet.membershipTier)} p-5 text-white`}>
+                <div className={`bg-gradient-to-r ${tierAccent(wallet.membershipTier)} p-5 text-white`}>
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <div className="flex items-center gap-2 mb-2">
@@ -242,7 +213,7 @@ export function ProfileContent({ lang }: ProfileContentProps) {
                         </span>
                       </div>
                       <p className="text-[1.7rem] sm:text-2xl font-medium">
-                        {getTierLabel(wallet.membershipTier, lang)}
+                        {tierName(wallet.membershipTier, lang, tierRungs)}
                       </p>
                     </div>
                     {wallet.tierSource === "override" && (
@@ -296,14 +267,14 @@ export function ProfileContent({ lang }: ProfileContentProps) {
                       <>
                         <div className="h-2 overflow-hidden rounded-full bg-gray-100">
                           <div
-                            className={`h-full rounded-full bg-gradient-to-r ${getTierGradient(wallet.nextTier)}`}
+                            className={`h-full rounded-full bg-gradient-to-r ${tierAccent(wallet.nextTier)}`}
                             style={{ width: `${Math.min(100, Math.max(0, wallet.progressPercent))}%` }}
                           />
                         </div>
                         <div className="flex items-center justify-between gap-4 mt-2 text-sm text-gray-500">
                           <span>{Math.round(wallet.progressPercent)}%</span>
                           <span>
-                            {lang === "vi" ? "Tiếp theo" : "Next"}: {getTierLabel(wallet.nextTier, lang)} · {formatVnd(wallet.nextTierThresholdVnd)}
+                            {lang === "vi" ? "Tiếp theo" : "Next"}: {tierName(wallet.nextTier, lang, tierRungs)} · {formatVnd(wallet.nextTierThresholdVnd)}
                           </span>
                         </div>
                       </>

@@ -3,6 +3,7 @@
 import { Check, Coins, Gift, Lock } from "lucide-react";
 import { formatExu, formatVnd, useMembershipTiers } from "@/lib/hooks";
 import type { MembershipTier } from "@/lib/hooks";
+import { tierAccent, tierName } from "./tier-names";
 
 interface TierLadderProps {
   /** The tier the customer is on right now (may be an admin override). */
@@ -10,20 +11,6 @@ interface TierLadderProps {
   lifetimeSpendVnd: number;
   lang: "en" | "vi";
 }
-
-const TIER_LABELS: Record<MembershipTier, { vi: string; en: string }> = {
-  traveler: { vi: "Du khách", en: "Traveler" },
-  silver: { vi: "Du khách bạc", en: "Silver" },
-  gold: { vi: "Du khách vàng", en: "Gold" },
-  platinum: { vi: "Du khách bạch kim", en: "Platinum" },
-};
-
-const TIER_ACCENTS: Record<MembershipTier, string> = {
-  traveler: "from-sky-500 to-blue-600",
-  silver: "from-slate-400 to-slate-600",
-  gold: "from-amber-400 to-amber-600",
-  platinum: "from-violet-500 to-purple-700",
-};
 
 /**
  * The whole membership ladder: every level, which ones are reached, and what
@@ -112,7 +99,7 @@ export function TierLadder({
               <span
                 className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${
                   reached
-                    ? `bg-gradient-to-br ${TIER_ACCENTS[rung.tier]} text-white`
+                    ? `bg-gradient-to-br ${tierAccent(rung.tier)} text-white`
                     : "bg-gray-100 text-gray-400"
                 }`}
               >
@@ -123,14 +110,15 @@ export function TierLadder({
                 )}
               </span>
 
-              <div className="min-w-0 flex-1">
+              {/* A basis, so on a phone the badges wrap below instead of squeezing the name to one word a line. */}
+              <div className="min-w-0 flex-1 basis-40">
                 <div className="flex flex-wrap items-center gap-2">
                   <span
                     className={`text-sm font-semibold ${
                       reached ? "text-gray-900" : "text-gray-500"
                     }`}
                   >
-                    {TIER_LABELS[rung.tier][lang]}
+                    {tierName(rung.tier, lang, tiers)}
                   </span>
                   {isCurrent && (
                     <span
