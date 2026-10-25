@@ -149,6 +149,8 @@ export interface Manufacturer {
    * hard-coded to appear under iPhone.
    */
   note?: string | null;
+  /** Each of the brand's notes, in order (vande #042); `note` joins them. */
+  notes?: string[] | null;
 }
 
 export interface DeviceType {
@@ -942,7 +944,8 @@ export async function getSupportedDevices(
 
     const res = await fetch(url, {
       headers,
-      next: { revalidate: 300 }, // cache for 5 minutes
+      // A minute: a note just saved in the CMS should show soon (vande #042).
+      next: { revalidate: 60 },
     });
 
     if (!res.ok) {

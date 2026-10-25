@@ -15,7 +15,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { useDebounce } from "@/lib/use-debounce";
-import { brandNote } from "@/lib/brand-note";
+import { brandNotes } from "@/lib/brand-note";
 
 interface TabDict {
   label: string;
@@ -532,21 +532,21 @@ export function DeviceList({ initialData, dict, lang }: DeviceListProps) {
                                                   kept as a fallback for iPhone so
                                                   the page reads the same before
                                                   anything is configured. */}
-                                              {brandNote(manufacturer, dict.infoNote) && (
-                                                  <div className="mt-3">
-                                                    <div
-                                                      data-testid="notification-neutral"
-                                                      className="flex items-center w-full p-4 rounded-sm border border-gray-200"
-                                                    >
-                                                      <Info className="w-4 h-4 text-primary shrink-0" />
-                                                      <div className="flex flex-col ml-2 text-primary">
-                                                        <span className="body-xs-medium">
-                                                          {brandNote(manufacturer, dict.infoNote)}
-                                                        </span>
-                                                      </div>
+                                              {/* Several notes, one box each,
+                                                  line breaks kept (vande #042). */}
+                                              {brandNotes(manufacturer, dict.infoNote).map((text, i) => (
+                                                <div key={i} className="mt-3">
+                                                  <div
+                                                    data-testid="notification-neutral"
+                                                    className="flex items-start w-full p-4 rounded-sm border border-gray-200"
+                                                  >
+                                                    <Info className="mt-0.5 w-4 h-4 text-primary shrink-0" />
+                                                    <div className="flex flex-col ml-2 text-primary">
+                                                      <span className="body-xs-medium whitespace-pre-line">{text}</span>
                                                     </div>
                                                   </div>
-                                                )}
+                                                </div>
+                                              ))}
                                             </div>
                                           </AccordionPrimitive.Content>
                                         </AccordionPrimitive.Item>

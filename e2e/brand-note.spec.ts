@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { brandNote } from "../lib/brand-note";
+import { brandNote, brandNotes } from "../lib/brand-note";
 
 /**
  * #079 — the extra note under a brand on the supported-devices page.
@@ -54,5 +54,20 @@ test.describe("brand note", () => {
   test("shows nothing when there is no fallback either", () => {
     expect(brandNote({ manufacturer: "iPhone" }, undefined)).toBeNull();
     expect(brandNote({ manufacturer: "iPhone" }, "  ")).toBeNull();
+  });
+});
+
+/** vande #042 — several notes per brand, one box each. */
+test.describe("brandNotes (vande #042)", () => {
+  test("lists every note in order", () => {
+    expect(
+      brandNotes({ manufacturer: "iPhone", notes: ["Một", " Hai "], note: "Một\n\nHai" }, FALLBACK),
+    ).toEqual(["Một", "Hai"]);
+  });
+
+  test("falls back to the single note, then to the iPhone locale string", () => {
+    expect(brandNotes({ manufacturer: "Samsung", note: "Lưu ý" }, FALLBACK)).toEqual(["Lưu ý"]);
+    expect(brandNotes({ manufacturer: "iPhone", notes: [] }, FALLBACK)).toEqual([FALLBACK]);
+    expect(brandNotes({ manufacturer: "Google" }, FALLBACK)).toEqual([]);
   });
 });

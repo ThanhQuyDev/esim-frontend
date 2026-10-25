@@ -27,3 +27,18 @@ export function brandNote(
 
   return null;
 }
+
+/**
+ * Every note of a brand, one box each (vande #042), like saily.com lists its
+ * iPhone caveats. Falls back to the single `note` (an older API) and then to
+ * the iPhone locale string, through {@link brandNote}.
+ */
+export function brandNotes(
+  manufacturer: Pick<Manufacturer, "manufacturer" | "note" | "notes">,
+  iphoneFallback?: string,
+): string[] {
+  const listed = (manufacturer.notes ?? []).map((n) => n.trim()).filter(Boolean);
+  if (listed.length) return listed;
+  const single = brandNote(manufacturer, iphoneFallback);
+  return single ? [single] : [];
+}
