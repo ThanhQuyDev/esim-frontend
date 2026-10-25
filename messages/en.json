@@ -1751,7 +1751,8 @@
       "label": "ICCID",
       "placeholder": "e.g. 8901234567890123456",
       "submit": "Check",
-      "hint": "The ICCID is 18–22 digits and is in the email we sent with your eSIM."
+      "hint": "The ICCID is 18–22 digits and is in the email we sent with your eSIM.",
+      "another": "Look up another eSIM"
     },
     "loading": "Loading eSIM data...",
     "errors": {

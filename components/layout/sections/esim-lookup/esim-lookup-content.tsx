@@ -125,13 +125,32 @@ export function EsimLookupContent({
       )}
 
       {token && !isLoading && !isError && data && (
-        <LookupResult
-          data={data}
-          dict={dict}
-          lang={lang}
-          onRefresh={() => void refetch()}
-          refreshing={isFetching}
-        />
+        <>
+          <LookupResult
+            data={data}
+            dict={dict}
+            lang={lang}
+            onRefresh={() => void refetch()}
+            refreshing={isFetching}
+          />
+          {/* Back to an empty form for the next ICCID — a group checks several
+              eSIMs one after another (vande #062). */}
+          <div className="mt-4 flex justify-center">
+            <button
+              type="button"
+              onClick={() => {
+                setIccid("");
+                setFormError(null);
+                router.replace("?", { scroll: true });
+              }}
+              className="inline-flex h-[46px] items-center gap-2 rounded-[30px] border border-[#111] bg-white px-6 text-base font-semibold text-[#111] transition-colors hover:bg-gray-50"
+              data-testid="lookup-another"
+            >
+              <Search className="h-4 w-4" />
+              {dict.form.another}
+            </button>
+          </div>
+        </>
       )}
     </div>
   );

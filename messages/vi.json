@@ -1751,7 +1751,8 @@
       "label": "Mã ICCID",
       "placeholder": "Ví dụ: 8901234567890123456",
       "submit": "Tra cứu",
-      "hint": "ICCID gồm 18–22 chữ số, nằm trong email chúng tôi gửi kèm eSIM."
+      "hint": "ICCID gồm 18–22 chữ số, nằm trong email chúng tôi gửi kèm eSIM.",
+      "another": "Tra cứu thêm eSIM"
     },
     "loading": "Đang tải dữ liệu eSIM...",
     "errors": {
