@@ -1084,6 +1084,29 @@ export interface BankTransferCheckoutResponse {
  * until SePay's webhook confirms the money arrived — poll with
  * {@link useOrderByNumber}.
  */
+/**
+ * Cancel one of the buyer's own orders while it still waits for payment
+ * (vande #061): gives back the eXu and the coupon it was holding at once,
+ * instead of after the 30-minute timeout.
+ */
+export function useCancelOrder() {
+  const { token } = useAuth();
+  return useMutation({
+    mutationFn: async (orderId: number | string) => {
+      const res = await authFetch(
+        `${API_BASE_URL}/api/v1/orders/${orderId}/cancel`,
+        token,
+        { method: "POST" }
+      );
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || `Cancel failed: ${res.status}`);
+      }
+      return res.json();
+    },
+  });
+}
+
 export function useBankTransferCheckout() {
   return useMutation({
     mutationFn: async (

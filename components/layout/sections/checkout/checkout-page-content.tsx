@@ -423,6 +423,12 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
           onPaid={(orderNumber) => {
             window.location.href = `${localizedHref(lang, "payment/result")}?orderNumber=${encodeURIComponent(orderNumber)}&method=bank_transfer`;
           }}
+          // Back to choosing how to pay, the cart untouched; or out of
+          // checkout altogether (vande #061).
+          onBack={() => setBankTransfer(null)}
+          onCancelled={() => {
+            window.location.href = localizedHref(lang, "cart");
+          }}
         />
       </div>
     );

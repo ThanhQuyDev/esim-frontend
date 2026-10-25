@@ -1,8 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { AlertCircle, Check, Copy, Loader2 } from "lucide-react";
-import { useOrderByNumber, formatVnd, type BankTransferCheckoutResponse } from "@/lib/hooks";
+import { AlertCircle, ArrowLeft, Check, Copy, Loader2, X } from "lucide-react";
+import {
+  useCancelOrder,
+  useOrderByNumber,
+  formatVnd,
+  type BankTransferCheckoutResponse,
+} from "@/lib/hooks";
 
 interface BankTransferPanelProps {
   /** Payment instructions returned by the bank-transfer checkout endpoint. */
@@ -10,6 +15,14 @@ interface BankTransferPanelProps {
   lang: "vi" | "en";
   /** Called once the order is confirmed paid (webhook processed). */
   onPaid?: (orderNumber: string) => void;
+  /**
+   * "Quay lại" / "Hủy giao dịch" (vande #061): shown only while the order
+   * waits for the money. Both cancel the pending order first, so the eXu and
+   * coupon it holds come back; then the page goes back to choosing a payment
+   * method, or leaves checkout.
+   */
+  onBack?: () => void;
+  onCancelled?: () => void;
 }
 
 const TEXT = {
@@ -33,6 +46,14 @@ const TEXT = {
     failedHint: "Vui lòng thử lại hoặc liên hệ CSKH kèm mã đơn",
     copied: "Đã sao chép",
     copy: "Sao chép",
+    back: "Quay lại",
+    cancel: "Hủy giao dịch",
+    cancelConfirm: "Hủy giao dịch này?",
+    cancelHint:
+      "Nếu bạn đã chuyển khoản, vui lòng KHÔNG hủy — hệ thống sẽ tự xác nhận trong vài giây.",
+    cancelYes: "Xác nhận hủy",
+    cancelNo: "Không hủy",
+    cancelling: "Đang hủy…",
   },
   en: {
     title: "Bank transfer",
@@ -54,6 +75,14 @@ const TEXT = {
     failedHint: "Please try again or contact support with order",
     copied: "Copied",
     copy: "Copy",
+    back: "Back",
+    cancel: "Cancel payment",
+    cancelConfirm: "Cancel this payment?",
+    cancelHint:
+      "If you have already transferred the money, please do NOT cancel — it is confirmed within seconds.",
+    cancelYes: "Yes, cancel",
+    cancelNo: "Keep it",
+    cancelling: "Cancelling…",
   },
 } as const;
 
@@ -112,8 +141,17 @@ function CopyRow({
  * Bank-transfer payment panel: shows the VietQR plus the exact transfer details
  * and polls the order until SePay's webhook marks it paid.
  */
-export function BankTransferPanel({ info, lang, onPaid }: BankTransferPanelProps) {
+export function BankTransferPanel({
+  info,
+  lang,
+  onPaid,
+  onBack,
+  onCancelled,
+}: BankTransferPanelProps) {
   const t = TEXT[lang];
+  const cancelOrder = useCancelOrder();
+  const [confirming, setConfirming] = useState<"back" | "cancel" | null>(null);
+  const [cancelError, setCancelError] = useState<string | null>(null);
   const orderNumber = info.orderNumber ?? info.orderId ?? "";
 
   const { data: order } = useOrderByNumber(orderNumber, !!orderNumber);
@@ -213,6 +251,75 @@ export function BankTransferPanel({ info, lang, onPaid }: BankTransferPanelProps
           </div>
         )}
       </div>
+
+      {/* Back / cancel while the money has not arrived (vande #061). */}
+      {!isPaid && !needsManualHandling && !hasFailed && (onBack || onCancelled) && (
+        <div className="mt-4 border-t border-[#f3f4f6] pt-4" data-testid="bank-transfer-actions">
+          {confirming ? (
+            <div
+              className="rounded-xl border border-[#FCA5A5] bg-[#FEF2F2] p-3.5"
+              data-testid="bank-transfer-confirm"
+            >
+              <p className="font-semibold text-[#991B1B]">{t.cancelConfirm}</p>
+              <p className="mt-1 text-[13px] text-[#7F1D1D]">{t.cancelHint}</p>
+              {cancelError && (
+                <p className="mt-2 text-[13px] text-[#B91C1C]">{cancelError}</p>
+              )}
+              <div className="mt-3 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  disabled={cancelOrder.isPending || !order?.id}
+                  onClick={() => {
+                    setCancelError(null);
+                    cancelOrder.mutate(order!.id, {
+                      onSuccess: () => (confirming === "back" ? onBack?.() : onCancelled?.()),
+                      onError: (e) => setCancelError(e.message),
+                    });
+                  }}
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-[#DC2626] px-4 py-2 text-[14px] font-semibold text-white hover:bg-[#B91C1C] disabled:opacity-60"
+                  data-testid="bank-transfer-confirm-yes"
+                >
+                  {cancelOrder.isPending && <Loader2 className="w-4 h-4 animate-spin" />}
+                  {cancelOrder.isPending ? t.cancelling : t.cancelYes}
+                </button>
+                <button
+                  type="button"
+                  disabled={cancelOrder.isPending}
+                  onClick={() => setConfirming(null)}
+                  className="rounded-lg border border-[#e5e7eb] bg-white px-4 py-2 text-[14px] font-medium text-[#374151] hover:bg-gray-50"
+                >
+                  {t.cancelNo}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-wrap justify-between gap-2">
+              {onBack && (
+                <button
+                  type="button"
+                  onClick={() => setConfirming("back")}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-[#e5e7eb] bg-white px-4 py-2 text-[14px] font-medium text-[#374151] hover:bg-gray-50"
+                  data-testid="bank-transfer-back"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  {t.back}
+                </button>
+              )}
+              {onCancelled && (
+                <button
+                  type="button"
+                  onClick={() => setConfirming("cancel")}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-[#FCA5A5] bg-white px-4 py-2 text-[14px] font-medium text-[#DC2626] hover:bg-[#FEF2F2]"
+                  data-testid="bank-transfer-cancel"
+                >
+                  <X className="w-4 h-4" />
+                  {t.cancel}
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
