@@ -322,7 +322,12 @@ export default async function UnifiedSlugPage({
           />
           <div className="max-w-[1168px] mx-auto px-4 sm:px-0">
             <LazyEsimComparison dict={dict.whatIsEsimPage.comparison} />
-            <LazyTestimonialsSection dict={dict.testimonials} />
+            {/* "Họ nói về chúng tôi" centred, as on the reference picture (vande #031). */}
+            <PartnerBar dict={dict.partnerBar} centered />
+          </div>
+          {/* Full width, so its grey background reaches both edges (vande #031). */}
+          <LazyTestimonialsSection dict={dict.testimonials} />
+          <div className="max-w-[1168px] mx-auto px-4 sm:px-0">
             <LazyDownloadAppSection dict={dict.downloadApp} />
             <LazyFAQSection
               dict={dict.faq}
@@ -509,7 +514,12 @@ export default async function UnifiedSlugPage({
           count={whyChooseUsCount("khu_vuc")}
         />
         <LazyEsimComparison dict={dict.whatIsEsimPage.comparison} />
-        <LazyTestimonialsSection dict={dict.testimonials} />
+        {/* "Họ nói về chúng tôi" centred, as on the reference picture (vande #031). */}
+        <PartnerBar dict={dict.partnerBar} centered />
+      </div>
+      {/* Full width, so its grey background reaches both edges (vande #031). */}
+      <LazyTestimonialsSection dict={dict.testimonials} />
+      <div className="max-w-[1168px] mx-auto px-4 sm:px-0">
         <LazyDownloadAppSection dict={dict.downloadApp} />
         <LazyFAQSection
           dict={dict.faq}
