@@ -38,6 +38,15 @@ const EMPTY_PLANS: PlansByDestinationResponse = {
   localEsim: [],
 };
 
+/**
+ * Durations a group of plans is sold as (vande #034). A group made only of
+ * per-day plans has none — any day is on offer, so the popular row is shown.
+ */
+function soldDays(matching: Plan[]): number[] {
+  if (matching.every((p) => p.isAbleMultidate)) return [];
+  return Array.from(new Set(matching.map((p) => p.durationDays))).sort((a, b) => a - b);
+}
+
 export function DestinationPlans({ destination, slug, dict, lang, planSource = "destination", initialPlans, initialRegion }: DestinationPlansProps) {
   // Day-pass prices follow the checkout formula once the tiers arrive (#014).
   useMultidayTiers();
@@ -136,30 +145,30 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
     return false;
   }, [selectedPlan, plans, activeCategory]);
 
-  // Available days for non-flexible plans
+  // Durations the selected group is sold as. A plan priced per day counts as
+  // its own duration (vande #034): the chips list what is really on sale.
   const availableDays = useMemo(() => {
     if (!selectedPlan) return [];
     if (activeCategory !== "data") return [];
-    if (selectedPlan.isAbleMultidate) return [];
     if (plans.dataPlans.some((p) => p.id === selectedPlan.id)) {
       const matching = plans.dataPlans.filter((p) => p.dataMb === selectedPlan.dataMb);
-      return Array.from(new Set(matching.map((p) => p.durationDays))).sort((a, b) => a - b);
+      return soldDays(matching);
     }
     if ((plans.localEsim ?? []).some((p) => p.id === selectedPlan.id)) {
       const matching = (plans.localEsim ?? []).filter((p) => p.dataMb === selectedPlan.dataMb);
-      return Array.from(new Set(matching.map((p) => p.durationDays))).sort((a, b) => a - b);
+      return soldDays(matching);
     }
     if (plans.dailyUnlimited.some((p) => p.id === selectedPlan.id)) {
       const matching = plans.dailyUnlimited.filter((p) => p.fupSpeed === selectedPlan.fupSpeed);
-      return Array.from(new Set(matching.map((p) => p.durationDays))).sort((a, b) => a - b);
+      return soldDays(matching);
     }
     if (plans.fastUnlimited.some((p) => p.id === selectedPlan.id)) {
       const matching = plans.fastUnlimited.filter((p) => p.dataMb === selectedPlan.dataMb && p.fupSpeed === selectedPlan.fupSpeed);
-      return Array.from(new Set(matching.map((p) => p.durationDays))).sort((a, b) => a - b);
+      return soldDays(matching);
     }
     if (plans.slowUnlimited.some((p) => p.id === selectedPlan.id)) {
       const matching = plans.slowUnlimited.filter((p) => p.dataMb === selectedPlan.dataMb && p.fupSpeed === selectedPlan.fupSpeed);
-      return Array.from(new Set(matching.map((p) => p.durationDays))).sort((a, b) => a - b);
+      return soldDays(matching);
     }
     return [];
   }, [selectedPlan, plans, activeCategory]);

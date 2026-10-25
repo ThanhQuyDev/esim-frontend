@@ -47,7 +47,10 @@ export function PlanConfig({
   // complete. Everything else pairs a trimmed chip row with the calendar.
   const canPickAnyDay = !isFixed;
   const dayOptions = isFlexibleDays
-    ? flexibleDayOptions(POPULAR_DAYS_DESKTOP)
+    ? // Durations really on sale, not every day 1-30 (vande #034).
+      availableDays.length > 0
+        ? trimToPopularDays(availableDays, POPULAR_DAYS_DESKTOP, days)
+        : flexibleDayOptions(POPULAR_DAYS_DESKTOP)
     : canPickAnyDay
       ? trimToPopularDays(availableDays, POPULAR_DAYS_DESKTOP, days)
       : availableDays;

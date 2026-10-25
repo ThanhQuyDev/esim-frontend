@@ -15,9 +15,11 @@ import { localizedSlug } from "@/lib/slug";
 import { Ic } from "../../local-esim/design/nd-icons";
 import { AccItem, Overlay, Tip, radioKeys } from "../../local-esim/design/nd-parts";
 import { vnd } from "../../local-esim/design/nd-state";
+import { POPULAR_DAYS_DESKTOP, POPULAR_DAYS_MOBILE } from "../../destination/day-options";
 import { SPRITE_FLAGS } from "./rg-icons";
 import {
   badgeFor,
+  chipDaysFor,
   gbLabel,
   joinVi,
   perDay,
@@ -1076,12 +1078,12 @@ export function PlanPanes({
 
 /* ───────────── step 3: days ───────────── */
 
-const DESK_DAYS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 20, 25, 30];
-const MOB_DAYS = [1, 3, 5, 7, 10, 12, 15, 20, 30];
-
-/** Days field mode: calendar for per-day plans, dropdown jump for fixed sizes. */
+/**
+ * Days field mode: the calendar when some duration is not on a chip (or the
+ * plan is priced per day), dropdown jump for fixed sizes.
+ */
 export function daysMode(p: RegionPurchase): "cal" | "go" | "" {
-  if (p.perDayKind) return p.allowed === "any" ? "cal" : "";
+  if (p.perDayKind) return p.opt && chipDaysFor(p.opt, POPULAR_DAYS_MOBILE).more ? "cal" : "";
   return p.tier ? "go" : "";
 }
 
@@ -1124,8 +1126,10 @@ export function DaysField({
 export function DayChips({ p, mobile, onCal }: { p: RegionPurchase; mobile?: boolean; onCal: () => void }) {
   const tx = useT();
   if (!p.perDayKind) return <div className="day-chips" id="dayChips" hidden />;
-  const base = mobile ? MOB_DAYS : DESK_DAYS;
-  const list = p.allowed === "any" ? base : (p.allowed ?? []);
+  // Durations really on sale, kept to the popular list (vande #034).
+  const { days: list, more } = p.opt
+    ? chipDaysFor(p.opt, mobile ? POPULAR_DAYS_MOBILE : POPULAR_DAYS_DESKTOP)
+    : { days: [], more: false };
   const exact = list.includes(p.days);
   return (
     <div className={`day-chips${mobile ? "" : " day-chips--row"}`} id="dayChips" role="group" aria-labelledby="daysLbl">
@@ -1134,7 +1138,7 @@ export function DayChips({ p, mobile, onCal }: { p: RegionPurchase; mobile?: boo
           {d}
         </button>
       ))}
-      {p.allowed === "any" && (
+      {more && (
         <button className="day-chip day-chip--cal" type="button" aria-pressed={!exact} aria-haspopup="dialog" onClick={onCal}>
           <Ic name="ic-calendar" w={14} />
           <span className="day-chip-t">{!exact ? tx("{0} ngày", p.days) : tx("Khác")}</span>

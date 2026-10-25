@@ -180,6 +180,25 @@ export function daysFor(opt: Opt): number[] | "any" {
   return Array.from(new Set(opt.plans.map((p) => p.durationDays))).sort((a, b) => a - b);
 }
 
+/**
+ * The day chips of a daily / unlimited option (vande #034): the durations its
+ * plans are really sold as, kept to the popular list. A plan priced per day
+ * (esimaccess) counts as its own duration only — offering every day from 1 to
+ * 30 because of it showed a "2 days" made of two 1-day packages, dearer than
+ * the 3-day package next to it. The whole popular row is shown only when every
+ * duration is really on offer: a supplier selling each one (Billion), or an
+ * option made only of per-day plans. `more` says some duration is not on a
+ * chip, so the calendar is offered for it.
+ */
+export function chipDaysFor(opt: Opt, popular: number[]): { days: number[]; more: boolean } {
+  // Every plan priced per day: any duration is a real offer, so the popular row.
+  if (opt.plans.every((p) => p.isAbleMultidate)) return { days: [...popular], more: true };
+  const sold = Array.from(new Set(opt.plans.map((p) => p.durationDays))).sort((a, b) => a - b);
+  const kept = sold.filter((d) => popular.includes(d));
+  const days = kept.length > 0 ? kept : sold;
+  return { days, more: daysFor(opt) === "any" || days.length < sold.length };
+}
+
 /** Price of one eSIM of `plan` for `days` days, and its pre-discount price. */
 export function priceOf(plan: Plan, days: number): { price: number; list: number } {
   const price = calcTotalVndPrice(plan, days);
