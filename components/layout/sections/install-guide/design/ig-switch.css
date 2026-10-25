@@ -29,3 +29,9 @@ html:has(.ig-page){scroll-padding-top:6.375rem}
    header's menus, but let an open modal or drawer cover the whole screen. */
 .ig-page{position:relative;z-index:0}
 .ig-page:has(.ov.open,.drawer.open){z-index:10000}
+
+/* The design's progress ring is called `.ring`, which is also Tailwind's
+   focus-ring utility: it drew a light blue ring around it (vande #036). */
+.igd .ring,.igm .ring{box-shadow:none}
+/* Flags are drawn as SVG now, not emoji (Windows shows "HK" for 🇭🇰). */
+.igd .dflag svg,.igm .dflag svg{display:block}

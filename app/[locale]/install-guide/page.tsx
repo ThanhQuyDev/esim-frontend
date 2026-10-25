@@ -1,4 +1,8 @@
 import { InstallGuide } from "@/components/layout/sections/install-guide";
+import { IG_DESKTOP_HTML } from "@/components/layout/sections/install-guide/design/ig-desktop-html";
+import { IG_MOBILE_HTML } from "@/components/layout/sections/install-guide/design/ig-mobile-html";
+import { IG_DESKTOP_HTML as IG_DESKTOP_HTML_EN } from "@/components/layout/sections/install-guide/design/ig-desktop-html.en";
+import { IG_MOBILE_HTML as IG_MOBILE_HTML_EN } from "@/components/layout/sections/install-guide/design/ig-mobile-html.en";
 import { FooterSection } from "@/components/layout/sections/footer";
 import { getCmsSeoUrlForPage } from "@/lib/cms-seo-url";
 import { getDictionary } from "@/lib/dictionaries";
@@ -30,7 +34,12 @@ export default async function InstallGuidePage() {
     // The design brings its own <main> (one per layout; the hidden one is out
     // of the accessibility tree), so the page wrapper is a plain div.
     <div>
-      <InstallGuide lang={locale} />
+      {/* Markup in the page's language (vande #036); only it reaches the client. */}
+      <InstallGuide
+        lang={locale}
+        desktopHtml={locale === "en" ? IG_DESKTOP_HTML_EN : IG_DESKTOP_HTML}
+        mobileHtml={locale === "en" ? IG_MOBILE_HTML_EN : IG_MOBILE_HTML}
+      />
       <FooterSection dict={dict.footer} lang={locale} />
     </div>
   );
