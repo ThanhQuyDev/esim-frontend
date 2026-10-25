@@ -30,8 +30,8 @@ import {
   planText,
   Flag,
 } from "./rg-parts";
+import { DEFAULT_DESTINATION_IMAGE } from "@/lib/destination-image";
 
-const HERO = "https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?auto=format&fit=crop&q=60";
 
 interface Props {
   p: RegionPurchase;
@@ -311,7 +311,9 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
               height={480}
               width={720}
               sizes="(max-width:56.25rem) 100vw, 29rem"
-              src={hero || `${HERO}&w=720&h=480`}
+              // No picture in the CMS yet: our own default, not a stock photo
+              // of Mount Fuji on every country's page (vande #074).
+              src={hero || DEFAULT_DESTINATION_IMAGE}
               onError={(e) => e.currentTarget.remove()}
             />
           </div>{" "}

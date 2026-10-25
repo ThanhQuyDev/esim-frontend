@@ -7,6 +7,7 @@ import { getCloudinaryTransformedUrl } from "@/lib/image-utils";
 import type { DestinationDict } from "../types";
 import { CountriesModal } from "../countries-modal";
 import { applySeoVars, type SeoTemplateVars } from "@/lib/seo-vars";
+import { DEFAULT_DESTINATION_IMAGE } from "@/lib/destination-image";
 
 interface MobileHeroProps {
   destination: Destination;
@@ -71,9 +72,15 @@ export function MobileHero({ destination, dict, lang, planSource = "destination"
               className="object-cover object-[center_30%]"
             />
           ) : (
-            <div
-              className="w-full h-full"
-              style={{ background: "linear-gradient(160deg,#E8824A,#FAC96A,#7BAFC0)" }}
+            // No photo of this destination yet: the default picture (vande #074).
+            <Image
+              src={DEFAULT_DESTINATION_IMAGE}
+              alt=""
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover"
+              data-testid="destination-default-image"
             />
           )}
           <div

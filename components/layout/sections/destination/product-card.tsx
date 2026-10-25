@@ -12,6 +12,7 @@ import { CountriesModal } from "./countries-modal";
 import { activationDeadlineText } from "@/lib/plan-activation";
 import { dailyResetText } from "@/lib/plan-daily-reset";
 import { refundRule } from "@/lib/plan-refund";
+import { DEFAULT_DESTINATION_IMAGE } from "@/lib/destination-image";
 
 interface ProductCardProps {
   destination: Destination;
@@ -155,17 +156,25 @@ export function ProductCard({
               className="w-full h-full object-cover object-[center_30%] block"
             />
           ) : (
-            <div
-              className="w-full h-full flex items-center justify-center"
-              style={{ background: "linear-gradient(160deg,#E8824A,#FAC96A,#7BAFC0)" }}
-            >
+            <div className="relative w-full h-full flex items-center justify-center">
+              {/* No photo of this destination yet: the default picture, with
+                  its flag on top so the page is still clearly about it (vande #074). */}
+              <Image
+                src={DEFAULT_DESTINATION_IMAGE}
+                alt=""
+                fill
+                sizes="(min-width: 841px) 465px, 100vw"
+                priority
+                className="object-cover"
+                data-testid="destination-default-image"
+              />
               {destination.flagUrl && (
                 <Image
                   src={destination.flagUrl}
                   alt={destination.name}
                   width={80}
                   height={80}
-                  className="w-20 h-20 rounded-lg shadow-lg object-cover"
+                  className="relative w-20 h-20 rounded-lg shadow-lg object-cover -translate-y-4"
                 />
               )}
             </div>

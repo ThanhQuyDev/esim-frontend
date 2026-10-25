@@ -31,8 +31,8 @@ import {
   planText,
   Flag,
 } from "./rg-parts";
+import { DEFAULT_DESTINATION_IMAGE } from "@/lib/destination-image";
 
-const HERO = "https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?auto=format&fit=crop";
 
 interface Props {
   p: RegionPurchase;
@@ -148,13 +148,6 @@ export function RgMobile({ p, label, lang, breadcrumb }: Props) {
         </div>{" "}
         <div className="m-hero" style={{ "--hero-bg": "linear-gradient(160deg,#E8824A,#FAC96A,#7BAFC0)" } as CSSProperties}>
           <picture>
-            {!hero && (
-              <source
-                media="(min-width:37.5rem)"
-                sizes="100vw"
-                srcSet={`${HERO}&q=60&w=1200&h=540 1200w, ${HERO}&q=60&w=1800&h=800 1800w`}
-              />
-            )}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               alt={tx("Phong cảnh {0}", label)}
@@ -163,7 +156,9 @@ export function RgMobile({ p, label, lang, breadcrumb }: Props) {
               height={336}
               width={480}
               sizes="100vw"
-              src={hero || `${HERO}&q=60&w=800&h=560`}
+              // No picture in the CMS yet: our own default, not a stock photo
+              // of Mount Fuji on every country's page (vande #074).
+              src={hero || DEFAULT_DESTINATION_IMAGE}
               onError={(e) => e.currentTarget.parentElement?.remove()}
             />
           </picture>{" "}
