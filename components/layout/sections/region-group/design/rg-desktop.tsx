@@ -207,8 +207,8 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
         <div className="pre-note" role="note">
           <Ic name="ic-info" w={16} />
           <span>
-            {p.country && p.noticeHtml ? (
-              // The note the admin wrote for this country (doitac-1410 #078) — one note, not two (vande #032).
+            {p.noticeHtml ? (
+              // The note the admin wrote for this country or region (doitac-1410 #078) — one note, not two (vande #032, #051).
               <span dangerouslySetInnerHTML={{ __html: p.noticeHtml }} />
             ) : p.country && p.china ? (
               <>

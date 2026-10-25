@@ -313,12 +313,14 @@ export default async function UnifiedSlugPage({
               (#067): the coverage step swaps the plans in place, so the URL
               stays `/esim-chau-a` (#004). The design draws its own breadcrumb
               and the page's h1. */}
-          {/* The admin's note on the region, at the top (doitac-1410 #078) */}
-          <EntityNotice html={firstEntityNoticeHtml(group.members, locale)} className="pt-4" />
+          {/* The admin's note on the region (doitac-1410 #078) goes in the
+              design's own note bar, under the breadcrumb and in place of its
+              sample copy (vande #051), as on the country pages. */}
           <RegionDesign
             members={await withCountryLists(group.members, locale)}
             label={group.label}
             lang={locale}
+            noticeHtml={firstEntityNoticeHtml(group.members, locale)}
           />
           <div className="max-w-[1168px] mx-auto px-4 sm:px-0">
             <LazyEsimComparison dict={dict.whatIsEsimPage.comparison} />
@@ -516,8 +518,9 @@ export default async function UnifiedSlugPage({
       {/* The final region design (#067). Same-named packs are the coverage
           step, switched in place (#004); the pack being viewed uses the full
           record fetched above rather than its list entry. */}
-      {/* The admin's note on the region, at the top (doitac-1410 #078) */}
-      <EntityNotice html={entityNoticeHtml(region, locale)} className="pt-4" />
+      {/* The admin's note on the region (doitac-1410 #078) goes in the
+          design's own note bar, under the breadcrumb and in place of its sample
+          copy (vande #051), as on the country pages. */}
       <RegionDesign
         members={
           variantGroup
@@ -527,6 +530,7 @@ export default async function UnifiedSlugPage({
         label={variantGroup?.label ?? localizedName}
         lang={locale}
         initialSlug={params.slug}
+        noticeHtml={entityNoticeHtml(region, locale)}
       />
       <div className="max-w-[1168px] mx-auto px-4 sm:px-0">
         <LazyHowItWorksSection dict={howItWorks} />
