@@ -19,6 +19,12 @@ interface CategoryEntry {
   id: string;
   en: LocaleEntry;
   vi: LocaleEntry;
+  /**
+   * Keys and labels the entry had before it was renamed (vande #077): old
+   * links and articles saved under them still resolve, and the page sends
+   * an old address on to the new one.
+   */
+  aliases?: string[];
 }
 
 // ---------- Categories (top-level) ----------
@@ -55,9 +61,11 @@ const PARENTS: CategoryEntry[] = [
     vi: { key: "cai_dat", label: "Cài đặt" },
   },
   {
+    // Renamed (vande #077): "Using esim.vn eSIM / Sử dụng eSIM esim.vn".
     id: "using_esim",
-    en: { key: "using_esim", label: "Using esim.vn eSIM" },
-    vi: { key: "su_dung_esim", label: "Sử dụng esim.vn" },
+    en: { key: "using_your_esim", label: "Using your eSIM" },
+    vi: { key: "su_dung_esim", label: "Sử dụng eSIM" },
+    aliases: ["using_esim", "Using esim.vn eSIM", "Sử dụng esim.vn", "Sử dụng eSIM esim.vn"],
   },
   {
     id: "device_compatibility",
@@ -80,14 +88,18 @@ const PARENTS: CategoryEntry[] = [
     vi: { key: "tim_cau_tra_loi", label: "Tìm câu trả lời" },
   },
   {
+    // Renamed (vande #077): "eSIM functions / Chức năng eSIM".
     id: "esim_functions",
-    en: { key: "esim_functions", label: "eSIM functions" },
-    vi: { key: "chuc_nang_esim", label: "Chức năng eSIM" },
+    en: { key: "esim_features", label: "eSIM features" },
+    vi: { key: "tinh_nang_esim", label: "Tính năng eSIM" },
+    aliases: ["esim_functions", "chuc_nang_esim", "eSIM functions", "Chức năng eSIM"],
   },
   {
+    // Renamed (vande #077): "Cơ bản về eSIM".
     id: "esim_basics",
     en: { key: "esim_basics", label: "eSIM basics" },
-    vi: { key: "co_ban_ve_esim", label: "Cơ bản về eSIM" },
+    vi: { key: "kien_thuc_co_ban_ve_esim", label: "Kiến thức cơ bản về eSIM" },
+    aliases: ["co_ban_ve_esim", "Cơ bản về eSIM"],
   },
   {
     id: "about_esimvn",
@@ -109,6 +121,10 @@ function buildIndexes(entries: CategoryEntry[]) {
 
     byLabel.set(entry.en.label.toLowerCase(), entry);
     byLabel.set(entry.vi.label.toLowerCase(), entry);
+    for (const alias of entry.aliases ?? []) {
+      byAnyKey.set(alias, entry);
+      byLabel.set(alias.toLowerCase(), entry);
+    }
   }
 
   return { byAnyKey, byLabel };
@@ -190,6 +206,17 @@ export function resolveCategoryKey(key: string | null | undefined): string {
 /** Resolve any variant of a parent (section) key to its canonical id. */
 export function resolveParentKey(key: string | null | undefined): string {
   return getEntry(PARENT_INDEX, key)?.id ?? (key ?? "");
+}
+
+/**
+ * The address a section should be reached at, when `slug` is an old one
+ * (vande #077) — null when it is already current or not a known section.
+ */
+export function currentParentSlug(slug: string, lang: string): string | null {
+  const entry = getEntry(PARENT_INDEX, slug);
+  if (!entry) return null;
+  const current = toUrlSlug(lang === "vi" ? entry.vi.key : entry.en.key);
+  return current === slug ? null : current;
 }
 
 /** Get the localized label for a category key (canonical / en / vi). */

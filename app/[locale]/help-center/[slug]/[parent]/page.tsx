@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { permanentRedirect } from "next/navigation";
 import { DetailContent } from "@/components/layout/sections/help-center/detail-content";
 import { FooterSection } from "@/components/layout/sections/footer";
 import { getDictionary } from "@/lib/dictionaries";
@@ -6,6 +7,7 @@ import { fetchHelpCenterArticles } from "@/lib/api";
 import { getSeoMetadata } from "@/lib/seo";
 import { getLocale } from "next-intl/server";
 import {
+  currentParentSlug,
   fromUrlSlug,
   resolveCategoryKey,
   resolveParentKey,
@@ -39,6 +41,16 @@ export default async function HelpCenterParentPage({
   const locale = (await getLocale()) as Locale;
   const slug = decodeURIComponent(params.slug);
   const parentSlug = decodeURIComponent(params.parent);
+
+  // A section renamed since (vande #077): its old address goes to the new one.
+  const renamed = currentParentSlug(parentSlug, locale);
+  if (renamed) {
+    permanentRedirect(
+      locale === "vi"
+        ? `/ho-tro/${slug}/${renamed}`
+        : `/en/help-center/${slug}/${renamed}`
+    );
+  }
 
   const category = resolveCategoryKey(fromUrlSlug(slug));
   const parent = resolveParentKey(fromUrlSlug(parentSlug));
