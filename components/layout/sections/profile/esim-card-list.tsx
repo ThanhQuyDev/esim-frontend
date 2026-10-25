@@ -21,7 +21,8 @@ import {
 } from "lucide-react";
 import type { EsimDataUsage, MyEsim } from "@/lib/hooks";
 import { useEsimDataUsage, useTopupPackages } from "@/lib/hooks";
-import { DataUsageBar, statusLabel, USAGE_STATUS_COLOR } from "./usage-bar";
+import { CurrentDayNote, DataUsageBar, statusLabel, USAGE_STATUS_COLOR } from "./usage-bar";
+import { esimDayCycle } from "@/lib/plan-daily-reset";
 import type { ProfileDict } from "./translations";
 import { QRCodeSVG } from "qrcode.react";
 import { TopupModal } from "./topup-modal";
@@ -211,28 +212,19 @@ export function DataUsageSection({ esimId, lang }: { esimId: number; lang: strin
   const remainingGb = remainingMb === null ? null : remainingMb / 1024;
 
   // Time left runs from the moment the eSIM first connected — the plan clock
-  // does not start at purchase (#062).
-  const activatedAt = usage.activatedAt ? new Date(usage.activatedAt) : null;
-  const expiresAt = usage.expiredAt ? new Date(usage.expiredAt) : null;
-  const isActivated = !!activatedAt || usage.status?.toUpperCase() === "ACTIVE";
-
-  const daysRemaining = expiresAt
-    ? Math.max(0, Math.ceil((expiresAt.getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
-    : null;
-
-  // Days already used, for a bar that reads like the data one.
-  const totalDays =
-    usage.durationDays ??
-    (activatedAt && expiresAt
-      ? Math.max(
-          1,
-          Math.round((expiresAt.getTime() - activatedAt.getTime()) / (1000 * 60 * 60 * 24))
-        )
-      : null);
-  const daysUsed =
-    totalDays !== null && daysRemaining !== null
-      ? Math.min(totalDays, Math.max(0, totalDays - daysRemaining))
-      : null;
+  // does not start at purchase (#062) — and its days are counted the way the
+  // plan counts them: 24 hours, or the supplier's calendar day (vande #075).
+  const isActivated = !!usage.activatedAt || usage.status?.toUpperCase() === "ACTIVE";
+  const cycle = esimDayCycle({
+    activatedAt: usage.activatedAt,
+    expiredAt: usage.expiredAt,
+    durationDays: usage.durationDays,
+    policy: usage.dailyResetPolicy,
+    utcOffset: usage.dailyResetUtcOffset,
+  });
+  const totalDays = cycle?.totalDays ?? null;
+  const daysUsed = cycle?.daysUsed ?? null;
+  const daysRemaining = cycle?.daysRemaining ?? null;
 
   const statusColor = USAGE_STATUS_COLOR;
 
@@ -285,6 +277,15 @@ export function DataUsageSection({ esimId, lang }: { esimId: number; lang: strin
             lang={lang}
             integer
           />
+          <div className="mt-2">
+            <CurrentDayNote
+              cycle={cycle}
+              policy={usage.dailyResetPolicy}
+              utcOffset={usage.dailyResetUtcOffset}
+              planType={usage.planType}
+              lang={lang}
+            />
+          </div>
         </div>
       ) : isActivated ? (
         // In use, but no expiry reported yet — "not activated" would contradict

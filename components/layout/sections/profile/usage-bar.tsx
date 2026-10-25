@@ -1,6 +1,7 @@
 "use client";
 
-import { Infinity } from "lucide-react";
+import { Clock, Infinity } from "lucide-react";
+import { dayRuleText, hasDailyAllowance, type DayCycle } from "@/lib/plan-daily-reset";
 
 /**
  * Data / time bar shared by the signed-in profile card and the public lookup
@@ -90,3 +91,69 @@ export const USAGE_STATUS_COLOR: Record<string, string> = {
   NOT_ACTIVE: "bg-gray-100 text-gray-500",
   REFUNDED: "bg-red-100 text-red-700",
 };
+
+/** "5 giờ 12 phút", "12 phút". */
+function spanText(ms: number, vi: boolean): string {
+  const minutes = Math.max(1, Math.round(ms / 60_000));
+  const hours = Math.floor(minutes / 60);
+  const rest = minutes % 60;
+  if (vi) return hours > 0 ? `${hours} giờ${rest ? ` ${rest} phút` : ""}` : `${rest} phút`;
+  return hours > 0 ? `${hours} h${rest ? ` ${rest} min` : ""}` : `${rest} min`;
+}
+
+/**
+ * Which day the eSIM is on and when it ends (vande #075), in the customer's
+ * own clock — the reset of a daily allowance is what they keep asking about,
+ * and "used 1 of 7 days" an hour after connecting read like a day was lost.
+ */
+export function CurrentDayNote({
+  cycle,
+  policy,
+  utcOffset,
+  planType,
+  lang,
+}: {
+  cycle: DayCycle | null;
+  policy: string | null | undefined;
+  utcOffset: number | null | undefined;
+  planType: string | null | undefined;
+  lang: string;
+}) {
+  if (!cycle || cycle.finished || !cycle.ruleKnown || !cycle.dayEndsAt) return null;
+  const vi = lang !== "en";
+  const daily = hasDailyAllowance(planType ? { type: planType } : null);
+  const end = cycle.dayEndsAt;
+  const pad = (n: number) => String(n).padStart(2, "0");
+  // "03:16 26/10" in the device's own time.
+  const at = `${pad(end.getHours())}:${pad(end.getMinutes())} ${pad(end.getDate())}/${pad(end.getMonth() + 1)}`;
+  const left = spanText(end.getTime() - Date.now(), vi);
+  const rule = dayRuleText(policy, utcOffset, lang);
+  const lastDay = cycle.dayIndex >= cycle.totalDays;
+  return (
+    <div
+      className="rounded-lg border border-sky-100 bg-sky-50 px-3 py-2.5 text-sm text-sky-900 space-y-1"
+      data-testid="current-day"
+    >
+      <p className="flex items-start gap-1.5 font-medium">
+        <Clock className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+        <span>
+          {vi
+            ? `Đang dùng ngày thứ ${cycle.dayIndex}/${cycle.totalDays}.`
+            : `On day ${cycle.dayIndex} of ${cycle.totalDays}.`}{" "}
+          {lastDay
+            ? vi
+              ? `Gói hết hạn lúc ${at} (giờ trên máy bạn) — còn ${left}.`
+              : `The plan ends at ${at} (your device time) — ${left} left.`
+            : daily
+              ? vi
+                ? `Data trong ngày được làm mới lúc ${at} (giờ trên máy bạn) — còn ${left}.`
+                : `Today's data resets at ${at} (your device time) — in ${left}.`
+              : vi
+                ? `Ngày này kết thúc lúc ${at} (giờ trên máy bạn) — còn ${left}.`
+                : `This day ends at ${at} (your device time) — in ${left}.`}
+        </span>
+      </p>
+      {rule && <p className="text-xs text-sky-800/80">{rule}</p>}
+    </div>
+  );
+}

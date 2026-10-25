@@ -241,3 +241,85 @@ test.describe("A provider that reports no package size", () => {
     await expect(page.getByText("2.5 GB còn lại")).toBeVisible();
   });
 });
+
+/**
+ * Vande #075 — the days are counted the way the plan counts them: 24 hours
+ * from the first connection, or the supplier's calendar day in its own
+ * timezone. An hour into an eSIM is still day one, and the customer is told
+ * when the current day — and a daily allowance — ends, in their own clock.
+ */
+test.describe("Days counted by the plan's own rule (vande #075)", () => {
+  function hoursFromNow(hours: number): string {
+    return new Date(Date.now() + hours * 3_600_000).toISOString();
+  }
+
+  test("a 24-hour plan an hour in is on day one with nothing used", async ({ page }) => {
+    await mockUsage(
+      page,
+      usage({
+        activatedAt: hoursFromNow(-1),
+        durationDays: 7,
+        expiredAt: null,
+        dailyResetPolicy: "rolling_24h",
+        planType: "daily",
+      }),
+    );
+    await open(page);
+
+    const bar = page.getByTestId("time-bar");
+    await expect(bar).toContainText("7 ngày còn lại");
+    await expect(bar).toContainText("Đã dùng 0 ngày");
+    const note = page.getByTestId("current-day");
+    await expect(note).toContainText("Đang dùng ngày thứ 1/7");
+    await expect(note).toContainText("Data trong ngày được làm mới lúc");
+    // 23 hours left of a 24-hour day.
+    await expect(note).toContainText(/còn 2[23] giờ/);
+    await expect(note).toContainText("chu kỳ 24 giờ");
+  });
+
+  test("a calendar-day plan names its timezone and the day it is on", async ({ page }) => {
+    await mockUsage(
+      page,
+      usage({
+        activatedAt: hoursFromNow(-30),
+        durationDays: 5,
+        expiredAt: null,
+        dailyResetPolicy: "calendar_day",
+        dailyResetUtcOffset: 8,
+        planType: "daily",
+      }),
+    );
+    await open(page);
+
+    const note = page.getByTestId("current-day");
+    // 30 hours after connecting is day two or three, never "a day left over".
+    await expect(note).toContainText(/Đang dùng ngày thứ [23]\/5/);
+    await expect(note).toContainText("23:59 (UTC+8)");
+  });
+
+  test("a total-data plan says when the day ends, not that data resets", async ({ page }) => {
+    await mockUsage(
+      page,
+      usage({
+        activatedAt: hoursFromNow(-2),
+        durationDays: 10,
+        expiredAt: null,
+        dailyResetPolicy: "rolling_24h",
+        planType: "fixed",
+      }),
+    );
+    await open(page);
+
+    const note = page.getByTestId("current-day");
+    await expect(note).toContainText("Ngày này kết thúc lúc");
+    await expect(note).not.toContainText("làm mới");
+  });
+
+  test("a plan whose rule is unknown keeps the old count and adds no note", async ({ page }) => {
+    await mockUsage(page, usage({ expiredAt: daysFromNow(20) }));
+    await open(page);
+
+    await expect(page.getByTestId("time-bar")).toContainText("20 ngày còn lại");
+    await expect(page.getByTestId("current-day")).toHaveCount(0);
+  });
+});

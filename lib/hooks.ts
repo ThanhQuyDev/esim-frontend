@@ -1585,6 +1585,14 @@ export interface EsimDataUsage {
   activatedAt?: string | null;
   /** Plan length in days, for the time bar. */
   durationDays?: number | null;
+  /**
+   * How the plan's days are counted (vande #075): 24 hours from the first
+   * connection, or the supplier's calendar day in `dailyResetUtcOffset`.
+   */
+  dailyResetPolicy?: "rolling_24h" | "calendar_day" | null;
+  dailyResetUtcOffset?: number | null;
+  /** "fixed" / "daily"…: whether there is a daily allowance that resets. */
+  planType?: string | null;
   /** Minutes / SMS the provider reports, where it does (#025, round 4). */
   voiceTotal?: number | null;
   voiceRemaining?: number | null;
@@ -1632,6 +1640,14 @@ export interface EsimLookupResult {
   usedMb: number;
   remainingMb: number | null;
   durationDays: number | null;
+  /**
+   * How the plan's days are counted (vande #075): 24 hours from the first
+   * connection, or the supplier's calendar day in `dailyResetUtcOffset`.
+   */
+  dailyResetPolicy?: "rolling_24h" | "calendar_day" | null;
+  dailyResetUtcOffset?: number | null;
+  /** "fixed" / "daily"…: whether there is a daily allowance that resets. */
+  planType?: string | null;
   activatedAt: string | null;
   expiredAt: string | null;
   lastUpdateTime: string | null;

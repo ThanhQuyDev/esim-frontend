@@ -5,7 +5,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Calendar, Loader2, MessageSquare, PhoneCall, RefreshCw, Search, Wifi } from "lucide-react";
 import { fetchEsimLookupToken, useEsimLookup } from "@/lib/hooks";
 import type { EsimLookupResult } from "@/lib/hooks";
+import { esimDayCycle } from "@/lib/plan-daily-reset";
 import {
+  CurrentDayNote,
   DataUsageBar,
   statusLabel,
   USAGE_STATUS_COLOR,
@@ -179,25 +181,18 @@ function LookupResult({
     (data.totalMb > 0 ? Math.max(0, data.totalMb - data.usedMb) : null);
   const remainingGb = remainingMb === null ? null : remainingMb / 1024;
 
-  const activatedAt = data.activatedAt ? new Date(data.activatedAt) : null;
-  const expiresAt = data.expiredAt ? new Date(data.expiredAt) : null;
-  const isActivated = !!activatedAt || data.status?.toUpperCase() === "ACTIVE";
-
-  const daysRemaining = expiresAt
-    ? Math.max(0, Math.ceil((expiresAt.getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
-    : null;
-  const totalDays =
-    data.durationDays ??
-    (activatedAt && expiresAt
-      ? Math.max(
-          1,
-          Math.round((expiresAt.getTime() - activatedAt.getTime()) / (1000 * 60 * 60 * 24)),
-        )
-      : null);
-  const daysUsed =
-    totalDays !== null && daysRemaining !== null
-      ? Math.min(totalDays, Math.max(0, totalDays - daysRemaining))
-      : null;
+  const isActivated = !!data.activatedAt || data.status?.toUpperCase() === "ACTIVE";
+  // Days counted the way the plan counts them (vande #075).
+  const cycle = esimDayCycle({
+    activatedAt: data.activatedAt,
+    expiredAt: data.expiredAt,
+    durationDays: data.durationDays,
+    policy: data.dailyResetPolicy,
+    utcOffset: data.dailyResetUtcOffset,
+  });
+  const totalDays = cycle?.totalDays ?? null;
+  const daysUsed = cycle?.daysUsed ?? null;
+  const daysRemaining = cycle?.daysRemaining ?? null;
 
   return (
     <div
@@ -273,15 +268,26 @@ function LookupResult({
           )}
 
           {isActivated && totalDays !== null && daysUsed !== null ? (
-            <DataUsageBar
-              label={dict.result.period}
-              used={daysUsed}
-              total={totalDays}
-              unit={dict.result.daysUnit}
-              isUnlimited={false}
-              lang={lang}
-              integer
-            />
+            <div>
+              <DataUsageBar
+                label={dict.result.period}
+                used={daysUsed}
+                total={totalDays}
+                unit={dict.result.daysUnit}
+                isUnlimited={false}
+                lang={lang}
+                integer
+              />
+              <div className="mt-2">
+                <CurrentDayNote
+                  cycle={cycle}
+                  policy={data.dailyResetPolicy}
+                  utcOffset={data.dailyResetUtcOffset}
+                  planType={data.planType}
+                  lang={lang}
+                />
+              </div>
+            </div>
           ) : isActivated ? (
             <p className="text-sm text-gray-500">{dict.result.expiryUnknown}</p>
           ) : (
