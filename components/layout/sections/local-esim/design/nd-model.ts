@@ -1,3 +1,4 @@
+import { tr } from "./design-i18n-core";
 import type { DomesticOffer, Plan } from "@/lib/api";
 import { isPlanSoldOut } from "@/lib/plan-stock";
 import type { CarrierMeta } from "../carrier-meta";
@@ -36,7 +37,7 @@ export interface OfferGroup {
   unlimited: boolean;
 }
 
-const VI_MONTH = (m: number) => `${m} tháng`;
+const VI_MONTH = (m: number, lang: string) => tr(lang, "{0} tháng", m);
 
 export function offerOf(plan: Plan): DomesticOffer | null {
   return plan.domesticOffer ?? null;
@@ -68,7 +69,9 @@ export function sizeLabel(mb: number): string {
   return `${Math.round(mb)} MB`;
 }
 
-export function perLabel(plan: Plan): string {
+export function perLabel(plan: Plan, lang: string): string {
+  // The unit after a slash, "7 GB/ngày" → "7 GB/day" (vande #029).
+  if (lang !== "vi") return period(plan) === "daily" ? "day" : "month";
   return period(plan) === "daily" ? "ngày" : "tháng";
 }
 
@@ -79,32 +82,32 @@ function firstDataMb(plan: Plan): number | null {
 }
 
 /** The card's headline: "7 GB/ngày", "10 GB/tháng" or "Data không giới hạn". */
-export function dataTitle(plan: Plan): string {
-  if (isUnlimitedPlan(plan)) return "Data không giới hạn";
+export function dataTitle(plan: Plan, lang: string): string {
+  if (isUnlimitedPlan(plan)) return tr(lang, "Data không giới hạn");
   const mb = firstDataMb(plan);
-  return mb ? `${sizeLabel(mb)}/${perLabel(plan)}` : "Data không giới hạn";
+  return mb ? `${sizeLabel(mb)}/${perLabel(plan, lang)}` : tr(lang, "Data không giới hạn");
 }
 
 /** Calls, SMS and social-data lines under the headline. */
-export function cardLines(plan: Plan): CardLine[] {
+export function cardLines(plan: Plan, lang: string): CardLine[] {
   const o = offerOf(plan);
   if (!o) return [];
   const lines: CardLine[] = [];
-  if (o.offNetMinutes > 0) lines.push({ icon: "ic-phone", text: `${o.offNetMinutes} phút ngoại mạng` });
-  if (o.onNetMinutes > 0) lines.push({ icon: "ic-phone", text: `${o.onNetMinutes} phút nội mạng` });
+  if (o.offNetMinutes > 0) lines.push({ icon: "ic-phone", text: tr(lang, "{0} phút ngoại mạng", o.offNetMinutes) });
+  if (o.onNetMinutes > 0) lines.push({ icon: "ic-phone", text: tr(lang, "{0} phút nội mạng", o.onNetMinutes) });
   if (o.domesticMinutes > 0)
     lines.push({
       icon: "ic-phone",
-      text: `${o.domesticMinutes} phút trong nước`,
-      tip: `${o.domesticMinutes} phút gọi áp dụng cho tất cả cuộc gọi nội mạng và ngoại mạng.`,
+      text: tr(lang, "{0} phút trong nước", o.domesticMinutes),
+      tip: tr(lang, "{0} phút gọi áp dụng cho tất cả cuộc gọi nội mạng và ngoại mạng.", o.domesticMinutes),
     });
-  if (o.offNetSms > 0) lines.push({ icon: "ic-phone", text: `${o.offNetSms} SMS ngoại mạng` });
-  if (o.onNetSms > 0) lines.push({ icon: "ic-phone", text: `${o.onNetSms} SMS nội mạng` });
+  if (o.offNetSms > 0) lines.push({ icon: "ic-phone", text: tr(lang, "{0} SMS ngoại mạng", o.offNetSms) });
+  if (o.onNetSms > 0) lines.push({ icon: "ic-phone", text: tr(lang, "{0} SMS nội mạng", o.onNetSms) });
   if (o.zeroRatedSocial)
     lines.push({
       icon: "ic-social",
-      text: "Miễn phí data mạng xã hội",
-      tip: "Miễn phí truy cập YouTube, Facebook, TikTok.",
+      text: tr(lang, "Miễn phí data mạng xã hội"),
+      tip: tr(lang, "Miễn phí truy cập YouTube, Facebook, TikTok."),
     });
   return lines;
 }
@@ -114,13 +117,13 @@ export function cardLines(plan: Plan): CardLine[] {
  * allowance of an "unlimited-reduce" plan, otherwise that the first cycle's
  * fee is included in the eSIM price.
  */
-export function cardNote(plan: Plan): CardNote {
+export function cardNote(plan: Plan, lang: string): CardNote {
   const o = offerOf(plan);
   const months = cycleMonths(plan);
   if (o && o.recurringDataMb !== o.firstCycleDataMb && o.recurringDataMb) {
     return {
       icon: "ic-calendar",
-      text: `Từ tháng thứ ${months + 1}: ${sizeLabel(o.recurringDataMb)}/${perLabel(plan)}`,
+      text: tr(lang, "Từ tháng thứ {0}: {1}/{2}", months + 1, sizeLabel(o.recurringDataMb), perLabel(plan, lang)),
     };
   }
   const bundle = (o?.bundleType ?? plan.type ?? "").toLowerCase();
@@ -128,10 +131,10 @@ export function cardNote(plan: Plan): CardNote {
   if (bundle === "unlimited-reduce" && first) {
     return {
       icon: "ic-bolt",
-      text: `Tốc độ cao ${sizeLabel(first)}/${perLabel(plan)}, hết data chuyển tốc độ thường`,
+      text: tr(lang, "Tốc độ cao {0}/{1}, hết data chuyển tốc độ thường", sizeLabel(first), perLabel(plan, lang)),
     };
   }
-  return { icon: "ic-gift", text: `Miễn phí gói ${VI_MONTH(months)} đầu`, isCycle: true };
+  return { icon: "ic-gift", text: tr(lang, "Miễn phí gói {0} đầu", VI_MONTH(months, lang)), isCycle: true };
 }
 
 export function totalMinutes(plan: Plan): number {
@@ -140,32 +143,32 @@ export function totalMinutes(plan: Plan): number {
 }
 
 /** "7 GB/ngày + 330 phút gọi" — the summary line by the buy buttons. */
-export function summary(plan: Plan): string {
+export function summary(plan: Plan, lang: string): string {
   const minutes = totalMinutes(plan);
-  return minutes > 0 ? `${dataTitle(plan)} + ${minutes} phút gọi` : dataTitle(plan);
+  return minutes > 0 ? tr(lang, "{0} + {1} phút gọi", dataTitle(plan, lang), minutes) : dataTitle(plan, lang);
 }
 
 /** "WIN119P — 7 GB/ngày" */
-export function planLabel(plan: Plan): string {
-  return `${plan.providerPlanId} — ${dataTitle(plan)}`;
+export function planLabel(plan: Plan, lang: string): string {
+  return `${plan.providerPlanId} — ${dataTitle(plan, lang)}`;
 }
 
 /** Hotspot allowance: "7 GB/ngày"; "Không giới hạn" for an unlimited one. */
-export function hotspotLabel(plan: Plan): string | null {
+export function hotspotLabel(plan: Plan, lang: string): string | null {
   if (!plan.hotSpot && !plan.hotSpotAllow) return null;
   const raw = (plan.hotSpotAllow ?? "").trim();
-  if (!raw) return "Có";
-  if (/unlimited|không giới hạn/i.test(raw)) return "Không giới hạn";
+  if (!raw) return tr(lang, "Có");
+  if (/unlimited|không giới hạn/i.test(raw)) return tr(lang, "Không giới hạn");
   const m = raw.match(/([\d.,]+)\s*(gb|mb)?/i);
   if (!m) return raw;
   const unit = (m[2] ?? "GB").toUpperCase();
-  return `${m[1]} ${unit}/${perLabel(plan)}`;
+  return `${m[1]} ${unit}/${perLabel(plan, lang)}`;
 }
 
 /** "Wintel 4G/5G – Hạ tầng VinaPhone" / "VNSKY 5G – Hạ tầng MobiFone". */
-export function networkLabel(meta: CarrierMeta, plan: Plan | null): string {
+export function networkLabel(meta: CarrierMeta, plan: Plan | null, lang: string): string {
   const tech = plan && techOf(plan) === "5G" && !(plan.speed ?? "").includes("4G") ? "5G" : "4G/5G";
-  return meta.network ? `${meta.label} ${tech} – Hạ tầng ${meta.network}` : `${meta.label} ${tech}`;
+  return meta.network ? tr(lang, "{0} {1} – Hạ tầng {2}", meta.label, tech, meta.network) : `${meta.label} ${tech}`;
 }
 
 export function techOf(plan: Plan): "4G" | "5G" {
@@ -173,10 +176,13 @@ export function techOf(plan: Plan): "4G" | "5G" {
 }
 
 /** "Đầu số 055" — from the plan, else the carrier's known prefix. */
-export function phonePrefixLabel(meta: CarrierMeta, plan: Plan | null): string | null {
+export function phonePrefixLabel(meta: CarrierMeta, plan: Plan | null, lang: string): string | null {
   const fromPlan = plan ? offerOf(plan)?.supportPhone : null;
+  // The import's "Đầu số 095" reads in the page language too (vande #029).
+  const prefix = fromPlan?.match(/^\s*đầu số\s*(.+)$/i);
+  if (prefix) return tr(lang, "Đầu số {0}", prefix[1].trim());
   if (fromPlan) return fromPlan;
-  return meta.phonePrefix ? `Đầu số ${meta.phonePrefix}` : null;
+  return meta.phonePrefix ? tr(lang, "Đầu số {0}", meta.phonePrefix) : null;
 }
 
 /** Marketing tag → the design's badge class and label. */
@@ -210,22 +216,22 @@ export function listVnd(plan: Plan): number {
 }
 
 /** Renewal fee per cycle: "119.000₫/1 tháng". */
-export function renewalLabel(plan: Plan, fmt: (n: number) => string): string | null {
+export function renewalLabel(plan: Plan, fmt: (n: number) => string, lang: string): string | null {
   const o = offerOf(plan);
   if (!o?.cycleFeeVnd) return null;
-  return `${fmt(o.cycleFeeVnd)}/${VI_MONTH(o.cycleMonths)}`;
+  return `${fmt(o.cycleFeeVnd)}/${VI_MONTH(o.cycleMonths, lang)}`;
 }
 
 /** "Cước 119k / 1 tháng" (mobile card). */
-export function renewalShort(plan: Plan): string | null {
+export function renewalShort(plan: Plan, lang: string): string | null {
   const o = offerOf(plan);
   if (!o?.cycleFeeVnd) return null;
   const k = o.cycleFeeVnd / 1000;
-  return `Cước ${Number.isInteger(k) ? k : k.toFixed(1)}k / ${VI_MONTH(o.cycleMonths)}`;
+  return tr(lang, "Cước {0}k / {1}", Number.isInteger(k) ? k : k.toFixed(1), VI_MONTH(o.cycleMonths, lang));
 }
 
-export function monthLabel(m: number): string {
-  return VI_MONTH(m);
+export function monthLabel(m: number, lang: string): string {
+  return VI_MONTH(m, lang);
 }
 
 /** What makes two plans the same offer, apart from how many months they run. */

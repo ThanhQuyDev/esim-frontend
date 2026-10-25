@@ -1,5 +1,9 @@
 "use client";
 
+
+
+import { tr } from "../../local-esim/design/design-i18n-core";
+import { useT } from "../../local-esim/design/design-i18n";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { Destination, Plan } from "@/lib/api";
 import { worksWithTiktokAndChatGpt } from "@/lib/plan-tiktok";
@@ -27,49 +31,55 @@ import { countOf, type RegionPurchase } from "./rg-state";
 
 /* ───────────── small pieces ───────────── */
 
-/** A country flag: the design's own drawing when it has one, else the image. */
+/**
+ * A country flag: the one set for the destination in the CMS, else the
+ * design's own drawing (vande #029 — the drawing used to win, so a flag
+ * changed in the CMS never showed).
+ */
 export function Flag({ code, url, w, h, cls = "flag" }: { code: string; url?: string; w: number; h: number; cls?: string }) {
   const c = code.toLowerCase();
-  if (SPRITE_FLAGS.has(c)) return <Ic name={`fl-${c}`} w={w} h={h} cls={cls} />;
+  if (!url && SPRITE_FLAGS.has(c)) return <Ic name={`fl-${c}`} w={w} h={h} cls={cls} />;
   if (!url) return <span className={cls} style={{ display: "inline-block", width: w, height: h }} aria-hidden="true" />;
   // eslint-disable-next-line @next/next/no-img-element
   return <img className={`${cls} rg-flag-img`} src={url} alt="" width={w} height={h} loading="lazy" decoding="async" />;
 }
 
 export function Pbi({ b }: { b: Badge | null }) {
-  return b ? <span className={`pbi ${b.cls}`}>{b.label}</span> : null;
+  const tx = useT();
+  return b ? <span className={`pbi ${b.cls}`}>{tx(b.label)}</span> : null;
 }
 
 const count = (p: RegionPurchase, i: number) => countOf(p.members[i]);
 
 /** "18 nước · 1 GB – 7 ngày" and friends (design's `y`). */
-export function planText(p: RegionPurchase): string {
+export function planText(p: RegionPurchase, lang: string): string {
   if (!p.plan) return "";
-  if (p.need && p.tier) return `${p.tier.gb} – chưa chọn số ngày`;
-  return `${optLabel(p)}${p.perDayKind ? ` · ${p.days} ngày` : ""}`;
+  if (p.need && p.tier) return tr(lang, "{0} – chưa chọn số ngày", p.tier.gb);
+  return `${optLabel(p, lang)}${p.perDayKind ? tr(lang, " · {0} ngày", p.days) : ""}`;
 }
 
 /** The chip's own label (design's `data-label`). */
-export function optLabel(p: RegionPurchase): string {
-  if (p.tier && p.plan) return `${p.tier.gb} – ${p.plan.durationDays} ngày`;
+export function optLabel(p: RegionPurchase, lang: string): string {
+  if (p.tier && p.plan) return tr(lang, "{0} – {1} ngày", p.tier.gb, p.plan.durationDays);
   const o = p.opt;
   if (!o || !p.plan) return "";
-  if (o.kind === "combo") return comboLabel(p.plan);
-  if (o.kind === "daily") return `${o.gb}/ngày`;
-  if (o.gb) return `${o.gb}/ngày · sau đó ${o.throttle}`;
-  return o.throttle ? `Không giới hạn · ${o.throttle}` : "Không giới hạn · tốc độ cao nhất";
+  if (o.kind === "combo") return comboLabel(p.plan, lang);
+  if (o.kind === "daily") return tr(lang, "{0}/ngày", o.gb);
+  if (o.gb) return tr(lang, "{0}/ngày · sau đó {1}", o.gb, o.throttle);
+  return o.throttle ? tr(lang, "Không giới hạn · {0}", o.throttle) : tr(lang, "Không giới hạn · tốc độ cao nhất");
 }
 
-function comboLabel(plan: Plan): string {
+function comboLabel(plan: Plan, lang: string): string {
   const parts = [gbLabel(Number(plan.dataMb))];
-  if (plan.call) parts.push(`${plan.call} phút`);
+  if (plan.call) parts.push(tr(lang, "{0} phút", plan.call));
   if (plan.sms) parts.push(`${plan.sms} SMS`);
-  return `${parts.filter(Boolean).join(" + ")} – ${plan.durationDays} ngày`;
+  return tr(lang, "{0} – {1} ngày", parts.filter(Boolean).join(" + "), plan.durationDays);
 }
 
 /* ───────────── step 1: coverage variants ───────────── */
 
 export function Variants({ p }: { p: RegionPurchase }) {
+  const tx = useT();
   const ref = useRef<HTMLDivElement>(null);
   const [edge, setEdge] = useState({ l: false, r: false });
   const fit = p.fit;
@@ -133,8 +143,8 @@ export function Variants({ p }: { p: RegionPurchase }) {
             data-fit={fit === i ? "" : undefined}
             onClick={() => p.setActive(i)}
           >
-            <span className="rng-n">{count(p, i)} nước</span>
-            {price > 0 && <span className="rng-p">từ {vnd(price)}</span>}
+            <span className="rng-n">{count(p, i)}{" "}{tx("nước")}</span>
+            {price > 0 && <span className="rng-p">{tx("từ")}{" "}{vnd(price)}</span>}
           </div>
         );
       })}
@@ -152,12 +162,12 @@ const fold = (s: string) =>
     .toLowerCase();
 
 /** "Có trong gói" / "Có ở gói 28 nước" for one country (design's `.dp-s`). */
-function pickNote(p: RegionPurchase, code: string): string {
-  if (p.codes.includes(code)) return "Có trong gói";
+function pickNote(p: RegionPurchase, code: string, lang: string): string {
+  if (p.codes.includes(code)) return tr(lang, "Có trong gói");
   const c = p.countries.find((x) => x.code === code);
   if (!c?.in.length) return "";
   const cheapest = c.in.reduce((a, b) => (Number(p.members[b].fromPrice) < Number(p.members[a].fromPrice) ? b : a));
-  return `Có ở gói ${count(p, cheapest)} nước`;
+  return tr(lang, "Có ở gói {0} nước", count(p, cheapest));
 }
 
 export function CountryOptions({
@@ -173,13 +183,14 @@ export function CountryOptions({
   sheet?: boolean;
   onPicked?: () => void;
 }) {
+  const tx = useT();
   const q = fold(query.trim());
   const list = p.countries.filter((c) => !q || fold(c.name).includes(q) || c.code.toLowerCase() === q);
   return (
     <ul
       className={`dp-list${sheet ? " dp-list--sheet" : ""}`}
       id="dpList"
-      aria-label="Chọn nước bạn sẽ đến"
+      aria-label={tx("Chọn nước bạn sẽ đến")}
       aria-multiselectable="true"
       role="listbox"
       onMouseDown={(e) => e.preventDefault()}
@@ -200,17 +211,16 @@ export function CountryOptions({
           <span className="dp-ck" />
           <Flag code={c.code} url={c.flagUrl} w={24} h={18} />
           <span className="dp-n">{c.name}</span>
-          <span className="dp-s">{pickNote(p, c.code)}</span>
+          <span className="dp-s">{pickNote(p, c.code, p.lang)}</span>
         </li>
       ))}
-      <li className="dp-empty" hidden={list.length > 0} role="presentation">
-        Không tìm thấy nước phù hợp
-      </li>
+      <li className="dp-empty" hidden={list.length > 0} role="presentation">{tx("Không tìm thấy nước phù hợp")}</li>
     </ul>
   );
 }
 
 function Tags({ p }: { p: RegionPurchase }) {
+  const tx = useT();
   return (
     <span className="dp-tags" id="dpTags">
       {p.picked.map((code) => {
@@ -223,7 +233,7 @@ function Tags({ p }: { p: RegionPurchase }) {
             type="button"
             className={`dp-tag${miss ? " is-miss" : ""}`}
             data-code={code}
-            aria-label={`Bỏ ${name}${miss ? " (gói đang chọn không có)" : ""}`}
+            aria-label={tx("Bỏ {0}{1}", name, miss ? " (gói đang chọn không có)" : "")}
             onClick={(e) => {
               e.stopPropagation();
               p.togglePick(code, false);
@@ -241,6 +251,7 @@ function Tags({ p }: { p: RegionPurchase }) {
 
 /** Desktop picker: tags + combobox input + dropdown list (design's `#destPick`). */
 export function DestPicker({ p }: { p: RegionPurchase }) {
+  const tx = useT();
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [act, setAct] = useState(-1);
@@ -290,9 +301,9 @@ export function DestPicker({ p }: { p: RegionPurchase }) {
         <Tags p={p} />
         <input
           ref={input}
-          aria-label="Nước bạn sẽ đến"
+          aria-label={tx("Nước bạn sẽ đến")}
           autoComplete="off"
-          placeholder={p.picked.length ? "Thêm nước khác…" : "Bạn sẽ đến nước nào? Nhập tên nước để kiểm tra"}
+          placeholder={p.picked.length ? tx("Thêm nước khác…") : tx("Bạn sẽ đến nước nào? Nhập tên nước để kiểm tra")}
           id="dpInput"
           aria-autocomplete="list"
           aria-controls="dpList"
@@ -336,7 +347,7 @@ export function DestPicker({ p }: { p: RegionPurchase }) {
         <button
           className="search-clr dp-x"
           type="button"
-          aria-label="Xoá chữ đang nhập"
+          aria-label={tx("Xoá chữ đang nhập")}
           id="dpX"
           hidden={!query}
           onClick={() => {
@@ -349,7 +360,7 @@ export function DestPicker({ p }: { p: RegionPurchase }) {
         <button
           className="dp-clr"
           type="button"
-          aria-label="Xóa hết nước đã chọn"
+          aria-label={tx("Xóa hết nước đã chọn")}
           id="dpClear"
           hidden={!p.picked.length || !!query}
           onMouseDown={(e) => e.stopPropagation()}
@@ -357,9 +368,7 @@ export function DestPicker({ p }: { p: RegionPurchase }) {
             e.stopPropagation();
             p.clearPicked();
           }}
-        >
-          Xóa hết
-        </button>
+        >{tx("Xóa hết")}</button>
       </div>{" "}
       {open && (
         <CountryOptions
@@ -377,6 +386,7 @@ export function DestPicker({ p }: { p: RegionPurchase }) {
 
 /** Mobile picker: tags + a button that opens the picker sheet (`#dpOv`). */
 export function DestTrigger({ p, onOpen }: { p: RegionPurchase; onOpen: () => void }) {
+  const tx = useT();
   return (
     <div className="dp" id="destPick">
       {" "}
@@ -389,17 +399,16 @@ export function DestTrigger({ p, onOpen }: { p: RegionPurchase; onOpen: () => vo
         <Ic name="ic-search" w={16} />
         <Tags p={p} />
         <button className="dp-trig" type="button" id="dpTrig" aria-haspopup="dialog" onClick={onOpen}>
-          {p.picked.length ? "Thêm nước" : "Bạn sẽ đến nước nào?"}
+          {p.picked.length ? tx("Thêm nước") : tx("Bạn sẽ đến nước nào?")}
         </button>
-        <button className="dp-clr" type="button" id="dpClear" aria-label="Xóa hết nước đã chọn" hidden={!p.picked.length} onClick={p.clearPicked}>
-          Xóa hết
-        </button>
+        <button className="dp-clr" type="button" id="dpClear" aria-label={tx("Xóa hết nước đã chọn")} hidden={!p.picked.length} onClick={p.clearPicked}>{tx("Xóa hết")}</button>
       </div>{" "}
     </div>
   );
 }
 
 export function PickerSheet({ p, open, onClose }: { p: RegionPurchase; open: boolean; onClose: () => void }) {
+  const tx = useT();
   const [query, setQuery] = useState("");
   useEffect(() => {
     if (open) setQuery("");
@@ -411,21 +420,19 @@ export function PickerSheet({ p, open, onClose }: { p: RegionPurchase; open: boo
         <div className="modal-hd">
           <div className="modal-top">
             <div>
-              <div className="modal-title modal-title--sm" id="dpTitle">
-                Bạn sẽ đến nước nào?
-              </div>
-              <p className="modal-desc">Chọn một hoặc nhiều nước — gói rẻ nhất phủ đủ được chọn sẵn.</p>
+              <div className="modal-title modal-title--sm" id="dpTitle">{tx("Bạn sẽ đến nước nào?")}</div>
+              <p className="modal-desc">{tx("Chọn một hoặc nhiều nước — gói rẻ nhất phủ đủ được chọn sẵn.")}</p>
             </div>
-            <button className="btn-close" type="button" aria-label="Đóng" data-close="">
+            <button className="btn-close" type="button" aria-label={tx("Đóng")} data-close="">
               <Ic name="ic-x" w={24} />
             </button>
           </div>
           <div className="search dp-search">
             <Ic name="ic-search" w={16} />
             <input
-              aria-label="Tìm nước"
+              aria-label={tx("Tìm nước")}
               autoComplete="off"
-              placeholder="Tìm tên nước…"
+              placeholder={tx("Tìm tên nước…")}
               type="search"
               id="dpInput"
               aria-autocomplete="list"
@@ -436,7 +443,7 @@ export function PickerSheet({ p, open, onClose }: { p: RegionPurchase; open: boo
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
-            <button className="search-clr" type="button" id="dpX" aria-label="Xoá chữ đang tìm" hidden={!query} onClick={() => setQuery("")}>
+            <button className="search-clr" type="button" id="dpX" aria-label={tx("Xoá chữ đang tìm")} hidden={!query} onClick={() => setQuery("")}>
               <Ic name="ic-close" w={14} />
             </button>
           </div>
@@ -450,23 +457,19 @@ export function PickerSheet({ p, open, onClose }: { p: RegionPurchase; open: boo
               fit !== null ? (
                 <>
                   <Ic name="ic-check-circle" w={14} />
-                  <span>
-                    Gói <b>{count(p, fit)} nước</b> phủ đủ {p.picked.length} nước bạn chọn
-                  </span>
+                  <span>{tx("Gói")}{" "}<b>{count(p, fit)}{" "}{tx("nước")}</b>{" "}{tx("phủ đủ")}{" "}{p.picked.length}{" "}{tx("nước bạn chọn")}</span>
                 </>
               ) : (
                 <>
                   <Ic name="ic-warning" w={14} />
-                  <span>Chưa có gói phủ đủ các nước này</span>
+                  <span>{tx("Chưa có gói phủ đủ các nước này")}</span>
                 </>
               )
             ) : (
-              "Chọn nước để được gợi ý gói rẻ nhất."
+              tx("Chọn nước để được gợi ý gói rẻ nhất.")
             )}
           </p>
-          <button className="btn btn-block btn-dark" type="button" data-close="">
-            Xong
-          </button>
+          <button className="btn btn-block btn-dark" type="button" data-close="">{tx("Xong")}</button>
         </div>
       </div>
     </Overlay>
@@ -475,12 +478,13 @@ export function PickerSheet({ p, open, onClose }: { p: RegionPurchase; open: boo
 
 /** The verdict under the picker (design's `j()` → `#destRes`). */
 export function DestRes({ p }: { p: RegionPurchase }) {
+  const tx = useT();
   const n = p.picked;
   if (!n.length) return <p className="dest-res" id="destRes" aria-live="polite" hidden role="status" />;
   const cur = p.active;
   const fit = p.fit;
   const missing = n.filter((c) => !p.codes.includes(c));
-  const names = (list: string[]) => joinVi(list.map(p.nameOf));
+  const names = (list: string[]) => joinVi(list.map(p.nameOf), p.lang);
   const go = (i: number, text: string) => (
     <button type="button" className="res-go" onClick={() => p.setActive(i)}>
       {text}
@@ -504,16 +508,17 @@ export function DestRes({ p }: { p: RegionPurchase }) {
       <>
         {line(
           "warning",
-          `Gói ${count(p, cur)} nước ${missing.length < 3 ? `chưa có ${names(missing)}` : `thiếu ${missing.length}/${n.length} nước bạn chọn`}`,
+          missing.length < 3
+            ? tx("Gói {0} nước chưa có {1}", count(p, cur), names(missing))
+            : tx("Gói {0} nước thiếu {1}/{2} nước bạn chọn", count(p, cur), missing.length, n.length),
         )}
-        {fit !== null && go(fit, `Đổi sang gói ${count(p, fit)} nước`)}
+        {fit !== null && go(fit, tx("Đổi sang gói {0} nước", count(p, fit)))}
       </>
     );
   } else {
     const ok = line(
       "check-circle",
-      <>
-        Gói <strong>{count(p, cur)} nước</strong> phủ đủ {n.length < 3 ? names(n) : `cả ${n.length} nước bạn chọn`}
+      <>{tx("Gói")}{" "}<strong>{count(p, cur)}{" "}{tx("nước")}</strong>{" "}{tx("phủ đủ")}{" "}{n.length < 3 ? names(n) : tx("cả {0} nước bạn chọn", n.length)}
       </>,
     );
     if (fit !== null && fit !== cur) {
@@ -521,7 +526,7 @@ export function DestRes({ p }: { p: RegionPurchase }) {
       body = (
         <>
           {ok}
-          {go(fit, `Đổi sang gói ${count(p, fit)} nước${save > 0 ? `, rẻ hơn ${save}%` : ""}`)}
+          {go(fit, tx("Đổi sang gói {0} nước", count(p, fit)) + (save > 0 ? tx(", rẻ hơn {0}%", save) : ""))}
         </>
       );
     } else {
@@ -529,7 +534,7 @@ export function DestRes({ p }: { p: RegionPurchase }) {
       body = (
         <>
           {ok}
-          {save > 0 && <span className="res-save">Rẻ hơn {save}% so với gói {count(p, 0)} nước</span>}
+          {save > 0 && <span className="res-save">{tx("Rẻ hơn")}{" "}{save}{tx("% so với gói")}{" "}{count(p, 0)}{" "}{tx("nước")}</span>}
         </>
       );
     }
@@ -560,6 +565,7 @@ export function CovFlags({ p, max }: { p: RegionPurchase; max: number }) {
 /* ───────────── step 2: tabs, app filter, plans ───────────── */
 
 export function SegTabs({ p }: { p: RegionPurchase }) {
+  const tx = useT();
   const nData = p.plans.dataPlans.length + p.plans.slowUnlimited.length + p.plans.fastUnlimited.length + p.plans.dailyUnlimited.length;
   const nCombo = p.plans.smsCallEsim?.length ?? 0;
   if (!nCombo) return null;
@@ -586,18 +592,19 @@ export function SegTabs({ p }: { p: RegionPurchase }) {
       {label}
       <span className="seg-n">
         <span id={key === "data" ? "nData" : "nCombo"}>{n}</span>
-        <span className="sr-only"> gói</span>
+        <span className="sr-only">{" "}{tx("gói")}</span>
       </span>
     </button>
   );
   return (
-    <div className="seg" id="segType" role="tablist" aria-label="Loại gói">
-      {tab("data", "ic-wifi", "Chỉ Data", nData)} {tab("combo", "ic-phone", "Data + Gọi + SMS", nCombo)}
+    <div className="seg" id="segType" role="tablist" aria-label={tx("Loại gói")}>
+      {tab("data", "ic-wifi", tx("Chỉ Data"), nData)} {tab("combo", "ic-phone", tx("Data + Gọi + SMS"), nCombo)}
     </div>
   );
 }
 
 export function AppFilter({ p, mobile }: { p: RegionPurchase; mobile?: boolean }) {
+  const tx = useT();
   const [ping, setPing] = useState(false);
   const hint = !p.appFilter && p.picked.includes("CN");
   const was = useRef(false);
@@ -630,20 +637,19 @@ export function AppFilter({ p, mobile }: { p: RegionPurchase; mobile?: boolean }
         </span>
       )}
       <span className="af-t">
-        <span className="af-h" id="afH">
-          Lọc eSIM dùng được{" "}
+        <span className="af-h" id="afH">{tx("Lọc eSIM dùng được")}{" "}
           <span className="af-apps">
             <span className="af-app">TikTok</span>
             <span className="sr-only">, </span>
             <span className="af-app">ChatGPT</span>
-            <span className="sr-only"> và </span>
+            <span className="sr-only">{" "}{tx("và")}{" "}</span>
             <span className="af-app">Claude</span>
           </span>
         </span>
         <span className="af-s" id="afSub">
-          <span className="af-s1">Đi Trung Quốc? Bật để xem {of} vẫn dùng được</span>
-          <span className="af-s2">Đã lọc {of}. Tắt lọc để xem tất cả</span>
-          <span className="af-s3">Đến Trung Quốc: bật để xem {of} vẫn dùng được</span>
+          <span className="af-s1">{tx("Đi Trung Quốc? Bật để xem")}{" "}{of}{" "}{tx("vẫn dùng được")}</span>
+          <span className="af-s2">{tx("Đã lọc")}{" "}{of}{tx(". Tắt lọc để xem tất cả")}</span>
+          <span className="af-s3">{tx("Đến Trung Quốc: bật để xem")}{" "}{of}{" "}{tx("vẫn dùng được")}</span>
         </span>
       </span>
       <span className="af-sw" aria-hidden="true" />
@@ -652,8 +658,9 @@ export function AppFilter({ p, mobile }: { p: RegionPurchase; mobile?: boolean }
 }
 
 function KycIcon({ show }: { show: boolean }) {
+  const tx = useT();
   return show ? (
-    <span className="chip-kyc" role="img" aria-label="Cần xác thực danh tính">
+    <span className="chip-kyc" role="img" aria-label={tx("Cần xác thực danh tính")}>
       <Ic name="ic-passport" w={14} />
     </span>
   ) : null;
@@ -674,6 +681,7 @@ function PgHead({
   n: number;
   of: number | null;
 }) {
+  const tx = useT();
   return (
     <div className="pg-hd">
       <Ic name={icon} w={14} />
@@ -682,7 +690,7 @@ function PgHead({
       </h3>
       <Tip text={`${title}: ${tip}`} w={14} extra="tip--pg" />
       <span className="pg-line" aria-hidden="true" />
-      <span className="pg-count">{of !== null ? `${n}/${of} gói` : `${n} gói`}</span>
+      <span className="pg-count">{of !== null ? tx("{0}/{1} gói", n, of) : tx("{0} gói", n)}</span>
     </div>
   );
 }
@@ -697,6 +705,7 @@ const TIPS = {
 
 /** The fixed-plan dropdown (`#dsel`): days of the chosen size with prices. */
 function DaySelect({ p, tier, open, setOpen }: { p: RegionPurchase; tier: Tier; open: boolean; setOpen: (o: boolean) => void }) {
+  const tx = useT();
   const btn = useRef<HTMLButtonElement>(null);
   const list = useRef<HTMLDivElement>(null);
   const cur = p.tier?.key === tier.key ? p.plan : null;
@@ -734,7 +743,7 @@ function DaySelect({ p, tier, open, setOpen }: { p: RegionPurchase; tier: Tier; 
         }}
       >
         <span className="dsel-v" id="dselV">
-          {p.need || !cur ? "Chọn số ngày" : `${cur.durationDays} ngày`}
+          {p.need || !cur ? tx("Chọn số ngày") : tx("{0} ngày", cur.durationDays)}
         </span>
         <span className="dsel-p" id="dselP" hidden={p.need || !cur}>
           {cur ? vnd(priceOf(cur, cur.durationDays).price) : ""}
@@ -762,12 +771,12 @@ function DaySelect({ p, tier, open, setOpen }: { p: RegionPurchase; tier: Tier; 
           } else if (e.key === "Tab") setOpen(false);
         }}
       >
-        <div className="dsel-tp" role="group" aria-label={`Số ngày của gói ${tier.gb}`}>
+        <div className="dsel-tp" role="group" aria-label={tx("Số ngày của gói {0}", tier.gb)}>
           {opts.map((plan) => {
             const { price } = priceOf(plan, plan.durationDays);
             const d = plan.durationDays;
             const checked = !p.need && cur?.durationDays === d;
-            const per = d > 1 ? `≈ ${vnd(perDay(price, d))}/ngày` : "";
+            const per = d > 1 ? tx("≈ {0}/ngày", vnd(perDay(price, d))) : "";
             const b = badgeFor(plan, false);
             return (
               <span
@@ -786,7 +795,7 @@ function DaySelect({ p, tier, open, setOpen }: { p: RegionPurchase; tier: Tier; 
                 }}
               >
                 <span className="dopt-k" />
-                <span className="dopt-d">{d} ngày</span>
+                <span className="dopt-d">{d}{" "}{tx("ngày")}</span>
                 <span className="dopt-p">{vnd(price)}</span>
                 <span className="dopt-b">
                   <Pbi b={b} />
@@ -803,6 +812,7 @@ function DaySelect({ p, tier, open, setOpen }: { p: RegionPurchase; tier: Tier; 
 
 /** What the chosen plan gives (`#planNote`): data rule + apps line. */
 export function PlanNote({ p }: { p: RegionPurchase }) {
+  const tx = useT();
   if (!p.plan) return null;
   const b = (t: string) => <b>{t}</b>;
   const o = p.opt;
@@ -811,40 +821,33 @@ export function PlanNote({ p }: { p: RegionPurchase }) {
   if (o?.kind === "unl") {
     icon = "ic-infinity";
     text = o.gb ? (
-      <>
-        Mỗi ngày dùng {b(o.gb)} tốc độ cao. Hết {o.gb}, mạng không bị cắt: tự giảm còn {b(o.throttle)}
-        {speedUse(o.throttle)} và dùng tiếp không giới hạn.
-      </>
+      <>{tx("Mỗi ngày dùng")}{" "}{b(o.gb)}{" "}{tx("tốc độ cao. Hết")}{" "}{o.gb}{tx(", mạng không bị cắt: tự giảm còn")}{" "}{b(o.throttle)}
+        {speedUse(o.throttle, tx)}{" "}{tx("và dùng tiếp không giới hạn.")}</>
     ) : o.throttle ? (
-      <>
-        Không giới hạn dung lượng, luôn dùng ở tốc độ {b(o.throttle)}
-        {speedUse(o.throttle)}.
+      <>{tx("Không giới hạn dung lượng, luôn dùng ở tốc độ")}{" "}{b(o.throttle)}
+        {speedUse(o.throttle, tx)}.
       </>
     ) : (
-      <>Không giới hạn dung lượng, luôn dùng tốc độ cao nhất của mạng 4G/5G — không giảm tốc.</>
+      <>{tx("Không giới hạn dung lượng, luôn dùng tốc độ cao nhất của mạng 4G/5G — không giảm tốc.")}</>
     );
   } else if (o?.kind === "daily") {
     icon = "ic-clock";
     text = (
       <>
-        Data {b(`${o.gb}/ngày`)} tốc độ cao — hết dung lượng trong ngày thì{" "}
-        {o.throttle ? <>hạ xuống {b(o.throttle)}</> : <>{b("ngừng truy cập")} đến hết ngày</>}.
+        Data {b(tx("{0}/ngày", o.gb))}{" "}{tx("tốc độ cao — hết dung lượng trong ngày thì")}{" "}
+        {o.throttle ? <>{tx("hạ xuống")}{" "}{b(o.throttle)}</> : <>{b(tx("ngừng truy cập"))}{" "}{tx("đến hết ngày")}</>}.
       </>
     );
   } else if (o?.kind === "combo") {
     icon = "ic-phone";
     text = (
       <>
-        {b(gbLabel(Number(p.plan.dataMb)))} data tốc độ cao{p.plan.call ? <> + {b(`${p.plan.call} phút`)} gọi</> : null}
-        {p.plan.sms ? <> + {b(`${p.plan.sms} SMS`)}</> : null}, dùng trong {p.plan.durationDays} ngày — kèm số điện thoại riêng.
-      </>
+        {b(gbLabel(Number(p.plan.dataMb)))}{" "}{tx("data tốc độ cao")}{p.plan.call ? <> + {b(tx("{0} phút", p.plan.call))}{" "}{tx("gọi")}</> : null}
+        {p.plan.sms ? <> + {b(`${p.plan.sms} SMS`)}</> : null}{tx(", dùng trong")}{" "}{p.plan.durationDays}{" "}{tx("ngày — kèm số điện thoại riêng.")}</>
     );
   } else {
     text = (
-      <>
-        Tổng {b(p.tier?.gb ?? gbLabel(Number(p.plan.dataMb)))} tốc độ cao, dùng trong {b(`${p.plan.durationDays} ngày`)} — hết dung lượng có
-        thể nạp thêm.
-      </>
+      <>{tx("Tổng")}{" "}{b(p.tier?.gb ?? gbLabel(Number(p.plan.dataMb)))}{" "}{tx("tốc độ cao, dùng trong")}{" "}{b(tx("{0} ngày", p.plan.durationDays))}{" "}{tx("— hết dung lượng có thể nạp thêm.")}</>
     );
   }
   const apps = p.apps;
@@ -858,19 +861,17 @@ export function PlanNote({ p }: { p: RegionPurchase }) {
         <Ic name={apps === "all" || apps === "unknown" ? "ic-check-circle" : "ic-no"} w={15} />
         <span>
           {apps === "notiktok" ? (
-            <>
-              Hỗ trợ sử dụng ChatGPT, Gemini, Claude… <b className="pn-no">Không dùng được TikTok.</b>
+            <>{tx("Hỗ trợ sử dụng ChatGPT, Gemini, Claude…")}{" "}<b className="pn-no">{tx("Không dùng được TikTok.")}</b>
             </>
           ) : apps === "none" ? (
-            <>
-              Hỗ trợ sử dụng Google, Gemini, Claude… <b className="pn-no">Không dùng được TikTok, ChatGPT.</b>
+            <>{tx("Hỗ trợ sử dụng Google, Gemini, Claude…")}{" "}<b className="pn-no">{tx("Không dùng được TikTok, ChatGPT.")}</b>
             </>
           ) : (
-            "Hỗ trợ sử dụng TikTok, ChatGPT, Gemini, Claude…"
+            tx("Hỗ trợ sử dụng TikTok, ChatGPT, Gemini, Claude…")
           )}
           {p.showFilter && apps !== "all" && apps !== "unknown" && (
             <button className="pn-go" type="button" id="pnGo" onClick={() => p.toggleAppFilter(true)}>
-              <span className="pn-go-t">Lọc eSIM dùng được</span>
+              <span className="pn-go-t">{tx("Lọc eSIM dùng được")}</span>
               <Ic name="ic-chev-right" w={12} />
             </button>
           )}
@@ -887,24 +888,22 @@ const SPEED_USE: Record<number, string> = {
   5: "xem video HD, gọi video ổn định",
   10: "xem video Full HD, tải file nhanh",
 };
-function speedUse(throttle: string): string {
+function speedUse(throttle: string, tx: (key: string) => string): string {
   const n = parseFloat(throttle) || 0;
-  return /mbps/i.test(throttle) && SPEED_USE[n] ? ` (${SPEED_USE[n]})` : "";
+  return /mbps/i.test(throttle) && SPEED_USE[n] ? ` (${tx(SPEED_USE[n])})` : "";
 }
 
 export function EkycNote({ p, onOpen, oneLine }: { p: RegionPurchase; onOpen: () => void; oneLine?: boolean }) {
+  const tx = useT();
   if (!p.needsKyc || p.need) return null;
   return (
     <button className={`ekyc-note${oneLine ? " ekyc-note--1l" : ""}`} type="button" id="ekycNote" aria-haspopup="dialog" onClick={onOpen}>
       <Ic name="ic-passport" w={18} />
       <span className="ekyc-note-c">
-        <span className="ekyc-note-t">
-          eSIM này cần xác thực danh tính{p.kycWhere.length ? " tại " : ""}
-          {p.kycWhere.length > 0 && <span className="ekyc-where">{joinVi(p.kycWhere)}</span>}
+        <span className="ekyc-note-t">{tx("eSIM này cần xác thực danh tính")}{p.kycWhere.length ? tx(" tại ") : ""}
+          {p.kycWhere.length > 0 && <span className="ekyc-where">{joinVi(p.kycWhere, p.lang)}</span>}
         </span>
-        <span className="ekyc-note-l">
-          Xem hướng dẫn
-          <Ic name="ic-chev-right" w={12} />
+        <span className="ekyc-note-l">{tx("Xem hướng dẫn")}<Ic name="ic-chev-right" w={12} />
         </span>
       </span>
     </button>
@@ -927,6 +926,7 @@ export function PlanPanes({
   mobile?: boolean;
   plansRef?: React.Ref<HTMLDivElement>;
 }) {
+  const tx = useT();
   const filtered = p.appFilter && p.showFilter;
   const allCount = (list: Plan[]) => (filtered ? list.length : null);
   const kycHere = p.kycWhere.length > 0;
@@ -969,8 +969,8 @@ export function PlanPanes({
       <div id="paneData" role="tabpanel" aria-labelledby="tab-data" hidden={p.tab !== "data"}>
         {p.tiers.length > 0 && (
           <div className="pg pg--scroll pg--tier" role="group" aria-labelledby="pgd1">
-            <PgHead id="pgd1" icon="ic-calendar" title="Gói cố định" tip={TIPS.fixed} n={p.plans.dataPlans.length} of={allCount(p.all.dataPlans)} />{" "}
-            <div className="tier-grid" id="tierGrid" role="group" aria-label="Chọn dung lượng và số ngày dùng">
+            <PgHead id="pgd1" icon="ic-calendar" title={tx("Gói cố định")} tip={tx(TIPS.fixed)} n={p.plans.dataPlans.length} of={allCount(p.all.dataPlans)} />{" "}
+            <div className="tier-grid" id="tierGrid" role="group" aria-label={tx("Chọn dung lượng và số ngày dùng")}>
               {p.tiers.map((t) => {
                 const on = p.tier?.key === t.key;
                 return (
@@ -1005,16 +1005,10 @@ export function PlanPanes({
               {p.tier && (
                 <div className={`dock${p.need ? " is-need" : ""}`} id="dock">
                   <div className="dock-l">
-                    <p className="dock-q">
-                      Tổng <b id="dockGb">{p.tier.gb}</b> dùng trong bao nhiêu ngày?
-                    </p>
+                    <p className="dock-q">{tx("Tổng")}{" "}<b id="dockGb">{p.tier.gb}</b>{" "}{tx("dùng trong bao nhiêu ngày?")}</p>
                     <p className="dock-s">
-                      <span id="dockS" hidden={p.need}>
-                        Data dùng chung cả gói, không chia theo ngày.
-                      </span>
-                      <span className="dock-need" id="dockNeed" role="status" hidden={!p.need}>
-                        Chọn số ngày để tiếp tục mua hàng
-                      </span>
+                      <span id="dockS" hidden={p.need}>{tx("Data dùng chung cả gói, không chia theo ngày.")}</span>
+                      <span className="dock-need" id="dockNeed" role="status" hidden={!p.need}>{tx("Chọn số ngày để tiếp tục mua hàng")}</span>
                     </p>
                   </div>
                   <DaySelect p={p} tier={p.tier} open={dselOpen} setOpen={setDselOpen} />
@@ -1026,21 +1020,21 @@ export function PlanPanes({
         )}
         {p.daily.length > 0 && (
           <div className="pg pg--scroll" role="group" aria-labelledby="pgd2">
-            <PgHead id="pgd2" icon="ic-clock" title="Gói theo ngày" tip={TIPS.daily} n={p.daily.length} of={filtered ? null : null} />{" "}
-            <div className="chip-grid">{p.daily.map((o) => chip(o, `${o.gb}/ngày`))}</div>
+            <PgHead id="pgd2" icon="ic-clock" title={tx("Gói theo ngày")} tip={tx(TIPS.daily)} n={p.daily.length} of={filtered ? null : null} />{" "}
+            <div className="chip-grid">{p.daily.map((o) => chip(o, tx("{0}/ngày", o.gb)))}</div>
             {noteIn("daily")}
           </div>
         )}
         {p.unl.length > 0 && (
           <div className="pg pg--scroll" role="group" aria-labelledby="pgd3">
-            <PgHead id="pgd3" icon="ic-infinity" title="Gói không giới hạn" tip={TIPS.unl} n={p.unl.length} of={null} />{" "}
+            <PgHead id="pgd3" icon="ic-infinity" title={tx("Gói không giới hạn")} tip={tx(TIPS.unl)} n={p.unl.length} of={null} />{" "}
             <div className="chip-grid">
               {p.unl.map((o) =>
                 chip(
                   o,
                   o.gb ? (
                     <>
-                      {o.gb}/ngày{" "}
+                      {o.gb}{tx("/ngày")}{" "}
                       <span className="chip-sub">
                         <Ic name="ic-infinity" w={14} />
                         {o.throttle}
@@ -1049,7 +1043,7 @@ export function PlanPanes({
                   ) : (
                     <>
                       <Ic name="ic-infinity" w={14} />
-                      {o.throttle || "Tốc độ cao"}
+                      {o.throttle || tx("Tốc độ cao")}
                     </>
                   ),
                 ),
@@ -1059,14 +1053,14 @@ export function PlanPanes({
           </div>
         )}
         {p.tiers.length + p.daily.length + p.unl.length === 0 && !p.isLoading && (
-          <p className="pg-empty">{p.appFilter ? "Không có gói nào dùng được TikTok, ChatGPT ở phạm vi này." : "Phạm vi này hiện chưa có gói nào."}</p>
+          <p className="pg-empty">{p.appFilter ? tx("Không có gói nào dùng được TikTok, ChatGPT ở phạm vi này.") : tx("Phạm vi này hiện chưa có gói nào.")}</p>
         )}
       </div>{" "}
       <div id="paneCombo" role="tabpanel" aria-labelledby="tab-combo" hidden={p.tab !== "combo"}>
         {p.combo.length > 0 && (
           <div className="pg pg--scroll" role="group" aria-labelledby="pgc1">
-            <PgHead id="pgc1" icon="ic-phone" title="Gói Data + Gọi + SMS" tip={TIPS.combo} n={p.combo.length} of={allCount(p.all.smsCallEsim ?? [])} />{" "}
-            <div className="chip-grid">{p.combo.map((o) => chip(o, comboLabel(o.plans[0])))}</div>
+            <PgHead id="pgc1" icon="ic-phone" title={tx("Gói Data + Gọi + SMS")} tip={tx(TIPS.combo)} n={p.combo.length} of={allCount(p.all.smsCallEsim ?? [])} />{" "}
+            <div className="chip-grid">{p.combo.map((o) => chip(o, comboLabel(o.plans[0], p.lang)))}</div>
             {noteIn("combo")}
           </div>
         )}
@@ -1097,6 +1091,7 @@ export function DaysField({
   onGo: () => void;
   cls: string;
 }) {
+  const tx = useT();
   const mode = daysMode(p);
   return (
     <button
@@ -1115,13 +1110,14 @@ export function DaysField({
         }
       }}
     >
-      <span id="daysVal">{p.need ? "Chọn số ngày" : `${p.days} ngày${mode || p.perDayKind ? "" : " (theo gói)"}`}</span>
+      <span id="daysVal">{p.need ? tx("Chọn số ngày") : tx("{0} ngày{1}", p.days, mode || p.perDayKind ? "" : " (theo gói)")}</span>
       <Ic name={mode === "go" ? "ic-chev-down" : "ic-calendar"} w={16} />
     </button>
   );
 }
 
 export function DayChips({ p, mobile, onCal }: { p: RegionPurchase; mobile?: boolean; onCal: () => void }) {
+  const tx = useT();
   if (!p.perDayKind) return <div className="day-chips" id="dayChips" hidden />;
   const base = mobile ? MOB_DAYS : DESK_DAYS;
   const list = p.allowed === "any" ? base : (p.allowed ?? []);
@@ -1129,14 +1125,14 @@ export function DayChips({ p, mobile, onCal }: { p: RegionPurchase; mobile?: boo
   return (
     <div className={`day-chips${mobile ? "" : " day-chips--row"}`} id="dayChips" role="group" aria-labelledby="daysLbl">
       {list.map((d) => (
-        <button key={d} className="day-chip" type="button" aria-label={`${d} ngày`} aria-pressed={p.days === d} data-days={d} onClick={() => p.setDays(d)}>
+        <button key={d} className="day-chip" type="button" aria-label={tx("{0} ngày", d)} aria-pressed={p.days === d} data-days={d} onClick={() => p.setDays(d)}>
           {d}
         </button>
       ))}
       {p.allowed === "any" && (
         <button className="day-chip day-chip--cal" type="button" aria-pressed={!exact} aria-haspopup="dialog" onClick={onCal}>
           <Ic name="ic-calendar" w={14} />
-          <span className="day-chip-t">{!exact ? `${p.days} ngày` : "Khác"}</span>
+          <span className="day-chip-t">{!exact ? tx("{0} ngày", p.days) : tx("Khác")}</span>
         </button>
       )}
     </div>
@@ -1144,15 +1140,12 @@ export function DayChips({ p, mobile, onCal }: { p: RegionPurchase; mobile?: boo
 }
 
 export function NeedHint({ p, onGo }: { p: RegionPurchase; onGo: () => void }) {
+  const tx = useT();
   return (
     <div className="alert alert--sm alert--warning qstock need-hint" id="needHint" role="status" hidden={!p.need}>
       <Ic name="ic-calendar" w={15} />
-      <span>
-        Chọn <b>số ngày dùng</b> ở bước 2 để tiếp tục mua hàng.
-      </span>
-      <button className="need-go" type="button" id="needGo" data-dgo="" onClick={onGo}>
-        Chọn ngay
-      </button>
+      <span>{tx("Chọn")}{" "}<b>{tx("số ngày dùng")}</b>{" "}{tx("ở bước 2 để tiếp tục mua hàng.")}</span>
+      <button className="need-go" type="button" id="needGo" data-dgo="" onClick={onGo}>{tx("Chọn ngay")}</button>
     </div>
   );
 }
@@ -1163,6 +1156,7 @@ const MONTHS = ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Th�
 const dmy = (d: Date) => `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}/${d.getFullYear()}`;
 
 export function CalendarModal({ p, open, onClose }: { p: RegionPurchase; open: boolean; onClose: () => void }) {
+  const tx = useT();
   const today = useMemo(() => {
     const d = new Date();
     d.setHours(0, 0, 0, 0);
@@ -1218,7 +1212,7 @@ export function CalendarModal({ p, open, onClose }: { p: RegionPurchase; open: b
           type="button"
           className={cls}
           disabled={past}
-          aria-label={`${d} ${MONTHS[m]} ${y}`}
+          aria-label={`${d} ${tx(MONTHS[m])} ${y}`}
           aria-pressed={pressed || undefined}
           onClick={() => click(t)}
         >
@@ -1230,7 +1224,7 @@ export function CalendarModal({ p, open, onClose }: { p: RegionPurchase; open: b
       <div className="cal-month" data-idx={n} key={n}>
         <div className="cal-hd">
           <span className="cal-title">
-            {MONTHS[m]} năm {y}
+            {tx(MONTHS[m])}{tx("năm") ? ` ${tx("năm")} ` : " "}{y}
           </span>
         </div>
         <div className="cal-dh">
@@ -1254,23 +1248,21 @@ export function CalendarModal({ p, open, onClose }: { p: RegionPurchase; open: b
       <div className="modal modal--xl" role="dialog" aria-labelledby="calTitle" aria-modal="true">
         <div className="modal-hd">
           <div className="modal-top">
-            <div className="modal-title modal-title--sm" id="calTitle">
-              Chọn ngày đi và ngày về
-            </div>
-            <button className="btn-close" type="button" aria-label="Đóng" data-close="">
+            <div className="modal-title modal-title--sm" id="calTitle">{tx("Chọn ngày đi và ngày về")}</div>
+            <button className="btn-close" type="button" aria-label={tx("Đóng")} data-close="">
               <Ic name="ic-x" w={24} />
             </button>
           </div>
           <div className="cal-tip">
             <Ic name="ic-info" w={15} />
-            <span>Số ngày được tính cả ngày đi và ngày về. Gói chỉ bắt đầu tính khi eSIM kết nối mạng tại điểm đến.</span>
+            <span>{tx("Số ngày được tính cả ngày đi và ngày về. Gói chỉ bắt đầu tính khi eSIM kết nối mạng tại điểm đến.")}</span>
           </div>
         </div>
         <div className="cal-body" id="cal">
           <button
             className="cal-nav cal-nav--prev"
             type="button"
-            aria-label="Tháng trước"
+            aria-label={tx("Tháng trước")}
             disabled={month <= new Date(today.getFullYear(), today.getMonth(), 1)}
             onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))}
           >
@@ -1279,7 +1271,7 @@ export function CalendarModal({ p, open, onClose }: { p: RegionPurchase; open: b
           <button
             className="cal-nav cal-nav--next"
             type="button"
-            aria-label="Tháng sau"
+            aria-label={tx("Tháng sau")}
             onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))}
           >
             <Ic name="ic-chev-right" w={18} />
@@ -1292,28 +1284,24 @@ export function CalendarModal({ p, open, onClose }: { p: RegionPurchase; open: b
           <div className="cal-info">
             <div className="cal-info-plan" id="calPlan">
               {end && start ? (
-                <>
-                  Chuyến đi {days} ngày<span className="cal-dot"> &ensp;·&ensp; </span>
-                  <span className="cal-rng">
-                    Từ {dmy(start)} – {dmy(end)}
+                <>{tx("Chuyến đi")}{" "}{days}{" "}{tx("ngày")}<span className="cal-dot"> &ensp;·&ensp; </span>
+                  <span className="cal-rng">{tx("Từ")}{" "}{dmy(start)} – {dmy(end)}
                   </span>
                 </>
               ) : start ? (
-                "Chọn ngày về"
+                tx("Chọn ngày về")
               ) : (
-                "Chọn ngày đi"
+                tx("Chọn ngày đi")
               )}
             </div>
             <div className="cal-info-price" id="calPrice">
               {end && tot ? (
-                <>
-                  Tổng: <b>{vnd(tot)}</b> ({days} ngày × {vnd(perDayPrice)}/ngày × {p.quantity} eSIM)
+                <>{tx("Tổng:")}{" "}<b>{vnd(tot)}</b> ({days}{" "}{tx("ngày ×")}{" "}{vnd(perDayPrice)}{tx("/ngày ×")}{" "}{p.quantity} eSIM)
                 </>
               ) : null}
             </div>
             <div className="cal-info-net" id="calNet" hidden={!end || net === null || net === tot}>
-              <Ic name="ic-ticket" w={13} />
-              Giá sau voucher: <b>{net !== null ? vnd(net) : ""}</b>
+              <Ic name="ic-ticket" w={13} />{tx("Giá sau voucher:")}{" "}<b>{net !== null ? vnd(net) : ""}</b>
             </div>
           </div>
           <button
@@ -1325,9 +1313,7 @@ export function CalendarModal({ p, open, onClose }: { p: RegionPurchase; open: b
               if (end && days) p.setDays(days);
               onClose();
             }}
-          >
-            Xác nhận
-          </button>
+          >{tx("Xác nhận")}</button>
         </div>
       </div>
     </Overlay>
@@ -1351,6 +1337,7 @@ const no = (t: ReactNode) => (
 
 /** Networks of the plan, as many as fit on one line, then "+N nhà mạng". */
 function Nets({ plan, onMore }: { plan: Plan | null; onMore: () => void }) {
+  const tx = useT();
   const nets = (plan?.operatorName ?? "")
     .split(/[,;/]/)
     .map((s) => s.trim())
@@ -1379,7 +1366,7 @@ function Nets({ plan, onMore }: { plan: Plan | null; onMore: () => void }) {
   const rest = nets.length - shown;
   return (
     <div className="sr sr--nets">
-      <span className="sl">Nhà mạng hỗ trợ</span>
+      <span className="sl">{tx("Nhà mạng hỗ trợ")}</span>
       <div className="nets" id="specNets" ref={ref}>
         {nets.slice(0, shown).map((n) => (
           <span className="net" key={n}>
@@ -1387,9 +1374,9 @@ function Nets({ plan, onMore }: { plan: Plan | null; onMore: () => void }) {
           </span>
         ))}
         {rest > 0 && (
-          <button type="button" className="net net--more" onClick={onMore} aria-label={long ? undefined : `Xem thêm ${rest} nhà mạng`}>
+          <button type="button" className="net net--more" onClick={onMore} aria-label={long ? undefined : tx("Xem thêm {0} nhà mạng", rest)}>
             +{rest}
-            {long ? " nhà mạng" : ""}
+            {long ? tx(" nhà mạng") : ""}
           </button>
         )}
       </div>
@@ -1398,6 +1385,7 @@ function Nets({ plan, onMore }: { plan: Plan | null; onMore: () => void }) {
 }
 
 export function FeatureRows({ p, onEkyc, onCountries }: { p: RegionPurchase; onEkyc: () => void; onCountries: () => void }) {
+  const tx = useT();
   const [open, setOpen] = useState(false);
   const plan = p.plan;
   const voice = planVoiceInfo(plan);
@@ -1407,49 +1395,49 @@ export function FeatureRows({ p, onEkyc, onCountries }: { p: RegionPurchase; onE
     : !plan.hotSpot && !plan.hotSpotAllow
       ? null
       : p.tier
-        ? `Tổng ${p.tier.gb}${p.need ? "" : ` – ${plan.durationDays} ngày`}`
+        ? tx("Tổng {0}", p.tier.gb) + (p.need ? "" : tx(" – {0} ngày", plan.durationDays))
         : o?.kind === "combo"
-          ? "Có"
+          ? tx("Có")
           : o && !o.gb
-            ? "Không giới hạn"
-            : `${o?.gb}/ngày`;
+            ? tx("Không giới hạn")
+            : tx("{0}/ngày", o?.gb);
   return (
     <>
       <Nets plan={plan} onMore={onCountries} />{" "}
       <div className="sr">
-        <span className="sl">Chia sẻ kết nối / Hotspot</span>
+        <span className="sl">{tx("Chia sẻ kết nối / Hotspot")}</span>
         {hotspot ? (
           <span className="pill pill--info">
             <Ic name="ic-wifi" w={13} />
             <span id="specHotspot">{hotspot}</span>
           </span>
         ) : (
-          <span id="specHotspot">{no("Không")}</span>
+          <span id="specHotspot">{no(tx("Không"))}</span>
         )}
       </div>{" "}
       <div className="sr">
-        <span className="sl">Gọi & Nhắn tin</span>
+        <span className="sl">{tx("Gọi & Nhắn tin")}</span>
         <span id="specCalls">
-          {voice.hasVoice && plan ? yes([plan.call ? `${plan.call} phút gọi` : null, plan.sms ? `${plan.sms} SMS` : null].filter(Boolean).join(" · ") || "Có") : no("Không")}
+          {voice.hasVoice && plan ? yes([plan.call ? tx("{0} phút gọi", plan.call) : null, plan.sms ? `${plan.sms} SMS` : null].filter(Boolean).join(" · ") || tx("Có")) : no(tx("Không"))}
         </span>
       </div>{" "}
       <div className="sr">
-        <span className="sl">Số điện thoại</span>
-        <span id="specNumber">{voice.hasVoice ? yes("Có") : no("Không")}</span>
+        <span className="sl">{tx("Số điện thoại")}</span>
+        <span id="specNumber">{voice.hasVoice ? yes(tx("Có")) : no(tx("Không"))}</span>
       </div>{" "}
       <div className="sr">
-        <span className="sl">Nạp thêm dữ liệu (Topup)</span>
-        {plan?.topUp === false ? no("Không") : yes("Có")}
+        <span className="sl">{tx("Nạp thêm dữ liệu (Topup)")}</span>
+        {plan?.topUp === false ? no(tx("Không")) : yes(tx("Có"))}
       </div>{" "}
       <div className="sr">
-        <span className="sl">Xác thực danh tính</span>
+        <span className="sl">{tx("Xác thực danh tính")}</span>
         <span id="specEkyc">
           {p.needsKyc ? (
             <button type="button" className="pill pill--danger pill--sm" aria-haspopup="dialog" onClick={onEkyc}>
-              {p.kycWhere.length ? `Bắt buộc tại ${p.kycWhere.length} điểm đến` : "Bắt buộc"}
+              {p.kycWhere.length ? tx("Bắt buộc tại {0} điểm đến", p.kycWhere.length) : tx("Bắt buộc")}
             </button>
           ) : (
-            yes("Không cần")
+            yes(tx("Không cần"))
           )}
         </span>
       </div>
@@ -1461,9 +1449,8 @@ export function FeatureRows({ p, onEkyc, onCountries }: { p: RegionPurchase; onE
             <span className="ekyc-banner-icon">
               <Ic name="ic-passport" w={16} />
             </span>{" "}
-            <span className="ekyc-banner-title">
-              Gói này cần xác thực danh tính{p.kycWhere.length ? " tại " : ""}
-              <span className="ekyc-where">{joinVi(p.kycWhere)}</span>
+            <span className="ekyc-banner-title">{tx("Gói này cần xác thực danh tính")}{p.kycWhere.length ? tx(" tại ") : ""}
+              <span className="ekyc-where">{joinVi(p.kycWhere, p.lang)}</span>
             </span>{" "}
             <span className="ekyc-banner-toggle">
               <Ic name="ic-chev-down" w={14} />
@@ -1473,23 +1460,20 @@ export function FeatureRows({ p, onEkyc, onCountries }: { p: RegionPurchase; onE
             <ol className="ekyc-steps">
               <li className="ekyc-step">
                 <span className="ekyc-step-num">1</span>
-                <span>Mua eSIM & nhận mã QR qua email.</span>
+                <span>{tx("Mua eSIM & nhận mã QR qua email.")}</span>
               </li>
               <li className="ekyc-step">
                 <span className="ekyc-step-num">2</span>
-                <span>Quét mã QR để cài đặt vào thiết bị.</span>
+                <span>{tx("Quét mã QR để cài đặt vào thiết bị.")}</span>
               </li>
               <li className="ekyc-step">
                 <span className="ekyc-step-num">3</span>
                 <span>
-                  <strong>Hoàn tất xác thực danh tính</strong> (Hộ chiếu) → Bắt đầu sử dụng.
-                </span>
+                  <strong>{tx("Hoàn tất xác thực danh tính")}</strong>{" "}{tx("(Hộ chiếu) → Bắt đầu sử dụng.")}</span>
               </li>
             </ol>
             <button className="btn btn-block btn-danger btn-sm" type="button" onClick={onEkyc}>
-              <Ic name="ic-file" w={15} />
-              Xem hướng dẫn đăng ký chi tiết
-              <Ic name="ic-chev-right" w={13} />
+              <Ic name="ic-file" w={15} />{tx("Xem hướng dẫn đăng ký chi tiết")}<Ic name="ic-chev-right" w={13} />
             </button>
           </div>
         </div>
@@ -1499,36 +1483,34 @@ export function FeatureRows({ p, onEkyc, onCountries }: { p: RegionPurchase; onE
 }
 
 export function DeliveryRows({ plan }: { plan: Plan | null }) {
+  const tx = useT();
   const deadline = plan?.activationDeadline ? formatActivationDate(plan.activationDeadline) : null;
   const reset = dailyResetText(plan, "vi");
   const refundable = refundRule(plan) === "fast-if-unactivated";
   return (
     <>
       <div className="sr">
-        <span className="sl">Thời gian nhận eSIM</span>
+        <span className="sl">{tx("Thời gian nhận eSIM")}</span>
         <span className="pill pill--sm dlv-pill pill--success">
-          <Ic name="ic-bolt" w={12} />
-          Nhận ngay lập tức qua email
-        </span>
+          <Ic name="ic-bolt" w={12} />{tx("Nhận ngay lập tức qua email")}</span>
       </div>{" "}
       <div className="sr">
-        <span className="sl">Thời hạn kích hoạt</span>
+        <span className="sl">{tx("Thời hạn kích hoạt")}</span>
         {deadline ? (
-          <span className="sv-text">
-            Trước ngày <strong id="activateBy">{deadline}</strong>
+          <span className="sv-text">{tx("Trước ngày")}{" "}<strong id="activateBy">{deadline}</strong>
           </span>
         ) : (
-          <span className="sv-text">Theo quy định của nhà cung cấp (ghi trong email nhận eSIM)</span>
+          <span className="sv-text">{tx("Theo quy định của nhà cung cấp (ghi trong email nhận eSIM)")}</span>
         )}
       </div>{" "}
       {reset && plan?.dailyResetPolicy && (
         <div className="sr">
-          <span className="sl">Giờ làm mới mỗi ngày</span>
+          <span className="sl">{tx("Giờ làm mới mỗi ngày")}</span>
           <span className="sv-2" id="cycleTxt">
             {plan.dailyResetPolicy === "rolling_24h" ? (
               <>
-                <b>Sau mỗi 24 giờ</b>
-                <small>tính từ lúc cài eSIM</small>
+                <b>{tx("Sau mỗi 24 giờ")}</b>
+                <small>{tx("tính từ lúc cài eSIM")}</small>
               </>
             ) : (
               <>
@@ -1536,24 +1518,24 @@ export function DeliveryRows({ plan }: { plan: Plan | null }) {
                   23:59 (UTC{(plan.dailyResetUtcOffset ?? 8) >= 0 ? "+" : "-"}
                   {Math.abs(plan.dailyResetUtcOffset ?? 8)})
                 </b>
-                <small>dù bạn ở múi giờ nào</small>
+                <small>{tx("dù bạn ở múi giờ nào")}</small>
               </>
             )}
           </span>
         </div>
       )}{" "}
       <div className="sr">
-        <span className="sl">Hướng dẫn hoàn tiền</span>
+        <span className="sl">{tx("Hướng dẫn hoàn tiền")}</span>
         <span className="sv-2">
           {refundable ? (
             <>
-              <b>Hoàn tiền nhanh</b>
-              <small>nếu eSIM chưa kích hoạt</small>
+              <b>{tx("Hoàn tiền nhanh")}</b>
+              <small>{tx("nếu eSIM chưa kích hoạt")}</small>
             </>
           ) : (
             <>
-              <b>Không hỗ trợ hoàn tiền</b>
-              <small>theo chính sách nhà cung cấp</small>
+              <b>{tx("Không hỗ trợ hoàn tiền")}</b>
+              <small>{tx("theo chính sách nhà cung cấp")}</small>
             </>
           )}
         </span>
@@ -1566,34 +1548,32 @@ export function DeliveryRows({ plan }: { plan: Plan | null }) {
 
 /** "Quốc gia & nhà mạng" (#ctrOv): the chosen variant's countries. */
 export function CountriesModal({ p, open, onClose }: { p: RegionPurchase; open: boolean; onClose: () => void }) {
+  const tx = useT();
   const [q, setQ] = useState("");
   useEffect(() => {
     if (open) setQ("");
   }, [open]);
   const list: Destination[] = p.member?.destinations ?? [];
   const nets = (p.plan?.operatorName ?? "").trim();
-  const shown = list.filter((d) => !q.trim() || fold(nameOf(d)).includes(fold(q.trim())));
+  const shown = list.filter((d) => !q.trim() || fold(nameOf(d, p.lang)).includes(fold(q.trim())));
   return (
     <Overlay id="ctrOv" open={open} onClose={onClose}>
       <div className="modal modal--md" role="dialog" aria-labelledby="ctrTitle" aria-modal="true">
         <div className="modal-hd">
           <div className="modal-top">
             <div>
-              <div className="modal-title modal-title--sm" id="ctrTitle">
-                Quốc gia & nhà mạng
-              </div>
+              <div className="modal-title modal-title--sm" id="ctrTitle">{tx("Quốc gia & nhà mạng")}</div>
               <p className="modal-desc">
-                <span id="ctrDesc">{list.length}</span> điểm đến tại {p.regionName} được hỗ trợ
-              </p>
+                <span id="ctrDesc">{list.length}</span>{" "}{tx("điểm đến tại")}{" "}{p.regionName}{" "}{tx("được hỗ trợ")}</p>
             </div>
-            <button className="btn-close" type="button" aria-label="Đóng" data-close="">
+            <button className="btn-close" type="button" aria-label={tx("Đóng")} data-close="">
               <Ic name="ic-x" w={24} />
             </button>
           </div>
           <div className="search">
             <Ic name="ic-search" w={16} />
-            <input aria-label="Tìm quốc gia" autoComplete="off" placeholder="Tìm quốc gia…" type="search" value={q} onChange={(e) => setQ(e.target.value)} />
-            <button className="search-clr" type="button" aria-label="Xoá tìm kiếm" hidden={!q} onClick={() => setQ("")}>
+            <input aria-label={tx("Tìm quốc gia")} autoComplete="off" placeholder={tx("Tìm quốc gia…")} type="search" value={q} onChange={(e) => setQ(e.target.value)} />
+            <button className="search-clr" type="button" aria-label={tx("Xoá tìm kiếm")} hidden={!q} onClick={() => setQ("")}>
               <Ic name="ic-close" w={14} />
             </button>
           </div>
@@ -1604,26 +1584,27 @@ export function CountriesModal({ p, open, onClose }: { p: RegionPurchase; open: 
               <li className="ctr-item" key={d.id} data-code={d.countryCode?.toLowerCase()}>
                 <Flag code={d.countryCode || ""} url={d.flagUrl} w={32} h={24} />
                 <div>
-                  <div className="ctr-name">{nameOf(d)}</div>
+                  <div className="ctr-name">{nameOf(d, p.lang)}</div>
                 </div>
               </li>
             ))}
           </ul>
           <div className="ctr-empty" id="ctrEmpty" hidden={shown.length > 0}>
             <Ic name="ic-search" w={28} />
-            <p>Không tìm thấy kết quả phù hợp.</p>
+            <p>{tx("Không tìm thấy kết quả phù hợp.")}</p>
           </div>
         </div>
         <div className="modal-ft">
-          <p className="modal-note">{nets ? `Nhà mạng của gói đang chọn: ${nets}.` : "* Gói có icon hộ chiếu đỏ cần xác thực danh tính (ảnh hộ chiếu) khi dùng tại điểm đến tương ứng."}</p>
+          <p className="modal-note">{nets ? tx("Nhà mạng của gói đang chọn: {0}.", nets) : tx("* Gói có icon hộ chiếu đỏ cần xác thực danh tính (ảnh hộ chiếu) khi dùng tại điểm đến tương ứng.")}</p>
         </div>
       </div>
     </Overlay>
   );
 }
 
-function nameOf(d: Destination): string {
-  return d.titleVi || d.title || d.name;
+/** A destination's name in the page language (vande #029). */
+function nameOf(d: Destination, lang: string): string {
+  return lang === "vi" ? d.titleVi || d.title || d.name : d.title || d.name;
 }
 
 const KYC_LINKS: Record<string, { name: string; region: string }> = {
@@ -1634,6 +1615,7 @@ const KYC_LINKS: Record<string, { name: string; region: string }> = {
 
 /** "Xác thực danh tính để dùng eSIM" (#ekycOv). */
 export function EkycModal({ p, open, onClose, lang }: { p: RegionPurchase; open: boolean; onClose: () => void; lang: string }) {
+  const tx = useT();
   const guide = (region: string) => `${lang === "vi" ? "" : `/${lang}`}/kyc-guide?region=${region}`;
   return (
     <Overlay id="ekycOv" open={open} onClose={onClose} top>
@@ -1641,47 +1623,43 @@ export function EkycModal({ p, open, onClose, lang }: { p: RegionPurchase; open:
         <div className="modal-hd modal-hd--danger">
           <div className="modal-top">
             <span className="modal-badge">
-              <Ic name="ic-passport" w={14} />
-              Hướng dẫn xác thực danh tính
-            </span>
-            <button className="btn-close" type="button" aria-label="Đóng" data-close="">
+              <Ic name="ic-passport" w={14} />{tx("Hướng dẫn xác thực danh tính")}</span>
+            <button className="btn-close" type="button" aria-label={tx("Đóng")} data-close="">
               <Ic name="ic-x" w={24} />
             </button>
           </div>
-          <div className="modal-title" id="ekycTitle">
-            Xác thực danh tính để dùng eSIM
-          </div>
+          <div className="modal-title" id="ekycTitle">{tx("Xác thực danh tính để dùng eSIM")}</div>
           <ul className="modal-sub">
             <li>
               <Ic name="ic-check-circle" w={15} />
-              <span>Theo quy định tại một số điểm đến, bạn cần xác minh danh tính để kích hoạt eSIM.</span>
+              <span>{tx("Theo quy định tại một số điểm đến, bạn cần xác minh danh tính để kích hoạt eSIM.")}</span>
             </li>
             <li>
               <Ic name="ic-check-circle" w={15} />
-              <span>eSIM phải được cài đặt trên thiết bị trước khi đăng ký tại điểm đến được chỉ định.</span>
+              <span>{tx("eSIM phải được cài đặt trên thiết bị trước khi đăng ký tại điểm đến được chỉ định.")}</span>
             </li>
           </ul>
           <div className="modal-stats">
             <div className="modal-stat">
               <b>3–5&apos;</b>
-              <span>Thời gian hoàn tất</span>
+              <span>{tx("Thời gian hoàn tất")}</span>
             </div>
             <div className="modal-stat">
               <b>100%</b>
-              <span>An toàn & bảo mật</span>
+              <span>{tx("An toàn & bảo mật")}</span>
             </div>
             <div className="modal-stat">
               <b>24/7</b>
-              <span>Hỗ trợ trực tuyến</span>
+              <span>{tx("Hỗ trợ trực tuyến")}</span>
             </div>
           </div>
         </div>
         <div className="modal-body">
           <div className="notice">
-            📌 <strong>Lưu ý:</strong> Bạn <strong>không cần xác thực</strong> nếu không dùng eSIM tại các điểm đến dưới đây. Thủ tục chỉ mất{" "}
-            <strong>3–5 phút</strong>.
+            📌 <strong>{tx("Lưu ý:")}</strong>{" "}{tx("Bạn")}{" "}<strong>{tx("không cần xác thực")}</strong>{" "}{tx("nếu không dùng eSIM tại các điểm đến dưới đây. Thủ tục chỉ mất")}{" "}
+            <strong>{tx("3–5 phút")}</strong>.
           </div>
-          <div className="section-lbl">Điểm đến bắt buộc xác thực</div>
+          <div className="section-lbl">{tx("Điểm đến bắt buộc xác thực")}</div>
           <div className="opt-grid">
             {Object.entries(KYC_LINKS).map(([code, k]) => (
               <a
@@ -1696,29 +1674,28 @@ export function EkycModal({ p, open, onClose, lang }: { p: RegionPurchase; open:
                 <span className="opt-ico">
                   <Flag code={code} w={44} h={33} />
                 </span>
-                <span className="opt-name">{k.name}</span>
-                <span className="opt-link">
-                  Xem hướng dẫn <Ic name="ic-chev-right" w={12} />
+                <span className="opt-name">{tx(k.name)}</span>
+                <span className="opt-link">{tx("Xem hướng dẫn")}{" "}<Ic name="ic-chev-right" w={12} />
                 </span>
-                <span className="sr-only"> (mở trang hướng dẫn trong tab mới)</span>
+                <span className="sr-only">{" "}{tx("(mở trang hướng dẫn trong tab mới)")}</span>
               </a>
             ))}
           </div>
           <div className="acc acc--line">
-            <div className="acc-title">Câu hỏi thường gặp</div>
+            <div className="acc-title">{tx("Câu hỏi thường gặp")}</div>
             {[
               [
-                "Thông tin của tôi có được bảo mật không?",
-                "Hoàn toàn. Dữ liệu được mã hoá đầu cuối và chỉ dùng để đáp ứng yêu cầu pháp lý. esim.vn không lưu trữ hay chia sẻ thông tin với bên thứ ba.",
+                tx("Thông tin của tôi có được bảo mật không?"),
+                tx("Hoàn toàn. Dữ liệu được mã hoá đầu cuối và chỉ dùng để đáp ứng yêu cầu pháp lý. esim.vn không lưu trữ hay chia sẻ thông tin với bên thứ ba."),
               ],
-              ["Tôi có thể dùng hộ chiếu nước ngoài không?", "Có. Hệ thống chấp nhận hộ chiếu quốc tế còn hiệu lực. Chỉ cần chụp trang thông tin cá nhân rõ nét, đủ ánh sáng."],
+              [tx("Tôi có thể dùng hộ chiếu nước ngoài không?"), tx("Có. Hệ thống chấp nhận hộ chiếu quốc tế còn hiệu lực. Chỉ cần chụp trang thông tin cá nhân rõ nét, đủ ánh sáng.")],
               [
-                "Nếu xác thực thất bại, tôi phải làm gì?",
-                "Bạn có thể thử lại tối đa 3 lần. Nếu vẫn thất bại, liên hệ hỗ trợ 24/7 qua chat trong ứng dụng hoặc email hotro@esim.com.vn.",
+                tx("Nếu xác thực thất bại, tôi phải làm gì?"),
+                tx("Bạn có thể thử lại tối đa 3 lần. Nếu vẫn thất bại, liên hệ hỗ trợ 24/7 qua chat trong ứng dụng hoặc email hotro@esim.com.vn."),
               ],
               [
-                "Xác thực mất bao lâu để được duyệt?",
-                "Thông thường hệ thống xử lý trong vài phút. Sau khi được duyệt, bạn sẽ nhận thông báo qua email hoặc SMS và sử dụng eSIM ngay.",
+                tx("Xác thực mất bao lâu để được duyệt?"),
+                tx("Thông thường hệ thống xử lý trong vài phút. Sau khi được duyệt, bạn sẽ nhận thông báo qua email hoặc SMS và sử dụng eSIM ngay."),
               ],
             ].map(([q, a]) => (
               <AccItem
@@ -1737,13 +1714,9 @@ export function EkycModal({ p, open, onClose, lang }: { p: RegionPurchase; open:
         </div>
         <div className="modal-ft">
           <button className="btn btn-block btn-danger btn-lg" type="button" data-close="">
-            <Ic name="ic-check-circle" w={18} />
-            Đã hiểu, tiếp tục mua eSIM
-          </button>
+            <Ic name="ic-check-circle" w={18} />{tx("Đã hiểu, tiếp tục mua eSIM")}</button>
           <p className="modal-note">
-            <Ic name="ic-chat" w={14} />
-            Cần hỗ trợ? Liên hệ qua Chat hoặc email hotro@esim.com.vn
-          </p>
+            <Ic name="ic-chat" w={14} />{tx("Cần hỗ trợ? Liên hệ qua Chat hoặc email hotro@esim.com.vn")}</p>
         </div>
       </div>
     </Overlay>
@@ -1754,6 +1727,7 @@ export function EkycModal({ p, open, onClose, lang }: { p: RegionPurchase; open:
 
 /** Country pages of the region's best-known countries (`.cross-card`). */
 export function CrossCards({ p, lang, limit = 3 }: { p: RegionPurchase; lang: string; limit?: number }) {
+  const tx = useT();
   const list = [...(p.member?.destinations ?? [])]
     .sort((a, b) => Number(b.isPopular) - Number(a.isPopular))
     .slice(0, limit);
@@ -1767,8 +1741,8 @@ export function CrossCards({ p, lang, limit = 3 }: { p: RegionPurchase; lang: st
               <Flag code={d.countryCode || ""} url={d.flagUrl} w={59} h={44.2} />
             </span>
             <div className="cross-txt">
-              <h3 className="cross-title">eSIM {nameOf(d)}</h3>
-              <span className="cross-price">Xem các gói eSIM riêng cho {nameOf(d)}</span>
+              <h3 className="cross-title">eSIM {nameOf(d, lang)}</h3>
+              <span className="cross-price">{tx("Xem các gói eSIM riêng cho")}{" "}{nameOf(d, lang)}</span>
             </div>
             <Ic name="ic-chev-right" w={18} cls="ic cross-arrow" />
           </a>

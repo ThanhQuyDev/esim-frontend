@@ -1,5 +1,8 @@
 "use client";
 
+
+import { useT } from "./design-i18n";
+import { getCloudinaryTransformedUrl } from "@/lib/image-utils";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import type { LocalCarrier } from "@/lib/api";
 import { getCarrierMeta, carrierInitial, type CarrierMeta } from "../carrier-meta";
@@ -24,6 +27,8 @@ import {
   planCycleLine,
   radioKeys,
   type Brand,
+  VnFlag,
+  type DomesticCountry,
 } from "./nd-parts";
 
 const HERO =
@@ -36,6 +41,8 @@ interface Props {
   otherCarriers: LocalCarrier[];
   crossHref: (provider: string) => string;
   breadcrumb: { home: string; destinations: string; vietnam: string };
+  /** Vietnam's picture and flag from the CMS (vande #029). */
+  country: DomesticCountry | null;
 }
 
 /**
@@ -43,7 +50,10 @@ interface Props {
  * "esim-noi-dia-mobile-v45.html" (#066, test round 4). The design's own top
  * bar is left out: the site header is shared by every page.
  */
-export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb }: Props) {
+export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb, country }: Props) {
+  // The CMS picture of Vietnam when set; the design's photo otherwise (vande #029).
+  const hero = getCloudinaryTransformedUrl(country?.avatarUrl ?? undefined, { width: 1200, height: 840, quality: "auto:good", gravity: "center" });
+  const tx = useT();
   const plan = p.plan;
   const [ekyc, setEkyc] = useState(false);
   const [devOpen, setDevOpen] = useState(false);
@@ -51,9 +61,9 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb }
   const [vch, setVch] = useState(false);
 
   const logoStyle: CSSProperties = { background: meta.logoBg };
-  const prefix = phonePrefixLabel(meta, plan);
-  const line = planCycleLine(plan, p.months);
-  const tag = [meta.network ? `Dùng hạ tầng ${meta.network}` : null, prefix].filter(Boolean).join(" – ");
+  const prefix = phonePrefixLabel(meta, plan, lang);
+  const line = planCycleLine(plan, p.months, lang);
+  const tag = [meta.network ? tx("Dùng hạ tầng {0}", meta.network) : null, prefix].filter(Boolean).join(" – ");
 
   // "Xem thêm N gói 5G": on a page that sells both, 5G cards fold away until
   // asked for — the chosen one always stays in view (design's #moreBtn).
@@ -107,13 +117,13 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb }
         <nav aria-label="Breadcrumb" className="bc">
           <ol>
             <li>
-              <a href={breadcrumb.home}>Trang chủ</a>
+              <a href={breadcrumb.home}>{tx("Trang chủ")}</a>
             </li>
             <li>
-              <a href={breadcrumb.destinations}>Điểm đến</a>
+              <a href={breadcrumb.destinations}>{tx("Điểm đến")}</a>
             </li>
             <li>
-              <a href={breadcrumb.vietnam}>Việt Nam</a>
+              <a href={breadcrumb.vietnam}>{tx("Việt Nam")}</a>
             </li>
             <li>
               <span aria-current="page">eSIM {meta.label}</span>
@@ -126,27 +136,25 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb }
             <source
               media="(min-width:37.5rem)"
               sizes="100vw"
-              srcSet={`${HERO}&q=60&w=1200&h=540 1200w, ${HERO}&q=60&w=1800&h=800 1800w, ${HERO}&q=45&w=2400&h=1067 2400w`}
+              srcSet={hero || `${HERO}&q=60&w=1200&h=540 1200w, ${HERO}&q=60&w=1800&h=800 1800w, ${HERO}&q=45&w=2400&h=1067 2400w`}
             />
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              alt="Thành phố Việt Nam về đêm"
+              alt={tx("Thành phố Việt Nam về đêm")}
               decoding="async"
               fetchPriority="high"
               height={336}
               sizes="100vw"
-              src={`${HERO}&q=60&w=800&h=560`}
-              srcSet={`${HERO}&q=60&w=480&h=336 480w, ${HERO}&q=60&w=800&h=560 800w, ${HERO}&q=50&w=1200&h=840 1200w, ${HERO}&q=45&w=1320&h=924 1320w`}
+              src={hero || `${HERO}&q=60&w=800&h=560`}
+              srcSet={hero ? undefined : `${HERO}&q=60&w=480&h=336 480w, ${HERO}&q=60&w=800&h=560 800w, ${HERO}&q=50&w=1200&h=840 1200w, ${HERO}&q=45&w=1320&h=924 1320w`}
               width={480}
             />
           </picture>{" "}
           <div className="m-hero-in">
             {" "}
-            <div className="m-rate" role="img" aria-label="Đánh giá 4,8 trên 5 từ hơn 12.000 lượt trên Trustpilot">
+            <div className="m-rate" role="img" aria-label={tx("Đánh giá 4,8 trên 5 từ hơn 12.000 lượt trên Trustpilot")}>
               <b>4.8</b>
-              <Ic name="ic-star" w={13} />
-              hơn 12k đánh giá
-              <span className="m-rate-tp">
+              <Ic name="ic-star" w={13} />{tx("hơn 12k đánh giá")}<span className="m-rate-tp">
                 <Ic name="ic-star" w={11} />
                 Trustpilot
               </span>
@@ -157,17 +165,14 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb }
                 {carrierInitial(meta)}
               </span>
               <h1>eSIM {meta.label}</h1>
-              <Ic name="fl-vn" w={24} h={18} cls="flag" label="VN" />
+              <VnFlag url={country?.flagUrl} w={24} h={18} />
             </div>{" "}
           </div>{" "}
         </div>{" "}
         <div className="m-sec m-sheet">
           {" "}
           <p className="m-desc">
-            eSIM {meta.label} — nhà mạng nội địa{meta.network ? ` trên hạ tầng ${meta.network}` : ""}, sóng 4G/5G toàn quốc.
-            {meta.phonePrefix ? ` Có số thuê bao đầu ${meta.phonePrefix},` : " Có số thuê bao,"} tất cả gói đều dùng được
-            Data + Gọi + SMS, gia hạn theo chu kỳ hàng tháng.
-          </p>{" "}
+            eSIM {meta.label}{" "}{tx("— nhà mạng nội địa")}{meta.network ? tx(" trên hạ tầng {0}", meta.network) : ""}{tx(", sóng 4G/5G toàn quốc.")}{meta.phonePrefix ? tx(" Có số thuê bao đầu {0},", meta.phonePrefix) : tx(" Có số thuê bao,")}{" "}{tx("tất cả gói đều dùng được Data + Gọi + SMS, gia hạn theo chu kỳ hàng tháng.")}</p>{" "}
           <div className="price-row price-row--vch" id="priceAnchor">
             <button className="pv" type="button" id="vchTag" aria-haspopup="dialog" onClick={() => setVch(true)}>
               <span className="price-now" id="priceNet">
@@ -175,14 +180,14 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb }
               </span>
               <span className="pv-lbl">
                 <Ic name="ic-ticket" w={14} />
-                {p.voucher ? "Giá sau voucher" : "Chi tiết giá"}
+                {p.voucher ? tx("Giá sau voucher") : tx("Chi tiết giá")}
                 <Ic name="ic-chev-right" w={12} />
               </span>
             </button>
           </div>{" "}
           <div className="daily-row">
             <span className="daily-detail" id="dOSDetail">
-              {plan ? `Gói: ${planLabel(plan)} · ${p.months} tháng` : ""}
+              {plan ? tx("Gói: {0} · {1} tháng", planLabel(plan, lang), p.months) : ""}
             </span>
           </div>{" "}
         </div>{" "}
@@ -190,11 +195,11 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb }
           {" "}
           <h2 className="sec-lbl" id="step1">
             <span className="sec-num">
-              <span className="sr-only">Bước </span>1
+              <span className="sr-only">{tx("Bước")}{" "}</span>1
             </span>
             <span className="sr-only">. </span>
-            <span>Chọn gói cước</span>
-            <Tip text="Tất cả eSIM đều có chức năng sử dụng Data + Gọi + SMS" w={16} extra="tip--h" />
+            <span>{tx("Chọn gói cước")}</span>
+            <Tip text={tx("Tất cả eSIM đều có chức năng sử dụng Data + Gọi + SMS")} w={16} extra="tip--h" />
           </h2>{" "}
           <div id="plans" role="radiogroup" aria-labelledby="step1" ref={plansRef} onKeyDown={(e) => radioKeys(e, pickFromKeys)}>
             {p.highSpeed.length > 0 && (
@@ -202,9 +207,7 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb }
                 {" "}
                 <div className="pg-hd">
                   <Ic name="ic-bolt" w={14} />
-                  <h3 className="pg-title" id="pg1">
-                    Gói Data tốc độ cao
-                  </h3>
+                  <h3 className="pg-title" id="pg1">{tx("Gói Data tốc độ cao")}</h3>
                 </div>{" "}
                 <div className="plan-list">
                   {p.highSpeed.map((g) => {
@@ -232,7 +235,7 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb }
                     hidden={!more && folded === 0}
                     onClick={() => setMore(!more)}
                   >
-                    <span id="moreTxt">{more ? "Thu gọn gói 5G" : `Xem thêm ${folded} gói 5G`}</span>
+                    <span id="moreTxt">{more ? tx("Thu gọn gói 5G") : tx("Xem thêm {0} gói 5G", folded)}</span>
                     <Ic name="ic-chev-down" w={14} />
                   </button>
                 )}
@@ -243,9 +246,7 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb }
                 {" "}
                 <div className="pg-hd">
                   <Ic name="ic-infinity" w={14} />
-                  <h3 className="pg-title" id="pg2">
-                    Gói Data không giới hạn
-                  </h3>
+                  <h3 className="pg-title" id="pg2">{tx("Gói Data không giới hạn")}</h3>
                 </div>{" "}
                 <div className="plan-list">
                   {p.unlimited.map((g) => (
@@ -260,40 +261,30 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb }
           {" "}
           <h2 className="sec-lbl" id="step2">
             <span className="sec-num">
-              <span className="sr-only">Bước </span>2
+              <span className="sr-only">{tx("Bước")}{" "}</span>2
             </span>
             <span className="sr-only">. </span>
-            <span>Tùy chọn của bạn</span>
+            <span>{tx("Tùy chọn của bạn")}</span>
           </h2>{" "}
           <div className="m-row">
-            <span className="m-row-l" id="cycLbl">
-              Chu kỳ sử dụng
-            </span>
+            <span className="m-row-l" id="cycLbl">{tx("Chu kỳ sử dụng")}</span>
             <CycleMenu p={p} labelId="cycLbl" />
           </div>{" "}
           <div className="m-row">
-            <span className="m-row-l" id="qtyLbl">
-              Số lượng eSIM
-            </span>
+            <span className="m-row-l" id="qtyLbl">{tx("Số lượng eSIM")}</span>
             <Qty p={p} labelId="qtyLbl" />
           </div>{" "}
           <StockAlert p={p} />{" "}
           <div className="trust">
             <div className="ti">
-              <Ic name="ic-shield" w={14} />
-              Thanh toán an toàn
-            </div>
+              <Ic name="ic-shield" w={14} />{tx("Thanh toán an toàn")}</div>
             <div className="ti">
-              <Ic name="ic-headset" w={14} />
-              Hỗ trợ 24/7
-            </div>
+              <Ic name="ic-headset" w={14} />{tx("Hỗ trợ 24/7")}</div>
             <div className="ti">
-              <Ic name="ic-refund" w={14} />
-              Hoàn tiền 100%
-            </div>
+              <Ic name="ic-refund" w={14} />{tx("Hoàn tiền 100%")}</div>
           </div>{" "}
         </section>{" "}
-        <section className="m-acc" aria-label="Thông tin chi tiết">
+        <section className="m-acc" aria-label={tx("Thông tin chi tiết")}>
           {" "}
           <AccItem
             heading
@@ -301,19 +292,19 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb }
             q={
               <>
                 <Ic name="ic-gear" w={16} />
-                <span>Tính năng eSIM</span>
+                <span>{tx("Tính năng eSIM")}</span>
                 <Ic name="ic-chev-down" w={16} />
               </>
             }
           >
-            <FeatureRows meta={meta} plan={plan} onEkyc={() => setEkyc(true)} ekycTitle="eSIM này cần xác thực thuê bao" />
+            <FeatureRows meta={meta} plan={plan} onEkyc={() => setEkyc(true)} ekycTitle={tx("eSIM này cần xác thực thuê bao")} />
           </AccItem>{" "}
           <AccItem
             heading
             q={
               <>
                 <Ic name="ic-box" w={16} />
-                <span>Giao hàng & Kích hoạt</span>
+                <span>{tx("Giao hàng & Kích hoạt")}</span>
                 <Ic name="ic-chev-down" w={16} />
               </>
             }
@@ -325,12 +316,12 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb }
             q={
               <>
                 <Ic name="ic-device" w={16} />
-                <span>Kiểm tra thiết bị hỗ trợ eSIM</span>
+                <span>{tx("Kiểm tra thiết bị hỗ trợ eSIM")}</span>
                 <Ic name="ic-chev-down" w={16} />
               </>
             }
           >
-            <section className="dc dc--sel" aria-label="Kiểm tra thiết bị hỗ trợ eSIM" id="dcCard">
+            <section className="dc dc--sel" aria-label={tx("Kiểm tra thiết bị hỗ trợ eSIM")} id="dcCard">
               {" "}
               <DeviceCheck
                 lang={lang}
@@ -346,12 +337,8 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb }
         {otherCarriers.length > 0 && (
           <section className="m-cross" aria-labelledby="crossHd">
             {" "}
-            <h2 className="cross-hd" id="crossHd">
-              Xem các eSIM nội địa khác
-            </h2>{" "}
-            <p className="cross-lead">
-              Mỗi nhà mạng có hạ tầng sóng, đầu số và bảng giá riêng — chọn gói phù hợp nhất với nhu cầu data và gọi của bạn.
-            </p>{" "}
+            <h2 className="cross-hd" id="crossHd">{tx("Xem các eSIM nội địa khác")}</h2>{" "}
+            <p className="cross-lead">{tx("Mỗi nhà mạng có hạ tầng sóng, đầu số và bảng giá riêng — chọn gói phù hợp nhất với nhu cầu data và gọi của bạn.")}</p>{" "}
             <div className="m-cross-list">
               {otherCarriers.map((c) => (
                 <CrossCard key={c.provider} href={crossHref(c.provider)} meta={getCarrierMeta(c.provider)} fromVnd={c.fromVndPrice} showPrefix />
@@ -364,7 +351,7 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb }
         className={`m-buy${buyShow ? " show" : ""}${tight ? " is-tight" : ""}${tight > 1 ? " is-tight2" : ""}`}
         id="mBuy"
         role="region"
-        aria-label="Mua nhanh"
+        aria-label={tx("Mua nhanh")}
         ref={buyRef}
       >
         {" "}
@@ -377,11 +364,11 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb }
           </div>
           <button className="m-buy-price" type="button" aria-haspopup="dialog" onClick={() => setVch(true)}>
             <Ic name="ic-ticket" w={14} />
-            <span className="sr-only">{p.voucher ? "Giá sau voucher " : "Giá "}</span>
+            <span className="sr-only">{p.voucher ? tx("Giá sau voucher ") : tx("Giá ")}</span>
             <span id="mTotal">{vnd(p.net)}</span>
             {p.net < p.total && (
               <>
-                <span className="sr-only">, giá trước voucher </span>
+                <span className="sr-only">{tx(", giá trước voucher")}{" "}</span>
                 <s className="m-buy-old" id="mTotalOld">
                   {vnd(p.total)}
                 </s>
@@ -389,12 +376,10 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb }
             )}
           </button>
         </div>{" "}
-        <button className="btn btn-outline m-cart" type="button" aria-label="Thêm vào giỏ hàng" disabled={!plan} onClick={p.addToCart}>
+        <button className="btn btn-outline m-cart" type="button" aria-label={tx("Thêm vào giỏ hàng")} disabled={!plan} onClick={p.addToCart}>
           <Ic name="ic-cart" w={20} />
         </button>{" "}
-        <button className="btn btn-primary m-buy-cta" type="button" id="buyBtn" disabled={!plan} onClick={p.buyNow}>
-          Mua ngay
-        </button>{" "}
+        <button className="btn btn-primary m-buy-cta" type="button" id="buyBtn" disabled={!plan} onClick={p.buyNow}>{tx("Mua ngay")}</button>{" "}
       </div>{" "}
       <EkycModal open={ekyc} onClose={() => setEkyc(false)} carrierLabel={meta.label} />
       <DeviceModal open={devOpen} onClose={() => setDevOpen(false)} lang={lang} initialBrand={devBrand} />
@@ -404,14 +389,12 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb }
           <div className="modal-hd">
             <div className="modal-top">
               <div>
-                <div className="modal-title modal-title--sm" id="vpT">
-                  Chi tiết giá
-                </div>
+                <div className="modal-title modal-title--sm" id="vpT">{tx("Chi tiết giá")}</div>
                 <p className="modal-desc" id="vchPlan">
                   {p.quantity} eSIM · {line}
                 </p>
               </div>
-              <button className="btn-close" type="button" aria-label="Đóng" data-close="">
+              <button className="btn-close" type="button" aria-label={tx("Đóng")} data-close="">
                 <Ic name="ic-x" w={24} />
               </button>
             </div>
@@ -420,9 +403,7 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb }
             <VoucherRows p={p} />
           </div>{" "}
           <div className="modal-ft">
-            <button className="btn btn-block btn-dark" type="button" data-close="">
-              Đã hiểu
-            </button>
+            <button className="btn btn-block btn-dark" type="button" data-close="">{tx("Đã hiểu")}</button>
           </div>{" "}
         </div>
       </Overlay>

@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getLocalPlansByCarrier, getLocalCarriers } from "@/lib/api";
+import { getDestinationBySlug, getLocalPlansByCarrier, getLocalCarriers } from "@/lib/api";
 import { getDictionary } from "@/lib/dictionaries";
 import { LocalEsimDetail } from "@/components/layout/sections/local-esim/local-esim-detail";
 import { getCarrierMeta } from "@/components/layout/sections/local-esim/carrier-meta";
@@ -94,6 +94,9 @@ export default async function DomesticEsimCarrierPage({
   }
 
   const meta = getCarrierMeta(carrier);
+  // Picture and flag of the page come from Vietnam's destination in the CMS
+  // (vande #029), not from the design file.
+  const vietnam = await getDestinationBySlug("esim-viet-nam", locale);
   const whyChooseUsRes = await getWhyChooseUs({
     lang: locale,
     type: "quoc_gia",
@@ -115,6 +118,7 @@ export default async function DomesticEsimCarrierPage({
         dict={dict.destinationPage}
         lang={locale}
         initialPlans={plans}
+        country={vietnam ? { avatarUrl: vietnam.avatarUrl ?? null, flagUrl: vietnam.flagUrl ?? null } : null}
       />
       <div className="max-w-[1168px] mx-auto px-4 sm:px-0">
         <LazyHowItWorksSection dict={dict.howItWorks} />

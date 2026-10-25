@@ -1,5 +1,8 @@
 "use client";
 
+
+
+import { tr, useT } from "../../local-esim/design/design-i18n";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { getCloudinaryTransformedUrl } from "@/lib/image-utils";
 import { Ic } from "../../local-esim/design/nd-icons";
@@ -39,10 +42,13 @@ interface Props {
 
 /** "18 điểm đến: Nhật Bản, Hàn Quốc, Thái Lan, Singapore và 14 nước khác". */
 export function coverageLine(p: RegionPurchase): string {
-  const names = (p.member?.destinations ?? []).map((d) => d.titleVi || d.title || d.name);
+  // Names in the page language (vande #029): titleVi first only on /vi.
+  const names = (p.member?.destinations ?? []).map((d) => (p.lang === "vi" ? d.titleVi || d.title || d.name : d.title || d.name));
   const n = names.length;
   if (!n) return "";
-  return `${n} điểm đến: ${n > 5 ? `${names.slice(0, 4).join(", ")} và ${n - 4} nước khác` : names.length > 1 ? `${names.slice(0, -1).join(", ")} và ${names[n - 1]}` : names[0]}`;
+  if (n > 5) return tr(p.lang, "{0} điểm đến: {1} và {2} nước khác", n, names.slice(0, 4).join(", "), n - 4);
+  if (n > 1) return tr(p.lang, "{0} điểm đến: {1} và {2}", n, names.slice(0, -1).join(", "), names[n - 1]);
+  return tr(p.lang, "{0} điểm đến: {1}", n, names[0]);
 }
 
 /**
@@ -51,6 +57,7 @@ export function coverageLine(p: RegionPurchase): string {
  * one; the design's script is replaced by React state (rg-state / rg-parts).
  */
 export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
+  const tx = useT();
   const plan = p.plan;
   const [tab, setTab] = useState<0 | 1>(0);
   const [ctr, setCtr] = useState(false);
@@ -71,9 +78,12 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
   const leftStick = useRef<HTMLDivElement>(null);
 
   const n = p.n;
-  const line = planText(p);
+  const line = planText(p, p.lang);
   const qtyTail = p.quantity > 1 ? ` · ${p.quantity} eSIM` : "";
-  const hero = getCloudinaryTransformedUrl(p.member?.avatarUrl, { width: 940, height: 640, quality: "auto:good", gravity: "center" });
+  const hero = getCloudinaryTransformedUrl(
+    // The chosen variant's CMS picture, else any variant's, before the design's photo (vande #029).
+    p.member?.avatarUrl || p.members.find((m) => m.avatarUrl)?.avatarUrl,
+    { width: 940, height: 640, quality: "auto:good", gravity: "center" });
 
   // Sticky bar: shown once the price has scrolled away, the plans are in
   // reach and the main buy row is not on screen (design's stickyBar).
@@ -146,7 +156,7 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
           if ((e.target as HTMLElement).closest("[data-close]")) setVpop(null);
         }}
       >
-        <VoucherBreakdown p={p} planLine={`${p.quantity} eSIM · ${n} nước · ${line}`} />
+        <VoucherBreakdown p={p} planLine={tx("{0} eSIM · {1} nước · {2}", p.quantity, n, line)} />
       </div>
     );
 
@@ -169,26 +179,24 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
       <nav aria-label="Breadcrumb" className="bc bc--c">
         <ol>
           <li>
-            <a href={breadcrumb.home}>Trang chủ</a>
+            <a href={breadcrumb.home}>{tx("Trang chủ")}</a>
           </li>
           <li>
-            <a href={breadcrumb.destinations}>eSIM du lịch</a>
+            <a href={breadcrumb.destinations}>{tx("eSIM du lịch")}</a>
           </li>
           <li>
             <span aria-current="page">eSIM {label}</span>
           </li>
         </ol>
       </nav>{" "}
-      <aside aria-label="Lưu ý trước chuyến đi" className="pre-wrap">
+      <aside aria-label={tx("Lưu ý trước chuyến đi")} className="pre-wrap">
         <div className="pre-note" role="note">
           <Ic name="ic-info" w={16} />
           <span>
-            <b>Cài eSIM trước khi bay</b> để có mạng ngay khi đến nơi.
-            {p.showFilter && (
+            <b>{tx("Cài eSIM trước khi bay")}</b>{" "}{tx("để có mạng ngay khi đến nơi.")}{p.showFilter && (
               <>
                 {" "}
-                <b>Đi qua Trung Quốc?</b> Bật bộ lọc ở bước 2 để chọn gói dùng được TikTok, ChatGPT.
-              </>
+                <b>{tx("Đi qua Trung Quốc?")}</b>{" "}{tx("Bật bộ lọc ở bước 2 để chọn gói dùng được TikTok, ChatGPT.")}</>
             )}
           </span>
         </div>
@@ -203,19 +211,18 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
               </span>
               <h1 className="pic-title">eSIM {label}</h1>
               <button className="pill pill--sm pill--cnt pill--link pill--neutral" type="button" id="vBadge" aria-haspopup="dialog" onClick={() => setCtr(true)}>
-                {n} quốc gia
-              </button>
+                {n}{" "}{tx("quốc gia")}</button>
             </div>
           </div>{" "}
           <div className="buy-sum">
             <div className="rat">
-              <div className="stars" role="img" aria-label="Đánh giá 4,7 trên 5">
+              <div className="stars" role="img" aria-label={tx("Đánh giá 4,7 trên 5")}>
                 {[0, 1, 2, 3, 4].map((i) => (
                   <Ic key={i} name="ic-star" w={16} />
                 ))}
               </div>
               <span className="rat-score">4.7</span>
-              <span className="rat-cnt">97.400+ đánh giá</span>
+              <span className="rat-cnt">{tx("97.400+ đánh giá")}</span>
               <div className="tp">
                 <Ic name="ic-star" w={14} />
                 Trustpilot
@@ -236,7 +243,7 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
                 </span>
                 <span className="pv-lbl">
                   <Ic name="ic-ticket" w={14} />
-                  {p.voucher ? "Giá sau voucher" : "Chi tiết giá"}
+                  {p.voucher ? tx("Giá sau voucher") : tx("Chi tiết giá")}
                   <Ic name="ic-chev-down" w={12} />
                 </span>
               </button>
@@ -248,7 +255,7 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
                   <span>
                     ≈{" "}
                     <span className="daily-amt" id="dailyAmt">
-                      {vnd(perDay(p.net / p.quantity, p.days))}/ngày{p.quantity > 1 ? " mỗi eSIM" : ""}
+                      {vnd(perDay(p.net / p.quantity, p.days))}{tx("/ngày")}{p.quantity > 1 ? tx(" mỗi eSIM") : ""}
                     </span>
                   </span>
                   <span className="daily-sep" aria-hidden="true">
@@ -257,7 +264,7 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
                 </>
               )}
               <span className="daily-detail" id="dOSDetail">
-                {plan ? `Gói: ${n} nước · ${line}${qtyTail}` : ""}
+                {plan ? tx("Gói: {0} nước · {1}{2}", n, line, qtyTail) : ""}
               </span>
             </div>
           </div>{" "}
@@ -266,7 +273,7 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
           <div className="pd-img" style={{ "--hero-bg": "linear-gradient(160deg,#E8824A,#FAC96A,#7BAFC0)" } as CSSProperties}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              alt={`Phong cảnh ${label}`}
+              alt={tx("Phong cảnh {0}", label)}
               decoding="async"
               fetchPriority="high"
               height={480}
@@ -276,14 +283,11 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
               onError={(e) => e.currentTarget.remove()}
             />
           </div>{" "}
-          <article aria-label={`Thông tin eSIM ${label}`} className="pic">
+          <article aria-label={tx("Thông tin eSIM {0}", label)} className="pic">
             <div className="pic-body">
-              <p className="pic-sub">
-                eSIM du lịch {label} dùng được tại <span id="vSub">{coverageLine(p)}</span>. <b>Một eSIM cho cả chuyến đi nhiều nước</b>, mạng 4G/5G
-                tốc độ cao. Nhận mã QR qua email ngay sau khi mua.
-              </p>{" "}
-              <div className="dt-tabs" role="tablist" aria-label="Chi tiết eSIM">
-                {(["Tính năng eSIM", "Giao hàng & Kích hoạt"] as const).map((t, i) => (
+              <p className="pic-sub">{tx("eSIM du lịch")}{" "}{label}{" "}{tx("dùng được tại")}{" "}<span id="vSub">{coverageLine(p)}</span>. <b>{tx("Một eSIM cho cả chuyến đi nhiều nước")}</b>{tx(", mạng 4G/5G tốc độ cao. Nhận mã QR qua email ngay sau khi mua.")}</p>{" "}
+              <div className="dt-tabs" role="tablist" aria-label={tx("Chi tiết eSIM")}>
+                {([tx("Tính năng eSIM"), tx("Giao hàng & Kích hoạt")] as const).map((t, i) => (
                   <button
                     key={t}
                     className="dt-tab"
@@ -321,9 +325,7 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
               <div className="dc-ico">
                 <Ic name="ic-device" w={18} />
               </div>
-              <h2 className="dc-title" id="dcTitle">
-                Kiểm tra thiết bị hỗ trợ eSIM
-              </h2>
+              <h2 className="dc-title" id="dcTitle">{tx("Kiểm tra thiết bị hỗ trợ eSIM")}</h2>
             </div>{" "}
             <DeviceCheck
               lang={lang}
@@ -339,21 +341,19 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
             <section aria-labelledby="stepV" className="block">
               <h2 className="sec-lbl" id="stepV">
                 <span className="sec-num">
-                  <span className="sr-only">Bước </span>1
+                  <span className="sr-only">{tx("Bước")}{" "}</span>1
                 </span>
                 <span className="sr-only">. </span>
-                <span>Chọn phạm vi phủ sóng</span>
+                <span>{tx("Chọn phạm vi phủ sóng")}</span>
               </h2>{" "}
               <Variants p={p} />{" "}
               <div className="cov">
                 <div className="cov-hd">
                   <CovFlags p={p} max={7} />
                   <span className="cov-t">
-                    <b id="covSub">eSIM {label}</b> · <span id="covN">{n} nước</span>
+                    <b id="covSub">eSIM {label}</b> · <span id="covN">{n}{" "}{tx("nước")}</span>
                   </span>
-                  <button className="fs-link" type="button" aria-haspopup="dialog" onClick={() => setCtr(true)}>
-                    Xem tất cả
-                    <Ic name="ic-chev-right" w={14} />
+                  <button className="fs-link" type="button" aria-haspopup="dialog" onClick={() => setCtr(true)}>{tx("Xem tất cả")}<Ic name="ic-chev-right" w={14} />
                   </button>
                 </div>{" "}
                 <DestPicker p={p} /> <DestRes p={p} />
@@ -363,11 +363,11 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
           <section aria-labelledby="step1" className="block">
             <h2 className="sec-lbl" id="step1">
               <span className="sec-num">
-                <span className="sr-only">Bước </span>
+                <span className="sr-only">{tx("Bước")}{" "}</span>
                 {p.members.length > 1 ? 2 : 1}
               </span>
               <span className="sr-only">. </span>
-              <span>Chọn gói cước</span>
+              <span>{tx("Chọn gói cước")}</span>
             </h2>{" "}
             <SegTabs p={p} /> <AppFilter p={p} />{" "}
             <PlanPanes p={p} dselOpen={dsel} setDselOpen={setDsel} onEkyc={() => setEkyc(true)} plansRef={plansRef} />
@@ -375,23 +375,19 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
           <section aria-labelledby="step2" className="block block--last">
             <h2 className="sec-lbl" id="step2">
               <span className="sec-num">
-                <span className="sr-only">Bước </span>
+                <span className="sr-only">{tx("Bước")}{" "}</span>
                 {p.members.length > 1 ? 3 : 2}
               </span>
               <span className="sr-only">. </span>
-              <span>Tùy chọn của bạn</span>
+              <span>{tx("Tùy chọn của bạn")}</span>
             </h2>{" "}
             <div className="cust-row cust-row--sc">
               <div>
-                <span className="cust-lbl" id="daysLbl">
-                  Số ngày dùng
-                </span>
+                <span className="cust-lbl" id="daysLbl">{tx("Số ngày dùng")}</span>
                 <DaysField p={p} cls="days-field" onCal={() => setCal(true)} onGo={goDays} />
               </div>
               <div>
-                <span className="cust-lbl" id="qtyLbl">
-                  Số lượng eSIM
-                </span>
+                <span className="cust-lbl" id="qtyLbl">{tx("Số lượng eSIM")}</span>
                 <Qty p={p} labelId="qtyLbl" />
               </div>
             </div>{" "}
@@ -402,7 +398,7 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
                   <p className="bs-plan">
                     <Ic name="ic-globe" w={14} />
                     <span>
-                      <span id="mPlan">{p.need ? "Chưa chọn số ngày" : `${n} nước · ${line}`}</span>
+                      <span id="mPlan">{p.need ? tx("Chưa chọn số ngày") : tx("{0} nước · {1}", n, line)}</span>
                       <span className="bs-qty" id="mQty" hidden={p.quantity < 2}>
                         {p.quantity} eSIM
                       </span>
@@ -412,7 +408,7 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
                 </div>{" "}
                 <div className="bs-r">
                   <p className="bs-total">
-                    <span className="sr-only">Giá trước voucher </span>
+                    <span className="sr-only">{tx("Giá trước voucher")}{" "}</span>
                     {p.net < Math.max(p.total, p.listTotal) && (
                       <s className="bs-old" id="mTotalOld">
                         {vnd(Math.max(p.total, p.listTotal))}
@@ -432,8 +428,7 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
                       onClick={() => setVpop(vpop === "bs" ? null : "bs")}
                     >
                       <Ic name="ic-ticket" w={13} />
-                      <span>
-                        Giá sau voucher · tiết kiệm <span id="mSave">{vnd(p.total - p.net)}</span>
+                      <span>{tx("Giá sau voucher · tiết kiệm")}{" "}<span id="mSave">{vnd(p.total - p.net)}</span>
                       </span>
                       <Ic name="ic-chev-down" w={12} />
                     </button>
@@ -442,19 +437,15 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
                 </div>
               </div>{" "}
               <button className="btn btn-lg btn-outline" type="button" data-cart="" disabled={!plan} aria-disabled={p.need} data-dgo="" onClick={guard(p.addToCart)}>
-                <Ic name="ic-cart" w={18} />
-                Thêm vào giỏ hàng
-              </button>{" "}
-              <button className="btn btn-lg btn-primary" type="button" id="buyBtn" disabled={!plan} aria-disabled={p.need} data-dgo="" onClick={guard(p.buyNow)}>
-                Mua ngay
-              </button>
+                <Ic name="ic-cart" w={18} />{tx("Thêm vào giỏ hàng")}</button>{" "}
+              <button className="btn btn-lg btn-primary" type="button" id="buyBtn" disabled={!plan} aria-disabled={p.need} data-dgo="" onClick={guard(p.buyNow)}>{tx("Mua ngay")}</button>
             </div>
           </section>{" "}
           <div className="trust trust--lined">
             {[
-              ["ic-shield", "Thanh toán an toàn", "Thẻ, Apple Pay, Google Pay"],
-              ["ic-headset", "Hỗ trợ 24/7", "Qua chat, Zalo, WhatsApp"],
-              ["ic-refund", "Hoàn tiền 100%", "Nếu eSIM chưa kích hoạt"],
+              ["ic-shield", tx("Thanh toán an toàn"), tx("Thẻ, Apple Pay, Google Pay")],
+              ["ic-headset", tx("Hỗ trợ 24/7"), tx("Qua chat, Zalo, WhatsApp")],
+              ["ic-refund", tx("Hoàn tiền 100%"), tx("Nếu eSIM chưa kích hoạt")],
             ].map(([ic, b, s]) => (
               <div className="ti" key={ic}>
                 <span className="ti-ic">
@@ -469,22 +460,16 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
           </div>{" "}
           <p className="dev-note dev-note--lined">
             <Ic name="ic-info" w={14} />
-            <span>Vui lòng kiểm tra thiết bị có hỗ trợ eSIM trước khi thanh toán.</span>
-            <button className="dev-go" type="button" onClick={goDeviceCheck}>
-              Kiểm tra ngay
-              <Ic name="ic-chev-right" w={13} />
+            <span>{tx("Vui lòng kiểm tra thiết bị có hỗ trợ eSIM trước khi thanh toán.")}</span>
+            <button className="dev-go" type="button" onClick={goDeviceCheck}>{tx("Kiểm tra ngay")}<Ic name="ic-chev-right" w={13} />
             </button>
           </p>
         </div>
       </main>{" "}
       {(p.member?.destinations?.length ?? 0) > 1 && (
         <section aria-labelledby="crossHd" className="cross">
-          <h2 className="cross-hd" id="crossHd">
-            Xem eSIM cho các điểm đến khác
-          </h2>{" "}
-          <p className="cross-lead">
-            Mỗi điểm đến có nhà mạng, vùng phủ sóng và bảng giá riêng — chọn gói phù hợp nhất với hành trình và nhu cầu data của bạn.
-          </p>{" "}
+          <h2 className="cross-hd" id="crossHd">{tx("Xem eSIM cho các điểm đến khác")}</h2>{" "}
+          <p className="cross-lead">{tx("Mỗi điểm đến có nhà mạng, vùng phủ sóng và bảng giá riêng — chọn gói phù hợp nhất với hành trình và nhu cầu data của bạn.")}</p>{" "}
           <div className="cross-grid cross-grid--3">
             <CrossCards p={p} lang={lang} />
           </div>
@@ -494,7 +479,7 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
       <EkycModal p={p} open={ekyc} onClose={() => setEkyc(false)} lang={lang} />
       <CalendarModal p={p} open={cal} onClose={() => setCal(false)} />
       <DeviceModal open={devOpen} onClose={() => setDevOpen(false)} lang={lang} initialBrand={devBrand} />
-      <div className={`dsb${dsbShow ? " show" : ""}`} id="dsb" role="region" aria-label="Mua nhanh" ref={dsbRef}>
+      <div className={`dsb${dsbShow ? " show" : ""}`} id="dsb" role="region" aria-label={tx("Mua nhanh")} ref={dsbRef}>
         <div className="dsb-inner">
           <div className="dsb-l">
             <span className="dsb-logo" aria-hidden="true">
@@ -502,10 +487,10 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
             </span>
             <div className="dsb-info">
               <div className="dsb-name">
-                eSIM {label} · <span id="dsbV">{n} quốc gia</span>
+                eSIM {label} · <span id="dsbV">{n}{" "}{tx("quốc gia")}</span>
               </div>
               <div className="dsb-plan" id="dsbPlan">
-                {plan ? `Gói: ${line}` : ""}
+                {plan ? tx("Gói: {0}", line) : ""}
               </div>
             </div>
           </div>{" "}
@@ -532,23 +517,17 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
                     ctaRow.current?.scrollIntoView({ block: "center", behavior: "smooth" });
                   }}
                 >
-                  <Ic name="ic-ticket" w={12} />
-                  Giá sau voucher
-                </button>
+                  <Ic name="ic-ticket" w={12} />{tx("Giá sau voucher")}</button>
               )}
               <span className="sb-stock" id="sbStock" hidden={!p.atMax || p.stock === Infinity}>
                 <Ic name="ic-package" w={12} />
-                <span id="sbStockTxt">{p.stock !== Infinity ? `Chỉ còn ${p.stock} eSIM trong kho` : ""}</span>
+                <span id="sbStockTxt">{p.stock !== Infinity ? tx("Chỉ còn {0} eSIM trong kho", p.stock) : ""}</span>
               </span>
             </div>{" "}
             <Qty p={p} ids={["dsbMinus", "dsbQty", "dsbPlus"]} compact className="dsb-qty" />{" "}
             <button className="btn btn-sm btn-outline dsb-cart" type="button" disabled={!plan} aria-disabled={p.need} data-dgo="" onClick={guard(p.addToCart)}>
-              <Ic name="ic-cart" w={16} />
-              Thêm vào giỏ hàng
-            </button>{" "}
-            <button className="btn btn-primary btn-sm" type="button" disabled={!plan} aria-disabled={p.need} data-dgo="" onClick={guard(p.buyNow)}>
-              Mua ngay
-            </button>
+              <Ic name="ic-cart" w={16} />{tx("Thêm vào giỏ hàng")}</button>{" "}
+            <button className="btn btn-primary btn-sm" type="button" disabled={!plan} aria-disabled={p.need} data-dgo="" onClick={guard(p.buyNow)}>{tx("Mua ngay")}</button>
           </div>
         </div>
       </div>
@@ -558,24 +537,19 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
 
 /** "Dùng được TikTok, ChatGPT & Claude" under the plan in the buy row. */
 export function BsApps({ p }: { p: RegionPurchase }) {
+  const tx = useT();
   if (p.apps === "unknown" || p.need) return null;
   return (
     <p className="bs-apps">
       {p.apps === "all" ? (
         <span className="is-ok">
-          <Ic name="ic-check-circle" w={15} />
-          Dùng được TikTok, ChatGPT & Claude
-        </span>
+          <Ic name="ic-check-circle" w={15} />{tx("Dùng được TikTok, ChatGPT & Claude")}</span>
       ) : p.apps === "notiktok" ? (
         <span className="is-no">
-          <Ic name="ic-no" w={15} />
-          Không dùng được TikTok
-        </span>
+          <Ic name="ic-no" w={15} />{tx("Không dùng được TikTok")}</span>
       ) : (
         <span className="is-no">
-          <Ic name="ic-no" w={15} />
-          Không dùng được TikTok, ChatGPT
-        </span>
+          <Ic name="ic-no" w={15} />{tx("Không dùng được TikTok, ChatGPT")}</span>
       )}
     </p>
   );

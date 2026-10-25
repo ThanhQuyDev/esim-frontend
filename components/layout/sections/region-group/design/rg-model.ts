@@ -1,3 +1,4 @@
+import { tr } from "../../local-esim/design/design-i18n-core";
 import type { Plan, PlansByDestinationResponse } from "@/lib/api";
 import {
   calcTotalVndPrice,
@@ -207,6 +208,6 @@ export function countPlans(p: PlansByDestinationResponse, tab: "data" | "combo")
 }
 
 /** "Thái Lan, Singapore và Nhật Bản". */
-export function joinVi(names: string[]): string {
-  return names.length > 1 ? `${names.slice(0, -1).join(", ")} và ${names[names.length - 1]}` : names[0] ?? "";
+export function joinVi(names: string[], lang: string): string {
+  return names.length > 1 ? tr(lang, "{0} và {1}", names.slice(0, -1).join(", "), names[names.length - 1]) : names[0] ?? "";
 }

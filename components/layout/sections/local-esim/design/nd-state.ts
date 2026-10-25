@@ -104,6 +104,8 @@ export function useDomesticPurchase(plans: Plan[], carrier: string, lang: string
   };
 
   return {
+    // Page language, for the design's copy (vande #029).
+    lang,
     groups,
     highSpeed,
     unlimited,

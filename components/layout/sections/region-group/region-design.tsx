@@ -1,5 +1,7 @@
 "use client";
 
+
+import { DesignLangProvider, tr } from "../local-esim/design/design-i18n";
 import "./design/rg-desktop.css";
 import "./design/rg-mobile.css";
 import "./design/rg-switch.css";
@@ -40,7 +42,9 @@ export function RegionDesign({ members, label, lang, initialSlug }: RegionDesign
     home: lang === "vi" ? "/" : `/${lang}`,
     destinations: localizedHref(lang, "destinations"),
   };
+  // The design's copy follows the page language (vande #029).
   return (
+    <DesignLangProvider lang={lang}>
     <div className="rg-page" data-testid="region-design">
       <RgSprite />
       {variant === "desktop" ? (
@@ -52,9 +56,10 @@ export function RegionDesign({ members, label, lang, initialSlug }: RegionDesign
         open={p.cartOpen}
         onClose={() => p.setCartOpen(false)}
         lang={lang}
-        itemName={`eSIM ${label} · ${p.codes.length} nước · ${planText(p)}`}
+        itemName={tr(lang, "eSIM {0} · {1} nước · {2}", label, p.codes.length, planText(p, lang))}
         totalLabel={vnd(p.total)}
       />
     </div>
+    </DesignLangProvider>
   );
 }

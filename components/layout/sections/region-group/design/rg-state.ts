@@ -240,6 +240,8 @@ export function useRegionPurchase(regions: Region[], lang: Locale, initialSlug?:
   };
 
   return {
+    // Page language, for the design's copy (vande #029).
+    lang,
     members,
     active,
     setActive,

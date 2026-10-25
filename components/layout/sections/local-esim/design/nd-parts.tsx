@@ -1,5 +1,8 @@
 "use client";
 
+
+
+import { useDesignLang, useT } from "./design-i18n";
 import {
   useCallback,
   useEffect,
@@ -204,11 +207,13 @@ export function PlanCard({
   extra?: boolean;
   hidden?: boolean;
 }) {
+  const tx = useT();
+  const lang = useDesignLang();
   const plan = variantFor(group, months);
   const soldOut = groupSoldOut(group);
-  const badge = soldOut ? { cls: "sold" as const, label: "Tạm hết hàng" } : badgeOf(plan);
-  const lines = cardLines(plan);
-  const note = cardNote(plan);
+  const badge = soldOut ? { cls: "sold" as const, label: tx("Tạm hết hàng") } : badgeOf(plan);
+  const lines = cardLines(plan, lang);
+  const note = cardNote(plan, lang);
   const tech = techOf(plan);
   const techTag = (
     <span className={`tech ${tech === "5G" ? "t5" : "t4"}`}>
@@ -216,10 +221,10 @@ export function PlanCard({
       <span>{tech}</span>
     </span>
   );
-  const pbi = badge ? <span className={`pbi ${badge.cls}`}>{badge.label}</span> : null;
+  const pbi = badge ? <span className={`pbi ${badge.cls}`}>{tx(badge.label)}</span> : null;
   const body = (
     <>
-      <span className="plan-t1">{dataTitle(plan)}</span>
+      <span className="plan-t1">{dataTitle(plan, lang)}</span>
       {lines.length > 0 && (
         <span className="plan-t2">
           {lines.map((l) => (
@@ -270,7 +275,7 @@ export function PlanCard({
           </span>{" "}
           <span className="plan-r">
             <span className="plan-price">{vnd(priceVnd(plan))}</span>
-            {renewalShort(plan) && <span className="plan-per">{renewalShort(plan)}</span>}
+            {renewalShort(plan, lang) && <span className="plan-per">{renewalShort(plan, lang)}</span>}
           </span>
         </>
       ) : (
@@ -293,6 +298,7 @@ export function PlanCard({
 /* ───────────── "Chu kỳ sử dụng" menu (.dsel--cyc) ───────────── */
 
 export function CycleMenu({ p, labelId }: { p: DomesticPurchase; labelId: string }) {
+  const tx = useT();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const options = p.group?.variants ?? [];
@@ -323,7 +329,7 @@ export function CycleMenu({ p, labelId }: { p: DomesticPurchase; labelId: string
         disabled={options.length === 0}
       >
         <span className="dsel-v" id="cycV">
-          {monthLabel(p.months)}
+          {monthLabel(p.months, p.lang)}
         </span>
         <Ic name="ic-chev-down" w={16} />
       </button>{" "}
@@ -344,8 +350,8 @@ export function CycleMenu({ p, labelId }: { p: DomesticPurchase; labelId: string
               }}
             >
               <span className="dopt-k" />
-              <span className="dopt-d">{monthLabel(m)}</span>
-              <span className="dopt-l">Giá cước</span>
+              <span className="dopt-d">{monthLabel(m, p.lang)}</span>
+              <span className="dopt-l">{tx("Giá cước")}</span>
               <span className="dopt-p">{vnd(priceVnd(v))}</span>
             </button>
           );
@@ -370,12 +376,13 @@ export function Qty({
   compact?: boolean;
   className?: string;
 }) {
+  const tx = useT();
   return (
-    <div className={className} role="group" {...(labelId ? { "aria-labelledby": labelId } : { "aria-label": "Số lượng" })}>
+    <div className={className} role="group" {...(labelId ? { "aria-labelledby": labelId } : { "aria-label": tx("Số lượng") })}>
       <button
         className="qty-btn"
         type="button"
-        aria-label="Giảm số lượng"
+        aria-label={tx("Giảm số lượng")}
         id={ids[0]}
         disabled={p.quantity <= 1}
         onClick={() => p.setQty(Math.max(1, p.quantity - 1))}
@@ -388,7 +395,7 @@ export function Qty({
       <button
         className="qty-btn"
         type="button"
-        aria-label="Tăng số lượng"
+        aria-label={tx("Tăng số lượng")}
         id={ids[2]}
         disabled={p.atMax}
         onClick={() => p.setQty(p.quantity + 1)}
@@ -400,12 +407,13 @@ export function Qty({
 }
 
 export function StockAlert({ p }: { p: PriceState }) {
+  const tx = useT();
   return (
     <div className="alert alert--sm alert--warning qstock" id="qStock" role="status" hidden={!p.atMax || p.stock === Infinity}>
       <Ic name="ic-package" w={15} />
       <span id="qStockTxt">
         {p.atMax && p.stock !== Infinity
-          ? `Gói này chỉ còn ${p.stock} eSIM trong kho — bạn đã chọn số lượng tối đa có thể mua.`
+          ? tx("Gói này chỉ còn {0} eSIM trong kho — bạn đã chọn số lượng tối đa có thể mua.", p.stock)
           : ""}
       </span>
     </div>
@@ -416,6 +424,7 @@ export function StockAlert({ p }: { p: PriceState }) {
 
 /** The price lines (`dl.vpop-bd`) and the voucher note — shared by popover and modal. */
 export function VoucherRows({ p }: { p: PriceState }) {
+  const tx = useT();
   const [ok, copy] = useCopied();
   const orig = p.listTotal > p.total ? p.listTotal : p.total;
   const disc = orig - p.total;
@@ -425,12 +434,11 @@ export function VoucherRows({ p }: { p: PriceState }) {
       <dl className="vpop-bd">
         {" "}
         <div>
-          <dt>Giá gốc</dt>
+          <dt>{tx("Giá gốc")}</dt>
           <dd id="vpOrig">{vnd(orig)}</dd>
         </div>{" "}
         <div id="vpDiscRow" hidden={disc <= 0}>
-          <dt>
-            Giảm giá sản phẩm{" "}
+          <dt>{tx("Giảm giá sản phẩm")}{" "}
             <span className="vpop-pct" id="vpPct">
               −{pct}%
             </span>
@@ -446,18 +454,15 @@ export function VoucherRows({ p }: { p: PriceState }) {
               <button
                 className={`vcode${ok ? " is-ok" : ""}`}
                 type="button"
-                aria-label={`Sao chép mã voucher ${p.voucher.code}`}
+                aria-label={tx("Sao chép mã voucher {0}", p.voucher.code)}
                 data-code={p.voucher.code}
                 onClick={() => copy(p.voucher!.code)}
               >
                 <Ic name={ok ? "ic-yes" : "ic-copy"} w={14} />
-                <span className="vcode-t">{ok ? "Đã sao chép" : p.voucher.code}</span>
+                <span className="vcode-t">{ok ? tx("Đã sao chép") : p.voucher.code}</span>
               </button>
-              <small>
-                Giảm {p.voucher.discountPercent}%
-                {p.voucherMax ? `, tối đa ${vnd(p.voucherMax)} mỗi đơn` : ""}.<br />
-                Số lượng voucher có hạn.
-              </small>
+              <small>{tx("Giảm")}{" "}{p.voucher.discountPercent}%
+                {p.voucherMax ? tx(", tối đa {0} mỗi đơn", vnd(p.voucherMax)) : ""}.<br />{tx("Số lượng voucher có hạn.")}</small>
             </dt>
             <dd id="vchOff" className="is-neg">
               −{vnd(p.voucher.discountVnd)}
@@ -465,31 +470,29 @@ export function VoucherRows({ p }: { p: PriceState }) {
           </div>
         )}{" "}
         <div className="vpop-net">
-          <dt>
-            Giá tạm tính<small>{p.voucher ? "khi áp dụng voucher trên" : "chưa gồm voucher"}</small>
+          <dt>{tx("Giá tạm tính")}<small>{p.voucher ? tx("khi áp dụng voucher trên") : tx("chưa gồm voucher")}</small>
           </dt>
           <dd id="vchNet">{vnd(p.net)}</dd>
         </div>{" "}
       </dl>{" "}
-      {p.voucher && <div className="vpop-note">*Nhập mã voucher ở bước giỏ hàng để được giá như trên.</div>}
+      {p.voucher && <div className="vpop-note">{tx("*Nhập mã voucher ở bước giỏ hàng để được giá như trên.")}</div>}
     </>
   );
 }
 
 /** Desktop popover content (`#vchPop`). */
 export function VoucherBreakdown({ p, planLine }: { p: PriceState; planLine: string }) {
+  const tx = useT();
   return (
     <>
       <div className="vpop-hd">
         <div>
-          <div className="vpop-t" id="vpT">
-            Chi tiết giá
-          </div>
+          <div className="vpop-t" id="vpT">{tx("Chi tiết giá")}</div>
           <div className="vpop-plan" id="vchPlan">
             {planLine}
           </div>
         </div>
-        <button className="vpop-x" type="button" aria-label="Đóng" data-close="">
+        <button className="vpop-x" type="button" aria-label={tx("Đóng")} data-close="">
           <Ic name="ic-x" w={20} />
         </button>
       </div>{" "}
@@ -511,23 +514,25 @@ export function FeatureRows({
   onEkyc: () => void;
   ekycTitle: string;
 }) {
+  const tx = useT();
+  const lang = useDesignLang();
   const [bannerOpen, setBannerOpen] = useState(false);
-  const hotspot = plan ? hotspotLabel(plan) : null;
-  const prefix = phonePrefixLabel(meta, plan);
-  const fee = plan ? renewalLabel(plan, vnd) : null;
+  const hotspot = plan ? hotspotLabel(plan, lang) : null;
+  const prefix = phonePrefixLabel(meta, plan, lang);
+  const fee = plan ? renewalLabel(plan, vnd, lang) : null;
   return (
     <>
       <div className="sr sr--nets sr--nets-fix">
-        <span className="sl">Nhà mạng hỗ trợ</span>
+        <span className="sl">{tx("Nhà mạng hỗ trợ")}</span>
         <div className="nets" id="specNets">
           <span className="net" id="specNet">
-            {networkLabel(meta, plan)}
+            {networkLabel(meta, plan, lang)}
           </span>
         </div>
       </div>{" "}
       {hotspot && (
         <div className="sr">
-          <span className="sl">Chia sẻ kết nối / Hotspot</span>
+          <span className="sl">{tx("Chia sẻ kết nối / Hotspot")}</span>
           <span className="pill pill--info">
             <Ic name="ic-wifi" w={13} />
             <span id="specHotspot">{hotspot}</span>
@@ -535,15 +540,15 @@ export function FeatureRows({
         </div>
       )}{" "}
       <div className="sr">
-        <span className="sl">Gọi & Nhắn tin</span>
+        <span className="sl">{tx("Gọi & Nhắn tin")}</span>
         <span className="v-yes">
           <Ic name="ic-yes" w={16} />
-          {plan && !plan.call && !plan.sms ? "Không" : "Có"}
+          {plan && !plan.call && !plan.sms ? tx("Không") : tx("Có")}
         </span>
       </div>{" "}
       {prefix && (
         <div className="sr">
-          <span className="sl">Số điện thoại</span>
+          <span className="sl">{tx("Số điện thoại")}</span>
           <span className="pill pill--sm pill--success">
             <Ic name="ic-phone" w={13} />
             {prefix}
@@ -552,7 +557,7 @@ export function FeatureRows({
       )}{" "}
       {fee && (
         <div className="sr">
-          <span className="sl">Cước phí gia hạn gói</span>
+          <span className="sl">{tx("Cước phí gia hạn gói")}</span>
           <span className="sv" id="specFee">
             {fee}
           </span>
@@ -583,23 +588,20 @@ export function FeatureRows({
               {" "}
               <li className="ekyc-step">
                 <span className="ekyc-step-num">1</span>
-                <span>Mua eSIM & nhận mã QR qua email.</span>
+                <span>{tx("Mua eSIM & nhận mã QR qua email.")}</span>
               </li>{" "}
               <li className="ekyc-step">
                 <span className="ekyc-step-num">2</span>
-                <span>Quét mã QR để cài đặt vào thiết bị.</span>
+                <span>{tx("Quét mã QR để cài đặt vào thiết bị.")}</span>
               </li>{" "}
               <li className="ekyc-step">
                 <span className="ekyc-step-num">3</span>
                 <span>
-                  <strong>Hoàn tất xác thực thuê bao</strong> (CCCD hoặc Hộ chiếu nước ngoài) → Bắt đầu sử dụng.
-                </span>
+                  <strong>{tx("Hoàn tất xác thực thuê bao")}</strong>{" "}{tx("(CCCD hoặc Hộ chiếu nước ngoài) → Bắt đầu sử dụng.")}</span>
               </li>{" "}
             </ol>{" "}
             <button className="btn btn-block btn-danger btn-sm" type="button" onClick={onEkyc}>
-              <Ic name="ic-file" w={15} />
-              Xem hướng dẫn đăng ký chi tiết
-              <Ic name="ic-chev-right" w={13} />
+              <Ic name="ic-file" w={15} />{tx("Xem hướng dẫn đăng ký chi tiết")}<Ic name="ic-chev-right" w={13} />
             </button>{" "}
           </div>{" "}
         </div>
@@ -609,41 +611,39 @@ export function FeatureRows({
 }
 
 export function DeliveryRows({ plan }: { plan: Plan | null }) {
+  const tx = useT();
   const deadline = plan?.activationDeadline ? formatActivationDate(plan.activationDeadline) : null;
-  const daily = plan ? perLabel(plan) === "ngày" : true;
+  const daily = plan ? perLabel(plan, "vi") === tx("ngày") : true;
   return (
     <>
       <div className="sr">
-        <span className="sl">Thời gian nhận eSIM</span>
+        <span className="sl">{tx("Thời gian nhận eSIM")}</span>
         <span className="pill pill--sm pill--success dlv-pill">
-          <Ic name="ic-bolt" w={12} />
-          Nhận ngay lập tức qua email
-        </span>
+          <Ic name="ic-bolt" w={12} />{tx("Nhận ngay lập tức qua email")}</span>
       </div>{" "}
       <div className="sr">
-        <span className="sl">Thời hạn kích hoạt</span>
+        <span className="sl">{tx("Thời hạn kích hoạt")}</span>
         {deadline ? (
-          <span className="sv-text">
-            Trước ngày <strong id="activateBy">{deadline}</strong>
+          <span className="sv-text">{tx("Trước ngày")}{" "}<strong id="activateBy">{deadline}</strong>
           </span>
         ) : (
-          <span className="sv-text">Theo quy định của nhà cung cấp (ghi trong email nhận eSIM)</span>
+          <span className="sv-text">{tx("Theo quy định của nhà cung cấp (ghi trong email nhận eSIM)")}</span>
         )}
       </div>{" "}
       {daily && (
         <div className="sr">
-          <span className="sl">Làm mới data theo ngày</span>
+          <span className="sl">{tx("Làm mới data theo ngày")}</span>
           <span className="sv-2">
-            <b>00:00 mỗi ngày</b>
-            <small>giờ Việt Nam (UTC+7)</small>
+            <b>{tx("00:00 mỗi ngày")}</b>
+            <small>{tx("giờ Việt Nam (UTC+7)")}</small>
           </span>
         </div>
       )}{" "}
       <div className="sr">
-        <span className="sl">Đổi trả & bảo hành</span>
+        <span className="sl">{tx("Đổi trả & bảo hành")}</span>
         <span className="sv-2">
-          <b>Không hỗ trợ trả hàng</b>
-          <small>Có hướng dẫn cài đặt & sử dụng</small>
+          <b>{tx("Không hỗ trợ trả hàng")}</b>
+          <small>{tx("Có hướng dẫn cài đặt & sử dụng")}</small>
         </span>
       </div>
     </>
@@ -720,6 +720,7 @@ export function DesignSelect({
   disabled?: boolean;
   onChange: (v: string) => void;
 }) {
+  const tx = useT();
   const [open, setOpen] = useState(false);
   const [act, setAct] = useState(0);
   const [up, setUp] = useState(false);
@@ -814,7 +815,7 @@ export function DesignSelect({
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => pick(i)}
             >
-              {o.label}
+              {tx(o.label)}
             </li>
           ))}
       </ul>
@@ -837,6 +838,7 @@ export function DeviceCheck({
   native?: boolean;
   flash?: number;
 }) {
+  const tx = useT();
   const devices = useDeviceList(lang);
   const [brand, setBrand] = useState<Brand | "">("");
   const [model, setModel] = useState("");
@@ -845,13 +847,13 @@ export function DeviceCheck({
   void brandId;
   const models = devices.filter((d) => d.brand === brand);
   const modelOptions = brand
-    ? [...models.map((d) => ({ value: d.name, label: d.name })), { value: "?", label: "Không thấy máy của tôi", unknown: true }]
+    ? [...models.map((d) => ({ value: d.name, label: d.name })), { value: "?", label: tx("Không thấy máy của tôi"), unknown: true }]
     : [];
   const result =
     model === "?"
-      ? { cls: "unk", text: "Máy của bạn chưa có trong danh sách. Hãy bấm *#06# trên bàn phím gọi điện: thấy mã EID là máy hỗ trợ eSIM." }
+      ? { cls: "unk", text: tx("Máy của bạn chưa có trong danh sách. Hãy bấm *#06# trên bàn phím gọi điện: thấy mã EID là máy hỗ trợ eSIM.") }
       : model
-        ? { cls: "ok", text: `✓ Có, ${model} hỗ trợ eSIM.` }
+        ? { cls: "ok", text: tx("✓ Có, {0} hỗ trợ eSIM.", model) }
         : null;
   const brandOptions = BRANDS.map((b) => ({ value: b.key, label: b.label }));
 
@@ -871,7 +873,7 @@ export function DeviceCheck({
           <option value="">{ph}</option>
           {options.map((o) => (
             <option key={o.value} value={o.value}>
-              {o.label}
+              {tx(o.label)}
             </option>
           ))}
         </select>
@@ -898,53 +900,42 @@ export function DeviceCheck({
       {" "}
       <div className="dc-how">
         {" "}
-        <p className="dc-how-t">Cách nhanh nhất</p>{" "}
-        <p>
-          Mở bàn phím gọi điện, bấm{" "}
+        <p className="dc-how-t">{tx("Cách nhanh nhất")}</p>{" "}
+        <p>{tx("Mở bàn phím gọi điện, bấm")}{" "}
           <button
             className={`dc-code${ok ? " is-ok" : ""}`}
             type="button"
-            aria-label={ok ? "Đã sao chép mã *#06#" : "Sao chép mã *#06#"}
-            title="Sao chép mã"
+            aria-label={ok ? tx("Đã sao chép mã *#06#") : tx("Sao chép mã *#06#")}
+            title={tx("Sao chép mã")}
             onClick={() => copy("*#06#")}
           >
             <span className="dc-code-t">*#06#</span>
             <Ic name={ok ? "ic-yes" : "ic-copy"} w={14} />
           </button>
         </p>{" "}
-        <p>
-          Thấy mã <b>EID</b> là máy hỗ trợ eSIM; không thấy là không hỗ trợ.
-        </p>{" "}
-        <p className="dc-how-n">Lưu ý: chỉ tính EID, không tính IMEI hay MEID.</p>{" "}
+        <p>{tx("Thấy mã")}{" "}<b>EID</b>{" "}{tx("là máy hỗ trợ eSIM; không thấy là không hỗ trợ.")}</p>{" "}
+        <p className="dc-how-n">{tx("Lưu ý: chỉ tính EID, không tính IMEI hay MEID.")}</p>{" "}
       </div>{" "}
-      <p className="dc-lbl" id="dcPick">
-        Hoặc chọn kiểu máy của bạn để kiểm tra:
-      </p>{" "}
+      <p className="dc-lbl" id="dcPick">{tx("Hoặc chọn kiểu máy của bạn để kiểm tra:")}</p>{" "}
       <div className="dc-sels">
         {" "}
         <div className="dc-f">
-          <label className="dc-fl" htmlFor={native ? "dcBrand" : "dcBrandBtn"} id="dcBrandL">
-            Hãng
-          </label>
-          {selectFor("brand", "dcBrand", "dcBrandL", brand, brandOptions, "Chọn hãng", false, (v) => {
+          <label className="dc-fl" htmlFor={native ? "dcBrand" : "dcBrandBtn"} id="dcBrandL">{tx("Hãng")}</label>
+          {selectFor("brand", "dcBrand", "dcBrandL", brand, brandOptions, tx("Chọn hãng"), false, (v) => {
             setBrand(v as Brand | "");
             setModel("");
           })}
         </div>{" "}
         <div className="dc-f">
-          <label className="dc-fl" htmlFor={native ? "dcModel" : "dcModelBtn"} id="dcModelL">
-            Kiểu máy
-          </label>
-          {selectFor("model", "dcModel", "dcModelL", model, modelOptions, "Chọn kiểu máy", !brand, setModel)}
+          <label className="dc-fl" htmlFor={native ? "dcModel" : "dcModelBtn"} id="dcModelL">{tx("Kiểu máy")}</label>
+          {selectFor("model", "dcModel", "dcModelL", model, modelOptions, tx("Chọn kiểu máy"), !brand, setModel)}
         </div>{" "}
       </div>{" "}
       <div className={`dc-res${result ? " " + result.cls : ""}`} id="dcRes" role="status" hidden={!result} aria-live="polite">
         {result?.text}
-        {result?.cls === "ok" && brand === "apple" && <small> {APPLE_NOTE}</small>}
+        {result?.cls === "ok" && brand === "apple" && <small> {tx(APPLE_NOTE)}</small>}
       </div>{" "}
-      <button className="dc-all" type="button" aria-haspopup="dialog" onClick={() => onAll(brand)}>
-        Xem tất cả thiết bị hỗ trợ
-        <Ic name="ic-chev-right" w={13} />
+      <button className="dc-all" type="button" aria-haspopup="dialog" onClick={() => onAll(brand)}>{tx("Xem tất cả thiết bị hỗ trợ")}<Ic name="ic-chev-right" w={13} />
       </button>{" "}
     </div>
   );
@@ -962,6 +953,7 @@ export function DeviceModal({
   lang: string;
   initialBrand: Brand | "";
 }) {
+  const tx = useT();
   const devices = useDeviceList(lang);
   const [q, setQ] = useState("");
   const [brand, setBrand] = useState<Brand>("apple");
@@ -984,31 +976,29 @@ export function DeviceModal({
           {" "}
           <div className="modal-top">
             <div>
-              <div className="modal-title modal-title--sm" id="devTitle">
-                Thiết bị hỗ trợ eSIM
-              </div>
-              <p className="modal-desc">Chọn hãng hoặc gõ tên máy để tìm nhanh</p>
+              <div className="modal-title modal-title--sm" id="devTitle">{tx("Thiết bị hỗ trợ eSIM")}</div>
+              <p className="modal-desc">{tx("Chọn hãng hoặc gõ tên máy để tìm nhanh")}</p>
             </div>
-            <button className="btn-close" type="button" aria-label="Đóng" data-close="">
+            <button className="btn-close" type="button" aria-label={tx("Đóng")} data-close="">
               <Ic name="ic-x" w={24} />
             </button>
           </div>{" "}
           <div className="search" id="devSearch">
             <Ic name="ic-search" w={15} />
             <input
-              aria-label="Tìm thiết bị"
+              aria-label={tx("Tìm thiết bị")}
               autoComplete="off"
               id="devQ"
-              placeholder="Tìm thiết bị…"
+              placeholder={tx("Tìm thiết bị…")}
               type="search"
               value={q}
               onChange={(e) => setQ(e.target.value)}
             />
-            <button className="search-clr" type="button" aria-label="Xoá tìm kiếm" hidden={!q} onClick={() => setQ("")}>
+            <button className="search-clr" type="button" aria-label={tx("Xoá tìm kiếm")} hidden={!q} onClick={() => setQ("")}>
               <Ic name="ic-close" w={12} />
             </button>
           </div>{" "}
-          <div className="dv-tabs" id="devTabs" role="group" aria-label="Hãng">
+          <div className="dv-tabs" id="devTabs" role="group" aria-label={tx("Hãng")}>
             {BRANDS.map((b) => (
               <button
                 key={b.key}
@@ -1037,18 +1027,12 @@ export function DeviceModal({
           </ul>{" "}
           <div className="ctr-empty" id="devEmpty" hidden={shown.length > 0}>
             <Ic name="ic-search" w={36} />
-            <p>
-              Không tìm thấy thiết bị phù hợp.
-              <br />
-              Hãy kiểm tra bằng mã <b>*#06#</b> hoặc xem danh sách đầy đủ bên dưới.
-            </p>
+            <p>{tx("Không tìm thấy thiết bị phù hợp.")}<br />{tx("Hãy kiểm tra bằng mã")}{" "}<b>*#06#</b>{" "}{tx("hoặc xem danh sách đầy đủ bên dưới.")}</p>
           </div>{" "}
         </div>{" "}
         <div className="modal-ft dv-ft">
-          <p className="modal-note">Không thấy thiết bị của bạn? Danh sách đầy đủ, cập nhật mới nhất có trên esim.vn.</p>
-          <a href={localizedHref(lang, "esim-supported-devices")} className="btn btn-block btn-dark" rel="noopener" target="_blank">
-            Xem danh sách đầy đủ trên esim.vn
-            <Ic name="ic-chev-right" w={14} />
+          <p className="modal-note">{tx("Không thấy thiết bị của bạn? Danh sách đầy đủ, cập nhật mới nhất có trên esim.vn.")}</p>
+          <a href={localizedHref(lang, "esim-supported-devices")} className="btn btn-block btn-dark" rel="noopener" target="_blank">{tx("Xem danh sách đầy đủ trên esim.vn")}<Ic name="ic-chev-right" w={14} />
           </a>
         </div>{" "}
       </div>
@@ -1058,6 +1042,7 @@ export function DeviceModal({
 
 /** "Xác thực thuê bao (eKYC)" modal (#ekycOv). */
 export function EkycModal({ open, onClose, carrierLabel }: { open: boolean; onClose: () => void; carrierLabel: string }) {
+  const tx = useT();
   const app = `app ${carrierLabel}`;
   const [guide, setGuide] = useState<number | null>(null);
   const card = (i: number, icon: string, name: string, sub: string, steps: ReactNode[]) => (
@@ -1069,8 +1054,7 @@ export function EkycModal({ open, onClose, carrierLabel }: { open: boolean; onCl
         {name}
         <small>{sub}</small>
       </span>
-      <span className="opt-link">
-        Xem hướng dẫn <Ic name="ic-chev-right" w={12} />
+      <span className="opt-link">{tx("Xem hướng dẫn")}{" "}<Ic name="ic-chev-right" w={12} />
       </span>{" "}
       <span className="opt-guide" hidden={guide !== i}>
         <ol>
@@ -1082,8 +1066,7 @@ export function EkycModal({ open, onClose, carrierLabel }: { open: boolean; onCl
     </button>
   );
   const openStep = (
-    <>
-      Mở {app}, chọn <strong>“Xác thực danh tính”</strong>
+    <>{tx("Mở")}{" "}{app}{tx(", chọn")}{" "}<strong>{tx("“Xác thực danh tính”")}</strong>
     </>
   );
   return (
@@ -1094,75 +1077,57 @@ export function EkycModal({ open, onClose, carrierLabel }: { open: boolean; onCl
           {" "}
           <div className="modal-top">
             <span className="modal-badge">
-              <Ic name="ic-id-card" w={12} />
-              Hướng dẫn xác thực thuê bao
-            </span>
-            <button className="btn-close" type="button" aria-label="Đóng" data-close="">
+              <Ic name="ic-id-card" w={12} />{tx("Hướng dẫn xác thực thuê bao")}</span>
+            <button className="btn-close" type="button" aria-label={tx("Đóng")} data-close="">
               <Ic name="ic-x" w={24} />
             </button>
           </div>{" "}
-          <div className="modal-title" id="ekycTitle">
-            Xác thực thuê bao (eKYC)
-          </div>{" "}
+          <div className="modal-title" id="ekycTitle">{tx("Xác thực thuê bao (eKYC)")}</div>{" "}
           <ul className="modal-sub">
             {" "}
             <li>
               <Ic name="ic-info" w={15} />
-              <span>Theo quy định tại Việt Nam, mọi khách hàng phải xác thực danh tính để sử dụng eSIM.</span>
+              <span>{tx("Theo quy định tại Việt Nam, mọi khách hàng phải xác thực danh tính để sử dụng eSIM.")}</span>
             </li>{" "}
             <li>
               <Ic name="ic-device-lines" w={15} />
-              <span>Cần cài đặt ứng dụng của nhà mạng để xác thực danh tính.</span>
+              <span>{tx("Cần cài đặt ứng dụng của nhà mạng để xác thực danh tính.")}</span>
             </li>{" "}
           </ul>{" "}
         </div>{" "}
         <div className="modal-body">
           {" "}
           <div className="notice">
-            💡 <strong>Mẹo nhanh:</strong> Chuẩn bị sẵn <strong>CCCD gắn chip</strong> hoặc <strong>Hộ chiếu</strong> trước khi
-            bắt đầu để quá trình xác thực diễn ra nhanh và suôn sẻ nhất.
-          </div>{" "}
-          <div className="section-lbl">Hình thức xác thực được hỗ trợ</div>{" "}
+            💡 <strong>{tx("Mẹo nhanh:")}</strong>{" "}{tx("Chuẩn bị sẵn")}{" "}<strong>{tx("CCCD gắn chip")}</strong>{" "}{tx("hoặc")}{" "}<strong>{tx("Hộ chiếu")}</strong>{" "}{tx("trước khi bắt đầu để quá trình xác thực diễn ra nhanh và suôn sẻ nhất.")}</div>{" "}
+          <div className="section-lbl">{tx("Hình thức xác thực được hỗ trợ")}</div>{" "}
           <div className="opt-grid">
             {" "}
-            {card(0, "ic-id-lg", "CCCD gắn chip", "Dành cho công dân Việt Nam", [
+            {card(0, "ic-id-lg", tx("CCCD gắn chip"), tx("Dành cho công dân Việt Nam"), [
               openStep,
-              "Chụp mặt trước và mặt sau CCCD gắn chip",
-              "Quét khuôn mặt để đối chiếu (nhìn thẳng, đủ sáng)",
+              tx("Chụp mặt trước và mặt sau CCCD gắn chip"),
+              tx("Quét khuôn mặt để đối chiếu (nhìn thẳng, đủ sáng)"),
             ])}{" "}
-            {card(1, "ic-passport-lg", "Hộ chiếu nước ngoài", "Dành cho người nước ngoài", [
+            {card(1, "ic-passport-lg", tx("Hộ chiếu nước ngoài"), tx("Dành cho người nước ngoài"), [
               openStep,
-              "Chụp trang thông tin cá nhân của hộ chiếu (còn hiệu lực)",
-              "Quét khuôn mặt để đối chiếu (nhìn thẳng, đủ sáng)",
+              tx("Chụp trang thông tin cá nhân của hộ chiếu (còn hiệu lực)"),
+              tx("Quét khuôn mặt để đối chiếu (nhìn thẳng, đủ sáng)"),
             ])}{" "}
           </div>{" "}
           <div className="acc acc--line">
-            <div className="acc-title">Câu hỏi thường gặp</div>{" "}
-            <AccItem q={<>Thông tin của tôi có được bảo mật không?<Ic name="ic-chev-down" w={15} /></>}>
-              Hoàn toàn. Dữ liệu được mã hoá và chỉ dùng để đăng ký thuê bao chính chủ theo quy định của cơ quan quản lý viễn thông.
+            <div className="acc-title">{tx("Câu hỏi thường gặp")}</div>{" "}
+            <AccItem q={<>{tx("Thông tin của tôi có được bảo mật không?")}<Ic name="ic-chev-down" w={15} /></>}>{tx("Hoàn toàn. Dữ liệu được mã hoá và chỉ dùng để đăng ký thuê bao chính chủ theo quy định của cơ quan quản lý viễn thông.")}</AccItem>{" "}
+            <AccItem q={<>{tx("Người nước ngoài có đăng ký được không?")}<Ic name="ic-chev-down" w={15} /></>}>{tx("Có. Hệ thống chấp nhận Hộ chiếu nước ngoài còn hiệu lực khi xác thực trên")}{" "}{app}.
             </AccItem>{" "}
-            <AccItem q={<>Người nước ngoài có đăng ký được không?<Ic name="ic-chev-down" w={15} /></>}>
-              Có. Hệ thống chấp nhận Hộ chiếu nước ngoài còn hiệu lực khi xác thực trên {app}.
-            </AccItem>{" "}
-            <AccItem q={<>Một CCCD đăng ký được bao nhiêu thuê bao?<Ic name="ic-chev-down" w={15} /></>}>
-              Theo quy định hiện hành, mỗi giấy tờ tuỳ thân được đăng ký tối đa 3 thuê bao trên mỗi nhà mạng.
-            </AccItem>{" "}
-            <AccItem q={<>Nếu xác thực thất bại, tôi phải làm gì?<Ic name="ic-chev-down" w={15} /></>}>
-              Bạn có thể thử lại nhiều lần. Nếu vẫn thất bại, liên hệ hỗ trợ 24/7 qua chat trong ứng dụng hoặc gửi email
-              hotro@esim.com.vn.
-            </AccItem>{" "}
+            <AccItem q={<>{tx("Một CCCD đăng ký được bao nhiêu thuê bao?")}<Ic name="ic-chev-down" w={15} /></>}>{tx("Theo quy định hiện hành, mỗi giấy tờ tuỳ thân được đăng ký tối đa 3 thuê bao trên mỗi nhà mạng.")}</AccItem>{" "}
+            <AccItem q={<>{tx("Nếu xác thực thất bại, tôi phải làm gì?")}<Ic name="ic-chev-down" w={15} /></>}>{tx("Bạn có thể thử lại nhiều lần. Nếu vẫn thất bại, liên hệ hỗ trợ 24/7 qua chat trong ứng dụng hoặc gửi email hotro@esim.com.vn.")}</AccItem>{" "}
           </div>{" "}
         </div>{" "}
         <div className="modal-ft">
           {" "}
           <button className="btn btn-block btn-danger btn-lg" type="button" data-close="">
-            <Ic name="ic-check-badge" w={16} />
-            Đã hiểu, tiếp tục mua eSIM
-          </button>{" "}
+            <Ic name="ic-check-badge" w={16} />{tx("Đã hiểu, tiếp tục mua eSIM")}</button>{" "}
           <p className="modal-note">
-            <Ic name="ic-info" w={13} />
-            Cần hỗ trợ? Liên hệ qua Chat hoặc email hotro@esim.com.vn
-          </p>{" "}
+            <Ic name="ic-info" w={13} />{tx("Cần hỗ trợ? Liên hệ qua Chat hoặc email hotro@esim.com.vn")}</p>{" "}
         </div>{" "}
       </div>
     </Overlay>
@@ -1181,9 +1146,10 @@ export function CrossCard({
   fromVnd: number;
   showPrefix?: boolean;
 }) {
-  const parts = [`Từ ${vnd(fromVnd)}`];
-  if (meta.network) parts.push(`Hạ tầng ${meta.network}`);
-  if (showPrefix && meta.phonePrefix) parts.push(`Đầu số ${meta.phonePrefix}`);
+  const tx = useT();
+  const parts = [tx("Từ {0}", vnd(fromVnd))];
+  if (meta.network) parts.push(tx("Hạ tầng {0}", meta.network));
+  if (showPrefix && meta.phonePrefix) parts.push(tx("Đầu số {0}", meta.phonePrefix));
   return (
     <a href={href} className="cross-card">
       <span className="cross-logo" style={{ background: meta.logoBg }}>
@@ -1199,6 +1165,18 @@ export function CrossCard({
 }
 
 /** The plan line used in summaries: "WIN119P · 1 tháng". */
-export function planCycleLine(plan: Plan | null, months: number): string {
-  return plan ? `${plan.providerPlanId} · ${monthLabel(months)}` : "";
+export function planCycleLine(plan: Plan | null, months: number, lang: string): string {
+  return plan ? `${plan.providerPlanId} · ${monthLabel(months, lang)}` : "";
+}
+
+/** Vietnam's picture and flag as set in the CMS (vande #029). */
+export type DomesticCountry = { avatarUrl: string | null; flagUrl: string | null };
+
+/** Vietnam's flag: the CMS image when set, else the design's drawing. */
+export function VnFlag({ url, w, h }: { url?: string | null; w: number; h: number }) {
+  if (url) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img className="flag" src={url} alt="VN" width={w} height={h} loading="lazy" decoding="async" />;
+  }
+  return <Ic name="fl-vn" w={w} h={h} cls="flag" label="VN" />;
 }
