@@ -63,6 +63,12 @@ export function isMobileUserAgent(userAgent: string | null | undefined): boolean
  * null when the page has no device variant.
  */
 export function mobileVariantPath(internalPath: string): string | null {
+  // Domestic eSIM carrier pages too (vande #030): they rendered both layouts,
+  // so the HTML carried every heading twice.
+  const domestic = internalPath.match(/^\/(vi|en)\/esim-noi-dia\/([^/]+)\/?$/);
+  if (domestic && domestic[2] !== MOBILE_VARIANT_SEGMENT) {
+    return `/${domestic[1]}/esim-noi-dia/${domestic[2]}/${MOBILE_VARIANT_SEGMENT}`;
+  }
   const m = internalPath.match(/^\/(vi|en)\/([^/]+)\/?$/);
   if (!m) return null;
   const [, locale, slug] = m;

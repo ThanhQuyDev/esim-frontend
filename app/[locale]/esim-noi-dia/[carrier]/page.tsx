@@ -9,6 +9,9 @@ import {
   LazyFAQSection,
   LazyReferFriendBanner,
   LazyFooterSection,
+  LazyEsimComparison,
+  LazyTestimonialsSection,
+  LazyDownloadAppSection,
 } from "@/components/layout/sections/destination/lazy-below-fold-sections";
 import { PartnerBar } from "@/components/layout/sections/partner-bar";
 import { getWhyChooseUs } from "@/lib/api";
@@ -41,6 +44,20 @@ import type { Metadata } from "next";
 // 500 thay vì trang 404. Dựng động thì vẫn là HTML render sẵn phía server (Google
 // đọc bình thường), các lệnh fetch vẫn được cache 300s nên không tăng tải API.
 export const dynamic = "force-dynamic";
+
+/**
+ * The eSIM vs physical SIM table for an eSIM used at home (vande #030):
+ * activation does not wait for a destination, and "using abroad" is beside
+ * the point.
+ */
+function domesticComparison(comparison: { rows: { label: string; esim: string; sim: string }[] }) {
+  return {
+    ...comparison,
+    rows: comparison.rows
+      .slice(0, -1)
+      .map((row, i) => (i === 3 ? { ...row, esim: row.esim.replace(/\s*\([^)]*\)\s*$/, "") } : row)),
+  };
+}
 
 export async function generateStaticParams() {
   try {
@@ -128,7 +145,13 @@ export default async function DomesticEsimCarrierPage({
           features={whyChooseUsItems}
           count={whyChooseUsCount("esim_noi_dia")}
         />
-        <PartnerBar dict={dict.partnerBar} />
+        <PartnerBar dict={dict.partnerBar} centered />
+        <LazyEsimComparison dict={domesticComparison(dict.whatIsEsimPage.comparison)} />
+      </div>
+      {/* Full width, so its grey background reaches both edges (vande #030). */}
+      <LazyTestimonialsSection dict={dict.testimonials} />
+      <div className="max-w-[1168px] mx-auto px-4 sm:px-0">
+        <LazyDownloadAppSection dict={dict.downloadApp} />
         <LazyFAQSection
           dict={dict.faq}
           lang={locale}

@@ -1,5 +1,7 @@
 interface PartnerBarProps {
   dict: Record<string, any>;
+  /** Title centred above one row of logos (vande #030), instead of the pill. */
+  centered?: boolean;
 }
 
 const partners = [
@@ -11,7 +13,31 @@ const partners = [
   { name: "techradar", src: "https://sb.nordcdn.com/m/235a0b392cdb70c6/original/techradar.svg", width: 175, height: 50, minWidth: 175 },
 ];
 
-export function PartnerBar({ dict }: PartnerBarProps) {
+export function PartnerBar({ dict, centered }: PartnerBarProps) {
+  if (centered) {
+    return (
+      <div data-section="PartnerBar" data-testid="section-PartnerBar" className="relative scroll-mt-20 xl:scroll-mt-24">
+        <div className="py-12 lg:py-16">
+          <h2 className="heading-md text-center mb-8">{dict.title}</h2>
+          <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-6 px-4 lg:gap-x-14">
+            {partners.map((partner) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                key={partner.name}
+                src={partner.src}
+                alt={partner.name}
+                width={partner.width}
+                height={partner.height}
+                loading="lazy"
+                decoding="async"
+                className="h-8 w-auto lg:h-10"
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div data-section="PartnerBar" data-testid="section-PartnerBar" className="relative scroll-mt-20 xl:scroll-mt-24">
       <div className="py-16">

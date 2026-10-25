@@ -28,17 +28,17 @@ export function DeviceVariantProvider({
   );
 }
 
-export function useDeviceVariant(): DeviceVariant {
+export function useDeviceVariant(desktopQuery: string = DESKTOP_QUERY): DeviceVariant {
   const serverVariant = useContext(DeviceVariantContext);
   const [variant, setVariant] = useState<DeviceVariant>(serverVariant);
 
   useEffect(() => {
-    const mq = window.matchMedia(DESKTOP_QUERY);
+    const mq = window.matchMedia(desktopQuery);
     const sync = () => setVariant(mq.matches ? "desktop" : "mobile");
     sync();
     mq.addEventListener("change", sync);
     return () => mq.removeEventListener("change", sync);
-  }, []);
+  }, [desktopQuery]);
 
   return variant;
 }

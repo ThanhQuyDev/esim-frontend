@@ -1,7 +1,2 @@
-/* One layout at a time (#066): the design ships separate desktop and mobile
-   files; the desktop one takes over where its own grid needs the width. */
-.nd-page .ndm { display: none; }
-@media (max-width: 56.25rem) {
-  .nd-page .ndd { display: none; }
-  .nd-page .ndm { display: block; }
-}
+/* One layout at a time: the page renders only the layout for the device
+   (vande #030, useDeviceVariant), so no width switch is needed here any more. */

@@ -11,6 +11,7 @@ import { CartConfirmDialog } from "../destination/cart-confirm-dialog";
 import type { DestinationDict } from "../destination/types";
 import type { Locale } from "@/lib/i18n-config";
 import { DesignLangProvider } from "./design/design-i18n";
+import { useDeviceVariant } from "@/lib/device-variant-context";
 import type { DomesticCountry } from "./design/nd-parts";
 import { NdSprite } from "./design/nd-icons";
 import { NdDesktop } from "./design/nd-desktop";
@@ -49,6 +50,8 @@ export function LocalEsimDetail({ carrier, lang, initialPlans, country }: LocalE
   const { data: grouped = EMPTY } = useLocalPlansByCarrier(carrier, lang, initialPlans ?? undefined);
   const { data: allCarriers = [] } = useLocalCarriers();
   const plans = grouped.localEsim ?? [];
+  // The design's own breakpoint: the desktop grid needs 900px (nd-switch.css).
+  const variant = useDeviceVariant("(min-width: 56.3125rem)");
   const p = useDomesticPurchase(plans, carrier, lang, `eSIM ${meta.label}`);
 
   const otherCarriers = allCarriers.filter((c) => c.provider !== carrier);
@@ -65,6 +68,9 @@ export function LocalEsimDetail({ carrier, lang, initialPlans, country }: LocalE
     <DesignLangProvider lang={lang}>
     <div className="nd-page" data-testid="local-esim-detail">
       <NdSprite />
+      {/* One layout only, like the region page (vande #030): both were
+          rendered and one hidden with CSS, so every heading appeared twice. */}
+      {variant === "desktop" ? (
       <NdDesktop
         p={p}
         meta={meta}
@@ -76,6 +82,7 @@ export function LocalEsimDetail({ carrier, lang, initialPlans, country }: LocalE
         allPlans={plans}
         country={country ?? null}
       />
+      ) : (
       <NdMobile
         p={p}
         meta={meta}
@@ -85,6 +92,7 @@ export function LocalEsimDetail({ carrier, lang, initialPlans, country }: LocalE
         breadcrumb={breadcrumb}
         country={country ?? null}
       />
+      )}
       <CartConfirmDialog
         open={p.cartOpen}
         onClose={() => p.setCartOpen(false)}
