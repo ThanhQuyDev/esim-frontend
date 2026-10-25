@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import { PasswordInput } from "@/components/ui/password-input";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle2, Loader2, XCircle } from "lucide-react";
@@ -135,8 +136,8 @@ export function AccountLinkAction({ mode, lang }: { mode: AccountLinkMode; lang:
         <form onSubmit={submit} className="space-y-4" data-testid="reset-password-form">
           <label className="block space-y-1.5 text-sm">
             <span className="font-medium text-gray-700">{t.newPassword}</span>
-            <input
-              type="password"
+            <PasswordInput
+              lang={lang}
               autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -145,8 +146,8 @@ export function AccountLinkAction({ mode, lang }: { mode: AccountLinkMode; lang:
           </label>
           <label className="block space-y-1.5 text-sm">
             <span className="font-medium text-gray-700">{t.repeat}</span>
-            <input
-              type="password"
+            <PasswordInput
+              lang={lang}
               autoComplete="new-password"
               value={repeat}
               onChange={(e) => setRepeat(e.target.value)}

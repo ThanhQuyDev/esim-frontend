@@ -20,6 +20,7 @@ import { ChangeEmail } from "./change-email";
 import { TierLadder } from "./tier-ladder";
 import { tierAccent, tierName } from "./tier-names";
 import { PersonalInfo } from "./personal-info";
+import { PasswordSettings } from "./password-settings";
 import { AffiliateTab } from "./affiliate-tab";
 import { WalletPageContent } from "@/components/layout/sections/wallet/wallet-page-content";
 import Link from "next/link";
@@ -196,6 +197,8 @@ export function ProfileContent({ lang }: ProfileContentProps) {
               </div>
               {/* Self-service email change (#057) */}
               <ChangeEmail currentEmail={user.email} lang={lang} />
+              {/* Create or change the password (vande #073) */}
+              <PasswordSettings lang={lang} />
             </div>
 
             {/* Personal Info — moved out of SIM management tab */}

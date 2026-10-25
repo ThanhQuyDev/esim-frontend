@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { PasswordInput } from "@/components/ui/password-input";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -572,8 +573,8 @@ export function AffiliateRegisterForm({
                     {dict.password} <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input
-                      type="password"
+                    <PasswordInput
+                      lang={lang}
                       placeholder={dict.passwordPlaceholder}
                       data-testid="password"
                       autoComplete="new-password"
@@ -596,8 +597,8 @@ export function AffiliateRegisterForm({
                     <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input
-                      type="password"
+                    <PasswordInput
+                      lang={lang}
                       placeholder={dict.confirmPasswordPlaceholder}
                       data-testid="confirm-password"
                       autoComplete="new-password"

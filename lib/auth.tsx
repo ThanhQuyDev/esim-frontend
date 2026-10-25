@@ -78,6 +78,11 @@ interface AuthContextValue {
   /** Set a password for an account that doesn't have one yet */
   setPassword: (password: string) => Promise<void>;
   /**
+   * Change an existing password (vande #073). Needs the current one; other
+   * devices signed in to the account are signed out, this one stays.
+   */
+  changePassword: (oldPassword: string, password: string) => Promise<void>;
+  /**
    * Apply fields the server changed on the signed-in user — a new email after
    * an email change — so the whole site shows them without logging in again.
    */
@@ -207,6 +212,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const logoutRef = useRef<() => void>(() => {});
+  /**
+   * The token as of now, not as of the last render: "Tạo tài khoản" saves the
+   * password straight after the code signs the customer in (vande #073),
+   * before React has re-rendered with the new token.
+   */
+  const tokenRef = useRef<string | null>(null);
+  useEffect(() => {
+    tokenRef.current = token;
+  }, [token]);
   const queryClient = useQueryClient();
 
   // Hydrate from localStorage on mount
@@ -231,6 +245,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const completeLogin = useCallback(
     async (result: { token: string; user: AuthUser }) => {
+      tokenRef.current = result.token;
       setToken(result.token);
       setUser(result.user);
       persistAuth(result.token, result.user);
@@ -319,7 +334,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     async (password: string) => {
       const res = await authFetch(
         `${API_BASE_URL}/api/v1/auth/me/password`,
-        token,
+        tokenRef.current ?? token,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -333,8 +348,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       const updated = await res.json();
       setUser(updated);
-      if (token) {
-        persistAuth(token, updated);
+      const current = tokenRef.current ?? token;
+      if (current) {
+        persistAuth(current, updated);
+      }
+    },
+    [token]
+  );
+
+  const changePassword = useCallback(
+    async (oldPassword: string, password: string) => {
+      const res = await authFetch(`${API_BASE_URL}/api/v1/auth/me`, tokenRef.current ?? token, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ oldPassword, password }),
+      });
+
+      if (!res.ok) {
+        await throwApiError(res, "Failed to change password");
+      }
+
+      const updated = await res.json();
+      setUser(updated);
+      const current = tokenRef.current ?? token;
+      if (current) {
+        persistAuth(current, updated);
       }
     },
     [token]
@@ -392,6 +430,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loginWithPassword,
         loginWithGoogle,
         setPassword,
+        changePassword,
         updateUser,
         forgotPassword,
         logout,

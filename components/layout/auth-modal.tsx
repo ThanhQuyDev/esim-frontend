@@ -1,12 +1,27 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { X, Mail, Loader2, ArrowLeft, Lock, ShieldCheck, Eye, EyeOff } from "lucide-react";
+import {
+  X,
+  Mail,
+  Loader2,
+  ArrowLeft,
+  Lock,
+  ShieldCheck,
+  Eye,
+  EyeOff,
+  UserPlus,
+  CheckCircle2,
+} from "lucide-react";
 import { useAuth, AuthError, type AuthUser } from "@/lib/auth";
 import { GoogleSignInButton } from "./google-signin-button";
 
-type Step = "email" | "otp" | "set-password";
-type Method = "otp" | "password";
+type Step = "email" | "otp" | "set-password" | "done";
+/**
+ * "signup" (vande #073): create an account from the start — email and a
+ * password, then the email code that proves the address is theirs.
+ */
+type Method = "otp" | "password" | "signup";
 
 interface AuthModalProps {
   lang?: string;
@@ -87,6 +102,8 @@ export function AuthModal({ lang }: AuthModalProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  /** What the "done" step says after signing up (vande #073). */
+  const [doneMessage, setDoneMessage] = useState("");
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   // Focus first OTP input when switching to OTP step
@@ -107,6 +124,7 @@ export function AuthModal({ lang }: AuthModalProps) {
     setShowConfirmPassword(false);
     setError("");
     setNotice("");
+    setDoneMessage("");
     setMethod("otp");
     setStep("email");
   };
@@ -147,6 +165,28 @@ export function AuthModal({ lang }: AuthModalProps) {
     } finally {
       setLoading(false);
     }
+  };
+
+  /**
+   * "Tạo tài khoản" (vande #073): the passwords are checked here, then an
+   * email code is sent; the password is saved once the code proves the
+   * address is theirs.
+   */
+  const handleSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setNotice("");
+    if (newPassword.length < 6) {
+      setError(
+        t(lang, "Mật khẩu phải có ít nhất 6 ký tự.", "Password must be at least 6 characters.")
+      );
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setError(t(lang, "Mật khẩu nhập lại không khớp.", "Passwords do not match."));
+      return;
+    }
+    await handleSendOtp(e);
   };
 
   const handlePasswordLogin = async (e: React.FormEvent) => {
@@ -271,6 +311,29 @@ export function AuthModal({ lang }: AuthModalProps) {
 
     try {
       const user = await verifyOtp(email, otpCode);
+      if (method === "signup") {
+        // The code proved the email; now the password chosen on the form.
+        if (user.hasPassword === false) {
+          await setPassword(newPassword);
+          setDoneMessage(
+            t(
+              lang,
+              "Đã tạo tài khoản và mật khẩu. Lần sau bạn đăng nhập bằng email và mật khẩu, hoặc mã OTP.",
+              "Your account and password are set. Next time sign in with your email and password, or a code."
+            )
+          );
+        } else {
+          setDoneMessage(
+            t(
+              lang,
+              "Email này đã có tài khoản nên bạn đã được đăng nhập luôn. Mật khẩu cũ của tài khoản vẫn giữ nguyên — có thể đổi trong trang Tài khoản.",
+              "This email already had an account, so you are now signed in. Its existing password is unchanged — you can change it on your account page."
+            )
+          );
+        }
+        setStep("done");
+        return;
+      }
       afterLogin(user);
     } catch (err) {
       setError(
@@ -359,7 +422,8 @@ export function AuthModal({ lang }: AuthModalProps) {
   const submitClass =
     "w-full flex items-center justify-center gap-2 py-3 bg-[var(--bg-accent)] text-primary font-medium rounded-xl transition-colors hover:opacity-90 disabled:opacity-60 cursor-pointer";
   const tabClass = (active: boolean) =>
-    `flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-base sm:text-sm font-medium transition-colors cursor-pointer ${
+    // Three tabs on a phone since "Tạo tài khoản" (vande #073): one line each.
+    `flex-1 flex items-center justify-center gap-1.5 py-2 px-1 rounded-lg text-sm whitespace-nowrap font-medium transition-colors cursor-pointer ${
       active ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"
     }`;
 
@@ -385,19 +449,29 @@ export function AuthModal({ lang }: AuthModalProps) {
         {step === "email" ? (
           /* ===== Step 1: Email + method choice ===== */
           <form
-            onSubmit={method === "otp" ? handleSendOtp : handlePasswordLogin}
+            onSubmit={
+              method === "otp"
+                ? handleSendOtp
+                : method === "signup"
+                  ? handleSignup
+                  : handlePasswordLogin
+            }
             className="p-8 space-y-5"
           >
             <div className="text-center">
               <div className="mx-auto w-14 h-14 rounded-full bg-[var(--bg-accent)]/10 flex items-center justify-center mb-4">
                 {method === "otp" ? (
                   <Mail className="w-7 h-7 text-[var(--bg-accent)]" />
+                ) : method === "signup" ? (
+                  <UserPlus className="w-7 h-7 text-[var(--bg-accent)]" />
                 ) : (
                   <Lock className="w-7 h-7 text-[var(--bg-accent)]" />
                 )}
               </div>
               <h2 className="text-[1.7rem] sm:text-2xl font-medium text-gray-900">
-                {t(lang, "Đăng nhập / Đăng ký", "Sign In / Sign Up")}
+                {method === "signup"
+                  ? t(lang, "Tạo tài khoản", "Create an account")
+                  : t(lang, "Đăng nhập / Đăng ký", "Sign In / Sign Up")}
               </h2>
               <p className="mt-2 text-base sm:text-sm text-gray-500">
                 {method === "otp"
@@ -406,11 +480,17 @@ export function AuthModal({ lang }: AuthModalProps) {
                       "Nhập email để nhận mã xác thực OTP",
                       "Enter your email to receive a verification code"
                     )
-                  : t(
-                      lang,
-                      "Đăng nhập bằng email và mật khẩu",
-                      "Sign in with your email and password"
-                    )}
+                  : method === "signup"
+                    ? t(
+                        lang,
+                        "Nhập email và đặt mật khẩu. Chúng tôi gửi mã OTP để xác nhận email của bạn.",
+                        "Enter your email and choose a password. We send a code to confirm the email is yours."
+                      )
+                    : t(
+                        lang,
+                        "Đăng nhập bằng email và mật khẩu",
+                        "Sign in with your email and password"
+                      )}
               </p>
             </div>
 
@@ -425,7 +505,7 @@ export function AuthModal({ lang }: AuthModalProps) {
                 }}
                 className={tabClass(method === "otp")}
               >
-                <ShieldCheck className="w-4 h-4" />
+                <ShieldCheck className="w-4 h-4 hidden sm:block" />
                 {t(lang, "Mã OTP", "OTP code")}
               </button>
               <button
@@ -437,8 +517,21 @@ export function AuthModal({ lang }: AuthModalProps) {
                 }}
                 className={tabClass(method === "password")}
               >
-                <Lock className="w-4 h-4" />
+                <Lock className="w-4 h-4 hidden sm:block" />
                 {t(lang, "Mật khẩu", "Password")}
+              </button>
+              <button
+                type="button"
+                data-testid="auth-tab-signup"
+                onClick={() => {
+                  setMethod("signup");
+                  setError("");
+                  setNotice("");
+                }}
+                className={tabClass(method === "signup")}
+              >
+                <UserPlus className="w-4 h-4 hidden sm:block" />
+                {t(lang, "Tạo tài khoản", "Sign up")}
               </button>
             </div>
 
@@ -518,12 +611,72 @@ export function AuthModal({ lang }: AuthModalProps) {
               </div>
             )}
 
+            {/* Sign-up passwords (vande #073) */}
+            {method === "signup" && (
+              <>
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="auth-signup-password"
+                    className="text-base sm:text-sm font-medium text-gray-700"
+                  >
+                    {t(lang, "Mật khẩu", "Password")}
+                  </label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <input
+                      id="auth-signup-password"
+                      type={showNewPassword ? "text" : "password"}
+                      required
+                      autoComplete="new-password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder={t(lang, "Ít nhất 6 ký tự", "At least 6 characters")}
+                      className={passwordInputClass}
+                    />
+                    <PasswordToggle
+                      lang={lang}
+                      visible={showNewPassword}
+                      onToggle={() => setShowNewPassword((v) => !v)}
+                    />
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="auth-signup-confirm"
+                    className="text-base sm:text-sm font-medium text-gray-700"
+                  >
+                    {t(lang, "Nhập lại mật khẩu", "Confirm password")}
+                  </label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <input
+                      id="auth-signup-confirm"
+                      type={showConfirmPassword ? "text" : "password"}
+                      required
+                      autoComplete="new-password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder={t(lang, "Nhập lại mật khẩu", "Re-enter your password")}
+                      className={passwordInputClass}
+                    />
+                    <PasswordToggle
+                      lang={lang}
+                      visible={showConfirmPassword}
+                      onToggle={() => setShowConfirmPassword((v) => !v)}
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+
             {/* Submit */}
             <button type="submit" disabled={loading} className={submitClass}>
               {loading && <Loader2 className="w-4 h-4 animate-spin" />}
               {method === "otp"
                 ? t(lang, "Gửi mã OTP", "Send OTP")
-                : t(lang, "Đăng nhập", "Sign in")}
+                : method === "signup"
+                  ? t(lang, "Tạo tài khoản", "Create account")
+                  : t(lang, "Đăng nhập", "Sign in")}
             </button>
 
             {/* Google */}
@@ -610,6 +763,20 @@ export function AuthModal({ lang }: AuthModalProps) {
                 {t(lang, "Gửi lại", "Resend")}
               </button>
             </p>
+          </div>
+        ) : step === "done" ? (
+          /* ===== Signed up (vande #073) ===== */
+          <div className="p-8 space-y-5 text-center" data-testid="auth-done">
+            <div className="mx-auto w-14 h-14 rounded-full bg-emerald-50 flex items-center justify-center">
+              <CheckCircle2 className="w-7 h-7 text-emerald-600" />
+            </div>
+            <h2 className="text-[1.7rem] sm:text-2xl font-medium text-gray-900">
+              {t(lang, "Hoàn tất", "All set")}
+            </h2>
+            <p className="text-base sm:text-sm text-gray-600">{doneMessage}</p>
+            <button type="button" onClick={handleClose} className={submitClass}>
+              {t(lang, "Tiếp tục", "Continue")}
+            </button>
           </div>
         ) : (
           /* ===== Step 3: Set a password for the account ===== */
