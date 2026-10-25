@@ -176,6 +176,11 @@ export interface Region {
   /** Admin's note at the top of the page, HTML (doitac-1410 #078). */
   notice?: string | null;
   noticeVi?: string | null;
+  /**
+   * "Khu vực cha" set in the CMS (vande #035): this region is listed as another
+   * pack on the parent's page. Absent from an API that predates the field.
+   */
+  parentId?: number | null;
   isActive: boolean;
   fromPrice?: number | null;
   createdAt: string;

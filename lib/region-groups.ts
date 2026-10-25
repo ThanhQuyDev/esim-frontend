@@ -102,22 +102,32 @@ function memberCount(region: Region): number {
 }
 
 /**
- * Collapse same-named regions into groups, preserving the order in which the
- * groups first appear. A region with no same-named sibling comes back as a
- * one-member group, so callers can render every group the same way.
+ * Collapse regions into groups, preserving the order in which the groups first
+ * appear. A region on its own comes back as a one-member group, so callers can
+ * render every group the same way.
+ *
+ * The CMS decides the groups (vande #035): a region with a "Khu vực cha" is
+ * listed on its parent's page. Only an API without that field (an older
+ * backend) falls back to the old guess from same-named titles.
  */
 export function groupRegions(regions: Region[], lang: Locale): RegionGroup[] {
   const byKey = new Map<string, RegionGroup>();
+  const byParent = regions.some((r) => r.parentId !== undefined);
+  const byId = new Map(regions.map((r) => [r.id, r]));
 
   for (const region of regions) {
-    const key = regionGroupKey(region, lang);
+    const key = byParent
+      ? `p${region.parentId ?? region.id}`
+      : regionGroupKey(region, lang);
+    // The parent names the group; its packs may come first in the list.
+    const head = byParent ? (byId.get(region.parentId ?? region.id) ?? region) : region;
     const existing = byKey.get(key);
     if (existing) {
       existing.members.push(region);
     } else {
       byKey.set(key, {
         key,
-        label: baseLabel(region, lang),
+        label: baseLabel(head, lang),
         slug: "",
         members: [region],
         fromPrice: null,
@@ -128,9 +138,14 @@ export function groupRegions(regions: Region[], lang: Locale): RegionGroup[] {
 
   return Array.from(byKey.values()).map((group) => {
     group.members.sort((a, b) => memberCount(a) - memberCount(b));
-    group.slug = regionGroupSlug(
-      group.members.map((m) => localizedSlug(m, lang)).filter(Boolean),
-    );
+    const slugs = group.members.map((m) => localizedSlug(m, lang)).filter(Boolean);
+    group.slug = regionGroupSlug(slugs);
+    // Packs an admin grouped by hand may share no more than "esim-"
+    // ("esim-chau-a" + "esim-dong-nam-a"): the group page is the parent's own.
+    if (byParent && slugs.length > 1 && group.slug.split("-").length < 2) {
+      const parent = byId.get(Number(group.key.slice(1)));
+      group.slug = parent ? localizedSlug(parent, lang) : slugs[0];
+    }
     const prices = group.members
       .map((m) => Number(m.fromPrice))
       .filter((p) => Number.isFinite(p) && p > 0);
