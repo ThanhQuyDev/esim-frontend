@@ -14,7 +14,7 @@ import {
   groupRegions,
   type RegionGroup,
 } from "@/lib/region-groups";
-import { RegionDesign } from "@/components/layout/sections/region-group/region-design";
+import { CountryDesign, RegionDesign } from "@/components/layout/sections/region-group/region-design";
 import { faqCandidateUrls } from "@/lib/faq-urls";
 import { RegionSuggestions } from "@/components/layout/sections/destination/region-suggestions";
 import { buildRegionSuggestions } from "@/lib/region-suggestions";
@@ -396,26 +396,45 @@ export default async function UnifiedSlugPage({
       lang: locale,
     });
 
+    // The country design (vande #032) — the region page's design with the
+    // country as its one pack. Vietnam keeps the old layout for now: its page
+    // also sells our own Viettel stock in a block of its own (vande #015),
+    // which the design has no place for.
+    const useCountryDesign = (destination.countryCode || "").toUpperCase() !== "VN";
+
     return (
       <main role="main">
-        <Breadcrumb
-          items={[
-            {
-              label: dict.breadcrumb.destinations,
-              href: (locale === "vi" ? '/diem-den' : `/${locale}/destinations`),
-            },
-            { label: localizedName },
-          ]}
-          lang={locale}
-        />
+        {!useCountryDesign && (
+          <Breadcrumb
+            items={[
+              {
+                label: dict.breadcrumb.destinations,
+                href: (locale === "vi" ? '/diem-den' : `/${locale}/destinations`),
+              },
+              { label: localizedName },
+            ]}
+            lang={locale}
+          />
+        )}
         {/* The admin's note on the destination, at the top (doitac-1410 #078) */}
-        <EntityNotice html={entityNoticeHtml(destination, locale)} className="mb-3" />
-        <DestinationPlans
-          destination={destination}
-          slug={params.slug}
-          dict={dict.destinationPage}
-          lang={locale}
-        />
+        {/* On the country design the note sits in the design's own note bar. */}
+        {!useCountryDesign && <EntityNotice html={entityNoticeHtml(destination, locale)} className="mb-3" />}
+        {useCountryDesign ? (
+          <CountryDesign
+            destination={destination}
+            label={localizedName}
+            lang={locale}
+            initialPlans={await getPlansByDestinationSlug(params.slug, locale)}
+            noticeHtml={entityNoticeHtml(destination, locale)}
+          />
+        ) : (
+          <DestinationPlans
+            destination={destination}
+            slug={params.slug}
+            dict={dict.destinationPage}
+            lang={locale}
+          />
+        )}
         <div className="max-w-[1168px] mx-auto">
           {/* Regional / global alternatives — above the usage steps, per #043 */}
           <RegionSuggestions
@@ -437,8 +456,12 @@ export default async function UnifiedSlugPage({
             count={whyChooseUsCount("quoc_gia")}
           />
           <LazyEsimComparison dict={dict.whatIsEsimPage.comparison} />
-          <PartnerBar dict={dict.partnerBar} />
-          <LazyTestimonialsSection dict={dict.testimonials} />
+          {/* "Họ nói về chúng tôi" centred, as on the reference picture (vande #032). */}
+          <PartnerBar dict={dict.partnerBar} centered />
+        </div>
+        {/* Full width, so its grey background reaches both edges (vande #032). */}
+        <LazyTestimonialsSection dict={dict.testimonials} />
+        <div className="max-w-[1168px] mx-auto">
           <LazyDownloadAppSection dict={dict.downloadApp} />
           <LazyFAQSection
             dict={dict.faq}

@@ -41,7 +41,8 @@ export function Flag({ code, url, w, h, cls = "flag" }: { code: string; url?: st
   if (!url && SPRITE_FLAGS.has(c)) return <Ic name={`fl-${c}`} w={w} h={h} cls={cls} />;
   if (!url) return <span className={cls} style={{ display: "inline-block", width: w, height: h }} aria-hidden="true" />;
   // eslint-disable-next-line @next/next/no-img-element
-  return <img className={`${cls} rg-flag-img`} src={url} alt="" width={w} height={h} loading="lazy" decoding="async" />;
+  // Sized inline: the mobile hero stretches every <img> inside it to cover.
+  return <img className={`${cls} rg-flag-img`} src={url} alt="" width={w} height={h} loading="lazy" decoding="async" style={{ position: "static", width: w, height: h }} />;
 }
 
 export function Pbi({ b }: { b: Badge | null }) {
@@ -647,7 +648,11 @@ export function AppFilter({ p, mobile }: { p: RegionPurchase; mobile?: boolean }
           </span>
         </span>
         <span className="af-s" id="afSub">
+          {p.country ? (
+            <span className="af-s1">{tx("Trung Quốc chặn các ứng dụng này — bật để chỉ xem")}{" "}{of}{" "}{tx("vẫn dùng được")}</span>
+          ) : (
           <span className="af-s1">{tx("Đi Trung Quốc? Bật để xem")}{" "}{of}{" "}{tx("vẫn dùng được")}</span>
+          )}
           <span className="af-s2">{tx("Đã lọc")}{" "}{of}{tx(". Tắt lọc để xem tất cả")}</span>
           <span className="af-s3">{tx("Đến Trung Quốc: bật để xem")}{" "}{of}{" "}{tx("vẫn dùng được")}</span>
         </span>
@@ -1144,7 +1149,7 @@ export function NeedHint({ p, onGo }: { p: RegionPurchase; onGo: () => void }) {
   return (
     <div className="alert alert--sm alert--warning qstock need-hint" id="needHint" role="status" hidden={!p.need}>
       <Ic name="ic-calendar" w={15} />
-      <span>{tx("Chọn")}{" "}<b>{tx("số ngày dùng")}</b>{" "}{tx("ở bước 2 để tiếp tục mua hàng.")}</span>
+      <span>{tx("Chọn")}{" "}<b>{tx("số ngày dùng")}</b>{" "}{p.members.length > 1 ? tx("ở bước 2 để tiếp tục mua hàng.") : tx("ở bước 1 để tiếp tục mua hàng.")}</span>
       <button className="need-go" type="button" id="needGo" data-dgo="" onClick={onGo}>{tx("Chọn ngay")}</button>
     </div>
   );

@@ -28,6 +28,7 @@ import {
   SegTabs,
   Variants,
   planText,
+  Flag,
 } from "./rg-parts";
 
 const HERO = "https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?auto=format&fit=crop&q=60";
@@ -38,6 +39,19 @@ interface Props {
   label: string;
   lang: string;
   breadcrumb: { home: string; destinations: string };
+}
+
+/** Carriers of a country page's plans, "China Unicom, China Mobile" (vande #032). */
+export function countryCarriers(p: RegionPurchase): string {
+  const all = [...p.all.dataPlans, ...p.all.slowUnlimited, ...p.all.fastUnlimited, ...p.all.dailyUnlimited];
+  const names = new Set<string>();
+  for (const plan of all) {
+    for (const op of String(plan.operatorName ?? "").split(",")) {
+      const name = op.trim();
+      if (name) names.add(name);
+    }
+  }
+  return Array.from(names).slice(0, 3).join(", ");
 }
 
 /** "18 điểm đến: Nhật Bản, Hàn Quốc, Thái Lan, Singapore và 14 nước khác". */
@@ -156,7 +170,7 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
           if ((e.target as HTMLElement).closest("[data-close]")) setVpop(null);
         }}
       >
-        <VoucherBreakdown p={p} planLine={tx("{0} eSIM · {1} nước · {2}", p.quantity, n, line)} />
+        <VoucherBreakdown p={p} planLine={p.country ? tx("{0} eSIM · {1}", p.quantity, line) : tx("{0} eSIM · {1} nước · {2}", p.quantity, n, line)} />
       </div>
     );
 
@@ -193,10 +207,22 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
         <div className="pre-note" role="note">
           <Ic name="ic-info" w={16} />
           <span>
-            <b>{tx("Cài eSIM trước khi bay")}</b>{" "}{tx("để có mạng ngay khi đến nơi.")}{p.showFilter && (
+            {p.country && p.noticeHtml ? (
+              // The note the admin wrote for this country (doitac-1410 #078) — one note, not two (vande #032).
+              <span dangerouslySetInnerHTML={{ __html: p.noticeHtml }} />
+            ) : p.country && p.china ? (
+              <>
+                <b>{tx("Cài eSIM, tắt định vị trước khi bay")}</b>{" "}{tx("để có mạng ngay khi đến.")}{" "}
+                <b>{tx("Không dùng Wi-Fi ở Trung Quốc")}</b>{" "}{tx("vì có thể bị phát hiện, chặn ứng dụng quốc tế.")}
+              </>
+            ) : (
+            <>
+            <b>{tx("Cài eSIM trước khi bay")}</b>{" "}{tx("để có mạng ngay khi đến nơi.")}{!p.country && p.showFilter && (
               <>
                 {" "}
                 <b>{tx("Đi qua Trung Quốc?")}</b>{" "}{tx("Bật bộ lọc ở bước 2 để chọn gói dùng được TikTok, ChatGPT.")}</>
+            )}
+            </>
             )}
           </span>
         </div>
@@ -206,12 +232,18 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
           {" "}
           <div className="pd-hd">
             <div className="pic-title-row">
+              {p.country ? (
+                <Flag code={p.country.countryCode || ""} url={p.country.flagUrl ?? undefined} w={28} h={21} />
+              ) : (
               <span className="pic-logo" aria-hidden="true">
                 <Ic name="ic-globe" w={16} />
               </span>
+              )}
               <h1 className="pic-title">eSIM {label}</h1>
+              {!p.country && (
               <button className="pill pill--sm pill--cnt pill--link pill--neutral" type="button" id="vBadge" aria-haspopup="dialog" onClick={() => setCtr(true)}>
                 {n}{" "}{tx("quốc gia")}</button>
+              )}
             </div>
           </div>{" "}
           <div className="buy-sum">
@@ -264,7 +296,7 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
                 </>
               )}
               <span className="daily-detail" id="dOSDetail">
-                {plan ? tx("Gói: {0} nước · {1}{2}", n, line, qtyTail) : ""}
+                {plan ? (p.country ? tx("Gói: {0}{1}", line, qtyTail) : tx("Gói: {0} nước · {1}{2}", n, line, qtyTail)) : ""}
               </span>
             </div>
           </div>{" "}
@@ -285,7 +317,21 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
           </div>{" "}
           <article aria-label={tx("Thông tin eSIM {0}", label)} className="pic">
             <div className="pic-body">
-              <p className="pic-sub">{tx("eSIM du lịch")}{" "}{label}{" "}{tx("dùng được tại")}{" "}<span id="vSub">{coverageLine(p)}</span>. <b>{tx("Một eSIM cho cả chuyến đi nhiều nước")}</b>{tx(", mạng 4G/5G tốc độ cao. Nhận mã QR qua email ngay sau khi mua.")}</p>{" "}
+              {p.country ? (
+                <p className="pic-sub">
+                  {tx("eSIM du lịch {0}", label)}
+                  {countryCarriers(p) ? tx(" mạng {0}", countryCarriers(p)) : ""}{tx(" 4G/5G.")}{" "}
+                  {p.china && (
+                    <>
+                      <b>{tx("Không cần VPN")}</b>
+                      {tx(": dùng được ngay Facebook, Zalo, Google Maps, YouTube — có gói dùng cả TikTok, ChatGPT.")}{" "}
+                    </>
+                  )}
+                  {tx("Nhận mã QR qua email ngay sau khi mua.")}
+                </p>
+              ) : (
+              <p className="pic-sub">{tx("eSIM du lịch")}{" "}{label}{" "}{tx("dùng được tại")}{" "}<span id="vSub">{coverageLine(p)}</span>. <b>{tx("Một eSIM cho cả chuyến đi nhiều nước")}</b>{tx(", mạng 4G/5G tốc độ cao. Nhận mã QR qua email ngay sau khi mua.")}</p>
+              )}{" "}
               <div className="dt-tabs" role="tablist" aria-label={tx("Chi tiết eSIM")}>
                 {([tx("Tính năng eSIM"), tx("Giao hàng & Kích hoạt")] as const).map((t, i) => (
                   <button
@@ -396,9 +442,9 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
               <div className="bs">
                 <div className="bs-l">
                   <p className="bs-plan">
-                    <Ic name="ic-globe" w={14} />
+                    {p.country ? <Flag code={p.country.countryCode || ""} url={p.country.flagUrl ?? undefined} w={18} h={13.5} /> : <Ic name="ic-globe" w={14} />}
                     <span>
-                      <span id="mPlan">{p.need ? tx("Chưa chọn số ngày") : tx("{0} nước · {1}", n, line)}</span>
+                      <span id="mPlan">{p.need ? tx("Chưa chọn số ngày") : p.country ? line : tx("{0} nước · {1}", n, line)}</span>
                       <span className="bs-qty" id="mQty" hidden={p.quantity < 2}>
                         {p.quantity} eSIM
                       </span>
@@ -483,11 +529,11 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
         <div className="dsb-inner">
           <div className="dsb-l">
             <span className="dsb-logo" aria-hidden="true">
-              <Ic name="ic-globe" w={18} />
+              {p.country ? <Flag code={p.country.countryCode || ""} url={p.country.flagUrl ?? undefined} w={24} h={18} /> : <Ic name="ic-globe" w={18} />}
             </span>
             <div className="dsb-info">
               <div className="dsb-name">
-                eSIM {label} · <span id="dsbV">{n}{" "}{tx("quốc gia")}</span>
+                eSIM {label}{!p.country && (<> · <span id="dsbV">{n}{" "}{tx("quốc gia")}</span></>)}
               </div>
               <div className="dsb-plan" id="dsbPlan">
                 {plan ? tx("Gói: {0}", line) : ""}

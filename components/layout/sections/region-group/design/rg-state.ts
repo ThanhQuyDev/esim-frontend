@@ -2,8 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import type { Plan, PlansByDestinationResponse, Region } from "@/lib/api";
-import { useCart, usePlansByRegionSlug, usePublicCoupons } from "@/lib/hooks";
+import type { Destination, Plan, PlansByDestinationResponse, Region } from "@/lib/api";
+import { useCart, usePlansByRegionSlug, usePlansBySlug, usePublicCoupons } from "@/lib/hooks";
 import { pickBestVoucher } from "@/lib/voucher-preview";
 import { localizedHref } from "@/lib/route-mapping";
 import { trackJourney } from "@/lib/journey-tracking";
@@ -60,7 +60,19 @@ export interface RegionCountry {
  * countries the visitor says they will visit, the plan, days and quantity,
  * and the prices that follow. Shared by the desktop and mobile layouts.
  */
-export function useRegionPurchase(regions: Region[], lang: Locale, initialSlug?: string) {
+export function useRegionPurchase(
+  regions: Region[],
+  lang: Locale,
+  initialSlug?: string,
+  /**
+   * A country page on the same design (vande #032): one "pack" — the country
+   * itself — with no coverage step, its plans read by destination.
+   */
+  country?: Destination | null,
+  initialPlans?: PlansByDestinationResponse | null,
+  /** The country's own note from the CMS, shown in the design's note bar. */
+  noticeHtml?: string | null,
+) {
   const router = useRouter();
   const { addItem } = useCart();
   const { data: coupons } = usePublicCoupons();
@@ -76,7 +88,9 @@ export function useRegionPurchase(regions: Region[], lang: Locale, initialSlug?:
   const member = members[active] ?? members[0];
   const slug = member ? localizedSlug(member, lang) : "";
 
-  const { data: all = EMPTY, isLoading } = usePlansByRegionSlug(slug, lang);
+  const regionPlans = usePlansByRegionSlug(country ? "" : slug, lang);
+  const countryPlans = usePlansBySlug(country ? slug : "", lang, initialPlans ?? undefined);
+  const { data: all = EMPTY, isLoading } = country ? countryPlans : regionPlans;
 
   // ── countries ──
   const countries: RegionCountry[] = useMemo(() => {
@@ -115,7 +129,7 @@ export function useRegionPurchase(regions: Region[], lang: Locale, initialSlug?:
   };
 
   // ── plans ──
-  const china = isChinaProductPage({ region: member });
+  const china = isChinaProductPage(country ? { destination: country } : { region: member });
   const showFilter = china && hasTiktokPlans(all);
   const [appFilter, setAppFilter] = useState(false);
   const plans = appFilter && showFilter ? filterTiktokPlans(all) : all;
@@ -217,7 +231,8 @@ export function useRegionPurchase(regions: Region[], lang: Locale, initialSlug?:
 
   // ── identity verification ──
   const kycCodes = codes.filter((c) => KYC_CODES.includes(c));
-  const kycWhere = kycCodes.map(nameOf);
+  // A country page says "needs verification" without naming where (vande #032).
+  const kycWhere = country ? [] : kycCodes.map(nameOf);
   const needsKyc = !!plan?.isKyc;
 
   // ── cart ──
@@ -242,6 +257,11 @@ export function useRegionPurchase(regions: Region[], lang: Locale, initialSlug?:
   return {
     // Page language, for the design's copy (vande #029).
     lang,
+    /** Set on a country page (vande #032); null on a region page. */
+    country: country ?? null,
+    noticeHtml: noticeHtml ?? null,
+    /** China, for the country page's own notes (vande #032). */
+    china,
     members,
     active,
     setActive,
@@ -329,7 +349,10 @@ function defaultSelection(tiers: Tier[], daily: Opt[], unl: Opt[], combo: Opt[],
     const p = popular.plans.find((x) => badgeOf(x)?.cls === "pop")!;
     return { kind: "fixed", key: popular.key, days: p.durationDays };
   }
-  const t7 = tiers.find((t) => t.plans.some((p) => p.durationDays === 7));
+  // The designs open on "1 GB – 7 ngày": the 1 GB size first, else the
+  // smallest one sold for 7 days (vande #032).
+  const has7 = (t: Tier) => t.plans.some((p) => p.durationDays === 7);
+  const t7 = tiers.find((t) => has7(t) && t.dataMb >= 1024) ?? tiers.find(has7);
   if (t7) return { kind: "fixed", key: t7.key, days: 7 };
   if (tiers[0]) return { kind: "fixed", key: tiers[0].key, days: tiers[0].plans[0]?.durationDays };
   const o = daily[0] ?? unl[0] ?? combo[0];

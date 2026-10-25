@@ -9,7 +9,7 @@ import { AccItem, DeviceCheck, DeviceModal, Overlay, Qty, StockAlert, VoucherRow
 import { vnd } from "../../local-esim/design/nd-state";
 import { perDay } from "./rg-model";
 import type { RegionPurchase } from "./rg-state";
-import { coverageLine } from "./rg-desktop";
+import { countryCarriers, coverageLine } from "./rg-desktop";
 import {
   AppFilter,
   CalendarModal,
@@ -29,6 +29,7 @@ import {
   SegTabs,
   Variants,
   planText,
+  Flag,
 } from "./rg-parts";
 
 const HERO = "https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?auto=format&fit=crop";
@@ -125,10 +126,22 @@ export function RgMobile({ p, label, lang, breadcrumb }: Props) {
           <div className="pre-note" role="note">
             <Ic name="ic-info" w={15} />
             <span>
-              <b>{tx("Cài eSIM trước khi bay")}</b>{" "}{tx("để có mạng ngay khi đến nơi.")}{p.showFilter && (
+              {p.country && p.noticeHtml ? (
+                // The note the admin wrote for this country (doitac-1410 #078) — one note, not two (vande #032).
+                <span dangerouslySetInnerHTML={{ __html: p.noticeHtml }} />
+              ) : p.country && p.china ? (
+                <>
+                  <b>{tx("Cài eSIM, tắt định vị trước khi bay")}</b>{" "}{tx("để có mạng ngay khi đến.")}{" "}
+                  <b>{tx("Không dùng Wi-Fi ở Trung Quốc")}</b>{" "}{tx("vì có thể bị phát hiện, chặn ứng dụng quốc tế.")}
+                </>
+              ) : (
+              <>
+              <b>{tx("Cài eSIM trước khi bay")}</b>{" "}{tx("để có mạng ngay khi đến nơi.")}{!p.country && p.showFilter && (
                 <>
                   {" "}
                   <b>{tx("Đi qua Trung Quốc?")}</b>{" "}{tx("Bật bộ lọc ở bước 2 để chọn gói dùng được TikTok, ChatGPT.")}</>
+              )}
+              </>
               )}
             </span>
           </div>
@@ -164,17 +177,37 @@ export function RgMobile({ p, label, lang, breadcrumb }: Props) {
             </div>{" "}
             <div className="m-hero-tag">{tx("eSIM du lịch hàng đầu tại")}{" "}{label}</div>{" "}
             <div className="m-hero-t">
+              {p.country ? (
+                <Flag code={p.country.countryCode || ""} url={p.country.flagUrl ?? undefined} w={28} h={21} />
+              ) : (
               <span className="pic-logo" aria-hidden="true">
                 <Ic name="ic-globe" w={16} />
               </span>
+              )}
               <h1>eSIM {label}</h1>
+              {!p.country && (
               <button className="pill pill--sm pill--cnt pill--link pill--solid" type="button" id="vBadge" aria-haspopup="dialog" onClick={() => setCtr(true)}>
                 {n}{" "}{tx("quốc gia")}</button>
+              )}
             </div>
           </div>
         </div>{" "}
         <div className="m-sec m-sheet">
-          <p className="m-desc">{tx("eSIM du lịch")}{" "}{label}{" "}{tx("dùng được tại")}{" "}<span id="vSub">{coverageLine(p)}</span>. <b>{tx("Một eSIM cho cả chuyến đi nhiều nước")}</b>{tx(", mạng 4G/5G tốc độ cao. Nhận mã QR qua email ngay sau khi mua.")}</p>{" "}
+          {p.country ? (
+            <p className="m-desc">
+              {tx("eSIM du lịch {0}", label)}
+              {countryCarriers(p) ? tx(" mạng {0}", countryCarriers(p)) : ""}{tx(" 4G/5G.")}{" "}
+              {p.china && (
+                <>
+                  <b>{tx("Không cần VPN")}</b>
+                  {tx(": dùng được ngay Facebook, Zalo, Google Maps, YouTube — có gói dùng cả TikTok, ChatGPT.")}{" "}
+                </>
+              )}
+              {tx("Nhận mã QR qua email ngay sau khi mua.")}
+            </p>
+          ) : (
+          <p className="m-desc">{tx("eSIM du lịch")}{" "}{label}{" "}{tx("dùng được tại")}{" "}<span id="vSub">{coverageLine(p)}</span>. <b>{tx("Một eSIM cho cả chuyến đi nhiều nước")}</b>{tx(", mạng 4G/5G tốc độ cao. Nhận mã QR qua email ngay sau khi mua.")}</p>
+          )}{" "}
           <div className="price-row price-row--vch">
             <button className="pv" type="button" id="vchTag" aria-haspopup="dialog" onClick={() => setVch(true)}>
               <span className="price-now" id="priceNet">
@@ -202,7 +235,7 @@ export function RgMobile({ p, label, lang, breadcrumb }: Props) {
               </>
             )}
             <span className="daily-detail" id="dOSDetail">
-              {plan ? tx("Gói: {0} nước · {1}", n, line) + (p.quantity > 1 ? ` · ${p.quantity} eSIM` : "") : ""}
+              {plan ? (p.country ? tx("Gói: {0}", line) : tx("Gói: {0} nước · {1}", n, line)) + (p.quantity > 1 ? ` · ${p.quantity} eSIM` : "") : ""}
             </span>
           </div>
         </div>{" "}
@@ -337,7 +370,7 @@ export function RgMobile({ p, label, lang, breadcrumb }: Props) {
       >
         <div className="m-buy-info">
           <div className="m-buy-plan">
-            <span id="mPlan">{p.need ? tx("Chưa chọn số ngày") : tx("{0} nước · {1}", n, line)}</span>
+            <span id="mPlan">{p.need ? tx("Chưa chọn số ngày") : p.country ? line : tx("{0} nước · {1}", n, line)}</span>
             <span className="m-buy-qty" id="mQty" hidden={p.quantity < 2}>
               {p.quantity} eSIM
             </span>
@@ -373,7 +406,7 @@ export function RgMobile({ p, label, lang, breadcrumb }: Props) {
               <div>
                 <div className="modal-title modal-title--sm" id="vpT">{tx("Chi tiết giá")}</div>
                 <p className="modal-desc" id="vchPlan">
-                  {p.quantity} eSIM · {n}{" "}{tx("nước ·")}{" "}{line}
+                  {p.quantity} eSIM · {p.country ? line : (<>{n}{" "}{tx("nước ·")}{" "}{line}</>)}
                 </p>
               </div>
               <button className="btn-close" type="button" aria-label={tx("Đóng")} data-close="">
