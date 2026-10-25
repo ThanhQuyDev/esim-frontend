@@ -1590,8 +1590,18 @@ export function useEsimDataUsage(esimId: number | null) {
  * forwarded to family.
  */
 export interface EsimLookupResult {
+  /** In full, with the order and connection details below (vande #037). */
+  iccid?: string;
   iccidMasked: string | null;
   planName: string | null;
+  orderNumber?: string | null;
+  destinationVi?: string | null;
+  destinationEn?: string | null;
+  operatorName?: string | null;
+  networkSpeed?: string | null;
+  apn?: string | null;
+  /** Refunded from the order, so cancelled (vande #037). */
+  refunded?: boolean;
   status: string;
   isUnlimited: boolean;
   totalMb: number;

@@ -190,9 +190,9 @@ function LookupResult({
           {data.planName && (
             <p className="text-base font-semibold text-gray-900">{data.planName}</p>
           )}
-          {data.iccidMasked && (
-            <p className="mt-1 font-mono text-sm text-gray-500">
-              {dict.result.iccid}: {data.iccidMasked}
+          {(data.iccid || data.iccidMasked) && (
+            <p className="mt-1 font-mono text-sm text-gray-500" data-testid="lookup-iccid">
+              {dict.result.iccid}: {data.iccid || data.iccidMasked}
             </p>
           )}
         </div>
@@ -219,7 +219,15 @@ function LookupResult({
         </div>
       </div>
 
-      {!data.usageAvailable ? (
+      {data.refunded ? (
+        // Refunded = cancelled (vande #037): no usage to show.
+        <p
+          className="rounded-[10px] bg-red-50 px-4 py-3 text-sm font-medium text-red-700"
+          data-testid="lookup-refunded"
+        >
+          {dict.result.refunded}
+        </p>
+      ) : !data.usageAvailable ? (
         <p className="text-sm text-gray-500" data-testid="lookup-usage-unavailable">
           {dict.result.usageUnavailable}
         </p>
@@ -264,7 +272,9 @@ function LookupResult({
           )}
 
           <div className="grid grid-cols-2 gap-2">
-            <div className="rounded-lg bg-blue-50 p-3 text-center">
+            {/* rounded-lg is 40px in this site's theme — a pill once the
+                label wraps (vande #037). */}
+            <div className="rounded-[10px] bg-blue-50 p-3 text-center">
               <Wifi className="mx-auto mb-1 h-3.5 w-3.5 text-blue-500" />
               <p className="text-lg font-medium text-blue-700">
                 {data.isUnlimited ? "∞" : remainingGb === null ? "—" : remainingGb.toFixed(1)}
@@ -273,7 +283,7 @@ function LookupResult({
                 {data.isUnlimited ? dict.result.unlimited : dict.result.gbRemaining}
               </p>
             </div>
-            <div className="rounded-lg bg-emerald-50 p-3 text-center">
+            <div className="rounded-[10px] bg-emerald-50 p-3 text-center">
               <Calendar className="mx-auto mb-1 h-3.5 w-3.5 text-emerald-500" />
               <p className="text-lg font-medium text-emerald-700">
                 {daysRemaining !== null ? daysRemaining : "—"}
@@ -285,45 +295,54 @@ function LookupResult({
       )}
 
       {/* Minutes / SMS (#023): a bar like the data one when the provider
-          reports what is left (#015, test round 4), the allowance otherwise. */}
-      {(!!data.callMinutes || !!data.smsCount) && (
+          reports what is left (#015, test round 4); otherwise the plan's
+          allowance on one line, "Gọi: 200 Phút - Nhắn tin: 200 SMS" (vande #037). */}
+      {!data.refunded && (!!data.callMinutes || !!data.smsCount) && (
         <div className="space-y-3 border-t border-gray-100 pt-3" data-testid="lookup-voice-sms">
-          {!!data.callMinutes &&
-            (data.callMinutesRemaining != null ? (
-              <DataUsageBar
-                label={dict.result.callBar}
-                used={Math.max(0, data.callMinutes - data.callMinutesRemaining)}
-                total={data.callMinutes}
-                unit={dict.result.minutesUnit}
-                isUnlimited={false}
-                lang={lang}
-                integer
-              />
-            ) : (
-              <span className="inline-flex items-center gap-1.5 text-sm text-gray-600">
-                <PhoneCall className="h-3.5 w-3.5 text-gray-400" />
-                {data.callMinutes} {dict.result.callMinutes}
-              </span>
-            ))}
-          {!!data.smsCount &&
-            (data.smsRemaining != null ? (
-              <DataUsageBar
-                label={dict.result.smsBar}
-                used={Math.max(0, data.smsCount - data.smsRemaining)}
-                total={data.smsCount}
-                unit={dict.result.smsUnit}
-                isUnlimited={false}
-                lang={lang}
-                integer
-              />
-            ) : (
-              <span className="ml-4 inline-flex items-center gap-1.5 text-sm text-gray-600">
-                <MessageSquare className="h-3.5 w-3.5 text-gray-400" />
-                {data.smsCount} {dict.result.sms}
-              </span>
-            ))}
+          {!!data.callMinutes && data.callMinutesRemaining != null && (
+            <DataUsageBar
+              label={dict.result.callBar}
+              used={Math.max(0, data.callMinutes - data.callMinutesRemaining)}
+              total={data.callMinutes}
+              unit={dict.result.minutesUnit}
+              isUnlimited={false}
+              lang={lang}
+              integer
+            />
+          )}
+          {!!data.smsCount && data.smsRemaining != null && (
+            <DataUsageBar
+              label={dict.result.smsBar}
+              used={Math.max(0, data.smsCount - data.smsRemaining)}
+              total={data.smsCount}
+              unit={dict.result.smsUnit}
+              isUnlimited={false}
+              lang={lang}
+              integer
+            />
+          )}
+          {(() => {
+            const calls = data.callMinutes && data.callMinutesRemaining == null ? data.callMinutes : null;
+            const sms = data.smsCount && data.smsRemaining == null ? data.smsCount : null;
+            if (!calls && !sms) return null;
+            const text =
+              calls && sms
+                ? dict.result.voiceSmsLine.replace("{calls}", String(calls)).replace("{sms}", String(sms))
+                : calls
+                  ? dict.result.voiceLine.replace("{calls}", String(calls))
+                  : dict.result.smsLine.replace("{sms}", String(sms));
+            return (
+              <p className="flex items-center gap-2 text-sm font-medium text-gray-700" data-testid="lookup-voice-sms-line">
+                <PhoneCall className="h-4 w-4 text-gray-400" />
+                <MessageSquare className="h-4 w-4 text-gray-400" />
+                {text}
+              </p>
+            );
+          })()}
         </div>
       )}
+
+      <LookupDetails data={data} dict={dict} lang={lang} />
 
       {data.expiredAt && (
         <p className="text-center text-sm text-gray-400">
@@ -348,6 +367,49 @@ function LookupResult({
       <p className="border-t border-gray-100 pt-3 text-center text-xs text-gray-400" data-testid="lookup-delay-note">
         {dict.result.delayNote}
       </p>
+    </div>
+  );
+}
+
+/** Everything else about the eSIM (vande #037): order, where, how it connects. */
+function LookupDetails({
+  data,
+  dict,
+  lang,
+}: {
+  data: EsimLookupResult;
+  dict: EsimLookupDict;
+  lang: string;
+}) {
+  const vi = lang === "vi";
+  const destination = (vi ? data.destinationVi : data.destinationEn) || data.destinationVi || data.destinationEn;
+  const rows: Array<[string, string | null | undefined]> = [
+    [dict.result.iccid, data.iccid],
+    [dict.result.orderNumber, data.orderNumber],
+    [dict.result.destination, destination],
+    [
+      dict.result.activatedAt,
+      data.activatedAt
+        ? new Date(data.activatedAt).toLocaleString(vi ? "vi-VN" : "en-US")
+        : dict.result.notActivatedShort,
+    ],
+    [dict.result.operator, data.operatorName],
+    [dict.result.networkSpeed, data.networkSpeed],
+    [dict.result.apn, data.apn],
+  ];
+  const shown = rows.filter((r): r is [string, string] => !!r[1]);
+  if (!shown.length) return null;
+  return (
+    <div className="border-t border-gray-100 pt-3" data-testid="lookup-details">
+      <p className="mb-2 text-sm font-semibold text-gray-900">{dict.result.detailsTitle}</p>
+      <dl className="divide-y divide-gray-100 text-sm">
+        {shown.map(([label, value]) => (
+          <div key={label} className="flex items-start justify-between gap-4 py-2">
+            <dt className="shrink-0 text-gray-500">{label}</dt>
+            <dd className="min-w-0 break-words text-right font-medium text-gray-900">{value}</dd>
+          </div>
+        ))}
+      </dl>
     </div>
   );
 }

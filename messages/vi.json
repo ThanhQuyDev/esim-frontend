@@ -1781,7 +1781,19 @@
       "lastUpdate": "Cập nhật lúc:",
       "notActivated": "Chưa kích hoạt — thời gian sử dụng bắt đầu tính từ khi eSIM kết nối mạng lần đầu.",
       "expiryUnknown": "eSIM đang được sử dụng — nhà cung cấp chưa gửi ngày hết hạn, thời gian còn lại sẽ hiện khi có số liệu.",
-      "usageUnavailable": "Nhà mạng chưa cung cấp số liệu sử dụng trực tuyến cho eSIM này. Bạn có thể xem dung lượng còn lại trong phần cài đặt di động của điện thoại."
+      "usageUnavailable": "Nhà mạng chưa cung cấp số liệu sử dụng trực tuyến cho eSIM này. Bạn có thể xem dung lượng còn lại trong phần cài đặt di động của điện thoại.",
+      "refunded": "eSIM này đã được hoàn tiền nên đã bị huỷ và không còn sử dụng được.",
+      "voiceSmsLine": "Gọi: {calls} Phút - Nhắn tin: {sms} SMS",
+      "voiceLine": "Gọi: {calls} Phút",
+      "smsLine": "Nhắn tin: {sms} SMS",
+      "detailsTitle": "Thông tin eSIM",
+      "orderNumber": "Mã đơn hàng",
+      "destination": "Điểm đến",
+      "activatedAt": "Thời gian kích hoạt",
+      "notActivatedShort": "Chưa kích hoạt",
+      "operator": "Nhà mạng",
+      "networkSpeed": "Tốc độ mạng",
+      "apn": "APN"
     }
   },
   "breadcrumb": {

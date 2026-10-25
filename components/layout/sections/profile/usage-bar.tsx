@@ -76,6 +76,7 @@ export function statusLabel(status: string | undefined, lang: string): string {
     USED_UP: { vi: "Hết dung lượng", en: "Used up" },
     FINISHED: { vi: "Đã kết thúc", en: "Finished" },
     CANCELLED: { vi: "Đã huỷ", en: "Cancelled" },
+    REFUNDED: { vi: "Đã hoàn tiền", en: "Refunded" },
   };
   const known = labels[key];
   if (known) return lang === "vi" ? known.vi : known.en;
@@ -87,4 +88,5 @@ export const USAGE_STATUS_COLOR: Record<string, string> = {
   ACTIVE: "bg-emerald-100 text-emerald-700",
   EXPIRED: "bg-red-100 text-red-700",
   NOT_ACTIVE: "bg-gray-100 text-gray-500",
+  REFUNDED: "bg-red-100 text-red-700",
 };

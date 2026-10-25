@@ -1781,7 +1781,19 @@
       "lastUpdate": "Last updated:",
       "notActivated": "Not activated yet — the usage period starts when the eSIM first connects to a network.",
       "expiryUnknown": "This eSIM is in use — the provider has not sent an expiry yet; the time left will appear once it does.",
-      "usageUnavailable": "The carrier does not report live usage for this eSIM. You can check the remaining data in your phone's mobile settings."
+      "usageUnavailable": "The carrier does not report live usage for this eSIM. You can check the remaining data in your phone's mobile settings.",
+      "refunded": "This eSIM has been refunded, so it is cancelled and can no longer be used.",
+      "voiceSmsLine": "Calls: {calls} min - Texts: {sms} SMS",
+      "voiceLine": "Calls: {calls} min",
+      "smsLine": "Texts: {sms} SMS",
+      "detailsTitle": "eSIM details",
+      "orderNumber": "Order number",
+      "destination": "Destination",
+      "activatedAt": "Activated",
+      "notActivatedShort": "Not activated yet",
+      "operator": "Network operator",
+      "networkSpeed": "Network speed",
+      "apn": "APN"
     }
   },
   "breadcrumb": {
