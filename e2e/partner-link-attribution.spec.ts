@@ -80,3 +80,20 @@ test("hands the page no click token when there is none", async ({ request }) => 
   expect(await res.json()).toEqual({ clickToken: null });
   expect(res.headers()["cache-control"]).toContain("no-store");
 });
+
+test("redirects to the address the visitor used, not the server's own (vande #079)", async ({
+  request,
+}) => {
+  // On the VPS nginx passes the public host on to a container listening on
+  // 0.0.0.0:3100; links used to send visitors to https://0.0.0.0:3100.
+  const res = await request.get(`/go/${CODE}`, {
+    maxRedirects: 0,
+    headers: {
+      "x-forwarded-host": "esim.vn",
+      "x-forwarded-proto": "https",
+    },
+  });
+
+  expect([301, 302, 307, 308]).toContain(res.status());
+  expect(res.headers()["location"]).toMatch(/^https:\/\/esim\.vn\//);
+});

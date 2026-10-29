@@ -156,3 +156,33 @@ export async function recordPartnerLinkClick(
     return null;
   }
 }
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
+
+/** "Listen on every address" — what a server binds to, not one to visit. */
+const BIND_ALL_HOST = /^(0\.0\.0\.0|\[::\]|::)(:\d+)?$/;
+
+/**
+ * The address the visitor used (vande #079). On the VPS the site runs in a
+ * container behind nginx, and `request.nextUrl.origin` there is the address
+ * Next listens on — every link went to https://0.0.0.0:3100 and could not be
+ * opened. The Host the browser sent (passed on by nginx / Vercel) is used
+ * instead, and the configured site address when that is missing too.
+ */
+export function publicOrigin(request: {
+  headers: Headers;
+  nextUrl: { origin: string; protocol: string };
+}): string {
+  const first = (value: string | null) => value?.split(",")[0]?.trim() || null;
+  const host =
+    first(request.headers.get("x-forwarded-host")) ??
+    first(request.headers.get("host"));
+  if (host && !BIND_ALL_HOST.test(host)) {
+    const proto =
+      first(request.headers.get("x-forwarded-proto")) ??
+      request.nextUrl.protocol.replace(/:$/, "");
+    return `${proto === "http" ? "http" : "https"}://${host}`;
+  }
+  const own = new URL(request.nextUrl.origin).host;
+  return BIND_ALL_HOST.test(own) && SITE_URL ? SITE_URL : request.nextUrl.origin;
+}

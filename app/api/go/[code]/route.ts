@@ -5,6 +5,7 @@ import {
   fetchPartnerLinkTarget,
   hashClientIp,
   isLinkPreviewBot,
+  publicOrigin,
   recordPartnerLinkClick,
 } from "@/lib/partner-link";
 
@@ -18,7 +19,7 @@ const API_BASE_URL =
 export const dynamic = "force-dynamic";
 
 function redirectTo(request: NextRequest, targetPath: string | null) {
-  const origin = request.nextUrl.origin;
+  const origin = publicOrigin(request);
   const url = targetPath ? new URL(targetPath, origin) : new URL("/", origin);
   // The partner's channel label is read from the link itself; on the landing
   // URL it would only leak through Referer, history and shared screenshots
