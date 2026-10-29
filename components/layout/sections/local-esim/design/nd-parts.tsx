@@ -99,14 +99,20 @@ export function AccItem({
   children,
   defaultOpen = false,
   heading,
+  openSignal = 0,
 }: {
   q: ReactNode;
   children: ReactNode;
   defaultOpen?: boolean;
   /** Mobile wraps the question in `<h2 class="acc-h">`. */
   heading?: boolean;
+  /** Bump it to open the item from outside ("Kiểm tra ngay", vande #089). */
+  openSignal?: number;
 }) {
   const [open, setOpen] = useState(defaultOpen);
+  useEffect(() => {
+    if (openSignal) setOpen(true);
+  }, [openSignal]);
   const btn = (
     <button className="acc-q" type="button" aria-expanded={open} onClick={() => setOpen(!open)}>
       {q}

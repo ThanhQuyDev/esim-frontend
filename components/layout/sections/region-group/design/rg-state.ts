@@ -19,13 +19,20 @@ import {
   buildDaily,
   buildTiers,
   buildUnlimited,
-  daysFor,
   planForDays,
   priceOf,
+  tripCombo,
+  tripOpts,
+  tripTiers,
   type Kind,
   type Opt,
   type Tier,
 } from "./rg-model";
+import {
+  normalizeDays,
+  validDays as soldDays,
+  type DaysWarning,
+} from "../../destination/days-first";
 
 const EMPTY: PlansByDestinationResponse = {
   dataPlans: [],
@@ -39,12 +46,13 @@ const EMPTY: PlansByDestinationResponse = {
 /** Destinations that ask for identity verification (the design's `r`). */
 const KYC_CODES = ["HK", "TW", "MO"];
 
-/** A chosen plan: a fixed size with its days, or a daily / unlimited / combo chip. */
+/**
+ * A chosen plan: a fixed size, or a daily / unlimited / combo chip. The days
+ * come from the trip length (vande #089), not from the selection.
+ */
 export interface Selection {
   kind: Kind;
   key: string;
-  /** Fixed plans: the number of days picked in the dropdown. */
-  days?: number;
 }
 
 export interface RegionCountry {
@@ -134,16 +142,36 @@ export function useRegionPurchase(
   const [appFilter, setAppFilter] = useState(false);
   const plans = appFilter && showFilter ? filterTiktokPlans(all) : all;
 
-  const tiers = useMemo(() => buildTiers(plans.dataPlans), [plans.dataPlans]);
-  const daily = useMemo(() => buildDaily(plans.slowUnlimited), [plans.slowUnlimited]);
-  const unl = useMemo(() => buildUnlimited(plans.fastUnlimited, plans.dailyUnlimited), [plans.fastUnlimited, plans.dailyUnlimited]);
-  const combo = useMemo(() => buildCombo(plans.smsCallEsim ?? []), [plans.smsCallEsim]);
+  const allTiers = useMemo(() => buildTiers(plans.dataPlans), [plans.dataPlans]);
+  const allDaily = useMemo(() => buildDaily(plans.slowUnlimited), [plans.slowUnlimited]);
+  const allUnl = useMemo(() => buildUnlimited(plans.fastUnlimited, plans.dailyUnlimited), [plans.fastUnlimited, plans.dailyUnlimited]);
+  const allCombo = useMemo(() => buildCombo(plans.smsCallEsim ?? []), [plans.smsCallEsim]);
+
+  // ── trip length first (vande #089, "Chọn số ngày trước") ──
+  // The visitor says how long the trip is; the plans shown are those that
+  // cover it. Days the destination does not sell snap to one it does.
+  const sold = useMemo(() => soldDays({ ...plans, localEsim: [] }), [plans]);
+  const [days, setDaysRaw] = useState(7);
+  const [warning, setWarning] = useState<DaysWarning | null>(null);
+  useEffect(() => {
+    if (sold.length && !sold.includes(days)) setDaysRaw(normalizeDays(days, sold).days);
+  }, [sold]); // eslint-disable-line react-hooks/exhaustive-deps
+  const setDays = (requested: number) => {
+    const { days: next, warning: w } = normalizeDays(requested, sold);
+    setWarning(w);
+    setDaysRaw(next);
+  };
+
+  const tiers = useMemo(() => tripTiers(allTiers, days), [allTiers, days]);
+  const daily = useMemo(() => tripOpts(allDaily, days), [allDaily, days]);
+  const unl = useMemo(() => tripOpts(allUnl, days), [allUnl, days]);
+  const combo = useMemo(() => tripCombo(allCombo, days), [allCombo, days]);
 
   const [tab, setTab] = useState<"data" | "combo">("data");
   const [sel, setSel] = useState<Selection | null>(null);
-  const [days, setDays] = useState(7);
-  /** A size was picked but not its days yet (design's `l.need`). */
-  const [need, setNeed] = useState(false);
+  /** Kept for the layouts: a trip length is always chosen now (vande #089). */
+  const need = false;
+  const setNeed = (_: boolean) => undefined;
   const [qty, setQty] = useState(1);
   const [cartOpen, setCartOpen] = useState(false);
 
@@ -155,29 +183,23 @@ export function useRegionPurchase(
   const optOf = (key?: string) => [...daily, ...unl, ...combo].find((o) => o.key === key) ?? null;
   const valid = (s: Selection | null) => !!s && (s.kind === "fixed" ? !!tierOf(s.key) : !!optOf(s.key));
 
-  // Open on the design's default — the popular fixed plan — or the first one
-  // there is; keep the choice across variants when the new one sells it too.
+  // One plan is always chosen (spec §7.4): the same kind and size when the
+  // trip length, the filter or the coverage still offers it, else the default
+  // — fixed 1 GB, else the first there is. A choice on the other tab takes
+  // the tab with it.
   useEffect(() => {
     if (isLoading || valid(sel)) return;
-    const next = defaultSelection(tiers, daily, unl, combo, sel);
+    const next = defaultSelection(tiers, daily, unl, combo, tab);
     setSel(next);
-    setNeed(false);
     if (next?.kind === "combo") setTab("combo");
     else if (next) setTab("data");
   }, [isLoading, tiers, daily, unl, combo]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const tier = sel?.kind === "fixed" ? tierOf(sel.key) : null;
   const opt = sel && sel.kind !== "fixed" ? optOf(sel.key) : null;
-  const fixedPlan: Plan | null = tier
-    ? (tier.plans.find((p) => p.durationDays === sel?.days) ?? tier.plans[0])
-    : null;
-  const allowed = opt && opt.kind !== "combo" ? daysFor(opt) : null;
-
-  // Days a daily / unlimited chip cannot be bought for snap to the nearest.
-  useEffect(() => {
-    if (!allowed || allowed === "any" || !allowed.length || allowed.includes(days)) return;
-    setDays(allowed.reduce((a, b) => (Math.abs(b - days) < Math.abs(a - days) ? b : a)));
-  }, [allowed, days]);
+  // The fixed plan of that size closest to the trip: its shortest that lasts it.
+  const fixedPlan: Plan | null = tier ? tier.plans[0] ?? null : null;
+  const allowed = null;
 
   const plan: Plan | null = fixedPlan ?? (opt ? planForDays(opt, days) : null);
   const perDayKind = !!opt && opt.kind !== "combo";
@@ -185,31 +207,19 @@ export function useRegionPurchase(
   const isFixed = !perDayKind;
 
   const selectTier = (t: Tier) => {
-    // Nearest number of days to what is chosen now; the visitor still has to
-    // confirm it in the dropdown (design: tier click → dock "need").
-    const target = plan ? effDays : days;
-    const near = [...t.plans].sort(
-      (a, b) => Math.abs(a.durationDays - target) - Math.abs(b.durationDays - target) || a.durationDays - b.durationDays,
-    )[0];
-    setSel({ kind: "fixed", key: t.key, days: near?.durationDays });
-    setNeed(true);
-    if (near) trackJourney("plan_view", String(near.id));
+    setSel({ kind: "fixed", key: t.key });
+    if (t.plans[0]) trackJourney("plan_view", String(t.plans[0].id));
   };
-  const selectFixedDays = (t: Tier, d: number) => {
-    setSel({ kind: "fixed", key: t.key, days: d });
-    setNeed(false);
-    const p = t.plans.find((x) => x.durationDays === d);
-    if (p) trackJourney("plan_view", String(p.id));
-  };
+  /** Kept for callers of the old dropdown; the size is what is picked now. */
+  const selectFixedDays = (t: Tier, _d: number) => selectTier(t);
   const selectOpt = (o: Opt) => {
     setSel({ kind: o.kind, key: o.key });
-    setNeed(false);
     trackJourney("plan_view", String(planForDays(o, days).id));
   };
   const switchTab = (t: "data" | "combo") => {
     setTab(t);
     if (t === "combo" && sel?.kind !== "combo" && combo[0]) selectOpt(combo[0]);
-    if (t === "data" && sel?.kind === "combo") setSel(defaultSelection(tiers, daily, unl, [], null));
+    if (t === "data" && sel?.kind === "combo") setSel(defaultSelection(tiers, daily, unl, [], "data"));
   };
   const toggleAppFilter = (on: boolean) => {
     setAppFilter(on);
@@ -281,10 +291,17 @@ export function useRegionPurchase(
     showFilter,
     appFilter,
     toggleAppFilter,
+    /** What is shown for the trip length chosen (vande #089). */
     tiers,
     daily,
     unl,
     combo,
+    /** Whether the destination sells data+call+SMS plans at all. */
+    hasCombo: allCombo.length > 0,
+    /** Trip length (vande #089) and the days the destination sells. */
+    tripDays: days,
+    validDays: sold,
+    warning,
     tab,
     switchTab,
     sel,
@@ -338,23 +355,17 @@ function cheaper(a: Region, b: Region): boolean {
   return count(a) < count(b);
 }
 
-function defaultSelection(tiers: Tier[], daily: Opt[], unl: Opt[], combo: Opt[], prev: Selection | null): Selection | null {
-  // Same kind and size as before, when the new lineup has it.
-  if (prev?.kind === "fixed") {
-    const t = tiers.find((x) => x.key === prev.key);
-    if (t) return { kind: "fixed", key: t.key, days: t.plans.some((p) => p.durationDays === prev.days) ? prev.days : t.plans[0]?.durationDays };
-  }
-  const popular = tiers.find((t) => t.plans.some((p) => badgeOf(p)?.cls === "pop"));
-  if (popular) {
-    const p = popular.plans.find((x) => badgeOf(x)?.cls === "pop")!;
-    return { kind: "fixed", key: popular.key, days: p.durationDays };
-  }
-  // The designs open on "1 GB – 7 ngày": the 1 GB size first, else the
-  // smallest one sold for 7 days (vande #032).
-  const has7 = (t: Tier) => t.plans.some((p) => p.durationDays === 7);
-  const t7 = tiers.find((t) => has7(t) && t.dataMb >= 1024) ?? tiers.find(has7);
-  if (t7) return { kind: "fixed", key: t7.key, days: 7 };
-  if (tiers[0]) return { kind: "fixed", key: tiers[0].key, days: tiers[0].plans[0]?.durationDays };
-  const o = daily[0] ?? unl[0] ?? combo[0];
-  return o ? { kind: o.kind, key: o.key } : null;
+function defaultSelection(
+  tiers: Tier[],
+  daily: Opt[],
+  unl: Opt[],
+  combo: Opt[],
+  tab: "data" | "combo",
+): Selection | null {
+  // The designs open on fixed 1 GB (spec §7.4 step 4), else the first plan.
+  const t = tiers.find((x) => x.dataMb === 1024) ?? tiers[0];
+  const data = t ? { kind: "fixed" as const, key: t.key } : daily[0] ?? unl[0];
+  const first = tab === "combo" ? combo[0] ?? data : data ?? combo[0];
+  if (!first) return null;
+  return "plans" in first ? { kind: first.kind, key: first.key } : first;
 }

@@ -16,17 +16,15 @@ import {
   CountriesModal,
   CovFlags,
   CrossCards,
-  DayChips,
-  DaysField,
   DeliveryRows,
   DestRes,
   DestTrigger,
   EkycModal,
   FeatureRows,
-  NeedHint,
   PickerSheet,
   PlanPanes,
   SegTabs,
+  TripDays,
   Variants,
   planText,
   Flag,
@@ -54,7 +52,6 @@ export function RgMobile({ p, label, lang, breadcrumb }: Props) {
   const [cal, setCal] = useState(false);
   const [pick, setPick] = useState(false);
   const [vch, setVch] = useState(false);
-  const [dsel, setDsel] = useState(false);
   const [devOpen, setDevOpen] = useState(false);
   const [devBrand, setDevBrand] = useState<Brand | "">("");
 
@@ -97,17 +94,23 @@ export function RgMobile({ p, label, lang, breadcrumb }: Props) {
     });
   }, [p.net, p.quantity, line]);
 
-  const goDays = () => {
-    setDsel(true);
-    requestAnimationFrame(() => document.querySelector(".rgm #dock")?.scrollIntoView({ block: "center", behavior: "smooth" }));
-  };
-  const guard = (fn: () => unknown) => () => {
-    if (p.need) goDays();
-    else fn();
-  };
+  // "Kiểm tra ngay" (spec §9.8): open the device check, bring it into view,
+  // flash its border once.
+  const [devGo, setDevGo] = useState(0);
+  const goDeviceCheck = () => setDevGo((n) => n + 1);
+  // Scrolled once the accordion has opened, so the card's final place is known.
+  useEffect(() => {
+    if (!devGo) return;
+    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    const t = window.setTimeout(
+      () => document.getElementById("dcCard")?.scrollIntoView({ block: "center", behavior: reduce ? "auto" : "smooth" }),
+      60,
+    );
+    return () => window.clearTimeout(t);
+  }, [devGo]);
 
   return (
-    <div className="rgm m tidy tv">
+    <div className="rgm dv4 m tidy tv">
       <main className="m-app">
         <nav aria-label="Breadcrumb" className="bc">
           <ol>
@@ -258,6 +261,7 @@ export function RgMobile({ p, label, lang, breadcrumb }: Props) {
             </div>
           </section>
         )}{" "}
+        {/* "Chọn số ngày trước" (vande #089): trip, plans, quantity. */}
         <section className="m-step" aria-labelledby="step1">
           <h2 className="sec-lbl" id="step1">
             <span className="sec-num">
@@ -265,30 +269,38 @@ export function RgMobile({ p, label, lang, breadcrumb }: Props) {
               {p.members.length > 1 ? 2 : 1}
             </span>
             <span className="sr-only">. </span>
-            <span>{tx("Chọn gói cước")}</span>
+            <span>{tx("Bạn đi {0} mấy ngày?", label)}</span>
           </h2>{" "}
-          <SegTabs p={p} /> <AppFilter p={p} mobile />{" "}
-          <PlanPanes p={p} dselOpen={dsel} setDselOpen={setDsel} onEkyc={() => setEkyc(true)} mobile plansRef={plansRef} />
+          <TripDays p={p} mobile onCal={() => setCal(true)} />
         </section>{" "}
-        <section className="m-step" aria-labelledby="step2">
-          <h2 className="sec-lbl" id="step2">
+        <section className="m-step" aria-labelledby="stepP">
+          <h2 className="sec-lbl" id="stepP">
             <span className="sec-num">
               <span className="sr-only">{tx("Bước")}{" "}</span>
               {p.members.length > 1 ? 3 : 2}
             </span>
             <span className="sr-only">. </span>
-            <span>{tx("Tùy chọn của bạn")}</span>
+            <span>{tx("Chọn gói cước cho chuyến")}{" "}<span id="tripSum">{tx("{0} ngày", p.tripDays)}</span></span>
           </h2>{" "}
-          <div className="m-row">
-            <span className="m-row-l" id="daysLbl">{tx("Số ngày dùng")}</span>
-            <DaysField p={p} cls="m-val" onCal={() => setCal(true)} onGo={goDays} />
+          <SegTabs p={p} /> <AppFilter p={p} mobile />{" "}
+          <PlanPanes p={p} onEkyc={() => setEkyc(true)} mobile plansRef={plansRef} />
+        </section>{" "}
+        <section className="m-step" aria-labelledby="step2">
+          <h2 className="sec-lbl" id="step2">
+            <span className="sec-num">
+              <span className="sr-only">{tx("Bước")}{" "}</span>
+              {p.members.length > 1 ? 4 : 3}
+            </span>
+            <span className="sr-only">. </span>
+            <span>{tx("Số lượng eSIM")}</span>
+          </h2>{" "}
+          <div className="m-qty">
+            <div className="m-row">
+              <span className="m-row-l" id="qtyLbl">{tx("Số lượng eSIM")}</span>
+              <Qty p={p} labelId="qtyLbl" />
+            </div>
+            <StockAlert p={p} />
           </div>{" "}
-          <DayChips p={p} mobile onCal={() => setCal(true)} />{" "}
-          <div className="m-row">
-            <span className="m-row-l" id="qtyLbl">{tx("Số lượng eSIM")}</span>
-            <Qty p={p} labelId="qtyLbl" />
-          </div>{" "}
-          <StockAlert p={p} /> <NeedHint p={p} onGo={goDays} />{" "}
           <div className="trust">
             <div className="ti">
               <Ic name="ic-shield" w={14} />{tx("Thanh toán an toàn")}</div>
@@ -296,7 +308,13 @@ export function RgMobile({ p, label, lang, breadcrumb }: Props) {
               <Ic name="ic-headset" w={14} />{tx("Hỗ trợ 24/7")}</div>
             <div className="ti">
               <Ic name="ic-refund" w={14} />{tx("Hoàn tiền 100%")}</div>
-          </div>
+          </div>{" "}
+          <p className="dev-note dev-note--lined">
+            <Ic name="ic-info" w={14} />
+            <span>{tx("Vui lòng kiểm tra thiết bị có hỗ trợ eSIM trước khi thanh toán.")}</span>
+            <button className="dev-go" type="button" data-devgo="" onClick={goDeviceCheck}>{tx("Kiểm tra ngay")}<Ic name="ic-chev-right" w={13} />
+            </button>
+          </p>
         </section>{" "}
         <section className="m-acc" aria-label={tx("Thông tin chi tiết")}>
           <AccItem
@@ -326,6 +344,7 @@ export function RgMobile({ p, label, lang, breadcrumb }: Props) {
           </AccItem>{" "}
           <AccItem
             heading
+            openSignal={devGo}
             q={
               <>
                 <Ic name="ic-device" w={16} />
@@ -334,7 +353,7 @@ export function RgMobile({ p, label, lang, breadcrumb }: Props) {
               </>
             }
           >
-            <section className="dc dc--sel" aria-label={tx("Kiểm tra thiết bị hỗ trợ eSIM")} id="dcCard">
+            <section className={`dc dc--sel${devGo ? " is-flash" : ""}`} aria-label={tx("Kiểm tra thiết bị hỗ trợ eSIM")} id="dcCard" key={`dc${devGo}`}>
               <DeviceCheck
                 lang={lang}
                 native
@@ -384,10 +403,10 @@ export function RgMobile({ p, label, lang, breadcrumb }: Props) {
             )}
           </button>
         </div>{" "}
-        <button className="btn btn-outline m-cart" type="button" aria-label={tx("Thêm vào giỏ hàng")} disabled={!plan} aria-disabled={p.need} data-dgo="" onClick={guard(p.addToCart)}>
+        <button className="btn btn-outline m-cart" type="button" aria-label={tx("Thêm vào giỏ hàng")} disabled={!plan} aria-disabled={p.need} data-dgo="" onClick={() => p.addToCart()}>
           <Ic name="ic-cart" w={20} />
         </button>{" "}
-        <button className="btn btn-primary m-buy-cta" type="button" id="buyBtn" disabled={!plan} aria-disabled={p.need} data-dgo="" onClick={guard(p.buyNow)}>{tx("Mua ngay")}</button>
+        <button className="btn btn-primary m-buy-cta" type="button" id="buyBtn" disabled={!plan} aria-disabled={p.need} data-dgo="" onClick={() => p.buyNow()}>{tx("Mua ngay")}</button>
       </div>
       <CountriesModal p={p} open={ctr} onClose={() => setCtr(false)} />
       <EkycModal p={p} open={ekyc} onClose={() => setEkyc(false)} lang={lang} />

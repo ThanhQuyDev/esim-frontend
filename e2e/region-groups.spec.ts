@@ -260,15 +260,16 @@ test.describe("Region group page — packs as the coverage step (#004, #067)", (
     await expect.poll(() => requested).toContain("esim-chau-a-13-quoc-gia");
   });
 
-  test("a fixed size asks for its days before it can be bought (#067)", async ({ page }) => {
+  test("the trip days come first and pick the plan (#089)", async ({ page }) => {
     await mockApi(page);
     await mockRegionPlans(page, []);
 
     await page.goto(harness());
-    const tier = page.locator(".rgd .tier").first();
-    await expect(tier).toHaveText("3 GB");
-    await expect(tier).toHaveAttribute("aria-pressed", "true");
-    await expect(page.locator(".rgd #dselV")).toHaveText("30 ngày");
+    // Only a 30-day plan is sold: the default 7-day trip opens on 30.
+    await expect(page.locator(".rgd #tripIn")).toHaveValue("30");
+    const chip = page.locator(".rgd #plans .chip[aria-checked=\"true\"]").first();
+    await expect(chip).toContainText("3 GB");
+    await expect(chip).toContainText("30 ngày");
     await expect(page.locator(".rgd #priceNet")).toContainText("150.000");
   });
 });

@@ -199,6 +199,38 @@ export function chipDaysFor(opt: Opt, popular: number[]): { days: number[]; more
   return { days, more: daysFor(opt) === "any" || days.length < sold.length };
 }
 
+/**
+ * "Chọn số ngày trước" (vande #089): the fixed sizes for a trip of `days` —
+ * each size keeps only the plans that last the trip, shortest first, so its
+ * first plan is the one closest to the trip.
+ */
+export function tripTiers(tiers: Tier[], days: number): Tier[] {
+  return tiers
+    .map((t) => ({ ...t, plans: t.plans.filter((p) => p.durationDays >= days) }))
+    .filter((t) => t.plans.length > 0);
+}
+
+/** Daily / unlimited chips sold for exactly `days` days, or per day. */
+export function tripOpts(opts: Opt[], days: number): Opt[] {
+  return opts.filter((o) => o.plans.some((p) => p.isAbleMultidate || p.durationDays === days));
+}
+
+/**
+ * Data + call + SMS plans for a trip of `days`: those that last it; of plans
+ * giving the same data, minutes and SMS, the one closest to the trip.
+ */
+export function tripCombo(opts: Opt[], days: number): Opt[] {
+  const best = new Map<string, Opt>();
+  for (const o of opts) {
+    const p = o.plans[0];
+    if (p.durationDays < days) continue;
+    const id = `${Number(p.dataMb)}|${p.call ?? ""}|${p.sms ?? ""}`;
+    const cur = best.get(id);
+    if (!cur || p.durationDays < cur.plans[0].durationDays) best.set(id, o);
+  }
+  return Array.from(best.values());
+}
+
 /** Price of one eSIM of `plan` for `days` days, and its pre-discount price. */
 export function priceOf(plan: Plan, days: number): { price: number; list: number } {
   const price = calcTotalVndPrice(plan, days);

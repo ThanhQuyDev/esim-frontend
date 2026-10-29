@@ -16,16 +16,14 @@ import {
   CountriesModal,
   CovFlags,
   CrossCards,
-  DayChips,
-  DaysField,
   DeliveryRows,
   DestPicker,
   DestRes,
   EkycModal,
   FeatureRows,
-  NeedHint,
   PlanPanes,
   SegTabs,
+  TripDays,
   Variants,
   planText,
   Flag,
@@ -80,7 +78,6 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
   const [devOpen, setDevOpen] = useState(false);
   const [devBrand, setDevBrand] = useState<Brand | "">("");
   const [vpop, setVpop] = useState<null | "top" | "bs">(null);
-  const [dsel, setDsel] = useState(false);
   const [dsbShow, setDsbShow] = useState(false);
   const [flash, setFlash] = useState(0);
 
@@ -174,22 +171,13 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
       </div>
     );
 
-  /** "Chọn số ngày": open the dropdown and bring it into view. */
-  const goDays = () => {
-    setDsel(true);
-    requestAnimationFrame(() => document.getElementById("dock")?.scrollIntoView({ block: "center", behavior: "smooth" }));
-  };
-  const guard = (fn: () => unknown) => () => {
-    if (p.need) goDays();
-    else fn();
-  };
   const goDeviceCheck = () => {
     dcRef.current?.scrollIntoView({ block: "nearest", behavior: "smooth" });
     setFlash((f) => f + 1);
   };
 
   return (
-    <div className="rgd airy crisp tv">
+    <div className="rgd airy crisp dv4 tv">
       <nav aria-label="Breadcrumb" className="bc bc--c">
         <ol>
           <li>
@@ -408,6 +396,7 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
               </div>
             </section>
           )}{" "}
+          {/* "Chọn số ngày trước" (vande #089): the trip, then its plans. */}
           <section aria-labelledby="step1" className="block">
             <h2 className="sec-lbl" id="step1">
               <span className="sec-num">
@@ -415,78 +404,33 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
                 {p.members.length > 1 ? 2 : 1}
               </span>
               <span className="sr-only">. </span>
-              <span>{tx("Chọn gói cước")}</span>
+              <span>{tx("Bạn đi {0} mấy ngày?", label)}</span>
             </h2>{" "}
-            <SegTabs p={p} /> <AppFilter p={p} />{" "}
-            <PlanPanes p={p} dselOpen={dsel} setDselOpen={setDsel} onEkyc={() => setEkyc(true)} plansRef={plansRef} />
+            <TripDays p={p} onCal={() => setCal(true)} />
           </section>{" "}
-          <section aria-labelledby="step2" className="block block--last">
-            <h2 className="sec-lbl" id="step2">
+          <section aria-labelledby="stepP" className="block">
+            <h2 className="sec-lbl" id="stepP">
               <span className="sec-num">
                 <span className="sr-only">{tx("Bước")}{" "}</span>
                 {p.members.length > 1 ? 3 : 2}
               </span>
               <span className="sr-only">. </span>
-              <span>{tx("Tùy chọn của bạn")}</span>
+              <span>{tx("Chọn gói cước cho chuyến")}{" "}<span id="tripSum">{tx("{0} ngày", p.tripDays)}</span></span>
             </h2>{" "}
-            <div className="cust-row cust-row--sc">
-              <div>
-                <span className="cust-lbl" id="daysLbl">{tx("Số ngày dùng")}</span>
-                <DaysField p={p} cls="days-field" onCal={() => setCal(true)} onGo={goDays} />
-              </div>
-              <div>
-                <span className="cust-lbl" id="qtyLbl">{tx("Số lượng eSIM")}</span>
-                <Qty p={p} labelId="qtyLbl" />
-              </div>
-            </div>{" "}
-            <DayChips p={p} onCal={() => setCal(true)} /> <StockAlert p={p} /> <NeedHint p={p} onGo={goDays} />{" "}
-            <div className="buy-row" id="ctaRow" ref={ctaRow}>
-              <div className="bs">
-                <div className="bs-l">
-                  <p className="bs-plan">
-                    {p.country ? <Flag code={p.country.countryCode || ""} url={p.country.flagUrl ?? undefined} w={18} h={13.5} /> : <Ic name="ic-globe" w={14} />}
-                    <span>
-                      <span id="mPlan">{p.need ? tx("Chưa chọn số ngày") : p.country ? line : tx("{0} nước · {1}", n, line)}</span>
-                      <span className="bs-qty" id="mQty" hidden={p.quantity < 2}>
-                        {p.quantity} eSIM
-                      </span>
-                    </span>
-                  </p>
-                  <BsApps p={p} />
-                </div>{" "}
-                <div className="bs-r">
-                  <p className="bs-total">
-                    <span className="sr-only">{tx("Giá trước voucher")}{" "}</span>
-                    {p.net < Math.max(p.total, p.listTotal) && (
-                      <s className="bs-old" id="mTotalOld">
-                        {vnd(Math.max(p.total, p.listTotal))}
-                      </s>
-                    )}
-                    <span className="bs-net" id="mTotal">
-                      {vnd(p.net)}
-                    </span>
-                  </p>
-                  {p.voucher && (
-                    <button
-                      className="bs-vch"
-                      type="button"
-                      aria-expanded={vpop === "bs"}
-                      aria-controls="vchPop"
-                      data-vpop=""
-                      onClick={() => setVpop(vpop === "bs" ? null : "bs")}
-                    >
-                      <Ic name="ic-ticket" w={13} />
-                      <span>{tx("Giá sau voucher · tiết kiệm")}{" "}<span id="mSave">{vnd(p.total - p.net)}</span>
-                      </span>
-                      <Ic name="ic-chev-down" w={12} />
-                    </button>
-                  )}
-                  {popover("bs")}
-                </div>
-              </div>{" "}
-              <button className="btn btn-lg btn-outline" type="button" data-cart="" disabled={!plan} aria-disabled={p.need} data-dgo="" onClick={guard(p.addToCart)}>
+            <SegTabs p={p} /> <AppFilter p={p} />{" "}
+            <PlanPanes p={p} onEkyc={() => setEkyc(true)} plansRef={plansRef} />
+          </section>{" "}
+          <section aria-label={tx("Số lượng và mua")} className="block block--last">
+            <div className="buy-row buy-row--q" id="ctaRow" ref={ctaRow}>
+              <StockAlert p={p} />
+              <Qty p={p} className="qty-sel qty-sel--buy" />{" "}
+              <button className="btn btn-lg btn-outline" type="button" data-cart="" disabled={!plan} onClick={() => p.addToCart()}>
                 <Ic name="ic-cart" w={18} />{tx("Thêm vào giỏ hàng")}</button>{" "}
-              <button className="btn btn-lg btn-primary" type="button" id="buyBtn" disabled={!plan} aria-disabled={p.need} data-dgo="" onClick={guard(p.buyNow)}>{tx("Mua ngay")}</button>
+              <button className="btn btn-lg btn-primary" type="button" id="buyBtn" disabled={!plan} onClick={() => p.buyNow()}>
+                <span id="buyLbl">{tx("Mua ngay")}</span>
+                <span className="buy-sep" aria-hidden="true">—</span>
+                <span id="mTotal">{vnd(p.net)}</span>
+              </button>
             </div>
           </section>{" "}
           <div className="trust trust--lined">
@@ -573,9 +517,9 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
               </span>
             </div>{" "}
             <Qty p={p} ids={["dsbMinus", "dsbQty", "dsbPlus"]} compact className="dsb-qty" />{" "}
-            <button className="btn btn-sm btn-outline dsb-cart" type="button" disabled={!plan} aria-disabled={p.need} data-dgo="" onClick={guard(p.addToCart)}>
+            <button className="btn btn-sm btn-outline dsb-cart" type="button" disabled={!plan} aria-disabled={p.need} data-dgo="" onClick={() => p.addToCart()}>
               <Ic name="ic-cart" w={16} />{tx("Thêm vào giỏ hàng")}</button>{" "}
-            <button className="btn btn-primary btn-sm" type="button" disabled={!plan} aria-disabled={p.need} data-dgo="" onClick={guard(p.buyNow)}>{tx("Mua ngay")}</button>
+            <button className="btn btn-primary btn-sm" type="button" disabled={!plan} aria-disabled={p.need} data-dgo="" onClick={() => p.buyNow()}>{tx("Mua ngay")}</button>
           </div>
         </div>
       </div>

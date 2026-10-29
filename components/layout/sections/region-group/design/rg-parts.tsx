@@ -15,14 +15,11 @@ import { localizedSlug } from "@/lib/slug";
 import { Ic } from "../../local-esim/design/nd-icons";
 import { AccItem, Overlay, Tip, radioKeys } from "../../local-esim/design/nd-parts";
 import { vnd } from "../../local-esim/design/nd-state";
-import { POPULAR_DAYS_DESKTOP, POPULAR_DAYS_MOBILE } from "../../destination/day-options";
 import { SPRITE_FLAGS } from "./rg-icons";
 import {
   badgeFor,
-  chipDaysFor,
   gbLabel,
   joinVi,
-  perDay,
   planForDays,
   priceOf,
   type Badge,
@@ -569,9 +566,10 @@ export function CovFlags({ p, max }: { p: RegionPurchase; max: number }) {
 
 export function SegTabs({ p }: { p: RegionPurchase }) {
   const tx = useT();
-  const nData = p.plans.dataPlans.length + p.plans.slowUnlimited.length + p.plans.fastUnlimited.length + p.plans.dailyUnlimited.length;
-  const nCombo = p.plans.smsCallEsim?.length ?? 0;
-  if (!nCombo) return null;
+  // What the chosen trip length shows (vande #089); fixed counts by size.
+  const nData = p.tiers.length + p.daily.length + p.unl.length;
+  const nCombo = p.combo.length;
+  if (!p.hasCombo) return null;
   const tab = (key: "data" | "combo", icon: string, label: string, n: number) => (
     <button
       className="seg-btn"
@@ -600,7 +598,7 @@ export function SegTabs({ p }: { p: RegionPurchase }) {
     </button>
   );
   return (
-    <div className="seg" id="segType" role="tablist" aria-label={tx("Loại gói")}>
+    <div className="seg trip-seg" id="segType" role="tablist" aria-label={tx("Loại gói")}>
       {tab("data", "ic-wifi", tx("Chỉ Data"), nData)} {tab("combo", "ic-phone", tx("Data + Gọi + SMS"), nCombo)}
     </div>
   );
@@ -703,188 +701,84 @@ function PgHead({
 }
 
 const TIPS = {
-  fixed: "Chọn mức data trước, rồi chọn số ngày dùng ở khung bên dưới. Giá thay đổi theo số ngày.",
   daily:
     "Mỗi ngày có sẵn một lượng data tốc độ cao; sang ngày mới được cấp lại. Dùng hết trong ngày, tuỳ gói mà mạng ngừng truy cập hoặc hạ tốc độ đến hết ngày.",
   unl: "Không giới hạn dung lượng, mạng không bị cắt. Thẻ “X GB/ngày ∞ Y Mbps”: mỗi ngày có X GB tốc độ cao, dùng hết thì giảm còn Y Mbps. Thẻ “∞ Y Mbps”: luôn dùng ở tốc độ Y.",
   combo: "Gồm data tốc độ cao, phút gọi và tin nhắn SMS, kèm số điện thoại riêng — dùng trong số ngày ghi trên thẻ.",
 };
 
-/** The fixed-plan dropdown (`#dsel`): days of the chosen size with prices. */
-function DaySelect({ p, tier, open, setOpen }: { p: RegionPurchase; tier: Tier; open: boolean; setOpen: (o: boolean) => void }) {
-  const tx = useT();
-  const btn = useRef<HTMLButtonElement>(null);
-  const list = useRef<HTMLDivElement>(null);
-  const cur = p.tier?.key === tier.key ? p.plan : null;
-  useEffect(() => {
-    if (!open) return;
-    const off = (e: MouseEvent) => {
-      // Buttons that lead to the days (buy while days are missing, the days
-      // field, "Chọn ngay") open it themselves — not an outside click.
-      if (!(e.target as HTMLElement).closest("#dsel,.tier,[data-dgo]")) setOpen(false);
-    };
-    document.addEventListener("click", off);
-    list.current?.scrollIntoView({ block: "nearest", behavior: "smooth" });
-    return () => document.removeEventListener("click", off);
-  }, [open, setOpen]);
-  const opts = tier.plans;
-  const pick = (d: number) => {
-    p.selectFixedDays(tier, d);
-    setOpen(false);
-  };
-  return (
-    <div className="dsel" id="dsel">
-      <button
-        className="dsel-btn"
-        type="button"
-        id="dselBtn"
-        aria-controls="dselList"
-        aria-expanded={open}
-        ref={btn}
-        onClick={() => setOpen(!open)}
-        onKeyDown={(e) => {
-          if (e.key === "ArrowDown" && !open) {
-            e.preventDefault();
-            setOpen(true);
-          }
-        }}
-      >
-        <span className="dsel-v" id="dselV">
-          {p.need || !cur ? tx("Chọn số ngày") : tx("{0} ngày", cur.durationDays)}
-        </span>
-        <span className="dsel-p" id="dselP" hidden={p.need || !cur}>
-          {cur ? vnd(priceOf(cur, cur.durationDays).price) : ""}
-        </span>
-        <Ic name="ic-chev-down" w={16} />
-      </button>
-      <div
-        className="dsel-list"
-        id="dselList"
-        hidden={!open}
-        ref={list}
-        onKeyDown={(e) => {
-          const items = Array.from(list.current?.querySelectorAll<HTMLElement>(".chip") ?? []);
-          const i = items.indexOf(document.activeElement as HTMLElement);
-          const next = { ArrowDown: items[(i + 1) % items.length], ArrowUp: items[(i - 1 + items.length) % items.length], Home: items[0], End: items[items.length - 1] }[
-            e.key as "ArrowDown"
-          ];
-          if (next) {
-            e.preventDefault();
-            next.focus();
-          } else if (e.key === "Escape") {
-            e.stopPropagation();
-            setOpen(false);
-            btn.current?.focus();
-          } else if (e.key === "Tab") setOpen(false);
-        }}
-      >
-        <div className="dsel-tp" role="group" aria-label={tx("Số ngày của gói {0}", tier.gb)}>
-          {opts.map((plan) => {
-            const { price } = priceOf(plan, plan.durationDays);
-            const d = plan.durationDays;
-            const checked = !p.need && cur?.durationDays === d;
-            const per = d > 1 ? tx("≈ {0}/ngày", vnd(perDay(price, d))) : "";
-            const b = badgeFor(plan, false);
-            return (
-              <span
-                key={plan.id}
-                className="chip dopt"
-                role="radio"
-                aria-checked={checked}
-                tabIndex={checked ? 0 : -1}
-                data-days={d}
-                onClick={() => pick(d)}
-                onKeyDown={(e) => {
-                  if (e.key === " " || e.key === "Enter") {
-                    e.preventDefault();
-                    pick(d);
-                  }
-                }}
-              >
-                <span className="dopt-k" />
-                <span className="dopt-d">{d}{" "}{tx("ngày")}</span>
-                <span className="dopt-p">{vnd(price)}</span>
-                <span className="dopt-b">
-                  <Pbi b={b} />
-                </span>
-                <span className="dopt-pd">{per}</span>
-              </span>
-            );
-          })}
-        </div>
-      </div>
-    </div>
-  );
-}
 
-/** What the chosen plan gives (`#planNote`): data rule + apps line. */
-export function PlanNote({ p }: { p: RegionPurchase }) {
+/**
+ * What the chosen plan gives (vande #089, design `#planSum` + `#planNote`):
+ * "Gói đang chọn | Tổng 1 GB tốc độ cao, dùng 7 ngày. Hết data: nạp thêm.",
+ * then whether TikTok and ChatGPT work.
+ */
+export function PlanNote({ p, mobile }: { p: RegionPurchase; mobile?: boolean }) {
   const tx = useT();
   if (!p.plan) return null;
   const b = (t: string) => <b>{t}</b>;
   const o = p.opt;
-  let icon = "ic-calendar";
   let text: ReactNode;
   if (o?.kind === "unl") {
-    icon = "ic-infinity";
     text = o.gb ? (
-      <>{tx("Mỗi ngày dùng")}{" "}{b(o.gb)}{" "}{tx("tốc độ cao. Hết")}{" "}{o.gb}{tx(", mạng không bị cắt: tự giảm còn")}{" "}{b(o.throttle)}
-        {speedUse(o.throttle, tx)}{" "}{tx("và dùng tiếp không giới hạn.")}</>
+      <>{b(tx("{0}/ngày", o.gb))}{" "}{tx("tốc độ cao.")}{" "}{tx("Sau đó")}{" "}{b(o.throttle)}{" "}{tx("không giới hạn.")}</>
     ) : o.throttle ? (
-      <>{tx("Không giới hạn dung lượng, luôn dùng ở tốc độ")}{" "}{b(o.throttle)}
-        {speedUse(o.throttle, tx)}.
-      </>
+      <>{b(tx("Không giới hạn"))}{" "}{tx("dung lượng.")}{" "}{tx("Luôn dùng tốc độ")}{" "}{b(o.throttle)}{speedUse(o.throttle, tx)}.</>
     ) : (
-      <>{tx("Không giới hạn dung lượng, luôn dùng tốc độ cao nhất của mạng 4G/5G — không giảm tốc.")}</>
+      <>{b(tx("Không giới hạn"))}{" "}{tx("dung lượng.")}{" "}{tx("Luôn ở tốc độ cao nhất 4G/5G.")}</>
     );
   } else if (o?.kind === "daily") {
-    icon = "ic-clock";
     text = (
       <>
-        Data {b(tx("{0}/ngày", o.gb))}{" "}{tx("tốc độ cao — hết dung lượng trong ngày thì")}{" "}
-        {o.throttle ? <>{tx("hạ xuống")}{" "}{b(o.throttle)}</> : <>{b(tx("ngừng truy cập"))}{" "}{tx("đến hết ngày")}</>}.
+        {b(tx("{0}/ngày", o.gb))}{" "}{tx("tốc độ cao.")}{" "}{tx("Hết data:")}{" "}
+        {o.throttle ? <>{tx("hạ xuống")}{" "}{b(o.throttle)}</> : tx("ngừng đến hết ngày")}.
       </>
     );
   } else if (o?.kind === "combo") {
-    icon = "ic-phone";
     text = (
       <>
-        {b(gbLabel(Number(p.plan.dataMb)))}{" "}{tx("data tốc độ cao")}{p.plan.call ? <> + {b(tx("{0} phút", p.plan.call))}{" "}{tx("gọi")}</> : null}
-        {p.plan.sms ? <> + {b(`${p.plan.sms} SMS`)}</> : null}{tx(", dùng trong")}{" "}{p.plan.durationDays}{" "}{tx("ngày — kèm số điện thoại riêng.")}</>
+        {tx("Tổng")}{" "}{b(gbLabel(Number(p.plan.dataMb)))}
+        {p.plan.call ? <> · {b(tx("{0} phút", p.plan.call))}{" "}{tx("gọi")}</> : null}
+        {p.plan.sms ? <> · {b(`${p.plan.sms} SMS`)}</> : null}. {tx("Dùng")}{" "}{b(tx("{0} ngày", p.plan.durationDays))}.
+      </>
     );
   } else {
     text = (
-      <>{tx("Tổng")}{" "}{b(p.tier?.gb ?? gbLabel(Number(p.plan.dataMb)))}{" "}{tx("tốc độ cao, dùng trong")}{" "}{b(tx("{0} ngày", p.plan.durationDays))}{" "}{tx("— hết dung lượng có thể nạp thêm.")}</>
+      <>{tx("Tổng")}{" "}{b(p.tier?.gb ?? gbLabel(Number(p.plan.dataMb)))}{" "}{tx("tốc độ cao, dùng")}{" "}{b(tx("{0} ngày", p.plan.durationDays))}. {tx("Hết data: nạp thêm.")}</>
     );
   }
   const apps = p.apps;
   return (
-    <div className="plan-note" id="planNote" aria-live="polite" hidden={p.need}>
-      <p className="pn-r" id="pnData">
-        <Ic name={icon} w={15} />
-        <span>{text}</span>
-      </p>
-      <p className="pn-r">
-        <Ic name={apps === "all" || apps === "unknown" ? "ic-check-circle" : "ic-no"} w={15} />
-        <span>
-          {apps === "notiktok" ? (
-            <>{tx("Hỗ trợ sử dụng ChatGPT, Gemini, Claude…")}{" "}<b className="pn-no">{tx("Không dùng được TikTok.")}</b>
-            </>
-          ) : apps === "none" ? (
-            <>{tx("Hỗ trợ sử dụng Google, Gemini, Claude…")}{" "}<b className="pn-no">{tx("Không dùng được TikTok, ChatGPT.")}</b>
-            </>
-          ) : (
-            tx("Hỗ trợ sử dụng TikTok, ChatGPT, Gemini, Claude…")
-          )}
-          {p.showFilter && apps !== "all" && apps !== "unknown" && (
-            <button className="pn-go" type="button" id="pnGo" onClick={() => p.toggleAppFilter(true)}>
-              <span className="pn-go-t">{tx("Lọc eSIM dùng được")}</span>
-              <Ic name="ic-chev-right" w={12} />
-            </button>
-          )}
-        </span>
-      </p>
-    </div>
+    <>
+      <div className="plan-sum" id="planSum" aria-live="polite" aria-label={tx("Gói đang chọn")}>
+        {!mobile && <span className="ps-l">{tx("Gói đang chọn")}</span>}
+        <span id="planSumT">{text}</span>
+      </div>
+      {apps !== "unknown" && (
+        <div className="plan-note" id="planNote">
+          <p className="pn-r">
+            <Ic name={apps === "all" ? "ic-check-circle" : "ic-no"} w={15} />
+            <span>
+              {apps === "notiktok" ? (
+                <>{tx("Hỗ trợ sử dụng ChatGPT, Gemini, Claude…")}{" "}<b className="pn-no">{tx("Không dùng được TikTok.")}</b></>
+              ) : apps === "none" ? (
+                <>{tx("Hỗ trợ sử dụng Google, Gemini, Claude…")}{" "}<b className="pn-no">{tx("Không dùng được TikTok, ChatGPT.")}</b></>
+              ) : p.china ? (
+                <><b>{tx("Không cần VPN")}</b>{tx(": dùng được Facebook, Google Maps, TikTok, ChatGPT…")}</>
+              ) : (
+                tx("Hỗ trợ sử dụng TikTok, ChatGPT, Gemini, Claude…")
+              )}
+              {p.showFilter && apps !== "all" && (
+                <button className="pn-go" type="button" id="pnGo" onClick={() => p.toggleAppFilter(true)}>
+                  <span className="pn-go-t">{tx("Lọc eSIM dùng được")}</span>
+                  <Ic name="ic-chev-right" w={12} />
+                </button>
+              )}
+            </span>
+          </p>
+        </div>
+      )}
+    </>
   );
 }
 
@@ -920,15 +814,11 @@ export function EkycNote({ p, onOpen, oneLine }: { p: RegionPurchase; onOpen: ()
 /** Step 2 body: the data pane (fixed / daily / unlimited) and the combo pane. */
 export function PlanPanes({
   p,
-  dselOpen,
-  setDselOpen,
   onEkyc,
   mobile,
   plansRef,
 }: {
   p: RegionPurchase;
-  dselOpen: boolean;
-  setDselOpen: (o: boolean) => void;
   onEkyc: () => void;
   mobile?: boolean;
   plansRef?: React.Ref<HTMLDivElement>;
@@ -941,7 +831,7 @@ export function PlanPanes({
   const noteIn = (where: "fixed" | "daily" | "unl" | "combo") =>
     (p.sel?.kind === where || (where === "fixed" && p.sel?.kind === "fixed")) ? (
       <>
-        <PlanNote p={p} />
+        <PlanNote p={p} mobile={mobile} />
         <EkycNote p={p} onOpen={onEkyc} oneLine={mobile} />
       </>
     ) : null;
@@ -966,6 +856,8 @@ export function PlanPanes({
   };
 
   const pickFromKeys = (el: HTMLElement) => {
+    const t = p.tiers.find((x) => x.key === el.id);
+    if (t) return p.selectTier(t);
     const o = [...p.daily, ...p.unl, ...p.combo].find((x) => x.key === el.id);
     if (o) p.selectOpt(o);
   };
@@ -975,59 +867,44 @@ export function PlanPanes({
       {" "}
       <div id="paneData" role="tabpanel" aria-labelledby="tab-data" hidden={p.tab !== "data"}>
         {p.tiers.length > 0 && (
-          <div className="pg pg--scroll pg--tier" role="group" aria-labelledby="pgd1">
-            <PgHead id="pgd1" icon="ic-calendar" title={tx("Gói cố định")} tip={tx(TIPS.fixed)} n={p.plans.dataPlans.length} of={allCount(p.all.dataPlans)} />{" "}
-            <div className="tier-grid" id="tierGrid" role="group" aria-label={tx("Chọn dung lượng và số ngày dùng")}>
+          <div className="pg pg--scroll" role="group" aria-labelledby="pgd1">
+            <PgHead
+              id="pgd1"
+              icon="ic-calendar"
+              title={tx("Gói cố định")}
+              tip={tx("Số GB là tổng dung lượng dùng cho cả gói, không chia theo ngày. Hiển thị gói đúng {0} ngày; nếu chưa có, hiển thị gói gần nhất có hạn dài hơn.", p.tripDays)}
+              n={p.tiers.length}
+              of={null}
+            />{" "}
+            {/* One chip per size: the plan of that size closest to the trip
+                (vande #089, "1 GB – 7 ngày"). */}
+            <div className="chip-grid" role="radiogroup" aria-label={tx("Gói cố định")}>
               {p.tiers.map((t) => {
                 const on = p.tier?.key === t.key;
+                const plan = t.plans[0];
                 return (
-                  <button
+                  <span
                     key={t.key}
-                    className="tier"
-                    type="button"
+                    className="chip"
                     id={t.key}
-                    aria-controls="dselList"
-                    tabIndex={on || (!p.tier && t === p.tiers[0]) ? 0 : -1}
-                    aria-pressed={on}
-                    onClick={() => {
-                      if (on) setDselOpen(!dselOpen);
-                      else {
-                        p.selectTier(t);
-                        setDselOpen(true);
-                      }
-                    }}
-                    onKeyDown={(e) => {
-                      const step = ({ ArrowLeft: -1, ArrowRight: 1 } as Record<string, number>)[e.key];
-                      if (!step) return;
-                      e.preventDefault();
-                      const i = p.tiers.indexOf(t);
-                      document.getElementById(p.tiers[(i + step + p.tiers.length) % p.tiers.length].key)?.focus();
-                    }}
+                    role="radio"
+                    aria-checked={on}
+                    tabIndex={on ? 0 : -1}
+                    onClick={() => p.selectTier(t)}
                   >
-                    {t.gb}
-                    <Pbi b={t.badge} />
-                  </button>
+                    {t.gb}{" "}<span className="chip-sub">{tx("– {0} ngày", plan.durationDays)}</span>{" "}
+                    <Pbi b={badgeFor(plan) ?? t.badge} />
+                    <KycIcon show={kycHere && !!plan.isKyc} />
+                  </span>
                 );
-              })}{" "}
-              {p.tier && (
-                <div className={`dock${p.need ? " is-need" : ""}`} id="dock">
-                  <div className="dock-l">
-                    <p className="dock-q">{tx("Tổng")}{" "}<b id="dockGb">{p.tier.gb}</b>{" "}{tx("dùng trong bao nhiêu ngày?")}</p>
-                    <p className="dock-s">
-                      <span id="dockS" hidden={p.need}>{tx("Data dùng chung cả gói, không chia theo ngày.")}</span>
-                      <span className="dock-need" id="dockNeed" role="status" hidden={!p.need}>{tx("Chọn số ngày để tiếp tục mua hàng")}</span>
-                    </p>
-                  </div>
-                  <DaySelect p={p} tier={p.tier} open={dselOpen} setOpen={setDselOpen} />
-                </div>
-              )}
+              })}
             </div>
             {noteIn("fixed")}
           </div>
         )}
         {p.daily.length > 0 && (
           <div className="pg pg--scroll" role="group" aria-labelledby="pgd2">
-            <PgHead id="pgd2" icon="ic-clock" title={tx("Gói theo ngày")} tip={tx(TIPS.daily)} n={p.daily.length} of={filtered ? null : null} />{" "}
+            <PgHead id="pgd2" icon="ic-clock" title={tx("Gói theo ngày")} tip={tx(TIPS.daily)} n={p.daily.length} of={null} />{" "}
             <div className="chip-grid">{p.daily.map((o) => chip(o, tx("{0}/ngày", o.gb)))}</div>
             {noteIn("daily")}
           </div>
@@ -1060,104 +937,116 @@ export function PlanPanes({
           </div>
         )}
         {p.tiers.length + p.daily.length + p.unl.length === 0 && !p.isLoading && (
-          <p className="pg-empty">{p.appFilter ? tx("Không có gói nào dùng được TikTok, ChatGPT ở phạm vi này.") : tx("Phạm vi này hiện chưa có gói nào.")}</p>
+          <p className="pk-empty">{tx("Chưa có gói nào phù hợp với {0} ngày — thử giảm số ngày hoặc tắt bộ lọc.", p.tripDays)}</p>
         )}
       </div>{" "}
       <div id="paneCombo" role="tabpanel" aria-labelledby="tab-combo" hidden={p.tab !== "combo"}>
         {p.combo.length > 0 && (
           <div className="pg pg--scroll" role="group" aria-labelledby="pgc1">
-            <PgHead id="pgc1" icon="ic-phone" title={tx("Gói Data + Gọi + SMS")} tip={tx(TIPS.combo)} n={p.combo.length} of={allCount(p.all.smsCallEsim ?? [])} />{" "}
+            <PgHead id="pgc1" icon="ic-phone" title={tx("Gói Data + Gọi + SMS")} tip={tx(TIPS.combo)} n={p.combo.length} of={null} />{" "}
             <div className="chip-grid">{p.combo.map((o) => chip(o, comboLabel(o.plans[0], p.lang)))}</div>
             {noteIn("combo")}
           </div>
+        )}
+        {p.combo.length === 0 && !p.isLoading && (
+          <p className="pk-empty">{tx("Chưa có gói nào phù hợp với {0} ngày — thử giảm số ngày hoặc tắt bộ lọc.", p.tripDays)}</p>
         )}
       </div>
     </div>
   );
 }
 
-/* ───────────── step 3: days ───────────── */
+/* ───────────── trip length (vande #089) ───────────── */
+
+const TRIP_CHIPS_DESKTOP = [1, 3, 5, 7, 10, 15, 20, 30];
+const TRIP_CHIPS_MOBILE = [1, 2, 3, 5, 7, 10, 15, 20, 30];
 
 /**
- * Days field mode: the calendar when some duration is not on a chip (or the
- * plan is priced per day), dropdown jump for fixed sizes.
+ * "Bạn đi … mấy ngày?" (design `.trip-row`): − / + jump between the days the
+ * destination sells, the number can be typed, quick chips and the calendar.
+ * A number it does not sell snaps to one it does, with a note (`.trip-warn`).
  */
-export function daysMode(p: RegionPurchase): "cal" | "go" | "" {
-  if (p.perDayKind) return p.opt && chipDaysFor(p.opt, POPULAR_DAYS_MOBILE).more ? "cal" : "";
-  return p.tier ? "go" : "";
-}
-
-export function DaysField({
-  p,
-  onCal,
-  onGo,
-  cls,
-}: {
-  p: RegionPurchase;
-  onCal: () => void;
-  onGo: () => void;
-  cls: string;
-}) {
+export function TripDays({ p, mobile, onCal }: { p: RegionPurchase; mobile?: boolean; onCal: () => void }) {
   const tx = useT();
-  const mode = daysMode(p);
+  const [draft, setDraft] = useState(String(p.tripDays));
+  useEffect(() => setDraft(String(p.tripDays)), [p.tripDays]);
+  const valid = p.validDays;
+  const prev = [...valid].reverse().find((d) => d < p.tripDays);
+  const next = valid.find((d) => d > p.tripDays);
+  const chips = (mobile ? TRIP_CHIPS_MOBILE : TRIP_CHIPS_DESKTOP).filter((d) => !valid.length || valid.includes(d));
+  const onChip = chips.includes(p.tripDays);
+  const commit = () => {
+    const n = parseInt(draft, 10);
+    if (Number.isFinite(n) && n > 0) p.setDays(n);
+    else setDraft(String(p.tripDays));
+  };
+  const w = p.warning;
   return (
-    <button
-      className={`${cls}${p.need ? " is-ph" : ""}`}
-      type="button"
-      id="daysField"
-      data-dgo=""
-      aria-disabled={!mode}
-      data-mode={mode}
-      aria-haspopup={mode === "cal" ? "dialog" : undefined}
-      onClick={(e) => {
-        if (mode === "cal") onCal();
-        else if (mode === "go") {
-          e.stopPropagation();
-          onGo();
-        }
-      }}
-    >
-      <span id="daysVal">{p.need ? tx("Chọn số ngày") : tx("{0} ngày{1}", p.days, mode || p.perDayKind ? "" : " (theo gói)")}</span>
-      <Ic name={mode === "go" ? "ic-chev-down" : "ic-calendar"} w={16} />
-    </button>
-  );
-}
-
-export function DayChips({ p, mobile, onCal }: { p: RegionPurchase; mobile?: boolean; onCal: () => void }) {
-  const tx = useT();
-  if (!p.perDayKind) return <div className="day-chips" id="dayChips" hidden />;
-  // Durations really on sale, kept to the popular list (vande #034).
-  const { days: list, more } = p.opt
-    ? chipDaysFor(p.opt, mobile ? POPULAR_DAYS_MOBILE : POPULAR_DAYS_DESKTOP)
-    : { days: [], more: false };
-  const exact = list.includes(p.days);
-  return (
-    <div className={`day-chips${mobile ? "" : " day-chips--row"}`} id="dayChips" role="group" aria-labelledby="daysLbl">
-      {list.map((d) => (
-        <button key={d} className="day-chip" type="button" aria-label={tx("{0} ngày", d)} aria-pressed={p.days === d} data-days={d} onClick={() => p.setDays(d)}>
-          {d}
-        </button>
-      ))}
-      {more && (
-        <button className="day-chip day-chip--cal" type="button" aria-pressed={!exact} aria-haspopup="dialog" onClick={onCal}>
-          <Ic name="ic-calendar" w={14} />
-          <span className="day-chip-t">{!exact ? tx("{0} ngày", p.days) : tx("Khác")}</span>
-        </button>
+    <>
+      <div className="trip-row">
+        {mobile && (
+          <span className="trip-lbl" id="tripLbl">{tx("Chọn số ngày dùng")}</span>
+        )}
+        <div className="trip-sel" role="group" {...(mobile ? { "aria-labelledby": "tripLbl" } : { "aria-label": tx("Số ngày") })}>
+          <button className="qty-btn" type="button" id="tripMinus" aria-label={tx("Giảm 1 ngày")} disabled={prev == null} onClick={() => prev != null && p.setDays(prev)}>
+            −
+          </button>
+          <label className="trip-val">
+            <input
+              aria-label={tx("Số ngày dùng eSIM")}
+              id="tripIn"
+              className="trip-in"
+              inputMode="numeric"
+              maxLength={3}
+              value={draft}
+              onFocus={(e) => e.target.select()}
+              onChange={(e) => setDraft(e.target.value.replace(/[^\d]/g, ""))}
+              onBlur={commit}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  commit();
+                  e.currentTarget.blur();
+                }
+              }}
+            />
+            <span>{tx("ngày")}</span>
+          </label>
+          <button className="qty-btn" type="button" id="tripPlus" aria-label={tx("Tăng 1 ngày")} disabled={next == null} onClick={() => next != null && p.setDays(next)}>
+            +
+          </button>
+        </div>
+        <div className="day-chips" id="dayChips" role="group" aria-label={tx("Chọn nhanh số ngày")}>
+          {chips.map((d) => (
+            <button key={d} className="day-chip" type="button" aria-label={tx("{0} ngày", d)} aria-pressed={p.tripDays === d} data-days={d} onClick={() => p.setDays(d)}>
+              {d}
+            </button>
+          ))}
+          <button className="day-chip day-chip--cal" type="button" aria-pressed={!onChip} aria-haspopup="dialog" data-cal="" onClick={onCal}>
+            <Ic name="ic-calendar" w={14} />
+            <span className="day-chip-t">{onChip ? tx("Lịch") : mobile ? String(p.tripDays) : tx("{0} ngày", p.tripDays)}</span>
+          </button>
+        </div>
+      </div>
+      {w && (
+        <div className="alert alert--warning alert--sm trip-warn" id="tripWarn" role="status">
+          <Ic name="ic-info" w={15} />
+          <span>
+            {w.kind === "over" ? (
+              tx("Chuyến {0} ngày dài hơn gói tối đa ({1} ngày) tại điểm đến này. Đã chọn {1} ngày — nếu cần dùng lâu hơn, bạn có thể mua thêm eSIM (tăng số lượng ở bước cuối).", w.requested, w.max)
+            ) : (
+              <>
+                {tx("Điểm đến này chưa có gói đúng {0} ngày — đã chọn số ngày gần nhất có gói:", w.requested)}{" "}
+                <b>{tx("{0} ngày", w.chosen)}</b>.
+              </>
+            )}
+          </span>
+        </div>
       )}
-    </div>
+    </>
   );
 }
 
-export function NeedHint({ p, onGo }: { p: RegionPurchase; onGo: () => void }) {
-  const tx = useT();
-  return (
-    <div className="alert alert--sm alert--warning qstock need-hint" id="needHint" role="status" hidden={!p.need}>
-      <Ic name="ic-calendar" w={15} />
-      <span>{tx("Chọn")}{" "}<b>{tx("số ngày dùng")}</b>{" "}{p.members.length > 1 ? tx("ở bước 2 để tiếp tục mua hàng.") : tx("ở bước 1 để tiếp tục mua hàng.")}</span>
-      <button className="need-go" type="button" id="needGo" data-dgo="" onClick={onGo}>{tx("Chọn ngay")}</button>
-    </div>
-  );
-}
 
 /* ───────────── calendar (#calOv) — the design's rangeCalendar ───────────── */
 
