@@ -70,6 +70,15 @@ export interface ProfileDict {
   // Topup
   topupTitle: string;
   topupSubtitle: string;
+  // Billion add-ons: data on top of the current plan (vande #081)
+  addonButton: string;
+  topupRenewSection: string;
+  addonSection: string;
+  addonSectionNote: string;
+  addonBoost: string;
+  addonUpgrade: string;
+  addonExtra: string;
+  addonDaysLeft: string;
   topupNoPackages: string;
   topupErrorLoading: string;
   topupConfirmButton: string;
@@ -156,6 +165,14 @@ export const profileTranslations: Record<"en" | "vi", ProfileDict> = {
     referralInactive: "Your referral code is currently inactive.",
     topupTitle: "Top Up Your eSIM",
     topupSubtitle: "Choose a package to add data to this eSIM.",
+    addonButton: "Buy more data",
+    topupRenewSection: "Renew plan (top-up)",
+    addonSection: "Buy more data",
+    addonSectionNote: "Added to the plan you are using now; it does not extend its validity.",
+    addonBoost: "1-day speed boost",
+    addonUpgrade: "Upgrade plan",
+    addonExtra: "Extra data",
+    addonDaysLeft: "days left",
     topupNoPackages: "No top-up packages are available for this eSIM right now.",
     topupErrorLoading: "Could not load top-up packages. Please try again.",
     topupConfirmButton: "Continue to Payment",
@@ -240,6 +257,14 @@ export const profileTranslations: Record<"en" | "vi", ProfileDict> = {
     referralInactive: "Mã giới thiệu của bạn hiện không hoạt động.",
     topupTitle: "Nạp dung lượng cho eSIM",
     topupSubtitle: "Chọn gói cước để nạp thêm dung lượng cho eSIM này.",
+    addonButton: "Mua thêm dung lượng",
+    topupRenewSection: "Gia hạn gói (Top-up)",
+    addonSection: "Mua thêm dung lượng",
+    addonSectionNote: "Cộng thêm vào gói đang dùng, không kéo dài hạn sử dụng của gói.",
+    addonBoost: "Tăng tốc 1 ngày",
+    addonUpgrade: "Nâng cấp gói",
+    addonExtra: "Thêm dung lượng",
+    addonDaysLeft: "ngày còn lại",
     topupNoPackages: "SIM này hiện không có gói nạp khả dụng.",
     topupErrorLoading: "Không thể tải danh sách gói nạp. Vui lòng thử lại.",
     topupConfirmButton: "Tiếp tục thanh toán",

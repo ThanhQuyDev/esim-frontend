@@ -9,6 +9,7 @@ import {
   Infinity as InfinityIcon,
   AlertCircle,
   Check,
+  Zap,
 } from "lucide-react";
 import {
   useTopupPackages,
@@ -160,6 +161,7 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
   if (!open) return null;
 
   const packages = listResponse?.packages ?? [];
+  const packageGroups = groupTopupPackages(packages, t);
   const provider = listResponse?.provider;
   const selectedPackage =
     selectedPackageId !== null
@@ -484,22 +486,33 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
           ) : (
             <>
               <p className="text-base sm:text-sm text-gray-500 mb-4">{t.topupSubtitle}</p>
-              <div className="space-y-2.5">
-                {packages.map((pkg) => (
-                  <TopupPackageItem
-                    key={pkg.packageId}
-                    pkg={pkg}
-                    selected={selectedPackageId === pkg.packageId}
-                    onSelect={() => {
-                      setSelectedPackageId(pkg.packageId);
-                      setErrorMessage(null);
-                    }}
-                    t={t}
-                    lang={lang}
-                    destination={destinationOfEsim}
-                  />
-                ))}
-              </div>
+              {/* Top-ups and, for Billion, data on top of the plan (vande #081). */}
+              {packageGroups.map((group) => (
+                <section key={group.key} className="mb-4 last:mb-0" data-testid={`topup-group-${group.key}`}>
+                  {group.title && (
+                    <div className="mb-2">
+                      <h3 className="text-base sm:text-sm font-semibold text-gray-900">{group.title}</h3>
+                      {group.note && <p className="text-sm text-gray-500">{group.note}</p>}
+                    </div>
+                  )}
+                  <div className="space-y-2.5">
+                    {group.packages.map((pkg) => (
+                      <TopupPackageItem
+                        key={pkg.packageId}
+                        pkg={pkg}
+                        selected={selectedPackageId === pkg.packageId}
+                        onSelect={() => {
+                          setSelectedPackageId(pkg.packageId);
+                          setErrorMessage(null);
+                        }}
+                        t={t}
+                        lang={lang}
+                        destination={destinationOfEsim}
+                      />
+                    ))}
+                  </div>
+                </section>
+              ))}
             </>
           )}
         </div>
@@ -697,9 +710,19 @@ function TopupPackageItem({ pkg, selected, onSelect, t, lang, destination }: Top
                 {pkg.dataAmountText}
               </span>
             )}
+            {pkg.kind === "addon" && pkg.addonKind && (
+              <span
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-sm font-semibold"
+                data-testid="topup-addon-kind"
+              >
+                <Zap className="w-3 h-3" />
+                {addonKindLabel(pkg.addonKind, t)}
+              </span>
+            )}
             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-sm font-medium">
               <Calendar className="w-3 h-3" />
-              {pkg.durationDays} {t.topupDuration}
+              {pkg.durationDays}{" "}
+              {pkg.kind === "addon" && pkg.addonKind !== "boost" ? t.addonDaysLeft : t.topupDuration}
             </span>
           </div>
           <p className="text-base sm:text-sm text-gray-700 leading-snug">{pkg.name}</p>
@@ -724,4 +747,30 @@ function TopupPackageItem({ pkg, selected, onSelect, t, lang, destination }: Top
       </div>
     </button>
   );
+}
+
+function addonKindLabel(kind: "boost" | "upgrade" | "extra", t: ProfileDict): string {
+  return kind === "boost" ? t.addonBoost : kind === "upgrade" ? t.addonUpgrade : t.addonExtra;
+}
+
+/**
+ * One list as before; with Billion add-ons in it (vande #081), top-ups first
+ * under "Gia hạn gói", then the add-ons under "Mua thêm dung lượng" — boost,
+ * upgrade, extra data — so nobody buys one thinking it is the other.
+ */
+function groupTopupPackages(
+  packages: TopupPackage[],
+  t: ProfileDict
+): { key: string; title?: string; note?: string; packages: TopupPackage[] }[] {
+  const addons = packages.filter((p) => p.kind === "addon");
+  if (addons.length === 0) return [{ key: "all", packages }];
+  const order = { boost: 0, upgrade: 1, extra: 2 } as const;
+  const sortedAddons = [...addons].sort(
+    (a, b) => order[a.addonKind ?? "extra"] - order[b.addonKind ?? "extra"] || (a.vndPrice ?? 0) - (b.vndPrice ?? 0)
+  );
+  const topups = packages.filter((p) => p.kind !== "addon");
+  return [
+    ...(topups.length ? [{ key: "topup", title: t.topupRenewSection, packages: topups }] : []),
+    { key: "addon", title: t.addonSection, note: t.addonSectionNote, packages: sortedAddons },
+  ];
 }

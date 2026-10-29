@@ -516,6 +516,11 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
   );
   const canTopup =
     canTopUpEsim(esim) && (!isBillion || (billionTopups?.packages?.length ?? 0) > 0);
+  // Only data on top of the plan to sell (vande #081): say so on the button.
+  const onlyAddons =
+    isBillion &&
+    (billionTopups?.packages?.length ?? 0) > 0 &&
+    billionTopups!.packages.every((p) => p.kind === "addon");
 
   return (
     <div
@@ -889,7 +894,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                       className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-blue-600 text-white rounded-lg text-base sm:text-sm font-semibold hover:bg-blue-700 transition-colors shadow-sm"
                     >
                       <Zap className="w-4 h-4" />
-                      {t.topup}
+                      {onlyAddons ? t.addonButton : t.topup}
                     </button>
                   )}
                 </div>

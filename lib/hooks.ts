@@ -1747,6 +1747,9 @@ export interface TopupPackage {
   price: number;
   retailPrice: number;
   vndPrice?: number;
+  /** "addon": data on top of the current plan (Billion, vande #081). */
+  kind?: "topup" | "addon";
+  addonKind?: "boost" | "upgrade" | "extra";
 }
 
 export interface TopupListResponse {
