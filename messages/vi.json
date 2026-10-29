@@ -59,6 +59,7 @@
     "title": "Chọn điểm đến du lịch của bạn",
     "description": "Chọn gói dữ liệu di động cho chuyến đi của bạn.",
     "tabs": {
+      "all": "Tất cả",
       "country": "Quốc gia",
       "region": "Khu vực",
       "local": "eSIM nội địa",

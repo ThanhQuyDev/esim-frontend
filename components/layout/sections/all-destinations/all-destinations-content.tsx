@@ -12,6 +12,7 @@ import { localizedSlug } from "@/lib/slug";
 import { LocalCarrierGrid } from "@/components/layout/sections/local-esim/local-carrier-grid";
 import { useMatchedLocalCarriers } from "@/components/layout/sections/local-esim/local-carrier-search";
 import { toRegionListItems, variantCountLabel } from "@/lib/region-groups";
+import { esimName } from "@/lib/esim-name";
 
 interface AllDestinationsContentProps {
   dict: Record<string, any>;
@@ -98,7 +99,7 @@ function DestinationCard({
             {/* Name + Info */}
             <div className="flex flex-col gap-0.5">
               <p className="body-lg-medium scroll-mt-20 xl:scroll-mt-24">
-                {(lang === "vi" ? item.titleVi : item.title) || item.name}
+                {esimName((lang === "vi" ? item.titleVi : item.title) || item.name, lang)}
               </p>
               <p className="body-md text-text-tertiary scroll-mt-20 xl:scroll-mt-24">
                 <span className="whitespace-nowrap">

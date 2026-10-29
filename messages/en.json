@@ -59,6 +59,7 @@
     "title": "Choose your travel destination",
     "description": "Pick a mobile data plan for your trip.",
     "tabs": {
+      "all": "All",
       "country": "Country",
       "region": "Region",
       "local": "Domestic eSIM",
