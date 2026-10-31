@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Destination, Plan, PlansByDestinationResponse, Region } from "@/lib/api";
-import { useCart, usePlansByRegionSlug, usePlansBySlug, usePublicCoupons } from "@/lib/hooks";
+import { useCart, useMultidayTiers, usePlansByRegionSlug, usePlansBySlug, usePublicCoupons } from "@/lib/hooks";
 import { pickBestVoucher } from "@/lib/voucher-preview";
 import { localizedHref } from "@/lib/route-mapping";
 import { trackJourney } from "@/lib/journey-tracking";
@@ -84,6 +84,10 @@ export function useRegionPurchase(
   const router = useRouter();
   const { addItem } = useCart();
   const { data: coupons } = usePublicCoupons();
+  // A day pass bought for several days is priced on its whole cost (vande
+  // #014), with the margin tiers checkout uses. Without them the page showed
+  // the 1-day price × days, and checkout charged less (doitac-3010 #001).
+  useMultidayTiers();
 
   // The design lists the widest coverage first.
   const members = useMemo(

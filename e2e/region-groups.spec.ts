@@ -119,7 +119,7 @@ async function mockApi(page: Page) {
  * Plans for whichever region slug is requested, recording each slug so a test
  * can tell which pack's plans were loaded.
  */
-async function mockRegionPlans(page: Page, requested: string[]) {
+async function mockRegionPlans(page: Page, requested: string[], daily: Record<string, unknown>[] = []) {
   await page.route(`${API_BASE}/api/v1/plans/by-region/**`, async (route) => {
     const slug = decodeURIComponent(
       new URL(route.request().url()).pathname.split("/").pop() ?? "",
@@ -153,7 +153,7 @@ async function mockRegionPlans(page: Page, requested: string[]) {
             isNonHkIp: false,
           },
         ],
-        slowUnlimited: [],
+        slowUnlimited: daily,
         fastUnlimited: [],
         dailyUnlimited: [],
         smsCallEsim: [],
@@ -271,6 +271,31 @@ test.describe("Region group page — packs as the coverage step (#004, #067)", (
     await expect(chip).toContainText("3 GB");
     await expect(chip).toContainText("30 ngày");
     await expect(page.locator(".rgd #priceNet")).toContainText("150.000");
+  });
+
+  test("a day pass for several days costs what checkout charges (doitac-3010 #001)", async ({ page }) => {
+    // eSIM Access 1 GB/day: 1 day retails at 50.000 đ on a cost of 30.000 đ;
+    // the tier adds 20.000 đ once. 7 days = 7 × 30.000 + 20.000 = 230.000 đ,
+    // not 7 × 50.000 = 350.000 đ (the margin counted every day).
+    const dayPass = {
+      id: 901, provider: "esimaccess", providerPlanId: "daily-1gb", name: "Asia 1GB/Day",
+      durationDays: 1, dataMb: 1024, fupSpeed: "128kbps", costPrice: 1.2, price: 2, retailPrice: 2.6,
+      currency: "USD", sms: 0, call: 0, type: "daily", topUp: false, isCheapest: false, isActive: true,
+      createdAt: "", updatedAt: "", vndPrice: 50000, vndCostPrice: 30000, isAbleMultidate: true, isNonHkIp: false,
+    };
+    await page.route(`${API_BASE}/api/v1/plans/multiday-pricing**`, (route) =>
+      route.fulfill({ status: 200, contentType: "application/json",
+        body: JSON.stringify([{ minVnd: 0, maxVnd: 100000000, percentage: 0, fixedAmountVnd: 20000 }]) }),
+    );
+    await mockApi(page);
+    await mockRegionPlans(page, [], [dayPass]);
+
+    await page.goto(harness());
+    await page.locator(".rgd #plans .chip").filter({ hasText: "1 GB" }).first().click();
+    await page.locator(".rgd #tripIn").fill("7");
+    await page.locator(".rgd #tripIn").blur();
+    await expect(page.locator(".rgd #tripIn")).toHaveValue("7");
+    await expect(page.locator(".rgd #priceNet")).toContainText("230.000");
   });
 });
 
