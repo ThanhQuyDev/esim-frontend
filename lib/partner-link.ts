@@ -199,6 +199,33 @@ export function requestBotFlags(headers: {
   return flags;
 }
 
+/**
+ * Headers for every answer of a tracking link (doitac-3010 #021, rules 5, 7).
+ *
+ * - `private, no-store`: the answer may carry this visitor's click cookie, so
+ *   no shared cache (CDN, proxy, office gateway) may keep it and hand it to
+ *   the next person who opens the same link.
+ * - `X-Robots-Tag: noindex`: a tracking URL is not a page; search engines must
+ *   not list esim.vn/go/<code> next to the real page it points to. (It is not
+ *   blocked in robots.txt on purpose — a crawler that may not fetch the URL
+ *   never sees this header.)
+ * - `Referrer-Policy: no-referrer`: the landing page gets no Referer naming
+ *   the link the visitor came through.
+ */
+export const TRACKING_LINK_HEADERS: Record<string, string> = {
+  "Cache-Control": "private, no-store, max-age=0",
+  "X-Robots-Tag": "noindex, nofollow",
+  "Referrer-Policy": "no-referrer",
+};
+
+export function applyTrackingLinkHeaders(response: {
+  headers: { set(name: string, value: string): void };
+}): void {
+  for (const [name, value] of Object.entries(TRACKING_LINK_HEADERS)) {
+    response.headers.set(name, value);
+  }
+}
+
 /** Where a link points, without counting a click (doitac-1410 #026). */
 export async function fetchPartnerLinkTarget(
   apiBaseUrl: string,

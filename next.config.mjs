@@ -15,6 +15,20 @@ const nextConfig = {
   async rewrites() {
     return [{ source: "/go/:code", destination: "/api/go/:code" }];
   },
+  // The handler sets these itself (lib/partner-link TRACKING_LINK_HEADERS);
+  // repeated here so that even an answer it never wrote — an error page, a
+  // platform redirect — is not cached publicly or indexed (doitac-3010 #021).
+  async headers() {
+    const tracking = [
+      { key: "Cache-Control", value: "private, no-store, max-age=0" },
+      { key: "X-Robots-Tag", value: "noindex, nofollow" },
+      { key: "Referrer-Policy", value: "no-referrer" },
+    ];
+    return [
+      { source: "/go/:path*", headers: tracking },
+      { source: "/api/go/:path*", headers: tracking },
+    ];
+  },
   experimental: {
     optimizePackageImports: ["lucide-react"],
   },

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import {
   applyPartnerClick,
+  applyTrackingLinkHeaders,
   hashClientIp,
   isLinkPreviewBot,
   isPrefetchRequest,
@@ -70,5 +71,7 @@ export async function GET(
   // the page (doitac-1410 #026).
   const response = NextResponse.json({ attributed: true });
   applyPartnerClick(response, result);
+  // It carries the click cookie: no shared cache (doitac-3010 #021).
+  applyTrackingLinkHeaders(response);
   return response;
 }

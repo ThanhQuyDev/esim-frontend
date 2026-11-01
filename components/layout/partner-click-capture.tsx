@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
+import { useLocale } from "next-intl";
 
 import { PARTNER_CLICK_ID_PARAM } from "@/lib/partner-click-id";
 
@@ -60,12 +61,63 @@ function confirmWhenShown(): () => void {
  * It also confirms a fresh click once the landing page has really been shown
  * (doitac-3010 #018), which is what makes the click valid.
  */
+/**
+ * What the visitor is told when they arrive through a partner's link
+ * (doitac-3010 #021, rule 7): that a cookie records which partner sent them,
+ * that it costs them nothing, and where the privacy policy is. Shown once, on
+ * the page the link opened.
+ */
+const TRACKING_NOTICE = {
+  vi: {
+    text: "Bạn đến esim.vn qua liên kết của một đối tác. Chúng tôi lưu một cookie ghi nhận nguồn trong 30 ngày để trả hoa hồng cho đối tác — giá bạn trả không thay đổi.",
+    policy: "Chính sách bảo mật",
+    ok: "Đã hiểu",
+  },
+  en: {
+    text: "You reached esim.vn through a partner's link. We keep a cookie recording the referral for 30 days so the partner earns a commission — your price does not change.",
+    policy: "Privacy policy",
+    ok: "Got it",
+  },
+} as const;
+
+function TrackingNotice({ onClose }: { onClose: () => void }) {
+  const locale = useLocale() === "en" ? "en" : "vi";
+  const copy = TRACKING_NOTICE[locale];
+  const policyHref = `${locale === "en" ? "/en" : ""}/legal/privacy-policy`;
+
+  return (
+    <div
+      role="status"
+      data-testid="partner-tracking-notice"
+      className="fixed inset-x-4 bottom-4 z-50 mx-auto max-w-xl rounded-lg border bg-background p-4 text-sm shadow-lg sm:left-6 sm:right-auto"
+    >
+      <p className="text-muted-foreground">
+        {copy.text}{" "}
+        <a href={policyHref} className="font-medium text-foreground underline">
+          {copy.policy}
+        </a>
+      </p>
+      <div className="mt-3 flex justify-end">
+        <button
+          type="button"
+          onClick={onClose}
+          className="rounded-md bg-foreground px-3 py-1.5 text-xs font-medium text-background"
+        >
+          {copy.ok}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export function PartnerClickCapture() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
+  const [showNotice, setShowNotice] = useState(false);
 
   useEffect(() => {
     if (!clickPending()) return;
+    setShowNotice(true);
     return confirmWhenShown();
   }, []);
 
@@ -82,5 +134,7 @@ export function PartnerClickCapture() {
     );
   }, [searchParams, pathname]);
 
-  return null;
+  return showNotice ? (
+    <TrackingNotice onClose={() => setShowNotice(false)} />
+  ) : null;
 }

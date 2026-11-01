@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import {
   applyPartnerClick,
+  applyTrackingLinkHeaders,
   fetchPartnerLinkTarget,
   hashClientIp,
   isLinkPreviewBot,
@@ -29,10 +30,10 @@ function redirectTo(request: NextRequest, targetPath: string | null) {
   url.searchParams.delete("subid");
   url.searchParams.delete("pcid");
   const response = NextResponse.redirect(url);
-  // The answer depends on whether this was a prefetch (doitac-3010 #019); a
-  // cache must never hand a prefetch's cookie-less answer to a real click, or
-  // the other way round.
-  response.headers.set("Cache-Control", "no-store, private");
+  // Never kept by a shared cache, never indexed, no Referer onward
+  // (doitac-3010 #021). The answer also depends on whether this was a
+  // prefetch (#019), so a cache must never swap one for the other.
+  applyTrackingLinkHeaders(response);
   response.headers.set("Vary", "Sec-Purpose, Purpose");
   return response;
 }
