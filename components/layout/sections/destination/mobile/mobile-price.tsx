@@ -23,7 +23,8 @@ interface MobilePriceProps {
   dataLabel: string;
   greenBoxLine1: string;
   /** Apps line from the APN table; null keeps the existing wording (#068). */
-  greenBoxApps?: string | null;
+  /** `false`: not a China page, no apps line (doitac-3010 #047). */
+  greenBoxApps?: string | null | false;
   /** Open the eKYC guide modal (shown only when selectedPlan.isKyc). */
   onOpenEkyc?: () => void;
   lang?: string;
@@ -127,12 +128,14 @@ export function MobilePrice({
           <GreenCheck />
           <span dangerouslySetInnerHTML={{ __html: greenBoxLine1 }} />
         </div>
-        <div className="flex items-start gap-[9px] text-xs sm:text-sm text-[#166534] leading-normal">
-          <GreenCheck />
-          <span data-testid="green-box-apps">
-            {greenBoxApps ?? dict.greenBox.line3}
-          </span>
-        </div>
+        {greenBoxApps !== false && (
+          <div className="flex items-start gap-[9px] text-xs sm:text-sm text-[#166534] leading-normal">
+            <GreenCheck />
+            <span data-testid="green-box-apps">
+              {greenBoxApps ?? dict.greenBox.line3}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Inline KYC banner — shown when the selected plan needs eKYC */}

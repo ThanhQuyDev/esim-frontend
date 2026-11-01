@@ -332,7 +332,9 @@ export function useRegionPurchase(
     voucher,
     voucherMax: Number(voucherCoupon?.maxDiscountAmount ?? 0) || null,
     net,
-    apps: appsOf(plan),
+    // TikTok / ChatGPT only on China and the region packs that cover it
+    // (doitac-3010 #047); elsewhere nothing is blocked and the line goes.
+    apps: china ? appsOf(plan) : ("unknown" as const),
     kycWhere,
     needsKyc,
     regionName,

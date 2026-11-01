@@ -36,7 +36,7 @@ export interface MobileDestinationPlansProps {
   dataLabel: string;
   greenBoxLine1: string;
   /** Apps line from the APN table; null keeps the existing wording (#068). */
-  greenBoxApps?: string | null;
+  greenBoxApps?: string | null | false;
   region?: Region | null;
   destinationData?: Destination | null;
   activeCategory: PlanCategory;

@@ -325,9 +325,11 @@ export function DestinationPlans({ destination, slug, dict, lang, planSource = "
   // The green box's apps line, from the APN table rather than the blanket
   // "supports TikTok, ChatGPT…" that used to show for every plan (#068). Null when
   // the table says nothing about this plan, and the old wording then stands.
+  // Only China and the region packs that cover it (doitac-3010 #047):
+  // nowhere else blocks TikTok, and the line would only worry the buyer.
   const greenBoxApps = useMemo(
-    () => appsLine(selectedPlan, lang),
-    [selectedPlan, lang]
+    () => (isChinaPage ? appsLine(selectedPlan, lang) : false),
+    [isChinaPage, selectedPlan, lang]
   );
 
   // KYC inline banner (shown next to the price block)

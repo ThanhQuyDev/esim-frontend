@@ -109,10 +109,11 @@ interface GreenBoxProps {
   line1Html: string;
   /**
    * The apps line, worked out from the uploaded APN table (#068). Null means the
-   * table says nothing about this plan — outside China it is simply not listed —
-   * and the existing wording stands rather than being turned into a denial.
+   * table says nothing about this plan, and the existing wording stands rather
+   * than being turned into a denial. `false` leaves the line out: only China and
+   * the region packs that cover it say anything about TikTok (doitac-3010 #047).
    */
-  appsLine?: string | null;
+  appsLine?: string | null | false;
 }
 
 const GreenCheck = () => (
@@ -129,10 +130,12 @@ export function GreenBox({ dict, line1Html, appsLine }: GreenBoxProps) {
         <GreenCheck />
         <span dangerouslySetInnerHTML={{ __html: line1Html }} />
       </div>
-      <div className="flex items-start gap-[9px] text-base sm:text-sm text-[#166534] leading-normal">
-        <GreenCheck />
-        <span data-testid='green-box-apps'>{appsLine ?? dict.greenBox.line3}</span>
-      </div>
+      {appsLine !== false && (
+        <div className="flex items-start gap-[9px] text-base sm:text-sm text-[#166534] leading-normal">
+          <GreenCheck />
+          <span data-testid='green-box-apps'>{appsLine ?? dict.greenBox.line3}</span>
+        </div>
+      )}
     </div>
   );
 }
