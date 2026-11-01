@@ -6,6 +6,7 @@ import {
   hashClientIp,
   isLinkPreviewBot,
   isPrefetchRequest,
+  requestBotFlags,
   publicOrigin,
   recordPartnerLinkClick,
 } from "@/lib/partner-link";
@@ -70,6 +71,8 @@ export async function GET(
         request.headers.get("x-forwarded-for"),
         request.headers.get("x-real-ip")
       ) || undefined,
+    // A bot dressed as a browser is scored, not turned away (doitac-3010 #020).
+    botFlags: requestBotFlags(request.headers),
   });
 
   const response = redirectTo(request, result?.targetPath ?? null);

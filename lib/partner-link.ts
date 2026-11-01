@@ -1,5 +1,7 @@
 import { createHash } from "crypto";
 
+import { isDatacenterIp } from "@/lib/datacenter-ip";
+
 /**
  * Shared plumbing for KOL marketing-link attribution (#095).
  *
@@ -150,6 +152,53 @@ export function isPrefetchRequest(headers: {
   );
 }
 
+/** The client's address as the proxy in front of us reports it. */
+export function clientIpOf(headers: {
+  get(name: string): string | null;
+}): string | null {
+  return (
+    headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    headers.get("x-real-ip")?.trim() ||
+    null
+  );
+}
+
+/**
+ * What the request itself gives away about a bot dressed as a browser
+ * (doitac-3010 #020, rule 4). A declared bot never gets here — it was turned
+ * away by {@link isLinkPreviewBot}. These are the tells of one that claims to
+ * be "Mozilla/5.0": the headers every real browser sends on a page load, and a
+ * rented server's address. The API turns them into the click's bot score; none
+ * of them refuses the visit.
+ */
+export function requestBotFlags(headers: {
+  get(name: string): string | null;
+}): string[] {
+  const flags: string[] = [];
+  const userAgent = headers.get("user-agent") ?? "";
+
+  if (!headers.get("accept-language")) flags.push("no_accept_language");
+  if (!(headers.get("accept") ?? "").includes("text/html")) {
+    flags.push("accept_not_html");
+  }
+
+  // Chrome, Edge and Firefox have sent Sec-Fetch-* on every navigation for
+  // years; Safari only lately, so it is left out rather than misjudged.
+  const chromium = /\b(Chrome|Chromium|Edg)\/\d+/.test(userAgent);
+  const iosShell = /\b(CriOS|EdgiOS|FxiOS)\//.test(userAgent);
+  const firefox = /\bFirefox\/\d+/.test(userAgent) && !iosShell;
+  if ((chromium || firefox) && !iosShell && !headers.get("sec-fetch-mode")) {
+    flags.push("no_fetch_metadata");
+  }
+  // Chromium sends its Client Hints to any https site.
+  if (chromium && !iosShell && !headers.get("sec-ch-ua")) {
+    flags.push("no_client_hints");
+  }
+
+  if (isDatacenterIp(clientIpOf(headers))) flags.push("datacenter_ip");
+  return flags;
+}
+
 /** Where a link points, without counting a click (doitac-1410 #026). */
 export async function fetchPartnerLinkTarget(
   apiBaseUrl: string,
@@ -180,7 +229,13 @@ export async function fetchPartnerLinkTarget(
 export async function recordPartnerLinkClick(
   apiBaseUrl: string,
   code: string,
-  meta: { userAgent?: string; referrer?: string; ipHash?: string }
+  meta: {
+    userAgent?: string;
+    referrer?: string;
+    ipHash?: string;
+    /** From {@link requestBotFlags} (doitac-3010 #020). */
+    botFlags?: string[];
+  }
 ): Promise<PartnerLinkClickResult | null> {
   try {
     const res = await fetch(
