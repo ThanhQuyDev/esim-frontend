@@ -66,6 +66,23 @@ export const PARTNER_CLICK_TOKEN_COOKIE_OPTIONS = {
   secure: process.env.NODE_ENV === "production",
 };
 
+/**
+ * "A click is waiting for its landing page" (doitac-3010 #018, rule 2).
+ *
+ * The /go hit itself is only a raw click: a HEAD, a link-preview bot or a
+ * prefetch reaches it too. This short-lived, readable flag tells the page to
+ * confirm the click once it has really been shown, which is what makes the
+ * click valid. It carries nothing — the click itself stays in the HttpOnly
+ * token — so reading or faking it changes nothing.
+ */
+export const PARTNER_CLICK_PENDING_COOKIE_NAME = "esim_pc_pending";
+
+export const PARTNER_CLICK_PENDING_COOKIE_OPTIONS = {
+  maxAge: 15 * 60,
+  path: "/",
+  sameSite: "lax" as const,
+};
+
 /** The plain cookies this replaces; cleared on every new click. */
 const LEGACY_COOKIES = [
   PARTNER_LINK_COOKIE_NAME,
@@ -86,6 +103,11 @@ export function applyPartnerClick(
     PARTNER_CLICK_TOKEN_COOKIE_NAME,
     result.clickToken,
     PARTNER_CLICK_TOKEN_COOKIE_OPTIONS
+  );
+  response.cookies.set(
+    PARTNER_CLICK_PENDING_COOKIE_NAME,
+    "1",
+    PARTNER_CLICK_PENDING_COOKIE_OPTIONS
   );
   for (const name of LEGACY_COOKIES) response.cookies.delete(name);
 }
