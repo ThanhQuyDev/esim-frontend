@@ -125,6 +125,31 @@ export function isLinkPreviewBot(userAgent: string | null | undefined): boolean 
   return PREVIEW_BOTS.test(userAgent);
 }
 
+/**
+ * A request the browser made ahead of the visitor (doitac-3010 #018, #019):
+ * a prefetch or prerender from the address bar, a speculation rule, a link
+ * hovered in a page, Next's own router prefetch. Nobody has clicked yet — and
+ * a page anyone controls can fire one at /go — so it is redirected like any
+ * other request but gets no cookie and no click.
+ */
+export function isPrefetchRequest(headers: {
+  get(name: string): string | null;
+}): boolean {
+  const purpose = [
+    headers.get("sec-purpose"),
+    headers.get("purpose"),
+    headers.get("x-purpose"),
+    headers.get("x-moz"),
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+  if (/prefetch|prerender|preview/.test(purpose)) return true;
+  return Boolean(
+    headers.get("next-router-prefetch") || headers.get("rsc")
+  );
+}
+
 /** Where a link points, without counting a click (doitac-1410 #026). */
 export async function fetchPartnerLinkTarget(
   apiBaseUrl: string,

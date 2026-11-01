@@ -5,6 +5,7 @@ import {
   fetchPartnerLinkTarget,
   hashClientIp,
   isLinkPreviewBot,
+  isPrefetchRequest,
   publicOrigin,
   recordPartnerLinkClick,
 } from "@/lib/partner-link";
@@ -26,7 +27,13 @@ function redirectTo(request: NextRequest, targetPath: string | null) {
   // (doitac-1410 #026).
   url.searchParams.delete("subid");
   url.searchParams.delete("pcid");
-  return NextResponse.redirect(url);
+  const response = NextResponse.redirect(url);
+  // The answer depends on whether this was a prefetch (doitac-3010 #019); a
+  // cache must never hand a prefetch's cookie-less answer to a real click, or
+  // the other way round.
+  response.headers.set("Cache-Control", "no-store, private");
+  response.headers.set("Vary", "Sec-Purpose, Purpose");
+  return response;
 }
 
 /**
@@ -38,7 +45,9 @@ function redirectTo(request: NextRequest, targetPath: string | null) {
  *   live site) cookie — nothing readable or editable by the page, and nothing
  *   on the landing URL, so a shared or screenshotted URL carries no click;
  * - a HEAD request or a link-preview bot (Threads, Facebook, Zalo, Slack…) is
- *   sent to the same page but is not recorded as a click.
+ *   sent to the same page but is not recorded as a click;
+ * - so is a prefetch or prerender (doitac-3010 #019): `Sec-Purpose: prefetch`
+ *   gets the 307 and nothing else — no Set-Cookie, no click.
  */
 export async function GET(
   request: NextRequest,
@@ -47,7 +56,9 @@ export async function GET(
   const { code } = await params;
   const userAgent = request.headers.get("user-agent");
 
-  if (isLinkPreviewBot(userAgent)) {
+  // A prefetch or prerender still gets its 307, but no cookie and no click
+  // (doitac-3010 #019): it is the browser guessing, not somebody clicking.
+  if (isLinkPreviewBot(userAgent) || isPrefetchRequest(request.headers)) {
     return redirectTo(request, await fetchPartnerLinkTarget(API_BASE_URL, code));
   }
 

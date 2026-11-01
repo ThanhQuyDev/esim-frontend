@@ -4,6 +4,7 @@ import {
   applyPartnerClick,
   hashClientIp,
   isLinkPreviewBot,
+  isPrefetchRequest,
   recordPartnerLinkClick,
 } from "@/lib/partner-link";
 
@@ -38,8 +39,12 @@ export async function GET(
   const userAgent = request.headers.get("user-agent");
 
   // A crawler rendering the page is not a visit (doitac-1410 #026).
-  if (isLinkPreviewBot(userAgent)) {
-    return NextResponse.json({ attributed: false });
+  // Nor is a prefetch: no cookie, no click (doitac-3010 #019).
+  if (isLinkPreviewBot(userAgent) || isPrefetchRequest(request.headers)) {
+    return NextResponse.json(
+      { attributed: false },
+      { headers: { "Cache-Control": "no-store, private" } }
+    );
   }
 
   const result = await recordPartnerLinkClick(API_BASE_URL, code, {
