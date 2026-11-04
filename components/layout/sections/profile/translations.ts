@@ -75,6 +75,7 @@ export interface ProfileDict {
   topupRenewSection: string;
   addonSection: string;
   addonSectionNote: string;
+  billionFixedTopupNote: string;
   addonBoost: string;
   addonUpgrade: string;
   addonExtra: string;
@@ -169,6 +170,8 @@ export const profileTranslations: Record<"en" | "vi", ProfileDict> = {
     topupRenewSection: "Renew plan (top-up)",
     addonSection: "Buy more data",
     addonSectionNote: "Added to the plan you are using now; it does not extend its validity.",
+    billionFixedTopupNote:
+      "This data does not start by itself: the current plan must be ended to activate it, then the validity is extended. Contact esim.vn for help.",
     addonBoost: "1-day speed boost",
     addonUpgrade: "Upgrade plan",
     addonExtra: "Extra data",
@@ -261,6 +264,8 @@ export const profileTranslations: Record<"en" | "vi", ProfileDict> = {
     topupRenewSection: "Gia hạn gói (Top-up)",
     addonSection: "Mua thêm dung lượng",
     addonSectionNote: "Cộng thêm vào gói đang dùng, không kéo dài hạn sử dụng của gói.",
+    billionFixedTopupNote:
+      "Dung lượng nạp thêm không tự chạy: cần kết thúc gói đang dùng để kích hoạt, sau đó hạn dùng được gia hạn. Liên hệ esim.vn để được hỗ trợ.",
     addonBoost: "Tăng tốc 1 ngày",
     addonUpgrade: "Nâng cấp gói",
     addonExtra: "Thêm dung lượng",

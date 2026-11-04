@@ -489,9 +489,11 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
               {/* Top-ups and, for Billion, data on top of the plan (vande #081). */}
               {packageGroups.map((group) => (
                 <section key={group.key} className="mb-4 last:mb-0" data-testid={`topup-group-${group.key}`}>
-                  {group.title && (
+                  {(group.title || group.note) && (
                     <div className="mb-2">
-                      <h3 className="text-base sm:text-sm font-semibold text-gray-900">{group.title}</h3>
+                      {group.title && (
+                        <h3 className="text-base sm:text-sm font-semibold text-gray-900">{group.title}</h3>
+                      )}
                       {group.note && <p className="text-sm text-gray-500">{group.note}</p>}
                     </div>
                   )}
@@ -763,14 +765,18 @@ function groupTopupPackages(
   t: ProfileDict
 ): { key: string; title?: string; note?: string; packages: TopupPackage[] }[] {
   const addons = packages.filter((p) => p.kind === "addon");
-  if (addons.length === 0) return [{ key: "all", packages }];
+  // Billion's fixed add-ons (F052) wait for the current plan to be ended.
+  const topupNote = packages.some((p) => p.packageId.startsWith("billion:"))
+    ? t.billionFixedTopupNote
+    : undefined;
+  if (addons.length === 0) return [{ key: "all", note: topupNote, packages }];
   const order = { boost: 0, upgrade: 1, extra: 2 } as const;
   const sortedAddons = [...addons].sort(
     (a, b) => order[a.addonKind ?? "extra"] - order[b.addonKind ?? "extra"] || (a.vndPrice ?? 0) - (b.vndPrice ?? 0)
   );
   const topups = packages.filter((p) => p.kind !== "addon");
   return [
-    ...(topups.length ? [{ key: "topup", title: t.topupRenewSection, packages: topups }] : []),
+    ...(topups.length ? [{ key: "topup", title: t.topupRenewSection, note: topupNote, packages: topups }] : []),
     { key: "addon", title: t.addonSection, note: t.addonSectionNote, packages: sortedAddons },
   ];
 }

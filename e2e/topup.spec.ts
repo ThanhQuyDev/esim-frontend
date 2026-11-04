@@ -151,6 +151,41 @@ function mockTopupApi(
 test.describe("Topup modal — billion", () => {
   const iccid = "89000000000000billion0";
 
+  // "Bundle Add-on Instructions", 04/11/2026: a fixed add-on (F052) does not
+  // start by itself, unlike the daily add-ons.
+  for (const [packageId, shown] of [
+    ["billion:1793268348767286", true],
+    ["billion-acc:0:1274:1", false],
+  ] as const) {
+    test(`${shown ? "explains" : "does not explain"} activation for ${packageId}`, async ({ page }) => {
+      await seedAuth(page);
+      void stubOtherAuthedCalls(page);
+      void page.route(`${API_BASE}/api/v1/topup/packages**`, async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            success: true,
+            iccid,
+            provider: "BILLION",
+            packages: [
+              {
+                ...packagesFor("BILLION")[0],
+                packageId,
+                ...(shown ? {} : { kind: "addon", addonKind: "boost" }),
+              },
+            ],
+          }),
+        });
+      });
+
+      await page.goto(`/en/profile/topup-test?provider=BILLION&iccid=${iccid}&lang=en`);
+      await page.getByTestId("open-topup").click();
+      await expect(page.getByText("Billion 3GB - 30 Days")).toBeVisible();
+      await expect(page.getByText("This data does not start by itself")).toHaveCount(shown ? 1 : 0);
+    });
+  }
+
   test("renders Billion label + packages and checks out with BILLION provider", async ({
     page,
   }) => {
