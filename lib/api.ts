@@ -261,6 +261,8 @@ export interface Plan {
    * `dailyResetUtcOffset`. Absent when the supplier has not stated it.
    */
   dailyResetPolicy?: "rolling_24h" | "calendar_day" | null;
+  /** When the days start counting, per supplier (vande-0411 #026). */
+  validityStart?: import("./plan-validity-start").PlanValidityStart | null;
   /** Hours east of UTC a calendar-day reset is counted in, e.g. 7 or 8. */
   dailyResetUtcOffset?: number | null;
   /**

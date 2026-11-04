@@ -17,6 +17,7 @@ import { useQuery } from "@tanstack/react-query";
 import type { Plan, SupportedDevicesResponse } from "@/lib/api";
 import { formatActivationDate } from "@/lib/plan-activation";
 import { dailyResetText } from "@/lib/plan-daily-reset";
+import { validityStartText } from "@/lib/plan-validity-start";
 import { localizedHref } from "@/lib/route-mapping";
 import { Ic } from "./nd-icons";
 import {
@@ -622,7 +623,9 @@ export function DeliveryRows({ plan }: { plan: Plan | null }) {
   // From the plan's own reset data (vande #033), in the page's language: the
   // old check compared a Vietnamese label with a translated one, so the row
   // never showed in English and always said UTC+7.
-  const reset = dailyResetText(plan, useDesignLang());
+  const lang = useDesignLang();
+  const reset = dailyResetText(plan, lang);
+  const start = validityStartText(plan, lang);
   return (
     <>
       <div className="sr">
@@ -639,6 +642,15 @@ export function DeliveryRows({ plan }: { plan: Plan | null }) {
           <span className="sv-text">{tx("Theo quy định của nhà cung cấp (ghi trong email nhận eSIM)")}</span>
         )}
       </div>{" "}
+      {start && (
+        <div className="sr" data-testid="plan-validity-start">
+          <span className="sl">{start.title}</span>
+          <span className="sv-2">
+            <b>{start.value}</b>
+            <small>{start.note}</small>
+          </span>
+        </div>
+      )}{" "}
       {reset && (
         <div className="sr">
           <span className="sl">{tx("Giờ làm mới mỗi ngày")}</span>

@@ -9,6 +9,7 @@ import type { Destination, Plan } from "@/lib/api";
 import { worksWithTiktokAndChatGpt } from "@/lib/plan-tiktok";
 import { formatActivationDate } from "@/lib/plan-activation";
 import { dailyResetText } from "@/lib/plan-daily-reset";
+import { validityStartText } from "@/lib/plan-validity-start";
 import { refundRule } from "@/lib/plan-refund";
 import { planVoiceInfo } from "@/lib/plan-voice";
 import { localizedSlug } from "@/lib/slug";
@@ -1385,6 +1386,7 @@ export function DeliveryRows({ plan }: { plan: Plan | null }) {
   const deadline = plan?.activationDeadline ? formatActivationDate(plan.activationDeadline) : null;
   const lang = useDesignLang();
   const reset = dailyResetText(plan, lang);
+  const start = validityStartText(plan, lang);
   const refundable = refundRule(plan) === "fast-if-unactivated";
   return (
     <>
@@ -1402,6 +1404,15 @@ export function DeliveryRows({ plan }: { plan: Plan | null }) {
           <span className="sv-text">{tx("Theo quy định của nhà cung cấp (ghi trong email nhận eSIM)")}</span>
         )}
       </div>{" "}
+      {start && (
+        <div className="sr" data-testid="plan-validity-start">
+          <span className="sl">{start.title}</span>
+          <span className="sv-2">
+            <b>{start.value}</b>
+            <small>{start.note}</small>
+          </span>
+        </div>
+      )}{" "}
       {reset && (
         <div className="sr">
           <span className="sl">{tx("Giờ làm mới mỗi ngày")}</span>

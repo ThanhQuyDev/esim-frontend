@@ -11,6 +11,7 @@ import type { DestinationDict } from "./types";
 import { CountriesModal } from "./countries-modal";
 import { activationDeadlineText } from "@/lib/plan-activation";
 import { dailyResetText } from "@/lib/plan-daily-reset";
+import { validityStartText } from "@/lib/plan-validity-start";
 import { refundRule } from "@/lib/plan-refund";
 import { DEFAULT_DESTINATION_IMAGE } from "@/lib/destination-image";
 
@@ -113,6 +114,7 @@ export function ProductCard({
   // When the daily allowance starts over; null means there is nothing truthful
   // to show and the row is dropped (#071).
   const resetText = dailyResetText(selectedPlan, lang);
+  const validityStart = validityStartText(selectedPlan, lang);
   const durations = selectedPlan ? selectedPlan?.durationDays : false
   const isHostSpotAllDay = selectedPlan?.type === "fixed"
 
@@ -397,6 +399,18 @@ export function ProductCard({
                       )}
                 </span>
               </div>
+              {validityStart && (
+                <div
+                  className="flex items-start justify-between py-[13px] border-b border-[#f3f4f6] gap-3"
+                  data-testid="plan-validity-start"
+                >
+                  <span className="text-base sm:text-sm text-[#374151]">{validityStart.title}</span>
+                  <div className="flex flex-col items-end gap-1 text-right max-w-[60%]">
+                    <span className="text-base sm:text-sm font-medium">{validityStart.value}</span>
+                    <span className="text-sm text-[#6b7280]">{validityStart.note}</span>
+                  </div>
+                </div>
+              )}
               {/* #071: when the daily allowance comes back. Omitted entirely when
                   the supplier has not stated the cycle, or when the plan is one
                   total pool of data and has no daily reset to describe. */}

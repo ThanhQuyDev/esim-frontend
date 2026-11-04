@@ -8,6 +8,7 @@ import { localizedHref } from "@/lib/route-mapping";
 import type { DestinationDict } from "../types";
 import { activationDeadlineText } from "@/lib/plan-activation";
 import { dailyResetText } from "@/lib/plan-daily-reset";
+import { validityStartText } from "@/lib/plan-validity-start";
 
 interface MobileFeaturesProps {
   destination: Destination;
@@ -214,6 +215,7 @@ export function MobileFeatures({
   const hotSpotAllowGb = selectedPlan?.hotSpotAllow ?? null;
   // When the daily allowance starts over; null means the row is dropped (#071).
   const resetText = dailyResetText(selectedPlan, lang);
+  const validityStart = validityStartText(selectedPlan, lang);
   const voice = planVoiceInfo(selectedPlan);
   // A plan with calls or SMS necessarily has a phone number (#045). This row
   // used to be hardcoded "no", which contradicted the Calls & SMS row above it.
@@ -440,6 +442,19 @@ export function MobileFeatures({
                 : dict.delivery.activationDesc)}
           </span>
         </div>
+
+        {validityStart && (
+          <div
+            className="flex items-start justify-between py-[13px] border-b border-[#f3f4f6] gap-3"
+            data-testid="plan-validity-start"
+          >
+            <span className="text-sm text-[#374151]">{validityStart.title}</span>
+            <div className="flex flex-col items-end gap-1 text-right max-w-[60%]">
+              <span className="text-sm font-bold">{validityStart.value}</span>
+              <span className="text-sm text-[#6b7280]">{validityStart.note}</span>
+            </div>
+          </div>
+        )}
 
         {/* Daily reset (#071) — dropped when the supplier has not stated the
             cycle, or the plan is one total pool with no daily reset. */}

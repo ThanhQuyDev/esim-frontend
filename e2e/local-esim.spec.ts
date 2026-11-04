@@ -459,3 +459,46 @@ test.describe("Domestic template perks and cycles (#066)", () => {
     await expect(d.locator("#specFee")).toHaveText("1.428.000₫/12 tháng");
   });
 });
+
+test.describe("Thời điểm bắt đầu tính gói (vande-0411 #026)", () => {
+  // Every plan in the mocked groups, on the supplier's value.
+  const withStart = (value: unknown): unknown =>
+    Array.isArray(value)
+      ? value.map(withStart)
+      : value && typeof value === "object"
+        ? {
+            ...Object.fromEntries(
+              Object.entries(value as Record<string, unknown>).map(([k, v]) => [k, withStart(v)]),
+            ),
+            ...("vndPrice" in (value as object) ? { validityStart: "installation" } : {}),
+          }
+        : value;
+
+  async function openDelivery(page: Page, plans: unknown) {
+    await mockLocalApi(page);
+    await page.route(`${API_BASE}/api/v1/plans/local/wintel**`, (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(plans),
+      }),
+    );
+    await page.goto("/esim-noi-dia/test?view=detail&carrier=wintel&lang=vi");
+    await page.getByRole("tab", { name: "Giao hàng & Kích hoạt" }).first().click();
+  }
+
+  test("shows the start and the install reminder", async ({ page }) => {
+    await openDelivery(page, withStart(groupedPlans()));
+
+    const row = page.getByTestId("plan-validity-start").first();
+    await expect(row).toContainText("Thời điểm bắt đầu tính gói");
+    await expect(row).toContainText("Khi cài đặt eSIM");
+    await expect(row).toContainText("trước khi lên máy bay 2 - 3h");
+  });
+
+  test("leaves the row out until the supplier has said", async ({ page }) => {
+    await openDelivery(page, groupedPlans());
+
+    await expect(page.getByTestId("plan-validity-start")).toHaveCount(0);
+  });
+});
