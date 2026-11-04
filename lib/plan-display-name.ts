@@ -32,13 +32,14 @@ export function planDisplayName(
  */
 export function planWithTopups<
   P extends { dataMb?: number | null; durationDays?: number | null; type?: string | null },
->(plan: P | null | undefined, esim: { addedDays?: number; addedDataMb?: number }): P | null | undefined {
+>(plan: P | null | undefined, esim: { chosenDays?: number | null; addedDays?: number; addedDataMb?: number }): P | null | undefined {
   if (!plan) return plan;
   const fixed = !plan.type || plan.type === "fixed";
   return {
     ...plan,
     dataMb: (Number(plan.dataMb) || 0) + (fixed && Number(plan.dataMb) > 0 ? esim.addedDataMb ?? 0 : 0),
-    durationDays: (Number(plan.durationDays) || 0) + (esim.addedDays ?? 0),
+    durationDays:
+      (Number(esim.chosenDays) || Number(plan.durationDays) || 0) + (esim.addedDays ?? 0),
   };
 }
 

@@ -1559,6 +1559,8 @@ export interface MyEsim {
    * (#031). 0 / null means it has never been topped up.
    */
   topupCount?: number;
+  /** Days picked for a day pass; null otherwise (vande-0411 #035). */
+  chosenDays?: number | null;
   /** Added to the plan by finished top-ups (vande-0411 #019). */
   addedDays?: number;
   addedDataMb?: number;
