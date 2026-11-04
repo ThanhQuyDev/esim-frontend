@@ -5,6 +5,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { useLocale } from "next-intl";
 
 import { PARTNER_CLICK_ID_PARAM } from "@/lib/partner-click-id";
+import { captureTrafficSignals } from "@/lib/traffic-signals";
 
 /** Same name as `PARTNER_CLICK_PENDING_COOKIE_NAME` (lib/partner-link, server-only). */
 const PENDING_COOKIE = "esim_pc_pending";
@@ -116,6 +117,9 @@ export function PartnerClickCapture() {
   const [showNotice, setShowNotice] = useState(false);
 
   useEffect(() => {
+    // Before the click is confirmed below, which clears the cookie that says
+    // this visit came through a partner's link (vande-0411 #052).
+    captureTrafficSignals();
     if (!clickPending()) return;
     setShowNotice(true);
     return confirmWhenShown();

@@ -27,6 +27,7 @@ import {
 } from "@/lib/cart";
 import { useExchangeRate, useCheckout, useBankTransferCheckout, useCart, convertUsdToVnd, formatVnd, formatExu, useWalletMe, useMyProfile, useValidateReferral, type BankTransferCheckoutResponse } from "@/lib/hooks";
 import { BankTransferPanel } from "@/components/layout/sections/payment/bank-transfer-panel";
+import { captureTrafficSignals } from "@/lib/traffic-signals";
 import { useAuth } from "@/lib/auth";
 import { getOrCreateVisitorId } from "@/lib/visitor-id";
 import { partnerClickForOrder } from "@/lib/partner-click-id";
@@ -316,6 +317,8 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
         // Lets the API flag several affiliate orders from one device (#036);
         // it never changes whether the order earns commission.
         visitorId: getOrCreateVisitorId() ?? undefined,
+        // "Nguồn truy cập" on the order (vande-0411 #052).
+        trafficSignals: captureTrafficSignals() ?? undefined,
         useWalletAmountVnd: actualExuUsed > 0 ? actualExuUsed : undefined,
         // Pass the current locale and a locale-aware absolute return URL so
         // OnePay redirects the buyer back to the result page in the same

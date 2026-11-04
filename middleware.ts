@@ -54,6 +54,13 @@ export default function middleware(request: NextRequest) {
   }
 
   const response = handleI18nRouting(request);
+  // How this page was opened, readable only here: typed in ("none") or from a
+  // link that may hide where it was ("cross-site"). The page keeps it with the
+  // session's first signals (vande-0411 #052).
+  const fetchSite = request.headers.get('sec-fetch-site');
+  if (fetchSite && request.headers.get('sec-fetch-dest') === 'document') {
+    response.cookies.set('esim_sfs', fetchSite, { path: '/', sameSite: 'lax' });
+  }
   // Expose the current request path to server components so per-page SEO /
   // structured-data lookups know exactly which page is being rendered.
   // next-intl does not set this header on its own.
