@@ -1779,6 +1779,9 @@ export interface TopupPackage {
   /** "addon": data on top of the current plan (Billion, vande #081). */
   kind?: "topup" | "addon";
   addonKind?: "boost" | "upgrade" | "extra";
+  /** The eSIM's date once bought (vande-0411 #021). */
+  expiresAfter?: string | null;
+  startsAfterCurrent?: boolean;
 }
 
 export interface TopupListResponse {

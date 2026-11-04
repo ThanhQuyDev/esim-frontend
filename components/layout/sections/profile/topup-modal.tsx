@@ -729,13 +729,22 @@ function TopupPackageItem({ pkg, selected, onSelect, t, lang, destination }: Top
                 {pkg.dataAmountText}
               </span>
             )}
-            {pkg.kind === "addon" && pkg.addonKind && (
+            {pkg.kind === "addon" && (
               <span
                 className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-sm font-semibold"
                 data-testid="topup-addon-kind"
               >
                 <Zap className="w-3 h-3" />
-                {addonKindLabel(pkg.addonKind, t)}
+                {keepsExpiryLabel(pkg.expiresAfter, lang)}
+              </span>
+            )}
+            {pkg.kind !== "addon" && pkg.expiresAfter && (
+              <span
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-sm font-medium"
+                data-testid="topup-new-expiry"
+              >
+                <Calendar className="w-3 h-3" />
+                {lang === "vi" ? "Hạn mới: đến" : "New expiry:"} {shortDate(pkg.expiresAfter)}
               </span>
             )}
             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-sm font-medium">
@@ -745,6 +754,13 @@ function TopupPackageItem({ pkg, selected, onSelect, t, lang, destination }: Top
             </span>
           </div>
           <p className="text-base sm:text-sm text-gray-700 leading-snug">{pkg.name}</p>
+          {pkg.startsAfterCurrent && (
+            <p className="text-sm text-amber-700 mt-1" data-testid="topup-starts-after-current">
+              {lang === "vi"
+                ? "Gói này chạy sau khi gói hiện tại kết thúc."
+                : "This package starts after the current one ends."}
+            </p>
+          )}
           {!pkg.vndPrice && (
             <p className="text-sm text-amber-600 mt-1">
               ⚠ {t.topupVndUnavailable}
@@ -768,8 +784,15 @@ function TopupPackageItem({ pkg, selected, onSelect, t, lang, destination }: Top
   );
 }
 
-function addonKindLabel(kind: "boost" | "upgrade" | "extra", t: ProfileDict): string {
-  return kind === "boost" ? t.addonBoost : kind === "upgrade" ? t.addonUpgrade : t.addonExtra;
+/** dd/mm/yyyy in Vietnam, for the date labels on a package (vande-0411 #021). */
+function shortDate(value: string): string {
+  return new Date(value).toLocaleDateString("en-GB", { timeZone: "Asia/Ho_Chi_Minh" });
+}
+
+function keepsExpiryLabel(expiresAfter: string | null | undefined, lang: "en" | "vi"): string {
+  const label = lang === "vi" ? "Hạn dùng giữ nguyên" : "Expiry unchanged";
+  if (!expiresAfter) return label;
+  return `${label}: ${lang === "vi" ? "đến" : "until"} ${shortDate(expiresAfter)}`;
 }
 
 /**
