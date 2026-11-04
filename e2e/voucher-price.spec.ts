@@ -57,12 +57,20 @@ test.describe("Voucher pick rules", () => {
     expect(best?.finalVnd).toBe(800_000);
   });
 
-  test("rounds the saving to thousands, exactly like the cart", () => {
-    // 7% of 149.000 = 10.430 → the cart's roundVndToThousands gives 10.000.
+  test("keeps the saving to the dong, like the order (vande-0411 #003)", () => {
+    // 7% of 149.000 = 10.430; the order takes exactly that off.
     const best = pickBestVoucher([coupon({ discountPercent: 7 })], 149_000);
 
-    expect(best?.discountVnd).toBe(10_000);
-    expect(best?.finalVnd).toBe(139_000);
+    expect(best?.discountVnd).toBe(10_430);
+    expect(best?.finalVnd).toBe(138_570);
+  });
+
+  test("takes 720d off 72.000d at 1%, not 1.000d (vande-0411 #003)", () => {
+    // It showed 71.000d; the order wanted 71.280d, so eXU fell 280d short.
+    const best = pickBestVoucher([coupon({ discountPercent: 1 })], 72_000);
+
+    expect(best?.discountVnd).toBe(720);
+    expect(best?.finalVnd).toBe(71_280);
   });
 
   test("never advertises a partner (KOL) code", () => {
@@ -159,8 +167,8 @@ test.describe("Voucher pick rules", () => {
     expect(pickBestVoucher([coupon()], 0)).toBeNull();
     expect(pickBestVoucher([], 1_000_000)).toBeNull();
     expect(pickBestVoucher(undefined, 1_000_000)).toBeNull();
-    // 10% of 4.000 rounds to 0₫ — no point claiming a discount.
-    expect(pickBestVoucher([coupon()], 4_000)).toBeNull();
+    // 10% of 4đ rounds to 0₫ — no point claiming a discount.
+    expect(pickBestVoucher([coupon()], 4)).toBeNull();
   });
 });
 

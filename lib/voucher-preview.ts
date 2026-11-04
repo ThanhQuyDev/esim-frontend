@@ -1,5 +1,3 @@
-import { roundVndToThousands } from "./utils";
-
 /**
  * "Price after voucher", Shopee-style (#042).
  *
@@ -9,7 +7,7 @@ import { roundVndToThousands } from "./utils";
  * price list — the discount is the same one the cart applies at checkout.
  *
  * The maths deliberately mirrors `getVndDiscount` in lib/cart.ts (percent off
- * the VND subtotal, rounded to thousands). If the two ever drift, the page would
+ * the VND subtotal, to the đồng). If the two ever drift, the page would
  * promise a price the cart refuses to honour.
  */
 
@@ -85,21 +83,22 @@ export function isPubliclyOfferable(
   return true;
 }
 
-/** Percent off the VND total, rounded exactly the way the cart rounds it. */
+/** Percent off the VND total, to the đồng like the cart and the order. */
 export function voucherDiscountVnd(
   totalVnd: number,
   discountPercent: number
 ): number {
   if (!(totalVnd > 0) || !(discountPercent > 0)) return 0;
-  return roundVndToThousands((totalVnd * discountPercent) / 100);
+  return Math.round((totalVnd * discountPercent) / 100);
 }
 
 /**
  * VND taken off by a coupon of any shape (#082): a percentage, a flat amount,
  * or a percentage with a ceiling ("15% off, up to 50k").
  *
- * Mirrors `computeCouponDiscount` on the server, and rounds to thousands the
- * way the cart does — otherwise a page advertises a saving the cart refuses.
+ * Mirrors `computeCouponDiscount` and the order, which keep the exact đồng
+ * (vande #080). Rounding to the thousand here showed 1.000đ off where the order
+ * took 720đ, and the eXU sent fell 280đ short of the order (vande-0411 #003).
  */
 export function couponDiscountVnd(
   coupon: Pick<
@@ -114,7 +113,7 @@ export function couponDiscountVnd(
     const flat = Number(coupon.discountAmount ?? 0);
     if (!(flat > 0)) return 0;
     // Never more than the order itself.
-    return roundVndToThousands(Math.min(flat, totalVnd));
+    return Math.round(Math.min(flat, totalVnd));
   }
 
   const percent = Number(coupon.discountPercent ?? 0);
@@ -124,7 +123,7 @@ export function couponDiscountVnd(
   const cap = Number(coupon.maxDiscountAmount ?? 0);
   if (cap > 0) discount = Math.min(discount, cap);
 
-  return roundVndToThousands(Math.min(discount, totalVnd));
+  return Math.round(Math.min(discount, totalVnd));
 }
 
 /**
