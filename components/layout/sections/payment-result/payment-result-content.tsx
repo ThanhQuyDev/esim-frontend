@@ -62,8 +62,8 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
   const isPending = responseCode === "" && !!orderNumber;
   const responseMessage = getResponseCodeMessage(responseCode, lang);
 
-  // Detect topup orders by the `TOPUP-` orderNumber prefix.
-  const isTopup = orderNumber.startsWith("TOPUP-");
+  // Detect topup orders by their orderNumber prefix; ADDON- is an add-on.
+  const isTopup = orderNumber.startsWith("TOPUP-") || orderNumber.startsWith("ADDON-");
 
   // Fetch order details when payment succeeded OR when checking pending order status
   const {
