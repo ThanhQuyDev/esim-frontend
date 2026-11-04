@@ -40,14 +40,18 @@ function retailVndForCost(costVnd: number, tiers: MarginTier[]): number {
   return Math.round(retail / 1000) * 1000;
 }
 
-type PricedPlan = Pick<Plan, "isAbleMultidate" | "vndPrice"> & { vndCostPrice?: number | string | null };
+type PricedPlan = Pick<Plan, "isAbleMultidate" | "vndPrice"> & {
+  vndCostPrice?: number | string | null;
+  /** The real cost (dollars × rate), not the rounded figure (vande-0411 #001). */
+  vndCostExact?: number | string | null;
+};
 
 /** Đồng for `days` of a plan, before any plan discount. */
 export function multidayVnd(plan: PricedPlan, days: number): number {
   const perDay = Number(plan.vndPrice) || 0;
   const n = plan.isAbleMultidate ? Math.max(1, Math.round(days || 1)) : 1;
   if (n === 1) return perDay;
-  const cost = Number(plan.vndCostPrice) || 0;
+  const cost = Number(plan.vndCostExact) || Number(plan.vndCostPrice) || 0;
   if (!TIERS || !(cost > 0)) return perDay * n;
   return retailVndForCost(cost * n, TIERS);
 }

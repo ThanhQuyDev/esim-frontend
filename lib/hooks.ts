@@ -1227,6 +1227,10 @@ interface ApiCartItem {
   plan: ApiCartItemPlan;
   quantity: number;
   periodNum?: number;
+  /** What checkout charges for one of this line, in đồng. */
+  unitVndPrice?: number;
+  /** The same before the plan discount. */
+  unitOriginalVndPrice?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -1304,17 +1308,19 @@ export function useCart() {
         const dataLabel = mb >= 1024
           ? `${parseFloat((mb / 1024).toFixed(1))} GB`
           : `${mb} MB`;
-        const rawVndPrice = item.plan?.vndPrice || 0;
         const planDiscount = item.plan?.discount;
         const hasDiscount = planDiscount != null && planDiscount > 0;
-        // For multidate plans, multiply per-day price by periodNum to get total price
-        const periodNum = item.periodNum || 1;
-        const isMultidate = item.plan?.isAbleMultidate || (item.periodNum != null && item.periodNum > 1);
-        const dayMultiplier = isMultidate ? periodNum : 1;
-        const totalRawVndPrice = rawVndPrice * dayMultiplier;
-        const discountedVndPrice = hasDiscount
-          ? roundVndToThousands(totalRawVndPrice * (1 - planDiscount! / 100))
-          : totalRawVndPrice;
+        // The server prices the line as checkout will (vande-0411 #001): the
+        // 1-day price × days is wrong for every day pass. That figure only
+        // remains for a backend without these fields, never 0 đ on the screen.
+        const days = item.plan?.isAbleMultidate ? item.periodNum || 1 : 1;
+        const perDayTotal = (item.plan?.vndPrice || 0) * days;
+        const totalRawVndPrice = item.unitOriginalVndPrice ?? perDayTotal;
+        const discountedVndPrice =
+          item.unitVndPrice ??
+          (hasDiscount
+            ? roundVndToThousands(perDayTotal * (1 - planDiscount! / 100))
+            : perDayTotal);
         return {
           id: String(item.id),
           planId: item.planId,

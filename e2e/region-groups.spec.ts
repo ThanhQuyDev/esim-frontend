@@ -297,6 +297,30 @@ test.describe("Region group page — packs as the coverage step (#004, #067)", (
     await expect(page.locator(".rgd #tripIn")).toHaveValue("7");
     await expect(page.locator(".rgd #priceNet")).toContainText("230.000");
   });
+
+  test("a day pass is priced on the real cost, not the rounded one (vande-0411 #001)", async ({ page }) => {
+    // 7 × 30.400 + 20.000 = 232.800 → 233.000 đ; on the shown 30.000 đ it was 230.000 đ.
+    const dayPass = {
+      id: 901, provider: "esimaccess", providerPlanId: "daily-1gb", name: "Asia 1GB/Day",
+      durationDays: 1, dataMb: 1024, fupSpeed: "128kbps", costPrice: 1.2, price: 2, retailPrice: 2.6,
+      currency: "USD", sms: 0, call: 0, type: "daily", topUp: false, isCheapest: false, isActive: true,
+      createdAt: "", updatedAt: "", vndPrice: 50000, vndCostPrice: 30000, vndCostExact: 30400,
+      isAbleMultidate: true, isNonHkIp: false,
+    };
+    await page.route(`${API_BASE}/api/v1/plans/multiday-pricing**`, (route) =>
+      route.fulfill({ status: 200, contentType: "application/json",
+        body: JSON.stringify([{ minVnd: 0, maxVnd: 100000000, percentage: 0, fixedAmountVnd: 20000 }]) }),
+    );
+    await mockApi(page);
+    await mockRegionPlans(page, [], [dayPass]);
+
+    await page.goto(harness());
+    await page.locator(".rgd #plans .chip").filter({ hasText: "1 GB" }).first().click();
+    await page.locator(".rgd #tripIn").fill("7");
+    await page.locator(".rgd #tripIn").blur();
+    await expect(page.locator(".rgd #tripIn")).toHaveValue("7");
+    await expect(page.locator(".rgd #priceNet")).toContainText("233.000");
+  });
 });
 
 test.describe("Region grouping — same name, different country count", () => {
