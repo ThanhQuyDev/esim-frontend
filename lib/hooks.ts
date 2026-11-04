@@ -1782,6 +1782,8 @@ export interface TopupPackage {
   /** The eSIM's date once bought (vande-0411 #021). */
   expiresAfter?: string | null;
   startsAfterCurrent?: boolean;
+  /** Bought by the day: the customer picks how many (vande-0411 #022). */
+  isDayPass?: boolean;
 }
 
 export interface TopupListResponse {
@@ -1795,6 +1797,8 @@ export interface TopupCheckoutPayload {
   iccid: string;
   packageId: string;
   provider: TopupProvider;
+  /** Days for a day pass (vande-0411 #022). */
+  periodNum?: number;
   /** EXU_WALLET settles from the eXu balance with no gateway step (#028). */
   paymentMethod: "ONEPAY" | "EXU_WALLET";
   /** VAT invoice details, when the customer asked for one (#028). */
@@ -1820,6 +1824,22 @@ export interface TopupCheckoutResponse {
  * List Topup packages available for a given ICCID.
  * Backend auto-detects the underlying provider; FE just passes ICCID.
  */
+/** A day pass priced for N days by the server (vande-0411 #022). */
+export function useTopupDayPrice(iccid: string, packageId: string | null, days: number) {
+  const { token } = useAuth();
+  return useQuery({
+    queryKey: ["topup-day-price", iccid, packageId, days],
+    enabled: !!token && !!packageId && days > 1,
+    queryFn: async ({ signal }): Promise<{ days: number; vndPrice: number }> => {
+      const query = new URLSearchParams({ iccid, packageId: packageId!, days: String(days) });
+      const res = await authFetch(`${API_BASE_URL}/api/v1/topup/packages/price?${query}`, token, { signal });
+      if (!res.ok) throw new Error(`Failed to price the top-up: ${res.status}`);
+      return res.json();
+    },
+    staleTime: 60_000,
+  });
+}
+
 export function useTopupPackages(iccid: string | null, enabled = true) {
   const { token } = useAuth();
   return useQuery({

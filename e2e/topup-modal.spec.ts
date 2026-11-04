@@ -275,3 +275,63 @@ test("the pay button keeps its amount on one line on a desktop screen (#029)", a
   );
   expect(Math.max(...tops) - Math.min(...tops)).toBeLessThanOrEqual(2);
 });
+
+test("a day pass lets the customer pick the days and pays for them (vande-0411 #022)", async ({
+  page,
+}) => {
+  await seedAuth(page);
+  await page.route(`${API_BASE}/api/v1/topup/packages**`, (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        iccid: ICCID,
+        provider: "ESIM_ACCESS",
+        packages: [
+          {
+            provider: "ESIM_ACCESS",
+            packageId: "TOPUP_P9LD7ZDVR",
+            name: "China 1GB/Day",
+            dataAmountBytes: 1073741824,
+            dataAmountText: "1 GB/ngày",
+            durationDays: 1,
+            isUnlimited: false,
+            price: 0.96,
+            retailPrice: 2,
+            vndPrice: 40000,
+            isDayPass: true,
+            expiresAfter: "2026-11-09T00:00:00.000Z",
+          },
+        ],
+      }),
+    }),
+  );
+  await page.route(`${API_BASE}/api/v1/topup/packages/price**`, (route) => {
+    const days = Number(new URL(route.request().url()).searchParams.get("days"));
+    return route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ days, vndPrice: days === 3 ? 112000 : 76000 }),
+    });
+  });
+  let sent: Record<string, unknown> | null = null;
+  await page.route(`${API_BASE}/api/v1/topup/bank-transfer`, (route) => {
+    sent = route.request().postDataJSON();
+    return route.fulfill({ status: 400, contentType: "application/json", body: "{}" });
+  });
+
+  await page.goto(`/esim-noi-dia/test?view=topup&iccid=${ICCID}`, {
+    waitUntil: "domcontentloaded",
+  });
+  await page.getByTestId("topup-package-TOPUP_P9LD7ZDVR").click();
+  await page.getByRole("button", { name: "Thêm 1 ngày" }).click();
+  await page.getByRole("button", { name: "Thêm 1 ngày" }).click();
+
+  const summary = page.getByTestId("topup-days-summary");
+  await expect(summary).toContainText("1 GB/ngày × 3 ngày");
+  await expect(summary).toContainText("112.000");
+  await expect(summary).toContainText("11/11/2026");
+
+  await page.getByTestId("topup-bank-transfer-btn").click();
+  await expect.poll(() => sent).toMatchObject({ packageId: "TOPUP_P9LD7ZDVR", periodNum: 3 });
+});

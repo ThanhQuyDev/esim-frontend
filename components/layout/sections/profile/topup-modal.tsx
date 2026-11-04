@@ -10,9 +10,12 @@ import {
   AlertCircle,
   Check,
   Zap,
+  Minus,
+  Plus,
 } from "lucide-react";
 import {
   useTopupPackages,
+  useTopupDayPrice,
   useTopupCheckout,
   useTopupBankTransfer,
   useTopupWalletCheckout,
@@ -96,6 +99,8 @@ function mapTopupError(message: string, t: ProfileDict): string {
 
 export function TopupModal({ esim, open, mode, onClose, t, lang }: TopupModalProps) {
   const [selectedPackageId, setSelectedPackageId] = useState<string | null>(null);
+  // Days for a day pass: "1 GB/ngày" for 3 more days (vande-0411 #022).
+  const [days, setDays] = useState(1);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const {
@@ -132,6 +137,7 @@ export function TopupModal({ esim, open, mode, onClose, t, lang }: TopupModalPro
   useEffect(() => {
     if (!open) {
       setSelectedPackageId(null);
+      setDays(1);
       setErrorMessage(null);
       setBankTransfer(null);
       setConfirmingExu(false);
@@ -160,6 +166,15 @@ export function TopupModal({ esim, open, mode, onClose, t, lang }: TopupModalPro
     };
   }, [open]);
 
+  // A hook, so before the early return: it stays off unless a day pass is picked.
+  const dayPriceQuery = useTopupDayPrice(
+    esim.iccid,
+    listResponse?.packages?.find((p) => p.packageId === selectedPackageId)?.isDayPass
+      ? selectedPackageId
+      : null,
+    days,
+  );
+
   if (!open) return null;
 
   // Each button opens on what it says it sells (vande-0411 #016).
@@ -172,6 +187,10 @@ export function TopupModal({ esim, open, mode, onClose, t, lang }: TopupModalPro
     selectedPackageId !== null
       ? packages.find((p) => p.packageId === selectedPackageId) ?? null
       : null;
+  const dayPass = !!selectedPackage?.isDayPass;
+  const chosenDays = dayPass ? days : 1;
+  const dayPrice = dayPriceQuery;
+  const daysPayload = chosenDays > 1 ? { periodNum: chosenDays } : {};
 
   /**
    * Bank-transfer topup: creates a pending order and shows the VietQR panel.
@@ -194,6 +213,7 @@ export function TopupModal({ esim, open, mode, onClose, t, lang }: TopupModalPro
         packageId: selectedPackage.packageId,
         provider,
         paymentMethod: "ONEPAY",
+        ...daysPayload,
         ...(invoicePayload ? { invoice: invoicePayload } : {}),
       });
       setBankTransfer(res);
@@ -234,6 +254,7 @@ export function TopupModal({ esim, open, mode, onClose, t, lang }: TopupModalPro
         packageId: selectedPackage.packageId,
         provider,
         paymentMethod: "ONEPAY",
+        ...daysPayload,
         ...(invoicePayload ? { invoice: invoicePayload } : {}),
       });
 
@@ -280,6 +301,7 @@ export function TopupModal({ esim, open, mode, onClose, t, lang }: TopupModalPro
         packageId: selectedPackage.packageId,
         provider,
         paymentMethod: "EXU_WALLET",
+        ...daysPayload,
         ...(invoicePayload ? { invoice: invoicePayload } : {}),
       });
       // The recharge already ran; close and let the profile page refresh.
@@ -326,7 +348,9 @@ export function TopupModal({ esim, open, mode, onClose, t, lang }: TopupModalPro
   }
 
   const isCheckingOut = checkoutMutation.isPending;
-  const priceVnd = selectedPackage?.vndPrice ?? 0;
+  // N days are priced by the server: the margin tiers go by the whole cost.
+  const priceVnd = chosenDays > 1 ? (dayPrice.data?.vndPrice ?? 0) : (selectedPackage?.vndPrice ?? 0);
+  const pricePending = chosenDays > 1 && !dayPrice.data;
   // The country / region the eSIM is for, so the customer knows which trip a
   // package recharges (#028, test round 4).
   const destinationOfEsim = (() => {
@@ -340,7 +364,7 @@ export function TopupModal({ esim, open, mode, onClose, t, lang }: TopupModalPro
   const walletBalance = wallet?.availableBalanceVnd ?? 0;
   const walletCovers = priceVnd > 0 && walletBalance >= priceVnd;
   const anyPending =
-    isCheckingOut || bankTransferMutation.isPending || walletMutation.isPending;
+    isCheckingOut || bankTransferMutation.isPending || walletMutation.isPending || pricePending;
   const canConfirm = !!selectedPackage && !anyPending;
 
   return (
@@ -430,8 +454,8 @@ export function TopupModal({ esim, open, mode, onClose, t, lang }: TopupModalPro
                 </p>
                 <p>
                   {lang === "vi"
-                    ? `100% giá trị gói ${selectedPackage.name} (${formatVnd(selectedPackage.vndPrice ?? 0)}) sẽ được thanh toán bằng điểm eXU. Thao tác này không thể khôi phục, hoàn tiền hoặc hủy bỏ.`
-                    : `100% of ${selectedPackage.name} (${formatVnd(selectedPackage.vndPrice ?? 0)}) will be paid with eXU points. This cannot be undone, refunded or cancelled.`}
+                    ? `100% giá trị gói ${selectedPackage.name} (${formatVnd(priceVnd ?? 0)}) sẽ được thanh toán bằng điểm eXU. Thao tác này không thể khôi phục, hoàn tiền hoặc hủy bỏ.`
+                    : `100% of ${selectedPackage.name} (${formatVnd(priceVnd ?? 0)}) will be paid with eXU points. This cannot be undone, refunded or cancelled.`}
                 </p>
               </div>
               {errorMessage && <p className="text-sm text-red-700">{errorMessage}</p>}
@@ -522,6 +546,7 @@ export function TopupModal({ esim, open, mode, onClose, t, lang }: TopupModalPro
                         selected={selectedPackageId === pkg.packageId}
                         onSelect={() => {
                           setSelectedPackageId(pkg.packageId);
+                          setDays(1);
                           setErrorMessage(null);
                         }}
                         t={t}
@@ -543,6 +568,56 @@ export function TopupModal({ esim, open, mode, onClose, t, lang }: TopupModalPro
               <div className="flex items-start gap-2 rounded-lg bg-red-50 border border-red-100 p-2.5">
                 <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-red-700 leading-relaxed">{errorMessage}</p>
+              </div>
+            )}
+            {dayPass && selectedPackage && (
+              <div className="rounded-[6px] border border-gray-200 bg-white p-3" data-testid="topup-days">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span className="text-base sm:text-sm font-medium text-gray-800">
+                    {lang === "vi" ? "Số ngày muốn thêm" : "Days to add"}
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      aria-label={lang === "vi" ? "Giảm 1 ngày" : "One day less"}
+                      disabled={days <= 1}
+                      onClick={() => setDays(clampDays(days - 1))}
+                      className="flex h-8 w-8 items-center justify-center rounded-[6px] border border-gray-300 disabled:opacity-40"
+                    >
+                      <Minus className="h-4 w-4" />
+                    </button>
+                    <input
+                      type="number"
+                      min={1}
+                      max={365}
+                      value={days}
+                      onChange={(e) => setDays(clampDays(Number(e.target.value)))}
+                      aria-label={lang === "vi" ? "Số ngày" : "Days"}
+                      className="h-8 w-16 rounded-[6px] border border-gray-300 text-center text-base sm:text-sm"
+                      data-testid="topup-days-input"
+                    />
+                    <button
+                      type="button"
+                      aria-label={lang === "vi" ? "Thêm 1 ngày" : "One day more"}
+                      disabled={days >= 365}
+                      onClick={() => setDays(clampDays(days + 1))}
+                      className="flex h-8 w-8 items-center justify-center rounded-[6px] border border-gray-300 disabled:opacity-40"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+                <p className="mt-2 text-sm text-gray-600" data-testid="topup-days-summary">
+                  {[
+                    `${selectedPackage.dataAmountText} × ${days} ${lang === "vi" ? "ngày" : days > 1 ? "days" : "day"}`,
+                    pricePending ? (lang === "vi" ? "đang tính giá…" : "pricing…") : formatVnd(priceVnd),
+                    selectedPackage.expiresAfter
+                      ? `${lang === "vi" ? "Hạn mới: đến" : "New expiry:"} ${shortDate(laterBy(selectedPackage.expiresAfter, days - 1))}`
+                      : null,
+                  ]
+                    .filter(Boolean)
+                    .join(" · ")}
+                </p>
               </div>
             )}
             {/* VAT invoice, same fields as the normal eSIM checkout (#028). */}
@@ -660,9 +735,11 @@ export function TopupModal({ esim, open, mode, onClose, t, lang }: TopupModalPro
                     {t.topupConfirmButton}
                     {selectedPackage && (
                       <span className="font-medium">
-                        {selectedPackage.vndPrice
-                          ? `· ${formatVnd(selectedPackage.vndPrice)}`
-                          : `· ${formatUsd(selectedPackage.retailPrice)}`}
+                        {priceVnd
+                          ? `· ${formatVnd(priceVnd)}`
+                          : pricePending
+                            ? ""
+                            : `· ${formatUsd(selectedPackage.retailPrice)}`}
                       </span>
                     )}
                   </>
@@ -782,6 +859,15 @@ function TopupPackageItem({ pkg, selected, onSelect, t, lang, destination }: Top
       </div>
     </button>
   );
+}
+
+function clampDays(value: number): number {
+  return Math.min(365, Math.max(1, Math.trunc(value) || 1));
+}
+
+/** A package's date reads for one day; N days end N - 1 later (vande-0411 #022). */
+function laterBy(value: string, days: number): string {
+  return new Date(new Date(value).getTime() + days * 86_400_000).toISOString();
 }
 
 /** dd/mm/yyyy in Vietnam, for the date labels on a package (vande-0411 #021). */
