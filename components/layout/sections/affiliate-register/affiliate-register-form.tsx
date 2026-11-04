@@ -158,6 +158,8 @@ export function AffiliateRegisterForm({
   const [fileError, setFileError] = useState<string | null>(null);
   const [uploadWarning, setUploadWarning] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  // Hidden from people; only a script fills it in (vande-0411 #006).
+  const [honeypot, setHoneypot] = useState("");
 
   const addFiles = (picked: FileList | null) => {
     if (!picked) return;
@@ -233,6 +235,7 @@ export function AffiliateRegisterForm({
         businessAddress: isCompany ? values.businessAddress : undefined,
         channelInfo,
         notes: values.notes,
+        website: honeypot.trim() || undefined,
       });
 
       setSubmitting(false);
@@ -297,7 +300,7 @@ export function AffiliateRegisterForm({
 
       setError(result.message || dict.errorGeneric);
     },
-    [dict.apiErrors, dict.errorGeneric, dict.documentsUploadFailed, files, form, isCompany]
+    [dict.apiErrors, dict.errorGeneric, dict.documentsUploadFailed, files, form, isCompany, honeypot]
   );
 
   if (submitted) {
@@ -355,6 +358,21 @@ export function AffiliateRegisterForm({
         className="space-y-8"
         data-testid="affiliate-register-form"
       >
+        {/* Off-screen, skipped by keyboard and screen readers (vande-0411 #006). */}
+        <div aria-hidden="true" className="absolute left-[-9999px] top-auto h-px w-px overflow-hidden">
+          <label htmlFor="partner-website">Website</label>
+          <input
+            id="partner-website"
+            name="website"
+            type="text"
+            tabIndex={-1}
+            autoComplete="off"
+            data-testid="partner-honeypot"
+            value={honeypot}
+            onChange={(e) => setHoneypot(e.target.value)}
+          />
+        </div>
+
         <div role="status" aria-live="polite" aria-atomic="true">
           {error && (
             <div

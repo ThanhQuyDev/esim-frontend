@@ -1954,6 +1954,11 @@
     },
     "apiErrors": {
       "emailAlreadyExists": "That email already has an account. Sign in, or use another address.",
+      "emailNotAccepted": "Please use a real email address so we can send you the outcome.",
+      "contactPhoneInvalid": "That phone number does not look right.",
+      "channelRequired": "Please choose your main channel.",
+      "tooManyApplications": "Too many applications were sent in a short time. Please try again later.",
+      "spamDetected": "We could not send your application. Please reload the page and try again.",
       "unknown": "We could not send your application. Please check your details."
     },
     "validation": {

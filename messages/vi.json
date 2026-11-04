@@ -1993,6 +1993,11 @@
     },
     "apiErrors": {
       "emailAlreadyExists": "Email này đã có tài khoản. Hãy đăng nhập hoặc dùng email khác.",
+      "emailNotAccepted": "Vui lòng dùng địa chỉ email thật để nhận kết quả xét duyệt.",
+      "contactPhoneInvalid": "Số điện thoại không hợp lệ.",
+      "channelRequired": "Vui lòng chọn kênh chính.",
+      "tooManyApplications": "Có quá nhiều hồ sơ được gửi trong thời gian ngắn. Vui lòng thử lại sau.",
+      "spamDetected": "Không gửi được hồ sơ. Vui lòng tải lại trang và thử lại.",
       "unknown": "Không gửi được hồ sơ. Vui lòng kiểm tra lại thông tin."
     },
     "validation": {
