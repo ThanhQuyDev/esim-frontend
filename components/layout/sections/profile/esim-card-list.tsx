@@ -28,7 +28,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { TopupModal } from "./topup-modal";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/lib/hooks";
-import { planDisplayName, planSummary } from "@/lib/plan-display-name";
+import { planDisplayName, planSummary, planWithTopups } from "@/lib/plan-display-name";
 
 interface EsimCardListProps {
   esims: MyEsim[];
@@ -580,7 +580,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
           </div>
           {/* Quick summary under the name (#025): data · days · minutes · SMS. */}
           <p className="text-sm text-gray-700" data-testid="esim-plan-summary">
-            {planSummary(esim.plan, lang)}
+            {planSummary(planWithTopups(esim.plan, esim), lang)}
           </p>
           <p className="text-sm text-gray-500">
             {lang === "vi" ? "Tạo ngày" : "Created"}: {formatDate(esim.createdAt, lang)}

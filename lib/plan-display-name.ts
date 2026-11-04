@@ -25,6 +25,23 @@ export function planDisplayName(
  * One-line summary under the plan name: data · days · minutes · SMS
  * (#025) — "2GB/ngày · 15 ngày · 20 phút · 20 SMS".
  */
+/**
+ * A plan with what its finished top-ups added: 500 MB – 7 days plus 3 GB – 15
+ * days reads 3.5 GB – 22 days (vande-0411 #019). Only a fixed plan's data adds
+ * up; a day's allowance stays what it is.
+ */
+export function planWithTopups<
+  P extends { dataMb?: number | null; durationDays?: number | null; type?: string | null },
+>(plan: P | null | undefined, esim: { addedDays?: number; addedDataMb?: number }): P | null | undefined {
+  if (!plan) return plan;
+  const fixed = !plan.type || plan.type === "fixed";
+  return {
+    ...plan,
+    dataMb: (Number(plan.dataMb) || 0) + (fixed && Number(plan.dataMb) > 0 ? esim.addedDataMb ?? 0 : 0),
+    durationDays: (Number(plan.durationDays) || 0) + (esim.addedDays ?? 0),
+  };
+}
+
 export function planSummary(
   plan:
     | { dataMb?: number | null; durationDays?: number | null; type?: string | null; call?: number | null; sms?: number | null }
