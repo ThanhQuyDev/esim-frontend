@@ -54,6 +54,10 @@ const TEXT = {
     cancelYes: "Xác nhận hủy",
     cancelNo: "Không hủy",
     cancelling: "Đang hủy…",
+    timeLeft: "Thời gian còn lại để chuyển khoản",
+    timeUp: "Đã hết thời gian chuyển khoản",
+    timeUpHint:
+      "Đơn này đã hết hạn, vui lòng KHÔNG chuyển khoản nữa và đặt lại đơn mới. Nếu bạn vừa chuyển, hãy liên hệ CSKH kèm mã đơn",
   },
   en: {
     title: "Bank transfer",
@@ -83,8 +87,33 @@ const TEXT = {
     cancelYes: "Yes, cancel",
     cancelNo: "Keep it",
     cancelling: "Cancelling…",
+    timeLeft: "Time left to transfer",
+    timeUp: "The time to transfer is up",
+    timeUpHint:
+      "This order has expired. Please do NOT transfer now, place a new order instead. If you have just transferred, contact support with order",
   },
 } as const;
+
+/** mm:ss, from the seconds left. */
+function clock(seconds: number): string {
+  const minutes = Math.floor(seconds / 60);
+  return `${String(minutes).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
+}
+
+/**
+ * Seconds left to transfer (vande-0411 #053), for whoever holds the QR: often a
+ * friend the buyer sent it to. Null when the API did not give a time.
+ */
+function useSecondsLeft(total: number | undefined, running: boolean): number | null {
+  const [deadline] = useState(() => (total ? Date.now() + total * 1000 : null));
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (!deadline || !running) return;
+    const timer = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, [deadline, running]);
+  return deadline ? Math.max(0, Math.ceil((deadline - now) / 1000)) : null;
+}
 
 function CopyRow({
   label,
@@ -167,6 +196,10 @@ export function BankTransferPanel({
   const hasFailed =
     order?.status === "failed" || order?.status === "cancelled";
 
+  const settled = isPaid || needsManualHandling || hasFailed;
+  const secondsLeft = useSecondsLeft(info.expiresInSeconds, !settled);
+  const timeUp = !settled && secondsLeft === 0;
+
   // Notify once, in an effect — calling the callback during render would fire
   // on every re-render (and breaks React's render purity).
   const notifiedRef = useRef(false);
@@ -182,9 +215,45 @@ export function BankTransferPanel({
       <h3 className="text-lg font-bold text-[#111] mb-1">{t.title}</h3>
       <p className="text-[13px] text-[#6b7280] mb-4">{t.subtitle}</p>
 
+      {!settled && secondsLeft !== null && (
+        timeUp ? (
+          <div
+            className="mb-4 flex items-start gap-2.5 rounded-xl border border-[#FCA5A5] bg-[#FEF2F2] px-3.5 py-3"
+            data-testid="bank-transfer-time-up"
+          >
+            <AlertCircle className="w-5 h-5 text-[#DC2626] shrink-0 mt-0.5" />
+            <div>
+              <p className="font-semibold text-[#B91C1C]">{t.timeUp}</p>
+              <p className="text-[13px] text-[#6b7280]">
+                {t.timeUpHint}{" "}
+                <span className="font-mono font-semibold text-[#111]">{orderNumber}</span>.
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div
+            className={`mb-4 flex flex-wrap items-center justify-between gap-2 rounded-xl border px-3.5 py-2.5 ${
+              secondsLeft <= 300
+                ? "border-[#FCA5A5] bg-[#FEF2F2] text-[#B91C1C]"
+                : "border-[#e5e7eb] bg-[#f9fafb] text-[#111]"
+            }`}
+            data-testid="bank-transfer-countdown"
+          >
+            <span className="text-[13px] font-medium">{t.timeLeft}</span>
+            <span
+              className="font-mono text-xl font-bold tabular-nums"
+              role="timer"
+              data-testid="bank-transfer-time-left"
+            >
+              {clock(secondsLeft)}
+            </span>
+          </div>
+        )
+      )}
+
       <div className="grid sm:grid-cols-[200px_minmax(0,1fr)] gap-5">
         {/* VietQR */}
-        <div className="shrink-0">
+        <div className={`shrink-0 ${timeUp ? "opacity-30 grayscale" : ""}`}>
           {info.qrUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -241,7 +310,7 @@ export function BankTransferPanel({
               </p>
             </div>
           </div>
-        ) : (
+        ) : timeUp ? null : (
           <div className="flex items-start gap-2.5" data-testid="bank-transfer-waiting">
             <Loader2 className="w-5 h-5 animate-spin text-[#6b7280] shrink-0 mt-0.5" />
             <div>

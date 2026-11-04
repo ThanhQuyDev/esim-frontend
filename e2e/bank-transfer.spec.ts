@@ -54,7 +54,7 @@ async function stubOtherAuthedCalls(page: Page) {
 
 async function mockApi(
   page: Page,
-  opts: { paidAfterMs: number; paidStatus?: string },
+  opts: { paidAfterMs: number; paidStatus?: string; expiresInSeconds?: number },
 ) {
   await stubOtherAuthedCalls(page);
   await page.route(`${API_BASE}/api/v1/topup/packages**`, async (route) => {
@@ -96,6 +96,7 @@ async function mockApi(
         accountNumber: "19000000000000",
         accountName: "TRUONG THANH QUY",
         bankCode: "TCB",
+        expiresInSeconds: opts.expiresInSeconds,
       }),
     });
   });
@@ -161,6 +162,36 @@ test.describe("Topup — bank transfer", () => {
     await expect(page.getByTestId("bank-transfer-paid")).toBeVisible({
       timeout: 15000,
     });
+  });
+
+  /** The time left, for whoever holds the QR (vande-0411 #053). */
+  test("counts down the time to transfer, then says it is up", async ({ page }) => {
+    await seedAuth(page);
+    await mockApi(page, { paidAfterMs: 600_000, expiresInSeconds: 6 });
+    await page.goto(`/en/profile/topup-test?provider=BILLION&iccid=${ICCID}&lang=en`);
+    await page.getByTestId("open-topup").click();
+    await page.getByText("Billion 3GB - 30 Days").click();
+    await page.getByTestId("topup-bank-transfer-btn").click();
+
+    const left = page.getByTestId("bank-transfer-time-left");
+    await expect(left).toHaveText(/^00:0[1-6]$/);
+    await expect(page.getByTestId("bank-transfer-countdown")).toContainText("Time left to transfer");
+    await expect(page.getByTestId("bank-transfer-time-up")).toBeVisible({ timeout: 15000 });
+    await expect(page.getByTestId("bank-transfer-time-up")).toContainText(ORDER_NUMBER);
+    await expect(left).toHaveCount(0);
+  });
+
+  test("stops counting once the money has arrived", async ({ page }) => {
+    await seedAuth(page);
+    await mockApi(page, { paidAfterMs: 2000, expiresInSeconds: 1800 });
+    await page.goto(`/en/profile/topup-test?provider=BILLION&iccid=${ICCID}&lang=en`);
+    await page.getByTestId("open-topup").click();
+    await page.getByText("Billion 3GB - 30 Days").click();
+    await page.getByTestId("topup-bank-transfer-btn").click();
+
+    await expect(page.getByTestId("bank-transfer-time-left")).toHaveText(/^(30:00|29:\d\d)$/);
+    await expect(page.getByTestId("bank-transfer-paid")).toBeVisible({ timeout: 15000 });
+    await expect(page.getByTestId("bank-transfer-countdown")).toHaveCount(0);
   });
 
   /**

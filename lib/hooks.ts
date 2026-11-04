@@ -1080,6 +1080,8 @@ export interface BankTransferCheckoutResponse {
   bankCode: string;
   /** Only set when the eXU wallet already covered the whole order. */
   paymentUrl?: string;
+  /** Time left to transfer before the order is written off (vande-0411 #053). */
+  expiresInSeconds?: number;
 }
 
 /**
