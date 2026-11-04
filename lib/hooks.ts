@@ -994,6 +994,8 @@ export interface EsimInfo {
 }
 
 export interface OrderItemPlan {
+  /** The name under the one naming rule (vande-0411 #043). */
+  standardName?: string | null;
   id: number;
   name: string;
   slug: string;
