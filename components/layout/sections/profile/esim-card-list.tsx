@@ -408,6 +408,8 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
   const [expanded, setExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState<EsimTab>("info");
   const [topupOpen, setTopupOpen] = useState(false);
+  // Which of the two buttons opened it (vande-0411 #016).
+  const [topupMode, setTopupMode] = useState<"topup" | "addon">("topup");
   const router = useRouter();
   const { addItem } = useCart();
   const [buyingAgain, setBuyingAgain] = useState(false);
@@ -516,11 +518,12 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
   );
   const canTopup =
     canTopUpEsim(esim) && (!isBillion || (billionTopups?.packages?.length ?? 0) > 0);
-  // Only data on top of the plan to sell (vande #081): say so on the button.
-  const onlyAddons =
-    isBillion &&
-    (billionTopups?.packages?.length ?? 0) > 0 &&
-    billionTopups!.packages.every((p) => p.kind === "addon");
+  // Two different things to buy, so two buttons (vande-0411 #016): more data on
+  // the same validity, or more days. Only Billion sells the first.
+  const canAddon =
+    canTopup && isBillion && billionTopups!.packages.some((p) => p.kind === "addon");
+  const canExtend =
+    canTopup && (!isBillion || billionTopups!.packages.some((p) => p.kind !== "addon"));
 
   return (
     <div
@@ -886,16 +889,43 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                   )}
 
                   {/* Top Up Button — only when this eSIM can really be recharged (#029) */}
-                  {canTopup && (
+                  {canExtend && (
                     <button
                       type="button"
                       data-testid="esim-topup-button"
-                      onClick={() => setTopupOpen(true)}
+                      onClick={() => {
+                        setTopupMode("topup");
+                        setTopupOpen(true);
+                      }}
                       className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-blue-600 text-white rounded-lg text-base sm:text-sm font-semibold hover:bg-blue-700 transition-colors shadow-sm"
                     >
                       <Zap className="w-4 h-4" />
-                      {onlyAddons ? t.addonButton : t.topup}
+                      {t.extendButton}
                     </button>
+                  )}
+                  {canExtend && (
+                    <p className="text-center text-xs text-gray-500" data-testid="esim-topup-hint">
+                      {t.extendButtonHint}
+                    </p>
+                  )}
+                  {canAddon && (
+                    <button
+                      type="button"
+                      data-testid="esim-addon-button"
+                      onClick={() => {
+                        setTopupMode("addon");
+                        setTopupOpen(true);
+                      }}
+                      className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-base sm:text-sm font-medium rounded-lg transition-colors"
+                    >
+                      <Zap className="w-4 h-4" />
+                      {t.addonButton}
+                    </button>
+                  )}
+                  {canAddon && (
+                    <p className="text-center text-xs text-gray-500" data-testid="esim-addon-hint">
+                      {t.addonButtonHint}
+                    </p>
                   )}
                 </div>
               </>
@@ -912,6 +942,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
         <TopupModal
           esim={esim}
           open={topupOpen}
+          mode={topupMode}
           onClose={() => setTopupOpen(false)}
           t={t}
           lang={lang}

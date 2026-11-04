@@ -29,6 +29,8 @@ import { planDisplayName } from "@/lib/plan-display-name";
 interface TopupModalProps {
   esim: MyEsim;
   open: boolean;
+  /** Only top-ups or only add-ons; both when left out (vande-0411 #016). */
+  mode?: "topup" | "addon";
   onClose: () => void;
   t: ProfileDict;
   lang: "en" | "vi";
@@ -92,7 +94,7 @@ function mapTopupError(message: string, t: ProfileDict): string {
   return message || t.topupErrorGeneric;
 }
 
-export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
+export function TopupModal({ esim, open, mode, onClose, t, lang }: TopupModalProps) {
   const [selectedPackageId, setSelectedPackageId] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -160,7 +162,10 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
 
   if (!open) return null;
 
-  const packages = listResponse?.packages ?? [];
+  // Each button opens on what it says it sells (vande-0411 #016).
+  const packages = (listResponse?.packages ?? []).filter(
+    (p) => !mode || (mode === "addon") === (p.kind === "addon"),
+  );
   const packageGroups = groupTopupPackages(packages, t);
   const provider = listResponse?.provider;
   const selectedPackage =
@@ -365,7 +370,13 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
               className="text-xl sm:text-base font-semibold text-gray-900 break-all"
               data-testid="topup-title"
             >
-              {lang === "vi" ? "Nạp thêm dữ liệu vào ICCID: " : "Top up data on ICCID: "}
+              {mode === "addon"
+                ? t.addonModalTitle
+                : mode === "topup"
+                  ? t.extendModalTitle
+                  : lang === "vi"
+                    ? "Nạp thêm dữ liệu vào ICCID: "
+                    : "Top up data on ICCID: "}
               <span className="font-mono">{esim.iccid}</span>
             </h2>
             {/* ICCID and the product name — never the supplier (#029). The
@@ -485,7 +496,13 @@ export function TopupModal({ esim, open, onClose, t, lang }: TopupModalProps) {
             </div>
           ) : (
             <>
-              <p className="text-base sm:text-sm text-gray-500 mb-4">{t.topupSubtitle}</p>
+              <p className="text-base sm:text-sm text-gray-500 mb-4">
+                {mode === "addon"
+                  ? t.addonButtonHint
+                  : mode === "topup"
+                    ? t.extendButtonHint
+                    : t.topupSubtitle}
+              </p>
               {/* Top-ups and, for Billion, data on top of the plan (vande #081). */}
               {packageGroups.map((group) => (
                 <section key={group.key} className="mb-4 last:mb-0" data-testid={`topup-group-${group.key}`}>

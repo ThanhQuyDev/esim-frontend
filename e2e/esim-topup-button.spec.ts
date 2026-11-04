@@ -89,10 +89,10 @@ function esim(overrides: Record<string, unknown> = {}) {
 async function openCard(
   page: Page,
   card: Record<string, unknown>,
-  opts: { noPackages?: boolean } = {},
+  opts: { noPackages?: boolean; keepPackages?: boolean } = {},
 ) {
   await seedAuth(page);
-  await stubApi(page);
+  if (!opts.keepPackages) await stubApi(page);
   if (opts.noPackages) {
     // Registered last, so it wins: this eSIM takes no topup (doitac-1410 #064).
     await page.route(`${API_BASE}/api/v1/topup/packages**`, (route) =>
@@ -120,6 +120,11 @@ async function openCard(
   }).toPass({ timeout: 60_000 });
 }
 
+/** The stubs go first here, or they would win over the test's own packages. */
+async function openCardKeepingPackages(page: Page, card: Record<string, unknown>) {
+  await openCard(page, card, { keepPackages: true });
+}
+
 test.describe("Top Up button on My eSIMs", () => {
   test("is offered on a rechargeable Airalo eSIM and opens the topup modal", async ({
     page,
@@ -142,6 +147,64 @@ test.describe("Top Up button on My eSIMs", () => {
     );
 
     await expect(page.getByTestId("esim-topup-button")).toBeVisible();
+  });
+
+  test("a Billion eSIM gets one button for each thing it sells (vande-0411 #016)", async ({
+    page,
+  }) => {
+    const pack = (packageId: string, title: string, kind: string) => ({
+      packageId,
+      name: title,
+      kind,
+      dataAmountText: "1 GB",
+      durationDays: 7,
+      isUnlimited: false,
+      price: 2,
+      retailPrice: 3,
+      vndPrice: 76000,
+    });
+    await page.route(`${API_BASE}/api/v1/topup/packages**`, (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          iccid: "8900000000000000001",
+          provider: "BILLION",
+          packages: [
+            pack("billion:sku:7", "Goi gia han", "topup"),
+            pack("billion-acc:2:sku:1", "Goi them data", "addon"),
+          ],
+        }),
+      }),
+    );
+    await openCardKeepingPackages(
+      page,
+      esim({ provider: "billion", plan: { id: 2, name: "Billion Asia 3GB", topUp: false } }),
+    );
+
+    await expect(page.getByTestId("esim-topup-button")).toHaveText("Gia hạn gói");
+    await expect(page.getByTestId("esim-topup-hint")).toHaveText(
+      "Ở lại lâu hơn? Mua thêm ngày dùng kèm data.",
+    );
+    await expect(page.getByTestId("esim-addon-button")).toHaveText("Mua thêm data");
+    await expect(page.getByTestId("esim-addon-hint")).toHaveText(
+      "Hết data trước hạn? Mua thêm dung lượng, hạn dùng giữ nguyên.",
+    );
+
+    await page.getByTestId("esim-addon-button").click();
+    const modal = page.getByTestId("topup-modal");
+    await expect(modal).toContainText("Mua thêm data cho ICCID");
+    await expect(modal).toContainText("Goi them data");
+    await expect(modal).not.toContainText("Goi gia han");
+  });
+
+  test("an eSIM that only takes top-ups has no add-on button (vande-0411 #016)", async ({
+    page,
+  }) => {
+    await openCard(page, esim());
+
+    await expect(page.getByTestId("esim-topup-button")).toHaveText("Gia hạn gói");
+    await expect(page.getByTestId("esim-addon-button")).toHaveCount(0);
   });
 
   test("is not offered on a Billion eSIM Billion gives no recharge product (doitac-1410 #064)", async ({

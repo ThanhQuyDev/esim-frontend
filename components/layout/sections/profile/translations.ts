@@ -72,6 +72,12 @@ export interface ProfileDict {
   topupSubtitle: string;
   // Billion add-ons: data on top of the current plan (vande #081)
   addonButton: string;
+  /** Under the "buy more data" button (vande-0411 #016). */
+  addonButtonHint: string;
+  extendButton: string;
+  extendButtonHint: string;
+  addonModalTitle: string;
+  extendModalTitle: string;
   topupRenewSection: string;
   addonSection: string;
   addonSectionNote: string;
@@ -167,6 +173,11 @@ export const profileTranslations: Record<"en" | "vi", ProfileDict> = {
     topupTitle: "Top Up Your eSIM",
     topupSubtitle: "Choose a package to add data to this eSIM.",
     addonButton: "Buy more data",
+    addonButtonHint: "Out of data early? Buy more data, your validity stays the same.",
+    extendButton: "Extend plan",
+    extendButtonHint: "Staying longer? Buy more days with data.",
+    addonModalTitle: "Buy more data on ICCID: ",
+    extendModalTitle: "Extend the plan on ICCID: ",
     topupRenewSection: "Renew plan (top-up)",
     addonSection: "Buy more data",
     addonSectionNote: "Added to the plan you are using now; it does not extend its validity.",
@@ -260,9 +271,14 @@ export const profileTranslations: Record<"en" | "vi", ProfileDict> = {
     referralInactive: "Mã giới thiệu của bạn hiện không hoạt động.",
     topupTitle: "Nạp dung lượng cho eSIM",
     topupSubtitle: "Chọn gói cước để nạp thêm dung lượng cho eSIM này.",
-    addonButton: "Mua thêm dung lượng",
+    addonButton: "Mua thêm data",
+    addonButtonHint: "Hết data trước hạn? Mua thêm dung lượng, hạn dùng giữ nguyên.",
+    extendButton: "Gia hạn gói",
+    extendButtonHint: "Ở lại lâu hơn? Mua thêm ngày dùng kèm data.",
+    addonModalTitle: "Mua thêm data cho ICCID: ",
+    extendModalTitle: "Gia hạn gói cho ICCID: ",
     topupRenewSection: "Gia hạn gói (Top-up)",
-    addonSection: "Mua thêm dung lượng",
+    addonSection: "Mua thêm data",
     addonSectionNote: "Cộng thêm vào gói đang dùng, không kéo dài hạn sử dụng của gói.",
     billionFixedTopupNote:
       "Dung lượng nạp thêm không tự chạy: cần kết thúc gói đang dùng để kích hoạt, sau đó hạn dùng được gia hạn. Liên hệ esim.vn để được hỗ trợ.",
