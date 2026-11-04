@@ -1567,6 +1567,8 @@ export interface MyEsim {
   topupPackageNames?: string | null;
   /** The order it was bought in, shown above the ICCID (#025, test round 4). */
   orderNumber?: string | null;
+  /** First package, then what was added (vande-0411 #020). */
+  packages?: EsimPackage[];
   /** Each topup applied, newest first — "Thông tin nạp thêm" (#030). */
   topups?: Array<{
     orderNumber: string;
@@ -1630,7 +1632,25 @@ export function useEsimDataUsage(esimId: number | null) {
  * activation data and no provider name, because the link is public and gets
  * forwarded to family.
  */
+export interface EsimPackage {
+  kind: "initial" | "topup" | "addon";
+  name: string | null;
+  dataText: string | null;
+  isUnlimited: boolean;
+  perDay: boolean;
+  durationDays: number | null;
+  status: "active" | "waiting" | "expired" | "processing";
+  createdAt: string | null;
+  activatedAt: string | null;
+  expiresAt: string | null;
+  /** Hidden from the public lookup for what a partner bought wholesale. */
+  vndPrice: number | null;
+}
+
 export interface EsimLookupResult {
+  /** First package, then what was added, when anything was (vande-0411 #020). */
+  packages?: EsimPackage[];
+  topupCount?: number;
   /** In full, with the order and connection details below (vande #037). */
   iccid?: string;
   iccidMasked: string | null;

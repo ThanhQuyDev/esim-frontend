@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Calendar, Loader2, MessageSquare, PhoneCall, RefreshCw, Search, Wifi } from "lucide-react";
 import { fetchEsimLookupToken, useEsimLookup } from "@/lib/hooks";
+import { EsimPackages } from "@/components/layout/sections/profile/esim-packages";
 import type { EsimLookupResult } from "@/lib/hooks";
 import { esimDayCycle } from "@/lib/plan-daily-reset";
 import {
@@ -317,6 +318,13 @@ function LookupResult({
             </div>
           </div>
         </>
+      )}
+
+      {/* What was bought first and on top of it (vande-0411 #020). */}
+      {!data.refunded && !!data.packages?.length && (
+        <div className="border-t border-gray-100 pt-3">
+          <EsimPackages packages={data.packages} topupCount={data.topupCount ?? 0} lang={lang} />
+        </div>
       )}
 
       {/* Minutes / SMS (#023): a bar like the data one when the provider

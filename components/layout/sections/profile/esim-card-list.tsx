@@ -26,6 +26,7 @@ import { esimDayCycle } from "@/lib/plan-daily-reset";
 import type { ProfileDict } from "./translations";
 import { QRCodeSVG } from "qrcode.react";
 import { TopupModal } from "./topup-modal";
+import { EsimPackages } from "./esim-packages";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/lib/hooks";
 import { planDisplayName, planSummary, planWithTopups } from "@/lib/plan-display-name";
@@ -744,7 +745,11 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                       {/* "Thông tin nạp thêm" (#030, round 4): each topup with its
                           package, data, days, minutes and SMS. Spans both columns —
                           there can be several. */}
-                      {topupCount > 0 && (
+                      {esim.packages?.length ? (
+                        <div className="sm:col-span-2">
+                          <EsimPackages packages={esim.packages} topupCount={topupCount} lang={lang} />
+                        </div>
+                      ) : topupCount > 0 && (
                         <div className="sm:col-span-2">
                           <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">
                             {lang === "vi" ? "Thông tin nạp thêm" : "Top-up details"}
