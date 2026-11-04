@@ -27,7 +27,8 @@ import {
   dataTitle,
   groupSoldOut,
   hotspotLabel,
-  monthLabel,
+  cycleDaysOf,
+  dayLabel,
   networkLabel,
   phonePrefixLabel,
   priceVnd,
@@ -198,7 +199,7 @@ export function radioKeys(e: KeyboardEvent<HTMLElement>, onPick: (el: HTMLElemen
 
 export function PlanCard({
   group,
-  months,
+  days,
   selected,
   onSelect,
   mobile,
@@ -206,7 +207,7 @@ export function PlanCard({
   hidden,
 }: {
   group: OfferGroup;
-  months: number;
+  days: number;
   selected: boolean;
   onSelect: () => void;
   mobile?: boolean;
@@ -216,7 +217,7 @@ export function PlanCard({
 }) {
   const tx = useT();
   const lang = useDesignLang();
-  const plan = variantFor(group, months);
+  const plan = variantFor(group, days);
   const soldOut = groupSoldOut(group);
   const badge = soldOut ? { cls: "sold" as const, label: tx("Tạm hết hàng") } : badgeOf(plan);
   const lines = cardLines(plan, lang);
@@ -336,28 +337,28 @@ export function CycleMenu({ p, labelId }: { p: DomesticPurchase; labelId: string
         disabled={options.length === 0}
       >
         <span className="dsel-v" id="cycV">
-          {monthLabel(p.months, p.lang)}
+          {dayLabel(p.days, p.lang)}
         </span>
         <Ic name="ic-chev-down" w={16} />
       </button>{" "}
       <div className="dsel-list" id="cycList" role="menu" hidden={!open} aria-labelledby={labelId}>
         {options.map((v) => {
-          const m = v.domesticOffer?.cycleMonths ?? Math.max(1, Math.round(v.durationDays / 30));
+          const m = cycleDaysOf(v);
           return (
             <button
               key={v.id}
               className="dopt dopt--c"
               type="button"
               role="menuitemradio"
-              aria-checked={m === p.months}
+              aria-checked={m === p.days}
               data-m={m}
               onClick={() => {
-                p.setMonths(m);
+                p.setDays(m);
                 setOpen(false);
               }}
             >
               <span className="dopt-k" />
-              <span className="dopt-d">{monthLabel(m, p.lang)}</span>
+              <span className="dopt-d">{dayLabel(m, p.lang)}</span>
               <span className="dopt-l">{tx("Giá cước")}</span>
               <span className="dopt-p">{vnd(priceVnd(v))}</span>
             </button>
@@ -1182,9 +1183,9 @@ export function CrossCard({
   );
 }
 
-/** The plan line used in summaries: "WIN119P · 1 tháng". */
-export function planCycleLine(plan: Plan | null, months: number, lang: string): string {
-  return plan ? `${plan.providerPlanId} · ${monthLabel(months, lang)}` : "";
+/** The plan line used in summaries: "WIN119P · 30 ngày". */
+export function planCycleLine(plan: Plan | null, days: number, lang: string): string {
+  return plan ? `${plan.providerPlanId} · ${dayLabel(days, lang)}` : "";
 }
 
 /** Vietnam's picture and flag as set in the CMS (vande #029). */

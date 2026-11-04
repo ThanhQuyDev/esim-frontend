@@ -326,7 +326,10 @@ export interface DomesticOffer {
   zeroRatedSocial: boolean;
   /** Renewal fee for one cycle, VND. */
   cycleFeeVnd: number | null;
-  cycleMonths: number;
+  /** Days a cycle runs: 30, 180, 360 (vande-0411 #045). */
+  cycleDays?: number;
+  /** The same in months, on plans imported before. */
+  cycleMonths?: number;
   /** E.g. "Đầu số 087". */
   supportPhone: string | null;
 }

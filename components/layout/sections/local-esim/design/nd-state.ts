@@ -9,7 +9,7 @@ import { localizedHref } from "@/lib/route-mapping";
 import { trackJourney } from "@/lib/journey-tracking";
 import { planCartItem } from "../../destination/cart-item";
 import {
-  cycleMonths,
+  cycleDaysOf,
   groupOffers,
   groupSoldOut,
   listVnd,
@@ -37,7 +37,7 @@ export function useDomesticPurchase(plans: Plan[], carrier: string, lang: string
   const unlimited = useMemo(() => groups.filter((g) => g.unlimited), [groups]);
 
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
-  const [months, setMonths] = useState(1);
+  const [days, setDays] = useState(1);
   const [qty, setQty] = useState(1);
   const [cartOpen, setCartOpen] = useState(false);
 
@@ -54,20 +54,20 @@ export function useDomesticPurchase(plans: Plan[], carrier: string, lang: string
       null;
     if (first) {
       setSelectedKey(first.key);
-      setMonths(cycleMonths(first.variants[0]));
+      setDays(cycleDaysOf(first.variants[0]));
     }
   }, [groups, highSpeed, unlimited, selectedKey]);
 
   const group: OfferGroup | null = groups.find((g) => g.key === selectedKey) ?? null;
-  const plan: Plan | null = group ? variantFor(group, months) : null;
+  const plan: Plan | null = group ? variantFor(group, days) : null;
 
   const selectGroup = (g: OfferGroup) => {
     if (groupSoldOut(g)) return;
     setSelectedKey(g.key);
     // Keep the chosen cycle when the card offers it; else its shortest.
-    const keep = g.variants.some((p) => cycleMonths(p) === months);
-    const next = keep ? variantFor(g, months) : g.variants[0];
-    if (!keep) setMonths(cycleMonths(next));
+    const keep = g.variants.some((p) => cycleDaysOf(p) === days);
+    const next = keep ? variantFor(g, days) : g.variants[0];
+    if (!keep) setDays(cycleDaysOf(next));
     trackJourney("plan_view", String(next.id));
   };
 
@@ -111,8 +111,8 @@ export function useDomesticPurchase(plans: Plan[], carrier: string, lang: string
     unlimited,
     group,
     plan,
-    months,
-    setMonths,
+    days,
+    setDays,
     selectGroup,
     quantity,
     setQty,

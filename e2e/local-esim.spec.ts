@@ -431,17 +431,17 @@ test.describe("Domestic template perks and cycles (#066)", () => {
     await expect(win).toContainText("7 GB/ngày");
     await expect(win).toContainText("30 phút ngoại mạng");
     await expect(win).toContainText("300 phút nội mạng");
-    await expect(win).toContainText("Miễn phí gói 1 tháng đầu");
+    await expect(win).toContainText("Miễn phí gói 30 ngày đầu");
 
     const vnsky = d.getByTestId("local-plan-503");
     await expect(vnsky).toContainText("10 phút trong nước");
     await expect(vnsky).toContainText("Miễn phí data mạng xã hội");
-    await expect(vnsky).toContainText("Từ tháng thứ 2: 4 GB/ngày");
+    await expect(vnsky).toContainText("Từ chu kỳ thứ 2: 4 GB/ngày");
     await expect(vnsky.locator(".tech")).toHaveText("5G");
 
     // Only two cards: the 12-month variant lives in the cycle picker.
     await expect(d.locator(".plan-btn")).toHaveCount(2);
-    await expect(d.locator("#specFee")).toHaveText("119.000₫/1 tháng");
+    await expect(d.locator("#specFee")).toHaveText("119.000₫/30 ngày");
   });
 
   test("the cycle picker switches to the 12-month plan and its price", async ({ page }) => {
@@ -451,12 +451,12 @@ test.describe("Domestic template perks and cycles (#066)", () => {
 
     await expect(d.locator("#priceNet")).toContainText("219.000");
     await d.locator("#cycBtn").click();
-    await d.locator('.dopt[data-m="12"]').click();
+    await d.locator('.dopt[data-m="360"]').click();
 
-    await expect(d.locator("#cycV")).toHaveText("12 tháng");
+    await expect(d.locator("#cycV")).toHaveText("360 ngày");
     await expect(d.locator("#priceNet")).toContainText("1.500.000");
-    await expect(d.getByTestId("local-plan-502")).toContainText("Miễn phí gói 12 tháng đầu");
-    await expect(d.locator("#specFee")).toHaveText("1.428.000₫/12 tháng");
+    await expect(d.getByTestId("local-plan-502")).toContainText("Miễn phí gói 360 ngày đầu");
+    await expect(d.locator("#specFee")).toHaveText("1.428.000₫/360 ngày");
   });
 });
 

@@ -7,7 +7,7 @@ import type { CarrierMeta } from "../carrier-meta";
  * Data behind the domestic-eSIM carrier page, ported from the design file
  * "esim-noi-dia-desktop-v60 / mobile-v45" (#066, test round 4).
  *
- * The design shows one card per offer and a "Chu kỳ sử dụng" (1/3/6/12 tháng)
+ * The design shows one card per offer and a "Chu kỳ sử dụng" (30/90/180/360 ngày)
  * picker. Our data has one plan per import row, each with its own number of
  * monthly cycles, so plans that offer the SAME thing for a different number of
  * months are grouped into one card and the picker switches between them.
@@ -25,7 +25,7 @@ export interface CardLine {
 export interface CardNote {
   icon: "ic-gift" | "ic-calendar" | "ic-bolt";
   text: string;
-  /** The "Miễn phí gói N tháng đầu" note follows the chosen cycle. */
+  /** The "Miễn phí gói N ngày đầu" note follows the chosen cycle. */
   isCycle?: boolean;
 }
 
@@ -37,7 +37,7 @@ export interface OfferGroup {
   unlimited: boolean;
 }
 
-const VI_MONTH = (m: number, lang: string) => tr(lang, "{0} tháng", m);
+const DAY_LABEL = (d: number, lang: string) => tr(lang, "{0} ngày", d);
 
 export function offerOf(plan: Plan): DomesticOffer | null {
   return plan.domesticOffer ?? null;
@@ -48,10 +48,12 @@ export function isUnlimitedPlan(plan: Plan): boolean {
   return t === "unlimited" || t === "unlimited-reduce";
 }
 
-export function cycleMonths(plan: Plan): number {
+/** Days a cycle runs (vande-0411 #045); plans imported before say months. */
+export function cycleDaysOf(plan: Plan): number {
   const offer = offerOf(plan);
-  if (offer?.cycleMonths) return offer.cycleMonths;
-  return Math.max(1, Math.round((plan.durationDays || 30) / 30));
+  if (offer?.cycleDays) return offer.cycleDays;
+  if (offer?.cycleMonths) return offer.cycleMonths * 30;
+  return plan.durationDays || 30;
 }
 
 function period(plan: Plan): "daily" | "month" {
@@ -119,11 +121,11 @@ export function cardLines(plan: Plan, lang: string): CardLine[] {
  */
 export function cardNote(plan: Plan, lang: string): CardNote {
   const o = offerOf(plan);
-  const months = cycleMonths(plan);
+  const days = cycleDaysOf(plan);
   if (o && o.recurringDataMb !== o.firstCycleDataMb && o.recurringDataMb) {
     return {
       icon: "ic-calendar",
-      text: tr(lang, "Từ tháng thứ {0}: {1}/{2}", months + 1, sizeLabel(o.recurringDataMb), perLabel(plan, lang)),
+      text: tr(lang, "Từ chu kỳ thứ {0}: {1}/{2}", 2, sizeLabel(o.recurringDataMb), perLabel(plan, lang)),
     };
   }
   const bundle = (o?.bundleType ?? plan.type ?? "").toLowerCase();
@@ -134,7 +136,7 @@ export function cardNote(plan: Plan, lang: string): CardNote {
       text: tr(lang, "Tốc độ cao {0}/{1}, hết data chuyển tốc độ thường", sizeLabel(first), perLabel(plan, lang)),
     };
   }
-  return { icon: "ic-gift", text: tr(lang, "Miễn phí gói {0} đầu", VI_MONTH(months, lang)), isCycle: true };
+  return { icon: "ic-gift", text: tr(lang, "Miễn phí gói {0} đầu", DAY_LABEL(days, lang)), isCycle: true };
 }
 
 export function totalMinutes(plan: Plan): number {
@@ -215,23 +217,23 @@ export function listVnd(plan: Plan): number {
   return list > vnd ? list : 0;
 }
 
-/** Renewal fee per cycle: "119.000₫/1 tháng". */
+/** Renewal fee per cycle: "119.000₫/30 ngày". */
 export function renewalLabel(plan: Plan, fmt: (n: number) => string, lang: string): string | null {
   const o = offerOf(plan);
   if (!o?.cycleFeeVnd) return null;
-  return `${fmt(o.cycleFeeVnd)}/${VI_MONTH(o.cycleMonths, lang)}`;
+  return `${fmt(o.cycleFeeVnd)}/${DAY_LABEL(cycleDaysOf(plan), lang)}`;
 }
 
-/** "Cước 119k / 1 tháng" (mobile card). */
+/** "Cước 119k / 30 ngày" (mobile card). */
 export function renewalShort(plan: Plan, lang: string): string | null {
   const o = offerOf(plan);
   if (!o?.cycleFeeVnd) return null;
   const k = o.cycleFeeVnd / 1000;
-  return tr(lang, "Cước {0}k / {1}", Number.isInteger(k) ? k : k.toFixed(1), VI_MONTH(o.cycleMonths, lang));
+  return tr(lang, "Cước {0}k / {1}", Number.isInteger(k) ? k : k.toFixed(1), DAY_LABEL(cycleDaysOf(plan), lang));
 }
 
-export function monthLabel(m: number, lang: string): string {
-  return VI_MONTH(m, lang);
+export function dayLabel(d: number, lang: string): string {
+  return DAY_LABEL(d, lang);
 }
 
 /** What makes two plans the same offer, apart from how many months they run. */
@@ -254,7 +256,7 @@ function offerKey(plan: Plan): string {
     o?.zeroRatedSocial ? 1 : 0,
     techOf(plan),
     // a renewal fee per cycle that differs is a different offer
-    o?.cycleFeeVnd && o.cycleMonths ? Math.round(o.cycleFeeVnd / o.cycleMonths) : "",
+    o?.cycleFeeVnd ? Math.round(o.cycleFeeVnd / cycleDaysOf(plan)) : "",
   ].join("|");
 }
 
@@ -269,13 +271,13 @@ export function groupOffers(plans: Plan[]): OfferGroup[] {
   }
   return Array.from(groups.values()).map((g) => ({
     ...g,
-    variants: g.variants.sort((a, b) => cycleMonths(a) - cycleMonths(b) || priceVnd(a) - priceVnd(b)),
+    variants: g.variants.sort((a, b) => cycleDaysOf(a) - cycleDaysOf(b) || priceVnd(a) - priceVnd(b)),
   }));
 }
 
 /** The variant of a card for the chosen number of months, else its shortest. */
-export function variantFor(group: OfferGroup, months: number): Plan {
-  return group.variants.find((p) => cycleMonths(p) === months) ?? group.variants[0];
+export function variantFor(group: OfferGroup, days: number): Plan {
+  return group.variants.find((p) => cycleDaysOf(p) === days) ?? group.variants[0];
 }
 
 /** Whether every variant of a card is out of stock. */

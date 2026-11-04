@@ -62,13 +62,13 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb, 
 
   const logoStyle: CSSProperties = { background: meta.logoBg };
   const prefix = phonePrefixLabel(meta, plan, lang);
-  const line = planCycleLine(plan, p.months, lang);
+  const line = planCycleLine(plan, p.days, lang);
   const tag = [meta.network ? tx("Dùng hạ tầng {0}", meta.network) : null, prefix].filter(Boolean).join(" – ");
 
   // "Xem thêm N gói 5G": on a page that sells both, 5G cards fold away until
   // asked for — the chosen one always stays in view (design's #moreBtn).
   const [more, setMore] = useState(false);
-  const is5g = (g: (typeof p.highSpeed)[number]) => techOf(variantFor(g, p.months)) === "5G";
+  const is5g = (g: (typeof p.highSpeed)[number]) => techOf(variantFor(g, p.days)) === "5G";
   const foldable = p.highSpeed.some((g) => !is5g(g)) && p.highSpeed.some(is5g);
   const folded = foldable ? p.highSpeed.filter((g) => is5g(g) && !more && p.group?.key !== g.key).length : 0;
 
@@ -103,7 +103,7 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb, 
         requestAnimationFrame(() => info.scrollWidth > info.clientWidth && setTight(2));
       }
     });
-  }, [p.net, p.quantity, p.months, p.plan?.id]);
+  }, [p.net, p.quantity, p.days, p.plan?.id]);
 
   const pickFromKeys = (el: HTMLElement) => {
     const g = [...p.highSpeed, ...p.unlimited].find((x) => x.variants.some((v) => `p${v.providerPlanId}` === el.id));
@@ -187,7 +187,7 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb, 
           </div>{" "}
           <div className="daily-row">
             <span className="daily-detail" id="dOSDetail">
-              {plan ? tx("Gói: {0} · {1} tháng", planLabel(plan, lang), p.months) : ""}
+              {plan ? tx("Gói: {0} · {1} ngày", planLabel(plan, lang), p.days) : ""}
             </span>
           </div>{" "}
         </div>{" "}
@@ -216,7 +216,7 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb, 
                       <PlanCard
                         key={g.key}
                         group={g}
-                        months={p.months}
+                        days={p.days}
                         selected={p.group?.key === g.key}
                         onSelect={() => p.selectGroup(g)}
                         mobile
@@ -250,7 +250,7 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb, 
                 </div>{" "}
                 <div className="plan-list">
                   {p.unlimited.map((g) => (
-                    <PlanCard key={g.key} group={g} months={p.months} selected={p.group?.key === g.key} onSelect={() => p.selectGroup(g)} mobile />
+                    <PlanCard key={g.key} group={g} days={p.days} selected={p.group?.key === g.key} onSelect={() => p.selectGroup(g)} mobile />
                   ))}
                 </div>{" "}
               </div>

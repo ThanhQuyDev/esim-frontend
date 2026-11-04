@@ -7,7 +7,7 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import type { LocalCarrier, Plan } from "@/lib/api";
 import { getCarrierMeta, carrierInitial, type CarrierMeta } from "../carrier-meta";
 import { Ic } from "./nd-icons";
-import { dataTitle, planLabel, summary, cycleMonths } from "./nd-model";
+import { dataTitle, planLabel, summary, cycleDaysOf } from "./nd-model";
 import { vnd, type DomesticPurchase } from "./nd-state";
 import {
   CrossCard,
@@ -72,14 +72,14 @@ export function NdDesktop({ p, meta, carrier, lang, otherCarriers, crossHref, br
 
   const logoStyle: CSSProperties = { background: meta.logoBg };
   const initial = carrierInitial(meta);
-  const months = p.months;
-  const line = planCycleLine(plan, months, lang);
-  const detail = plan ? tx("Gói: {0} · {1} tháng", planLabel(plan, lang), months) : "";
-  const monthsRange = (() => {
-    const all = allPlans.map(cycleMonths);
+  const days = p.days;
+  const line = planCycleLine(plan, days, lang);
+  const detail = plan ? tx("Gói: {0} · {1} ngày", planLabel(plan, lang), days) : "";
+  const daysRange = (() => {
+    const all = allPlans.map(cycleDaysOf);
     const lo = Math.min(...all, 1);
     const hi = Math.max(...all, 1);
-    return lo === hi ? tx("{0} tháng", lo) : tx("{0}–{1} tháng", lo, hi);
+    return lo === hi ? tx("{0} ngày", lo) : tx("{0}–{1} ngày", lo, hi);
   })();
 
   // The design's stickyBar(): shown once the price block has scrolled away,
@@ -268,7 +268,7 @@ export function NdDesktop({ p, meta, carrier, lang, otherCarriers, crossHref, br
             <div className="pic-body">
               {" "}
               <p className="pic-sub">{tx("eSIM nội địa")}{" "}{meta.label}{" "}{tx("chính hãng, đăng ký và kích hoạt hoàn toàn online — nhận mã QR qua email tức thì. Data 4G/5G")}{meta.network ? tx(" trên hạ tầng {0}", meta.network) : ""}{tx(", có số thuê bao gọi & SMS, chu kỳ linh hoạt")}{" "}
-                {monthsRange}{tx(", phù hợp dùng lâu dài tại Việt Nam.")}</p>{" "}
+                {daysRange}{tx(", phù hợp dùng lâu dài tại Việt Nam.")}</p>{" "}
               <div
                 className="dt-tabs"
                 role="tablist"
@@ -360,7 +360,7 @@ export function NdDesktop({ p, meta, carrier, lang, otherCarriers, crossHref, br
                   </div>{" "}
                   <div className="plan-grid">
                     {p.highSpeed.map((g) => (
-                      <PlanCard key={g.key} group={g} months={months} selected={p.group?.key === g.key} onSelect={() => p.selectGroup(g)} />
+                      <PlanCard key={g.key} group={g} days={days} selected={p.group?.key === g.key} onSelect={() => p.selectGroup(g)} />
                     ))}
                   </div>{" "}
                 </div>
@@ -376,7 +376,7 @@ export function NdDesktop({ p, meta, carrier, lang, otherCarriers, crossHref, br
                   </div>{" "}
                   <div className="plan-grid">
                     {p.unlimited.map((g) => (
-                      <PlanCard key={g.key} group={g} months={months} selected={p.group?.key === g.key} onSelect={() => p.selectGroup(g)} />
+                      <PlanCard key={g.key} group={g} days={days} selected={p.group?.key === g.key} onSelect={() => p.selectGroup(g)} />
                     ))}
                   </div>{" "}
                 </div>
@@ -525,7 +525,7 @@ export function NdDesktop({ p, meta, carrier, lang, otherCarriers, crossHref, br
                 eSIM {meta.label} <VnFlag url={country?.flagUrl} w={16} h={12} />
               </div>
               <div className="dsb-plan" id="dsbPlan">
-                {plan ? tx("Gói: {0} — {1} · {2} tháng", plan.providerPlanId, dataTitle(plan, lang), months) : ""}
+                {plan ? tx("Gói: {0} — {1} · {2} ngày", plan.providerPlanId, dataTitle(plan, lang), days) : ""}
               </div>
             </div>
           </div>{" "}
