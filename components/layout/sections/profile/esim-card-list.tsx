@@ -119,6 +119,16 @@ function formatDate(dateStr: string | null, lang: string) {
   }
 }
 
+/** "14:05 - 02/11/2026" (vande-0411 #046). */
+function formatDateTime(dateStr: string | null | undefined): string {
+  if (!dateStr) return "—";
+  const date = new Date(dateStr);
+  if (Number.isNaN(date.getTime())) return "—";
+  const zone = { timeZone: "Asia/Ho_Chi_Minh" };
+  const time = date.toLocaleTimeString("en-GB", { ...zone, hour: "2-digit", minute: "2-digit" });
+  return `${time} - ${date.toLocaleDateString("en-GB", zone)}`;
+}
+
 function CopyButton({ text, t }: { text: string; t: ProfileDict }) {
   const [copied, setCopied] = useState(false);
 
@@ -488,6 +498,8 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
     return deadline;
   })();
 
+  // Running: when it started, not how long is left to start it (vande-0411 #046).
+  const isRunning = customerEsimStatus(esim) === "inUse" && !!esim.activatedAt;
   const activationDaysLeft = activationDeadline
     ? Math.max(0, Math.ceil((activationDeadline.getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
     : null;
@@ -831,10 +843,16 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                       )}
                       <div>
                         <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">
-                          {lang === "vi" ? "Thời hạn kích hoạt" : "Activation Validity"}
+                          {isRunning
+                            ? lang === "vi" ? "Thời gian kích hoạt" : "Activated at"
+                            : lang === "vi" ? "Thời hạn kích hoạt" : "Activation Validity"}
                         </p>
                         <div className="bg-gray-50 rounded-lg px-3 py-2">
-                          {activationDeadline ? (
+                          {isRunning ? (
+                            <p className="text-base sm:text-sm text-gray-900" data-testid="esim-activated-at">
+                              {formatDateTime(esim.activatedAt)}
+                            </p>
+                          ) : activationDeadline ? (
                             <p className={`text-base sm:text-sm ${activationDaysLeft !== null && activationDaysLeft <= 30 ? "text-amber-600 font-medium" : "text-gray-900"}`}>
                               {activationDaysLeft !== null && activationDaysLeft > 0
                                 ? `${activationDaysLeft} ${lang === "vi" ? "ngày còn lại" : "days left"}`
@@ -863,18 +881,16 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                         </span>
                       </div>
                     </div>
-                    {esim.provider !== 'viettel' && (
                     <div>
                       <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">
                         {lang === "vi" ? "Hết hạn" : "Expires"}
                       </p>
                       <div className="bg-gray-50 rounded-lg px-3 py-2">
-                        <p className="text-base sm:text-sm text-gray-900">
-                          {formatDate(esim.expiresAt, lang)}
+                        <p className="text-base sm:text-sm text-gray-900" data-testid="esim-expires-at">
+                          {formatDateTime(esim.expiresAt)}
                         </p>
                       </div>
                     </div>
-                    )}
                   </div>
 
                   {/* The supplier's own "Install on iPhone" link used to sit here
