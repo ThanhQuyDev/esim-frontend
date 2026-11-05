@@ -1,5 +1,6 @@
 import { applySeoVars, type SeoTemplateVars } from '@/lib/seo-vars';
 import { isJsonLd, parseScriptBlocks } from '@/lib/script-blocks';
+import { AsyncLoaderScript } from '@/components/async-loader-script';
 
 /**
  * Renders the CMS "Schema / Script" block into the document <head>.
@@ -31,16 +32,13 @@ export function StructuredData({
     <>
       {scripts.map((script, index) => {
         if (!script.content) {
-          // React turns `<script async src>` into a resource and moves it to
-          // the top of <head>, away from the inline part of the same snippet
-          // — and out of <body> for an "end of body" snippet (vande #049).
-          // `itemProp` is the switch React offers to emit a script where it
-          // stands; the empty attribute means nothing to the browser.
-          const props =
-            script.props.async && script.props.src
-              ? { ...script.props, itemProp: "" }
-              : script.props;
-          return <script key={index} {...props} />;
+          // Kept where the admin put it (vande #049), with nothing added to
+          // the tag (vande-0411 #062).
+          return script.props.async && script.props.src ? (
+            <AsyncLoaderScript key={index} {...script.props} />
+          ) : (
+            <script key={index} {...script.props} />
+          );
         }
 
         const content =
