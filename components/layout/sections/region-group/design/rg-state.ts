@@ -242,6 +242,9 @@ export function useRegionPurchase(
     ? ((coupons as { code: string; maxDiscountAmount?: number | null }[] | undefined) ?? []).find((c) => c.code === voucher.code)
     : undefined;
   const net = voucher ? voucher.finalVnd : total;
+  // No voucher for this plan: its own discount is what shows (vande-0411 #064).
+  const was = !voucher && listTotal > total ? listTotal : 0;
+  const wasOffPercent = was ? Math.round(((was - total) / was) * 100) : 0;
 
   // ── identity verification ──
   const kycCodes = codes.filter((c) => KYC_CODES.includes(c));
@@ -329,6 +332,8 @@ export function useRegionPurchase(
     unit,
     total,
     listTotal,
+    was,
+    wasOffPercent,
     voucher,
     voucherMax: Number(voucherCoupon?.maxDiscountAmount ?? 0) || null,
     net,

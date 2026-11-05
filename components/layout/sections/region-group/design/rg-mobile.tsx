@@ -206,18 +206,32 @@ export function RgMobile({ p, label, lang, breadcrumb }: Props) {
           ) : (
           <p className="m-desc">{tx("eSIM du lịch")}{" "}{label}{" "}{tx("dùng được tại")}{" "}<span id="vSub">{coverageLine(p)}</span>. <b>{tx("Một eSIM cho cả chuyến đi nhiều nước")}</b>{tx(", mạng 4G/5G tốc độ cao. Nhận mã QR qua email ngay sau khi mua.")}</p>
           )}{" "}
-          <div className="price-row price-row--vch">
-            <button className="pv" type="button" id="vchTag" aria-haspopup="dialog" onClick={() => setVch(true)}>
+          {p.was > 0 ? (
+            <div className="price-row price-row--nv">
               <span className="price-now" id="priceNet">
-                {plan ? vnd(p.net) : "—"}
+                {vnd(p.net)}
               </span>
-              <span className="pv-lbl">
-                <Ic name="ic-ticket" w={14} />
-                {p.voucher ? tx("Giá sau voucher") : tx("Chi tiết giá")}
-                <Ic name="ic-chev-right" w={12} />
+              <s className="price-old" id="priceOld">
+                {vnd(p.was)}
+              </s>
+              <span className="price-off" id="priceOff">
+                -{p.wasOffPercent}%
               </span>
-            </button>
-          </div>{" "}
+            </div>
+          ) : (
+            <div className="price-row price-row--vch">
+              <button className="pv" type="button" id="vchTag" aria-haspopup="dialog" onClick={() => setVch(true)}>
+                <span className="price-now" id="priceNet">
+                  {plan ? vnd(p.net) : "—"}
+                </span>
+                <span className="pv-lbl">
+                  <Ic name="ic-ticket" w={14} />
+                  {p.voucher ? tx("Giá sau voucher") : tx("Chi tiết giá")}
+                  <Ic name="ic-chev-right" w={12} />
+                </span>
+              </button>
+            </div>
+          )}{" "}
           <div className="daily-row">
             {plan && (
               <>
@@ -389,19 +403,30 @@ export function RgMobile({ p, label, lang, breadcrumb }: Props) {
               {p.quantity} eSIM
             </span>
           </div>
-          <button className="m-buy-price" type="button" aria-haspopup="dialog" onClick={() => setVch(true)}>
-            <Ic name="ic-ticket" w={14} />
-            <span className="sr-only">{p.voucher ? tx("Giá sau voucher ") : tx("Giá ")}</span>
-            <span id="mTotal">{vnd(p.net)}</span>
-            {p.net < p.total && (
-              <>
-                <span className="sr-only">{tx(", giá trước voucher")}{" "}</span>
-                <s className="m-buy-old" id="mTotalOld">
-                  {vnd(p.total)}
-                </s>
-              </>
-            )}
-          </button>
+          {p.was > 0 ? (
+            // Nothing to open without a voucher: the price and what it was.
+            <div className="m-buy-price">
+              <span className="sr-only">{tx("Giá ")}</span>
+              <span id="mTotal">{vnd(p.net)}</span>
+              <s className="m-buy-old" id="mTotalOld">
+                {vnd(p.was)}
+              </s>
+            </div>
+          ) : (
+            <button className="m-buy-price" type="button" aria-haspopup="dialog" onClick={() => setVch(true)}>
+              <Ic name="ic-ticket" w={14} />
+              <span className="sr-only">{p.voucher ? tx("Giá sau voucher ") : tx("Giá ")}</span>
+              <span id="mTotal">{vnd(p.net)}</span>
+              {p.net < p.total && (
+                <>
+                  <span className="sr-only">{tx(", giá trước voucher")}{" "}</span>
+                  <s className="m-buy-old" id="mTotalOld">
+                    {vnd(p.total)}
+                  </s>
+                </>
+              )}
+            </button>
+          )}
         </div>{" "}
         <button className="btn btn-outline m-cart" type="button" aria-label={tx("Thêm vào giỏ hàng")} disabled={!plan} aria-disabled={p.need} data-dgo="" onClick={() => p.addToCart()}>
           <Ic name="ic-cart" w={20} />

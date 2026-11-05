@@ -248,27 +248,41 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
                 Trustpilot
               </div>
             </div>{" "}
-            <div className="price-row price-row--vch" id="priceAnchor" ref={priceAnchor}>
-              <button
-                className="pv"
-                type="button"
-                id="vchTag"
-                aria-controls="vchPop"
-                aria-expanded={vpop === "top"}
-                data-vpop=""
-                onClick={() => setVpop(vpop === "top" ? null : "top")}
-              >
+            {p.was > 0 ? (
+              <div className="price-row price-row--nv" id="priceAnchor" ref={priceAnchor}>
                 <span className="price-now" id="priceNet">
-                  {plan ? vnd(p.net) : "—"}
+                  {vnd(p.net)}
                 </span>
-                <span className="pv-lbl">
-                  <Ic name="ic-ticket" w={14} />
-                  {p.voucher ? tx("Giá sau voucher") : tx("Chi tiết giá")}
-                  <Ic name="ic-chev-down" w={12} />
+                <s className="price-old" id="priceOld">
+                  {vnd(p.was)}
+                </s>
+                <span className="price-off" id="priceOff">
+                  -{p.wasOffPercent}%
                 </span>
-              </button>
-              {popover("top")}
-            </div>{" "}
+              </div>
+            ) : (
+              <div className="price-row price-row--vch" id="priceAnchor" ref={priceAnchor}>
+                <button
+                  className="pv"
+                  type="button"
+                  id="vchTag"
+                  aria-controls="vchPop"
+                  aria-expanded={vpop === "top"}
+                  data-vpop=""
+                  onClick={() => setVpop(vpop === "top" ? null : "top")}
+                >
+                  <span className="price-now" id="priceNet">
+                    {plan ? vnd(p.net) : "—"}
+                  </span>
+                  <span className="pv-lbl">
+                    <Ic name="ic-ticket" w={14} />
+                    {p.voucher ? tx("Giá sau voucher") : tx("Chi tiết giá")}
+                    <Ic name="ic-chev-down" w={12} />
+                  </span>
+                </button>
+                {popover("top")}
+              </div>
+            )}{" "}
             <div className="daily-row">
               {plan && (
                 <>
@@ -489,12 +503,12 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
           <div className="dsb-r">
             <div className="dsb-pricewrap">
               <span className="dsb-pl">
-                {p.net < p.total && (
+                {(p.net < p.total || p.was > 0) && (
                   <s className="dsb-old" id="dsbOld">
-                    {vnd(p.total)}
+                    {vnd(p.was || p.total)}
                   </s>
                 )}
-                <span className={`dsb-price${p.voucher ? " dsb-price--net" : ""}`} id="dsbPrice">
+                <span className={`dsb-price${p.voucher || p.was > 0 ? " dsb-price--net" : ""}`} id="dsbPrice">
                   {vnd(p.net)}
                 </span>
               </span>
