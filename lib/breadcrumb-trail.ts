@@ -243,7 +243,15 @@ export async function resolveBreadcrumbTrail(
   if (segments.length === 1) {
     const name = await entityName(segments[0], lang);
     if (name) {
-      return [crumb(dict, "/destinations", lang), { label: name }];
+      // The word the page itself shows (vande-0411 #067): a mismatch between the
+      // visible trail and the marked-up one is what Google flags.
+      return [
+        {
+          ...crumb(dict, "/destinations", lang),
+          label: lang === "vi" ? "Điểm đến" : "Destinations",
+        },
+        { label: /esim/i.test(name) ? name : `eSIM ${name}` },
+      ];
     }
   }
 

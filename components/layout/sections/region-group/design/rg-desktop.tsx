@@ -184,37 +184,24 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
             <a href={breadcrumb.home}>{tx("Trang chủ")}</a>
           </li>
           <li>
-            <a href={breadcrumb.destinations}>{tx("eSIM du lịch")}</a>
+            <a href={breadcrumb.destinations}>{lang === "vi" ? "Điểm đến" : "Destinations"}</a>
           </li>
           <li>
             <span aria-current="page">eSIM {label}</span>
           </li>
         </ol>
       </nav>{" "}
-      <aside aria-label={tx("Lưu ý trước chuyến đi")} className="pre-wrap">
-        <div className="pre-note" role="note">
-          <Ic name="ic-info" w={16} />
-          <span>
-            {p.noticeHtml ? (
-              // The note the admin wrote for this country or region (doitac-1410 #078) — one note, not two (vande #032, #051).
+      {/* Only the note the admin wrote for this page; none by default (vande-0411 #067). */}
+      {p.noticeHtml && (
+        <aside aria-label={tx("Lưu ý trước chuyến đi")} className="pre-wrap">
+          <div className="pre-note" role="note">
+            <Ic name="ic-info" w={16} />
+            <span>
               <span dangerouslySetInnerHTML={{ __html: p.noticeHtml }} />
-            ) : p.country && p.china ? (
-              <>
-                <b>{tx("Cài eSIM, tắt định vị trước khi bay")}</b>{" "}{tx("để có mạng ngay khi đến.")}{" "}
-                <b>{tx("Không dùng Wi-Fi ở Trung Quốc")}</b>{" "}{tx("vì có thể bị phát hiện, chặn ứng dụng quốc tế.")}
-              </>
-            ) : (
-            <>
-            <b>{tx("Cài eSIM trước khi bay")}</b>{" "}{tx("để có mạng ngay khi đến nơi.")}{!p.country && p.showFilter && (
-              <>
-                {" "}
-                <b>{tx("Đi qua Trung Quốc?")}</b>{" "}{tx("Bật bộ lọc ở bước 2 để chọn gói dùng được TikTok, ChatGPT.")}</>
-            )}
-            </>
-            )}
-          </span>
-        </div>
-      </aside>{" "}
+            </span>
+          </div>
+        </aside>
+      )}{" "}
       <main className="main">
         <div className="pd-top">
           {" "}
@@ -321,7 +308,10 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
           </div>{" "}
           <article aria-label={tx("Thông tin eSIM {0}", label)} className="pic">
             <div className="pic-body">
-              {p.country ? (
+              {p.description ? (
+                // Written by the admin for this destination or region (vande-0411 #067).
+                <p className="pic-sub" data-testid="product-description">{p.description}</p>
+              ) : p.country ? (
                 <p className="pic-sub">
                   {tx("eSIM du lịch {0}", label)}
                   {countryCarriers(p) ? tx(" mạng {0}", countryCarriers(p)) : ""}{tx(" 4G/5G.")}{" "}

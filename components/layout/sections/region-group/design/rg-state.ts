@@ -34,6 +34,18 @@ import {
   type DaysWarning,
 } from "../../destination/days-first";
 
+/**
+ * The page's description in its own language. Empty when the admin has not
+ * written one, and the design's generated line is shown instead.
+ */
+function pageDescription(
+  entity: { description?: string | null; descriptionVi?: string | null } | null | undefined,
+  lang: string
+): string | null {
+  const text = lang === "vi" ? entity?.descriptionVi : entity?.description;
+  return text?.trim() || null;
+}
+
 const EMPTY: PlansByDestinationResponse = {
   dataPlans: [],
   slowUnlimited: [],
@@ -277,6 +289,8 @@ export function useRegionPurchase(
     /** Set on a country page (vande #032); null on a region page. */
     country: country ?? null,
     noticeHtml: noticeHtml ?? null,
+    /** The description from Điểm đến / Khu vực in the CMS (vande-0411 #067). */
+    description: pageDescription(country ?? member, lang),
     /** China, for the country page's own notes (vande #032). */
     china,
     members,
