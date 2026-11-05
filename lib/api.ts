@@ -185,6 +185,7 @@ export interface Region {
    * pack on the parent's page. Absent from an API that predates the field.
    */
   parentId?: number | null;
+  isPopular?: boolean;
   isActive: boolean;
   fromPrice?: number | null;
   createdAt: string;

@@ -128,11 +128,58 @@ function comboLabel(plan: Plan, lang: string): string {
 
 /* ───────────── step 1: coverage variants ───────────── */
 
-export function Variants({ p }: { p: RegionPurchase }) {
+/**
+ * The scopes on the row (vande-0411 #074, spec 6.2). With countries picked: the
+ * cheapest that cover them all. Otherwise a featured pack first, then the rest,
+ * widest first. The chosen scope always stays on the row, and the row keeps the
+ * list's order so a card does not jump when another is chosen.
+ */
+export function scopesOnRow(p: RegionPurchase, cap: number): number[] {
+  const all = p.members.map((_, i) => i);
+  const ranked = p.picked.length
+    ? all
+        .filter((i) => {
+          const codes = (p.members[i].destinations ?? []).map((d) => (d.countryCode || "").toUpperCase());
+          return p.picked.every((code) => codes.includes(code));
+        })
+        .sort(
+          (a, b) =>
+            Number(p.members[a].fromPrice) - Number(p.members[b].fromPrice) || count(p, a) - count(p, b),
+        )
+    : [
+        ...all.filter((i) => p.members[i].isPopular && p.members[i].parentId),
+        ...all.filter((i) => !(p.members[i].isPopular && p.members[i].parentId)),
+      ];
+  let row = ranked.slice(0, cap);
+  if (!row.includes(p.active)) row = [...row.slice(0, Math.max(cap - 1, 0)), p.active];
+  return row.sort((a, b) => a - b);
+}
+
+const SCOPES_DEFAULT = 5;
+const SCOPE_CARD_PX = 88;
+const SCOPE_GAP_PX = 6;
+
+export function Variants({ p, mobile, onAll }: { p: RegionPurchase; mobile?: boolean; onAll: () => void }) {
   const tx = useT();
   const ref = useRef<HTMLDivElement>(null);
   const [edge, setEdge] = useState({ l: false, r: false });
   const fit = p.fit;
+  // Desktop never scrolls sideways: as many cards as fit, one place kept for
+  // "Xem tất cả". A phone swipes, as in the mobile design.
+  const [fits, setFits] = useState(SCOPES_DEFAULT);
+  useEffect(() => {
+    const n = ref.current;
+    if (mobile || !n || typeof ResizeObserver === "undefined") return;
+    const measure = () =>
+      setFits(Math.max(2, Math.floor((n.clientWidth + SCOPE_GAP_PX) / (SCOPE_CARD_PX + SCOPE_GAP_PX)) - 1));
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(n);
+    return () => ro.disconnect();
+  }, [mobile]);
+  const cap = mobile ? (p.picked.length ? 8 : SCOPES_DEFAULT) : Math.min(fits, SCOPES_DEFAULT);
+  const row = scopesOnRow(p, cap);
+  const hiddenCount = p.members.length - row.length;
 
   // Keep the chosen variant in view and show the edge fades (design's G/F).
   useEffect(() => {
@@ -157,7 +204,7 @@ export function Variants({ p }: { p: RegionPurchase }) {
       n.removeEventListener("scroll", upd);
       removeEventListener("resize", upd);
     };
-  }, [p.active]);
+  }, [p.active, row.join()]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div
@@ -175,7 +222,8 @@ export function Variants({ p }: { p: RegionPurchase }) {
         if ((e.deltaY > 0 && n.scrollLeft < max - 1) || (e.deltaY < 0 && n.scrollLeft > 0)) n.scrollLeft += e.deltaY;
       }}
     >
-      {p.members.map((m, i) => {
+      {row.map((i) => {
+        const m = p.members[i];
         const codes = (m.destinations ?? []).map((d) => (d.countryCode || "").toUpperCase());
         const miss = p.picked.some((c) => !codes.includes(c));
         const price = Number(m.fromPrice);
@@ -198,7 +246,187 @@ export function Variants({ p }: { p: RegionPurchase }) {
           </div>
         );
       })}
+      {hiddenCount > 0 && (
+        <button className="rng-all" type="button" id="covAll" aria-haspopup="dialog" onClick={onAll}>
+          <span className="rng-n">{tx("Xem tất cả")}</span>
+          <span className="rng-p">
+            {p.picked.length ? tx("+{0} phạm vi", hiddenCount) : tx("{0} phạm vi", p.members.length)}
+            <Ic name="ic-chev-right" w={12} />
+          </span>
+        </button>
+      )}
     </div>
+  );
+}
+
+/** "Tất cả phạm vi phủ sóng" (#covOv, spec 6.4): only to see and choose a scope. */
+export function ScopesModal({
+  p,
+  open,
+  onClose,
+  flags,
+  onEditCountries,
+}: {
+  p: RegionPurchase;
+  open: boolean;
+  onClose: () => void;
+  /** Flags on a row: 4 on desktop, 2 on a phone. */
+  flags: number;
+  onEditCountries: () => void;
+}) {
+  const tx = useT();
+  const list = useRef<HTMLUListElement>(null);
+
+  useEffect(() => {
+    if (open) list.current?.querySelector(".is-cur")?.scrollIntoView({ block: "center" });
+  }, [open]);
+
+  const rows = p.members.map((m, i) => {
+    const dests = m.destinations ?? [];
+    const codes = dests.map((d) => (d.countryCode || "").toUpperCase());
+    const missing = p.picked.filter((code) => !codes.includes(code));
+    return { m, i, dests, codes, missing };
+  });
+  // Those covering every picked country first, by price; the rest after them.
+  const ordered = p.picked.length
+    ? [...rows].sort(
+        (a, b) =>
+          Number(a.missing.length > 0) - Number(b.missing.length > 0) ||
+          Number(a.m.fromPrice) - Number(b.m.fromPrice),
+      )
+    : rows;
+
+  return (
+    <Overlay id="covOv" open={open} onClose={onClose}>
+      <div className="modal modal--md" role="dialog" aria-labelledby="covTitle" aria-modal="true">
+        <div className="modal-hd">
+          <div className="modal-top">
+            <div>
+              <div className="modal-title modal-title--sm" id="covTitle">{tx("Tất cả phạm vi phủ sóng")}</div>
+              <p className="modal-desc">{tx("{0} phạm vi · chọn phạm vi phù hợp với các nước bạn đi", p.members.length)}</p>
+            </div>
+            <button className="btn-close" type="button" aria-label={tx("Đóng")} data-close="">
+              <Ic name="ic-x" w={24} />
+            </button>
+          </div>
+          <div className="cv-tags" id="cvTags">
+            {p.picked.length > 0 && <span className="cv-pl">{tx("Nước bạn chọn")}</span>}
+            {p.picked.map((code) => (
+              <button
+                key={code}
+                type="button"
+                className="dp-tag"
+                aria-label={tx("Bỏ {0}{1}", p.nameOf(code), "")}
+                onClick={() => p.togglePick(code, false)}
+              >
+                <Flag code={code} url={p.countries.find((x) => x.code === code)?.flagUrl} w={18} h={13.5} />
+                {p.nameOf(code)}
+                <Ic name="ic-close" w={10} />
+              </button>
+            ))}
+            {p.picked.length > 2 && (
+              <button
+                type="button"
+                className="cv-lnk"
+                id="cvClr"
+                onClick={() => p.picked.forEach((code) => p.togglePick(code, false))}
+              >
+                {tx("Xóa hết")}
+              </button>
+            )}
+            <button
+              type="button"
+              className="cv-lnk cv-edit"
+              id="cvEdit"
+              onClick={() => {
+                onClose();
+                onEditCountries();
+              }}
+            >
+              {p.picked.length ? tx("Đổi nước") : tx("Lọc theo nước")}
+            </button>
+          </div>
+        </div>
+        <div className="modal-body" tabIndex={0}>
+          <ul className="cv-list" id="covList" ref={list}>
+            {ordered.map(({ m, i, dests, missing }) => {
+              const covers = p.picked.length > 0 && missing.length === 0;
+              const isFit = p.fit === i;
+              const price = Number(m.fromPrice);
+              // The countries the visitor picked come first among the flags.
+              const flagged = [
+                ...dests.filter((d) => p.picked.includes((d.countryCode || "").toUpperCase())),
+                ...dests.filter((d) => !p.picked.includes((d.countryCode || "").toUpperCase())),
+              ];
+              const slots = dests.length > flags + 1 ? flags : dests.length;
+              const names = missing.map((code) => p.nameOf(code));
+              const note = !p.picked.length
+                ? ""
+                : covers
+                  ? tx("Phủ đủ nước bạn chọn")
+                  : names.length > 2
+                    ? tx("Thiếu {0} và {1} nước khác", names.slice(0, 2).join(", "), names.length - 2)
+                    : tx("Thiếu {0}", names.join(", "));
+              return (
+                <li className="cv-item" key={m.id} data-v={`v${m.id}`}>
+                  <button
+                    type="button"
+                    className={`cv-row${i === p.active ? " is-cur" : ""}`}
+                    aria-pressed={i === p.active}
+                    data-fit={isFit ? "" : undefined}
+                    data-miss={missing.length > 0 ? "" : undefined}
+                    data-cover={covers ? "" : undefined}
+                    onClick={() => {
+                      p.setActive(i);
+                      onClose();
+                    }}
+                  >
+                    <span className="cv-fl">
+                      {flagged.slice(0, slots).map((d) => (
+                        <span className="cv-f" key={d.id}>
+                          <Flag code={d.countryCode || ""} url={d.flagUrl} w={28} h={21} />
+                        </span>
+                      ))}
+                      {dests.length > slots && <span className="cv-more">+{dests.length - slots}</span>}
+                    </span>
+                    <span className="cv-t">
+                      <span className="cv-h">
+                        <b>{count(p, i)}{" "}{tx("nước")}</b>
+                        <span className="cv-fit">{tx("Rẻ nhất")}</span>
+                      </span>
+                      <span className="cv-s">
+                        {(p.lang === "vi" ? m.titleVi || m.title : m.title || m.titleVi) || m.name}
+                      </span>
+                      <span className="cv-m">{note}</span>
+                    </span>
+                    {price > 0 && <span className="cv-p">{tx("từ")}{" "}{vnd(price)}</span>}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+        <div className="modal-ft">
+          <p
+            className={`dp-sum${p.picked.length ? (p.fit !== null ? " is-ok" : " is-warn") : ""}`}
+            id="cvSum"
+            aria-live="polite"
+          >
+            {!p.picked.length ? (
+              tx("Muốn lọc theo nước? Chọn ở ô \"Bạn sẽ đến nước nào?\" ngoài trang.")
+            ) : p.fit !== null ? (
+              <span>
+                {tx("Phạm vi rẻ nhất phủ đủ {0} nước bạn chọn:", p.picked.length)}{" "}
+                <b>{count(p, p.fit)}{" "}{tx("nước")}</b>
+              </span>
+            ) : (
+              <span>{tx("Chưa có phạm vi phủ đủ các nước này")}</span>
+            )}
+          </p>
+          <button className="btn btn-block btn-dark" type="button" data-close="">{tx("Đóng")}</button>
+        </div>
+      </div>
+    </Overlay>
   );
 }
 

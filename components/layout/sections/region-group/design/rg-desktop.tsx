@@ -18,6 +18,7 @@ import {
   AppFilter,
   CalendarModal,
   CountriesModal,
+  ScopesModal,
   CovFlags,
   CrossCards,
   DeliveryRows,
@@ -80,6 +81,7 @@ export function RgDesktop({ p, label, lang, breadcrumb, cross = [] }: Props) {
   const plan = p.plan;
   const [tab, setTab] = useState<0 | 1>(0);
   const [ctr, setCtr] = useState(false);
+  const [scopes, setScopes] = useState(false);
   const [ekyc, setEkyc] = useState(false);
   const [cal, setCal] = useState(false);
   const [devOpen, setDevOpen] = useState(false);
@@ -396,7 +398,7 @@ export function RgDesktop({ p, label, lang, breadcrumb, cross = [] }: Props) {
                 <span className="sr-only">. </span>
                 <span>{tx("Chọn phạm vi phủ sóng")}</span>
               </h2>{" "}
-              <Variants p={p} />{" "}
+              <Variants p={p} onAll={() => setScopes(true)} />{" "}
               <div className="cov">
                 <div className="cov-hd">
                   <CovFlags p={p} max={7} />
@@ -482,6 +484,20 @@ export function RgDesktop({ p, label, lang, breadcrumb, cross = [] }: Props) {
         </section>
       )}{" "}
       <CountriesModal p={p} open={ctr} onClose={() => setCtr(false)} />
+      <ScopesModal
+        p={p}
+        open={scopes}
+        onClose={() => setScopes(false)}
+        flags={4}
+        onEditCountries={() => {
+          // After the popup has handed focus back to the button that opened it.
+          setTimeout(() => {
+            const input = document.querySelector<HTMLInputElement>("#destPick input");
+            input?.scrollIntoView({ block: "center", behavior: "smooth" });
+            input?.focus({ preventScroll: true });
+          }, 50);
+        }}
+      />
       <EkycModal p={p} open={ekyc} onClose={() => setEkyc(false)} lang={lang} />
       <CalendarModal p={p} open={cal} onClose={() => setCal(false)} />
       <DeviceModal open={devOpen} onClose={() => setDevOpen(false)} lang={lang} initialBrand={devBrand} />

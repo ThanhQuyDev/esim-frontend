@@ -18,6 +18,7 @@ import {
   AppFilter,
   CalendarModal,
   CountriesModal,
+  ScopesModal,
   CovFlags,
   CrossCards,
   DeliveryRows,
@@ -55,6 +56,7 @@ export function RgMobile({ p, label, lang, breadcrumb, cross = [] }: Props) {
   const tx = useT();
   const plan = p.plan;
   const [ctr, setCtr] = useState(false);
+  const [scopes, setScopes] = useState(false);
   const [ekyc, setEkyc] = useState(false);
   const [cal, setCal] = useState(false);
   const [pick, setPick] = useState(false);
@@ -259,7 +261,7 @@ export function RgMobile({ p, label, lang, breadcrumb, cross = [] }: Props) {
               <span className="sr-only">. </span>
               <span>{tx("Chọn phạm vi phủ sóng")}</span>
             </h2>{" "}
-            <Variants p={p} />{" "}
+            <Variants p={p} mobile onAll={() => setScopes(true)} />{" "}
             <div className="cov">
               <div className="cov-hd cov-hd--2">
                 <span className="cov-t">
@@ -433,6 +435,13 @@ export function RgMobile({ p, label, lang, breadcrumb, cross = [] }: Props) {
         <button className="btn btn-primary m-buy-cta" type="button" id="buyBtn" disabled={!plan} aria-disabled={p.need} data-dgo="" onClick={() => p.buyNow()}>{tx("Mua ngay")}</button>
       </div>
       <CountriesModal p={p} open={ctr} onClose={() => setCtr(false)} />
+      <ScopesModal
+        p={p}
+        open={scopes}
+        onClose={() => setScopes(false)}
+        flags={2}
+        onEditCountries={() => setPick(true)}
+      />
       <EkycModal p={p} open={ekyc} onClose={() => setEkyc(false)} lang={lang} />
       <CalendarModal p={p} open={cal} onClose={() => setCal(false)} />
       <PickerSheet p={p} open={pick} onClose={() => setPick(false)} />

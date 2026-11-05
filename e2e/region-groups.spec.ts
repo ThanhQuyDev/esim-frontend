@@ -237,13 +237,19 @@ test.describe("Region group page — packs as the coverage step (#004, #067)", (
 
     await options.filter({ hasText: "Ấn Độ" }).click();
     await expect(p20).toHaveAttribute("aria-checked", "true");
-    await expect(p13).toHaveAttribute("data-miss", "true");
+    // Only the packs covering the picked countries stay on the row (#074).
+    await expect(p13).toHaveCount(0);
+    await expect(page.locator(".rgd #covAll")).toContainText("+1 phạm vi");
     await expect(page.locator(".rgd .dp-tag")).toHaveText("Ấn Độ");
     await expect(page.locator(".rgd #destRes")).toContainText("Gói 20 nước phủ đủ Ấn Độ");
     await expect.poll(() => requested).toContain("esim-chau-a-20-quoc-gia");
 
     // Back on the smaller pack, the missing country is flagged with a way out.
-    await p13.click();
+    await page.locator(".rgd #covAll").click();
+    const missing = page.locator(".rgd #covList .cv-row", { hasText: "13 nước" });
+    await expect(missing).toContainText("Thiếu Ấn Độ");
+    await missing.click();
+    await expect(p13).toHaveAttribute("data-miss", "true");
     await expect(page.locator(".rgd #destRes")).toContainText("Gói 13 nước chưa có Ấn Độ");
     await page.locator(".rgd #destRes .res-go").click();
     await expect(p20).toHaveAttribute("aria-checked", "true");

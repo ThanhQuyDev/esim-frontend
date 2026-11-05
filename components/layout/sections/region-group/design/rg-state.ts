@@ -1,5 +1,6 @@
 "use client";
 
+import { entityNoticeHtml } from "@/lib/entity-notice";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Destination, Plan, PlansByDestinationResponse, Region } from "@/lib/api";
@@ -288,7 +289,9 @@ export function useRegionPurchase(
     lang,
     /** Set on a country page (vande #032); null on a region page. */
     country: country ?? null,
-    noticeHtml: noticeHtml ?? null,
+    // The chosen scope's own note; a scope with none keeps the page's, as the
+    // picture and icon keep another scope's (vande-0411 #074).
+    noticeHtml: (country ? null : entityNoticeHtml(member, lang)) ?? noticeHtml ?? null,
     /** The description from Điểm đến / Khu vực in the CMS (vande-0411 #067). */
     description: pageDescription(country ?? member, lang),
     /** China, for the country page's own notes (vande #032). */
