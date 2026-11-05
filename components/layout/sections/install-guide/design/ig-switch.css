@@ -35,3 +35,6 @@ html:has(.ig-page){scroll-padding-top:6.375rem}
 .igd .ring,.igm .ring{box-shadow:none}
 /* Flags are drawn as SVG now, not emoji (Windows shows "HK" for 🇭🇰). */
 .igd .dflag svg,.igm .dflag svg{display:block}
+/* About two thirds of the design's size: at full size they looked coarse (vande-0411 #075). */
+.igd .dflag{width:2.25rem;height:2.25rem}
+.igm .dflag{width:2rem;height:2rem}
