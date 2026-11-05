@@ -34,6 +34,7 @@ import {
   getTransactionLabel,
   formatExu,
   type WalletTransaction,
+  formatVnd,
 } from "@/lib/hooks";
 import { walletTranslations, type WalletDict } from "./translations";
 import Link from "next/link";
@@ -623,7 +624,13 @@ function ReferralTab({ t, lang }: { t: WalletDict; lang: string }) {
         <div className="p-6 space-y-6">
           {[
             { step: "1", title: t.howStep1, desc: t.howStep1Desc, icon: <Share2 className="w-5 h-5" /> },
-            { step: "2", title: t.howStep2, desc: t.howStep2Desc, icon: <ShoppingBag className="w-5 h-5" /> },
+            {
+              step: "2",
+              title: t.howStep2,
+              // What this customer's friend actually gets (vande-0411 #056).
+              desc: t.howStep2Desc.replace("{discount}", formatVnd(wallet?.refereeDiscountVnd ?? 10_000)),
+              icon: <ShoppingBag className="w-5 h-5" />,
+            },
             {
               step: "3",
               title: t.howStep3,

@@ -933,6 +933,7 @@ export interface TierBenefits {
   minimumSpendVnd: number;
   cashbackPercent: number;
   referralRewardVnd: number;
+  refereeDiscountVnd: number;
 }
 
 export interface WalletMeResponse {
@@ -947,6 +948,8 @@ export interface WalletMeResponse {
   tierSource: TierSource;
   cashbackPercent: number;
   referralRewardVnd: number;
+  /** Off the first order of a friend this customer refers (vande-0411 #056). */
+  refereeDiscountVnd: number;
   tierBenefits: TierBenefits;
   nextTier: MembershipTier | null;
   nextTierThresholdVnd: number | null;
@@ -2240,6 +2243,7 @@ export interface MembershipTierRung {
   minimumSpendVnd: number;
   cashbackPercent: number;
   referralRewardVnd: number;
+  refereeDiscountVnd: number;
 }
 
 /**

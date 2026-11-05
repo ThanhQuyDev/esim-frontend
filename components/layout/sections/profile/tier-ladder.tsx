@@ -165,6 +165,16 @@ export function TierLadder({
                   <Gift className="h-3.5 w-3.5" />
                   {formatExu(rung.referralRewardVnd, lang)}
                 </span>
+                {/* What a friend gets off their first order (vande-0411 #056). */}
+                <span
+                  className={`inline-flex items-center gap-1 rounded-lg px-2 py-1 ${
+                    reached ? "bg-blue-50 text-blue-700" : "bg-gray-50 text-gray-400"
+                  }`}
+                  data-testid="tier-referee-discount"
+                >
+                  {lang === "vi" ? "Bạn bè giảm" : "Friend gets"}{" "}
+                  {Number(rung.refereeDiscountVnd ?? 0).toLocaleString(lang === "vi" ? "vi-VN" : "en-US")}₫
+                </span>
               </div>
             </li>
           );

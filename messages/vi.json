@@ -305,7 +305,7 @@
   },
   "referFriend": {
     "title": "Giới thiệu bạn bè, nhận {reward} điểm eXU!",
-    "description": "Bạn bè được giảm 10.000đ cho đơn đầu tiên, còn bạn nhận {reward} điểm eXU theo hạng thành viên khi giới thiệu thành công.",
+    "description": "Bạn bè được giảm giá cho đơn đầu tiên theo hạng thành viên của bạn, còn bạn nhận {reward} điểm eXU theo hạng thành viên khi giới thiệu thành công.",
     "cta": "Tìm hiểu thêm",
     "imageAlt": "Một nhóm người vui mừng sau khi giới thiệu bạn bè đến esim.vn."
   },
@@ -1532,14 +1532,14 @@
     "hero": {
       "badge": "Quyền lợi theo hạng thành viên",
       "title": "Giới thiệu bạn bè, nhận thêm eXU",
-      "description": "Bạn bè được giảm 10.000đ cho đơn eSIM đầu tiên. Sau khi đơn được thanh toán thành công, bạn nhận thưởng eXU theo hạng thành viên hiện tại.",
+      "description": "Bạn bè được giảm giá cho đơn eSIM đầu tiên, mức giảm theo hạng thành viên của bạn. Sau khi đơn được thanh toán thành công, bạn nhận thưởng eXU theo hạng thành viên hiện tại.",
       "perks": [
         "Du khách: 10.000 điểm eXU mỗi lượt giới thiệu",
         "Du khách bạc: 12.000 điểm eXU mỗi lượt giới thiệu",
         "Du khách vàng: 15.000 điểm eXU mỗi lượt giới thiệu",
         "Du khách bạch kim: 20.000 điểm eXU mỗi lượt giới thiệu"
       ],
-      "termsPrefix": "Người được giới thiệu được giảm cố định 10.000đ cho đơn đầu tiên. ",
+      "termsPrefix": "Người được giới thiệu được giảm giá cho đơn đầu tiên, mức giảm theo hạng thành viên của người giới thiệu. ",
       "termsLink": "Xem điều khoản",
       "termsSuffix": ".",
       "termsHref": "/legal/referral-program-terms-and-conditions/",
@@ -1549,7 +1549,7 @@
     },
     "whyJoin": {
       "title": "Vì sao nên tham gia chương trình giới thiệu esim.vn?",
-      "paragraph1": "Bạn giúp bạn bè giữ kết nối khi đi nước ngoài, còn cả hai đều nhận được quyền lợi. Người bạn được giảm 10.000đ cho đơn đầu tiên và bạn nhận eXU để dùng cho những lần mua eSIM tiếp theo.",
+      "paragraph1": "Bạn giúp bạn bè giữ kết nối khi đi nước ngoài, còn cả hai đều nhận được quyền lợi. Người bạn được giảm giá cho đơn đầu tiên và bạn nhận eXU để dùng cho những lần mua eSIM tiếp theo.",
       "noteLabel": "Mức thưởng:",
       "noteBody": " Phần thưởng của người giới thiệu được xác định theo hạng thành viên tại thời điểm tạo đơn và được cộng sau khi đơn thanh toán thành công.",
       "imageAlt": "Điện thoại hiển thị ứng dụng eSIM esim.vn và các điểm đến được hỗ trợ, trong khi một chiếc máy bay bay trên bầu trời xanh."
@@ -1610,7 +1610,7 @@
         {
           "number": "3",
           "title": "Bạn bè được giảm, bạn nhận eXU theo hạng",
-          "description": "Người dùng mã giới thiệu của bạn được giảm 10.000đ cho đơn eSIM đầu tiên. Bạn nhận 10.000, 12.000, 15.000 hoặc 20.000 điểm eXU tùy theo hạng thành viên khi đơn được tạo.",
+          "description": "Người dùng mã giới thiệu của bạn được giảm giá cho đơn eSIM đầu tiên, mức giảm theo hạng thành viên của bạn. Bạn nhận 10.000, 12.000, 15.000 hoặc 20.000 điểm eXU tùy theo hạng thành viên khi đơn được tạo.",
           "termsLink": "Xem điều khoản",
           "termsHref": "/legal/referral-program-terms-and-conditions/",
           "imageAlt": "Màn hình ứng dụng esim.vn hiển thị số dư 100.000đ với nút \"Rút thưởng\" màu vàng.",
@@ -1638,7 +1638,7 @@
         },
         {
           "question": "Tôi có thể được giảm giá esim.vn khi giới thiệu bạn bè không?",
-          "answer": "Có! Mỗi lượt giới thiệu thành công cho bạn 10.000đ tín dụng esim.vn và tặng bạn của bạn 10.000đ giảm giá cho gói eSIM đầu tiên. Bạn có thể dùng tín dụng để giảm giá gói tiếp theo, hoặc tích lũy để có gói eSIM hoàn toàn miễn phí."
+          "answer": "Có! Mỗi lượt giới thiệu thành công cho bạn 10.000đ tín dụng esim.vn và tặng bạn của bạn một khoản giảm giá cho gói eSIM đầu tiên. Bạn có thể dùng tín dụng để giảm giá gói tiếp theo, hoặc tích lũy để có gói eSIM hoàn toàn miễn phí."
         },
         {
           "question": "Chương trình giới thiệu của esim.vn hoạt động thế nào?",
