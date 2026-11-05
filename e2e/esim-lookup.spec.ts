@@ -62,6 +62,18 @@ async function mockLookupEndpoint(page: Page, status: number, body: unknown) {
   });
 }
 
+/**
+ * Waits for hydration: on a dev server a click that comes earlier lands on a form
+ * with no handler yet, and the browser submits it the plain way.
+ */
+async function openForm(page: Page) {
+  await page.goto("/tra-cuu-esim", { waitUntil: "domcontentloaded" });
+  await page.waitForFunction(() => {
+    const button = document.querySelector('[data-testid="lookup-submit"]');
+    return !!button && Object.keys(button).some((key) => key.startsWith("__reactProps"));
+  });
+}
+
 test("shows the form and rejects a malformed ICCID without calling the API", async ({
   page,
 }) => {
@@ -71,7 +83,7 @@ test("shows the form and rejects a malformed ICCID without calling the API", asy
     return route.fulfill({ status: 200, body: "{}" });
   });
 
-  await page.goto("/tra-cuu-esim", { waitUntil: "domcontentloaded" });
+  await openForm(page);
   await page.getByTestId("lookup-iccid-input").fill("12345");
   await page.getByTestId("lookup-submit").click();
 
@@ -82,7 +94,7 @@ test("shows the form and rejects a malformed ICCID without calling the API", asy
 test("an unknown ICCID says so instead of failing silently", async ({ page }) => {
   await mockTokenEndpoint(page, 404, { message: "esimNotFound" });
 
-  await page.goto("/tra-cuu-esim", { waitUntil: "domcontentloaded" });
+  await openForm(page);
   await page.getByTestId("lookup-iccid-input").fill(ICCID);
   await page.getByTestId("lookup-submit").click();
 
@@ -95,7 +107,7 @@ test("a valid ICCID is swapped for a token — and never lands in the URL", asyn
   await mockTokenEndpoint(page, 200, { token: TOKEN });
   await mockLookupEndpoint(page, 200, lookup());
 
-  await page.goto("/tra-cuu-esim", { waitUntil: "domcontentloaded" });
+  await openForm(page);
   await page.getByTestId("lookup-iccid-input").fill(ICCID);
   await page.getByTestId("lookup-submit").click();
 
