@@ -1,3 +1,4 @@
+import { crossForCountry, crossForRegion } from "@/lib/cross-sell";
 import { notFound, permanentRedirect } from "next/navigation";
 import {
   getDestinationBySlug,
@@ -109,6 +110,13 @@ async function resolveRegionGroup(
  * covered countries (v3 #003). Groups are 2–4 packs and the lookups are cached
  * like the page's own, so this is a handful of fetches at build/revalidate time.
  */
+/** Every country, with its "from" price, for the cross-sell cards. */
+function allCountriesForCross(locale: Locale) {
+  return getDestinations({ limit: 500, lang: locale })
+    .then((res) => res.data)
+    .catch(() => []);
+}
+
 async function withCountryLists(
   members: Region[],
   locale: Locale,
@@ -307,6 +315,7 @@ export default async function UnifiedSlugPage({
         locale,
         entityType: "region",
       });
+      const groupMembers = await withCountryLists(group.members, locale);
       return (
         <main role="main">
           {/* Every pack of the group on one page, as in the final design
@@ -317,10 +326,11 @@ export default async function UnifiedSlugPage({
               design's own note bar, under the breadcrumb and in place of its
               sample copy (vande #051), as on the country pages. */}
           <RegionDesign
-            members={await withCountryLists(group.members, locale)}
+            members={groupMembers}
             label={group.label}
             lang={locale}
             noticeHtml={firstEntityNoticeHtml(group.members, locale)}
+            cross={crossForRegion(groupMembers[0], await allCountriesForCross(locale), locale)}
           />
           <div className="max-w-[1168px] mx-auto px-4 sm:px-0">
             <LazyEsimComparison dict={dict.whatIsEsimPage.comparison} />
@@ -428,6 +438,19 @@ export default async function UnifiedSlugPage({
             lang={locale}
             initialPlans={await getPlansByDestinationSlug(params.slug, locale)}
             noticeHtml={entityNoticeHtml(destination, locale)}
+            cross={crossForCountry(
+              destination,
+              regionSuggestions[0]
+                ? await getRegionBySlug(
+                    localizedSlug(regionSuggestions[0], locale) || regionSuggestions[0].slug,
+                    locale
+                  ).then((full) =>
+                    full ? { ...regionSuggestions[0], ...full, destinationCount: regionSuggestions[0].destinationCount } : regionSuggestions[0]
+                  )
+                : null,
+              await allCountriesForCross(locale),
+              locale
+            )}
           />
         ) : (
           <DestinationPlans
@@ -513,6 +536,9 @@ export default async function UnifiedSlugPage({
   // other packs.
   const variantGroup = await resolveRegionGroup(params.slug, locale);
 
+  const regionMembers = variantGroup
+    ? await withCountryLists(variantGroup.members, locale, region)
+    : [region];
   return (
     <main role="main">
       {/* The final region design (#067). Same-named packs are the coverage
@@ -522,11 +548,8 @@ export default async function UnifiedSlugPage({
           design's own note bar, under the breadcrumb and in place of its sample
           copy (vande #051), as on the country pages. */}
       <RegionDesign
-        members={
-          variantGroup
-            ? await withCountryLists(variantGroup.members, locale, region)
-            : [region]
-        }
+        members={regionMembers}
+        cross={crossForRegion(regionMembers[0], await allCountriesForCross(locale), locale)}
         label={variantGroup?.label ?? localizedName}
         lang={locale}
         initialSlug={params.slug}

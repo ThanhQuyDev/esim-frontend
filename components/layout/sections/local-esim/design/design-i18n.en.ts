@@ -284,6 +284,8 @@ export const DESIGN_EN: Record<string, string> = {
   "Xem các eSIM nội địa khác": "See other domestic eSIMs",
   "Xem các gói eSIM riêng cho": "See the eSIM plans for",
   "Xem danh sách đầy đủ trên esim.vn": "See the full list on esim.vn",
+  "{0} điểm đến · có {1}": "{0} destinations · includes {1}",
+  "Xem các gói eSIM": "See eSIM plans",
   "Xem eSIM cho các điểm đến khác": "See eSIMs for other destinations",
   "Xem hướng dẫn": "See the guide",
   "Xem hướng dẫn đăng ký chi tiết": "See the detailed registration guide",

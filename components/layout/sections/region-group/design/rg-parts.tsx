@@ -2,6 +2,8 @@
 
 
 
+import { useMoney } from "@/lib/money";
+import type { CrossItem } from "@/lib/cross-sell";
 import { tr } from "../../local-esim/design/design-i18n-core";
 import { useDesignLang, useT } from "../../local-esim/design/design-i18n";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
@@ -44,6 +46,52 @@ export function Flag({ code, url, w, h, cls = "flag" }: { code: string; url?: st
   // eslint-disable-next-line @next/next/no-img-element
   // Sized inline: the mobile hero stretches every <img> inside it to cover.
   return <img className={`${cls} rg-flag-img`} src={url} alt="" width={w} height={h} loading="lazy" decoding="async" style={{ position: "static", width: w, height: h }} />;
+}
+
+/** A flag or a map icon filling a round frame, whatever its own shape. */
+export function RoundImage({ code, url }: { code: string; url?: string | null }) {
+  const c = code.toLowerCase();
+  if (!url && SPRITE_FLAGS.has(c)) return <Ic name={`fl-${c}`} w={40} h={30} cls="flag" />;
+  if (!url) return null;
+  // eslint-disable-next-line @next/next/no-img-element
+  return (
+    <img
+      className="flag rg-flag-img"
+      src={url}
+      alt=""
+      loading="lazy"
+      decoding="async"
+      style={{ position: "static", width: "100%", height: "100%", objectFit: "cover" }}
+    />
+  );
+}
+
+/**
+ * The round mark before the page's name and in the bottom bar (vande-0411 #068):
+ * the country's flag, or the icon uploaded for the region. The design's globe only
+ * when there is none.
+ */
+export function PageMark({ p, frame = "pic-flag" }: { p: RegionPurchase; frame?: "pic-flag" | "dsb-flag" }) {
+  const url = p.country
+    ? p.country.flagUrl
+    : p.member?.iconUrl || p.members.find((m) => m.iconUrl)?.iconUrl;
+  const code = p.country?.countryCode ?? "";
+  if (url || (code && SPRITE_FLAGS.has(code.toLowerCase()))) {
+    return (
+      <span className={frame} aria-hidden="true" data-testid="page-mark">
+        <RoundImage code={code} url={url} />
+      </span>
+    );
+  }
+  return null;
+}
+
+/** Whether {@link PageMark} has something to show; if not, the design's globe. */
+export function hasMark(p: RegionPurchase): boolean {
+  if (p.country) {
+    return !!p.country.flagUrl || SPRITE_FLAGS.has((p.country.countryCode ?? "").toLowerCase());
+  }
+  return !!(p.member?.iconUrl || p.members.some((m) => m.iconUrl));
 }
 
 export function Pbi({ b }: { b: Badge | null }) {
@@ -1620,29 +1668,37 @@ export function EkycModal({ p, open, onClose, lang }: { p: RegionPurchase; open:
 
 /* ───────────── cross-sell ───────────── */
 
-/** Country pages of the region's best-known countries (`.cross-card`). */
-export function CrossCards({ p, lang, limit = 3 }: { p: RegionPurchase; lang: string; limit?: number }) {
+/**
+ * "Xem eSIM cho các điểm đến khác" as in the design (vande-0411 #068): a country
+ * with its price, a region with what it covers.
+ */
+export function CrossCards({ items }: { items: CrossItem[] }) {
   const tx = useT();
-  const list = [...(p.member?.destinations ?? [])]
-    .sort((a, b) => Number(b.isPopular) - Number(a.isPopular))
-    .slice(0, limit);
+  const money = useMoney();
   return (
     <>
-      {list.map((d) => {
-        const slug = localizedSlug(d, lang as "vi");
-        return (
-          <a key={d.id} href={lang === "vi" ? `/${slug}` : `/${lang}/${slug}`} className="cross-card">
-            <span className="cross-logo">
-              <Flag code={d.countryCode || ""} url={d.flagUrl} w={59} h={44.2} />
+      {items.map((item) => (
+        <a key={item.key} href={item.href} className="cross-card" data-testid="cross-card">
+          <span className="cross-logo">
+            {item.imageUrl || item.countryCode ? (
+              <RoundImage code={item.countryCode ?? ""} url={item.imageUrl} />
+            ) : (
+              <span className="cross-globe"><Ic name="ic-globe" w={22} /></span>
+            )}
+          </span>
+          <div className="cross-txt">
+            <h3 className="cross-title">{item.title}</h3>
+            <span className="cross-price">
+              {item.countryCount
+                ? tx("{0} điểm đến · có {1}", item.countryCount, item.includes ?? "")
+                : item.fromPrice
+                  ? tx("Từ {0}", money.format(item.fromPrice))
+                  : tx("Xem các gói eSIM")}
             </span>
-            <div className="cross-txt">
-              <h3 className="cross-title">eSIM {nameOf(d, lang)}</h3>
-              <span className="cross-price">{tx("Xem các gói eSIM riêng cho")}{" "}{nameOf(d, lang)}</span>
-            </div>
-            <Ic name="ic-chev-right" w={18} cls="ic cross-arrow" />
-          </a>
-        );
-      })}
+          </div>
+          <Ic name="ic-chev-right" w={18} cls="ic cross-arrow" />
+        </a>
+      ))}
     </>
   );
 }

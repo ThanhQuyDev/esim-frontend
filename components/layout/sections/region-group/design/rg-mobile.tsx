@@ -1,6 +1,9 @@
 "use client";
 
 
+import { esimName } from "@/lib/esim-name";
+import type { Locale } from "@/lib/i18n-config";
+import type { CrossItem } from "@/lib/cross-sell";
 import { useT } from "../../local-esim/design/design-i18n";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { getCloudinaryTransformedUrl } from "@/lib/image-utils";
@@ -28,6 +31,8 @@ import {
   Variants,
   planText,
   Flag,
+  PageMark,
+  hasMark,
 } from "./rg-parts";
 import { DEFAULT_DESTINATION_IMAGE } from "@/lib/destination-image";
 
@@ -37,6 +42,7 @@ interface Props {
   label: string;
   lang: string;
   breadcrumb: { home: string; destinations: string };
+  cross?: CrossItem[];
 }
 
 /**
@@ -44,7 +50,7 @@ interface Props {
  * (#067, test round 4). The design's own top bar is left out: the site header
  * is shared by every page.
  */
-export function RgMobile({ p, label, lang, breadcrumb }: Props) {
+export function RgMobile({ p, label, lang, breadcrumb, cross = [] }: Props) {
   const tx = useT();
   const plan = p.plan;
   const [ctr, setCtr] = useState(false);
@@ -121,7 +127,7 @@ export function RgMobile({ p, label, lang, breadcrumb }: Props) {
               <a href={breadcrumb.destinations}>{lang === "vi" ? "Điểm đến" : "Destinations"}</a>
             </li>
             <li>
-              <span aria-current="page">eSIM {label}</span>
+              <span aria-current="page">{esimName(label, lang as Locale)}</span>
             </li>
           </ol>
         </nav>{" "}
@@ -162,14 +168,13 @@ export function RgMobile({ p, label, lang, breadcrumb }: Props) {
             </div>{" "}
             <div className="m-hero-tag">{tx("eSIM du lịch hàng đầu tại")}{" "}{label}</div>{" "}
             <div className="m-hero-t">
-              {p.country ? (
-                <Flag code={p.country.countryCode || ""} url={p.country.flagUrl ?? undefined} w={28} h={21} />
-              ) : (
+              <PageMark p={p} />
+              {!hasMark(p) && (
               <span className="pic-logo" aria-hidden="true">
                 <Ic name="ic-globe" w={16} />
               </span>
               )}
-              <h1>eSIM {label}</h1>
+              <h1>{esimName(label, lang as Locale)}</h1>
               {!p.country && (
               <button className="pill pill--sm pill--cnt pill--link pill--solid" type="button" id="vBadge" aria-haspopup="dialog" onClick={() => setCtr(true)}>
                 {n}{" "}{tx("quốc gia")}</button>
@@ -254,7 +259,7 @@ export function RgMobile({ p, label, lang, breadcrumb }: Props) {
             <div className="cov">
               <div className="cov-hd cov-hd--2">
                 <span className="cov-t">
-                  <b id="covSub">eSIM {label}</b>
+                  <b id="covSub">{esimName(label, lang as Locale)}</b>
                 </span>
                 <button className="fs-link" type="button" aria-haspopup="dialog" onClick={() => setCtr(true)}>{tx("Xem")}{" "}<span id="covN">{n}{" "}{tx("nước")}</span>
                   <Ic name="ic-chev-right" w={13} />
@@ -369,12 +374,12 @@ export function RgMobile({ p, label, lang, breadcrumb }: Props) {
             </section>
           </AccItem>
         </section>{" "}
-        {(p.member?.destinations?.length ?? 0) > 1 && (
+        {cross.length > 0 && (
           <section className="m-cross" aria-labelledby="crossHd">
             <h2 className="cross-hd" id="crossHd">{tx("Xem eSIM cho các điểm đến khác")}</h2>{" "}
             <p className="cross-lead">{tx("Mỗi điểm đến có nhà mạng, vùng phủ sóng và bảng giá riêng — chọn gói phù hợp nhất với hành trình và nhu cầu data của bạn.")}</p>{" "}
             <div className="m-cross-list">
-              <CrossCards p={p} lang={lang} />
+              <CrossCards items={cross} />
             </div>
           </section>
         )}

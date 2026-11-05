@@ -30,6 +30,8 @@ export interface Destination {
   parentId?: number;
   flagUrl?: string;
   avatarUrl?: string;
+  /** The cheapest plan, on list responses. */
+  fromPrice?: number | null;
   keySearch?: string;
   isPopular: boolean;
   isActive: boolean;

@@ -1,3 +1,5 @@
+import type { Locale } from "./i18n-config";
+import { esimName } from "./esim-name";
 import { routing } from "@/i18n/routing";
 import {
   getBlogCategories,
@@ -250,7 +252,7 @@ export async function resolveBreadcrumbTrail(
           ...crumb(dict, "/destinations", lang),
           label: lang === "vi" ? "Điểm đến" : "Destinations",
         },
-        { label: /esim/i.test(name) ? name : `eSIM ${name}` },
+        { label: esimName(name, lang as Locale) },
       ];
     }
   }
