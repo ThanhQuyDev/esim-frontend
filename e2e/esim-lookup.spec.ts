@@ -140,6 +140,38 @@ test("a provider without a usage API says so rather than drawing an empty bar", 
   await expect(page.getByTestId("lookup-usage-unavailable")).toBeVisible();
 });
 
+test("a refunded eSIM says so and shows no usage (vande-0411 #082)", async ({ page }) => {
+  await mockLookupEndpoint(page, 200, lookup({ refunded: true, status: "REFUNDED" }));
+
+  await page.goto(`/tra-cuu-esim?token=${TOKEN}`, { waitUntil: "domcontentloaded" });
+
+  await expect(page.getByTestId("lookup-status")).toHaveText("Đã hoàn tiền");
+  await expect(page.getByTestId("lookup-refunded")).toBeVisible();
+  await expect(page.getByTestId("lookup-result")).not.toContainText("GB còn lại");
+});
+
+test("shows every detail of the eSIM (vande-0411 #082)", async ({ page }) => {
+  await mockLookupEndpoint(
+    page,
+    200,
+    lookup({
+      iccid: "8900000182754673782",
+      orderNumber: "ORD-1",
+      destinationVi: "Anh",
+      operatorName: "EE,3",
+      networkSpeed: "5G,4G",
+      apn: "globaldata",
+    }),
+  );
+
+  await page.goto(`/tra-cuu-esim?token=${TOKEN}`, { waitUntil: "domcontentloaded" });
+
+  const details = page.getByTestId("lookup-details");
+  for (const text of ["8900000182754673782", "ORD-1", "Anh", "EE,3", "5G,4G", "globaldata"]) {
+    await expect(details).toContainText(text);
+  }
+});
+
 test("a stale token falls back to the form with an explanation", async ({ page }) => {
   await mockLookupEndpoint(page, 404, { message: "esimNotFound" });
 
