@@ -6,7 +6,6 @@ import { tr } from "../../local-esim/design/design-i18n-core";
 import { useDesignLang, useT } from "../../local-esim/design/design-i18n";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { Destination, Plan } from "@/lib/api";
-import { worksWithTiktokAndChatGpt } from "@/lib/plan-tiktok";
 import { formatActivationDate } from "@/lib/plan-activation";
 import { dailyResetText } from "@/lib/plan-daily-reset";
 import { validityStartText } from "@/lib/plan-validity-start";
@@ -26,6 +25,7 @@ import {
   type Badge,
   type Opt,
   type Tier,
+  appFilterCount,
 } from "./rg-model";
 import { countOf, type RegionPurchase } from "./rg-state";
 
@@ -615,12 +615,8 @@ export function AppFilter({ p, mobile }: { p: RegionPurchase; mobile?: boolean }
     was.current = hint;
   }, [hint]);
   if (!p.showFilter) return null;
-  const tabPlans =
-    p.tab === "combo"
-      ? (p.all.smsCallEsim ?? [])
-      : [...p.all.dataPlans, ...p.all.slowUnlimited, ...p.all.fastUnlimited, ...p.all.dailyUnlimited];
-  const ok = tabPlans.filter(worksWithTiktokAndChatGpt).length;
-  const of = <b>{`${ok}/${tabPlans.length} eSIM`}</b>;
+  const count = appFilterCount(p.all, p.tripDays, p.tab);
+  const of = <b data-testid="app-filter-count">{`${count.ok}/${count.of} eSIM`}</b>;
   return (
     <button
       className={`af${hint ? " is-hint" : ""}${ping ? " is-ping" : ""}`}

@@ -7,6 +7,7 @@ import {
   findBestPlan,
 } from "../../destination/types";
 import { badgeOf } from "../../local-esim/design/nd-model";
+import { filterTiktokPlans } from "@/lib/plan-tiktok";
 
 /**
  * The plan lineup of a region page, shaped like the design file
@@ -230,6 +231,37 @@ export function tripCombo(opts: Opt[], days: number): Opt[] {
     if (!cur || Number(p.vndPrice) < Number(cur.plans[0].vndPrice)) best.set(id, o);
   }
   return Array.from(best.values());
+}
+
+/** How many chips a set of plans gives each tab for a trip of `days` days. */
+export function lineupCounts(
+  plans: PlansByDestinationResponse,
+  days: number
+): { data: number; combo: number } {
+  return {
+    data:
+      tripTiers(buildTiers(plans.dataPlans), days).length +
+      tripOpts(buildDaily(plans.slowUnlimited), days).length +
+      tripOpts(buildUnlimited(plans.fastUnlimited, plans.dailyUnlimited), days).length,
+    combo: tripCombo(buildCombo(plans.smsCallEsim ?? []), days).length,
+  };
+}
+
+/**
+ * The filter's "20/29 eSIM" (vande-0411 #065): the chips the visitor has for this
+ * trip, and how many remain with the filter on. Counting the plans in the API's
+ * lists instead read 3/220 for China: most capable plans are held back in
+ * `tiktokHiddenByPrice` as the dearer twin of a cheaper plan, and only join the
+ * lineup when the filter is on.
+ */
+export function appFilterCount(
+  plans: PlansByDestinationResponse,
+  days: number,
+  tab: "data" | "combo"
+): { ok: number; of: number } {
+  const ok = lineupCounts(filterTiktokPlans(plans), days)[tab];
+  // Never "5/4": a capable plan can be a chip the unfiltered page does not have.
+  return { ok, of: Math.max(ok, lineupCounts(plans, days)[tab]) };
 }
 
 /** Price of one eSIM of `plan` for `days` days, and its pre-discount price. */
