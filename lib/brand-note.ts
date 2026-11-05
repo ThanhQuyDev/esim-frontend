@@ -42,3 +42,11 @@ export function brandNotes(
   const single = brandNote(manufacturer, iphoneFallback);
   return single ? [single] : [];
 }
+
+/** A note's lines: each line break the admin typed is one bullet (vande-0411 #077). */
+export function noteLines(text: string): string[] {
+  return text
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+}

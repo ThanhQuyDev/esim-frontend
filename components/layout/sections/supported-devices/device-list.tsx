@@ -15,7 +15,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { useDebounce } from "@/lib/use-debounce";
-import { brandNotes } from "@/lib/brand-note";
+import { brandNotes, noteLines } from "@/lib/brand-note";
 
 interface TabDict {
   label: string;
@@ -536,13 +536,24 @@ export function DeviceList({ initialData, dict, lang }: DeviceListProps) {
                                                   line breaks kept (vande #042). */}
                                               {brandNotes(manufacturer, dict.infoNote).map((text, i) => (
                                                 <div key={i} className="mt-3">
+                                                  {/* Light grey and a size up: small type on
+                                                      white was hard on the eyes; the icon
+                                                      sits at the box's middle (vande-0411 #077). */}
                                                   <div
                                                     data-testid="notification-neutral"
-                                                    className="flex items-start w-full p-4 rounded-sm border border-gray-200"
+                                                    className="flex items-center w-full p-4 rounded-[10px] bg-[#f3f4f6]"
                                                   >
-                                                    <Info className="mt-0.5 w-4 h-4 text-primary shrink-0" />
-                                                    <div className="flex flex-col ml-2 text-primary">
-                                                      <span className="body-xs-medium whitespace-pre-line">{text}</span>
+                                                    <Info className="w-4 h-4 text-primary shrink-0" />
+                                                    <div className="min-w-0 ml-2 text-primary text-[0.8125rem] leading-5 font-medium">
+                                                      {noteLines(text).length > 1 ? (
+                                                        <ul className="list-disc pl-4 space-y-1" data-testid="note-lines">
+                                                          {noteLines(text).map((line, n) => (
+                                                            <li key={n}>{line}</li>
+                                                          ))}
+                                                        </ul>
+                                                      ) : (
+                                                        <span>{text}</span>
+                                                      )}
                                                     </div>
                                                   </div>
                                                 </div>

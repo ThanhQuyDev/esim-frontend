@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { brandNote, brandNotes } from "../lib/brand-note";
+import { brandNote, brandNotes, noteLines } from "../lib/brand-note";
 
 /**
  * #079 — the extra note under a brand on the supported-devices page.
@@ -55,6 +55,11 @@ test.describe("brand note", () => {
     expect(brandNote({ manufacturer: "iPhone" }, undefined)).toBeNull();
     expect(brandNote({ manufacturer: "iPhone" }, "  ")).toBeNull();
   });
+});
+
+test("a line break the admin typed becomes one bullet (vande-0411 #077)", () => {
+  expect(noteLines("Một\r\n\n  Hai  \n")).toEqual(["Một", "Hai"]);
+  expect(noteLines("Chỉ một dòng")).toEqual(["Chỉ một dòng"]);
 });
 
 /** vande #042 — several notes per brand, one box each. */
