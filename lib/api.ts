@@ -216,6 +216,10 @@ export interface Plan {
   call?: number | null;
   type: string;
   topUp: boolean;
+  /** Add-on: more data on the same validity (vande-0411 #015). */
+  isAddOn?: boolean;
+  /** Topup / Addon / none, as the API reads it (vande-0411 #015). */
+  purchaseKind?: "topup" | "addon" | "none" | null;
   speed?: string;
   operatorName?: string;
   fupSpeed?: string;

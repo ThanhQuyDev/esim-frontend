@@ -233,6 +233,14 @@ export function tripCombo(opts: Opt[], days: number): Opt[] {
   return Array.from(best.values());
 }
 
+/** Whether more data can be bought on this plan, as a top-up or an add-on. */
+export function canBuyMoreData(
+  plan: Pick<Plan, "topUp" | "isAddOn" | "purchaseKind">
+): boolean {
+  if (plan.purchaseKind) return plan.purchaseKind !== "none";
+  return !!plan.topUp || !!plan.isAddOn;
+}
+
 /** How many chips a set of plans gives each tab for a trip of `days` days. */
 export function lineupCounts(
   plans: PlansByDestinationResponse,

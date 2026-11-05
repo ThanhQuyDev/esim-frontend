@@ -26,6 +26,7 @@ import {
   type Opt,
   type Tier,
   appFilterCount,
+  canBuyMoreData,
 } from "./rg-model";
 import { countOf, type RegionPurchase } from "./rg-state";
 
@@ -707,7 +708,7 @@ const TIPS = {
 
 /**
  * What the chosen plan gives (vande #089, design `#planSum` + `#planNote`):
- * "Gói đang chọn | Tổng 1 GB tốc độ cao, dùng 7 ngày. Hết data: nạp thêm.",
+ * "Gói đang chọn | Tổng 1 GB tốc độ cao, dùng 7 ngày. Hết data: có thể nạp thêm.",
  * then whether TikTok and ChatGPT work.
  */
 export function PlanNote({ p, mobile }: { p: RegionPurchase; mobile?: boolean }) {
@@ -741,7 +742,7 @@ export function PlanNote({ p, mobile }: { p: RegionPurchase; mobile?: boolean })
     );
   } else {
     text = (
-      <>{tx("Tổng")}{" "}{b(p.tier?.gb ?? gbLabel(Number(p.plan.dataMb)))}{" "}{tx("tốc độ cao, dùng")}{" "}{b(tx("{0} ngày", p.plan.durationDays))}. {tx("Hết data: nạp thêm.")}</>
+      <>{tx("Tổng")}{" "}{b(p.tier?.gb ?? gbLabel(Number(p.plan.dataMb)))}{" "}{tx("tốc độ cao, dùng")}{" "}{b(tx("{0} ngày", p.plan.durationDays))}. {canBuyMoreData(p.plan) ? tx("Hết data: có thể nạp thêm.") : tx("Hết data: không thể nạp thêm.")}</>
     );
   }
   const apps = p.apps;
@@ -1321,7 +1322,7 @@ export function FeatureRows({ p, onEkyc, onCountries }: { p: RegionPurchase; onE
       </div>{" "}
       <div className="sr">
         <span className="sl">{tx("Nạp thêm dữ liệu (Topup)")}</span>
-        {plan?.topUp === false ? no(tx("Không")) : yes(tx("Có"))}
+        {plan && !canBuyMoreData(plan) ? no(tx("Không")) : yes(tx("Có"))}
       </div>{" "}
       <div className="sr">
         <span className="sl">{tx("Xác thực danh tính")}</span>
