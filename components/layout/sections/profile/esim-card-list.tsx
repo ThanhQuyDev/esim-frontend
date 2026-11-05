@@ -21,7 +21,8 @@ import {
 } from "lucide-react";
 import type { EsimDataUsage, MyEsim } from "@/lib/hooks";
 import { useEsimDataUsage, useTopupPackages } from "@/lib/hooks";
-import { CurrentDayNote, DataUsageBar, statusLabel, USAGE_STATUS_COLOR } from "./usage-bar";
+import { clockDate } from "@/lib/clock-date";
+import { CurrentDayNote, DataUsageBar, RemainingTile, statusLabel, USAGE_STATUS_COLOR, VoiceSmsChips } from "./usage-bar";
 import { esimDayCycle } from "@/lib/plan-daily-reset";
 import type { ProfileDict } from "./translations";
 import { QRCodeSVG } from "qrcode.react";
@@ -104,29 +105,6 @@ function getStatusLabel(status: string, t: ProfileDict) {
     pending: t.pending,
   };
   return map[status] || status;
-}
-
-function formatDate(dateStr: string | null, lang: string) {
-  if (!dateStr) return "—";
-  try {
-    return new Date(dateStr).toLocaleDateString(lang === "vi" ? "vi-VN" : "en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  } catch {
-    return "—";
-  }
-}
-
-/** "14:05 - 02/11/2026" (vande-0411 #046). */
-function formatDateTime(dateStr: string | null | undefined): string {
-  if (!dateStr) return "—";
-  const date = new Date(dateStr);
-  if (Number.isNaN(date.getTime())) return "—";
-  const zone = { timeZone: "Asia/Ho_Chi_Minh" };
-  const time = date.toLocaleTimeString("en-GB", { ...zone, hour: "2-digit", minute: "2-digit" });
-  return `${time} - ${date.toLocaleDateString("en-GB", zone)}`;
 }
 
 function CopyButton({ text, t }: { text: string; t: ProfileDict }) {
@@ -232,6 +210,7 @@ export function DataUsageSection({ esimId, lang }: { esimId: number; lang: strin
     durationDays: usage.durationDays,
     policy: usage.dailyResetPolicy,
     utcOffset: usage.dailyResetUtcOffset,
+    planType: usage.planType,
   });
   const totalDays = cycle?.totalDays ?? null;
   const daysUsed = cycle?.daysUsed ?? null;
@@ -316,30 +295,23 @@ export function DataUsageSection({ esimId, lang }: { esimId: number; lang: strin
 
       {/* Summary cards */}
       <div className="grid grid-cols-2 gap-2">
-        <div className="bg-blue-50 rounded-lg p-3 text-center">
-          <div className="flex items-center justify-center gap-1 mb-1">
-            <Wifi className="w-3.5 h-3.5 text-blue-500" />
-          </div>
-          <p className="text-lg font-medium text-blue-700">
-            {usage.isUnlimited ? "∞" : remainingGb === null ? "—" : remainingGb.toFixed(1)}
-          </p>
-          <p className="text-sm text-blue-500" data-testid="remaining-card">
-            {usage.isUnlimited
+        <RemainingTile
+          tone="blue"
+          icon={<Wifi className="w-3.5 h-3.5 text-blue-500" />}
+          value={usage.isUnlimited ? "∞" : remainingGb === null ? "—" : remainingGb.toFixed(1)}
+          label={
+            usage.isUnlimited
               ? lang === "vi" ? "Không giới hạn" : "Unlimited"
-              : `GB ${lang === "vi" ? "còn lại" : "remaining"}`}
-          </p>
-        </div>
-        <div className="bg-emerald-50 rounded-lg p-3 text-center">
-          <div className="flex items-center justify-center gap-1 mb-1">
-            <Calendar className="w-3.5 h-3.5 text-emerald-500" />
-          </div>
-          <p className="text-lg font-medium text-emerald-700">
-            {daysRemaining !== null ? daysRemaining : "—"}
-          </p>
-          <p className="text-sm text-emerald-500">
-            {lang === "vi" ? "ngày còn lại" : "days left"}
-          </p>
-        </div>
+              : `GB ${lang === "vi" ? "còn lại" : "remaining"}`
+          }
+          labelTestId="remaining-card"
+        />
+        <RemainingTile
+          tone="emerald"
+          icon={<Calendar className="w-3.5 h-3.5 text-emerald-500" />}
+          value={daysRemaining !== null ? daysRemaining : "—"}
+          label={lang === "vi" ? "ngày còn lại" : "days left"}
+        />
       </div>
 
       {/* Minutes / SMS left, where the provider reports them (#025). */}
@@ -369,10 +341,7 @@ export function DataUsageSection({ esimId, lang }: { esimId: number; lang: strin
       {/* Expiry info */}
       {usage.expiredAt && (
         <p className="text-sm text-gray-400 text-center">
-          {lang === "vi" ? "Hết hạn:" : "Expires:"}{" "}
-          {new Date(usage.expiredAt).toLocaleDateString(lang === "vi" ? "vi-VN" : "en-US", {
-            year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
-          })}
+          {lang === "vi" ? "Hết hạn:" : "Expires:"} {clockDate(usage.expiredAt)}
         </p>
       )}
 
@@ -596,9 +565,9 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
             {planSummary(planWithTopups(esim.plan, esim), lang)}
           </p>
           <p className="text-sm text-gray-500">
-            {lang === "vi" ? "Tạo ngày" : "Created"}: {formatDate(esim.createdAt, lang)}
+            {lang === "vi" ? "Tạo ngày" : "Created"}: {clockDate(esim.createdAt)}
             {esim.expiresAt && esim.provider !== 'viettel' && (
-              <> · {lang === "vi" ? "Hết hạn" : "Expires"}: {formatDate(esim.expiresAt, lang)}</>
+              <> · {lang === "vi" ? "Hết hạn" : "Expires"}: {clockDate(esim.expiresAt)}</>
             )}
           </p>
         </div>
@@ -790,7 +759,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                                           : null,
                                         minutes ? (lang === "vi" ? `${minutes} phút gọi` : `${minutes} min`) : null,
                                         sms ? `${sms} SMS` : null,
-                                        formatDate(topup.createdAt, lang),
+                                        clockDate(topup.createdAt),
                                       ]
                                         .filter(Boolean)
                                         .join(" · ")}
@@ -809,7 +778,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                                 {esim.lastTopupAt && (
                                   <p className="text-sm text-gray-500 mt-0.5">
                                     {lang === "vi" ? "Lần cuối" : "Last"}:{" "}
-                                    {formatDate(esim.lastTopupAt, lang)}
+                                    {clockDate(esim.lastTopupAt)}
                                   </p>
                                 )}
                               </>
@@ -825,20 +794,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                           <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">
                             {lang === "vi" ? "Phút gọi & SMS" : "Calls & SMS"}
                           </p>
-                          <div className="bg-gray-50 rounded-lg px-3 py-2">
-                            <div className="flex flex-wrap gap-1">
-                              {callMinutes > 0 && (
-                                <span className="inline-flex items-center px-2 py-0.5 text-sm font-medium rounded-full bg-sky-50 text-sky-700">
-                                  {callMinutes} {lang === "vi" ? "phút gọi" : "call min"}
-                                </span>
-                              )}
-                              {smsCount > 0 && (
-                                <span className="inline-flex items-center px-2 py-0.5 text-sm font-medium rounded-full bg-violet-50 text-violet-700">
-                                  {smsCount} SMS
-                                </span>
-                              )}
-                            </div>
-                          </div>
+                          <VoiceSmsChips calls={callMinutes} sms={smsCount} lang={lang} />
                         </div>
                       )}
                       <div>
@@ -850,7 +806,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                         <div className="bg-gray-50 rounded-lg px-3 py-2">
                           {isRunning ? (
                             <p className="text-base sm:text-sm text-gray-900" data-testid="esim-activated-at">
-                              {formatDateTime(esim.activatedAt)}
+                              {clockDate(esim.activatedAt)}
                             </p>
                           ) : activationDeadline ? (
                             <p className={`text-base sm:text-sm ${activationDaysLeft !== null && activationDaysLeft <= 30 ? "text-amber-600 font-medium" : "text-gray-900"}`}>
@@ -858,7 +814,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                                 ? `${activationDaysLeft} ${lang === "vi" ? "ngày còn lại" : "days left"}`
                                 : lang === "vi" ? "Đã hết hạn" : "Expired"}
                               <span className="block text-sm text-gray-400 mt-0.5">
-                                {formatDate(activationDeadline.toISOString(), lang)}
+                                {clockDate(activationDeadline.toISOString())}
                               </span>
                             </p>
                           ) : (
@@ -887,7 +843,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                       </p>
                       <div className="bg-gray-50 rounded-lg px-3 py-2">
                         <p className="text-base sm:text-sm text-gray-900" data-testid="esim-expires-at">
-                          {formatDateTime(esim.expiresAt)}
+                          {clockDate(esim.expiresAt)}
                         </p>
                       </div>
                     </div>

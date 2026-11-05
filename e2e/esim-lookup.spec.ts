@@ -143,7 +143,8 @@ test("minutes and SMS allowances are shown when the plan has them", async ({ pag
   await page.goto(`/tra-cuu-esim?token=${TOKEN}`, { waitUntil: "domcontentloaded" });
 
   // One line in the format the customer asked for (vande #037).
-  await expect(page.getByTestId("lookup-voice-sms-line")).toHaveText("Gọi: 30 Phút - Nhắn tin: 100 SMS");
+  await expect(page.getByTestId("lookup-voice-sms-line")).toContainText("30 phút gọi");
+  await expect(page.getByTestId("lookup-voice-sms-line")).toContainText("100 SMS");
 });
 
 test("minutes and SMS left are drawn as bars, with a refresh button and the delay note (#015)", async ({ page }) => {

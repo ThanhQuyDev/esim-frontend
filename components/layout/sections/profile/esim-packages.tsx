@@ -1,5 +1,6 @@
 "use client";
 
+import { clockDate } from "@/lib/clock-date";
 import { formatVnd, type EsimPackage } from "@/lib/hooks";
 
 /**
@@ -57,18 +58,6 @@ const STATUS_STYLE: Record<EsimPackage["status"], string> = {
   processing: "bg-amber-100 text-amber-700",
 };
 
-function dateTime(value: string | null, lang: "vi" | "en"): string {
-  if (!value) return "—";
-  return new Date(value).toLocaleString(lang === "vi" ? "vi-VN" : "en-GB", {
-    timeZone: "Asia/Ho_Chi_Minh",
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
-
 function PackageRow({ pkg, lang }: { pkg: EsimPackage; lang: "vi" | "en" }) {
   const t = TEXT[lang];
   const offer = [
@@ -80,9 +69,9 @@ function PackageRow({ pkg, lang }: { pkg: EsimPackage; lang: "vi" | "en" }) {
     .filter(Boolean)
     .join(" · ");
   const rows: [string, string][] = [
-    [t.created, dateTime(pkg.createdAt, lang)],
-    [t.activated, dateTime(pkg.activatedAt, lang)],
-    [t.expires, dateTime(pkg.expiresAt, lang)],
+    [t.created, clockDate(pkg.createdAt)],
+    [t.activated, clockDate(pkg.activatedAt)],
+    [t.expires, clockDate(pkg.expiresAt)],
   ];
   if (pkg.vndPrice !== null) rows.push([t.price, formatVnd(pkg.vndPrice)]);
   return (

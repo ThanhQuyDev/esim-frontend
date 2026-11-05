@@ -297,6 +297,33 @@ test.describe("Days counted by the plan's own rule (vande #075)", () => {
     await expect(note).toContainText("23:59 (UTC+8)");
   });
 
+  test("a total-data plan the supplier ends after N x 24 hours counts its days that way (#076)", async ({ page }) => {
+    const hour = 3_600_000;
+    const activated = Date.now() - 50 * hour;
+    const expired = activated + 5 * 24 * hour;
+    await mockUsage(
+      page,
+      usage({
+        activatedAt: new Date(activated).toISOString(),
+        durationDays: 5,
+        expiredAt: new Date(expired).toISOString(),
+        dailyResetPolicy: "calendar_day",
+        dailyResetUtcOffset: 8,
+        planType: "fixed",
+      }),
+    );
+    await open(page);
+
+    const note = page.getByTestId("current-day");
+    await expect(note).toContainText("Đang dùng ngày thứ 3/5");
+    // Day three ends 72 hours in: the same minute of the day as the expiry.
+    const end = new Date(activated + 72 * hour);
+    const pad = (n: number) => String(n).padStart(2, "0");
+    await expect(note).toContainText(`${pad(end.getHours())}:${pad(end.getMinutes())}:`);
+    await expect(note).toContainText("chu kỳ 24 giờ");
+    await expect(note).not.toContainText("23:59");
+  });
+
   test("a total-data plan says when the day ends, not that data resets", async ({ page }) => {
     await mockUsage(
       page,

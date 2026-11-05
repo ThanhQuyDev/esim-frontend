@@ -1,6 +1,8 @@
 "use client";
 
-import { Clock, Infinity } from "lucide-react";
+import type { ReactNode } from "react";
+import { Clock, Infinity, MessageSquare, Phone } from "lucide-react";
+import { clockDate } from "@/lib/clock-date";
 import { dayRuleText, hasDailyAllowance, type DayCycle } from "@/lib/plan-daily-reset";
 
 /**
@@ -123,15 +125,15 @@ export function CurrentDayNote({
   const vi = lang !== "en";
   const daily = hasDailyAllowance(planType ? { type: planType } : null);
   const end = cycle.dayEndsAt;
-  const pad = (n: number) => String(n).padStart(2, "0");
-  // "03:16 26/10" in the device's own time.
-  const at = `${pad(end.getHours())}:${pad(end.getMinutes())} ${pad(end.getDate())}/${pad(end.getMonth() + 1)}`;
+  const at = clockDate(end);
   const left = spanText(end.getTime() - Date.now(), vi);
-  const rule = dayRuleText(policy, utcOffset, lang);
+  // The way this eSIM's days really run, which the sentence above follows.
+  const rule = dayRuleText(cycle.policy ?? policy, utcOffset, lang);
   const lastDay = cycle.dayIndex >= cycle.totalDays;
   return (
     <div
-      className="rounded-lg border border-sky-100 bg-sky-50 px-3 py-2.5 text-sm text-sky-900 space-y-1"
+      // Squared off: it runs to several lines, and rounded-lg is 40px on this site.
+      className="rounded-[10px] border border-sky-100 bg-sky-50 px-3 py-2.5 text-sm text-sky-900 space-y-1"
       data-testid="current-day"
     >
       <p className="flex items-start gap-1.5 font-medium">
@@ -154,6 +156,68 @@ export function CurrentDayNote({
         </span>
       </p>
       {rule && <p className="text-xs text-sky-800/80">{rule}</p>}
+    </div>
+  );
+}
+
+/** GB or days left: the icon on the value's line, squared off (vande-0411 #076). */
+export function RemainingTile({
+  icon,
+  value,
+  label,
+  tone,
+  labelTestId,
+}: {
+  icon: ReactNode;
+  value: ReactNode;
+  label: ReactNode;
+  tone: "blue" | "emerald";
+  labelTestId?: string;
+}) {
+  const colors =
+    tone === "blue"
+      ? { box: "bg-blue-50", value: "text-blue-700", label: "text-blue-500" }
+      : { box: "bg-emerald-50", value: "text-emerald-700", label: "text-emerald-500" };
+  return (
+    <div className={`rounded-[10px] p-3 text-center ${colors.box}`}>
+      <p className={`flex items-center justify-center gap-1.5 text-lg font-medium ${colors.value}`}>
+        {icon}
+        {value}
+      </p>
+      <p className={`text-sm ${colors.label}`} data-testid={labelTestId}>
+        {label}
+      </p>
+    </div>
+  );
+}
+
+/** Minutes and SMS as on the order-success page (vande-0411 #076). */
+export function VoiceSmsChips({
+  calls,
+  sms,
+  lang,
+  testId,
+}: {
+  calls?: number | null;
+  sms?: number | null;
+  lang: string;
+  testId?: string;
+}) {
+  if (!calls && !sms) return null;
+  return (
+    <div className="flex flex-wrap gap-2" data-testid={testId}>
+      {!!calls && (
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-sky-50 px-3 py-1.5 text-sm font-medium text-sky-700">
+          <Phone className="h-3.5 w-3.5" />
+          {lang === "vi" ? `${calls} phút gọi` : `${calls} min calls`}
+        </span>
+      )}
+      {!!sms && (
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1.5 text-sm font-medium text-emerald-700">
+          <MessageSquare className="h-3.5 w-3.5" />
+          {sms} SMS
+        </span>
+      )}
     </div>
   );
 }

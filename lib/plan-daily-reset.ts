@@ -47,6 +47,7 @@ export function dailyResetText(
 
 const HOUR_MS = 60 * 60 * 1000;
 const DAY_MS = 24 * HOUR_MS;
+const MINUTE_MS = 60 * 1000;
 
 /** Whole calendar days since the epoch, in a timezone `offsetHours` from UTC. */
 const calendarDay = (at: number, offsetHours: number) =>
@@ -65,6 +66,8 @@ export type DayCycle = {
   finished: boolean;
   /** Whether the plan says how its days run; otherwise the old estimate. */
   ruleKnown: boolean;
+  /** How this eSIM's days really run, which may differ from the plan's rule. */
+  policy: string | null;
 };
 
 /**
@@ -80,6 +83,8 @@ export function esimDayCycle(input: {
   durationDays: number | null | undefined;
   policy: string | null | undefined;
   utcOffset: number | null | undefined;
+  /** The plan's type: a daily allowance really does reset on the plan's rule. */
+  planType?: string | null;
   now?: number;
 }): DayCycle | null {
   const now = input.now ?? Date.now();
@@ -96,8 +101,20 @@ export function esimDayCycle(input: {
         : null;
   if (!totalDays) return null;
 
-  const rolling = input.policy === "rolling_24h";
-  const calendar = input.policy === "calendar_day";
+  // A plan's calendar-day rule is when its daily data resets. A plan with one
+  // pool of data has no such reset, and the supplier ends it exactly N × 24 hours
+  // after the first connection (MicroEsim, seen on beta: on at 14:15 31/10, off at
+  // 14:15 05/11). Counting its days by the calendar told the customer "this day
+  // ends at 23:00" beside an expiry at 14:15 (vande-0411 #076).
+  const endsOnTheHour =
+    hasStart && hasEnd && Math.abs(expires - activated - totalDays * DAY_MS) < MINUTE_MS;
+  const statedRule = input.policy === "calendar_day" || input.policy === "rolling_24h";
+  const rolling =
+    input.policy === "rolling_24h" ||
+    (input.policy === "calendar_day" &&
+      endsOnTheHour &&
+      !hasDailyAllowance(input.planType ? { type: input.planType } : null));
+  const calendar = statedRule && !rolling;
   const offset = input.utcOffset ?? 8;
 
   if (hasStart && (rolling || calendar)) {
@@ -122,6 +139,7 @@ export function esimDayCycle(input: {
       expiresAt: new Date(end),
       finished,
       ruleKnown: true,
+      policy: rolling ? "rolling_24h" : "calendar_day",
     };
   }
 
@@ -139,6 +157,7 @@ export function esimDayCycle(input: {
     expiresAt: new Date(expires),
     finished: now >= expires,
     ruleKnown: false,
+    policy: null,
   };
 }
 

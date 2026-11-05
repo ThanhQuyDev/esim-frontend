@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Calendar, Loader2, MessageSquare, PhoneCall, RefreshCw, Search, Wifi } from "lucide-react";
+import { Calendar, Loader2, RefreshCw, Search, Wifi } from "lucide-react";
 import { fetchEsimLookupToken, useEsimLookup } from "@/lib/hooks";
 import { EsimPackages } from "@/components/layout/sections/profile/esim-packages";
 import type { EsimLookupResult } from "@/lib/hooks";
@@ -10,9 +10,12 @@ import { esimDayCycle } from "@/lib/plan-daily-reset";
 import {
   CurrentDayNote,
   DataUsageBar,
+  RemainingTile,
   statusLabel,
   USAGE_STATUS_COLOR,
+  VoiceSmsChips,
 } from "@/components/layout/sections/profile/usage-bar";
+import { clockDate } from "@/lib/clock-date";
 import type { EsimLookupDict } from "./translations";
 
 /**
@@ -190,6 +193,7 @@ function LookupResult({
     durationDays: data.durationDays,
     policy: data.dailyResetPolicy,
     utcOffset: data.dailyResetUtcOffset,
+    planType: data.planType,
   });
   const totalDays = cycle?.totalDays ?? null;
   const daysUsed = cycle?.daysUsed ?? null;
@@ -298,24 +302,18 @@ function LookupResult({
           )}
 
           <div className="grid grid-cols-2 gap-2">
-            {/* rounded-lg is 40px in this site's theme — a pill once the
-                label wraps (vande #037). */}
-            <div className="rounded-[10px] bg-blue-50 p-3 text-center">
-              <Wifi className="mx-auto mb-1 h-3.5 w-3.5 text-blue-500" />
-              <p className="text-lg font-medium text-blue-700">
-                {data.isUnlimited ? "∞" : remainingGb === null ? "—" : remainingGb.toFixed(1)}
-              </p>
-              <p className="text-sm text-blue-500">
-                {data.isUnlimited ? dict.result.unlimited : dict.result.gbRemaining}
-              </p>
-            </div>
-            <div className="rounded-[10px] bg-emerald-50 p-3 text-center">
-              <Calendar className="mx-auto mb-1 h-3.5 w-3.5 text-emerald-500" />
-              <p className="text-lg font-medium text-emerald-700">
-                {daysRemaining !== null ? daysRemaining : "—"}
-              </p>
-              <p className="text-sm text-emerald-500">{dict.result.daysLeft}</p>
-            </div>
+            <RemainingTile
+              tone="blue"
+              icon={<Wifi className="h-3.5 w-3.5 text-blue-500" />}
+              value={data.isUnlimited ? "∞" : remainingGb === null ? "—" : remainingGb.toFixed(1)}
+              label={data.isUnlimited ? dict.result.unlimited : dict.result.gbRemaining}
+            />
+            <RemainingTile
+              tone="emerald"
+              icon={<Calendar className="h-3.5 w-3.5 text-emerald-500" />}
+              value={daysRemaining !== null ? daysRemaining : "—"}
+              label={dict.result.daysLeft}
+            />
           </div>
         </>
       )}
@@ -354,24 +352,12 @@ function LookupResult({
               integer
             />
           )}
-          {(() => {
-            const calls = data.callMinutes && data.callMinutesRemaining == null ? data.callMinutes : null;
-            const sms = data.smsCount && data.smsRemaining == null ? data.smsCount : null;
-            if (!calls && !sms) return null;
-            const text =
-              calls && sms
-                ? dict.result.voiceSmsLine.replace("{calls}", String(calls)).replace("{sms}", String(sms))
-                : calls
-                  ? dict.result.voiceLine.replace("{calls}", String(calls))
-                  : dict.result.smsLine.replace("{sms}", String(sms));
-            return (
-              <p className="flex items-center gap-2 text-sm font-medium text-gray-700" data-testid="lookup-voice-sms-line">
-                <PhoneCall className="h-4 w-4 text-gray-400" />
-                <MessageSquare className="h-4 w-4 text-gray-400" />
-                {text}
-              </p>
-            );
-          })()}
+          <VoiceSmsChips
+            calls={data.callMinutesRemaining == null ? data.callMinutes : null}
+            sms={data.smsRemaining == null ? data.smsCount : null}
+            lang={lang}
+            testId="lookup-voice-sms-line"
+          />
         </div>
       )}
 
@@ -379,21 +365,13 @@ function LookupResult({
 
       {data.expiredAt && (
         <p className="text-center text-sm text-gray-400">
-          {dict.result.expires}{" "}
-          {new Date(data.expiredAt).toLocaleDateString(lang === "vi" ? "vi-VN" : "en-US", {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-          })}
+          {dict.result.expires} {clockDate(data.expiredAt)}
         </p>
       )}
 
       {data.lastUpdateTime && (
         <p className="text-center text-sm text-gray-400">
-          {dict.result.lastUpdate}{" "}
-          {new Date(data.lastUpdateTime).toLocaleString(lang === "vi" ? "vi-VN" : "en-US")}
+          {dict.result.lastUpdate} {clockDate(data.lastUpdateTime)}
         </p>
       )}
 
@@ -422,9 +400,7 @@ function LookupDetails({
     [dict.result.destination, destination],
     [
       dict.result.activatedAt,
-      data.activatedAt
-        ? new Date(data.activatedAt).toLocaleString(vi ? "vi-VN" : "en-US")
-        : dict.result.notActivatedShort,
+      data.activatedAt ? clockDate(data.activatedAt) : dict.result.notActivatedShort,
     ],
     [dict.result.operator, data.operatorName],
     [dict.result.networkSpeed, data.networkSpeed],
