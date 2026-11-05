@@ -200,13 +200,14 @@ export function chipDaysFor(opt: Opt, popular: number[]): { days: number[]; more
 }
 
 /**
- * "Chọn số ngày trước" (vande #089): the fixed sizes for a trip of `days` —
- * each size keeps only the plans that last the trip, shortest first, so its
- * first plan is the one closest to the trip.
+ * "Chọn số ngày trước" (vande #089): the fixed sizes sold for exactly `days`
+ * days. Longer plans used to be offered too, which filled the page with chips
+ * nobody asked for (vande-0411 #063); a section with nothing for the trip is
+ * left out, and the day row gets the visitor to one that has.
  */
 export function tripTiers(tiers: Tier[], days: number): Tier[] {
   return tiers
-    .map((t) => ({ ...t, plans: t.plans.filter((p) => p.durationDays >= days) }))
+    .map((t) => ({ ...t, plans: t.plans.filter((p) => p.durationDays === days) }))
     .filter((t) => t.plans.length > 0);
 }
 
@@ -216,17 +217,17 @@ export function tripOpts(opts: Opt[], days: number): Opt[] {
 }
 
 /**
- * Data + call + SMS plans for a trip of `days`: those that last it; of plans
- * giving the same data, minutes and SMS, the one closest to the trip.
+ * Data + call + SMS plans sold for exactly `days` days (vande-0411 #063); of
+ * plans giving the same data, minutes and SMS, the cheapest.
  */
 export function tripCombo(opts: Opt[], days: number): Opt[] {
   const best = new Map<string, Opt>();
   for (const o of opts) {
     const p = o.plans[0];
-    if (p.durationDays < days) continue;
+    if (p.durationDays !== days) continue;
     const id = `${Number(p.dataMb)}|${p.call ?? ""}|${p.sms ?? ""}`;
     const cur = best.get(id);
-    if (!cur || p.durationDays < cur.plans[0].durationDays) best.set(id, o);
+    if (!cur || Number(p.vndPrice) < Number(cur.plans[0].vndPrice)) best.set(id, o);
   }
   return Array.from(best.values());
 }

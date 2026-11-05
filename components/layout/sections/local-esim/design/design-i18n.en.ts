@@ -434,7 +434,7 @@ export const DESIGN_EN: Record<string, string> = {
   ": dùng được Facebook, Google Maps, TikTok, ChatGPT…": ": Facebook, Google Maps, TikTok and ChatGPT work…",
   "Bạn đi {0} mấy ngày?": "How many days in {0}?",
   "Chuyến {0} ngày dài hơn gói tối đa ({1} ngày) tại điểm đến này. Đã chọn {1} ngày — nếu cần dùng lâu hơn, bạn có thể mua thêm eSIM (tăng số lượng ở bước cuối).": "Your {0}-day trip is longer than the longest plan ({1} days) at this destination. Set to {1} days — for a longer stay, add another eSIM (increase the quantity in the last step).",
-  "Chưa có gói nào phù hợp với {0} ngày — thử giảm số ngày hoặc tắt bộ lọc.": "No plans match {0} days — try fewer days or turn off the filter.",
+  "Chưa có gói nào phù hợp với {0} ngày — thử số ngày khác hoặc tắt bộ lọc.": "No plans match {0} days — try other days or turn off the filter.",
   "Chọn gói cước cho chuyến": "Choose a plan for your",
   "Chọn nhanh số ngày": "Quick select days",
   "Chọn số ngày dùng": "Days of use",

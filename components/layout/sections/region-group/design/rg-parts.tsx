@@ -877,8 +877,7 @@ export function PlanPanes({
               n={p.tiers.length}
               of={null}
             />{" "}
-            {/* One chip per size: the plan of that size closest to the trip
-                (vande #089, "1 GB – 7 ngày"). */}
+            {/* One chip per size, for exactly the trip (vande #089, vande-0411 #063). */}
             <div className="chip-grid" role="radiogroup" aria-label={tx("Gói cố định")}>
               {p.tiers.map((t) => {
                 const on = p.tier?.key === t.key;
@@ -938,7 +937,7 @@ export function PlanPanes({
           </div>
         )}
         {p.tiers.length + p.daily.length + p.unl.length === 0 && !p.isLoading && (
-          <p className="pk-empty">{tx("Chưa có gói nào phù hợp với {0} ngày — thử giảm số ngày hoặc tắt bộ lọc.", p.tripDays)}</p>
+          <p className="pk-empty">{tx("Chưa có gói nào phù hợp với {0} ngày — thử số ngày khác hoặc tắt bộ lọc.", p.tripDays)}</p>
         )}
       </div>{" "}
       <div id="paneCombo" role="tabpanel" aria-labelledby="tab-combo" hidden={p.tab !== "combo"}>
@@ -950,7 +949,7 @@ export function PlanPanes({
           </div>
         )}
         {p.combo.length === 0 && !p.isLoading && (
-          <p className="pk-empty">{tx("Chưa có gói nào phù hợp với {0} ngày — thử giảm số ngày hoặc tắt bộ lọc.", p.tripDays)}</p>
+          <p className="pk-empty">{tx("Chưa có gói nào phù hợp với {0} ngày — thử số ngày khác hoặc tắt bộ lọc.", p.tripDays)}</p>
         )}
       </div>
     </div>

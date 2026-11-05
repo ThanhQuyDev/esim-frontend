@@ -152,8 +152,8 @@ export function useRegionPurchase(
   const allCombo = useMemo(() => buildCombo(plans.smsCallEsim ?? []), [plans.smsCallEsim]);
 
   // ── trip length first (vande #089, "Chọn số ngày trước") ──
-  // The visitor says how long the trip is; the plans shown are those that
-  // cover it. Days the destination does not sell snap to one it does.
+  // The visitor says how long the trip is; the plans shown are those sold for
+  // it (vande-0411 #063). Days the destination does not sell snap to one it does.
   const sold = useMemo(() => soldDays({ ...plans, localEsim: [] }), [plans]);
   const [days, setDaysRaw] = useState(7);
   const [warning, setWarning] = useState<DaysWarning | null>(null);
@@ -201,7 +201,7 @@ export function useRegionPurchase(
 
   const tier = sel?.kind === "fixed" ? tierOf(sel.key) : null;
   const opt = sel && sel.kind !== "fixed" ? optOf(sel.key) : null;
-  // The fixed plan of that size closest to the trip: its shortest that lasts it.
+  // The fixed plan of that size for exactly the trip (vande-0411 #063).
   const fixedPlan: Plan | null = tier ? tier.plans[0] ?? null : null;
   const allowed = null;
 
