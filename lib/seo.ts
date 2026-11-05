@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { fetchSeoConfigByUrl } from "./api";
 import { SITE_BASE_URL } from "./hreflang";
+import { getCloudinaryTransformedUrl } from "./image-utils";
+import { getLocale } from "next-intl/server";
 import { interpolate } from "./utils";
 
 const DEFAULT_SEO = {
@@ -30,9 +32,22 @@ export interface SeoMetadataOptions {
    * shows at once.
    */
   revalidate?: number;
+  /**
+   * The page's own picture (a destination's or region's official photo), used
+   * as the share image when the CMS sets none (vande-0411 #070).
+   */
+  image?: string | null;
 }
 
 /** Facebook / Zalo expect a territory-qualified locale, not a bare language. */
+async function requestLocale(): Promise<string | undefined> {
+  try {
+    return await getLocale();
+  } catch {
+    return undefined;
+  }
+}
+
 function ogLocale(locale?: string): string | undefined {
   if (!locale) return undefined;
   return locale === "vi" ? "vi_VN" : locale === "en" ? "en_US" : locale;
@@ -54,13 +69,34 @@ function socialBase(options?: SeoMetadataOptions) {
 }
 
 /**
- * The generated share card (`app/[locale]/opengraph-image.tsx`). Next only
- * attaches a file-based image at its own segment, and a page that returns its
- * own `openGraph` replaces that object whole — so every page built here lost
- * the image (#L010). Name it explicitly whenever the CMS has none.
+ * The default share card, one per language (vande-0411 #070): the designer's
+ * banner, kept in `public/og` rather than drawn at request time. It replaces the
+ * generated yellow card. A page that returns its own `openGraph` replaces the
+ * layout's object whole, so it is named here whenever the CMS has none (#L010).
  */
-function defaultOgImages(locale?: string) {
-  return [{ url: `${SITE_BASE_URL}/${locale || "vi"}/opengraph-image`, width: 1200, height: 630 }];
+export function defaultOgImages(locale?: string) {
+  const lang = locale === "en" ? "en" : "vi";
+  return [{ url: `${SITE_BASE_URL}/og/esimvn-og-${lang}.png`, width: 1200, height: 630 }];
+}
+
+/**
+ * A destination's official photo as a share image, cropped to the 1200x630
+ * card. JPEG rather than the site's WebP, which not every chat app previews.
+ */
+function pageOgImages(image: string | null | undefined) {
+  const url = getCloudinaryTransformedUrl(image, {
+    width: 1200,
+    height: 630,
+    quality: "auto:good",
+    gravity: "center",
+  });
+  if (!url) return null;
+  return [{ url: url.replace("/f_webp,", "/f_jpg,"), width: 1200, height: 630 }];
+}
+
+/** CMS image, else the page's own photo, else the default card. */
+function fallbackOgImages(options?: SeoMetadataOptions) {
+  return pageOgImages(options?.image) ?? defaultOgImages(options?.locale);
 }
 
 /**
@@ -94,6 +130,11 @@ export async function getSeoMetadata(
   templateVars?: TemplateVars,
   options?: SeoMetadataOptions
 ): Promise<Metadata> {
+  // Most pages do not pass their locale, so English pages shared the
+  // Vietnamese card (vande-0411 #070): read it from the request instead.
+  if (!options?.locale) {
+    options = { ...options, locale: await requestLocale() };
+  }
   const seo = await fetchSeoConfigByUrl(pageUrl, {
     revalidate: options?.revalidate,
   });
@@ -107,7 +148,7 @@ export async function getSeoMetadata(
     const keywords = applyVars(seo.metaKeywords, templateVars);
     const images = seo.ogImage
       ? [{ url: seo.ogImage }]
-      : defaultOgImages(options?.locale);
+      : fallbackOgImages(options);
 
     return {
       title: metaTitle,
@@ -127,7 +168,7 @@ export async function getSeoMetadata(
   const description =
     applyVars(fallback?.description, templateVars) ?? DEFAULT_SEO.description;
 
-  const images = defaultOgImages(options?.locale);
+  const images = fallbackOgImages(options);
 
   return {
     title,

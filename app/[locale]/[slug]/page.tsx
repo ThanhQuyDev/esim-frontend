@@ -234,7 +234,14 @@ export async function generateMetadata({
     seoSlugs,
     { title: fallbackTitle, description: fallbackDescription },
     seoVars,
-    { locale, url: canonicalPath, revalidate: SEO_REVALIDATE_SECONDS }
+    {
+      locale,
+      url: canonicalPath,
+      revalidate: SEO_REVALIDATE_SECONDS,
+      // The official photo once one is uploaded; never the default picture
+      // the page shows without one (vande-0411 #070).
+      image: entity.data.avatarUrl,
+    }
   );
 
   // SEO: canonical points at this locale's canonical slug; hreflang lists the

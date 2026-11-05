@@ -71,3 +71,35 @@ test.describe("Open Graph tags", () => {
     expect(ogTitle).toBe(title);
   });
 });
+
+test.describe("Default share image and logo (vande-0411 #070)", () => {
+  for (const [path, lang] of [
+    ["/coupon", "vi"],
+    ["/en/coupon", "en"],
+  ] as const) {
+    test(`${path} shares the ${lang} card kept in the code`, async ({ request }) => {
+      const head = await headOf(request, path);
+      const image = metaContent(head, "og:image");
+      expect(image).toMatch(new RegExp(`/og/esimvn-og-${lang}\\.png$`));
+      expect(metaContent(head, "twitter:image")).toBe(image);
+
+      const file = await request.get(`/og/esimvn-og-${lang}.png`);
+      expect(file.status()).toBe(200);
+      expect(file.headers()["content-type"]).toBe("image/png");
+    });
+  }
+
+  test("serves the new orange logo with its wordmark as outlines", async ({ request }) => {
+    const svg = await (await request.get("/logo.svg")).text();
+    expect(svg).toContain("#ff7320");
+    // Live text would fall back to Times wherever the Harabara font is missing.
+    expect(svg).not.toContain("<text");
+
+    const icon = await request.get("/favicon.ico");
+    expect(icon.status()).toBe(200);
+    expect((await icon.body()).length).toBeGreaterThan(30_000);
+
+    const mail = await request.get("/email/esimvn-logo.png");
+    expect(mail.headers()["content-type"]).toBe("image/png");
+  });
+});

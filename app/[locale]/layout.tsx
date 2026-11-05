@@ -14,6 +14,7 @@ import { AuthProvider } from "@/lib/auth";
 import { getMenuSlides, getTopBars } from "@/lib/api";
 import { getDictionary } from "@/lib/dictionaries";
 import { buildLanguageAlternates, SITE_BASE_URL } from "@/lib/hreflang";
+import { defaultOgImages } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n-config";
 import type { Metadata } from "next";
@@ -37,6 +38,13 @@ export async function generateMetadata(): Promise<Metadata> {
     alternates: {
       canonical,
       languages,
+    },
+    // Every page shares the default card unless it names its own (vande-0411
+    // #070); this replaced the generated `opengraph-image` route.
+    openGraph: { images: defaultOgImages(locale) },
+    twitter: {
+      card: "summary_large_image",
+      images: defaultOgImages(locale).map((image) => image.url),
     },
     icons: {
       icon: "/favicon.ico",
