@@ -16,11 +16,6 @@ export const routing = defineRouting({
       en: '/[slug]',
     },
 
-    // Domestic (local-inventory) eSIM carrier detail
-    '/esim-noi-dia/[carrier]': {
-      vi: '/esim-noi-dia/[carrier]',
-      en: '/domestic-esim/[carrier]',
-    },
 
     // Destinations
     '/destinations': {

@@ -1,6 +1,8 @@
 "use client";
 
 
+import { esimName } from "@/lib/esim-name";
+import type { Locale } from "@/lib/i18n-config";
 import { footerReached, useChatAboveBar } from "../../region-group/design/buy-bar";
 import { useT } from "./design-i18n";
 import { getCloudinaryTransformedUrl } from "@/lib/image-utils";
@@ -130,7 +132,7 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb, 
               <a href={breadcrumb.vietnam}>{tx("Việt Nam")}</a>
             </li>
             <li>
-              <span aria-current="page">eSIM {meta.label}</span>
+              <span aria-current="page">{esimName(meta.label, lang as Locale)}</span>
             </li>
           </ol>
         </nav>{" "}
@@ -168,7 +170,7 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb, 
               <span className="nd-logo pic-flag" aria-hidden="true" style={logoStyle}>
                 {carrierInitial(meta)}
               </span>
-              <h1>eSIM {meta.label}</h1>
+              <h1>{esimName(meta.label, lang as Locale)}</h1>
               <VnFlag url={country?.flagUrl} w={24} h={18} />
             </div>{" "}
           </div>{" "}
@@ -176,7 +178,7 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb, 
         <div className="m-sec m-sheet">
           {" "}
           <p className="m-desc">
-            eSIM {meta.label}{" "}{tx("— nhà mạng nội địa")}{meta.network ? tx(" trên hạ tầng {0}", meta.network) : ""}{tx(", sóng 4G/5G toàn quốc.")}{meta.phonePrefix ? tx(" Có số thuê bao đầu {0},", meta.phonePrefix) : tx(" Có số thuê bao,")}{" "}{tx("tất cả gói đều dùng được Data + Gọi + SMS, gia hạn theo chu kỳ hàng tháng.")}</p>{" "}
+            {esimName(meta.label, lang as Locale)}{" "}{tx("— nhà mạng nội địa")}{meta.network ? tx(" trên hạ tầng {0}", meta.network) : ""}{tx(", sóng 4G/5G toàn quốc.")}{meta.phonePrefix ? tx(" Có số thuê bao đầu {0},", meta.phonePrefix) : tx(" Có số thuê bao,")}{" "}{tx("tất cả gói đều dùng được Data + Gọi + SMS, gia hạn theo chu kỳ hàng tháng.")}</p>{" "}
           <div className="price-row price-row--vch" id="priceAnchor">
             <button className="pv" type="button" id="vchTag" aria-haspopup="dialog" onClick={() => setVch(true)}>
               <span className="price-now" id="priceNet">

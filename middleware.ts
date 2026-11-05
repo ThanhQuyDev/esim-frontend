@@ -24,6 +24,18 @@ export default function middleware(request: NextRequest) {
     return NextResponse.redirect(url, 308);
   }
 
+  // The carrier pages' old address, permanently (vande-0411 #072). Written out
+  // here because lib/domestic-url.ts reaches the API module.
+  const oldCarrier = request.nextUrl.pathname.match(
+    /^(?:\/(vi|en))?\/(?:esim-noi-dia|domestic-esim)\/([^/]+)\/?$/,
+  );
+  if (oldCarrier && oldCarrier[2] !== 'test') {
+    const url = request.nextUrl.clone();
+    const prefix = oldCarrier[1] === 'en' ? '/en' : '';
+    url.pathname = `${prefix}/esim-${oldCarrier[2].toLowerCase()}`;
+    return NextResponse.redirect(url, 301);
+  }
+
   // Visitors outside Vietnam landing on the ambiguous home page get the
   // English homepage instead of the Vietnamese default. Every other URL keeps
   // stating its own language — see `i18n/geo-locale.ts` for why this is

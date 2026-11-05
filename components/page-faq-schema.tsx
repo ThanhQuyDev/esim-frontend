@@ -6,6 +6,8 @@ import {
 } from '@/lib/api';
 import { buildFaqSchema } from '@/lib/faq-schema';
 import { faqCandidateUrls } from '@/lib/faq-urls';
+import { resolveDomesticCarrier } from '@/lib/domestic-url';
+import { getCarrierMeta } from '@/components/layout/sections/local-esim/carrier-meta';
 import { routing } from '@/i18n/routing';
 import type { Locale } from '@/lib/i18n-config';
 
@@ -56,6 +58,14 @@ export async function PageFaqSchema({ locale }: { locale: string }) {
         entityType = 'region';
         name = (locale === 'vi' ? region.titleVi : region.title) || region.name;
         entitySlugs = [region.slugVi, region.slug];
+      } else {
+        // A domestic carrier, with the candidates of its visible FAQ block.
+        const carrier = await resolveDomesticCarrier(segments[0]);
+        if (carrier) {
+          entityType = 'destination';
+          name = getCarrierMeta(carrier).label;
+          entitySlugs = [`esim-noi-dia/${carrier}`];
+        }
       }
     }
   }

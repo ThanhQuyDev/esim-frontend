@@ -2,6 +2,7 @@
 
 
 
+import { esimName } from "@/lib/esim-name";
 import { useDesignLang, useT } from "./design-i18n";
 import {
   useCallback,
@@ -1166,6 +1167,7 @@ export function CrossCard({
   showPrefix?: boolean;
 }) {
   const tx = useT();
+  const lang = useDesignLang();
   const parts = [tx("Từ {0}", vnd(fromVnd))];
   if (meta.network) parts.push(tx("Hạ tầng {0}", meta.network));
   if (showPrefix && meta.phonePrefix) parts.push(tx("Đầu số {0}", meta.phonePrefix));
@@ -1175,7 +1177,7 @@ export function CrossCard({
         {meta.label}
       </span>
       <div className="cross-txt">
-        <h3 className="cross-title">eSIM {meta.label}</h3>
+        <h3 className="cross-title">{esimName(meta.label, lang as "vi" | "en")}</h3>
         <span className="cross-price">{parts.join(" · ")}</span>
       </div>
       <Ic name="ic-chev-right" w={18} cls="ic cross-arrow" />

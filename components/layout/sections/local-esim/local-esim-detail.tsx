@@ -7,6 +7,7 @@ import type { PlansByDestinationResponse } from "@/lib/api";
 import { useLocalPlansByCarrier, useLocalCarriers } from "@/lib/hooks";
 import { localizedHref } from "@/lib/route-mapping";
 import { getCarrierMeta } from "./carrier-meta";
+import { localCarrierHref } from "./local-carrier-search";
 import { CartConfirmDialog } from "../destination/cart-confirm-dialog";
 import type { DestinationDict } from "../destination/types";
 import type { Locale } from "@/lib/i18n-config";
@@ -37,7 +38,7 @@ const EMPTY: PlansByDestinationResponse = {
 };
 
 /**
- * Domestic-eSIM carrier page body (`/esim-noi-dia/[carrier]`).
+ * Domestic-eSIM carrier page body (`/esim-itel`).
  *
  * Rebuilt from the final design files "esim-noi-dia-desktop-v60" and
  * "esim-noi-dia-mobile-v45" (#066, test round 4): the markup, class names and
@@ -55,8 +56,7 @@ export function LocalEsimDetail({ carrier, lang, initialPlans, country }: LocalE
   const p = useDomesticPurchase(plans, carrier, lang, `eSIM ${meta.label}`);
 
   const otherCarriers = allCarriers.filter((c) => c.provider !== carrier);
-  const crossHref = (provider: string) =>
-    lang === "vi" ? `/esim-noi-dia/${provider}` : `/${lang}/domestic-esim/${provider}`;
+  const crossHref = (provider: string) => localCarrierHref(lang, provider);
   const breadcrumb = {
     home: lang === "vi" ? "/" : `/${lang}`,
     destinations: localizedHref(lang, "destinations"),

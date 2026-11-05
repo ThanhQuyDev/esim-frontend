@@ -10,7 +10,7 @@ import { test, expect, type Page } from "@playwright/test";
  *
  * What they verify (the code changed in this task):
  *   1. Homepage "eSIM nội địa" tab renders carrier cards grouped dynamically.
- *   2. Detail page /esim-noi-dia/[carrier] renders high-speed + unlimited plans,
+ *   2. Detail page /esim-[carrier] renders high-speed + unlimited plans,
  *      shows the carrier phone-prefix + eKYC, and selecting a plan updates price
  *      from `vndPrice` (no FE price multiplication).
  */
@@ -124,7 +124,7 @@ test.describe("Homepage — eSIM nội địa tab", () => {
     // Card links to the detail route.
     await expect(page.getByTestId("local-carrier-card-wintel")).toHaveAttribute(
       "href",
-      "/en/domestic-esim/wintel",
+      "/en/esim-wintel",
     );
   });
 
@@ -142,6 +142,25 @@ test.describe("Homepage — eSIM nội địa tab", () => {
     await expect(page.getByTestId("local-carrier-card-wintel").locator("span").first()).toHaveText("Wintel");
     await expect(page.getByTestId("local-carrier-card-itel").locator("span").first()).toHaveText("itel");
     await expect(page.getByTestId("local-carrier-card-vnsky")).toContainText("Hạ tầng MobiFone");
+  });
+});
+
+test.describe("Carrier page address (vande-0411 #072)", () => {
+  for (const [from, to] of [
+    ["/esim-noi-dia/itel", "/esim-itel"],
+    ["/en/domestic-esim/itel", "/en/esim-itel"],
+    ["/en/esim-noi-dia/ITEL", "/en/esim-itel"],
+  ]) {
+    test(`${from} moved permanently to ${to}`, async ({ request }) => {
+      const res = await request.get(from, { maxRedirects: 0 });
+      expect(res.status()).toBe(301);
+      expect(new URL(res.headers().location, "http://x").pathname).toBe(to);
+    });
+  }
+
+  test("the test harness keeps its address", async ({ request }) => {
+    const res = await request.get("/esim-noi-dia/test", { maxRedirects: 0 });
+    expect(res.status()).toBe(200);
   });
 });
 
@@ -173,7 +192,7 @@ test.describe("Search — domestic eSIM suggestions", () => {
     // Card links to the Vietnamese detail route and shows the "from" price.
     await expect(page.getByTestId("search-local-carrier-wintel")).toHaveAttribute(
       "href",
-      "/esim-noi-dia/wintel",
+      "/esim-wintel",
     );
     await expect(page.getByTestId("search-local-carrier-wintel")).toContainText("49.000₫");
 

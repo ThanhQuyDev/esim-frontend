@@ -1,7 +1,13 @@
 import { crossForCountry, crossForRegion } from "@/lib/cross-sell";
+import {
+  DomesticCarrierPage,
+  domesticCarrierMetadata,
+} from "@/components/layout/sections/local-esim/domestic-carrier-page";
+import { carrierPageSlug, resolveDomesticCarrier } from "@/lib/domestic-url";
 import { notFound, permanentRedirect } from "next/navigation";
 import {
   getDestinationBySlug,
+  getLocalCarriers,
   getRegionBySlug,
   getWhyChooseUs,
   getDestinations,
@@ -158,6 +164,10 @@ export async function generateMetadata({
   const entity = await resolveEntity(params.slug, locale);
 
   if (!entity) {
+    const carrier = await resolveDomesticCarrier(params.slug);
+    if (carrier) {
+      return domesticCarrierMetadata(carrier, locale, SEO_REVALIDATE_SECONDS);
+    }
     // Group landing page (`/esim-chau-a`): no record of its own, so build the
     // metadata from the group label and the generic region SEO config.
     const group = await resolveRegionGroup(params.slug, locale);
@@ -259,9 +269,10 @@ export async function generateStaticParams() {
   const params: { locale: string; slug: string }[] = [];
 
   try {
-    const [destRes, regionRes] = await Promise.all([
+    const [destRes, regionRes, carriers] = await Promise.all([
       getDestinations({ limit: 500 }),
       getRegions({ limit: 500 }),
+      getLocalCarriers(),
     ]);
 
     for (const locale of ["en", "vi"] as const) {
@@ -274,6 +285,12 @@ export async function generateStaticParams() {
       for (const region of regionRes.data) {
         const slug = localizedSlug(region, locale);
         if (slug) {
+          params.push({ locale, slug });
+        }
+      }
+      for (const carrier of carriers) {
+        const slug = carrierPageSlug(carrier.provider);
+        if (!params.some((p) => p.locale === locale && p.slug === slug)) {
           params.push({ locale, slug });
         }
       }
@@ -308,6 +325,11 @@ export default async function UnifiedSlugPage({
   ]);
 
   if (!entity) {
+    // A country or region of that name would win (vande-0411 #072).
+    const carrier = await resolveDomesticCarrier(params.slug);
+    if (carrier) {
+      return <DomesticCarrierPage carrier={carrier} locale={locale} />;
+    }
     const group = await resolveRegionGroup(params.slug, locale);
     if (group && group.slug === params.slug) {
       const groupFaqSlugs = faqCandidateUrls({

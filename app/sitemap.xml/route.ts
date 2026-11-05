@@ -57,8 +57,7 @@ export async function GET(): Promise<Response> {
   const entries = buildSitemap(sources, {
     baseUrl,
     // next-intl owns the localized path for every route key, dynamic ones
-    // included — so `/blog/x` becomes `/en/blog/x` and a carrier page picks
-    // up its English path (`/domestic-esim/...`) automatically.
+    // included — so `/blog/x` becomes `/en/blog/x`.
     path: (locale, key, params) => {
       try {
         const href = params

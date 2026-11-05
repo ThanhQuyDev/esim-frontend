@@ -1,5 +1,7 @@
 import type { Locale } from "./i18n-config";
 import { esimName } from "./esim-name";
+import { resolveDomesticCarrier } from "./domestic-url";
+import { getCarrierMeta } from "@/components/layout/sections/local-esim/carrier-meta";
 import { routing } from "@/i18n/routing";
 import {
   getBlogCategories,
@@ -233,14 +235,6 @@ export async function resolveBreadcrumbTrail(
     ].filter((item) => item.label);
   }
 
-  // ── Domestic eSIM carrier ─────────────────────────────────────────
-  if (segments[0] === "esim-noi-dia" || segments[0] === "domestic-esim") {
-    return [
-      { label: label(dict, "domesticEsim", "eSIM") },
-      { label: segments[1] ? readableSlug(segments[1]) : "" },
-    ].filter((item) => item.label);
-  }
-
   // ── A bare slug: country or region detail page ────────────────────
   if (segments.length === 1) {
     const name = await entityName(segments[0], lang);
@@ -253,6 +247,21 @@ export async function resolveBreadcrumbTrail(
           label: lang === "vi" ? "Điểm đến" : "Destinations",
         },
         { label: esimName(name, lang as Locale) },
+      ];
+    }
+    // A domestic carrier: the same trail the page draws (vande-0411 #072).
+    const carrier = await resolveDomesticCarrier(segments[0]);
+    if (carrier) {
+      return [
+        {
+          ...crumb(dict, "/destinations", lang),
+          label: lang === "vi" ? "Điểm đến" : "Destinations",
+        },
+        {
+          label: lang === "vi" ? "Việt Nam" : "Vietnam",
+          href: lang === "vi" ? "/esim-viet-nam" : `/${lang}/esim-viet-nam`,
+        },
+        { label: esimName(getCarrierMeta(carrier).label, lang as Locale) },
       ];
     }
   }

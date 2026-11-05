@@ -22,13 +22,7 @@ function path(locale: "vi" | "en", key: string, params?: Record<string, string>)
   const filled = params
     ? key.replace(/\[(\w+)\]/g, (_, name: string) => params[name] ?? "")
     : key;
-  // A crude translation of the two keys the tests care about.
-  if (locale === "en") {
-    const translated = filled.startsWith("/esim-noi-dia")
-      ? filled.replace("/esim-noi-dia", "/domestic-esim")
-      : filled;
-    return translated === "/" ? "/en" : `/en${translated}`;
-  }
+  if (locale === "en") return filled === "/" ? "/en" : `/en${filled}`;
   return filled;
 }
 
@@ -56,7 +50,7 @@ test.describe("sitemap — contents", () => {
     expect(urls).toContain(`${BASE}/esim-chau-a`);
     expect(urls).toContain(`${BASE}/blog/cach-cai-esim`);
     expect(urls).toContain(`${BASE}/help-center/kich-hoat-esim`);
-    expect(urls).toContain(`${BASE}/esim-noi-dia/wintel`);
+    expect(urls).toContain(`${BASE}/esim-wintel`);
     // …and the static ones are still there.
     expect(urls).toContain(BASE);
     expect(urls).toContain(`${BASE}/destinations`);
@@ -242,7 +236,7 @@ test.describe("sitemap — laid out like the reference file (common-issue #004)"
     expect(block("/esim-nhat-ban")).toMatch(/weekly<\/changefreq>\s*<priority>0\.9</);
     expect(block("/esim-libya")).toMatch(/weekly<\/changefreq>\s*<priority>0\.7</);
     expect(block("/esim-chau-au-42-quoc-gia")).toMatch(/<priority>0\.85</);
-    expect(block("/esim-noi-dia/viettel")).toMatch(/<priority>0\.75</);
+    expect(block("/esim-viettel")).toMatch(/<priority>0\.75</);
     expect(block("/blog/esim-trung-quoc-la-gi")).toMatch(/weekly<\/changefreq>\s*<priority>0\.7</);
     expect(block("/help-center/khai-niem-ve-esim")).toMatch(/monthly<\/changefreq>\s*<priority>0\.6</);
     expect(block("/terms-of-service")).toMatch(/yearly<\/changefreq>\s*<priority>0\.3</);

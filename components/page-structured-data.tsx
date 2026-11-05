@@ -6,6 +6,7 @@ import {
   getBlogBySlug,
   getBlogsByAuthor,
   getDestinationBySlug,
+  getLocalPlansByCarrier,
   getRegionBySlug,
   getPlansByDestinationSlug,
   getPlansByRegionSlug
@@ -18,6 +19,8 @@ import {
 import { buildArticleSchema } from '@/lib/article-schema';
 import { authorSlugFromPath, buildAuthorPageSchema } from '@/lib/author-schema';
 import { buildSeoTemplateVars } from '@/lib/seo-vars';
+import { resolveDomesticCarrier } from '@/lib/domestic-url';
+import { getCarrierMeta } from '@/components/layout/sections/local-esim/carrier-meta';
 import { buildProductSchema, hasProductSchema } from '@/lib/product-schema';
 import { getUsdVndRate } from '@/lib/exchange-rate';
 import { StructuredData } from '@/components/structured-data';
@@ -37,7 +40,9 @@ function normalizePath(path: string): string {
  * Returns `"destination"`, `"region"`, or `null`.
  */
 interface ResolvedEntity {
-  type: 'destination' | 'region';
+  type: 'destination' | 'region' | 'domestic';
+  /** Set on a domestic carrier page (vande-0411 #072). */
+  carrier?: string;
   name: string;
   description: string | null;
   image: string | null;
@@ -72,17 +77,27 @@ async function resolveEntity(
     };
   }
 
+  const carrier = await resolveDomesticCarrier(slug);
+  if (carrier) {
+    return {
+      type: 'domestic',
+      carrier,
+      name: getCarrierMeta(carrier).label,
+      description: null,
+      image: null,
+    };
+  }
+
   return null;
 }
 
 /** The plans of the resolved entity — both the SEO variables and the Product
  *  schema are built from this one (cached) call. */
-async function entityPlans(
-  type: 'destination' | 'region',
-  slug: string,
-  lang: string,
-) {
-  return type === 'destination'
+async function entityPlans(entity: ResolvedEntity, slug: string, lang: string) {
+  if (entity.type === 'domestic') {
+    return getLocalPlansByCarrier(entity.carrier ?? '', lang);
+  }
+  return entity.type === 'destination'
     ? getPlansByDestinationSlug(slug, lang)
     : getPlansByRegionSlug(slug, lang);
 }
@@ -120,7 +135,7 @@ export async function PageStructuredData({ locale }: { locale: string }) {
   const segments = pathWithoutLocale.split('/').filter(Boolean);
   const slug = segments.length === 1 ? segments[0] : null;
   const entity = slug ? await resolveEntity(slug, locale) : null;
-  const plans = entity && slug ? await entityPlans(entity.type, slug, locale) : null;
+  const plans = entity && slug ? await entityPlans(entity, slug, locale) : null;
   const vars = entity
     ? buildSeoTemplateVars({
         name: entity.name,
@@ -138,7 +153,9 @@ export async function PageStructuredData({ locale }: { locale: string }) {
   } else if (entity) {
     // Slug-page fallback: a destination/region page with no record of its own
     // inherits the shared `/destination` or `/region` schema.
-    const fallbackSeo = await fetchSeoConfigByUrl(`${localePrefix}/${entity.type}`);
+    const fallbackSeo = await fetchSeoConfigByUrl(
+      `${localePrefix}/${entity.type === 'domestic' ? 'esim-noi-dia' : entity.type}`,
+    );
     cmsBlock = fallbackSeo?.structuredData ?? null;
   }
 

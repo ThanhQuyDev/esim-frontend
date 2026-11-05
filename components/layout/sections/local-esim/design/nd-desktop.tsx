@@ -1,6 +1,8 @@
 "use client";
 
 
+import { esimName } from "@/lib/esim-name";
+import type { Locale } from "@/lib/i18n-config";
 import {
   footerReached,
   scrollToVoucherPopup,
@@ -196,7 +198,7 @@ export function NdDesktop({ p, meta, carrier, lang, otherCarriers, crossHref, br
             <a href={breadcrumb.vietnam}>{tx("Việt Nam")}</a>
           </li>
           <li>
-            <span aria-current="page">eSIM {meta.label}</span>
+            <span aria-current="page">{esimName(meta.label, lang as Locale)}</span>
           </li>
         </ol>
       </nav>{" "}
@@ -209,7 +211,7 @@ export function NdDesktop({ p, meta, carrier, lang, otherCarriers, crossHref, br
               <span className="nd-logo pic-flag" aria-hidden="true" style={logoStyle}>
                 {initial}
               </span>
-              <h1 className="pic-title">eSIM {meta.label}</h1>
+              <h1 className="pic-title">{esimName(meta.label, lang as Locale)}</h1>
               <VnFlag url={country?.flagUrl} w={24} h={18} />
             </div>{" "}
           </div>{" "}
@@ -531,7 +533,7 @@ export function NdDesktop({ p, meta, carrier, lang, otherCarriers, crossHref, br
             </span>
             <div className="dsb-info">
               <div className="dsb-name">
-                eSIM {meta.label} <VnFlag url={country?.flagUrl} w={16} h={12} />
+                {esimName(meta.label, lang as Locale)} <VnFlag url={country?.flagUrl} w={16} h={12} />
               </div>
               <div className="dsb-plan" id="dsbPlan">
                 {plan ? tx("Gói: {0} — {1} · {2} ngày", plan.providerPlanId, dataTitle(plan, lang), days) : ""}

@@ -129,7 +129,7 @@ export interface BuildSitemapOptions {
   baseUrl: string;
   /**
    * Localized public path for a route key, per locale — the same keys
-   * next-intl knows (`/blog/[slug]`, `/esim-noi-dia/[carrier]`, …), with the
+   * next-intl knows (`/blog/[slug]`, `/[slug]`, …), with the
    * params filled in. Returning null drops the entry.
    */
   path: (
@@ -310,7 +310,7 @@ export function buildSitemap(
     if (!provider) continue;
     push(
       entryFor(baseUrl, (locale) =>
-        path(locale, "/esim-noi-dia/[carrier]", { carrier: provider })
+        path(locale, "/[slug]", { slug: `esim-${provider}` })
       ),
       "domestic",
       GROUP_SEO.domestic

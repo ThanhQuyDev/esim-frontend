@@ -85,14 +85,9 @@ export function useMatchedLocalCarriers(query: string) {
   return { matches, isLoading };
 }
 
-/**
- * Localized href of a carrier detail page - `/esim-noi-dia/{provider}` in
- * Vietnamese, `/en/domestic-esim/{provider}` in English (see i18n/routing.ts).
- */
+/** Localized href of a carrier detail page: `/esim-itel`, `/en/esim-itel`. */
 export function localCarrierHref(lang: Locale, provider: string): string {
-  return lang === "vi"
-    ? `/esim-noi-dia/${provider}`
-    : `/${lang}/domestic-esim/${provider}`;
+  return lang === "vi" ? `/esim-${provider}` : `/${lang}/esim-${provider}`;
 }
 
 /** Card title, e.g. "eSIM Wintel" (vi) / "Wintel eSIM" (en). */

@@ -1045,7 +1045,7 @@ export async function getPlansByRegionSlug(
  */
 export interface LocalCarrier {
   /**
-   * The bare carrier slug ("itel") — the key of the /esim-noi-dia/[carrier]
+   * The bare carrier slug ("itel") — the key of the /esim-[carrier]
    * URL and of the carrier artwork. The API's supplier slug ("itel-noidia",
    * vande #001) is mapped back to this by {@link toLocalCarriers}.
    */
