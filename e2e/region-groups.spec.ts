@@ -365,7 +365,7 @@ test.describe("Region grouping — same name, different country count", () => {
 
     // The ungrouped region keeps showing its country count.
     await expect(page.getByTestId("region-card-esim-chau-au")).toContainText(
-      "30 quốc gia",
+      "30 điểm đến",
     );
   });
 

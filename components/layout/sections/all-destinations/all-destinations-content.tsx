@@ -5,13 +5,18 @@ import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { MapPin, Loader2, X } from "lucide-react";
 import { useInfiniteDestinations, useRegions } from "@/lib/hooks";
-import { optimizeCloudinary } from "@/lib/cdn-image";
 import { useDebounce } from "@/lib/use-debounce";
 import type { Locale } from "@/lib/i18n-config";
 import { localizedSlug } from "@/lib/slug";
 import { LocalCarrierGrid } from "@/components/layout/sections/local-esim/local-carrier-grid";
 import { useMatchedLocalCarriers } from "@/components/layout/sections/local-esim/local-carrier-search";
-import { toRegionListItems, variantCountLabel } from "@/lib/region-groups";
+import { toRegionListItems } from "@/lib/region-groups";
+import {
+  DestinationMark,
+  PickerCardLink,
+  PickerTabs,
+  destinationSub,
+} from "@/components/layout/sections/destination-picker/destination-picker";
 import { esimName } from "@/lib/esim-name";
 
 interface AllDestinationsContentProps {
@@ -19,35 +24,7 @@ interface AllDestinationsContentProps {
   lang: Locale;
 }
 
-function ChevronRightIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      role="img"
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
-      className={className}
-    >
-      <title>Chevron right</title>
-      <path
-        fill="currentColor"
-        fillRule="evenodd"
-        d="M13.2151 6.8326L8.43758 11.4101C8.27758 11.5451 8.12758 11.6001 8.00008 11.6001C7.87258 11.6001 7.70083 11.5446 7.58533 11.4329L2.78533 6.8326C2.54543 6.6051 2.53763 6.2026 2.76733 5.9851C2.99546 5.74447 3.37683 5.73665 3.61508 5.96713L8.00008 10.1701L12.3851 5.9701C12.6226 5.73962 13.0046 5.74745 13.2328 5.98807C13.4626 6.2026 13.4551 6.6051 13.2151 6.8326Z"
-      />
-    </svg>
-  );
-}
-
-function SearchIcon({ className }: { className?: string }) {
-  return (
-    <i
-      className={`kitIcon text-center w-[1em] fa-magnifying-glass fa-sharp fa-regular text-[16px] ${className || ""}`}
-    />
-  );
-}
-
-type TabKey = "all" | "country" | "region" | "ultra" | "local";
+type TabKey = "all" | "country" | "region" | "local";
 
 function DestinationCard({
   item,
@@ -62,78 +39,16 @@ function DestinationCard({
 }) {
   // Dollars on the English site (doitac-1410 #073).
   const money = useMoney();
+  const key = item.countryCode || item.slug || item.id;
   return (
-    <div>
-      <a
-        className="align-bottom focus-visible:outline-hidden focus-visible:shadow-focus text-text-primary active:text-text-primary block group ease-out h-full rounded-sm transition-colors hover:text-text-primary hover:bg-bg-tertiary bg-bg-secondary"
-        data-testid={item.countryCode || item.slug || item.id}
-        href={lang === 'vi' ? `/${localizedSlug(item, lang) || item.code?.toLowerCase()}` : `/${lang}/${localizedSlug(item, lang) || item.code?.toLowerCase()}`}
-
-      >
-        <div
-          className="flex flex-col items-start text-left gap-4 relative border-none p-4 h-full rounded-sm transition-colors hover:text-text-primary hover:bg-bg-tertiary bg-gray-50 hover:bg-bg-secondary"
-          data-testid={`destination-card-${item.countryCode || item.slug || item.id}`}
-        >
-          <div className="w-full h-full flex gap-4 items-center">
-            {/* Flag/Avatar */}
-            <div className="w-[36px] h-[36px] relative overflow-hidden shrink-0 rounded-full">
-              {item.flagUrl || item.iconUrl ? (
-                <>
-                  <img
-                    alt={`${item.countryCode || item.slug} ${isRegion ? "globe icon" : "flag"}`}
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-cover absolute inset-0"
-                    width={36}
-                    height={36}
-                    src={optimizeCloudinary(item.flagUrl || item.iconUrl, { width: 72 })}
-                  />
-                  <div className="absolute inset-0 rounded-full pointer-events-none border border-[rgba(0,0,0,0.1)]" />
-                </>
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-bg-secondary">
-                  <MapPin className="w-4 h-4 text-text-tertiary" />
-                </div>
-              )}
-            </div>
-            {/* Name + Info */}
-            <div className="flex flex-col gap-0.5">
-              <p className="body-lg-medium scroll-mt-20 xl:scroll-mt-24">
-                {esimName((lang === "vi" ? item.titleVi : item.title) || item.name, lang)}
-              </p>
-              <p className="body-md text-text-tertiary scroll-mt-20 xl:scroll-mt-24">
-                <span className="whitespace-nowrap">
-                  {dict.from} {money.format(Number(item.fromPrice) || 20000)}
-                </span>
-                {item.variantCount > 1 ? (
-                  <>
-                    {" "}
-                    •{" "}
-                    <span className="whitespace-nowrap">
-                      {variantCountLabel(item.variantCount, lang)}
-                    </span>
-                  </>
-                ) : item.destinationCount != null ? (
-                  <>
-                    {" "}
-                    •{" "}
-                    <span className="whitespace-nowrap">
-                      {item.destinationCount}{" "}
-                      {item.destinationCount === 1
-                        ? dict.country
-                        : dict.countries}
-                    </span>
-                  </>
-                ) : null}
-              </p>
-            </div>
-            {/* Chevron */}
-            <div className="ml-auto">
-              <ChevronRightIcon className="mt-1 -rotate-90 pointer-events-none text-text-tertiary" />
-            </div>
-          </div>
-        </div>
-      </a>
+    <div data-testid={`destination-card-${key}`}>
+      <PickerCardLink
+        href={`${lang === "vi" ? "" : `/${lang}`}/${localizedSlug(item, lang) || item.code?.toLowerCase()}`}
+        testId={key}
+        mark={<DestinationMark item={item} isRegion={isRegion} />}
+        name={esimName((lang === "vi" ? item.titleVi : item.title) || item.name, lang)}
+        sub={destinationSub(item, isRegion, lang, dict.from, money.format)}
+      />
     </div>
   );
 }
@@ -200,7 +115,7 @@ export function AllDestinationsContent({
     [regions, lang]
   );
 
-  const tabs: { key: TabKey; label: string; badge?: string }[] = [
+  const tabs: { key: TabKey; label: string }[] = [
     { key: "all", label: dict.tabs.all },
     { key: "country", label: dict.tabs.country },
     { key: "region", label: dict.tabs.region },
@@ -213,57 +128,23 @@ export function AllDestinationsContent({
       data-testid="section-destinations"
       className="relative scroll-mt-20 xl:scroll-mt-24"
     >
-      <div className="py-16">
-        {/* Header */}
-        <div className="mx-4 sm:mx-auto">
-          <div className="container grid sm:gap-x-8 grid-cols-12 mb-10 mx-auto">
-            <div className="col-span-12 min-w-0 md:col-span-8">
-              <div className="grid min-w-0 grid-cols-1 gap-y-6">
-                <h1 className="heading-xl break-words scroll-mt-20 xl:scroll-mt-24">
-                  {dict.title}
-                </h1>
-                <p className="body-md min-w-0 break-words text-text-secondary scroll-mt-20 xl:scroll-mt-24">
-                  {dict.description}
-                </p>
-              </div>
-            </div>
+      <div className="dp-wrap">
+        <div className="dp-hd">
+          <div className="min-w-0">
+            <h1 className="dp-h break-words">{dict.title}</h1>
+            <p className="dp-sub break-words">{dict.description}</p>
           </div>
         </div>
 
-        {/* Tabs + Search + Grid */}
-        <div className="mx-4 sm:mx-auto">
-          <div className="container mx-auto">
-            {/* Tab Pills */}
-            <div className="mb-10 overflow-x-auto scrollbar-none">
-              <div className="relative flex gap-1 w-fit p-1 border border-border-secondary rounded-full">
-                {tabs.map((tab) => (
-                  <button
-                    key={tab.key}
-                    data-is-tab="true"
-                    data-is-active={activeTab === tab.key}
-                    onClick={() => {
-                      setActiveTab(tab.key);
-                      setSearchQuery("");
-                    }}
-                    className={`relative z-[1] body-sm-medium whitespace-nowrap md:body-md-medium px-4 py-1 focus-visible:outline-hidden focus-visible:shadow-focus rounded-full min-w-[60px] bg-transparent transition-all duration-200 ${activeTab === tab.key
-                      ? "!text-text-primary-on-color !bg-bg-dark hover:bg-inherit transition-[color] delay-250 duration-[0]"
-                      : "text-text-primary hover:text-text-primary hover:bg-bg-primary"
-                      }`}
-                  >
-                    {tab.badge ? (
-                      <span className="flex items-center gap-2">
-                        {tab.label}
-                        <span className="text-center whitespace-nowrap rounded-full inline-block bg-bg-accent text-text-primary py-0.5 px-2 body-2xs-medium">
-                          {tab.badge}
-                        </span>
-                      </span>
-                    ) : (
-                      tab.label
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
+        <PickerTabs
+          tabs={tabs}
+          active={activeTab}
+          onChange={(key) => {
+            setActiveTab(key);
+            setSearchQuery("");
+          }}
+          label={lang === "vi" ? "Loại eSIM" : "eSIM type"}
+        />
 
             {/* Search Input */}
             <div id="input-wrapper" className={`relative mb-6 ${activeTab === "local" ? "hidden" : ""}`}>
@@ -346,53 +227,42 @@ export function AllDestinationsContent({
                 </div>
                 )
               ) : isAllTab ? (
-                <>
-
-                  {/* Countries section */}
+                // Countries, then regions, then domestic (vande-0411 #071).
+                <div className="dp-stack">
                   {allItems.length > 0 && (
-                    <div>
-                      <h2 className="heading-sm mb-4">{dict.sectionCountries}</h2>
-                      <div
-                        id="country-list-items"
-                        className="grid gap-3 lg:gap-6 w-full md:grid-cols-2 lg:grid-cols-3"
-                      >
-                        {allItems.map((item: any) => (
-                          <DestinationCard
-                            key={`country-${item.id}`}
-                            item={item}
-                            lang={lang}
-                            dict={dict}
-                            isRegion={false}
-                          />
-                        ))}
-                      </div>
+                    <div id="country-list-items" className="dp-p">
+                      {allItems.map((item: any) => (
+                        <DestinationCard
+                          key={`country-${item.id}`}
+                          item={item}
+                          lang={lang}
+                          dict={dict}
+                          isRegion={false}
+                        />
+                      ))}
                     </div>
                   )}
-
-                  {/* Regions section */}
                   {regionItems.length > 0 && (
-                    <div className="my-10">
-                      <h2 className="heading-sm mb-4">{dict.sectionRegions}</h2>
-                      <div className="grid gap-3 lg:gap-6 w-full md:grid-cols-2 lg:grid-cols-3">
-                        {regionItems.map((item: any) => (
-                          <DestinationCard
-                            key={`region-${item.id}`}
-                            item={item}
-                            lang={lang}
-                            dict={dict}
-                            isRegion
-                          />
-                        ))}
-                      </div>
+                    <div className="dp-p">
+                      {regionItems.map((item: any) => (
+                        <DestinationCard
+                          key={`region-${item.id}`}
+                          item={item}
+                          lang={lang}
+                          dict={dict}
+                          isRegion
+                        />
+                      ))}
                     </div>
                   )}
-                </>
+                  {/* While searching, the matches above stand in for this. */}
+                  {!debouncedSearch.trim() && (
+                    <LocalCarrierGrid lang={lang} fromLabel={dict.from} emptyLabel="" />
+                  )}
+                </div>
               ) : (
                 <>
-                  <div
-                    id="country-list-items"
-                    className="grid gap-3 lg:gap-6 w-full md:grid-cols-2 lg:grid-cols-3"
-                  >
+                  <div id="country-list-items" className="dp-p">
                     {allItems.map((item: any) => (
                       <DestinationCard
                         key={item.id}
@@ -408,8 +278,6 @@ export function AllDestinationsContent({
               )}
               </>
             )}
-          </div>
-        </div>
       </div>
     </div>
   );

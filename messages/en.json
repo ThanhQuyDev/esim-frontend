@@ -62,7 +62,7 @@
       "all": "All",
       "country": "Country",
       "region": "Region",
-      "local": "Domestic eSIM",
+      "local": "Domestic",
       "ultraPlan": "Ultra Plan"
     },
     "from": "From",
@@ -76,7 +76,7 @@
       "all": "All",
       "country": "Country",
       "region": "Region",
-      "local": "Domestic eSIM",
+      "local": "Domestic",
       "ultraPlan": "Ultra Plan"
     },
     "searchPlaceholder": "Search for destination",
