@@ -1,5 +1,6 @@
 "use client";
 
+import { dayDate } from "@/lib/clock-date";
 import { useMemo, useState } from "react";
 import { SITE_BASE_URL } from "@/lib/hreflang";
 import {
@@ -558,9 +559,7 @@ export function AffiliateTab({
                       {order.orderNumber}
                     </p>
                     <p className="mt-0.5 text-sm text-gray-500">
-                      {new Date(order.createdAt).toLocaleDateString(
-                        lang === "vi" ? "vi-VN" : "en-GB"
-                      )}
+                      {dayDate(order.createdAt)}
                       {order.linkCode ? ` · ${order.linkCode}` : ""}
                     </p>
                   </div>

@@ -13,6 +13,8 @@ interface BreadcrumbProps {
   items: BreadcrumbItem[];
   lang: string;
   className?: string;
+  /** Width of the row, for a page narrower than the site's container. */
+  widthClassName?: string;
   children?: React.ReactNode;
 }
 
@@ -23,7 +25,13 @@ interface BreadcrumbProps {
  * component rendered in the page body cannot reach it. `PageBreadcrumbSchema`
  * (mounted in the layout head) publishes the trail for every page instead (#052).
  */
-export function Breadcrumb({ items, lang, className = "", children }: BreadcrumbProps) {
+export function Breadcrumb({
+  items,
+  lang,
+  className = "",
+  widthClassName = "md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1168px]",
+  children,
+}: BreadcrumbProps) {
   // Default locale (vi) has no prefix under localePrefix: 'as-needed'.
   // Strip a leading `/${defaultLocale}` segment from any href so the default
   // locale never shows `/vi` in breadcrumb links (pages still pass `/${locale}/...`).
@@ -54,7 +62,7 @@ export function Breadcrumb({ items, lang, className = "", children }: Breadcrumb
         aria-label="Breadcrumb"
         className={`w-full py-3 ${className}`}
       >
-        <div className="md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1168px] px-4 sm:px-0 mx-auto flex items-center justify-between">
+        <div className={`${widthClassName} px-4 sm:px-0 mx-auto flex items-center justify-between`}>
         <ol className="flex items-center flex-wrap gap-1 text-sm text-muted-foreground">
           {allItems.map((item, index) => {
             const isLast = index === allItems.length - 1;

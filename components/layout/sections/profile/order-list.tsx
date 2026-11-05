@@ -1,5 +1,6 @@
 "use client";
 
+import { dayDate } from "@/lib/clock-date";
 import { useState } from "react";
 import { Package, Calendar, CreditCard, ChevronRight, Loader2, AlertTriangle, ArrowLeft, RefreshCw, X } from "lucide-react";
 import type { ProfileDict } from "./translations";
@@ -39,14 +40,6 @@ function getStatusLabel(status: string, t: ProfileDict) {
     failed: t.failed,
   };
   return map[status] || status;
-}
-
-function formatDate(dateStr: string, lang: string) {
-  return new Date(dateStr).toLocaleDateString(lang === "vi" ? "vi-VN" : "en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
 }
 
 /**
@@ -234,7 +227,7 @@ export function OrderList({ orders, isLoading, t, lang }: OrderListProps) {
               <div className="flex items-center gap-3 text-sm text-gray-500">
                 <span className="flex items-center gap-1">
                   <Calendar className="w-3 h-3" />
-                  {formatDate(order.createdAt, lang)}
+                  {dayDate(order.createdAt)}
                 </span>
                 <span className="flex items-center gap-1">
                   <CreditCard className="w-3 h-3" />

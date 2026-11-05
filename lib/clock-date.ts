@@ -14,3 +14,9 @@ export function clockDate(value: string | Date | null | undefined): string {
     `${pad(at.getDate())}/${pad(at.getMonth() + 1)}/${at.getFullYear()}`
   );
 }
+
+/** "05/11/2026": the short form on the profile's lists (vande-0411 #079). */
+export function dayDate(value: string | Date | null | undefined): string {
+  const full = clockDate(value);
+  return full === "—" ? full : full.split(" ")[1];
+}

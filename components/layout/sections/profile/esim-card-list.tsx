@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import type { EsimDataUsage, MyEsim } from "@/lib/hooks";
 import { useEsimDataUsage, useTopupPackages } from "@/lib/hooks";
-import { clockDate } from "@/lib/clock-date";
+import { clockDate, dayDate } from "@/lib/clock-date";
 import { CurrentDayNote, DataUsageBar, RemainingTile, statusLabel, USAGE_STATUS_COLOR, VoiceSmsChips } from "./usage-bar";
 import { esimDayCycle } from "@/lib/plan-daily-reset";
 import type { ProfileDict } from "./translations";
@@ -140,9 +140,6 @@ function QrCodeImage({ lpa }: { lpa: string }) {
         level="H"
         imageSettings={esimQrLogoSettings(180)}
       />
-      <p className="text-sm text-gray-400 text-center max-w-[200px] break-all leading-tight">
-        {lpa}
-      </p>
     </div>
   );
 }
@@ -565,9 +562,9 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
             {planSummary(planWithTopups(esim.plan, esim), lang)}
           </p>
           <p className="text-sm text-gray-500">
-            {lang === "vi" ? "Tạo ngày" : "Created"}: {clockDate(esim.createdAt)}
+            {lang === "vi" ? "Tạo ngày" : "Created"}: {dayDate(esim.createdAt)}
             {esim.expiresAt && esim.provider !== 'viettel' && (
-              <> · {lang === "vi" ? "Hết hạn" : "Expires"}: {clockDate(esim.expiresAt)}</>
+              <> · {lang === "vi" ? "Hết hạn" : "Expires"}: {dayDate(esim.expiresAt)}</>
             )}
           </p>
         </div>

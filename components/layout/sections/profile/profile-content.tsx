@@ -30,6 +30,8 @@ import { useSignOut } from "@/lib/use-sign-out";
 
 interface ProfileContentProps {
   lang: "en" | "vi";
+  /** Width of the column, set by the page with its breadcrumb. */
+  widthClassName?: string;
 }
 
 type Tab = "profile" | "sim" | "wallet" | "affiliate";
@@ -61,7 +63,7 @@ function getExpiryBg(daysLeft: number | null): string {
   return "bg-emerald-50";
 }
 
-export function ProfileContent({ lang }: ProfileContentProps) {
+export function ProfileContent({ lang, widthClassName }: ProfileContentProps) {
   const t = profileTranslations[lang];
   const { user } = useAuth();
   const signOut = useSignOut(lang);
@@ -89,6 +91,13 @@ export function ProfileContent({ lang }: ProfileContentProps) {
     setActiveTab(requestedTab as Tab);
   }, [requestedTab, partner]);
 
+  // These two buttons sit far down the page: the wallet opens at its top, not
+  // wherever the page happened to be scrolled (vande-0411 #079).
+  const openWalletFromTop = () => {
+    setActiveTab("wallet");
+    window.scrollTo({ top: 0, behavior: "auto" });
+  };
+
   const copyReferralCode = async (code: string) => {
     try {
       await navigator.clipboard.writeText(code);
@@ -101,7 +110,7 @@ export function ProfileContent({ lang }: ProfileContentProps) {
 
   if (!user) {
     return (
-      <main className="min-h-screen bg-gray-50 pt-24 pb-16">
+      <main className="min-h-screen pt-24 pb-16">
         <div className="max-w-lg mx-auto px-4 text-center py-20">
           <User className="w-16 h-16 text-gray-300 mx-auto mb-4" />
           <p className="text-gray-500 mb-4">
@@ -139,11 +148,11 @@ export function ProfileContent({ lang }: ProfileContentProps) {
   const expiryBg = getExpiryBg(daysLeft);
 
   return (
-    <main className="min-h-screen bg-gray-50 pt-24 pb-16">
+    <main className="min-h-screen pt-24 pb-16">
       {/* Wider than the 672px it was (vande #050): the eSIM rows now carry
           plan name, status, dates and actions, and the names were cut short.
           Now the site container, lined up with the breadcrumb above. */}
-      <div className="md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1168px] px-4 sm:px-0 mx-auto">
+      <div className={`${widthClassName ?? ""} px-4 sm:px-0 mx-auto`}>
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-[1.7rem] sm:text-2xl font-medium text-gray-900">{t.pageTitle}</h1>
@@ -344,7 +353,7 @@ export function ProfileContent({ lang }: ProfileContentProps) {
                 )}
                 <div className="px-5 pb-4">
                   <button
-                    onClick={() => setActiveTab("wallet")}
+                    onClick={openWalletFromTop}
                     className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-base sm:text-sm font-medium bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-colors cursor-pointer"
                   >
                     <Wallet className="w-4 h-4" />
@@ -391,7 +400,7 @@ export function ProfileContent({ lang }: ProfileContentProps) {
                     </div>
                   )}
                   <button
-                    onClick={() => setActiveTab("wallet")}
+                    onClick={openWalletFromTop}
                     className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-base sm:text-sm font-medium bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors cursor-pointer"
                   >
                     <Gift className="w-4 h-4" />
