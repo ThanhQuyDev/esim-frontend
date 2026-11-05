@@ -2,7 +2,7 @@
 
 import { dayDate } from "@/lib/clock-date";
 import { useState } from "react";
-import { Package, Calendar, CreditCard, ChevronRight, Loader2, AlertTriangle, ArrowLeft, RefreshCw, X } from "lucide-react";
+import { Package, Calendar, CreditCard, ChevronRight, Loader2, AlertTriangle, ArrowLeft, RefreshCw, X, Check, Copy } from "lucide-react";
 import type { ProfileDict } from "./translations";
 import type { MyOrder } from "@/lib/hooks";
 import Link from "next/link";
@@ -25,7 +25,10 @@ function getStatusColor(status: string) {
       return "bg-amber-100 text-amber-700";
     case "cancelled":
     case "failed":
+    case "refunded":
       return "bg-red-100 text-red-700";
+    case "MANUAL_INTERVENTION":
+      return "bg-amber-100 text-amber-700";
     default:
       return "bg-gray-100 text-gray-600";
   }
@@ -38,6 +41,8 @@ function getStatusLabel(status: string, t: ProfileDict) {
     completed: t.completed,
     cancelled: t.cancelled,
     failed: t.failed,
+    refunded: t.refunded,
+    MANUAL_INTERVENTION: t.processing,
   };
   return map[status] || status;
 }
@@ -162,6 +167,29 @@ function RetryPaymentModal({
   );
 }
 
+/** Sits on the row's link, so the tap copies rather than opens the order. */
+function CopyOrderNumber({ value, lang }: { value: string; lang: string }) {
+  const [done, setDone] = useState(false);
+  return (
+    <button
+      type="button"
+      data-testid="order-number-copy"
+      aria-label={lang === "vi" ? "Copy mã đơn hàng" : "Copy order number"}
+      className="sm:hidden shrink-0 p-1 text-gray-400 hover:text-gray-700"
+      onClick={(event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        void navigator.clipboard?.writeText(value).then(() => {
+          setDone(true);
+          setTimeout(() => setDone(false), 1500);
+        });
+      }}
+    >
+      {done ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+    </button>
+  );
+}
+
 export function OrderList({ orders, isLoading, t, lang }: OrderListProps) {
   const router = useRouter();
   const [retryOrder, setRetryOrder] = useState<MyOrder | null>(null);
@@ -207,24 +235,32 @@ export function OrderList({ orders, isLoading, t, lang }: OrderListProps) {
             onClick={(e) => handleOrderClick(order, e)}
             className="flex items-center gap-4 p-4 rounded-xl border border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm transition-all group"
           >
-            {/* Icon */}
-            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-blue-50 shrink-0">
+            {/* Icon: dropped on a phone, for room (vande-0411 #080) */}
+            <div className="hidden sm:flex items-center justify-center w-10 h-10 rounded-lg bg-blue-50 shrink-0">
               <Package className="w-5 h-5 text-blue-500" />
             </div>
 
             {/* Info */}
             <div className="flex-1 min-w-0">
+              {/* On a phone the status has its own line, so the number fits. */}
+              <span
+                data-testid="order-status-mobile"
+                className={`sm:hidden inline-flex items-center px-2 py-0.5 mb-1.5 text-sm font-medium rounded-full ${getStatusColor(order.status)}`}
+              >
+                {getStatusLabel(order.status, t)}
+              </span>
               <div className="flex items-center gap-2 mb-1">
-                <p className="text-base sm:text-sm font-semibold text-gray-900 truncate">
+                <p className="text-base sm:text-sm font-semibold text-gray-900 max-sm:break-all sm:truncate">
                   {order.orderNumber}
                 </p>
+                <CopyOrderNumber value={order.orderNumber} lang={lang} />
                 <span
-                  className={`inline-flex items-center px-2 py-0.5 text-sm font-medium rounded-full ${getStatusColor(order.status)}`}
+                  className={`max-sm:hidden inline-flex items-center px-2 py-0.5 text-sm font-medium rounded-full ${getStatusColor(order.status)}`}
                 >
                   {getStatusLabel(order.status, t)}
                 </span>
               </div>
-              <div className="flex items-center gap-3 text-sm text-gray-500">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-sm text-gray-500">
                 <span className="flex items-center gap-1">
                   <Calendar className="w-3 h-3" />
                   {dayDate(order.createdAt)}

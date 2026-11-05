@@ -37,6 +37,9 @@ import {
   formatVnd,
 } from "@/lib/hooks";
 import { walletTranslations, type WalletDict } from "./translations";
+import { clockDate } from "@/lib/clock-date";
+import { walletReasonText } from "@/lib/wallet-reason";
+import { TapFull } from "../profile/tap-full";
 import Link from "next/link";
 import { localizedHref } from "@/lib/route-mapping";
 import { SITE_BASE_URL } from "@/lib/hreflang";
@@ -107,6 +110,11 @@ function getTxIcon(type: WalletTransaction["type"]) {
   }
 }
 
+/** "+134.000 eXU": the phone's row has no room for "điểm" (vande-0411 #080). */
+function shortExu(amount: number, lang: string): string {
+  return `${Math.round(Number(amount) || 0).toLocaleString(lang === "en" ? "en-US" : "vi-VN")} eXU`;
+}
+
 function isCredit(type: WalletTransaction["type"]): boolean {
   return [
     "order_cashback",
@@ -154,6 +162,7 @@ export function WalletPageContent({ lang, embedded }: WalletPageContentProps) {
         {tabs.map((tab) => (
           <button
             key={tab.key}
+            data-tab={tab.key}
             onClick={() => setActiveTab(tab.key)}
             className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-base sm:text-sm font-medium rounded-lg transition-all ${
               activeTab === tab.key
@@ -302,6 +311,7 @@ function WalletTab({ t, lang }: { t: WalletDict; lang: string }) {
             onClick={() => {
               const el = document.querySelector('[data-tab="referral"]') as HTMLElement;
               el?.click();
+              window.scrollTo({ top: 0, behavior: "auto" });
             }}
             className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-base sm:text-sm font-medium bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors"
           >
@@ -335,7 +345,8 @@ function WalletTab({ t, lang }: { t: WalletDict; lang: string }) {
             {transactions.map((tx) => {
               const credit = isCredit(tx.type);
               return (
-                <div key={tx.id} className="px-6 py-4 flex items-center gap-4 hover:bg-gray-50/50 transition-colors">
+                <div key={tx.id}>
+                <div className="max-sm:hidden px-6 py-4 flex items-center gap-4 hover:bg-gray-50/50 transition-colors">
                   <div
                     className={`flex items-center justify-center w-10 h-10 rounded-xl flex-shrink-0 ${
                       credit ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-500"
@@ -348,9 +359,9 @@ function WalletTab({ t, lang }: { t: WalletDict; lang: string }) {
                       {getTransactionLabel(tx.type, lang)}
                     </p>
                     {tx.reason && (
-                      <p className="text-sm text-gray-400 truncate">{tx.reason}</p>
+                      <p className="text-sm text-gray-400 truncate">{walletReasonText(tx.reason, lang)}</p>
                     )}
-                    <p className="text-sm text-gray-400 mt-0.5">{formatDate(tx.createdAt)}</p>
+                    <p className="text-sm text-gray-400 mt-0.5">{clockDate(tx.createdAt)}</p>
                   </div>
                   <div className="text-right flex-shrink-0">
                     <p className={`text-base sm:text-sm font-semibold ${credit ? "text-emerald-600" : "text-red-500"}`}>
@@ -359,6 +370,29 @@ function WalletTab({ t, lang }: { t: WalletDict; lang: string }) {
                     <p className="text-sm text-gray-400">
                       {t.availableBalance}: {formatExu(tx.balanceAfterVnd, lang)}
                     </p>
+                  </div>
+                </div>
+                  {/* On a phone: the title on its own line, amounts on the left,
+                      details on the right, tap to read a cut line (vande-0411 #080). */}
+                  <div className="sm:hidden px-4 py-3" data-testid="tx-row-mobile">
+                    <p className="text-sm font-semibold text-gray-900">
+                      {getTransactionLabel(tx.type, lang)}
+                    </p>
+                    <div className="mt-1.5 flex items-start justify-between gap-3">
+                      <div className="shrink-0">
+                        <p className={`text-sm font-semibold ${credit ? "text-emerald-600" : "text-red-500"}`}>
+                          {credit ? "+" : ""}{shortExu(tx.amountVnd, lang)}
+                        </p>
+                        <p className="mt-0.5 flex items-center gap-1 text-xs text-gray-500">
+                          <Wallet className="w-3 h-3" aria-label={t.availableBalance} />
+                          {shortExu(tx.balanceAfterVnd, lang)}
+                        </p>
+                      </div>
+                      <div className="min-w-0 flex-1 text-right text-xs text-gray-500">
+                        {tx.reason && <TapFull text={walletReasonText(tx.reason, lang)} align="right" />}
+                        <p className="mt-0.5">{clockDate(tx.createdAt)}</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               );
@@ -477,7 +511,7 @@ function ReferralTab({ t, lang }: { t: WalletDict; lang: string }) {
           {/* Copy Code + Edit */}
           {!isEditing ? (
             <div className="flex items-center gap-3">
-              <div className="flex-1 bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
+              <div className="flex-1 min-w-0 bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
                 <p className="text-sm text-gray-400 mb-0.5">{t.referralCode}</p>
                 <p className="text-base sm:text-sm font-mono font-medium text-gray-900">{referral.code}</p>
               </div>
@@ -566,7 +600,7 @@ function ReferralTab({ t, lang }: { t: WalletDict; lang: string }) {
 
           {/* Referral Link */}
           <div className="flex items-center gap-3">
-            <div className="flex-1 bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
+            <div className="flex-1 min-w-0 bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
               <p className="text-sm text-gray-400 mb-0.5">{t.referralLink}</p>
               <p className="text-base sm:text-sm text-gray-600 truncate">{referralLink}</p>
             </div>

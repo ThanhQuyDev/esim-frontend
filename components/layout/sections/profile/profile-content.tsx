@@ -166,12 +166,13 @@ export function ProfileContent({ lang, widthClassName }: ProfileContentProps) {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-1 p-1 bg-gray-100 rounded-xl mb-6">
+        {/* Slides sideways on a phone rather than wrapping (vande-0411 #080). */}
+        <div className="flex gap-1 p-1 bg-gray-100 rounded-xl mb-6 overflow-x-auto scrollbar-none">
           {tabs.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-base sm:text-sm font-medium rounded-lg transition-all ${
+              className={`flex-none sm:flex-1 whitespace-nowrap flex items-center justify-center gap-2 px-4 py-2.5 text-base sm:text-sm font-medium rounded-lg transition-all ${
                 activeTab === tab.key
                   ? "bg-white text-gray-900 shadow-sm"
                   : "text-gray-500 hover:text-gray-700"
@@ -376,7 +377,7 @@ export function ProfileContent({ lang, widthClassName }: ProfileContentProps) {
                 </div>
                 <div className="p-5 space-y-3">
                   <div className="flex items-center gap-3">
-                    <div className="flex-1 bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
+                    <div className="flex-1 min-w-0 bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
                       <p className="text-sm text-gray-400 mb-0.5">{t.referralLink}</p>
                       <p className="text-base sm:text-sm text-gray-600 truncate">{`${SITE_BASE_URL}/?ref=${referral.code}`}</p>
                     </div>

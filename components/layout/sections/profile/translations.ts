@@ -24,6 +24,8 @@ export interface ProfileDict {
   completed: string;
   cancelled: string;
   failed: string;
+  refunded: string;
+  processing: string;
   viewDetail: string;
   // SIM management
   myEsims: string;
@@ -121,6 +123,8 @@ export const profileTranslations: Record<"en" | "vi", ProfileDict> = {
     completed: "Completed",
     cancelled: "Cancelled",
     failed: "Failed",
+    refunded: "Refunded",
+    processing: "Processing",
     viewDetail: "View Detail",
     myEsims: "My eSIMs",
     noEsims: "You don't have any eSIMs yet.",
@@ -167,7 +171,7 @@ export const profileTranslations: Record<"en" | "vi", ProfileDict> = {
     // Referral
     referralCode: "Your Referral Code",
     referralLink: "Referral Link",
-    copyCode: "Copy Code",
+    copyCode: "Copy",
     shareReferral: "Share Referral Code",
     referralInactive: "Your referral code is currently inactive.",
     topupTitle: "Top Up Your eSIM",
@@ -220,6 +224,8 @@ export const profileTranslations: Record<"en" | "vi", ProfileDict> = {
     completed: "Hoàn thành",
     cancelled: "Đã hủy",
     failed: "Thất bại",
+    refunded: "Đã hoàn tiền",
+    processing: "Đang xử lý",
     viewDetail: "Xem chi tiết",
     myEsims: "eSIM Của Tôi",
     noEsims: "Bạn chưa có eSIM nào.",
@@ -266,7 +272,7 @@ export const profileTranslations: Record<"en" | "vi", ProfileDict> = {
     // Referral
     referralCode: "Mã giới thiệu của bạn",
     referralLink: "Link giới thiệu",
-    copyCode: "Sao chép mã",
+    copyCode: "Copy",
     shareReferral: "Chia sẻ mã giới thiệu",
     referralInactive: "Mã giới thiệu của bạn hiện không hoạt động.",
     topupTitle: "Nạp dung lượng cho eSIM",
