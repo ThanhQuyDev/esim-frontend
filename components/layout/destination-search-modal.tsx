@@ -44,10 +44,10 @@ export function DestinationSearchModal({
 
   // Fetch regions (for combining popular ones in the default list)
   const { data: allRegions = [], isLoading: isLoadingRegions } = useRegions(
-    JSON.stringify({ isPopular: true }),
+    JSON.stringify({ featuredTop: true }),
     "name",
     "ASC",
-    20
+    100
   );
 
   // Search destinations

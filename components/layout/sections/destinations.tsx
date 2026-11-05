@@ -38,11 +38,13 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
     12
   );
 
+  // A featured parent with its packs, and featured regions with no parent. A
+  // featured pack shows on its parent's page instead (vande-0411 #073).
   const { data: regions = [], isLoading: isLoadingRegions } = useRegions(
-    JSON.stringify({ isPopular: true }),
+    JSON.stringify({ featuredTop: true }),
     "name",
     "ASC",
-    12
+    100
   );
 
   const tabs = [
@@ -55,7 +57,7 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
   // Same-named regions that differ only by country count collapse into one
   // card linking to the group page (`/esim-chau-a`).
   const regionItems = useMemo(
-    () => toRegionListItems(regions, lang),
+    () => toRegionListItems(regions, lang).slice(0, 12),
     [regions, lang]
   );
   const displayItems = showRegions ? regionItems : destinations;

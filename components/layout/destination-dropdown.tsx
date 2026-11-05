@@ -1,7 +1,8 @@
 "use client";
+import { toRegionListItems } from "@/lib/region-groups";
 import { useMoney } from "@/lib/money";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Search, X, Info, MapPin, Loader2 } from "lucide-react";
 import { useTopDestinations, useSearchDestinations, useRegions, useSearchRegions } from "@/lib/hooks";
 import { useDebounce } from "@/lib/use-debounce";
@@ -61,12 +62,13 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
   );
 
   // Fetch regions
-  const { data: regions = [], isLoading: isLoadingRegions } = useRegions(
-    JSON.stringify({ isPopular: true }),
+  const { data: featuredRegions = [], isLoading: isLoadingRegions } = useRegions(
+    JSON.stringify({ featuredTop: true }),
     "name",
     "ASC",
-    20
+    100
   );
+  const regions = useMemo(() => toRegionListItems(featuredRegions, lang), [featuredRegions, lang]);
   const { data: searchRegions = [], isLoading: isSearchingRegions } = useSearchRegions(
     debouncedSearch,
     hasSearch
