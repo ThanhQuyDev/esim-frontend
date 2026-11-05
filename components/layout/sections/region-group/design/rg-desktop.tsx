@@ -2,6 +2,7 @@
 
 
 
+import { footerReached, scrollToVoucherPopup, useChatAboveBar, useVoucherArrow } from "./buy-bar";
 import { esimName } from "@/lib/esim-name";
 import type { Locale } from "@/lib/i18n-config";
 import type { CrossItem } from "@/lib/cross-sell";
@@ -85,6 +86,7 @@ export function RgDesktop({ p, label, lang, breadcrumb, cross = [] }: Props) {
   const [devBrand, setDevBrand] = useState<Brand | "">("");
   const [vpop, setVpop] = useState<null | "top" | "bs">(null);
   const [dsbShow, setDsbShow] = useState(false);
+  useVoucherArrow(vpop);
   const [flash, setFlash] = useState(0);
 
   const priceAnchor = useRef<HTMLDivElement>(null);
@@ -119,7 +121,8 @@ export function RgDesktop({ p, label, lang, breadcrumb, cross = [] }: Props) {
       setDsbShow(
         a.getBoundingClientRect().bottom < 0 &&
           (!plans || (scrollY > 0 && plans.getBoundingClientRect().top < innerHeight - bar.offsetHeight)) &&
-          !visible(cta),
+          !visible(cta) &&
+          !footerReached(),
       );
     };
     addEventListener("scroll", update, { passive: true });
@@ -176,6 +179,8 @@ export function RgDesktop({ p, label, lang, breadcrumb, cross = [] }: Props) {
         <VoucherBreakdown p={p} planLine={p.country ? tx("{0} eSIM · {1}", p.quantity, line) : tx("{0} eSIM · {1} nước · {2}", p.quantity, n, line)} />
       </div>
     );
+
+  useChatAboveBar(dsbRef, dsbShow);
 
   const goDeviceCheck = () => {
     dcRef.current?.scrollIntoView({ block: "nearest", behavior: "smooth" });
@@ -518,8 +523,9 @@ export function RgDesktop({ p, label, lang, breadcrumb, cross = [] }: Props) {
                   id="dsbVch"
                   aria-controls="vchPop"
                   onClick={() => {
-                    setVpop("bs");
-                    ctaRow.current?.scrollIntoView({ block: "center", behavior: "smooth" });
+                    // Up to the price at the top, as in the design (vande-0411 #069).
+                    setVpop("top");
+                    scrollToVoucherPopup();
                   }}
                 >
                   <Ic name="ic-ticket" w={12} />{tx("Giá sau voucher")}</button>

@@ -448,7 +448,7 @@ export const DESIGN_EN: Record<string, string> = {
   "Hết data: không thể nạp thêm.": "Out of data: no top-up available.",
   "Luôn dùng tốc độ": "Always at",
   "Luôn ở tốc độ cao nhất 4G/5G.": "Always at top 4G/5G speed.",
-  "Lịch": "Calendar",
+  "Lịch": "Dates",
   "Sau đó": "Then",
   "Số GB là tổng dung lượng dùng cho cả gói, không chia theo ngày. Hiển thị gói đúng {0} ngày; nếu chưa có, hiển thị gói gần nhất có hạn dài hơn.": "The GB is the total for the whole plan, not per day. Plans of exactly {0} days are shown; if there is none, the nearest longer one.",
   "Số lượng và mua": "Quantity and purchase",

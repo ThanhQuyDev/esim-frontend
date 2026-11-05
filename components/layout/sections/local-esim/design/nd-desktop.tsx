@@ -1,6 +1,12 @@
 "use client";
 
 
+import {
+  footerReached,
+  scrollToVoucherPopup,
+  useChatAboveBar,
+  useVoucherArrow,
+} from "../../region-group/design/buy-bar";
 import { useT } from "./design-i18n";
 import { getCloudinaryTransformedUrl } from "@/lib/image-utils";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
@@ -67,6 +73,8 @@ export function NdDesktop({ p, meta, carrier, lang, otherCarriers, crossHref, br
   const ctaRow = useRef<HTMLDivElement>(null);
   const plansRef = useRef<HTMLDivElement>(null);
   const dsbRef = useRef<HTMLDivElement>(null);
+  useVoucherArrow(vpop);
+  useChatAboveBar(dsbRef, dsbShow);
   const dcRef = useRef<HTMLElement>(null);
   const leftStick = useRef<HTMLDivElement>(null);
 
@@ -99,7 +107,8 @@ export function NdDesktop({ p, meta, carrier, lang, otherCarriers, crossHref, br
       const show =
         a.getBoundingClientRect().bottom < 0 &&
         (!plans || (scrollY > 0 && plans.getBoundingClientRect().top < innerHeight - bar.offsetHeight)) &&
-        !visible(cta);
+        !visible(cta) &&
+        !footerReached();
       setDsbShow(show);
     };
     addEventListener("scroll", update, { passive: true });
@@ -549,8 +558,9 @@ export function NdDesktop({ p, meta, carrier, lang, otherCarriers, crossHref, br
                   id="dsbVch"
                   aria-controls="vchPop"
                   onClick={() => {
-                    setVpop("bs");
-                    ctaRow.current?.scrollIntoView({ block: "center", behavior: "smooth" });
+                    // Up to the price at the top, as in the design (vande-0411 #069).
+                    setVpop("top");
+                    scrollToVoucherPopup();
                   }}
                 >
                   <Ic name="ic-ticket" w={12} />{tx("Giá sau voucher")}</button>

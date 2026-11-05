@@ -1,6 +1,7 @@
 "use client";
 
 
+import { footerReached, useChatAboveBar } from "../../region-group/design/buy-bar";
 import { useT } from "./design-i18n";
 import { getCloudinaryTransformedUrl } from "@/lib/image-utils";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
@@ -76,13 +77,16 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb, 
   const buyRef = useRef<HTMLDivElement>(null);
   const plansRef = useRef<HTMLDivElement>(null);
   const [buyShow, setBuyShow] = useState(false);
+  useChatAboveBar(buyRef, buyShow);
   const [tight, setTight] = useState(0);
   useEffect(() => {
     const update = () => {
       const bar = buyRef.current;
       const plans = plansRef.current;
       if (!bar || !plans) return;
-      setBuyShow(scrollY > 0 && plans.getBoundingClientRect().top < innerHeight - bar.offsetHeight);
+      setBuyShow(
+        scrollY > 0 && plans.getBoundingClientRect().top < innerHeight - bar.offsetHeight && !footerReached()
+      );
     };
     addEventListener("scroll", update, { passive: true });
     addEventListener("resize", update);

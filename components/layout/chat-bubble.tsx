@@ -190,7 +190,7 @@ export function ChatBubble() {
         }}
         // On a phone the open chat fills the screen and has its own close
         // button; the floating one would only sit over the send box (#070).
-        className={`fixed bottom-6 right-6 z-50 h-14 w-14 items-center justify-center rounded-full bg-[#1a1a1a] text-white shadow-lg transition-transform hover:scale-105 active:scale-95 ${open ? "hidden sm:flex" : "flex"}`}
+        className={`fixed bottom-[calc(1.5rem+var(--buy-bar-h,0px))] right-6 z-50 h-14 w-14 transition-[bottom] duration-300 items-center justify-center rounded-full bg-[#1a1a1a] text-white shadow-lg transition-transform hover:scale-105 active:scale-95 ${open ? "hidden sm:flex" : "flex"}`}
         aria-label={open ? "Close chat" : "Open support chat"}
         id="chat-bubble-toggle"
       >

@@ -1,6 +1,7 @@
 "use client";
 
 
+import { footerReached, useChatAboveBar } from "./buy-bar";
 import { esimName } from "@/lib/esim-name";
 import type { Locale } from "@/lib/i18n-config";
 import type { CrossItem } from "@/lib/cross-sell";
@@ -72,13 +73,16 @@ export function RgMobile({ p, label, lang, breadcrumb, cross = [] }: Props) {
   const buyRef = useRef<HTMLDivElement>(null);
   const plansRef = useRef<HTMLDivElement>(null);
   const [buyShow, setBuyShow] = useState(false);
+  useChatAboveBar(buyRef, buyShow);
   const [tight, setTight] = useState(0);
   useEffect(() => {
     const update = () => {
       const bar = buyRef.current;
       const plans = plansRef.current;
       if (!bar || !plans) return;
-      setBuyShow(scrollY > 0 && plans.getBoundingClientRect().top < innerHeight - bar.offsetHeight);
+      setBuyShow(
+        scrollY > 0 && plans.getBoundingClientRect().top < innerHeight - bar.offsetHeight && !footerReached()
+      );
     };
     addEventListener("scroll", update, { passive: true });
     addEventListener("resize", update);
