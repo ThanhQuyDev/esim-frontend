@@ -1,5 +1,9 @@
 "use client";
 
+import { TapFull } from "./tap-full";
+import { speedLabel } from "../region-group/design/rg-model";
+import { hasDailyAllowance } from "@/lib/plan-daily-reset";
+import { validityStartText } from "@/lib/plan-validity-start";
 import { esimQrLogoSettings } from "@/lib/esim-qr";
 import { isDomesticProvider } from "@/lib/api";
 import { useState, useEffect } from "react";
@@ -22,7 +26,7 @@ import {
 import type { EsimDataUsage, MyEsim } from "@/lib/hooks";
 import { useEsimDataUsage, useTopupPackages } from "@/lib/hooks";
 import { clockDate, dayDate } from "@/lib/clock-date";
-import { CurrentDayNote, DataUsageBar, RemainingTile, statusLabel, USAGE_STATUS_COLOR, VoiceSmsChips } from "./usage-bar";
+import { CurrentDayNote, DataUsageBar, RemainingTile, shownUsageStatus, statusLabel, USAGE_STATUS_COLOR, VoiceSmsChips } from "./usage-bar";
 import { esimDayCycle } from "@/lib/plan-daily-reset";
 import type { ProfileDict } from "./translations";
 import { QRCodeSVG } from "qrcode.react";
@@ -131,6 +135,56 @@ function CopyButton({ text, t }: { text: string; t: ProfileDict }) {
   );
 }
 
+/** Values on the eSIM's info tab: smaller on a phone, where 16px looked coarse. */
+const VALUE_TEXT = "text-[0.8125rem] sm:text-sm text-gray-900";
+
+/** "384 Kbps"; suppliers also write "Terminate (Dừng truy cập)" and "Max Speed". */
+function afterDataText(raw: string | null | undefined, vi: boolean): string | null {
+  if (!raw) return null;
+  if (/terminate/i.test(raw)) return vi ? "Dừng truy cập" : "Access stops";
+  if (/max speed/i.test(raw)) return vi ? "Tốc độ tối đa" : "Maximum speed";
+  return speedLabel(raw);
+}
+
+/** The plan's rows on the info tab (vande-0411 #081). */
+function esimPlanFacts(esim: MyEsim, lang: string): { label: string; value: string }[] {
+  const vi = lang === "vi";
+  const plan = planWithTopups(esim.plan, esim);
+  if (!plan) return [];
+  const facts: { label: string; value: string | null }[] = [];
+  const mb = Number(plan.dataMb) || 0;
+  const perDay = !!plan.type && plan.type !== "fixed";
+  const size = mb >= 1024 ? `${parseFloat((mb / 1024).toFixed(1))} GB` : `${mb} MB`;
+  facts.push({
+    label: vi ? "Dung lượng" : "Data",
+    value: mb > 0 ? `${size}${perDay ? (vi ? " /ngày" : " /day") : ""}` : vi ? "Không giới hạn" : "Unlimited",
+  });
+  facts.push({ label: vi ? "Tốc độ sau khi hết data" : "Speed after the data runs out", value: afterDataText(plan.fupSpeed, vi) });
+  const days = Number(plan.durationDays) || 0;
+  facts.push({
+    label: vi ? "Thời hạn gói" : "Plan length",
+    value: days > 0 ? (vi ? `${days} ngày` : `${days} day${days > 1 ? "s" : ""}`) : null,
+  });
+  if (plan.isKyc != null) {
+    facts.push({ label: vi ? "Yêu cầu KYC" : "ID check (KYC)", value: plan.isKyc ? (vi ? "Có" : "Yes") : vi ? "Không" : "No" });
+  }
+  const start = validityStartText(plan, lang);
+  if (start) facts.push({ label: start.title, value: start.value });
+  if (hasDailyAllowance(plan.type ? { type: plan.type } : null)) {
+    const offset = plan.dailyResetUtcOffset ?? 8;
+    facts.push({
+      label: vi ? "Giờ làm mới mỗi ngày" : "Daily reset",
+      value:
+        plan.dailyResetPolicy === "rolling_24h"
+          ? vi ? "Sau mỗi 24 giờ" : "Every 24 hours"
+          : plan.dailyResetPolicy === "calendar_day"
+            ? `23:59 (UTC${offset >= 0 ? "+" : "-"}${Math.abs(offset)})`
+            : null,
+    });
+  }
+  return facts.filter((fact): fact is { label: string; value: string } => !!fact.value);
+}
+
 function QrCodeImage({ lpa }: { lpa: string }) {
   return (
     <div className="flex flex-col items-center gap-2 py-3">
@@ -214,6 +268,7 @@ export function DataUsageSection({ esimId, lang }: { esimId: number; lang: strin
   const daysRemaining = cycle?.daysRemaining ?? null;
 
   const statusColor = USAGE_STATUS_COLOR;
+  const shownStatus = shownUsageStatus(usage.status, usage.expiredAt);
 
   return (
     <div className="border-t border-gray-100 pt-4 mt-4 space-y-4">
@@ -225,7 +280,7 @@ export function DataUsageSection({ esimId, lang }: { esimId: number; lang: strin
           data-testid="usage-status"
           className={`inline-flex items-center px-2 py-0.5 text-sm font-medium rounded-full ${statusColor[usage.status?.toUpperCase()] || "bg-gray-100 text-gray-500"}`}
         >
-          {statusLabel(usage.status, lang)}
+          {statusLabel(shownStatus, lang)}
         </span>
       </div>
 
@@ -470,6 +525,10 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
     ? Math.max(0, Math.ceil((activationDeadline.getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
     : null;
 
+  // What the plan gives, row by row; a row the supplier said nothing about is left
+  // out rather than guessed (vande-0411 #081).
+  const planFacts = esimPlanFacts(esim, lang);
+
   const fields: { label: string; value: string; copyable?: boolean }[] = [
     // The purchase order first, for support and warranty (#025, round 4).
     ...(esim.orderNumber
@@ -515,12 +574,14 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
         onClick={() => setExpanded(!expanded)}
         className="w-full flex items-center gap-3 p-4 text-left hover:bg-gray-50/50 transition-colors"
       >
-        <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-indigo-50 shrink-0">
+        <div className="max-sm:hidden flex items-center justify-center w-10 h-10 rounded-lg bg-indigo-50 shrink-0">
           <Smartphone className="w-5 h-5 text-indigo-500" />
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-0.5">
-            <p className="text-base sm:text-sm font-semibold text-gray-900 truncate font-mono" title={displayName}>
+          {/* On a phone: no icon, the labels on the first line, then a smaller
+              name that can wrap (vande-0411 #081). */}
+          <div className="flex items-center gap-2 mb-0.5 max-sm:flex-wrap">
+            <p className="max-sm:order-1 max-sm:w-full max-sm:break-words text-sm font-semibold text-gray-900 sm:truncate font-mono" title={displayName}>
               {displayName}
             </p>
             {/* TOPUP next to the product name, so a topped-up eSIM is obvious
@@ -558,11 +619,11 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
             )}
           </div>
           {/* Quick summary under the name (#025): data · days · minutes · SMS. */}
-          <p className="text-sm text-gray-700" data-testid="esim-plan-summary">
-            {planSummary(planWithTopups(esim.plan, esim), lang)}
-          </p>
+          <div className="text-sm text-gray-700" data-testid="esim-plan-summary">
+            <TapFull text={planSummary(planWithTopups(esim.plan, esim), lang)} />
+          </div>
           <p className="text-sm text-gray-500">
-            {lang === "vi" ? "Tạo ngày" : "Created"}: {dayDate(esim.createdAt)}
+            {lang === "vi" ? "Mua ngày" : "Bought"}: {dayDate(esim.createdAt)}
             {esim.expiresAt && esim.provider !== 'viettel' && (
               <> · {lang === "vi" ? "Hết hạn" : "Expires"}: {dayDate(esim.expiresAt)}</>
             )}
@@ -621,7 +682,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                     </div>
 
                     <div>
-                      <p className="text-sm font-medium text-gray-400 uppercase tracking-wider mb-2 text-center">
+                      <p className="text-xs sm:text-sm font-medium text-gray-400 uppercase tracking-wider mb-2 text-center">
                         {lang === "vi" ? "Hoặc cài đặt nhanh" : "Or install with one tap"}
                       </p>
                       <div className="grid grid-cols-2 gap-2">
@@ -655,8 +716,8 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                       <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">
                         {label}
                       </p>
-                      <div className="flex items-center gap-1 bg-gray-50 rounded-lg px-3 py-2">
-                        <p className="text-base sm:text-sm text-gray-900 font-mono break-all flex-1">
+                      <div className="flex items-center gap-1 bg-gray-50 rounded-[10px] px-3 py-2">
+                        <p className="text-[0.8125rem] sm:text-sm text-gray-900 font-mono break-all flex-1">
                           {value || "—"}
                         </p>
                         {copyable && value && <CopyButton text={value} t={t} />}
@@ -669,20 +730,20 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                     <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
                       {lang === "vi" ? "Thông tin gói cước" : "Plan Info"}
                     </p>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
                         <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">
                           {lang === "vi" ? "Loại gói" : "Plan Type"}
                         </p>
-                        <div className="bg-gray-50 rounded-lg px-3 py-2">
-                          <p className="text-base sm:text-sm text-gray-900">{planTypeLabel}</p>
+                        <div className="bg-gray-50 rounded-[10px] px-3 py-2">
+                          <p className="text-[0.8125rem] sm:text-sm text-gray-900">{planTypeLabel}</p>
                         </div>
                       </div>
                       <div>
                         <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">
                           {lang === "vi" ? "Nhà mạng" : "Carrier"}
                         </p>
-                        <div className="bg-gray-50 rounded-lg px-3 py-2">
+                        <div className="bg-gray-50 rounded-[10px] px-3 py-2">
                           {operatorNames.length > 0 ? (
                             <div className="flex flex-wrap gap-1">
                               {operatorNames.map((op) => (
@@ -695,7 +756,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                               ))}
                             </div>
                           ) : (
-                            <p className="text-base sm:text-sm text-gray-900">—</p>
+                            <p className="text-[0.8125rem] sm:text-sm text-gray-900">—</p>
                           )}
                         </div>
                       </div>
@@ -703,7 +764,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                         <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">
                           {lang === "vi" ? "Tốc độ mạng" : "Network Speed"}
                         </p>
-                        <div className="bg-gray-50 rounded-lg px-3 py-2">
+                        <div className="bg-gray-50 rounded-[10px] px-3 py-2">
                           {speedTiers.length > 0 ? (
                             <div className="flex flex-wrap gap-1">
                               {speedTiers.map((s) => (
@@ -716,7 +777,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                               ))}
                             </div>
                           ) : (
-                            <p className="text-base sm:text-sm text-gray-900">—</p>
+                            <p className="text-[0.8125rem] sm:text-sm text-gray-900">—</p>
                           )}
                         </div>
                       </div>
@@ -742,7 +803,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                                 const minutes = name.match(/(\d+)\s*Mins?/i)?.[1];
                                 const sms = name.match(/(\d+)\s*SMS/i)?.[1];
                                 return (
-                                  <div key={topup.orderNumber} className="text-base sm:text-sm text-gray-900">
+                                  <div key={topup.orderNumber} className="text-[0.8125rem] sm:text-sm text-gray-900">
                                     <p className="font-medium">{name}</p>
                                     <p className="text-sm text-gray-600">
                                       {[
@@ -766,7 +827,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                               })
                             ) : (
                               <>
-                                <p className="text-base sm:text-sm text-gray-900">
+                                <p className="text-[0.8125rem] sm:text-sm text-gray-900">
                                   {topupPackages ||
                                     (lang === "vi"
                                       ? `${topupCount} lần topup`
@@ -783,6 +844,14 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                           </div>
                         </div>
                       )}
+                      {planFacts.map(({ label, value }) => (
+                        <div key={label}>
+                          <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{label}</p>
+                          <div className="bg-gray-50 rounded-[10px] px-3 py-2">
+                            <p className={VALUE_TEXT} data-testid="esim-plan-fact">{value}</p>
+                          </div>
+                        </div>
+                      ))}
                       {/* Minutes / SMS. A call-and-SMS eSIM never said so
                           anywhere the customer could see it (#023). Only shown
                           when the plan actually includes an allowance. */}
@@ -800,13 +869,13 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                             ? lang === "vi" ? "Thời gian kích hoạt" : "Activated at"
                             : lang === "vi" ? "Thời hạn kích hoạt" : "Activation Validity"}
                         </p>
-                        <div className="bg-gray-50 rounded-lg px-3 py-2">
+                        <div className="bg-gray-50 rounded-[10px] px-3 py-2">
                           {isRunning ? (
-                            <p className="text-base sm:text-sm text-gray-900" data-testid="esim-activated-at">
+                            <p className="text-[0.8125rem] sm:text-sm text-gray-900" data-testid="esim-activated-at">
                               {clockDate(esim.activatedAt)}
                             </p>
                           ) : activationDeadline ? (
-                            <p className={`text-base sm:text-sm ${activationDaysLeft !== null && activationDaysLeft <= 30 ? "text-amber-600 font-medium" : "text-gray-900"}`}>
+                            <p className={`text-[0.8125rem] sm:text-sm ${activationDaysLeft !== null && activationDaysLeft <= 30 ? "text-amber-600 font-medium" : "text-gray-900"}`}>
                               {activationDaysLeft !== null && activationDaysLeft > 0
                                 ? `${activationDaysLeft} ${lang === "vi" ? "ngày còn lại" : "days left"}`
                                 : lang === "vi" ? "Đã hết hạn" : "Expired"}
@@ -815,7 +884,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                               </span>
                             </p>
                           ) : (
-                            <p className="text-base sm:text-sm text-gray-900">—</p>
+                            <p className="text-[0.8125rem] sm:text-sm text-gray-900">—</p>
                           )}
                         </div>
                       </div>
@@ -828,7 +897,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                       <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">
                         {t.status}
                       </p>
-                      <div className="bg-gray-50 rounded-lg px-3 py-2">
+                      <div className="bg-gray-50 rounded-[10px] px-3 py-2">
                         <span className={`inline-flex items-center px-2 py-0.5 text-sm font-medium rounded-full ${lifecycle.style}`}>
                           {lifecycle[lang]}
                         </span>
@@ -838,8 +907,8 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
                       <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">
                         {lang === "vi" ? "Hết hạn" : "Expires"}
                       </p>
-                      <div className="bg-gray-50 rounded-lg px-3 py-2">
-                        <p className="text-base sm:text-sm text-gray-900" data-testid="esim-expires-at">
+                      <div className="bg-gray-50 rounded-[10px] px-3 py-2">
+                        <p className="text-[0.8125rem] sm:text-sm text-gray-900" data-testid="esim-expires-at">
                           {clockDate(esim.expiresAt)}
                         </p>
                       </div>

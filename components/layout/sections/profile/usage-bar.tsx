@@ -86,6 +86,21 @@ export function statusLabel(status: string | undefined, lang: string): string {
   return status || (lang === "vi" ? "Không rõ" : "Unknown");
 }
 
+/**
+ * The status to show beside the usage figures. A supplier may go on reporting
+ * ACTIVE after the plan has ended, so an eSIM whose end has passed reads as
+ * expired, as its own card says (vande-0411 #081).
+ */
+export function shownUsageStatus(
+  status: string | undefined,
+  expiredAt: string | null | undefined,
+  now: number = Date.now(),
+): string | undefined {
+  if ((status ?? "").toUpperCase() !== "ACTIVE" || !expiredAt) return status;
+  const end = new Date(expiredAt).getTime();
+  return !Number.isNaN(end) && end <= now ? "EXPIRED" : status;
+}
+
 /** Badge colour per status, shared so both pages label states the same way. */
 export const USAGE_STATUS_COLOR: Record<string, string> = {
   ACTIVE: "bg-emerald-100 text-emerald-700",

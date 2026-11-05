@@ -1,3 +1,4 @@
+import type { PlanValidityStart } from "./plan-validity-start";
 import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { trackJourney } from "@/lib/journey-tracking";
 import { useCallback, useMemo } from "react";
@@ -1521,6 +1522,12 @@ export interface MyEsimPlan {
   operatorName?: string;
   /** Network speeds, slash-separated, e.g. "5G/4G" */
   speed?: string;
+  /** Speed once the data runs out, as the supplier writes it (vande-0411 #081). */
+  fupSpeed?: string | null;
+  isKyc?: boolean | null;
+  validityStart?: PlanValidityStart | null;
+  dailyResetPolicy?: string | null;
+  dailyResetUtcOffset?: number | null;
   destination?: {
     id?: number;
     name?: string;

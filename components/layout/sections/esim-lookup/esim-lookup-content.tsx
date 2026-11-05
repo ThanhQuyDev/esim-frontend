@@ -11,6 +11,7 @@ import {
   CurrentDayNote,
   DataUsageBar,
   RemainingTile,
+  shownUsageStatus,
   statusLabel,
   USAGE_STATUS_COLOR,
   VoiceSmsChips,
@@ -195,6 +196,7 @@ function LookupResult({
     utcOffset: data.dailyResetUtcOffset,
     planType: data.planType,
   });
+  const shownStatus = shownUsageStatus(data.status, data.expiredAt);
   const totalDays = cycle?.totalDays ?? null;
   const daysUsed = cycle?.daysUsed ?? null;
   const daysRemaining = cycle?.daysRemaining ?? null;
@@ -218,11 +220,11 @@ function LookupResult({
         <div className="flex shrink-0 items-center gap-2">
           <span
             className={`inline-flex items-center rounded-full px-2 py-0.5 text-sm font-medium ${
-              USAGE_STATUS_COLOR[data.status?.toUpperCase()] || "bg-gray-100 text-gray-500"
+              USAGE_STATUS_COLOR[shownStatus?.toUpperCase() ?? ""] || "bg-gray-100 text-gray-500"
             }`}
             data-testid="lookup-status"
           >
-            {statusLabel(data.status, lang)}
+            {statusLabel(shownStatus, lang)}
           </span>
           <button
             type="button"
