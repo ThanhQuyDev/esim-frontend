@@ -130,7 +130,8 @@ export function verifySecureHash(
   const config = getConfig();
   const receivedHash = queryParams.vpc_SecureHash || "";
 
-  if (!receivedHash) return false;
+  // No secret configured: nothing can be verified, so nothing is trusted.
+  if (!receivedHash || !config.hashSecret) return false;
 
   // Remove the hash from params before verification
   const paramsWithoutHash = { ...queryParams };

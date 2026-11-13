@@ -23,7 +23,11 @@ export const dynamic = "force-dynamic";
 
 function redirectTo(request: NextRequest, targetPath: string | null) {
   const origin = publicOrigin(request);
-  const url = targetPath ? new URL(targetPath, origin) : new URL("/", origin);
+  let url = targetPath ? new URL(targetPath, origin) : new URL("/", origin);
+  // Only ever to a page of this site (security 12/11/2026): a target of
+  // "//evil.com" or "https://evil.com" made esim.vn/go/<code> a redirect to
+  // any phishing page.
+  if (url.origin !== new URL(origin).origin) url = new URL("/", origin);
   // The partner's channel label is read from the link itself; on the landing
   // URL it would only leak through Referer, history and shared screenshots
   // (doitac-1410 #026).
