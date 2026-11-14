@@ -24,6 +24,7 @@ import { useAuth } from "@/lib/auth";
 import { walletTranslations } from "@/components/layout/sections/wallet/translations";
 import Link from "next/link";
 import { localizedHref } from "@/lib/route-mapping";
+import { usePlanStock, stockLeft, stockProblem } from "@/lib/plan-stock-client";
 
 interface CartPageContentProps {
   dict: Record<string, any>;
@@ -324,6 +325,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
 
   const handleCheckout = () => {
     if (selectedItems.length === 0) return;
+    if (stockBlocked()) return;
 
     // If not logged in, persist the selected items FIRST (so they survive
     // the localStorage → API cart sync that happens on login), then show
@@ -373,7 +375,43 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
     }
   };
 
-  const handleQuantity = async (id: string, qty: number) => {
+  // Viettel / domestic eSIMs left (vande-1411 #008): the quantity never goes
+  // past them, and a line over the stock cannot go to checkout.
+  const { data: stock } = usePlanStock(cart.items.map((i) => i.planId));
+  const quantityOfPlan = (planId?: number) =>
+    cart.items.filter((i) => i.planId === planId).reduce((sum, i) => sum + i.quantity, 0);
+  /** The most this line may hold, the plan's other lines counted. */
+  const maxFor = (item: CartItem) => {
+    const left = stockLeft(stock, item.planId);
+    if (left === Infinity) return Infinity;
+    return Math.max(0, left - (quantityOfPlan(item.planId) - item.quantity));
+  };
+  const problemOf = (item: CartItem) =>
+    stockProblem(item, stock, lang, quantityOfPlan(item.planId));
+  const [stockError, setStockError] = useState<string | null>(null);
+  const stockBlocked = () => {
+    const bad = selectedItems.map(problemOf).find(Boolean) ?? null;
+    setStockError(bad);
+    return !!bad;
+  };
+
+  // A line already over the stock (added before it ran low) comes down to it.
+  useEffect(() => {
+    if (!stock) return;
+    for (const item of cart.items) {
+      const max = maxFor(item);
+      if (max !== Infinity && max > 0 && item.quantity > max) {
+        void handleQuantity(item.id, max);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stock]);
+
+  const handleQuantity = async (id: string, wanted: number) => {
+    const line = cart.items.find((i) => i.id === id);
+    const max = line ? maxFor(line) : Infinity;
+    const qty = Math.max(1, max === Infinity ? wanted : Math.min(wanted, Math.max(1, max)));
+    setStockError(null);
     await updateItem(id, qty);
     if (!isApiCart) {
       setCart(getLocalCartData());
@@ -475,6 +513,9 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
             onToggle={() => toggleSelect(item.id)}
             onQuantityChange={(qty) => handleQuantity(item.id, qty)}
             onRemove={() => handleRemove(item.id)}
+            maxQuantity={maxFor(item)}
+            stockNote={problemOf(item)}
+            lang={lang}
             formatPrice={formatPrice}
             dict={dict}
           />
@@ -688,6 +729,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
                     })
                   );
                 }
+                if (stockBlocked()) return;
                 localStorage.setItem("esim_checkout_use_exu", "true");
                 window.location.href = localizedHref(lang, "checkout");
               }}
@@ -699,6 +741,12 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
                 : `Use eXU points (${formatExu(wallet.availableBalanceVnd, lang)})`}
             </button>
           ) : null}
+
+          {stockError && (
+            <p className="text-sm text-red-600" role="alert" data-testid="cart-stock-error">
+              {stockError}
+            </p>
+          )}
 
           {/* Checkout Button */}
           <button
@@ -729,6 +777,9 @@ function CartItemRow({
   onRemove,
   formatPrice,
   dict,
+  maxQuantity = Infinity,
+  stockNote,
+  lang,
 }: {
   item: CartItem;
   selected: boolean;
@@ -737,7 +788,12 @@ function CartItemRow({
   onRemove: () => void;
   formatPrice: (usd: number) => string;
   dict: Record<string, any>;
+  /** eSIMs of this plan left for this line (vande-1411 #008). */
+  maxQuantity?: number;
+  stockNote?: string | null;
+  lang: string;
 }) {
+  const atMax = maxQuantity !== Infinity && item.quantity >= maxQuantity;
   // Dollars on the English site; still charged in đồng (doitac-1410 #073).
   const money = useMoney();
   const displayPrice = item.vndPrice
@@ -829,12 +885,25 @@ function CartItemRow({
           </span>
           <button
             onClick={() => onQuantityChange(item.quantity + 1)}
-            className="p-1.5 text-text-tertiary hover:text-text-primary cursor-pointer transition-colors"
+            disabled={atMax}
+            className="p-1.5 text-text-tertiary hover:text-text-primary disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
             aria-label={dict.increase || "Increase quantity"}
+            data-testid={`cart-qty-plus-${item.id}`}
           >
             <Plus className="h-4 w-4" />
           </button>
         </div>
+        {(stockNote || atMax) && (
+          <p
+            className={`max-w-[11rem] text-right text-xs ${stockNote ? "text-red-600" : "text-text-tertiary"}`}
+            data-testid={`cart-stock-${item.id}`}
+          >
+            {stockNote ??
+              (lang === "vi"
+                ? `Còn ${maxQuantity} eSIM — đã chọn tối đa.`
+                : `${maxQuantity} eSIM left — that is the most.`)}
+          </p>
+        )}
         <button
           onClick={onRemove}
           className="text-sm text-red-400 hover:text-red-600 cursor-pointer transition-colors flex items-center gap-1"

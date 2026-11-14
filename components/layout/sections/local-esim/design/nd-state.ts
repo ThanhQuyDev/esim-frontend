@@ -7,6 +7,7 @@ import { formatVnd, useCart, usePublicCoupons } from "@/lib/hooks";
 import { pickBestVoucher } from "@/lib/voucher-preview";
 import { localizedHref } from "@/lib/route-mapping";
 import { trackJourney } from "@/lib/journey-tracking";
+import { isPlanSoldOut } from "@/lib/plan-stock";
 import { planCartItem } from "../../destination/cart-item";
 import {
   cycleDaysOf,
@@ -32,7 +33,13 @@ export function useDomesticPurchase(plans: Plan[], carrier: string, lang: string
   const { addItem } = useCart();
   const { data: coupons } = usePublicCoupons();
 
-  const groups = useMemo(() => groupOffers(plans), [plans]);
+  // A plan whose eSIMs are all sold is left out (vande-1411 #008): a card
+  // with none left disappears, and a cycle with none left is not offered —
+  // rather than "chỉ còn 0 eSIM trong kho".
+  const groups = useMemo(
+    () => groupOffers(plans.filter((p) => !isPlanSoldOut(p))),
+    [plans],
+  );
   const highSpeed = useMemo(() => groups.filter((g) => !g.unlimited), [groups]);
   const unlimited = useMemo(() => groups.filter((g) => g.unlimited), [groups]);
 

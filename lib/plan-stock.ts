@@ -16,3 +16,4 @@ export function isPlanSoldOut(plan: Pick<Plan, "isLocalInventory" | "availableSt
 export function soldOutLabel(lang: string): string {
   return lang === "vi" ? "Tạm hết hàng" : "Out of stock";
 }
+

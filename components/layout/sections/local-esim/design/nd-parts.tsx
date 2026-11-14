@@ -22,6 +22,7 @@ import { validityStartText } from "@/lib/plan-validity-start";
 import { localizedHref } from "@/lib/route-mapping";
 import { Ic } from "./nd-icons";
 import {
+  offerOf,
   badgeOf,
   cardLines,
   cardNote,
@@ -360,8 +361,14 @@ export function CycleMenu({ p, labelId }: { p: DomesticPurchase; labelId: string
             >
               <span className="dopt-k" />
               <span className="dopt-d">{dayLabel(m, p.lang)}</span>
-              <span className="dopt-l">{tx("Giá cước")}</span>
-              <span className="dopt-p">{vnd(priceVnd(v))}</span>
+              {/* The renewal fee of that cycle, not the eSIM's price
+                  (vande-1411 #008). */}
+              {offerOf(v)?.cycleFeeVnd ? (
+                <>
+                  <span className="dopt-l">{tx("Giá cước")}</span>
+                  <span className="dopt-p">{vnd(Number(offerOf(v)!.cycleFeeVnd))}</span>
+                </>
+              ) : null}
             </button>
           );
         })}

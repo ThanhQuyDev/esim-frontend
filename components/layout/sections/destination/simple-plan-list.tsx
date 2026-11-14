@@ -25,7 +25,10 @@ function formatDataLabel(mb: number): string {
  * Displays plans as selectable chips with data + duration info, marketing tags,
  * and provider badge when `isLocalInventory` is set.
  */
-export function SimplePlanList({ plans, selectedPlan, onSelectPlan, dict }: SimplePlanListProps) {
+export function SimplePlanList({ plans: allPlans, selectedPlan, onSelectPlan, dict }: SimplePlanListProps) {
+  // A plan with no eSIM left is not offered at all (vande-1411 #008), rather
+  // than shown greyed out.
+  const plans = allPlans.filter((plan) => !isPlanSoldOut(plan));
   if (plans.length === 0) {
     return <div className="py-8 text-center text-base sm:text-sm text-[#6b7280]">{dict.noPlans}</div>;
   }

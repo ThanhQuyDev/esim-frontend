@@ -1,4 +1,5 @@
 "use client";
+import { isPlanSoldOut } from "@/lib/plan-stock";
 
 import { entityNoticeHtml } from "@/lib/entity-notice";
 import { useEffect, useMemo, useState } from "react";
@@ -115,7 +116,17 @@ export function useRegionPurchase(
 
   const regionPlans = usePlansByRegionSlug(country ? "" : slug, lang);
   const countryPlans = usePlansBySlug(country ? slug : "", lang, initialPlans ?? undefined);
-  const { data: all = EMPTY, isLoading } = country ? countryPlans : regionPlans;
+  const { data: loaded = EMPTY, isLoading } = country ? countryPlans : regionPlans;
+  // Viettel travel plans with no eSIM left are not offered (vande-1411 #008).
+  const all = useMemo((): PlansByDestinationResponse => {
+    if (loaded === EMPTY) return loaded;
+    const keep = (list?: Plan[]) => list?.filter((p) => !isPlanSoldOut(p));
+    const out = { ...loaded } as Record<string, unknown>;
+    for (const [k, v] of Object.entries(loaded)) {
+      if (Array.isArray(v)) out[k] = keep(v as Plan[]);
+    }
+    return out as unknown as PlansByDestinationResponse;
+  }, [loaded]);
 
   // ── countries ──
   const countries: RegionCountry[] = useMemo(() => {

@@ -36,6 +36,7 @@ import Link from "next/link";
 import { localizedHref } from "@/lib/route-mapping";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { normalizePhone, phoneError } from "@/lib/phone";
+import { usePlanStock, stockProblem } from "@/lib/plan-stock-client";
 
 interface CheckoutPageContentProps {
   dict: Record<string, any>;
@@ -72,6 +73,8 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
     phone: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  // Viettel / domestic eSIMs left (vande-1411 #008): no order of more.
+  const { data: stock } = usePlanStock(items.map((i) => i.planId));
   const [orderComplete, setOrderComplete] = useState(false);
 
   // eXU wallet state
@@ -249,6 +252,19 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       newErrors.email = dict.emailInvalid || "Invalid email address";
     }
+
+    // Not more local eSIMs than are left; lines of one plan count together.
+    const stockIssue = items
+      .map((item) =>
+        stockProblem(
+          item,
+          stock,
+          lang,
+          items.filter((i) => i.planId === item.planId).reduce((n, i) => n + i.quantity, 0),
+        ),
+      )
+      .find(Boolean);
+    if (stockIssue) newErrors.stock = stockIssue;
 
     // Phone is optional — only validate format if provided, by the rules of
     // the country picked beside it (vande-1411 #007).
@@ -965,6 +981,15 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
               </div>
             )}
           </div>
+
+          {errors.stock && (
+            <p className="mb-3 text-sm text-red-600" role="alert" data-testid="checkout-stock-error">
+              {errors.stock}{" "}
+              <a href={localizedHref(lang, "cart")} className="underline underline-offset-4">
+                {lang === "vi" ? "Sửa giỏ hàng" : "Edit the cart"}
+              </a>
+            </p>
+          )}
 
           {/* Complete Order Button */}
           <button
