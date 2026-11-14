@@ -5,10 +5,40 @@
  * Reusable file upload utility for images and videos via Cloudinary.
  */
 
-const CLOUDINARY_CLOUD_NAME =
-  process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "demo";
-const CLOUDINARY_UPLOAD_PRESET =
-  process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "ml_default";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+
+/**
+ * Security 15/11/2026: no public upload preset any more. Each upload asks the
+ * API for a signed ticket first — `chat` for a signed-in customer, `ticket`
+ * for the support form (guests may attach files there too).
+ */
+export type CloudinaryPurpose = "chat" | "ticket";
+
+type UploadTicket =
+  | {
+      mode: "signed";
+      cloudName: string;
+      apiKey: string;
+      timestamp: number;
+      signature: string;
+      folder: string;
+    }
+  | { mode: "unsigned"; cloudName: string; uploadPreset: string };
+
+async function getUploadTicket(purpose: CloudinaryPurpose): Promise<UploadTicket> {
+  let token: string | null = null;
+  try {
+    token = localStorage.getItem("esim_auth_token");
+  } catch {
+    token = null;
+  }
+  const res = await fetch(`${API_BASE_URL}/api/v1/files/cloudinary-signature/${purpose}`, {
+    method: "POST",
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+  });
+  if (!res.ok) throw new Error("Upload failed");
+  return res.json();
+}
 
 export interface FileAttachment {
   fileUrl: string;
@@ -21,17 +51,28 @@ export interface FileAttachment {
  * Upload a file (image or video) to Cloudinary.
  * Returns the file metadata including the secure URL.
  */
-export async function uploadToCloudinary(file: File): Promise<FileAttachment> {
+export async function uploadToCloudinary(
+  file: File,
+  purpose: CloudinaryPurpose = "chat"
+): Promise<FileAttachment> {
+  const ticket = await getUploadTicket(purpose);
   const formData = new FormData();
   formData.append("file", file);
-  formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+  if (ticket.mode === "signed") {
+    formData.append("api_key", ticket.apiKey);
+    formData.append("timestamp", String(ticket.timestamp));
+    formData.append("signature", ticket.signature);
+    formData.append("folder", ticket.folder);
+  } else {
+    formData.append("upload_preset", ticket.uploadPreset);
+  }
 
   const resourceType = file.type.startsWith("video/")
     ? "video"
     : file.type.startsWith("image/")
       ? "image"
       : "raw";
-  const url = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/${resourceType}/upload`;
+  const url = `https://api.cloudinary.com/v1_1/${ticket.cloudName}/${resourceType}/upload`;
 
   const res = await fetch(url, { method: "POST", body: formData });
   if (!res.ok) throw new Error("Upload failed");
