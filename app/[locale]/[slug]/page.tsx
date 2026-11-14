@@ -3,6 +3,7 @@ import {
   domesticCarrierMetadata,
 } from "@/components/layout/sections/local-esim/domestic-carrier-page";
 import { carrierPageSlug, resolveDomesticCarrier } from "@/lib/domestic-url";
+import { sellable } from "@/lib/sellable";
 import { notFound, permanentRedirect } from "next/navigation";
 import {
   getDestinationBySlug,
@@ -109,7 +110,8 @@ async function resolveRegionGroup(
 ): Promise<RegionGroup | null> {
   try {
     const regions = await getRegions({ limit: 500 });
-    const group = findRegionGroupBySlug(regions.data, slug, locale);
+    // Packs switched off or with no plan are not offered (vande-1411 #031).
+    const group = findRegionGroupBySlug(regions.data.filter(sellable), slug, locale);
     // The list stops at 200 rows, so a parent's packs can be missing from it:
     // "Asia (Châu Á)" showed 25 scopes of its 28 (vande-1411 #030). Fetch the
     // whole group by its parent.
@@ -131,8 +133,14 @@ async function resolveRegionGroup(
     const parent =
       regions.data.find((r) => Number(r.id) === parentId) ??
       (parentSlug ? await getRegionBySlug(localizedSlug(parentSlug as Region, locale), locale) : null);
-    const whole = [...(parent ? [parent] : []), ...packs.data].filter((r) => r.isActive !== false);
-    return findRegionGroupBySlug(whole, slug, locale) ?? group;
+    // A parent with no plan of its own is no scope to pick; its packs that
+    // sell are (vande-1411 #031).
+    const whole = [...(parent ? [parent] : []), ...packs.data].filter(sellable);
+    return (
+      groupRegions(whole, locale).find(
+        (g) => g.slug === slug || g.members.some((m) => localizedSlug(m, locale) === slug)
+      ) ?? group
+    );
   } catch {
     return null;
   }

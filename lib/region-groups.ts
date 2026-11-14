@@ -2,6 +2,7 @@ import type { Destination, Region } from "./api";
 import type { Locale } from "./i18n-config";
 import { localizedSlug } from "./slug";
 import { normalizeSearchTerm } from "./text";
+import { sellable } from "./sellable";
 
 /**
  * Grouping of same-named regions that differ only by how many countries they
@@ -197,7 +198,13 @@ function optionCount(group: RegionGroup): number {
   const head = group.members.find((m) => m.childCount && m.childCount > 0);
   const parentInfo = group.members.find((m) => m.parent?.childCount)?.parent;
   const known = head?.childCount ?? parentInfo?.childCount ?? 0;
-  return Math.max(group.members.length, known > 0 ? known + 1 : 0);
+  if (known <= 0) return group.members.length;
+  // Only packs that sell count, and the parent only when it sells plans of its
+  // own (vande-1411 #031).
+  const parentSells = head
+    ? sellable(head)
+    : !!parentInfo && parentInfo.isActive !== false && parentInfo.hasPlans !== false;
+  return Math.max(group.members.length, known + (parentSells ? 1 : 0));
 }
 
 export function toRegionListItems(

@@ -30,6 +30,8 @@ import {
 import { roundVndToThousands } from "./utils";
 import type { VoucherCandidate } from "./voucher-preview";
 import { pickContextFaqs } from "./faq-context";
+// Only what sells now is listed (vande-1411 #031).
+import { sellable } from "./sellable";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.saily.example.com";
@@ -127,7 +129,7 @@ export function useTopDestinations(limit = 10) {
         undefined,
         signal
       ),
-    select: (data) => data.data.filter((d) => d.isActive).slice(0, limit),
+    select: (data) => data.data.filter(sellable).slice(0, limit),
   });
 }
 
@@ -142,12 +144,12 @@ export function useSearchDestinations(query: string, enabled = true) {
           // Filter inactive records server-side: they used to be dropped after
           // the fact, so a page of results could arrive mostly empty and hide
           // real suggestions behind the 20-row window.
-          filters: JSON.stringify({ search: query, isActive: true }),
+          filters: JSON.stringify({ search: query, isActive: true, hasPlans: true }),
         },
         undefined,
         signal
       ),
-    select: (data) => data.data.filter((d) => d.isActive),
+    select: (data) => data.data.filter(sellable),
     enabled: enabled && query.trim().length > 0,
   });
 }
@@ -172,7 +174,7 @@ export function useDestinations(
         undefined,
         signal
       ),
-    select: (data) => data.data.filter((d) => d.isActive),
+    select: (data) => data.data.filter(sellable),
   });
 }
 
@@ -217,7 +219,7 @@ export function useInfiniteDestinations(
     select: (data) => ({
       pages: data.pages.map((page) => ({
         ...page,
-        data: page.data.filter((d: any) => d.isActive),
+        data: page.data.filter(sellable),
       })),
       pageParams: data.pageParams,
     }),
@@ -246,7 +248,7 @@ export function useRegions(
         undefined,
         signal
       ),
-    select: (data) => data.data.filter((r) => r.isActive),
+    select: (data) => data.data.filter(sellable),
   });
 }
 
@@ -292,14 +294,14 @@ export function useSearchRegions(query: string, enabled = true) {
           limit: "20",
           // Same reason as useSearchDestinations: keep inactive regions out of
           // the 20-row window so every matching suggestion actually shows.
-          filters: JSON.stringify({ search: query, isActive: true }),
+          filters: JSON.stringify({ search: query, isActive: true, hasPlans: true }),
           orderBy: "name",
           order: "ASC"
         },
         undefined,
         signal
       ),
-    select: (data) => data.data.filter((r) => r.isActive),
+    select: (data) => data.data.filter(sellable),
     enabled: enabled && query.trim().length > 0,
   });
 }

@@ -12,7 +12,7 @@ const r = (o: Partial<Region> & { id: number }): Region =>
   ({ slug: `r${o.id}`, slugVi: null, name: `R${o.id}`, isActive: true, parentId: null, destinationCount: 5, ...o }) as unknown as Region;
 
 test("should count every active pack and the parent, not just those loaded", () => {
-  const parent = r({ id: 38, slug: "esim-chau-a", isParent: true, childCount: 27 });
+  const parent = r({ id: 38, slug: "esim-chau-a", isParent: true, childCount: 27, planCount: 4 });
   const loaded = [r({ id: 50, parentId: 38 }), r({ id: 51, parentId: 38 })];
   const [asia] = toRegionListItems([parent, ...loaded], "vi");
   expect(asia.variantCount).toBe(28);

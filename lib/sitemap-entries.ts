@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import type { Blog, Destination, HelpCenterArticle, LocalCarrier, Region } from "./api";
+import { sellable } from "./sellable";
 
 /**
  * What goes in the sitemap (#091).
@@ -231,7 +232,8 @@ export function buildSitemap(
 
   // Country and region pages live at the site root: /esim-nhat-ban, /en/japan.
   for (const destination of sources.destinations ?? []) {
-    if (destination?.isActive === false) continue;
+    // Only what sells now: the lists show nothing else (vande-1411 #031).
+    if (!sellable(destination)) continue;
     push(
       entryFor(
         baseUrl,
@@ -249,7 +251,7 @@ export function buildSitemap(
   }
 
   for (const region of sources.regions ?? []) {
-    if (region?.isActive === false) continue;
+    if (!sellable(region)) continue;
     // A pack under a parent redirects to the parent's page (vande-1411 #028):
     // only the page it lands on belongs in the sitemap.
     if (region?.parentId) continue;

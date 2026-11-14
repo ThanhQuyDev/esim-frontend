@@ -1,6 +1,7 @@
 import type { Destination, Region } from "./api";
 import type { Locale } from "./i18n-config";
 import { toRegionListItems, type RegionListItem } from "./region-groups";
+import { sellable } from "./sellable";
 
 /**
  * Regional / global eSIM suggestions for a country page (#043).
@@ -32,7 +33,8 @@ export function buildRegionSuggestions(
   if (memberIds.size === 0) return [];
 
   const covering = allRegions.filter(
-    (region) => region.isActive !== false && memberIds.has(Number(region.id))
+    // Only regions that sell now (vande-1411 #031).
+    (region) => sellable(region) && memberIds.has(Number(region.id))
   );
   if (covering.length === 0) return [];
 

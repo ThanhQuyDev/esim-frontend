@@ -8,6 +8,7 @@ import {
   STATIC_ROUTES,
 } from "../lib/sitemap-entries";
 
+// Catalogue fixtures carry planCount: only what sells is listed (vande-1411 #031).
 /**
  * #091 — the sitemap.
  *
@@ -33,12 +34,12 @@ test.describe("sitemap — contents", () => {
     const entries = buildSitemap(
       {
         destinations: [
-          { slug: "japan", slugVi: "esim-nhat-ban", isActive: true } as never,
-          { slug: "korea", slugVi: "esim-han-quoc", isActive: true } as never,
+          { planCount: 5, slug: "japan", slugVi: "esim-nhat-ban", isActive: true } as never,
+          { planCount: 5, slug: "korea", slugVi: "esim-han-quoc", isActive: true } as never,
         ],
-        regions: [{ slug: "asia", slugVi: "esim-chau-a", isActive: true } as never],
-        blogs: [{ slug: "cach-cai-esim", isPublished: true } as never],
-        helpArticles: [{ slug: "kich-hoat-esim" } as never],
+        regions: [{ planCount: 5, slug: "asia", slugVi: "esim-chau-a", isActive: true } as never],
+        blogs: [{ planCount: 5, slug: "cach-cai-esim", isPublished: true } as never],
+        helpArticles: [{ planCount: 5, slug: "kich-hoat-esim" } as never],
         carriers: [{ provider: "wintel" } as never],
       },
       { baseUrl: BASE, path },
@@ -78,7 +79,7 @@ test.describe("sitemap — contents", () => {
 
   test("gives every URL its language alternates", () => {
     const [entry] = buildSitemap(
-      { destinations: [{ slug: "japan", slugVi: "esim-nhat-ban" } as never] },
+      { destinations: [{ planCount: 5, slug: "japan", slugVi: "esim-nhat-ban" } as never] },
       { baseUrl: BASE, path: () => null },
     );
 
@@ -91,12 +92,12 @@ test.describe("sitemap — contents", () => {
   });
 
   test("uses each language's own slug", () => {
-    const destination = { slug: "japan", slugVi: "esim-nhat-ban" };
+    const destination = { planCount: 5, slug: "japan", slugVi: "esim-nhat-ban" };
 
     expect(entitySlug(destination, "vi")).toBe("esim-nhat-ban");
     expect(entitySlug(destination, "en")).toBe("japan");
     // No Vietnamese slug: fall back rather than emit a broken URL.
-    expect(entitySlug({ slug: "japan" }, "vi")).toBe("japan");
+    expect(entitySlug({ planCount: 5, slug: "japan" }, "vi")).toBe("japan");
   });
 
   test("keeps cart, checkout and the account area out", () => {
@@ -113,8 +114,8 @@ test.describe("sitemap — contents", () => {
   test("skips inactive or unpublished records", () => {
     const entries = buildSitemap(
       {
-        destinations: [{ slug: "hidden", slugVi: "an", isActive: false } as never],
-        blogs: [{ slug: "draft", isPublished: false } as never],
+        destinations: [{ planCount: 5, slug: "hidden", slugVi: "an", isActive: false } as never],
+        blogs: [{ planCount: 5, slug: "draft", isPublished: false } as never],
       },
       { baseUrl: BASE, path: () => null },
     );
@@ -127,8 +128,8 @@ test.describe("sitemap — contents", () => {
     const entries = buildSitemap(
       {
         destinations: [
-          { slug: "japan", slugVi: "esim-nhat-ban" } as never,
-          { slug: "japan", slugVi: "esim-nhat-ban" } as never,
+          { planCount: 5, slug: "japan", slugVi: "esim-nhat-ban" } as never,
+          { planCount: 5, slug: "japan", slugVi: "esim-nhat-ban" } as never,
         ],
       },
       { baseUrl: BASE, path },
@@ -141,8 +142,8 @@ test.describe("sitemap — contents", () => {
   test("drops a record with no usable slug instead of emitting a bare domain", () => {
     const entries = buildSitemap(
       {
-        destinations: [{ slug: "", slugVi: "  " } as never],
-        blogs: [{ slug: "", isPublished: true } as never],
+        destinations: [{ planCount: 5, slug: "", slugVi: "  " } as never],
+        blogs: [{ planCount: 5, slug: "", isPublished: true } as never],
         carriers: [{ provider: "  " } as never],
       },
       { baseUrl: BASE, path: () => null },
@@ -195,12 +196,12 @@ test.describe("sitemap — laid out like the reference file (common-issue #004)"
   const entries = buildSitemap(
     {
       destinations: [
-        { slug: "japan", slugVi: "esim-nhat-ban", isPopular: true, updatedAt: "2026-09-11T08:00:00Z" } as never,
-        { slug: "libya", slugVi: "esim-libya", isPopular: false } as never,
+        { planCount: 5, slug: "japan", slugVi: "esim-nhat-ban", isPopular: true, updatedAt: "2026-09-11T08:00:00Z" } as never,
+        { planCount: 5, slug: "libya", slugVi: "esim-libya", isPopular: false } as never,
       ],
-      regions: [{ slug: "europe-42", slugVi: "esim-chau-au-42-quoc-gia" } as never],
-      blogs: [{ slug: "esim-trung-quoc-la-gi" } as never],
-      helpArticles: [{ slug: "khai-niem-ve-esim" } as never],
+      regions: [{ planCount: 5, slug: "europe-42", slugVi: "esim-chau-au-42-quoc-gia" } as never],
+      blogs: [{ planCount: 5, slug: "esim-trung-quoc-la-gi" } as never],
+      helpArticles: [{ planCount: 5, slug: "khai-niem-ve-esim" } as never],
       carriers: [{ provider: "viettel" } as never],
     },
     { baseUrl: BASE, path },
