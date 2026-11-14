@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Fragment,
   useState,
   useRef,
   useEffect,
@@ -12,7 +13,8 @@ import {
 import { useChatSocket, type ChatMessage, type ChatMessageQuote } from "@/lib/chat-socket";
 import { uploadToCloudinary, validateChatFile, type FileAttachment } from "@/lib/cloudinary";
 import { useAuth } from "@/lib/auth";
-import { MessageCircle, X, Send, Loader2, Paperclip, Image as ImageIcon, CornerUpLeft } from "lucide-react";
+import { MessageCircle, X, Send, Loader2, Paperclip, Image as ImageIcon, CornerUpLeft, MoreHorizontal, Maximize2, Minimize2 } from "lucide-react";
+import { chatDayLabel, chatTime, startsNewDay } from "@/lib/chat-days";
 import { splitChatLinks } from "@/lib/chat-links";
 
 // ===== Mobile layout (v3 #006) =====
@@ -228,6 +230,9 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   /** The image being viewed in place, instead of a new Cloudinary tab. */
   const [viewingImage, setViewingImage] = useState<{ url: string; alt: string } | null>(null);
+  // Desktop window enlarged 1.5× from its "…" menu (vande-1411 #036).
+  const [expanded, setExpanded] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const isMobile = useMediaQuery(MOBILE_QUERY);
   const viewportBox = useVisualViewportBox(isMobile);
   const enterSends = useEnterSends();
@@ -276,7 +281,7 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
       return;
     }
     box.style.height = "auto";
-    box.style.height = `${Math.min(box.scrollHeight, 120)}px`;
+    box.style.height = `${Math.min(Math.max(box.scrollHeight, 64), 120)}px`;
   }, [input]);
 
   // Auto-scroll to bottom on new messages
@@ -297,6 +302,9 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
     setInput("");
     if (inputRef.current) inputRef.current.style.height = "";
     setReplyTo(null);
+    // Keep the box focused, so a phone keeps its keyboard and the page does
+    // not drop when the keyboard folds away (vande-1411 #036).
+    inputRef.current?.focus({ preventScroll: true });
   };
 
   const startReply = useCallback((message: ChatMessage) => {
@@ -337,9 +345,18 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
       className={
         isMobile
           ? "fixed inset-x-0 top-0 z-50 flex h-[100dvh] w-full flex-col overflow-hidden bg-white"
-          : "fixed bottom-24 right-6 z-50 flex w-[360px] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl"
+          : "fixed bottom-24 right-6 z-50 flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl transition-[width,height] duration-200"
       }
-      style={isMobile ? viewportBox : { height: "480px" }}
+      // Desktop: 360×480, or 1.5× that when enlarged, never taller than the
+      // window leaves room for (vande-1411 #036).
+      style={
+        isMobile
+          ? viewportBox
+          : expanded
+            ? { width: "540px", maxWidth: "calc(100vw - 3rem)", height: "min(720px, calc(100vh - 7rem))" }
+            : { width: "360px", height: "480px" }
+      }
+      data-expanded={expanded ? "true" : undefined}
       role="dialog"
       aria-label="Support chat"
       data-testid="chat-window"
@@ -356,13 +373,51 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
             </p>
           </div>
         </div>
-        <button
-          onClick={onClose}
-          className="rounded-full p-1 transition-colors hover:bg-white/20"
-          aria-label="Close chat"
-        >
-          <X className="h-4 w-4" />
-        </button>
+        <div className="relative flex items-center gap-1">
+          {/* "…": enlarge or shrink the window, on a computer (vande-1411 #036). */}
+          {!isMobile && (
+            <>
+              <button
+                type="button"
+                onClick={() => setMenuOpen((o) => !o)}
+                className="rounded-full p-1 transition-colors hover:bg-white/20"
+                aria-label="Tuỳ chọn cửa sổ"
+                aria-haspopup="menu"
+                aria-expanded={menuOpen}
+                data-testid="chat-window-menu"
+              >
+                <MoreHorizontal className="h-4 w-4" />
+              </button>
+              {menuOpen && (
+                <div
+                  role="menu"
+                  className="absolute right-7 top-8 z-10 min-w-[170px] overflow-hidden rounded-xl border border-gray-200 bg-white py-1 text-sm text-gray-800 shadow-lg"
+                >
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      setExpanded((e) => !e);
+                      setMenuOpen(false);
+                    }}
+                    className="flex w-full items-center gap-2 px-3 py-2 text-left hover:bg-gray-100"
+                    data-testid="chat-window-resize"
+                  >
+                    {expanded ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+                    {expanded ? "Thu gọn cửa sổ" : "Mở rộng cửa sổ"}
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+          <button
+            onClick={onClose}
+            className="rounded-full p-1 transition-colors hover:bg-white/20"
+            aria-label="Close chat"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
       </div>
 
       {/* Messages area */}
@@ -385,16 +440,25 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
           </div>
         )}
 
-        {messages.map((msg) => (
-          <MessageBubble
-            key={msg.id}
-            message={msg}
-            isOwn={msg.senderId === userId}
-            viewerId={userId}
-            onReply={startReply}
-            onJumpToQuoted={jumpToMessage}
-            onViewImage={setViewingImage}
-          />
+        {messages.map((msg, i) => (
+          <Fragment key={msg.id}>
+            {/* "Hôm nay", "Hôm qua" or the date, centred (vande-1411 #036). */}
+            {startsNewDay(msg.createdAt, messages[i - 1]?.createdAt) && (
+              <div className="flex justify-center py-1" data-testid="chat-day">
+                <span className="rounded-full bg-gray-200/80 px-3 py-0.5 text-[12px] font-medium text-gray-600">
+                  {chatDayLabel(msg.createdAt)}
+                </span>
+              </div>
+            )}
+            <MessageBubble
+              message={msg}
+              isOwn={msg.senderId === userId}
+              viewerId={userId}
+              onReply={startReply}
+              onJumpToQuoted={jumpToMessage}
+              onViewImage={setViewingImage}
+            />
+          </Fragment>
         ))}
 
         <div ref={messagesEndRef} />
@@ -471,7 +535,7 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
             // Shift+Enter is actually visible while typing (#005, round 4).
             const el = e.currentTarget;
             el.style.height = "auto";
-            el.style.height = `${el.scrollHeight}px`;
+            el.style.height = `${Math.max(el.scrollHeight, 64)}px`;
           }}
           onKeyDown={(e) => {
             // Never send mid-composition: Vietnamese IMEs (Telex/VNI) use Enter
@@ -483,16 +547,21 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
           }}
           enterKeyHint={enterSends ? "send" : "enter"}
           placeholder={enterSends ? "Nhập tin nhắn… (Shift+Enter để xuống dòng)" : "Nhập tin nhắn…"}
-          // One line high from the start (vande #046): with no height set the
-          // empty box was drawn 56–64px tall and snapped to 40px on the first
-          // key, jolting the chat. Typing still grows it via the inline style.
-          className="h-10 max-h-[120px] min-h-[40px] flex-1 resize-none overflow-y-auto rounded-2xl border border-gray-200 bg-gray-50 px-4 py-2 text-base leading-6 outline-none transition-colors focus:border-[#1a1a1a] focus:bg-white sm:text-sm"
+          // Two lines high from the start, so the whole hint "Nhập tin nhắn…
+          // (Shift+Enter để xuống dòng)" shows (vande-1411 #036). It never
+          // shrinks below that, so the first key does not jolt it (vande #046);
+          // typing still grows it via the inline style.
+          className="h-16 max-h-[120px] min-h-16 flex-1 resize-none overflow-y-auto rounded-2xl border border-gray-200 bg-gray-50 px-4 py-2 text-base leading-6 outline-none transition-colors focus:border-[#1a1a1a] focus:bg-white sm:text-sm"
           disabled={!connected}
           aria-label="Chat message input"
           data-testid="chat-input"
         />
         <button
           type="submit"
+          // Tapping send must not take the focus from the box: on a phone that
+          // folds the keyboard and the page jumps down (vande-1411 #036).
+          onPointerDown={(e) => e.preventDefault()}
+          onMouseDown={(e) => e.preventDefault()}
           disabled={!connected || (!input.trim() && !uploading)}
           className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1a1a1a] text-white transition-opacity disabled:opacity-40"
           aria-label="Send message"
@@ -574,13 +643,8 @@ function MessageBubble({
   onJumpToQuoted?: (messageId: number) => void;
   onViewImage?: (image: { url: string; alt: string }) => void;
 }) {
-  // Time WITH the date, "14:05 10/10/2026", so an old message can be told
-  // from today's (#005, test round 4).
-  const sent = new Date(message.createdAt);
-  const pad = (n: number) => String(n).padStart(2, "0");
-  const time =
-    `${pad(sent.getHours())}:${pad(sent.getMinutes())} ` +
-    `${pad(sent.getDate())}/${pad(sent.getMonth() + 1)}/${sent.getFullYear()}`;
+  // The time alone: the day is in the header above (vande-1411 #036).
+  const time = chatTime(message.createdAt);
 
   const hasImage = !!(message.fileUrl && message.fileType?.startsWith("image/"));
   const hasVideo = !!(message.fileUrl && message.fileType?.startsWith("video/"));

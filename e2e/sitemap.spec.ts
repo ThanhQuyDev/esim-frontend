@@ -97,7 +97,7 @@ test.describe("sitemap — contents", () => {
     expect(entitySlug(destination, "vi")).toBe("esim-nhat-ban");
     expect(entitySlug(destination, "en")).toBe("japan");
     // No Vietnamese slug: fall back rather than emit a broken URL.
-    expect(entitySlug({ planCount: 5, slug: "japan" }, "vi")).toBe("japan");
+    expect(entitySlug({ slug: "japan" }, "vi")).toBe("japan");
   });
 
   test("keeps cart, checkout and the account area out", () => {
