@@ -407,7 +407,7 @@ export function TopupModal({ esim, open, mode, onClose, t, lang }: TopupModalPro
                 badge here named the wholesaler we buy from, which is ours to
                 know and not the customer's. */}
             {esim.plan?.name && (
-              <p className="text-sm text-gray-700 mt-0.5 truncate">{planDisplayName(esim.plan)}</p>
+              <p className="text-sm text-gray-700 mt-0.5 truncate">{planDisplayName(esim.plan, (esim as { chosenDays?: number | null }).chosenDays)}</p>
             )}
           </div>
           <button

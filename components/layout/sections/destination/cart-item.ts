@@ -1,6 +1,7 @@
 import type { Plan } from "@/lib/api";
 import { multidayVnd } from "@/lib/multiday-price";
 import type { CartItem } from "@/lib/cart";
+import { withChosenDays } from "@/lib/plan-display-name";
 import { calcTotalPrice, calcTotalVndPrice, getFixedPrice, getFixedVndPrice } from "./types";
 
 /**
@@ -35,7 +36,11 @@ export function planCartItem(
   return {
     id: `${plan.id}:${cartDurationDays ?? "fixed"}`,
     planId: plan.id,
-    name: plan.standardName || plan.name || `eSIM ${destination || ""}`.trim(),
+    // The days bought, not the day pass's 1 (vande-1411 #011).
+    name:
+      withChosenDays(plan.standardName, cartDurationDays) ||
+      plan.name ||
+      `eSIM ${destination || ""}`.trim(),
     description: `${data} / ${displayDays} days`,
     price: unitPrice,
     vndPrice: unitVndPrice,

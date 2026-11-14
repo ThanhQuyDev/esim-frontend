@@ -111,7 +111,7 @@ export function PaymentResultContent({ lang }: PaymentResultContentProps) {
       // No plan on the item (an older order, or a provider payload without it)
       // falls back to the previous generic heading rather than showing nothing.
       // Named like the CMS, minutes / SMS spelled out (#033, test round 4).
-      const name = planDisplayName(item.plan) || t.esimDetails;
+      const name = planDisplayName(item.plan, (item as { periodNum?: number | null }).periodNum) || t.esimDetails;
       for (const esim of item.esims ?? []) {
         const position = (seenByPlan.get(key) ?? 0) + 1;
         seenByPlan.set(key, position);

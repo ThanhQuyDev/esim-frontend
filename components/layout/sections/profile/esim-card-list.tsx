@@ -446,7 +446,10 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
   const { addItem } = useCart();
   const [buyingAgain, setBuyingAgain] = useState(false);
   const lifecycle = CUSTOMER_STATUS[customerEsimStatus(esim)];
-  const displayName = planDisplayName(esim.plan) || esim.plan?.name || "";
+  const displayName =
+    planDisplayName(esim.plan, (esim as { chosenDays?: number | null }).chosenDays) ||
+    esim.plan?.name ||
+    "";
 
   // "Mua lại eSIM" (#025): the same plan straight into the cart, then the cart.
   const buyAgain = async (event?: { stopPropagation: () => void }) => {

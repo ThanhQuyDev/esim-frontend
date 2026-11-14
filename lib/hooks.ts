@@ -1,5 +1,6 @@
 import type { PlanValidityStart } from "./plan-validity-start";
 import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { withChosenDays } from "./plan-display-name";
 import { trackJourney } from "@/lib/journey-tracking";
 import { useCallback, useMemo } from "react";
 import type {
@@ -1332,7 +1333,10 @@ export function useCart() {
         return {
           id: String(item.id),
           planId: item.planId,
-          name: item.plan?.standardName || item.plan?.name || `Plan #${item.planId}`,
+          name:
+            withChosenDays(item.plan?.standardName, item.periodNum) ||
+            item.plan?.name ||
+            `Plan #${item.planId}`,
           description: `${(item.plan?.type === 'unlimited' || item.plan?.type === 'unlimited-reduce') ? 'Unlimited' : item.plan?.dataMb ? dataLabel : "?"} / ${(item.periodNum ?? item.plan?.durationDays) || "?"} days`,
           price: 0,
           quantity: item.quantity,

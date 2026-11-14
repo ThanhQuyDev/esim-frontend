@@ -1,4 +1,15 @@
 /**
+ * A day pass is named "… - 1 day" like every plan (vande-1411 #011); bought
+ * for 30 days, it reads "… - 30 days".
+ */
+export function withChosenDays(name: string | null | undefined, days: number | null | undefined): string {
+  const text = String(name ?? "");
+  const n = Math.round(Number(days ?? 0));
+  if (!(n > 1) || !/ - 1 day$/.test(text)) return text;
+  return text.replace(/ - 1 day$/, ` - ${n} days`);
+}
+
+/**
  * Plan name as the CMS shows it, call / SMS spelled out (#025, test round 4):
  * "United States 2GB / 15day - 20Mins - 20SMS". Only what the supplier's own
  * name does not already say is added.
@@ -8,10 +19,12 @@ export function planDisplayName(
     | { name?: string | null; standardName?: string | null; call?: number | null; sms?: number | null }
     | null
     | undefined,
+  /** The days a day pass was bought for: "… - 1 day" reads "… - 30 days" (vande-1411 #011). */
+  chosenDays?: number | null,
 ): string {
   // The name under the one naming rule when the plan has one (vande #020):
   // "China - Total 5 GB - 7 days", not the supplier's "China 5GB / 7day".
-  const base = (plan?.standardName || plan?.name)?.trim() ?? "";
+  const base = (withChosenDays(plan?.standardName, chosenDays) || plan?.name)?.trim() ?? "";
   if (!base) return "";
   const parts = [base];
   const call = Number(plan?.call) || 0;
