@@ -1,10 +1,20 @@
 "use client";
-import { toRegionListItems } from "@/lib/region-groups";
+import { toRegionListItems, variantCountLabel } from "@/lib/region-groups";
 import { useMoney } from "@/lib/money";
 
 import { useMemo, useState } from "react";
 import { Search, X, Info, MapPin, Loader2 } from "lucide-react";
-import { useTopDestinations, useSearchDestinations, useRegions, useSearchRegions } from "@/lib/hooks";
+import {
+  useDestinations,
+  useLocalCarriers,
+  useTopDestinations,
+  useSearchDestinations,
+  useRegions,
+  useSearchRegions,
+} from "@/lib/hooks";
+import { getCarrierMeta } from "@/components/layout/sections/local-esim/carrier-meta";
+import { localCarrierHref } from "@/components/layout/sections/local-esim/local-carrier-search";
+import { VietnamFlag } from "@/components/layout/sections/destination-picker/destination-picker";
 import { useDebounce } from "@/lib/use-debounce";
 import type { Locale } from "@/lib/i18n-config";
 import { localizedHref } from "@/lib/route-mapping";
@@ -26,7 +36,10 @@ interface DestinationDropdownProps {
   onClose: () => void;
 }
 
-type TabType = "top10" | "country" | "region" | "ultra";
+type TabType = "top15" | "country" | "region" | "local";
+
+/** How many the first tab holds: three rows of five (vande-1411 #023). */
+const TOP_COUNT = 15;
 
 /* Fallback translations when dict is not provided */
 const FALLBACK: Record<string, DestinationDropdownDict> = {
@@ -48,14 +61,21 @@ const FALLBACK: Record<string, DestinationDropdownDict> = {
 
 export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdownProps) {
   const t = { ...FALLBACK[lang] || FALLBACK.en, ...dict };
-  const [activeTab, setActiveTab] = useState<TabType>("top10");
+  const [activeTab, setActiveTab] = useState<TabType>("top15");
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebounce(searchQuery, 300);
 
   const hasSearch = debouncedSearch.length > 0;
 
-  // Fetch destinations
-  const { data: topDestinations = [], isLoading: isLoadingTop } = useTopDestinations(10);
+  // Fetch destinations: the featured ones for "TOP 15", every one for the
+  // "Quốc gia" tab (vande-1411 #023).
+  const { data: topDestinations = [], isLoading: isLoadingTop } = useTopDestinations(TOP_COUNT);
+  const { data: everyDestination = [], isLoading: isLoadingAll } = useDestinations(
+    JSON.stringify({ isActive: true }),
+    "name",
+    "ASC",
+    1000
+  );
   const { data: searchDestinations = [], isLoading: isSearchingDestinations } = useSearchDestinations(
     debouncedSearch,
     hasSearch
@@ -69,6 +89,48 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
     100
   );
   const regions = useMemo(() => toRegionListItems(featuredRegions, lang), [featuredRegions, lang]);
+  // Every region for the "Khu vực" tab, packs under their parent's card.
+  const { data: everyRegionRow = [], isLoading: isLoadingAllRegions } = useRegions(
+    JSON.stringify({ isActive: true }),
+    "name",
+    "ASC",
+    1000
+  );
+  const { data: carriers = [], isLoading: isLoadingCarriers } = useLocalCarriers();
+
+  const byTitle = (a: any, b: any) =>
+    String((lang === "vi" ? a.titleVi : a.title) || a.name).localeCompare(
+      String((lang === "vi" ? b.titleVi : b.title) || b.name),
+      lang
+    );
+  const allCountries = useMemo(
+    () => [...everyDestination].sort(byTitle),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [everyDestination, lang]
+  );
+  const allRegions = useMemo(
+    () => toRegionListItems(everyRegionRow, lang).sort(byTitle),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [everyRegionRow, lang]
+  );
+  // Domestic carriers in the same card as a country: "iTel", from its price.
+  const localItems = useMemo(
+    () =>
+      carriers.map((c) => {
+        const meta = getCarrierMeta(c.provider);
+        return {
+          id: c.provider,
+          _type: "local" as const,
+          name: meta.buttonLabel ?? meta.label,
+          title: meta.buttonLabel ?? meta.label,
+          titleVi: meta.buttonLabel ?? meta.label,
+          fromPrice: c.fromVndPrice,
+          href: localCarrierHref(lang, c.provider),
+          meta,
+        };
+      }),
+    [carriers, lang]
+  );
   const { data: searchRegions = [], isLoading: isSearchingRegions } = useSearchRegions(
     debouncedSearch,
     hasSearch
@@ -76,24 +138,33 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
 
   // Determine which data to show
   const showRegionsTab = activeTab === "region" && !hasSearch;
-  const showTop10Tab = activeTab === "top10" && !hasSearch;
+  const showTop10Tab = activeTab === "top15" && !hasSearch;
+  const showLocalTab = activeTab === "local" && !hasSearch;
   const showSearchResults = hasSearch;
   const isLoading = hasSearch
     ? (isSearchingDestinations || isSearchingRegions)
-    : (showRegionsTab ? isLoadingRegions : (showTop10Tab ? (isLoadingTop || isLoadingRegions) : isLoadingTop));
+    : showRegionsTab
+      ? isLoadingAllRegions
+      : showLocalTab
+        ? isLoadingCarriers
+        : showTop10Tab
+          ? isLoadingTop || isLoadingRegions
+          : isLoadingAll;
 
-  // Combined Top 10 list: mix countries and regions together
+  // "TOP 15": the countries and regions ticked featured in the CMS
+  // (vande-1411 #023), countries first.
   const top10Combined = (() => {
     if (!showTop10Tab) return [];
     const countryItems = topDestinations.map((d: any) => ({ ...d, _type: "destination" as const }));
     const regionItems = regions.map((r: any) => ({ ...r, _type: "region" as const }));
-    return [...countryItems, ...regionItems].slice(0, 10);
+    return [...countryItems, ...regionItems].slice(0, TOP_COUNT);
   })();
 
   const tabs = [
-    { key: "top10" as const, label: "Top 10" },
+    { key: "top15" as const, label: "TOP 15" },
     { key: "country" as const, label: t.tabs?.country || "Country" },
     { key: "region" as const, label: t.tabs?.region || "Region" },
+    { key: "local" as const, label: lang === "vi" ? "Nội địa" : "Domestic" },
   ];
 
   /* Format price with locale */
@@ -149,6 +220,7 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
                       key={tab.key}
                       data-is-tab="true"
                       data-is-active={activeTab === tab.key}
+                      data-testid={`dropdown-tab-${tab.key}`}
                       onClick={() => setActiveTab(tab.key)}
                       className={`relative body-sm-medium whitespace-nowrap md:body-md-medium px-4 py-1 focus-visible:outline-hidden focus-visible:shadow-focus rounded-full transition-all duration-200 min-w-[60px] ${activeTab === tab.key
                         ? "bg-bg-dark text-text-primary-on-color"
@@ -161,6 +233,12 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
                           <span className="text-center whitespace-nowrap rounded-full inline-block bg-bg-accent text-text-primary py-0.5 px-2 body-2xs-medium">
                             {tab.badge}
                           </span>
+                        </span>
+                      ) : tab.key === "local" ? (
+                        // The flag in front of "Nội địa", as on the home page.
+                        <span className="flex items-center gap-2">
+                          <VietnamFlag />
+                          {tab.label}
                         </span>
                       ) : (
                         tab.label
@@ -293,15 +371,23 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
                   )}
                 </div>
               ) : (
-                /* Tab Results - Show Destinations, Regions, or Combined Top 10 */
-                <div className="h-40">
+                /* Tab results: three rows, then a scrollbar (vande-1411 #023). */
+                <div className="h-[14rem]">
                   {(() => {
-                    const tabItems = showTop10Tab ? top10Combined : (showRegionsTab ? regions : topDestinations);
+                    const tabItems: any[] = showTop10Tab
+                      ? top10Combined
+                      : showRegionsTab
+                        ? allRegions
+                        : showLocalTab
+                          ? localItems
+                          : allCountries;
                     if (tabItems.length === 0) {
                       return (
                         <div className="flex items-center justify-center h-full">
                           <p className="body-md text-text-tertiary">
-                            {showRegionsTab
+                            {showLocalTab
+                              ? (lang === "vi" ? "Chưa có eSIM nội địa khả dụng." : "No domestic eSIMs available yet.")
+                              : showRegionsTab
                               ? (lang === "vi" ? "Không tìm thấy khu vực" : "No regions found")
                               : (lang === "vi" ? "Không tìm thấy điểm đến" : "No destinations found")
                             }
@@ -310,21 +396,37 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
                       );
                     }
                     return (
-                      <div className="grid gap-6 lg:gap-4 w-full lg:grid-cols-3 xl:grid-cols-5 max-h-40 overflow-auto">
+                      // Rows of 4rem with 1rem between: three fit in 14rem.
+                      <div
+                        className="grid gap-6 lg:gap-4 w-full lg:grid-cols-3 xl:grid-cols-5 lg:auto-rows-[4rem] max-h-[14rem] overflow-y-auto pr-2"
+                        data-testid="dropdown-tab-items"
+                      >
                         {tabItems.map((item: any) => {
                           const isRegionItem = showRegionsTab || item._type === "region";
                           return (
                             <a
                               key={`${item._type || 'dest'}-${item.id}`}
                               className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus rounded-sm w-full block group lg:p-3 lg:hover:bg-gray-100"
-                              data-testid={item.code || item.slug}
-                              href={localizedHref(lang, localizedSlug(item, lang) || item.code?.toLowerCase() || "")}
-
+                              data-testid={item._type === "local" ? `dropdown-local-${item.id}` : item.code || item.slug}
+                              href={
+                                item._type === "local"
+                                  ? item.href
+                                  : localizedHref(lang, localizedSlug(item, lang) || item.code?.toLowerCase() || "")
+                              }
                             >
-                              <div className="flex flex-row gap-2">
+                              <div className="flex min-w-0 flex-row gap-2">
                                 <div className="flex items-center justify-center h-6 w-6 rounded-full shrink-0 text-text-primary">
                                   <div className="w-[24px] h-[24px] relative overflow-hidden shrink-0 rounded-full">
-                                    {(item.flagUrl || item.iconUrl) ? (
+                                    {item._type === "local" ? (
+                                      // The carrier's round wordmark, as on its cards.
+                                      <span
+                                        className={`flex h-full w-full items-center justify-center text-[0.4375rem] font-bold leading-none text-white${item.meta.italic ? " italic" : ""}`}
+                                        style={{ backgroundColor: item.meta.logoBg }}
+                                        aria-hidden="true"
+                                      >
+                                        {item.meta.wordmark ?? item.meta.label}
+                                      </span>
+                                    ) : (item.flagUrl || item.iconUrl) ? (
                                       <>
                                         <img
                                           alt={`${item.name} ${isRegionItem ? 'avatar' : 'flag'}`}
@@ -342,21 +444,24 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
                                     )}
                                   </div>
                                 </div>
-                                <div className="flex flex-col gap-1">
-                                  <div className="flex items-center gap-1.5">
-                                    <p className="body-sm-medium text-text-primary text-left">{(lang === "vi" ? item.titleVi : item.title) || item.name}</p>
+                                {/* One line each, so every card is one 4rem row (vande-1411 #023). */}
+                                <div className="flex min-w-0 flex-col gap-1">
+                                  <div className="flex min-w-0 items-center gap-1.5">
+                                    <p className="body-sm-medium text-text-primary text-left truncate" title={(lang === "vi" ? item.titleVi : item.title) || item.name}>{(lang === "vi" ? item.titleVi : item.title) || item.name}</p>
                                     {showTop10Tab && isRegionItem && (
                                       <span className="text-center whitespace-nowrap rounded-full inline-block bg-blue-100 text-blue-700 py-0 px-1.5 body-2xs-medium">
                                         {lang === "vi" ? "Khu vực" : "Region"}
                                       </span>
                                     )}
                                   </div>
-                                  <p className="body-xs text-text-tertiary text-left">
+                                  <p className="body-xs text-text-tertiary text-left truncate">
                                     <span className="whitespace-nowrap">
                                       {isRegionItem
                                         ? [
                                           formatPrice(item.fromPrice) ? `${t.from} ${formatPrice(item.fromPrice)}` : null,
-                                          `${item.destinationCount} ${lang === "vi" ? "quốc gia" : (item.destinationCount === 1 ? "country" : "countries")}`
+                                          item.variantCount > 1
+                                            ? variantCountLabel(item.variantCount, lang)
+                                            : `${item.destinationCount} ${lang === "vi" ? "quốc gia" : (item.destinationCount === 1 ? "country" : "countries")}`
                                         ].filter(Boolean).join(" · ")
                                         : formatPrice(item.fromPrice)
                                           ? `${t.from} ${formatPrice(item.fromPrice)}`
