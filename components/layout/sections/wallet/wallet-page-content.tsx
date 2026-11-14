@@ -49,6 +49,8 @@ import { useSignOut } from "@/lib/use-sign-out";
 interface WalletPageContentProps {
   lang: "en" | "vi";
   embedded?: boolean;
+  /** The sub-tab to open on, e.g. "Giới thiệu" from the profile's share button (vande-1411 #040). */
+  initialTab?: "wallet" | "referral";
 }
 
 type Tab = "wallet" | "referral";
@@ -125,11 +127,11 @@ function isCredit(type: WalletTransaction["type"]): boolean {
   ].includes(type);
 }
 
-export function WalletPageContent({ lang, embedded }: WalletPageContentProps) {
+export function WalletPageContent({ lang, embedded, initialTab = "wallet" }: WalletPageContentProps) {
   const t = walletTranslations[lang];
   const { user } = useAuth();
   const signOut = useSignOut(lang);
-  const [activeTab, setActiveTab] = useState<Tab>("wallet");
+  const [activeTab, setActiveTab] = useState<Tab>(initialTab);
 
   if (!user) {
     if (embedded) return null;

@@ -93,7 +93,11 @@ export function ProfileContent({ lang, widthClassName }: ProfileContentProps) {
 
   // These two buttons sit far down the page: the wallet opens at its top, not
   // wherever the page happened to be scrolled (vande-0411 #079).
-  const openWalletFromTop = () => {
+  // Which "Điểm eXU" sub-tab to open on; the share button goes straight to
+  // "Giới thiệu" (vande-1411 #040).
+  const [walletTab, setWalletTab] = useState<"wallet" | "referral">("wallet");
+  const openWalletFromTop = (sub: "wallet" | "referral" = "wallet") => {
+    setWalletTab(sub);
     setActiveTab("wallet");
     window.scrollTo({ top: 0, behavior: "auto" });
   };
@@ -171,7 +175,10 @@ export function ProfileContent({ lang, widthClassName }: ProfileContentProps) {
           {tabs.map((tab) => (
             <button
               key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
+              onClick={() => {
+                if (tab.key === "wallet") setWalletTab("wallet");
+                setActiveTab(tab.key);
+              }}
               className={`flex-none sm:flex-1 whitespace-nowrap flex items-center justify-center gap-2 px-4 py-2.5 text-base sm:text-sm font-medium rounded-lg transition-all ${
                 activeTab === tab.key
                   ? "bg-white text-gray-900 shadow-sm"
@@ -354,7 +361,7 @@ export function ProfileContent({ lang, widthClassName }: ProfileContentProps) {
                 )}
                 <div className="px-5 pb-4">
                   <button
-                    onClick={openWalletFromTop}
+                    onClick={() => openWalletFromTop("wallet")}
                     className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-base sm:text-sm font-medium bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-colors cursor-pointer"
                   >
                     <Wallet className="w-4 h-4" />
@@ -401,7 +408,8 @@ export function ProfileContent({ lang, widthClassName }: ProfileContentProps) {
                     </div>
                   )}
                   <button
-                    onClick={openWalletFromTop}
+                    onClick={() => openWalletFromTop("referral")}
+                    data-testid="profile-share-referral"
                     className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-base sm:text-sm font-medium bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors cursor-pointer"
                   >
                     <Gift className="w-4 h-4" />
@@ -434,7 +442,7 @@ export function ProfileContent({ lang, widthClassName }: ProfileContentProps) {
         )}
 
         {activeTab === "wallet" && (
-          <WalletPageContent lang={lang} embedded />
+          <WalletPageContent key={walletTab} lang={lang} embedded initialTab={walletTab} />
         )}
 
         {activeTab === "sim" && (

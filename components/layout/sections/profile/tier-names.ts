@@ -38,3 +38,16 @@ export function tierAccent(tier: MembershipTier | null | undefined): string {
   if (!tier) return BUILT_IN_ACCENTS.traveler;
   return BUILT_IN_ACCENTS[tier] ?? ADDED_TIER_ACCENT;
 }
+
+/** Each built-in tier's picture on the ladder (vande-1411 #040). */
+const BUILT_IN_ICONS: Record<string, "plane" | "medal" | "crown" | "gem"> = {
+  traveler: "plane",
+  silver: "medal",
+  gold: "crown",
+  platinum: "gem",
+};
+
+/** A tier an admin added gets a star. */
+export function tierIconKey(tier: MembershipTier | null | undefined): "plane" | "medal" | "crown" | "gem" | "star" {
+  return (tier && BUILT_IN_ICONS[tier]) || (tier ? "star" : "plane");
+}

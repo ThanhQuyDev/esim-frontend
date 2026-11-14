@@ -1,9 +1,11 @@
 "use client";
 
-import { Check, Coins, Gift, Lock } from "lucide-react";
+import { Check, Coins, Crown, Gem, Gift, Lock, Medal, Plane, Star } from "lucide-react";
 import { formatExu, formatVnd, useMembershipTiers } from "@/lib/hooks";
 import type { MembershipTier } from "@/lib/hooks";
-import { tierAccent, tierName } from "./tier-names";
+import { tierAccent, tierIconKey, tierName } from "./tier-names";
+
+const TIER_ICONS = { plane: Plane, medal: Medal, crown: Crown, gem: Gem, star: Star };
 
 interface TierLadderProps {
   /** The tier the customer is on right now (may be an admin override). */
@@ -32,13 +34,23 @@ export function TierLadder({
 
   const spend = Math.max(0, lifetimeSpendVnd);
   const currentIndex = tiers.findIndex((rung) => rung.tier === currentTier);
-  const top = tiers[tiers.length - 1];
-  // The track fills against the top rung, so every level sits at a fixed point
-  // on it — the customer can see how far the whole ladder goes, not just the
-  // next step.
-  const trackPercent = top.minimumSpendVnd
-    ? Math.min(100, (spend / top.minimumSpendVnd) * 100)
-    : 100;
+  // The levels sit evenly along the track, so their icons never overlap (the
+  // first steps are small next to the top one), and the fill moves through
+  // each gap in proportion to the spend between those two levels
+  // (vande-1411 #040).
+  const step = tiers.length > 1 ? 100 / (tiers.length - 1) : 100;
+  const passed = tiers.filter((rung) => spend >= rung.minimumSpendVnd).length;
+  const nextRung = tiers[passed];
+  const lastReached = tiers[passed - 1];
+  const trackPercent =
+    !nextRung || !lastReached
+      ? passed ? 100 : 0
+      : Math.min(
+          100,
+          (passed - 1) * step +
+            (step * (spend - lastReached.minimumSpendVnd)) /
+              Math.max(1, nextRung.minimumSpendVnd - lastReached.minimumSpendVnd)
+        );
 
   return (
     <div
@@ -56,28 +68,74 @@ export function TierLadder({
         </p>
       </div>
 
-      <div className="px-5 pt-5">
+      {/* Each level's milestone shows its picture, and its goal on hover or
+          tap (vande-1411 #040). Extra room at the sides and above keeps the
+          edge icons inside the card; the bubbles open downward, over the list. */}
+      <div className="px-7 pt-6 pb-3">
         <div className="relative h-1.5 rounded-full bg-gray-100">
           <div
             className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-sky-500 to-violet-600"
             style={{ width: `${trackPercent}%` }}
           />
-          {tiers.map((rung) => {
-            const position = top.minimumSpendVnd
-              ? (rung.minimumSpendVnd / top.minimumSpendVnd) * 100
-              : 0;
+          {tiers.map((rung, index) => {
+            const position = index * step;
             const reached = spend >= rung.minimumSpendVnd;
+            const missing = Math.max(0, rung.minimumSpendVnd - spend);
+            const Icon = TIER_ICONS[tierIconKey(rung.tier)];
+            const name = tierName(rung.tier, lang, tiers);
+            // The first and last bubbles open inward so they stay on screen.
+            const bubbleSide =
+              index === 0
+                ? "left-0"
+                : index === tiers.length - 1
+                  ? "right-0"
+                  : "left-1/2 -translate-x-1/2";
             return (
               <span
                 key={rung.tier}
-                aria-hidden
-                className={`absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 ${
-                  reached
-                    ? "border-violet-600 bg-white"
-                    : "border-gray-300 bg-gray-100"
-                }`}
+                tabIndex={0}
+                role="img"
+                aria-label={name}
+                data-testid={`tier-milestone-${rung.tier}`}
+                data-reached={reached ? "true" : "false"}
+                className="group absolute top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 outline-none"
                 style={{ left: `${position}%` }}
-              />
+              >
+                <span
+                  className={`flex h-8 w-8 items-center justify-center rounded-full border-2 border-white shadow-sm transition-transform group-hover:scale-110 group-focus-visible:scale-110 ${
+                    reached
+                      ? `bg-gradient-to-br ${tierAccent(rung.tier)} text-white`
+                      : "bg-gray-200 text-gray-400"
+                  } ${index === currentIndex ? "ring-2 ring-violet-300 ring-offset-1" : ""}`}
+                >
+                  <Icon className="h-4 w-4" />
+                </span>
+                <span
+                  role="tooltip"
+                  data-testid={`tier-milestone-tip-${rung.tier}`}
+                  className={`pointer-events-none invisible absolute top-full mt-2 w-56 rounded-xl bg-gray-900 px-3 py-2.5 text-left text-xs leading-5 text-white opacity-0 shadow-lg transition-opacity group-hover:visible group-hover:opacity-100 group-focus:visible group-focus:opacity-100 ${bubbleSide}`}
+                >
+                  <span className="block text-sm font-semibold">{name}</span>
+                  <span className="block text-gray-300">
+                    {rung.minimumSpendVnd === 0
+                      ? vi
+                        ? "Ngay khi tạo tài khoản"
+                        : "As soon as you sign up"
+                      : `${vi ? "Mục tiêu: chi tiêu từ" : "Goal: spend from"} ${formatVnd(rung.minimumSpendVnd)}`}
+                  </span>
+                  <span className="mt-1 block">
+                    {vi ? "Hoàn" : "Cashback"} {rung.cashbackPercent}% eXU ·{" "}
+                    {vi ? "Thưởng giới thiệu" : "Referral reward"} {formatExu(rung.referralRewardVnd, lang)}
+                  </span>
+                  <span className={`mt-1 block font-medium ${reached ? "text-emerald-300" : "text-amber-300"}`}>
+                    {reached
+                      ? vi
+                        ? "Đã đạt"
+                        : "Reached"
+                      : `${vi ? "Còn thiếu" : "Still need"} ${formatVnd(missing)}`}
+                  </span>
+                </span>
+              </span>
             );
           })}
         </div>

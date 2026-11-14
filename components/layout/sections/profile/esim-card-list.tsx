@@ -1,6 +1,7 @@
 "use client";
 
 import { TapFull } from "./tap-full";
+import { EsimChipIcon } from "./esim-chip-icon";
 import { speedLabel } from "../region-group/design/rg-model";
 import { hasDailyAllowance } from "@/lib/plan-daily-reset";
 import { validityStartText } from "@/lib/plan-validity-start";
@@ -588,7 +589,9 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
               {displayName}
             </p>
             {/* TOPUP next to the product name, so a topped-up eSIM is obvious
-                without expanding the card (#031). */}
+                without expanding the card (#031). The chip in front says
+                "eSIM" at a glance (vande-1411 #040). */}
+            <EsimChipIcon className="h-5 w-5 shrink-0" />
             <span
               data-testid="esim-status"
               className={`inline-flex shrink-0 items-center px-2 py-0.5 text-sm font-medium rounded-full ${lifecycle.style}`}
