@@ -2,7 +2,7 @@
 import { useMoney } from "@/lib/money";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Minus, Plus, Trash2, Tag, ShoppingCart, ArrowRight, Ticket, Gift, AlertTriangle, CheckCircle2, Wallet, Coins } from "lucide-react";
+import { Minus, Plus, Trash2, Tag, ShoppingCart, ArrowRight, Ticket, Gift, AlertTriangle, CheckCircle2, Wallet, Coins, X } from "lucide-react";
 import {
   applyCoupon,
   removeCoupon,
@@ -580,20 +580,40 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
             ) : (
               <>
                 <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={promoInput}
-                    onChange={(e) => {
-                      setPromoInput(e.target.value);
-                      setPromoError("");
-                    }}
-                    placeholder={dict.enterCoupon || "Enter promo or referral code"}
-                    className="flex-1 rounded-xl border border-border-primary px-4 py-2.5 text-base sm:text-sm outline-none focus:border-[var(--border-focus)] transition-colors"
-                  />
+                  {/* The box gives way so "Áp dụng" stays on one line, and an
+                      X clears what was typed (vande-1411 #022). */}
+                  <div className="relative min-w-0 flex-1">
+                    <input
+                      type="text"
+                      value={promoInput}
+                      onChange={(e) => {
+                        setPromoInput(e.target.value);
+                        setPromoError("");
+                      }}
+                      placeholder={dict.enterCoupon || "Enter promo or referral code"}
+                      data-testid="cart-promo-input"
+                      className={`w-full min-w-0 rounded-xl border border-border-primary py-2.5 pl-4 ${promoInput ? "pr-9" : "pr-4"} text-base sm:text-sm outline-none focus:border-[var(--border-focus)] transition-colors`}
+                    />
+                    {promoInput && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPromoInput("");
+                          setPromoError("");
+                        }}
+                        aria-label={lang === "vi" ? "Xoá mã" : "Clear code"}
+                        data-testid="cart-promo-clear"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700 cursor-pointer"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
                   <button
                     onClick={handleApplyPromo}
                     disabled={!promoInput.trim()}
-                    className="rounded-xl bg-bg-brand-black px-4 py-2.5 text-base sm:text-sm font-medium text-white transition-colors hover:opacity-90 disabled:opacity-50 cursor-pointer"
+                    data-testid="cart-promo-apply"
+                    className="shrink-0 whitespace-nowrap rounded-xl bg-bg-brand-black px-4 py-2.5 text-base sm:text-sm font-medium text-white transition-colors hover:opacity-90 disabled:opacity-50 cursor-pointer"
                   >
                     {dict.apply || "Apply"}
                   </button>
@@ -708,7 +728,9 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
           {!user ? (
             <button
               onClick={() => openAuthModal()}
-              className="flex w-full items-center justify-center gap-2 rounded-full bg-gray-100 py-3.5 text-xl sm:text-base font-semibold text-gray-500 transition-colors hover:bg-gray-200 cursor-pointer"
+              // 1rem on a phone as on a computer (vande-1411 #022).
+              data-testid="cart-exu-login"
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-gray-100 py-3.5 text-base font-semibold text-gray-500 transition-colors hover:bg-gray-200 cursor-pointer"
             >
               <Wallet className="h-5 w-5" />
               {lang === "vi" ? "Bạn có eXU không?" : "Do you have eXU?"}
@@ -733,12 +755,13 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
                 localStorage.setItem("esim_checkout_use_exu", "true");
                 window.location.href = localizedHref(lang, "checkout");
               }}
-              className="flex w-full items-center justify-center gap-2 rounded-full bg-emerald-500 py-3.5 text-base sm:text-sm font-semibold text-white transition-colors hover:bg-emerald-600 cursor-pointer"
+              data-testid="cart-exu-use"
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-emerald-500 py-3.5 text-base font-semibold text-white transition-colors hover:bg-emerald-600 cursor-pointer"
             >
               <Wallet className="h-5 w-5" />
               {lang === "vi"
-                ? `Dùng điểm eXU (${formatExu(wallet.availableBalanceVnd, lang)})`
-                : `Use eXU points (${formatExu(wallet.availableBalanceVnd, lang)})`}
+                ? `Dùng eXU (${formatExu(wallet.availableBalanceVnd, lang)})`
+                : `Use eXU (${formatExu(wallet.availableBalanceVnd, lang)})`}
             </button>
           ) : null}
 

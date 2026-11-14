@@ -50,11 +50,12 @@ export function AffiliateFaq({ dict }: AffiliateFaqProps) {
                         className="group flex w-full items-center justify-between font-medium outline-0"
                         aria-expanded={openIndex === i}
                       >
-                        <h3 className="body-lg-medium text-primary text-left">
+                        <h3 className="body-lg-medium max-lg:text-[1.125rem] text-primary text-left">
                           {item.question}
                         </h3>
                         <span className="ml-4">
                           <ChevronDown
+                            strokeWidth={1.5}
                             className={`h-6 w-6 text-primary transition-transform duration-200 ${
                               openIndex === i ? "-rotate-180" : ""
                             }`}

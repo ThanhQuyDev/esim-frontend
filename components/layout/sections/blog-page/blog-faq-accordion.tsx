@@ -26,7 +26,8 @@ export function BlogFaqAccordion({ faqs, lang = "vi" }: BlogFaqAccordionProps) {
       <Accordion type="single" collapsible className="w-full">
         {faqs.map((faq) => (
           <AccordionItem key={faq.id} value={faq.id}>
-            <AccordionTrigger className="text-left text-[1.25rem] font-medium">
+            {/* 1.125rem, as the other FAQ blocks (vande-1411 #022). */}
+            <AccordionTrigger className="text-left text-[1.125rem] font-medium">
               {faq.question}
             </AccordionTrigger>
             <AccordionContent>

@@ -105,11 +105,14 @@ export function FAQSection({
                                     className="flex w-full items-center justify-between font-medium mb-0 outline-0 group transition-all focus-visible:outline-hidden focus-visible:shadow-focus"
                                     aria-expanded={openIndex === i}
                                   >
-                                    <h3 className="body-lg-medium text-left text-text-primary scroll-mt-20 xl:scroll-mt-24">
+                                    {/* 1.125rem on a phone too, as on a computer (vande-1411 #022). */}
+                                    <h3 className="body-lg-medium max-lg:text-[1.125rem] text-left text-text-primary scroll-mt-20 xl:scroll-mt-24">
                                       {item.question}
                                     </h3>
                                     <span className="ml-4">
+                                      {/* A finer line, so a column of arrows reads lighter (vande-1411 #022). */}
                                       <ChevronDown
+                                        strokeWidth={1.5}
                                         className={`w-6 h-6 text-text-primary transition-transform duration-200 ${
                                           openIndex === i ? "-rotate-180" : ""
                                         }`}
