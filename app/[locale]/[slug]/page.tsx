@@ -109,7 +109,30 @@ async function resolveRegionGroup(
 ): Promise<RegionGroup | null> {
   try {
     const regions = await getRegions({ limit: 500 });
-    return findRegionGroupBySlug(regions.data, slug, locale);
+    const group = findRegionGroupBySlug(regions.data, slug, locale);
+    // The list stops at 200 rows, so a parent's packs can be missing from it:
+    // "Asia (Châu Á)" showed 25 scopes of its 28 (vande-1411 #030). Fetch the
+    // whole group by its parent.
+    let parentId = group?.key.startsWith("p") ? Number(group.key.slice(1)) : NaN;
+    if (!Number.isFinite(parentId)) {
+      const region = await getRegionBySlug(slug, locale);
+      if (region?.isParent) parentId = Number(region.id);
+      else if (region?.parentId) parentId = Number(region.parentId);
+    }
+    if (!Number.isFinite(parentId)) return group;
+    const packs = await getRegions({
+      limit: 200,
+      filters: JSON.stringify({ parentIds: [parentId] }),
+    });
+    const parentSlug =
+      regions.data.find((r) => Number(r.id) === parentId) ??
+      packs.data.find((r) => r.parent)?.parent ??
+      null;
+    const parent =
+      regions.data.find((r) => Number(r.id) === parentId) ??
+      (parentSlug ? await getRegionBySlug(localizedSlug(parentSlug as Region, locale), locale) : null);
+    const whole = [...(parent ? [parent] : []), ...packs.data].filter((r) => r.isActive !== false);
+    return findRegionGroupBySlug(whole, slug, locale) ?? group;
   } catch {
     return null;
   }

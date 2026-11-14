@@ -203,7 +203,13 @@ export interface Region {
     /** Its pictures, for a pack with none of its own (vande-1411 #029). */
     avatarUrl?: string | null;
     iconUrl?: string | null;
+    /** Its active packs (vande-1411 #030). */
+    childCount?: number;
   } | null;
+  /** In a list: how many active packs this region is the parent of (vande-1411 #030). */
+  childCount?: number;
+  /** Ticked "Làm khu vực cha" (vande-0411 #073). */
+  isParent?: boolean;
   isActive: boolean;
   fromPrice?: number | null;
   createdAt: string;

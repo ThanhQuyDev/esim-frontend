@@ -188,12 +188,25 @@ export interface RegionListItem extends Region {
  * Collapse a region list for display: same-named regions become one card
  * pointing at the group slug, everything else passes through untouched.
  */
+/**
+ * How many options a group offers (vande-1411 #030): a parent and every one
+ * of its active packs — "Asia (Châu Á)" with 27 packs is 28 — counted by the
+ * API, so packs past the page of results this list holds still count.
+ */
+function optionCount(group: RegionGroup): number {
+  const head = group.members.find((m) => m.childCount && m.childCount > 0);
+  const parentInfo = group.members.find((m) => m.parent?.childCount)?.parent;
+  const known = head?.childCount ?? parentInfo?.childCount ?? 0;
+  return Math.max(group.members.length, known > 0 ? known + 1 : 0);
+}
+
 export function toRegionListItems(
   regions: Region[],
   lang: Locale,
 ): RegionListItem[] {
   return groupRegions(regions, lang).map((group) => {
     const [first] = group.members;
+    const options = optionCount(group);
     if (group.members.length === 1) {
       // A lone pack whose parent is not in this list still shows as, and links
       // to, its parent (vande-1411 #028).
@@ -205,10 +218,10 @@ export function toRegionListItems(
           titleVi: group.label,
           slug: group.slug,
           slugVi: group.slug,
-          variantCount: 1,
+          variantCount: options,
         };
       }
-      return { ...first, variantCount: 1 };
+      return { ...first, variantCount: options };
     }
 
     const icon = group.iconUrl ?? undefined;
@@ -226,7 +239,7 @@ export function toRegionListItems(
       destinationCount: Math.max(
         ...group.members.map((m) => m.destinationCount ?? 0),
       ),
-      variantCount: group.members.length,
+      variantCount: options,
     };
   });
 }
