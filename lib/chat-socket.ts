@@ -34,6 +34,8 @@ export interface ChatMessage {
   fileSize?: number;
   replyToId?: number | null;
   replyTo?: ChatMessageQuote | null;
+  /** One reaction per person, `{ "<userId>": "❤️" }` (vande-1411 #037). */
+  reactions?: Record<string, string> | null;
 }
 
 export type { FileAttachment } from "@/lib/cloudinary";
@@ -96,6 +98,16 @@ export function useChatSocket() {
       }
     });
 
+    // Someone reacted to a message (vande-1411 #037).
+    socket.on(
+      "messageReaction",
+      (data: { messageId: number; reactions: Record<string, string> | null }) => {
+        setMessages((prev) =>
+          prev.map((m) => (m.id === data.messageId ? { ...m, reactions: data.reactions } : m))
+        );
+      }
+    );
+
     socket.on("error", (data: { message: string }) => {
       setError(data.message);
     });
@@ -148,6 +160,11 @@ export function useChatSocket() {
     [roomId]
   );
 
+  /** React to a message; the same reaction again takes it back (vande-1411 #037). */
+  const react = useCallback((messageId: number, emoji: string) => {
+    socketRef.current?.emit("react", { messageId, emoji });
+  }, []);
+
   const markAsRead = useCallback(() => {
     if (!socketRef.current || !roomId) return;
     socketRef.current.emit("markAsRead", { chatRoomId: roomId });
@@ -162,6 +179,7 @@ export function useChatSocket() {
     sendMessage,
     loadMore,
     markAsRead,
+    react,
     unreadCount,
     userId: user?.id ?? null,
   };

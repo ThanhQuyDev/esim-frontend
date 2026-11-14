@@ -15,6 +15,7 @@ import { uploadToCloudinary, validateChatFile, type FileAttachment } from "@/lib
 import { useAuth } from "@/lib/auth";
 import { MessageCircle, X, Send, Loader2, Paperclip, Image as ImageIcon, CornerUpLeft, MoreHorizontal, Maximize2, Minimize2 } from "lucide-react";
 import { chatDayLabel, chatTime, startsNewDay } from "@/lib/chat-days";
+import { EmojiPicker, ReactionBar, ReactionPicker } from "./chat-reactions";
 import { splitChatLinks } from "@/lib/chat-links";
 
 // ===== Mobile layout (v3 #006) =====
@@ -220,7 +221,7 @@ export function ChatBubble() {
 // ===== Chat Window =====
 
 function ChatWindow({ onClose }: { onClose: () => void }) {
-  const { connected, messages, sendMessage, error, userId, markAsRead } = useChatSocket();
+  const { connected, messages, sendMessage, error, userId, markAsRead, react } = useChatSocket();
   const [input, setInput] = useState("");
   const [uploading, setUploading] = useState(false);
   /** Message being quoted, cleared once the reply is sent (#073). */
@@ -457,6 +458,7 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
               onReply={startReply}
               onJumpToQuoted={jumpToMessage}
               onViewImage={setViewingImage}
+              onReact={(emoji) => react(msg.id, emoji)}
             />
           </Fragment>
         ))}
@@ -514,6 +516,20 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
             <Paperclip className="h-4 w-4" />
           )}
         </button>
+        {/* Emoji into the message, where the cursor is (vande-1411 #037). */}
+        <EmojiPicker
+          disabled={!connected}
+          onPick={(emoji) => {
+            const box = inputRef.current;
+            const start = box?.selectionStart ?? input.length;
+            const end = box?.selectionEnd ?? input.length;
+            setInput(input.slice(0, start) + emoji + input.slice(end));
+            requestAnimationFrame(() => {
+              box?.focus({ preventScroll: true });
+              box?.setSelectionRange(start + emoji.length, start + emoji.length);
+            });
+          }}
+        />
         <input
           ref={fileInputRef}
           type="file"
@@ -635,6 +651,7 @@ function MessageBubble({
   onReply,
   onJumpToQuoted,
   onViewImage,
+  onReact,
 }: {
   message: ChatMessage;
   isOwn: boolean;
@@ -642,6 +659,8 @@ function MessageBubble({
   onReply?: (message: ChatMessage) => void;
   onJumpToQuoted?: (messageId: number) => void;
   onViewImage?: (image: { url: string; alt: string }) => void;
+  /** React to this message (vande-1411 #037). */
+  onReact?: (emoji: string) => void;
 }) {
   // The time alone: the day is in the header above (vande-1411 #036).
   const time = chatTime(message.createdAt);
@@ -770,7 +789,16 @@ function MessageBubble({
         >
           {time}
         </p>
+        {/* Reactions, one per person (vande-1411 #037). */}
+        <ReactionBar
+          reactions={message.reactions}
+          viewerId={viewerId}
+          onReact={onReact}
+          tone={isOwn && !(hasMedia && !hasTextContent) ? "dark" : "light"}
+        />
       </div>
+
+      {onReact && <ReactionPicker onReact={onReact} testId={`chat-react-${message.id}`} />}
 
       {/* Reply affordance. Always visible on touch — there is no hover there —
           and revealed on hover from a pointer, so the thread stays clean (#073). */}
