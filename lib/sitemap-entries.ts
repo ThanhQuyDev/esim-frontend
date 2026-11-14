@@ -250,6 +250,9 @@ export function buildSitemap(
 
   for (const region of sources.regions ?? []) {
     if (region?.isActive === false) continue;
+    // A pack under a parent redirects to the parent's page (vande-1411 #028):
+    // only the page it lands on belongs in the sitemap.
+    if (region?.parentId) continue;
     push(
       entryFor(
         baseUrl,

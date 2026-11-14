@@ -115,6 +115,17 @@ async function resolveRegionGroup(
   }
 }
 
+/** The slug of a region's parent in this language (vande-1411 #028). */
+async function parentRegionSlug(parentId: number, locale: Locale): Promise<string | null> {
+  try {
+    const regions = await getRegions({ limit: 500 });
+    const parent = regions.data.find((r) => Number(r.id) === Number(parentId));
+    return parent && !parent.parentId ? localizedSlug(parent, locale) || null : null;
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Each pack of a region group with its full record. The region list carries no
  * `destinations`, so a tab other than the one first opened lost its list of
@@ -389,6 +400,16 @@ export default async function UnifiedSlugPage({
   const canonicalSlug = localizedSlug(entity.data, locale);
   if (canonicalSlug && canonicalSlug !== params.slug) {
     permanentRedirect(localizedPath(canonicalSlug, locale));
+  }
+
+  // A pack under a parent region is sold on the parent's page: its own link
+  // moves there for good (vande-1411 #028). A parent has no parent, so this
+  // never loops; a standalone region and a parent stay where they are.
+  if (entity.type === "region" && entity.data.parentId) {
+    const parentSlug = await parentRegionSlug(entity.data.parentId, locale);
+    if (parentSlug && parentSlug !== params.slug) {
+      permanentRedirect(localizedPath(parentSlug, locale));
+    }
   }
 
   const localizedName = pickLocalizedName(entity.data, locale);

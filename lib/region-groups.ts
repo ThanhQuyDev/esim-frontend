@@ -119,8 +119,13 @@ export function groupRegions(regions: Region[], lang: Locale): RegionGroup[] {
     const key = byParent
       ? `p${region.parentId ?? region.id}`
       : regionGroupKey(region, lang);
-    // The parent names the group; its packs may come first in the list.
-    const head = byParent ? (byId.get(region.parentId ?? region.id) ?? region) : region;
+    // The parent names the group; its packs may come first in the list. A
+    // parent left out of this page of results still names it, from the pack
+    // (vande-1411 #028).
+    const head = byParent
+      ? (byId.get(region.parentId ?? region.id) ??
+        (region.parent ? ({ ...region, ...region.parent } as Region) : region))
+      : region;
     const existing = byKey.get(key);
     if (existing) {
       existing.members.push(region);
@@ -140,11 +145,17 @@ export function groupRegions(regions: Region[], lang: Locale): RegionGroup[] {
     group.members.sort((a, b) => memberCount(a) - memberCount(b));
     const slugs = group.members.map((m) => localizedSlug(m, lang)).filter(Boolean);
     group.slug = regionGroupSlug(slugs);
-    // Packs an admin grouped by hand may share no more than "esim-"
-    // ("esim-chau-a" + "esim-dong-nam-a"): the group page is the parent's own.
-    if (byParent && slugs.length > 1 && group.slug.split("-").length < 2) {
-      const parent = byId.get(Number(group.key.slice(1)));
-      group.slug = parent ? localizedSlug(parent, lang) : slugs[0];
+    // A group with a parent lives at the parent's own slug, "/esim-chau-a" —
+    // not at what its packs' slugs happen to share ("asia-5-mi", vande-1411
+    // #028). A pack's own slug sends there with a 301.
+    if (byParent) {
+      const parent =
+        byId.get(Number(group.key.slice(1))) ??
+        group.members.find((m) => m.parent)?.parent ??
+        null;
+      const parentSlug = parent ? localizedSlug(parent as Region, lang) : "";
+      if (parentSlug) group.slug = parentSlug;
+      else if (slugs.length > 1 && group.slug.split("-").length < 2) group.slug = slugs[0];
     }
     const prices = group.members
       .map((m) => Number(m.fromPrice))
@@ -175,7 +186,22 @@ export function toRegionListItems(
 ): RegionListItem[] {
   return groupRegions(regions, lang).map((group) => {
     const [first] = group.members;
-    if (group.members.length === 1) return { ...first, variantCount: 1 };
+    if (group.members.length === 1) {
+      // A lone pack whose parent is not in this list still shows as, and links
+      // to, its parent (vande-1411 #028).
+      if (first.parentId && group.slug && group.slug !== localizedSlug(first, lang)) {
+        return {
+          ...first,
+          name: group.label,
+          title: group.label,
+          titleVi: group.label,
+          slug: group.slug,
+          slugVi: group.slug,
+          variantCount: 1,
+        };
+      }
+      return { ...first, variantCount: 1 };
+    }
 
     const icon = group.iconUrl ?? undefined;
     return {

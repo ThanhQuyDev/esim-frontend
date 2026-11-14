@@ -190,6 +190,17 @@ export interface Region {
   isPopular?: boolean;
   /** Place among the five on the home page on a phone (vande-1411 #021). */
   mobileHomeRank?: number | null;
+  /**
+   * In a list: its parent's slugs and names, for when the parent row is not in
+   * the same page of results (vande-1411 #028).
+   */
+  parent?: {
+    slug: string;
+    slugVi: string | null;
+    name: string;
+    title: string | null;
+    titleVi: string | null;
+  } | null;
   isActive: boolean;
   fromPrice?: number | null;
   createdAt: string;
