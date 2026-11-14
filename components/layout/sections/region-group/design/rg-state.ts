@@ -2,6 +2,7 @@
 import { isPlanSoldOut } from "@/lib/plan-stock";
 
 import { entityNoticeHtml } from "@/lib/entity-notice";
+import { applySeoVars, buildSeoTemplateVars } from "@/lib/seo-vars";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Destination, Plan, PlansByDestinationResponse, Region } from "@/lib/api";
@@ -304,7 +305,17 @@ export function useRegionPurchase(
     // picture and icon keep another scope's (vande-0411 #074).
     noticeHtml: (country ? null : entityNoticeHtml(member, lang)) ?? noticeHtml ?? null,
     /** The description from Điểm đến / Khu vực in the CMS (vande-0411 #067). */
-    description: pageDescription(country ?? member, lang),
+    // Its ${fromPrice}, ${planCount}… filled from the plans shown, as the
+    // older product page did; the new one printed them raw (vande-1411 #016).
+    description: (() => {
+      const text = pageDescription(country ?? member, lang);
+      if (!text) return null;
+      const entity = (country ?? member) as { name?: string | null; titleVi?: string | null } | null;
+      const name = (lang === "vi" ? entity?.titleVi : null) || entity?.name || "";
+      return applySeoVars(text, buildSeoTemplateVars({ name, plans: loaded, lang }), {
+        stripUnresolved: true,
+      });
+    })(),
     /** China, for the country page's own notes (vande #032). */
     china,
     members,
