@@ -206,15 +206,45 @@ export function chipDaysFor(opt: Opt, popular: number[]): { days: number[]; more
  * nobody asked for (vande-0411 #063); a section with nothing for the trip is
  * left out, and the day row gets the visitor to one that has.
  */
+/**
+ * The days a section shows plans for (vande-1411 #017, as the design does):
+ * the trip's own when some plan is sold for it, else the nearest longer one —
+ * China for 11 days shows its 12-day plans. Null when nothing is that long.
+ */
+export function tripDays(durations: number[], days: number): number | null {
+  if (durations.includes(days)) return days;
+  const longer = durations.filter((d) => d > days);
+  return longer.length ? Math.min(...longer) : null;
+}
+
 export function tripTiers(tiers: Tier[], days: number): Tier[] {
+  const target = tripDays(
+    tiers.flatMap((t) => t.plans.map((p) => p.durationDays)),
+    days,
+  );
+  if (target === null) return [];
   return tiers
-    .map((t) => ({ ...t, plans: t.plans.filter((p) => p.durationDays === days) }))
+    .map((t) => ({ ...t, plans: t.plans.filter((p) => p.durationDays === target) }))
     .filter((t) => t.plans.length > 0);
 }
 
-/** Daily / unlimited chips sold for exactly `days` days, or per day. */
+/**
+ * Daily / unlimited chips for a trip of `days` days: a day pass, priced for
+ * those days, and plans sold for exactly that many days — or, when none is,
+ * for the nearest longer number (vande-1411 #017). Each chip keeps only those
+ * plans, so the plan it opens is one of them.
+ */
 export function tripOpts(opts: Opt[], days: number): Opt[] {
-  return opts.filter((o) => o.plans.some((p) => p.isAbleMultidate || p.durationDays === days));
+  const target = tripDays(
+    opts.flatMap((o) => o.plans.filter((p) => !p.isAbleMultidate).map((p) => p.durationDays)),
+    days,
+  );
+  return opts
+    .map((o) => ({
+      ...o,
+      plans: o.plans.filter((p) => p.isAbleMultidate || p.durationDays === target),
+    }))
+    .filter((o) => o.plans.length > 0);
 }
 
 /**
@@ -223,9 +253,11 @@ export function tripOpts(opts: Opt[], days: number): Opt[] {
  */
 export function tripCombo(opts: Opt[], days: number): Opt[] {
   const best = new Map<string, Opt>();
+  // Or the nearest longer, like the data plans (vande-1411 #017).
+  const target = tripDays(opts.map((o) => o.plans[0].durationDays), days);
   for (const o of opts) {
     const p = o.plans[0];
-    if (p.durationDays !== days) continue;
+    if (p.durationDays !== target) continue;
     const id = `${Number(p.dataMb)}|${p.call ?? ""}|${p.sms ?? ""}`;
     const cur = best.get(id);
     if (!cur || Number(p.vndPrice) < Number(cur.plans[0].vndPrice)) best.set(id, o);
