@@ -29,14 +29,18 @@ export function DataUsageBar({ label, used, total, unit, isUnlimited, lang, inte
       <div className="space-y-1.5">
         <div className="flex items-center justify-between">
           <span className="text-sm font-medium text-gray-600">{label}</span>
-          <span className="inline-flex items-center gap-1 text-sm font-semibold text-indigo-600">
-            <Infinity className="w-3.5 h-3.5" />
-            {vi ? "Không giới hạn" : "Unlimited"}
+          {/* What was used, of no cap: "0.1 GB / ∞" (vande-1411 #044). */}
+          <span
+            className="inline-flex items-center gap-1 text-sm font-semibold text-indigo-600"
+            data-testid="usage-unlimited"
+          >
+            {format(used)} {unit} / <Infinity className="w-3.5 h-3.5" aria-label="∞" />
           </span>
         </div>
         <div className="w-full h-2 rounded-full bg-indigo-100">
           <div className="h-full rounded-full bg-indigo-400 w-full" />
         </div>
+        <div className="text-sm text-gray-400">{vi ? "Không giới hạn" : "Unlimited"}</div>
       </div>
     );
   }
