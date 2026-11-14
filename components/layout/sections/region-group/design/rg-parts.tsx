@@ -28,7 +28,7 @@ import {
   appFilterCount,
   canBuyMoreData,
 } from "./rg-model";
-import { countOf, type RegionPurchase } from "./rg-state";
+import { countOf, ownOrParent, type RegionPurchase } from "./rg-state";
 
 /* ───────────── small pieces ───────────── */
 
@@ -72,7 +72,7 @@ export function RoundImage({ code, url }: { code: string; url?: string | null })
 export function PageMark({ p, frame = "pic-flag" }: { p: RegionPurchase; frame?: "pic-flag" | "dsb-flag" }) {
   const url = p.country
     ? p.country.flagUrl
-    : p.member?.iconUrl || p.members.find((m) => m.iconUrl)?.iconUrl;
+    : ownOrParent(p, "iconUrl");
   const code = p.country?.countryCode ?? "";
   if (url || (code && SPRITE_FLAGS.has(code.toLowerCase()))) {
     return (
@@ -89,7 +89,7 @@ export function hasMark(p: RegionPurchase): boolean {
   if (p.country) {
     return !!p.country.flagUrl || SPRITE_FLAGS.has((p.country.countryCode ?? "").toLowerCase());
   }
-  return !!(p.member?.iconUrl || p.members.some((m) => m.iconUrl));
+  return !!ownOrParent(p, "iconUrl");
 }
 
 export function Pbi({ b }: { b: Badge | null }) {

@@ -11,7 +11,7 @@ import { Ic } from "../../local-esim/design/nd-icons";
 import { AccItem, DeviceCheck, DeviceModal, Overlay, Qty, StockAlert, VoucherRows, type Brand } from "../../local-esim/design/nd-parts";
 import { useVnd } from "../../local-esim/design/nd-state";
 import { perDay } from "./rg-model";
-import type { RegionPurchase } from "./rg-state";
+import { ownOrParent, type RegionPurchase } from "./rg-state";
 import { countryCarriers, coverageLine } from "./rg-desktop";
 import {
   AppFilter,
@@ -66,7 +66,9 @@ export function RgMobile({ p, label, lang, breadcrumb }: Props) {
   const line = planText(p, p.lang);
   const hero = getCloudinaryTransformedUrl(
     // The chosen variant's CMS picture, else any variant's, before the design's photo (vande #029).
-    p.member?.avatarUrl || p.members.find((m) => m.avatarUrl)?.avatarUrl,
+    // The pack's own CMS picture, else its parent's (vande-1411 #029), before
+    // the design's photo.
+    ownOrParent(p, "avatarUrl") ?? undefined,
     { width: 960, height: 672, quality: "auto:good", gravity: "center" });
 
   // The buy bar shows once the page is scrolled and the plans are in reach.

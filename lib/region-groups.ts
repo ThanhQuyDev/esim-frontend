@@ -161,8 +161,16 @@ export function groupRegions(regions: Region[], lang: Locale): RegionGroup[] {
       .map((m) => Number(m.fromPrice))
       .filter((p) => Number.isFinite(p) && p > 0);
     group.fromPrice = prices.length > 0 ? Math.min(...prices) : null;
-    const withIcon = group.members.find((m) => m.avatarUrl || m.iconUrl);
-    group.iconUrl = withIcon?.avatarUrl ?? withIcon?.iconUrl ?? null;
+    // A group with a parent shows the parent's picture: a pack's own picture is
+    // for that pack alone (vande-1411 #029).
+    const parentRow = byParent ? byId.get(Number(group.key.slice(1))) : undefined;
+    const parentInfo = parentRow ?? group.members.find((m) => m.parent)?.parent ?? null;
+    if (byParent && parentInfo) {
+      group.iconUrl = parentInfo.avatarUrl || parentInfo.iconUrl || null;
+    } else {
+      const withIcon = group.members.find((m) => m.avatarUrl || m.iconUrl);
+      group.iconUrl = withIcon?.avatarUrl ?? withIcon?.iconUrl ?? null;
+    }
     return group;
   });
 }

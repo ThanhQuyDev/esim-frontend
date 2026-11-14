@@ -200,6 +200,9 @@ export interface Region {
     name: string;
     title: string | null;
     titleVi: string | null;
+    /** Its pictures, for a pack with none of its own (vande-1411 #029). */
+    avatarUrl?: string | null;
+    iconUrl?: string | null;
   } | null;
   isActive: boolean;
   fromPrice?: number | null;

@@ -419,3 +419,23 @@ function defaultSelection(
   if (!first) return null;
   return "plans" in first ? { kind: first.kind, key: first.key } : first;
 }
+
+/**
+ * A picture of the pack on screen, or of its parent when it has none — never
+ * a sibling's: a pack's own picture or icon is for that pack alone
+ * (vande-1411 #029).
+ */
+export function ownOrParent(
+  p: { member?: Region | null; members: Region[] },
+  field: "avatarUrl" | "iconUrl",
+): string | null {
+  const own = p.member?.[field];
+  if (own) return own;
+  const parentId = p.member?.parentId;
+  const parent =
+    (parentId ? p.members.find((m) => Number(m.id) === Number(parentId)) : undefined) ??
+    p.member?.parent ??
+    // On a parent's own page the parent is the pack on screen.
+    null;
+  return parent?.[field] ?? null;
+}
