@@ -23,6 +23,10 @@ import {
 import { CountryDesign, RegionDesign } from "@/components/layout/sections/region-group/region-design";
 import { faqCandidateUrls } from "@/lib/faq-urls";
 import { RegionSuggestions } from "@/components/layout/sections/destination/region-suggestions";
+import {
+  LocalEsimForCountry,
+  localEsimsOf,
+} from "@/components/layout/sections/destination/local-esim-for-country";
 import { buildRegionSuggestions } from "@/lib/region-suggestions";
 import { buildHowItWorksDict } from "@/lib/how-it-works";
 import { buildSeoTemplateVars } from "@/lib/seo-vars";
@@ -480,6 +484,13 @@ export default async function UnifiedSlugPage({
               country: dict.allDestinations.country,
               countries: dict.allDestinations.countries,
             }}
+            lang={locale}
+          />
+          {/* Under "Đi nhiều nước?": the domestic eSIMs of this country (vande-1411 #026). */}
+          <LocalEsimForCountry
+            carriers={localEsimsOf(await getLocalCarriers(), destination)}
+            countryName={localizedName}
+            fromLabel={dict.allDestinations.from}
             lang={locale}
           />
           <LazyHowItWorksSection dict={howItWorks} />

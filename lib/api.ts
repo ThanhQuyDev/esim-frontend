@@ -1075,6 +1075,17 @@ export interface LocalCarrierPage {
   avatarUrl: string | null;
   flagUrl: string | null;
   parentId: number | null;
+  /** The destination it belongs to, "Việt Nam" (vande-1411 #026). */
+  parent?: {
+    id: number;
+    name: string;
+    title: string | null;
+    titleVi: string | null;
+    slug: string;
+    slugVi: string | null;
+    countryCode: string | null;
+    flagUrl: string | null;
+  } | null;
 }
 
 /** "itel-noidia" → "itel". Domestic plans carry their own supplier (vande #001). */

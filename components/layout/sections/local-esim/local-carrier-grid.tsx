@@ -64,7 +64,10 @@ export function LocalCarrierGrid({
           carrier.fromVndPrice > 0 ? `${fromLabel} ${money.format(carrier.fromVndPrice)}` : "";
         const icon = carrier.destination?.flagUrl;
         const infra = carrierInfra(meta, lang);
-        const wordmark = meta.wordmark ?? meta.label;
+        // A carrier with no wordmark of its own and a long name shows its initial
+        // (vande-1411 #026): "VIETNAMOBILE" did not fit the circle.
+        const wordmark =
+          meta.wordmark ?? (meta.label.length > 6 ? meta.label.charAt(0) : meta.label);
 
         return (
           <div key={carrier.provider}>

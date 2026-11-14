@@ -7,7 +7,8 @@ import { localizedSlug } from "@/lib/slug";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useTopDestinations, useSearchDestinations, useSearchRegions, useRegions, useLocalCarriers } from "@/lib/hooks";
 import { useDebounce } from "@/lib/use-debounce";
-import { getCarrierMeta, carrierInfra } from "@/components/layout/sections/local-esim/carrier-meta";
+import { carrierName, getCarrierMeta, carrierInfra } from "@/components/layout/sections/local-esim/carrier-meta";
+import { esimName } from "@/lib/esim-name";
 import {
   matchLocalCarriers,
   localCarrierHref,
@@ -136,10 +137,23 @@ export function DestinationSearchModal({
     return money.format(num);
   };
 
+  // A domestic eSIM's parent comes along with it: typing "vietnamobile"
+  // suggests Việt Nam too (vande-1411 #026).
+  const parentsOfMatches = matchedCarriers
+    .map((c) => c.destination?.parent)
+    .filter((parent, i, all): parent is NonNullable<typeof parent> =>
+      !!parent && all.findIndex((other) => other?.id === parent.id) === i
+    )
+    .filter((parent) => !searchDestinations.some((d: any) => d.id === parent.id));
+
   // Merge search results: destinations first, then regions
   const mergedResults = hasSearch
     ? [
       ...searchDestinations.map((d: any) => ({
+        ...d,
+        _type: "destination" as const,
+      })),
+      ...parentsOfMatches.map((d) => ({
         ...d,
         _type: "destination" as const,
       })),
@@ -328,7 +342,10 @@ export function DestinationSearchModal({
                                     <div className="flex flex-col">
                                       <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
                                         <p className="body-md-medium text-text-primary! scroll-mt-20 xl:scroll-mt-24 min-w-0">
-                                          {localCarrierTitle(lang, carrier.provider)}
+                                          {/* Its local destination's name, "Vietnamobile" (vande-1411 #025). */}
+                                          {carrier.destination
+                                            ? esimName(carrierName(carrier.provider, lang, carrier.destination), lang)
+                                            : localCarrierTitle(lang, carrier.provider)}
                                         </p>
                                         <span className="text-center whitespace-nowrap rounded-full inline-block bg-blue-100 text-blue-700 py-0 px-1.5 body-2xs-medium">
                                           {lang === "vi" ? "Nội địa" : "Domestic"}

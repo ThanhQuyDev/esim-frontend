@@ -61,13 +61,25 @@ export function matchLocalCarriers(
   const q = normalizeSearchTerm(query);
   if (q.length < 2 || carriers.length === 0) return [];
 
-  if (isDomesticEsimQuery(q)) return carriers;
-
-  return carriers.filter((carrier) => {
+  const direct = carriers.filter((carrier) => {
     const provider = normalizeSearchTerm(carrier.provider);
     const label = normalizeSearchTerm(getCarrierMeta(carrier.provider).label);
-    return provider.startsWith(q) || label.startsWith(q);
+    if (provider.startsWith(q) || label.startsWith(q)) return true;
+    // Its local destination's names too, "Vietnamobile" (vande-1411 #026).
+    const page = carrier.destination;
+    return [page?.name, page?.title, page?.titleVi].some((name) =>
+      name ? normalizeSearchTerm(name).replace(/^esim\s*/, "").startsWith(q) : false
+    );
   });
+  // Still typing "việt nam" / "nội địa": every carrier, as before. Past it,
+  // a carrier named in full wins — "vietnamobile" starts with "vietnam" but
+  // asks for one carrier (vande-1411 #026).
+  const typingVietnam = VIETNAM_QUERY_TERMS.some((term) =>
+    term.length <= 2 ? q === term : term.startsWith(q)
+  );
+  if (typingVietnam) return carriers;
+  if (direct.length > 0) return direct;
+  return isDomesticEsimQuery(q) ? carriers : [];
 }
 
 /**
