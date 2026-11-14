@@ -4,7 +4,6 @@ import { useMoney } from "@/lib/money";
 import { useState, useEffect } from "react";
 import {
   Mail,
-  Phone,
   CreditCard,
   QrCode,
   FileText,
@@ -35,7 +34,8 @@ import { trackJourney } from "@/lib/journey-tracking";
 import { walletTranslations } from "@/components/layout/sections/wallet/translations";
 import Link from "next/link";
 import { localizedHref } from "@/lib/route-mapping";
-import { PHONE_MAX_LENGTH, sanitizePhoneInput } from "@/lib/utils";
+import { PhoneInput } from "@/components/ui/phone-input";
+import { normalizePhone, phoneError } from "@/lib/phone";
 
 interface CheckoutPageContentProps {
   dict: Record<string, any>;
@@ -164,7 +164,7 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
   useEffect(() => {
     if (!myProfile?.phoneNumber) return;
     setPhone((currentPhone) =>
-      currentPhone || sanitizePhoneInput(myProfile.phoneNumber ?? "")
+      currentPhone || normalizePhone(myProfile.phoneNumber ?? "")
     );
   }, [myProfile?.phoneNumber]);
 
@@ -250,10 +250,10 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
       newErrors.email = dict.emailInvalid || "Invalid email address";
     }
 
-    // Phone is optional — only validate format if provided
-    if (phone.trim() && !/^\+?\d{8,20}$/.test(phone)) {
-      newErrors.phone = dict.phoneInvalid || "Invalid phone number";
-    }
+    // Phone is optional — only validate format if provided, by the rules of
+    // the country picked beside it (vande-1411 #007).
+    const phoneProblem = phoneError(phone, lang);
+    if (phoneProblem) newErrors.phone = phoneProblem;
 
     if (wantInvoice) {
       if (!invoiceInfo.companyName.trim()) {
@@ -272,8 +272,8 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
       }
       if (!invoiceInfo.phone.trim()) {
         newErrors.invoicePhone = dict.invoicePhoneRequired || "Invoice phone number is required";
-      } else if (!/^\+?\d{8,20}$/.test(invoiceInfo.phone)) {
-        newErrors.invoicePhone = dict.invoicePhoneInvalid || "Invalid invoice phone number";
+      } else if (phoneError(invoiceInfo.phone, lang)) {
+        newErrors.invoicePhone = phoneError(invoiceInfo.phone, lang)!;
       }
     }
 
@@ -535,23 +535,18 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
               <label htmlFor="phone" className="text-base sm:text-sm font-medium text-text-primary">
                 {dict.phone || "Phone"}
               </label>
-              <div className="relative">
-                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-tertiary" />
-                <input
-                  id="phone"
-                  type="tel"
-                  inputMode="tel"
-                  maxLength={PHONE_MAX_LENGTH}
-                  value={phone}
-                  onChange={(e) => {
-                    setPhone(sanitizePhoneInput(e.target.value));
-                    setErrors((prev) => ({ ...prev, phone: "" }));
-                  }}
-                  placeholder={dict.phonePlaceholder || "+84 xxx xxx xxx"}
-                  className={`w-full rounded-xl border pl-10 pr-4 py-2.5 text-base sm:text-sm outline-none transition-colors ${errors.phone ? "border-red-400" : "border-border-primary focus:border-[var(--border-focus)]"
-                    }`}
-                />
-              </div>
+              {/* Country, then number (vande-1411 #007). */}
+              <PhoneInput
+                id="phone"
+                lang={lang}
+                value={phone}
+                onChange={(next) => {
+                  setPhone(next);
+                  setErrors((prev) => ({ ...prev, phone: "" }));
+                }}
+                invalid={!!errors.phone}
+                testId="checkout-phone"
+              />
               {errors.phone && <p className="text-sm text-red-500">{errors.phone}</p>}
             </div>
           </div>
@@ -834,19 +829,16 @@ export function CheckoutPageContent({ dict, lang }: CheckoutPageContentProps) {
                     <label htmlFor="invoicePhone" className="text-base sm:text-sm font-medium text-text-primary">
                       {dict.invoicePhone || "Invoice Phone Number"} <span className="text-red-500">*</span>
                     </label>
-                    <input
+                    <PhoneInput
                       id="invoicePhone"
-                      type="tel"
-                      inputMode="tel"
-                      maxLength={PHONE_MAX_LENGTH}
+                      lang={lang}
                       value={invoiceInfo.phone}
-                      onChange={(e) => {
-                        setInvoiceInfo((prev) => ({ ...prev, phone: sanitizePhoneInput(e.target.value) }));
+                      onChange={(next) => {
+                        setInvoiceInfo((prev) => ({ ...prev, phone: next }));
                         setErrors((prev) => ({ ...prev, invoicePhone: "" }));
                       }}
-                      placeholder={dict.invoicePhonePlaceholder || "+84 xxx xxx xxx"}
-                      className={`w-full rounded-xl border px-4 py-2.5 text-base sm:text-sm outline-none transition-colors ${errors.invoicePhone ? "border-red-400" : "border-border-primary focus:border-[var(--border-focus)]"
-                        }`}
+                      invalid={!!errors.invoicePhone}
+                      testId="checkout-invoice-phone"
                     />
                     {errors.invoicePhone && <p className="text-sm text-red-500">{errors.invoicePhone}</p>}
                   </div>
