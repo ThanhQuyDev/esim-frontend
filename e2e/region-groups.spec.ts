@@ -341,7 +341,9 @@ test.describe("Region grouping — same name, different country count", () => {
     // The two Asia packs collapse into a single card at the group slug.
     const group = page.getByTestId("region-card-esim-chau-a");
     await expect(group).toBeVisible();
-    await expect(group).toContainText("eSIM Châu Á");
+    // The button names the place alone, without "eSIM" (vande-1411 #021).
+    await expect(group).toContainText("Châu Á");
+    await expect(group).not.toContainText("eSIM");
 
     // …and the individual variants are no longer listed.
     await expect(

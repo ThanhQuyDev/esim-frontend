@@ -113,16 +113,21 @@ export function PickerTabs<K extends string>({
   );
 }
 
+/** The arrow of the cards on esim.vn, a turned chevron (vande-1411 #021). */
 function Chevron() {
   return (
-    <svg className="dp-cv" viewBox="0 0 24 24" aria-hidden="true">
+    <svg
+      className="dp-cv text-text-tertiary"
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      aria-hidden="true"
+    >
       <path
-        d="m9 18 6-6-6-6"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+        fill="currentColor"
+        fillRule="evenodd"
+        d="M13.2151 6.8326L8.43758 11.4101C8.27758 11.5451 8.12758 11.6001 8.00008 11.6001C7.87258 11.6001 7.70083 11.5446 7.58533 11.4329L2.78533 6.8326C2.54543 6.6051 2.53763 6.2026 2.76733 5.9851C2.99546 5.74447 3.37683 5.73665 3.61508 5.96713L8.00008 10.1701L12.3851 5.9701C12.6226 5.73962 13.0046 5.74745 13.2328 5.98807C13.4626 6.2026 13.4551 6.6051 13.2151 6.8326Z"
       />
     </svg>
   );

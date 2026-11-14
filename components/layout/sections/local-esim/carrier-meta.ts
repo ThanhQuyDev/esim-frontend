@@ -15,6 +15,8 @@ import type { LocalCarrier } from "@/lib/api";
 export interface CarrierMeta {
   /** Human-facing brand label, e.g. "Wintel", "iTEL", "VNSKY". */
   label: string;
+  /** Name on the destination buttons, when it differs: "iTel" (vande-1411 #021). */
+  buttonLabel?: string;
   /** Logo circle background (brand colour). */
   logoBg: string;
   /** Network the carrier rides on, e.g. "VinaPhone". Rendered per locale by {@link carrierInfra}. */
@@ -40,6 +42,7 @@ const CARRIER_META: Record<string, CarrierMeta> = {
   },
   itel: {
     label: "iTEL",
+    buttonLabel: "iTel",
     logoBg: "#D91E2A",
     network: "VinaPhone",
     phonePrefix: "087",

@@ -86,6 +86,7 @@
     "countries": "countries",
     "sectionRegions": "Regions",
     "sectionCountries": "Countries",
+    "sectionLocal": "Domestic",
     "noResults": "No destinations found"
   },
   "whyChoose": {

@@ -17,7 +17,7 @@ import {
   PickerTabs,
   destinationSub,
 } from "@/components/layout/sections/destination-picker/destination-picker";
-import { esimName } from "@/lib/esim-name";
+import { placeName } from "@/lib/esim-name";
 
 interface AllDestinationsContentProps {
   dict: Record<string, any>;
@@ -46,7 +46,8 @@ function DestinationCard({
         href={`${lang === "vi" ? "" : `/${lang}`}/${localizedSlug(item, lang) || item.code?.toLowerCase()}`}
         testId={key}
         mark={<DestinationMark item={item} isRegion={isRegion} />}
-        name={esimName((lang === "vi" ? item.titleVi : item.title) || item.name, lang)}
+        // The place alone, "Việt Nam" (vande-1411 #021).
+        name={placeName((lang === "vi" ? item.titleVi : item.title) || item.name)}
         sub={destinationSub(item, isRegion, lang, dict.from, money.format)}
       />
     </div>
@@ -126,13 +127,20 @@ export function AllDestinationsContent({
     <div
       data-section="destinations"
       data-testid="section-destinations"
-      className="relative scroll-mt-20 xl:scroll-mt-24"
+      className="relative scroll-mt-20 xl:scroll-mt-24 pt-16"
     >
       <div className="dp-wrap">
-        <div className="dp-hd">
-          <div className="min-w-0">
-            <h1 className="dp-h break-words">{dict.title}</h1>
-            <p className="dp-sub break-words">{dict.description}</p>
+        {/* The heading as on esim.vn (vande-1411 #021). */}
+        <div className="grid sm:gap-x-8 grid-cols-12 mb-10 text-text-primary">
+          <div className="col-span-12 min-w-0 md:col-span-8">
+            <div className="grid min-w-0 grid-cols-1 gap-y-6">
+              <h1 className="heading-xl break-words scroll-mt-20 xl:scroll-mt-24">
+                {dict.title}
+              </h1>
+              <p className="body-md min-w-0 break-words text-text-secondary scroll-mt-20 xl:scroll-mt-24">
+                {dict.description}
+              </p>
+            </div>
           </div>
         </div>
 
@@ -227,37 +235,51 @@ export function AllDestinationsContent({
                 </div>
                 )
               ) : isAllTab ? (
-                // Countries, then regions, then domestic (vande-0411 #071).
-                <div className="dp-stack">
+                // Countries, then regions, then domestic (vande-0411 #071),
+                // each under its own heading with room between them, as on
+                // esim.vn (vande-1411 #021).
+                <div>
                   {allItems.length > 0 && (
-                    <div id="country-list-items" className="dp-p">
-                      {allItems.map((item: any) => (
-                        <DestinationCard
-                          key={`country-${item.id}`}
-                          item={item}
-                          lang={lang}
-                          dict={dict}
-                          isRegion={false}
-                        />
-                      ))}
-                    </div>
+                    <section data-testid="all-section-country">
+                      <h2 className="heading-sm mb-4">{dict.sectionCountries}</h2>
+                      <div id="country-list-items" className="dp-p">
+                        {allItems.map((item: any) => (
+                          <DestinationCard
+                            key={`country-${item.id}`}
+                            item={item}
+                            lang={lang}
+                            dict={dict}
+                            isRegion={false}
+                          />
+                        ))}
+                      </div>
+                    </section>
                   )}
                   {regionItems.length > 0 && (
-                    <div className="dp-p">
-                      {regionItems.map((item: any) => (
-                        <DestinationCard
-                          key={`region-${item.id}`}
-                          item={item}
-                          lang={lang}
-                          dict={dict}
-                          isRegion
-                        />
-                      ))}
-                    </div>
+                    <section className="my-10" data-testid="all-section-region">
+                      <h2 className="heading-sm mb-4">{dict.sectionRegions}</h2>
+                      <div className="dp-p">
+                        {regionItems.map((item: any) => (
+                          <DestinationCard
+                            key={`region-${item.id}`}
+                            item={item}
+                            lang={lang}
+                            dict={dict}
+                            isRegion
+                          />
+                        ))}
+                      </div>
+                    </section>
                   )}
                   {/* While searching, the matches above stand in for this. */}
                   {!debouncedSearch.trim() && (
-                    <LocalCarrierGrid lang={lang} fromLabel={dict.from} emptyLabel="" />
+                    <section
+                      className={regionItems.length > 0 ? "mb-10" : "my-10"}
+                      data-testid="all-section-local"
+                    >
+                      <h2 className="heading-sm mb-4">{dict.sectionLocal}</h2>
+                      <LocalCarrierGrid lang={lang} fromLabel={dict.from} emptyLabel="" />
+                    </section>
                   )}
                 </div>
               ) : (

@@ -4,7 +4,7 @@ import { useMoney } from "@/lib/money";
 import { Loader2 } from "lucide-react";
 import { useLocalCarriers } from "@/lib/hooks";
 import { getCarrierMeta, carrierInfra } from "./carrier-meta";
-import { localCarrierHref, localCarrierTitle } from "./local-carrier-search";
+import { localCarrierHref } from "./local-carrier-search";
 import { PickerCardLink } from "../destination-picker/destination-picker";
 import type { Locale } from "@/lib/i18n-config";
 import type { LocalCarrier } from "@/lib/api";
@@ -77,7 +77,8 @@ export function LocalCarrierGrid({
                   {wordmark}
                 </span>
               }
-              name={localCarrierTitle(lang, carrier.provider)}
+              // The carrier alone, "iTel", as the countries (vande-1411 #021).
+              name={meta.buttonLabel ?? meta.label}
               sub={infra ? `${priceLabel} · ${infra}` : priceLabel}
             />
           </div>

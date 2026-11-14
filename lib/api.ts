@@ -34,6 +34,8 @@ export interface Destination {
   fromPrice?: number | null;
   keySearch?: string;
   isPopular: boolean;
+  /** Place among the five on the home page on a phone (vande-1411 #021). */
+  mobileHomeRank?: number | null;
   isActive: boolean;
   title?: string;
   titleVi?: string;
@@ -186,6 +188,8 @@ export interface Region {
    */
   parentId?: number | null;
   isPopular?: boolean;
+  /** Place among the five on the home page on a phone (vande-1411 #021). */
+  mobileHomeRank?: number | null;
   isActive: boolean;
   fromPrice?: number | null;
   createdAt: string;

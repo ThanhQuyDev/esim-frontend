@@ -197,6 +197,25 @@ export function toRegionListItems(
   });
 }
 
+/**
+ * The regions the admin picked for the home page on a phone, as cards in the
+ * order picked (vande-1411 #021). A picked parent comes with its packs, so its
+ * card still says how many options it has and the lowest price.
+ */
+export function rankedRegionItems(regions: Region[], lang: Locale): RegionListItem[] {
+  const groups = groupRegions(regions, lang);
+  const items = toRegionListItems(regions, lang);
+  const rankOf = (i: number) =>
+    Math.min(
+      ...groups[i].members.map((m) => Number(m.mobileHomeRank) || Number.POSITIVE_INFINITY),
+    );
+  return items
+    .map((item, i) => ({ item, rank: rankOf(i) }))
+    .filter(({ rank }) => Number.isFinite(rank))
+    .sort((a, b) => a.rank - b.rank)
+    .map(({ item }) => item);
+}
+
 /** "13 quốc gia" / "13 countries" — the label that tells the packs apart. */
 export function countryCountLabel(count: number, lang: Locale): string {
   if (lang === "vi") return `${count} quốc gia`;

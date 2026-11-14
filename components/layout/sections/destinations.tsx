@@ -7,9 +7,9 @@ import { useDestinations, useRegions } from "@/lib/hooks";
 import type { Locale } from "@/lib/i18n-config";
 import { localizedHref } from "@/lib/route-mapping";
 import { localizedSlug } from "@/lib/slug";
-import { esimName } from "@/lib/esim-name";
+import { placeName } from "@/lib/esim-name";
 import { LocalCarrierGrid } from "./local-esim/local-carrier-grid";
-import { toRegionListItems } from "@/lib/region-groups";
+import { rankedRegionItems, toRegionListItems } from "@/lib/region-groups";
 import {
   DestinationMark,
   PickerCardLink,
@@ -47,6 +47,21 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
     100
   );
 
+  // The five a phone shows, as the admin picked them (vande-1411 #021). Until
+  // some are picked the phone shows the first five of the list.
+  const { data: mobileDestinations = [] } = useDestinations(
+    JSON.stringify({ mobileHome: true, isActive: true }),
+    "mobileHomeRank",
+    "ASC",
+    5
+  );
+  const { data: mobileRegions = [] } = useRegions(
+    JSON.stringify({ mobileHome: true, isActive: true }),
+    "name",
+    "ASC",
+    100
+  );
+
   const tabs = [
     { key: "country" as const, label: dict.tabs.country, testId: "country-list-tab-chip-country" },
     { key: "region" as const, label: dict.tabs.region, testId: "country-list-tab-chip-region" },
@@ -61,6 +76,39 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
     [regions, lang]
   );
   const displayItems = showRegions ? regionItems : destinations;
+  const mobileRegionItems = useMemo(
+    () => rankedRegionItems(mobileRegions, lang).slice(0, 5),
+    [mobileRegions, lang]
+  );
+  // In the admin's order; the list endpoint does not read a sort from here.
+  const mobileCountryItems = useMemo(
+    () =>
+      [...mobileDestinations]
+        .sort((x: any, y: any) => (x.mobileHomeRank ?? 99) - (y.mobileHomeRank ?? 99))
+        .slice(0, 5),
+    [mobileDestinations]
+  );
+  const mobileItems = showRegions ? mobileRegionItems : mobileCountryItems;
+  const picked = mobileItems.length > 0;
+
+  const card = (item: any, index: number, phone: boolean) => (
+    <div
+      key={item.id}
+      id={phone ? undefined : item.code || item.slug || item.id}
+      // A phone shows the admin's five (vande-1411 #021), or the first five.
+      className={phone ? undefined : picked || index >= 5 ? "dp-hide-m" : undefined}
+      data-testid={`${showRegions ? "region" : "destination"}-card-${phone ? "m-" : ""}${item.code || item.slug || item.id}`}
+    >
+      <PickerCardLink
+        href={`${lang === "vi" ? "" : `/${lang}`}/${localizedSlug(item, lang) || item.code?.toLowerCase()}`}
+        testId={`${phone ? "m-" : ""}${item.code || item.slug || item.id}`}
+        mark={<DestinationMark item={item} isRegion={showRegions} />}
+        // The place alone, "Việt Nam" (vande-1411 #021).
+        name={placeName((lang === "vi" ? item.titleVi : item.title) || item.name)}
+        sub={destinationSub(item, showRegions, lang, dict.from, money.format)}
+      />
+    </div>
+  );
   const isLoading = showRegions ? isLoadingRegions : isLoadingDestinations;
 
   return (
@@ -70,19 +118,28 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
       className="dp-home relative scroll-mt-20 xl:scroll-mt-24"
     >
       <div className="dp-wrap">
-        <div className="dp-hd">
-          <div>
-            <p className="dp-eb">{dict.subtitle}</p>
-            <h2 className="dp-h">{dict.title}</h2>
-            <p className="dp-sub">{dict.description}</p>
+        {/* The heading and the button as on esim.vn (vande-1411 #021). */}
+        <div className="grid sm:gap-x-8 grid-cols-12 mb-10 text-text-primary">
+          <div className="col-span-12 md:col-span-8">
+            <p className="body-md-medium text-text-disabled mb-4">{dict.subtitle}</p>
+            <div className="grid grid-cols-1 gap-y-6">
+              <h2 className="heading-xl">{dict.title}</h2>
+              <p className="body-md text-text-secondary">{dict.description}</p>
+            </div>
           </div>
-          <a
-            className="dp-cta dp-cta-top"
-            data-testid="view-all-destinations-cta"
-            href={localizedHref(lang, "destinations")}
+          <div
+            className="hidden lg:flex items-end justify-end col-span-4"
+            data-testid="section-button-desktop"
           >
-            {dict.viewAllDestinations}
-          </a>
+            <a
+              role="button"
+              className="max-md:w-full text-center inline-block text-text-primary bg-bg-accent hover:bg-bg-accent-hover border border-bg-accent hover:border-bg-accent-hover active:bg-bg-accent-active active:border-bg-accent-active box-border !border-[#d1b700] touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7 w-full sm:w-auto"
+              data-testid="view-all-destinations-cta"
+              href={localizedHref(lang, "destinations")}
+            >
+              {dict.viewAllDestinations}
+            </a>
+          </div>
         </div>
 
         <PickerTabs
@@ -108,35 +165,29 @@ export function DestinationsSection({ dict, lang }: DestinationsSectionProps) {
               <Loader2 className="w-8 h-8 text-text-tertiary animate-spin" />
             </div>
           ) : (
-            <div id="country-list-items" className="dp-p">
-              {displayItems.map((item: any, index: number) => (
-                <div
-                  key={item.id}
-                  id={item.code || item.slug || item.id}
-                  // Five on a phone, as in the mobile design.
-                  className={index >= 5 ? "dp-hide-m" : undefined}
-                  data-testid={`${showRegions ? "region" : "destination"}-card-${item.code || item.slug || item.id}`}
-                >
-                  <PickerCardLink
-                    href={`${lang === "vi" ? "" : `/${lang}`}/${localizedSlug(item, lang) || item.code?.toLowerCase()}`}
-                    testId={item.code || item.slug || item.id}
-                    mark={<DestinationMark item={item} isRegion={showRegions} />}
-                    name={esimName((lang === "vi" ? item.titleVi : item.title) || item.name, lang)}
-                    sub={destinationSub(item, showRegions, lang, dict.from, money.format)}
-                  />
+            <>
+              <div id="country-list-items" className="dp-p">
+                {displayItems.map((item: any, index: number) => card(item, index, false))}
+              </div>
+              {picked && (
+                <div className="dp-p dp-only-m" data-testid="mobile-home-picks">
+                  {mobileItems.map((item: any, index: number) => card(item, index, true))}
                 </div>
-              ))}
-            </div>
+              )}
+            </>
           )}
         </div>
 
-        <a
-          className="dp-cta dp-cta-bottom"
-          data-testid="view-all-destinations-cta"
-          href={localizedHref(lang, "destinations")}
-        >
-          {dict.viewAllDestinations}
-        </a>
+        <div className="flex justify-center lg:hidden mt-10">
+          <a
+            role="button"
+            className="max-md:w-full text-center inline-block text-text-primary bg-bg-accent hover:bg-bg-accent-hover border border-bg-accent hover:border-bg-accent-hover active:bg-bg-accent-active active:border-bg-accent-active box-border !border-[#d1b700] touch-manipulation align-bottom rounded-full transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus py-[11px] body-md-medium px-7 w-full sm:w-auto"
+            data-testid="view-all-destinations-cta"
+            href={localizedHref(lang, "destinations")}
+          >
+            {dict.viewAllDestinations}
+          </a>
+        </div>
       </div>
     </div>
   );
