@@ -198,6 +198,13 @@ async function apiLogin(
   }
 
   const data = await res.json();
+  // An admin or partner with two-step sign-in on gets a code, not a session
+  // (vande-1411 #005); this shop has no screen for the code.
+  if (data?.twoFactorRequired || !data?.token) {
+    throw new Error(
+      "Tài khoản đã bật đăng nhập 2 lớp: vui lòng đăng nhập tại trang quản trị hoặc cổng đối tác."
+    );
+  }
   return {
     token: data.token,
     user: data.user ?? { id: 0, email: payload.email ?? "" },
