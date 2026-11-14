@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
+import { dataPeriodSuffix } from "@/lib/plan-display-name";
 import type { Plan } from "@/lib/api";
 import type { DestinationDict, CategorizedPlans } from "../types";
 import { getUniqueDataMb, findBestPlan, getUniqueFupSpeeds, findBestDailyUnlimitedPlan } from "../types";
@@ -65,7 +66,9 @@ function MobileGbChip({
           : "bg-white text-[#374151] border-[#e5e7eb] active:bg-[#f3f4f6]"
         }`}
     >
-      {formatDataLabel(gb)}/{lang === "en" ? "day" : "ngày"}
+      {formatDataLabel(gb)}
+      {/* By the plan: /ngày, /tháng, or nothing for a total (vande-1411 #012). */}
+      {dataPeriodSuffix(bestPlan, lang)}
       {bestPlan && <PlanTagBadges tags={bestPlan.tags as string[] | undefined} lang={lang} />}
       {bestPlan?.discount != null && bestPlan.discount > 0 && (
         <span className="text-[12px] font-medium px-[7px] py-[2px] rounded leading-[1.4] whitespace-nowrap bg-[#dcfce7] text-[#166534] border border-[#BBF7D0]">

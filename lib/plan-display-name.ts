@@ -79,3 +79,31 @@ export function planSummary(
   if (sms > 0) parts.push(`${sms} SMS`);
   return parts.join(" · ");
 }
+
+/**
+ * What a plan's data is counted by, as a chip's ending (vande-1411 #012):
+ * "/ngày" for a day pass, "/tháng" for a domestic offer counted by the month —
+ * "Viettel 12T5G125 - Total 500 GB - 12 months" moved to the Vietnam travel
+ * page read "500GB/ngày" — and nothing for a total quota.
+ */
+export function dataPeriodSuffix(
+  plan:
+    | {
+        type?: string | null;
+        isAbleMultidate?: boolean | null;
+        domesticOffer?: { dataPeriod?: string | null } | null;
+      }
+    | null
+    | undefined,
+  lang: string
+): string {
+  const en = lang === "en";
+  const period = plan?.domesticOffer?.dataPeriod;
+  if (period === "month") return en ? "/month" : "/tháng";
+  if (period === "daily") return en ? "/day" : "/ngày";
+  const type = plan?.type ?? "";
+  if (plan?.isAbleMultidate || ["daily", "unlimited", "unlimited-reduce"].includes(type)) {
+    return en ? "/day" : "/ngày";
+  }
+  return plan ? "" : en ? "/day" : "/ngày";
+}

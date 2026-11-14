@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
+import { dataPeriodSuffix } from "@/lib/plan-display-name";
 import type { Plan } from "@/lib/api";
 import type { DestinationDict, CategorizedPlans } from "./types";
 import { getUniqueDataMb, findBestPlan, getUniqueFupSpeeds, findBestDailyUnlimitedPlan } from "./types";
@@ -30,12 +31,15 @@ function GbChip({
   isSelected,
   onSelect,
   bestPlan,
+  unitPlan,
   lang,
 }: {
   gb: number;
   isSelected: boolean;
   onSelect: () => void;
   bestPlan?: Plan | null;
+  /** A plan of this size, for the unit when none fits the days. */
+  unitPlan?: Plan | null;
   lang: string;
 }) {
   return (
@@ -47,7 +51,9 @@ function GbChip({
         : "bg-white text-[#374151] border-[#e5e7eb] hover:bg-[#f3f4f6] hover:border-[#9ca3af]"
         }`}
     >
-      {formatDataLabel(gb)}/{lang === "en" ? "day" : "ngày"}
+      {formatDataLabel(gb)}
+      {/* By the plan: /ngày, /tháng, or nothing for a total (vande-1411 #012). */}
+      {dataPeriodSuffix(bestPlan ?? unitPlan, lang)}
       {bestPlan && <PlanTagBadges tags={bestPlan.tags as string[] | undefined} lang={lang} />}
       {bestPlan?.discount != null && bestPlan.discount > 0 && (
         <span className="text-[11px] font-medium tracking-wide px-[5px] py-[2px] rounded leading-tight shrink-0 bg-[#DCFCE7] text-[#166534] border border-[#BBF7D0]">
@@ -119,6 +125,7 @@ function GbSelector({
               isSelected={isActive && selectedGb === gb}
               onSelect={() => handleGbChange(gb)}
               bestPlan={best}
+              unitPlan={plans.find((p) => Number(p.dataMb) === Number(gb))}
               lang={lang}
             />
           );
