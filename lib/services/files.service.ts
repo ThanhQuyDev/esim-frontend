@@ -140,6 +140,6 @@ export function bytesToMb(bytes: number): number {
  * Throws on failure so callers can show a generic error toast.
  */
 export async function uploadFile(file: File): Promise<string> {
-  const result = await uploadToCloudinary(file);
+  const result = await uploadToCloudinary(file, "ticket");
   return result.fileUrl;
 }
