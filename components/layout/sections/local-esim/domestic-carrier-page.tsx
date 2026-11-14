@@ -1,5 +1,11 @@
 import { notFound } from "next/navigation";
-import { getDestinationBySlug, getLocalPlansByCarrier, getWhyChooseUs } from "@/lib/api";
+import {
+  getDestinationBySlug,
+  getLocalCarriers,
+  getLocalPlansByCarrier,
+  getWhyChooseUs,
+  type LocalCarrierPage,
+} from "@/lib/api";
 import { getDictionary } from "@/lib/dictionaries";
 import { carrierCmsKeys, carrierPagePath } from "@/lib/domestic-url";
 import { getUsdVndRate } from "@/lib/exchange-rate";
@@ -7,7 +13,13 @@ import { faqCandidateUrls } from "@/lib/faq-urls";
 import { getSeoMetadata } from "@/lib/seo";
 import { buildSeoTemplateVars } from "@/lib/seo-vars";
 import { LocalEsimDetail } from "./local-esim-detail";
-import { getCarrierMeta } from "./carrier-meta";
+import { carrierName } from "./carrier-meta";
+
+/** The local destination dressing this carrier's page, if any (vande-1411 #025). */
+async function localPageOf(carrier: string): Promise<LocalCarrierPage | null> {
+  const carriers = await getLocalCarriers();
+  return carriers.find((c) => c.provider === carrier)?.destination ?? null;
+}
 import {
   LazyHowItWorksSection,
   LazyFeaturesSection,
@@ -77,7 +89,7 @@ export async function domesticCarrierMetadata(
   revalidate: number,
 ): Promise<Metadata> {
   const plans = await getLocalPlansByCarrier(carrier, locale);
-  const meta = getCarrierMeta(carrier);
+  const meta = { label: carrierName(carrier, locale, await localPageOf(carrier)) };
   const path = carrierPagePath(locale, carrier);
   const metadata = await getSeoMetadata(
     carrierCmsKeys(locale, carrier),
@@ -116,9 +128,12 @@ export async function DomesticCarrierPage({ carrier, locale }: { carrier: string
     notFound();
   }
 
-  const meta = getCarrierMeta(carrier);
+  // A local destination gives the page its title, picture, icon and
+  // description (vande-1411 #025).
+  const page = await localPageOf(carrier);
+  const meta = { label: carrierName(carrier, locale, page) };
   // Picture and flag of the page come from Vietnam's destination in the CMS
-  // (vande #029), not from the design file.
+  // (vande #029), not from the design file — or from its local destination.
   const vietnam = await getDestinationBySlug("esim-viet-nam", locale);
   const whyChooseUsRes = await getWhyChooseUs({
     lang: locale,
@@ -147,7 +162,15 @@ export async function DomesticCarrierPage({ carrier, locale }: { carrier: string
         dict={dict.destinationPage}
         lang={locale}
         initialPlans={plans}
-        country={vietnam ? { avatarUrl: vietnam.avatarUrl ?? null, flagUrl: vietnam.flagUrl ?? null } : null}
+        country={
+          vietnam || page
+            ? {
+                avatarUrl: page?.avatarUrl || vietnam?.avatarUrl || null,
+                flagUrl: vietnam?.flagUrl ?? null,
+              }
+            : null
+        }
+        page={page}
       />
       <div className="max-w-[1168px] mx-auto px-4 sm:px-0">
         <LazyHowItWorksSection dict={dict.howItWorks} />

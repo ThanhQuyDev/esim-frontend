@@ -12,11 +12,33 @@ import type { LocalCarrier } from "@/lib/api";
  * fallback (uppercase label, neutral colour), so adding a new carrier upstream
  * never breaks the page — you only extend this map to brand it nicely.
  */
+/**
+ * A carrier's name on its button and page: its local destination's title when
+ * there is one ("Vietnamobile", vande-1411 #025), else the built-in label.
+ */
+export function carrierName(
+  provider: string,
+  lang: string,
+  page?: {
+    name?: string | null;
+    title?: string | null;
+    titleVi?: string | null;
+  } | null,
+): string {
+  const title = page ? (lang === "vi" ? page.titleVi : page.title) || page.name : null;
+  const bare = title?.replace(/\s*\besim\b\s*/gi, " ").trim();
+  if (bare) return bare;
+  const meta = getCarrierMeta(provider);
+  return meta.buttonLabel ?? meta.label;
+}
+
 export interface CarrierMeta {
   /** Human-facing brand label, e.g. "Wintel", "iTEL", "VNSKY". */
   label: string;
   /** Name on the destination buttons, when it differs: "iTel" (vande-1411 #021). */
   buttonLabel?: string;
+  /** The icon set on its local destination, in place of the initial (vande-1411 #025). */
+  iconUrl?: string | null;
   /** Logo circle background (brand colour). */
   logoBg: string;
   /** Network the carrier rides on, e.g. "VinaPhone". Rendered per locale by {@link carrierInfra}. */

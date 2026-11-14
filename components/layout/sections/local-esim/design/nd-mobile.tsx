@@ -8,7 +8,7 @@ import { useT } from "./design-i18n";
 import { getCloudinaryTransformedUrl } from "@/lib/image-utils";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import type { LocalCarrier } from "@/lib/api";
-import { getCarrierMeta, carrierInitial, type CarrierMeta } from "../carrier-meta";
+import { carrierName, getCarrierMeta, carrierInitial, type CarrierMeta } from "../carrier-meta";
 import { Ic } from "./nd-icons";
 import { planLabel, phonePrefixLabel, techOf, variantFor } from "./nd-model";
 import { useVnd, type DomesticPurchase } from "./nd-state";
@@ -46,6 +46,8 @@ interface Props {
   breadcrumb: { home: string; destinations: string; vietnam: string };
   /** Vietnam's picture and flag from the CMS (vande #029). */
   country: DomesticCountry | null;
+  /** Its local destination's description P1, in place of the stock copy (vande-1411 #025). */
+  intro?: string | null;
 }
 
 /**
@@ -53,7 +55,7 @@ interface Props {
  * "esim-noi-dia-mobile-v45.html" (#066, test round 4). The design's own top
  * bar is left out: the site header is shared by every page.
  */
-export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb, country }: Props) {
+export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb, country, intro }: Props) {
   const vnd = useVnd();
   // The CMS picture of Vietnam when set; the design's photo otherwise (vande #029).
   const hero = getCloudinaryTransformedUrl(country?.avatarUrl ?? undefined, { width: 1200, height: 840, quality: "auto:good", gravity: "center" });
@@ -64,7 +66,10 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb, 
   const [devBrand, setDevBrand] = useState<Brand | "">("");
   const [vch, setVch] = useState(false);
 
-  const logoStyle: CSSProperties = { background: meta.logoBg };
+  // The local destination's icon when set, else the brand colour (vande-1411 #025).
+  const logoStyle: CSSProperties = meta.iconUrl
+    ? { backgroundImage: `url(${meta.iconUrl})`, backgroundSize: "cover", backgroundPosition: "center" }
+    : { background: meta.logoBg };
   const prefix = phonePrefixLabel(meta, plan, lang);
   const line = planCycleLine(plan, p.days, lang);
   const tag = [meta.network ? tx("Dùng hạ tầng {0}", meta.network) : null, prefix].filter(Boolean).join(" – ");
@@ -169,7 +174,7 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb, 
             {tag && <div className="m-hero-tag">{tag}</div>}{" "}
             <div className="m-hero-t">
               <span className="nd-logo pic-flag" aria-hidden="true" style={logoStyle}>
-                {carrierInitial(meta)}
+                {meta.iconUrl ? null : carrierInitial(meta)}
               </span>
               <h1>{esimName(meta.label, lang as Locale)}</h1>
               <VnFlag url={country?.flagUrl} w={24} h={18} />
@@ -178,8 +183,9 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb, 
         </div>{" "}
         <div className="m-sec m-sheet">
           {" "}
-          <p className="m-desc">
-            {esimName(meta.label, lang as Locale)}{" "}{tx("— nhà mạng nội địa")}{meta.network ? tx(" trên hạ tầng {0}", meta.network) : ""}{tx(", sóng 4G/5G toàn quốc.")}{meta.phonePrefix ? tx(" Có số thuê bao đầu {0},", meta.phonePrefix) : tx(" Có số thuê bao,")}{" "}{tx("tất cả gói đều dùng được Data + Gọi + SMS, gia hạn theo chu kỳ hàng tháng.")}</p>{" "}
+          {/* The local destination's description P1 (vande-1411 #025). */}
+          {intro ? <p className="m-desc" data-testid="product-description">{intro}</p> : <p className="m-desc">
+            {esimName(meta.label, lang as Locale)}{" "}{tx("— nhà mạng nội địa")}{meta.network ? tx(" trên hạ tầng {0}", meta.network) : ""}{tx(", sóng 4G/5G toàn quốc.")}{meta.phonePrefix ? tx(" Có số thuê bao đầu {0},", meta.phonePrefix) : tx(" Có số thuê bao,")}{" "}{tx("tất cả gói đều dùng được Data + Gọi + SMS, gia hạn theo chu kỳ hàng tháng.")}</p>}{" "}
           <div className="price-row price-row--vch" id="priceAnchor">
             <button className="pv" type="button" id="vchTag" aria-haspopup="dialog" onClick={() => setVch(true)}>
               <span className="price-now" id="priceNet">
@@ -348,7 +354,7 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb, 
             <p className="cross-lead">{tx("Mỗi nhà mạng có hạ tầng sóng, đầu số và bảng giá riêng — chọn gói phù hợp nhất với nhu cầu data và gọi của bạn.")}</p>{" "}
             <div className="m-cross-list">
               {otherCarriers.map((c) => (
-                <CrossCard key={c.provider} href={crossHref(c.provider)} meta={getCarrierMeta(c.provider)} fromVnd={c.fromVndPrice} showPrefix />
+                <CrossCard key={c.provider} href={crossHref(c.provider)} meta={{ ...getCarrierMeta(c.provider), label: carrierName(c.provider, lang, c.destination) }} fromVnd={c.fromVndPrice} showPrefix />
               ))}
             </div>{" "}
           </section>

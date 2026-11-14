@@ -1180,7 +1180,8 @@ export function CrossCard({
   const vnd = useVnd();
   const tx = useT();
   const lang = useDesignLang();
-  const parts = [tx("Từ {0}", vnd(fromVnd))];
+  // No price until its eSIMs are imported (vande-1411 #025).
+  const parts = fromVnd > 0 ? [tx("Từ {0}", vnd(fromVnd))] : [];
   if (meta.network) parts.push(tx("Hạ tầng {0}", meta.network));
   if (showPrefix && meta.phonePrefix) parts.push(tx("Đầu số {0}", meta.phonePrefix));
   return (

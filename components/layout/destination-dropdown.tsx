@@ -12,7 +12,7 @@ import {
   useRegions,
   useSearchRegions,
 } from "@/lib/hooks";
-import { getCarrierMeta } from "@/components/layout/sections/local-esim/carrier-meta";
+import { carrierName, getCarrierMeta } from "@/components/layout/sections/local-esim/carrier-meta";
 import { localCarrierHref } from "@/components/layout/sections/local-esim/local-carrier-search";
 import { VietnamFlag } from "@/components/layout/sections/destination-picker/destination-picker";
 import { useDebounce } from "@/lib/use-debounce";
@@ -118,13 +118,15 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
     () =>
       carriers.map((c) => {
         const meta = getCarrierMeta(c.provider);
+        const name = carrierName(c.provider, lang, c.destination);
         return {
           id: c.provider,
           _type: "local" as const,
-          name: meta.buttonLabel ?? meta.label,
-          title: meta.buttonLabel ?? meta.label,
-          titleVi: meta.buttonLabel ?? meta.label,
+          name,
+          title: name,
+          titleVi: name,
           fromPrice: c.fromVndPrice,
+          iconUrl: c.destination?.flagUrl ?? null,
           href: localCarrierHref(lang, c.provider),
           meta,
         };
@@ -417,7 +419,7 @@ export function DestinationDropdown({ lang, dict, onClose }: DestinationDropdown
                               <div className="flex min-w-0 flex-row gap-2">
                                 <div className="flex items-center justify-center h-6 w-6 rounded-full shrink-0 text-text-primary">
                                   <div className="w-[24px] h-[24px] relative overflow-hidden shrink-0 rounded-full">
-                                    {item._type === "local" ? (
+                                    {item._type === "local" && !item.iconUrl ? (
                                       // The carrier's round wordmark, as on its cards.
                                       <span
                                         className={`flex h-full w-full items-center justify-center text-[0.4375rem] font-bold leading-none text-white${item.meta.italic ? " italic" : ""}`}

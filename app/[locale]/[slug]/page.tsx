@@ -77,12 +77,14 @@ async function resolveEntity(
   | null
 > {
   const destination = await getDestinationBySlug(slug, lang);
-  if (destination) {
+  // A local destination is a domestic carrier's page, not a country's
+  // (vande-1411 #025); its slug falls through to the carrier.
+  if (destination && (destination as { esimType?: string }).esimType !== "local") {
     return { type: "destination", data: destination };
   }
 
   const region = await getRegionBySlug(slug, lang);
-  if (region) {
+  if (region && (region as { esimType?: string }).esimType !== "local") {
     return { type: "region", data: region };
   }
 

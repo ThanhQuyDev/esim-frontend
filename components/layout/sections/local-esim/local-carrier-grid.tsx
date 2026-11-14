@@ -3,7 +3,7 @@ import { useMoney } from "@/lib/money";
 
 import { Loader2 } from "lucide-react";
 import { useLocalCarriers } from "@/lib/hooks";
-import { getCarrierMeta, carrierInfra } from "./carrier-meta";
+import { carrierName, getCarrierMeta, carrierInfra } from "./carrier-meta";
 import { localCarrierHref } from "./local-carrier-search";
 import { PickerCardLink } from "../destination-picker/destination-picker";
 import type { Locale } from "@/lib/i18n-config";
@@ -59,7 +59,10 @@ export function LocalCarrierGrid({
     <div className="dp-p">
       {carriers.map((carrier) => {
         const meta = getCarrierMeta(carrier.provider);
-        const priceLabel = `${fromLabel} ${money.format(carrier.fromVndPrice)}`;
+        // No price until its eSIMs are imported (vande-1411 #025).
+        const priceLabel =
+          carrier.fromVndPrice > 0 ? `${fromLabel} ${money.format(carrier.fromVndPrice)}` : "";
+        const icon = carrier.destination?.flagUrl;
         const infra = carrierInfra(meta, lang);
         const wordmark = meta.wordmark ?? meta.label;
 
@@ -69,17 +72,25 @@ export function LocalCarrierGrid({
               href={localCarrierHref(lang, carrier.provider)}
               testId={`local-carrier-card-${carrier.provider}`}
               mark={
-                <span
-                  className={`dp-l${wordmark.length > 4 ? " dp-sm" : ""}${meta.italic ? " italic" : ""}`}
-                  style={{ backgroundColor: meta.logoBg }}
-                  aria-hidden="true"
-                >
-                  {wordmark}
-                </span>
+                icon ? (
+                  // The icon set on its local destination (vande-1411 #025).
+                  <span className="dp-l">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img alt="" loading="lazy" decoding="async" width={36} height={36} src={icon} />
+                  </span>
+                ) : (
+                  <span
+                    className={`dp-l${wordmark.length > 4 ? " dp-sm" : ""}${meta.italic ? " italic" : ""}`}
+                    style={{ backgroundColor: meta.logoBg }}
+                    aria-hidden="true"
+                  >
+                    {wordmark}
+                  </span>
+                )
               }
               // The carrier alone, "iTel", as the countries (vande-1411 #021).
-              name={meta.buttonLabel ?? meta.label}
-              sub={infra ? `${priceLabel} · ${infra}` : priceLabel}
+              name={carrierName(carrier.provider, lang, carrier.destination)}
+              sub={[priceLabel, infra].filter(Boolean).join(" · ")}
             />
           </div>
         );

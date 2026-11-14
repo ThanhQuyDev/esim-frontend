@@ -13,7 +13,7 @@ import { useT } from "./design-i18n";
 import { getCloudinaryTransformedUrl } from "@/lib/image-utils";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import type { LocalCarrier, Plan } from "@/lib/api";
-import { getCarrierMeta, carrierInitial, type CarrierMeta } from "../carrier-meta";
+import { carrierName, getCarrierMeta, carrierInitial, type CarrierMeta } from "../carrier-meta";
 import { Ic } from "./nd-icons";
 import { dataTitle, planLabel, summary, cycleDaysOf } from "./nd-model";
 import { useVnd, type DomesticPurchase } from "./nd-state";
@@ -50,6 +50,8 @@ interface Props {
   allPlans: Plan[];
   /** Vietnam's picture and flag from the CMS (vande #029). */
   country: DomesticCountry | null;
+  /** Its local destination's description P1, in place of the stock copy (vande-1411 #025). */
+  intro?: string | null;
 }
 
 /**
@@ -58,7 +60,7 @@ interface Props {
  * names follow the design file one to one; the design's script is replaced
  * by React state (see nd-state / nd-parts).
  */
-export function NdDesktop({ p, meta, carrier, lang, otherCarriers, crossHref, breadcrumb, allPlans, country }: Props) {
+export function NdDesktop({ p, meta, carrier, lang, otherCarriers, crossHref, breadcrumb, allPlans, country, intro }: Props) {
   const vnd = useVnd();
   // The CMS picture of Vietnam when set; the design's photo otherwise (vande #029).
   const hero = getCloudinaryTransformedUrl(country?.avatarUrl ?? undefined, { width: 940, height: 640, quality: "auto:good", gravity: "center" });
@@ -81,7 +83,10 @@ export function NdDesktop({ p, meta, carrier, lang, otherCarriers, crossHref, br
   const dcRef = useRef<HTMLElement>(null);
   const leftStick = useRef<HTMLDivElement>(null);
 
-  const logoStyle: CSSProperties = { background: meta.logoBg };
+  // The local destination's icon when set, else the brand colour (vande-1411 #025).
+  const logoStyle: CSSProperties = meta.iconUrl
+    ? { backgroundImage: `url(${meta.iconUrl})`, backgroundSize: "cover", backgroundPosition: "center" }
+    : { background: meta.logoBg };
   const initial = carrierInitial(meta);
   const days = p.days;
   const line = planCycleLine(plan, days, lang);
@@ -210,7 +215,7 @@ export function NdDesktop({ p, meta, carrier, lang, otherCarriers, crossHref, br
             {" "}
             <div className="pic-title-row">
               <span className="nd-logo pic-flag" aria-hidden="true" style={logoStyle}>
-                {initial}
+                {meta.iconUrl ? null : initial}
               </span>
               <h1 className="pic-title">{esimName(meta.label, lang as Locale)}</h1>
               <VnFlag url={country?.flagUrl} w={24} h={18} />
@@ -279,8 +284,9 @@ export function NdDesktop({ p, meta, carrier, lang, otherCarriers, crossHref, br
             {" "}
             <div className="pic-body">
               {" "}
-              <p className="pic-sub">{tx("eSIM nội địa")}{" "}{meta.label}{" "}{tx("chính hãng, đăng ký và kích hoạt hoàn toàn online — nhận mã QR qua email tức thì. Data 4G/5G")}{meta.network ? tx(" trên hạ tầng {0}", meta.network) : ""}{tx(", có số thuê bao gọi & SMS, chu kỳ linh hoạt")}{" "}
-                {daysRange}{tx(", phù hợp dùng lâu dài tại Việt Nam.")}</p>{" "}
+              {/* The local destination's description P1 (vande-1411 #025). */}
+              {intro ? <p className="pic-sub" data-testid="product-description">{intro}</p> : <p className="pic-sub">{tx("eSIM nội địa")}{" "}{meta.label}{" "}{tx("chính hãng, đăng ký và kích hoạt hoàn toàn online — nhận mã QR qua email tức thì. Data 4G/5G")}{meta.network ? tx(" trên hạ tầng {0}", meta.network) : ""}{tx(", có số thuê bao gọi & SMS, chu kỳ linh hoạt")}{" "}
+                {daysRange}{tx(", phù hợp dùng lâu dài tại Việt Nam.")}</p>}{" "}
               <div
                 className="dt-tabs"
                 role="tablist"
@@ -423,7 +429,7 @@ export function NdDesktop({ p, meta, carrier, lang, otherCarriers, crossHref, br
                 <div className="bs-l">
                   <p className="bs-plan">
                     <span className="nd-logo bs-flag" aria-hidden="true" style={logoStyle}>
-                      {initial}
+                      {meta.iconUrl ? null : initial}
                     </span>
                     <span>
                       <span id="mPlan">{line}</span>
@@ -518,7 +524,7 @@ export function NdDesktop({ p, meta, carrier, lang, otherCarriers, crossHref, br
           <p className="cross-lead">{tx("Mỗi nhà mạng có hạ tầng sóng, đầu số và bảng giá riêng — chọn gói phù hợp nhất với nhu cầu data và gọi của bạn.")}</p>{" "}
           <div className="cross-grid">
             {otherCarriers.map((c) => (
-              <CrossCard key={c.provider} href={crossHref(c.provider)} meta={getCarrierMeta(c.provider)} fromVnd={c.fromVndPrice} />
+              <CrossCard key={c.provider} href={crossHref(c.provider)} meta={{ ...getCarrierMeta(c.provider), label: carrierName(c.provider, lang, c.destination) }} fromVnd={c.fromVndPrice} />
             ))}
           </div>{" "}
         </section>
@@ -530,7 +536,7 @@ export function NdDesktop({ p, meta, carrier, lang, otherCarriers, crossHref, br
           {" "}
           <div className="dsb-l">
             <span className="nd-logo dsb-flag" aria-hidden="true" style={logoStyle}>
-              {initial}
+              {meta.iconUrl ? null : initial}
             </span>
             <div className="dsb-info">
               <div className="dsb-name">

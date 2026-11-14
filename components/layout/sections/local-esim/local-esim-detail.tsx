@@ -3,10 +3,10 @@
 import "./design/nd-desktop.css";
 import "./design/nd-mobile.css";
 import "./design/nd-switch.css";
-import type { PlansByDestinationResponse } from "@/lib/api";
+import type { LocalCarrierPage, PlansByDestinationResponse } from "@/lib/api";
 import { useLocalPlansByCarrier, useLocalCarriers } from "@/lib/hooks";
 import { localizedHref } from "@/lib/route-mapping";
-import { getCarrierMeta } from "./carrier-meta";
+import { carrierName, getCarrierMeta } from "./carrier-meta";
 import { localCarrierHref } from "./local-carrier-search";
 import { CartConfirmDialog } from "../destination/cart-confirm-dialog";
 import type { DestinationDict } from "../destination/types";
@@ -26,6 +26,8 @@ interface LocalEsimDetailProps {
   initialPlans?: PlansByDestinationResponse | null;
   /** Vietnam's picture and flag from the CMS (vande #029). */
   country?: DomesticCountry | null;
+  /** Its local destination: title and description P1 (vande-1411 #025). */
+  page?: LocalCarrierPage | null;
 }
 
 const EMPTY: PlansByDestinationResponse = {
@@ -46,9 +48,18 @@ const EMPTY: PlansByDestinationResponse = {
  * carrier's real plans. Both layouts share one purchase state, so switching
  * width keeps the chosen plan, cycle and quantity.
  */
-export function LocalEsimDetail({ carrier, lang, initialPlans, country }: LocalEsimDetailProps) {
+export function LocalEsimDetail({ carrier, lang, initialPlans, country, page }: LocalEsimDetailProps) {
   const vnd = useVnd(lang);
-  const meta = getCarrierMeta(carrier);
+  // The local destination's title names the page, its description P1 opens it
+  // (vande-1411 #025).
+  const meta = page
+    ? {
+        ...getCarrierMeta(carrier),
+        label: carrierName(carrier, lang, page),
+        iconUrl: page.flagUrl || null,
+      }
+    : getCarrierMeta(carrier);
+  const intro = ((lang === "vi" ? page?.descriptionVi : page?.description) || "").trim() || null;
   const { data: grouped = EMPTY } = useLocalPlansByCarrier(carrier, lang, initialPlans ?? undefined);
   const { data: allCarriers = [] } = useLocalCarriers();
   const plans = grouped.localEsim ?? [];
@@ -82,6 +93,7 @@ export function LocalEsimDetail({ carrier, lang, initialPlans, country }: LocalE
         breadcrumb={breadcrumb}
         allPlans={plans}
         country={country ?? null}
+        intro={intro}
       />
       ) : (
       <NdMobile
@@ -92,6 +104,7 @@ export function LocalEsimDetail({ carrier, lang, initialPlans, country }: LocalE
         crossHref={crossHref}
         breadcrumb={breadcrumb}
         country={country ?? null}
+        intro={intro}
       />
       )}
       <CartConfirmDialog

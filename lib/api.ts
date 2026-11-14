@@ -1057,6 +1057,24 @@ export interface LocalCarrier {
   provider: string;
   fromVndPrice: number;
   planCount: number;
+  /**
+   * The local destination of this carrier (vande-1411 #025): its title,
+   * picture, icon and description dress the carrier's button and page.
+   */
+  destination?: LocalCarrierPage | null;
+}
+
+/** What a destination of eSIM Type "Local" gives its carrier (vande-1411 #025). */
+export interface LocalCarrierPage {
+  id: number;
+  name: string;
+  title: string | null;
+  titleVi: string | null;
+  description: string | null;
+  descriptionVi: string | null;
+  avatarUrl: string | null;
+  flagUrl: string | null;
+  parentId: number | null;
 }
 
 /** "itel-noidia" → "itel". Domestic plans carry their own supplier (vande #001). */
