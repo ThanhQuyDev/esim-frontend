@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Tag, Copy, Check, Clock, ShoppingCart, BadgePercent } from "lucide-react";
 import { couponDiscountLabel, toCartCoupon } from "@/lib/cart";
 import { copyCouponCode, listFeaturedCoupons, type ListedCoupon } from "@/lib/coupon-list";
+import { useMoney } from "@/lib/money";
 
 interface CouponListProps {
   dict: Record<string, any>;
@@ -25,12 +26,13 @@ async function fetchCoupons(): Promise<ListedCoupon[]> {
  * "Giảm 15% (tối đa 50.000₫)" / "15% off (up to 50,000 VND)" — percentage,
  * capped percentage and flat-amount codes all read correctly.
  */
-function discountLabel(coupon: ListedCoupon, vi: boolean): string {
+function discountLabel(coupon: ListedCoupon, vi: boolean, money: (vnd: number) => string): string {
   if (vi) {
     // The cart's label ("-15% (tối đa …)") without its minus sign.
     return `Giảm ${couponDiscountLabel(toCartCoupon(coupon)).replace(/^-/, "")}`;
   }
-  const format = (vnd: number) => `${new Intl.NumberFormat("en-US").format(vnd)} VND`;
+  // Dollars on the English site, as the cart (vande-1411 #020).
+  const format = money;
   if (coupon.discountType === "fixed") {
     return `${format(Number(coupon.discountAmount ?? 0))} off`;
   }
@@ -68,8 +70,9 @@ export function CouponList({ dict, lang }: CouponListProps) {
       day: "numeric",
     });
 
+  const money = useMoney();
   const formatVnd = (amount: number) =>
-    `${new Intl.NumberFormat(vi ? "vi-VN" : "en-US").format(amount)}${vi ? "đ" : " VND"}`;
+    vi ? `${new Intl.NumberFormat("vi-VN").format(amount)}đ` : money.format(amount);
 
   if (!isLoading && coupons.length === 0) return null;
 
@@ -114,7 +117,7 @@ export function CouponList({ dict, lang }: CouponListProps) {
                     >
                       <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-green-100 px-3 py-1 body-sm-medium text-green-700">
                         <BadgePercent className="h-4 w-4" aria-hidden="true" />
-                        {discountLabel(coupon, vi)}
+                        {discountLabel(coupon, vi, money.format)}
                       </span>
 
                       <div className="flex items-center justify-between gap-3 rounded-lg border border-dashed border-border-secondary bg-bg-secondary px-4 py-3">

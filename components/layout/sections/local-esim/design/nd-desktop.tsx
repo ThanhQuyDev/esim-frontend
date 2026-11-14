@@ -16,7 +16,7 @@ import type { LocalCarrier, Plan } from "@/lib/api";
 import { getCarrierMeta, carrierInitial, type CarrierMeta } from "../carrier-meta";
 import { Ic } from "./nd-icons";
 import { dataTitle, planLabel, summary, cycleDaysOf } from "./nd-model";
-import { vnd, type DomesticPurchase } from "./nd-state";
+import { useVnd, type DomesticPurchase } from "./nd-state";
 import {
   CrossCard,
   CycleMenu,
@@ -59,6 +59,7 @@ interface Props {
  * by React state (see nd-state / nd-parts).
  */
 export function NdDesktop({ p, meta, carrier, lang, otherCarriers, crossHref, breadcrumb, allPlans, country }: Props) {
+  const vnd = useVnd();
   // The CMS picture of Vietnam when set; the design's photo otherwise (vande #029).
   const hero = getCloudinaryTransformedUrl(country?.avatarUrl ?? undefined, { width: 940, height: 640, quality: "auto:good", gravity: "center" });
   const tx = useT();

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { Modal } from "./modal";
-import { formatVnd } from "@/lib/hooks";
+import { useMoney } from "@/lib/money";
 
 interface CalendarModalProps {
   open: boolean;
@@ -154,6 +154,7 @@ export function CalendarModal({
 }: CalendarModalProps) {
   const isMobile = useIsMobile();
   const today = useMemo(() => startOfDay(new Date()), []);
+  const money = useMoney();
   const [base, setBase] = useState<Date>(() => {
     const d = new Date(today);
     d.setDate(1);
@@ -406,8 +407,9 @@ export function CalendarModal({
               {selS && selE && days > 0 && totalVnd > 0 && (
                 <>
                   {totalLabel}{" "}
-                  <span className="font-bold text-[#111]">{formatVnd(totalVnd)} =</span>
-                  <span className="font-bold text-[#16A34A]">{formatVnd(perDayVnd)}/{dayUnit}</span>
+                  {/* Dollars on the English site (vande-1411 #020). */}
+                  <span className="font-bold text-[#111]">{money.format(totalVnd)} =</span>
+                  <span className="font-bold text-[#16A34A]">{money.format(perDayVnd)}/{dayUnit}</span>
                 </>
               )}
             </div>

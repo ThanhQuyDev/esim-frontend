@@ -10,7 +10,7 @@ import type { Locale } from "@/lib/i18n-config";
 import { localizedHref } from "@/lib/route-mapping";
 import { useDeviceVariant } from "@/lib/device-variant-context";
 import { CartConfirmDialog } from "../destination/cart-confirm-dialog";
-import { vnd } from "../local-esim/design/nd-state";
+import { useVnd } from "../local-esim/design/nd-state";
 import { RgSprite } from "./design/rg-icons";
 import { RgDesktop } from "./design/rg-desktop";
 import { RgMobile } from "./design/rg-mobile";
@@ -41,6 +41,7 @@ interface RegionDesignProps {
  * (#001); both share one purchase state, so a resize keeps the choices.
  */
 export function RegionDesign({ members, label, lang, initialSlug, country, initialPlans, noticeHtml }: RegionDesignProps) {
+  const vnd = useVnd(lang);
   const p = useRegionPurchase(members, lang, initialSlug, country, initialPlans, noticeHtml);
   const variant = useDeviceVariant();
   const breadcrumb = {

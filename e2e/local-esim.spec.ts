@@ -235,7 +235,9 @@ test.describe("Detail — LocalEsimDetail (via client harness)", () => {
   test("renders plans, phone prefix, eKYC, and price from vndPrice", async ({ page }) => {
     await mockLocalApi(page, "wintel");
 
-    await page.goto("/en/esim-noi-dia/test?carrier=wintel&lang=en");
+    // Vietnamese, so the price reads in đồng; the English page shows dollars
+    // (vande-1411 #020, cross-blocks-1411.spec.ts).
+    await page.goto("/esim-noi-dia/test?carrier=wintel&lang=vi");
     await expect(page.getByTestId("local-test-meta")).toBeVisible();
 
     // The page renders the design's desktop and mobile layouts; at this
@@ -270,7 +272,7 @@ test.describe("Detail — LocalEsimDetail (via client harness)", () => {
     await page.goto("/en/esim-noi-dia/test?carrier=wintel&lang=en");
     await expect(page.getByTestId("local-test-meta")).toBeVisible();
 
-    await expect(page.locator(".ndd #specHotspot")).toHaveText("7 GB/ngày");
+    await expect(page.locator(".ndd #specHotspot")).toHaveText("7 GB/day");
     await expect(page.getByText(/GBGB/)).toHaveCount(0);
   });
 

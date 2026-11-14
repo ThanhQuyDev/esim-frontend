@@ -566,7 +566,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
                     {promoApplied.type === "referral"
                       ? `-${money.format(promoApplied.discountVnd)}`
                       : cart.appliedCoupon
-                        ? couponDiscountLabel(cart.appliedCoupon)
+                        ? couponDiscountLabel(cart.appliedCoupon, money)
                         : ""}
                   </span>
                 </div>
@@ -647,7 +647,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
                         </div>
                         {/* One line, never squeezed: the code's details wrap instead. */}
                         <span className="shrink-0 whitespace-nowrap text-base sm:text-sm font-medium text-green-600">
-                          {couponListBadge(coupon)}
+                          {couponListBadge(coupon, money)}
                         </span>
                       </button>
                     ))}

@@ -225,9 +225,13 @@ export function renewalLabel(plan: Plan, fmt: (n: number) => string, lang: strin
 }
 
 /** "Cước 119k / 30 ngày" (mobile card). */
-export function renewalShort(plan: Plan, lang: string): string | null {
+export function renewalShort(plan: Plan, lang: string, fmt?: (n: number) => string): string | null {
   const o = offerOf(plan);
   if (!o?.cycleFeeVnd) return null;
+  // English: the fee in dollars, as every other price (vande-1411 #020).
+  if (lang !== "vi" && fmt) {
+    return tr(lang, "Cước {0} / {1}", fmt(o.cycleFeeVnd), DAY_LABEL(cycleDaysOf(plan), lang));
+  }
   const k = o.cycleFeeVnd / 1000;
   return tr(lang, "Cước {0}k / {1}", Number.isInteger(k) ? k : k.toFixed(1), DAY_LABEL(cycleDaysOf(plan), lang));
 }

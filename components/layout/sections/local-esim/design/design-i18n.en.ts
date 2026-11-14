@@ -88,6 +88,7 @@ export const DESIGN_EN: Record<string, string> = {
   "Có. Hệ thống chấp nhận hộ chiếu quốc tế còn hiệu lực. Chỉ cần chụp trang thông tin cá nhân rõ nét, đủ ánh sáng.": "Yes. The system accepts a valid international passport. Just take a clear, well-lit photo of the personal details page.",
   "Cước phí gia hạn gói": "Renewal fee",
   "Cước {0}k / {1}": "{0}k fee / {1}",
+  "Cước {0} / {1}": "{0} fee / {1}",
   "Cần cài đặt ứng dụng của nhà mạng để xác thực danh tính.": "You need to install the carrier's app to verify your identity.",
   "Cần hỗ trợ? Liên hệ qua Chat hoặc email hotro@esim.com.vn": "Need help? Contact us via chat or email hotro@esim.com.vn",
   "Cần xác thực danh tính": "Identity verification required",

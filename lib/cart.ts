@@ -175,7 +175,15 @@ export function getVndDiscount(subtotal: number, coupon: Coupon | null): number 
  * A flat-amount code shown as "-0%" tells the customer nothing, and a capped
  * one shown as "-15%" promises more than it gives on a large order.
  */
-export function couponDiscountLabel(coupon: Coupon): string {
+export function couponDiscountLabel(coupon: Coupon, money?: CouponMoney): string {
+  if (money?.isUsd) {
+    // English: dollars, in English (vande-1411 #020).
+    if ((coupon.discountType ?? "percent") === "fixed") {
+      return `-${money.format(coupon.discountAmountVnd ?? 0)}`;
+    }
+    const cap = coupon.maxDiscountVnd ?? 0;
+    return `-${coupon.discount}%${cap > 0 ? ` (up to ${money.format(cap)})` : ""}`;
+  }
   if ((coupon.discountType ?? "percent") === "fixed") {
     return `-${(coupon.discountAmountVnd ?? 0).toLocaleString("vi-VN")}₫`;
   }
@@ -186,12 +194,25 @@ export function couponDiscountLabel(coupon: Coupon): string {
   return `-${coupon.discount}%`;
 }
 
+/** The shopper's currency, from `useMoney()`: dollars on the English site. */
+export interface CouponMoney {
+  isUsd: boolean;
+  format: (vnd: number) => string;
+}
+
 /**
  * The green text on the right of a code in the cart's list (v3 #014). The left
  * already says what the code takes off, so a capped percentage only needs its
  * ceiling — "-15% (tối đa 30.000₫)" wrapped onto two lines in that slot.
  */
-export function couponListBadge(coupon: Coupon): string {
+export function couponListBadge(coupon: Coupon, money?: CouponMoney): string {
+  if (money?.isUsd) {
+    if ((coupon.discountType ?? "percent") === "fixed") {
+      return `-${money.format(coupon.discountAmountVnd ?? 0)}`;
+    }
+    const cap = coupon.maxDiscountVnd ?? 0;
+    return cap > 0 ? `Up to ${money.format(cap)}` : `-${coupon.discount}%`;
+  }
   if ((coupon.discountType ?? "percent") === "fixed") {
     return `-${(coupon.discountAmountVnd ?? 0).toLocaleString("vi-VN")}₫`;
   }

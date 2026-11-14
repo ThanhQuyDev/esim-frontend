@@ -14,7 +14,7 @@ import { planVoiceInfo } from "@/lib/plan-voice";
 import { localizedSlug } from "@/lib/slug";
 import { Ic } from "../../local-esim/design/nd-icons";
 import { AccItem, Overlay, Tip, radioKeys } from "../../local-esim/design/nd-parts";
-import { vnd } from "../../local-esim/design/nd-state";
+import { useVnd } from "../../local-esim/design/nd-state";
 import { SPRITE_FLAGS } from "./rg-icons";
 import {
   badgeFor,
@@ -158,6 +158,7 @@ const SCOPE_CARD_PX = 88;
 const SCOPE_GAP_PX = 6;
 
 export function Variants({ p, mobile, onAll }: { p: RegionPurchase; mobile?: boolean; onAll: () => void }) {
+  const vnd = useVnd();
   const tx = useT();
   const ref = useRef<HTMLDivElement>(null);
   const [edge, setEdge] = useState({ l: false, r: false });
@@ -272,6 +273,7 @@ export function ScopesModal({
   flags: number;
   onEditCountries: () => void;
 }) {
+  const vnd = useVnd();
   const tx = useT();
   const list = useRef<HTMLUListElement>(null);
 
@@ -1325,6 +1327,7 @@ const MONTHS = ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Th�
 const dmy = (d: Date) => `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}/${d.getFullYear()}`;
 
 export function CalendarModal({ p, open, onClose }: { p: RegionPurchase; open: boolean; onClose: () => void }) {
+  const vnd = useVnd();
   const tx = useT();
   const today = useMemo(() => {
     const d = new Date();

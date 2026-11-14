@@ -11,7 +11,7 @@ import type { LocalCarrier } from "@/lib/api";
 import { getCarrierMeta, carrierInitial, type CarrierMeta } from "../carrier-meta";
 import { Ic } from "./nd-icons";
 import { planLabel, phonePrefixLabel, techOf, variantFor } from "./nd-model";
-import { vnd, type DomesticPurchase } from "./nd-state";
+import { useVnd, type DomesticPurchase } from "./nd-state";
 import {
   AccItem,
   CrossCard,
@@ -54,6 +54,7 @@ interface Props {
  * bar is left out: the site header is shared by every page.
  */
 export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb, country }: Props) {
+  const vnd = useVnd();
   // The CMS picture of Vietnam when set; the design's photo otherwise (vande #029).
   const hero = getCloudinaryTransformedUrl(country?.avatarUrl ?? undefined, { width: 1200, height: 840, quality: "auto:good", gravity: "center" });
   const tx = useT();

@@ -1,9 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Plan } from "@/lib/api";
-import { formatVnd, useCart, usePublicCoupons } from "@/lib/hooks";
+import { formatVnd, useCart, useExchangeRate, usePublicCoupons } from "@/lib/hooks";
+import { FALLBACK_USD_VND_RATE } from "@/lib/exchange-rate";
+import { formatUsdPrice, usdFromVnd } from "@/lib/price-locale";
+import { useDesignLang } from "./design-i18n";
 import { pickBestVoucher } from "@/lib/voucher-preview";
 import { localizedHref } from "@/lib/route-mapping";
 import { trackJourney } from "@/lib/journey-tracking";
@@ -22,6 +25,24 @@ import {
 
 /** VND as the design writes it: "119.000₫". */
 export const vnd = (n: number) => formatVnd(Math.round(n));
+
+/**
+ * A price as the shopper reads it on a product page (vande-1411 #020): đồng on
+ * the Vietnamese site, dollars at today's rate on the English one — the rate
+ * and rounding the destination list and the cart use (`useMoney`). Amounts are
+ * still kept and charged in VND. `lang` is for a caller outside the design's
+ * language provider.
+ */
+export function useVnd(lang?: string): (n: number) => string {
+  const designLang = useDesignLang();
+  const isUsd = (lang ?? designLang) !== "vi";
+  const { data: rate } = useExchangeRate();
+  const usdToVnd = rate && rate > 0 ? rate : FALLBACK_USD_VND_RATE;
+  return useCallback(
+    (n: number) => (isUsd ? formatUsdPrice(usdFromVnd(Number(n || 0), usdToVnd)) : vnd(n)),
+    [isUsd, usdToVnd],
+  );
+}
 
 /**
  * Everything the domestic carrier page tracks: the chosen card, cycle length

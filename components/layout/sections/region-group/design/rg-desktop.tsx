@@ -10,7 +10,7 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { getCloudinaryTransformedUrl } from "@/lib/image-utils";
 import { Ic } from "../../local-esim/design/nd-icons";
 import { DeviceCheck, DeviceModal, Qty, StockAlert, VoucherBreakdown, type Brand } from "../../local-esim/design/nd-parts";
-import { vnd } from "../../local-esim/design/nd-state";
+import { useVnd } from "../../local-esim/design/nd-state";
 import { perDay } from "./rg-model";
 import type { RegionPurchase } from "./rg-state";
 import {
@@ -74,6 +74,7 @@ export function coverageLine(p: RegionPurchase): string {
  * one; the design's script is replaced by React state (rg-state / rg-parts).
  */
 export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
+  const vnd = useVnd();
   const tx = useT();
   const plan = p.plan;
   const [tab, setTab] = useState<0 | 1>(0);

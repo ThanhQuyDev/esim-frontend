@@ -9,7 +9,7 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { getCloudinaryTransformedUrl } from "@/lib/image-utils";
 import { Ic } from "../../local-esim/design/nd-icons";
 import { AccItem, DeviceCheck, DeviceModal, Overlay, Qty, StockAlert, VoucherRows, type Brand } from "../../local-esim/design/nd-parts";
-import { vnd } from "../../local-esim/design/nd-state";
+import { useVnd } from "../../local-esim/design/nd-state";
 import { perDay } from "./rg-model";
 import type { RegionPurchase } from "./rg-state";
 import { countryCarriers, coverageLine } from "./rg-desktop";
@@ -50,6 +50,7 @@ interface Props {
  * is shared by every page.
  */
 export function RgMobile({ p, label, lang, breadcrumb }: Props) {
+  const vnd = useVnd();
   const tx = useT();
   const plan = p.plan;
   const [ctr, setCtr] = useState(false);

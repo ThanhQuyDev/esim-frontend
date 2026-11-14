@@ -17,7 +17,7 @@ import type { DomesticCountry } from "./design/nd-parts";
 import { NdSprite } from "./design/nd-icons";
 import { NdDesktop } from "./design/nd-desktop";
 import { NdMobile } from "./design/nd-mobile";
-import { useDomesticPurchase, vnd } from "./design/nd-state";
+import { useDomesticPurchase, useVnd } from "./design/nd-state";
 
 interface LocalEsimDetailProps {
   carrier: string;
@@ -47,6 +47,7 @@ const EMPTY: PlansByDestinationResponse = {
  * width keeps the chosen plan, cycle and quantity.
  */
 export function LocalEsimDetail({ carrier, lang, initialPlans, country }: LocalEsimDetailProps) {
+  const vnd = useVnd(lang);
   const meta = getCarrierMeta(carrier);
   const { data: grouped = EMPTY } = useLocalPlansByCarrier(carrier, lang, initialPlans ?? undefined);
   const { data: allCarriers = [] } = useLocalCarriers();

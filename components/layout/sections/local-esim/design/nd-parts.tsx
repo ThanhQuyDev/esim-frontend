@@ -40,7 +40,7 @@ import {
   variantFor,
   type OfferGroup,
 } from "./nd-model";
-import { vnd, type DomesticPurchase, type PriceState } from "./nd-state";
+import { useVnd, type DomesticPurchase, type PriceState } from "./nd-state";
 import type { CarrierMeta } from "../carrier-meta";
 
 /* ───────────── modal (.ov) — the design's openModal/closeModal ───────────── */
@@ -217,6 +217,7 @@ export function PlanCard({
   extra?: boolean;
   hidden?: boolean;
 }) {
+  const vnd = useVnd();
   const tx = useT();
   const lang = useDesignLang();
   const plan = variantFor(group, days);
@@ -285,7 +286,7 @@ export function PlanCard({
           </span>{" "}
           <span className="plan-r">
             <span className="plan-price">{vnd(priceVnd(plan))}</span>
-            {renewalShort(plan, lang) && <span className="plan-per">{renewalShort(plan, lang)}</span>}
+            {renewalShort(plan, lang, vnd) && <span className="plan-per">{renewalShort(plan, lang, vnd)}</span>}
           </span>
         </>
       ) : (
@@ -308,6 +309,7 @@ export function PlanCard({
 /* ───────────── "Chu kỳ sử dụng" menu (.dsel--cyc) ───────────── */
 
 export function CycleMenu({ p, labelId }: { p: DomesticPurchase; labelId: string }) {
+  const vnd = useVnd();
   const tx = useT();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -440,6 +442,7 @@ export function StockAlert({ p }: { p: PriceState }) {
 
 /** The price lines (`dl.vpop-bd`) and the voucher note — shared by popover and modal. */
 export function VoucherRows({ p }: { p: PriceState }) {
+  const vnd = useVnd();
   const tx = useT();
   const [ok, copy] = useCopied();
   const orig = p.listTotal > p.total ? p.listTotal : p.total;
@@ -530,6 +533,7 @@ export function FeatureRows({
   onEkyc: () => void;
   ekycTitle: string;
 }) {
+  const vnd = useVnd();
   const tx = useT();
   const lang = useDesignLang();
   const [bannerOpen, setBannerOpen] = useState(false);
@@ -1173,6 +1177,7 @@ export function CrossCard({
   fromVnd: number;
   showPrefix?: boolean;
 }) {
+  const vnd = useVnd();
   const tx = useT();
   const lang = useDesignLang();
   const parts = [tx("Từ {0}", vnd(fromVnd))];
