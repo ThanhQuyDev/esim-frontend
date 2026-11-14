@@ -13,7 +13,8 @@ export interface RegionSuggestionsDict {
   from: string;
   country: string;
   countries: string;
-  viewPlans: string;
+  /** No longer shown: the card ends in an arrow alone (vande-1411 #019). */
+  viewPlans?: string;
 }
 
 interface RegionSuggestionsProps {
@@ -65,7 +66,7 @@ export function RegionSuggestions({
               key={item.id}
               href={href}
               data-testid={`region-suggestion-${slug}`}
-              className="group flex items-center gap-3.5 rounded-xl border border-[#e5e7eb] bg-white p-3.5 transition-colors hover:border-[#9ca3af] hover:bg-[#f9fafb]"
+              className="group flex items-center gap-3.5 rounded-xl bg-[#f7f7f8] p-3.5 transition-colors hover:bg-[#ececee]"
             >
               <span className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full bg-bg-secondary">
                 {icon ? (
@@ -112,10 +113,11 @@ export function RegionSuggestions({
                 </span>
               </span>
 
-              <span className="ml-auto flex shrink-0 items-center gap-1 text-[13px] font-medium text-text-secondary">
-                <span className="hidden sm:inline">{dict.viewPlans}</span>
-                <ChevronRight className="h-4 w-4" />
-              </span>
+              {/* The arrow alone, as on the design's cards (vande-1411 #019). */}
+              <ChevronRight
+                aria-hidden="true"
+                className="ml-auto h-4 w-4 shrink-0 text-[#9ca3af] transition-[transform,color] group-hover:translate-x-[3px] group-hover:text-text-primary"
+              />
             </Link>
           );
         })}

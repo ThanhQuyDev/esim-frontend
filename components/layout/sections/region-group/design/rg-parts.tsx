@@ -2,8 +2,6 @@
 
 
 
-import { useMoney } from "@/lib/money";
-import type { CrossItem } from "@/lib/cross-sell";
 import { tr } from "../../local-esim/design/design-i18n-core";
 import { useDesignLang, useT } from "../../local-esim/design/design-i18n";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
@@ -1894,39 +1892,3 @@ export function EkycModal({ p, open, onClose, lang }: { p: RegionPurchase; open:
   );
 }
 
-/* ───────────── cross-sell ───────────── */
-
-/**
- * "Xem eSIM cho các điểm đến khác" as in the design (vande-0411 #068): a country
- * with its price, a region with what it covers.
- */
-export function CrossCards({ items }: { items: CrossItem[] }) {
-  const tx = useT();
-  const money = useMoney();
-  return (
-    <>
-      {items.map((item) => (
-        <a key={item.key} href={item.href} className="cross-card" data-testid="cross-card">
-          <span className="cross-logo">
-            {item.imageUrl || item.countryCode ? (
-              <RoundImage code={item.countryCode ?? ""} url={item.imageUrl} />
-            ) : (
-              <span className="cross-globe"><Ic name="ic-globe" w={22} /></span>
-            )}
-          </span>
-          <div className="cross-txt">
-            <h3 className="cross-title">{item.title}</h3>
-            <span className="cross-price">
-              {item.countryCount
-                ? tx("{0} điểm đến · có {1}", item.countryCount, item.includes ?? "")
-                : item.fromPrice
-                  ? tx("Từ {0}", money.format(item.fromPrice))
-                  : tx("Xem các gói eSIM")}
-            </span>
-          </div>
-          <Ic name="ic-chev-right" w={18} cls="ic cross-arrow" />
-        </a>
-      ))}
-    </>
-  );
-}

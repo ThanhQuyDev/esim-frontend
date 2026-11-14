@@ -5,7 +5,6 @@
 import { footerReached, scrollToVoucherPopup, useChatAboveBar, useVoucherArrow } from "./buy-bar";
 import { esimName } from "@/lib/esim-name";
 import type { Locale } from "@/lib/i18n-config";
-import type { CrossItem } from "@/lib/cross-sell";
 import { tr, useT } from "../../local-esim/design/design-i18n";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { getCloudinaryTransformedUrl } from "@/lib/image-utils";
@@ -20,7 +19,6 @@ import {
   CountriesModal,
   ScopesModal,
   CovFlags,
-  CrossCards,
   DeliveryRows,
   DestPicker,
   DestRes,
@@ -44,7 +42,6 @@ interface Props {
   label: string;
   lang: string;
   breadcrumb: { home: string; destinations: string };
-  cross?: CrossItem[];
 }
 
 /** Carriers of a country page's plans, "China Unicom, China Mobile" (vande #032). */
@@ -76,7 +73,7 @@ export function coverageLine(p: RegionPurchase): string {
  * (#067, test round 4). Markup and class names follow the design file one to
  * one; the design's script is replaced by React state (rg-state / rg-parts).
  */
-export function RgDesktop({ p, label, lang, breadcrumb, cross = [] }: Props) {
+export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
   const tx = useT();
   const plan = p.plan;
   const [tab, setTab] = useState<0 | 1>(0);
@@ -474,15 +471,6 @@ export function RgDesktop({ p, label, lang, breadcrumb, cross = [] }: Props) {
           </p>
         </div>
       </main>{" "}
-      {cross.length > 0 && (
-        <section aria-labelledby="crossHd" className="cross">
-          <h2 className="cross-hd" id="crossHd">{tx("Xem eSIM cho các điểm đến khác")}</h2>{" "}
-          <p className="cross-lead">{tx("Mỗi điểm đến có nhà mạng, vùng phủ sóng và bảng giá riêng — chọn gói phù hợp nhất với hành trình và nhu cầu data của bạn.")}</p>{" "}
-          <div className="cross-grid cross-grid--3">
-            <CrossCards items={cross} />
-          </div>
-        </section>
-      )}{" "}
       <CountriesModal p={p} open={ctr} onClose={() => setCtr(false)} />
       <ScopesModal
         p={p}

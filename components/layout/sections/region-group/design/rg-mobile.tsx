@@ -4,7 +4,6 @@
 import { footerReached, useChatAboveBar } from "./buy-bar";
 import { esimName } from "@/lib/esim-name";
 import type { Locale } from "@/lib/i18n-config";
-import type { CrossItem } from "@/lib/cross-sell";
 import { useT } from "../../local-esim/design/design-i18n";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { getCloudinaryTransformedUrl } from "@/lib/image-utils";
@@ -20,7 +19,6 @@ import {
   CountriesModal,
   ScopesModal,
   CovFlags,
-  CrossCards,
   DeliveryRows,
   DestRes,
   DestTrigger,
@@ -44,7 +42,6 @@ interface Props {
   label: string;
   lang: string;
   breadcrumb: { home: string; destinations: string };
-  cross?: CrossItem[];
 }
 
 /**
@@ -52,7 +49,7 @@ interface Props {
  * (#067, test round 4). The design's own top bar is left out: the site header
  * is shared by every page.
  */
-export function RgMobile({ p, label, lang, breadcrumb, cross = [] }: Props) {
+export function RgMobile({ p, label, lang, breadcrumb }: Props) {
   const tx = useT();
   const plan = p.plan;
   const [ctr, setCtr] = useState(false);
@@ -380,15 +377,6 @@ export function RgMobile({ p, label, lang, breadcrumb, cross = [] }: Props) {
             </section>
           </AccItem>
         </section>{" "}
-        {cross.length > 0 && (
-          <section className="m-cross" aria-labelledby="crossHd">
-            <h2 className="cross-hd" id="crossHd">{tx("Xem eSIM cho các điểm đến khác")}</h2>{" "}
-            <p className="cross-lead">{tx("Mỗi điểm đến có nhà mạng, vùng phủ sóng và bảng giá riêng — chọn gói phù hợp nhất với hành trình và nhu cầu data của bạn.")}</p>{" "}
-            <div className="m-cross-list">
-              <CrossCards items={cross} />
-            </div>
-          </section>
-        )}
       </main>
       <div
         className={`m-buy${buyShow ? " show" : ""}${tight ? " is-tight" : ""}${tight > 1 ? " is-tight2" : ""}`}

@@ -1,7 +1,6 @@
 "use client";
 
 
-import type { CrossItem } from "@/lib/cross-sell";
 import { DesignLangProvider, tr } from "../local-esim/design/design-i18n";
 import "./design/rg-desktop.css";
 import "./design/rg-mobile.css";
@@ -24,8 +23,6 @@ interface RegionDesignProps {
   initialPlans?: PlansByDestinationResponse | null;
   /** Country page: the CMS note, shown in the design's own note bar. */
   noticeHtml?: string | null;
-  /** "Xem eSIM cho các điểm đến khác" (vande-0411 #068). */
-  cross?: CrossItem[];
   /** The packs of one region (one for a plain region page). */
   members: Region[];
   /** "Châu Á" — the region's name without its country count. */
@@ -43,7 +40,7 @@ interface RegionDesignProps {
  * plans. Only the layout for the device is rendered — one <h1> per page
  * (#001); both share one purchase state, so a resize keeps the choices.
  */
-export function RegionDesign({ members, label, lang, initialSlug, country, initialPlans, noticeHtml, cross }: RegionDesignProps) {
+export function RegionDesign({ members, label, lang, initialSlug, country, initialPlans, noticeHtml }: RegionDesignProps) {
   const p = useRegionPurchase(members, lang, initialSlug, country, initialPlans, noticeHtml);
   const variant = useDeviceVariant();
   const breadcrumb = {
@@ -56,9 +53,9 @@ export function RegionDesign({ members, label, lang, initialSlug, country, initi
     <div className="rg-page" data-testid="region-design">
       <RgSprite />
       {variant === "desktop" ? (
-        <RgDesktop p={p} label={label} lang={lang} breadcrumb={breadcrumb} cross={cross} />
+        <RgDesktop p={p} label={label} lang={lang} breadcrumb={breadcrumb} />
       ) : (
-        <RgMobile p={p} label={label} lang={lang} breadcrumb={breadcrumb} cross={cross} />
+        <RgMobile p={p} label={label} lang={lang} breadcrumb={breadcrumb} />
       )}
       <CartConfirmDialog
         open={p.cartOpen}
@@ -87,9 +84,7 @@ export function CountryDesign({
   lang,
   initialPlans,
   noticeHtml,
-  cross,
 }: {
-  cross?: CrossItem[];
   destination: Destination;
   label: string;
   lang: Locale;
@@ -109,7 +104,6 @@ export function CountryDesign({
       country={destination}
       initialPlans={initialPlans}
       noticeHtml={noticeHtml}
-      cross={cross}
     />
   );
 }
