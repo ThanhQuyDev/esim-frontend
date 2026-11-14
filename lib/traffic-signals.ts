@@ -90,6 +90,13 @@ function currentSignals(): { signals: TrafficSignals; internal: boolean } {
   return { signals, internal };
 }
 
+function withoutOwnFetchSite(signals: TrafficSignals): TrafficSignals {
+  if (signals.secFetchSite !== "same-origin" && signals.secFetchSite !== "same-site") return signals;
+  const rest = { ...signals };
+  delete rest.secFetchSite;
+  return rest;
+}
+
 function recentSignals(): TrafficSignals | null {
   try {
     const saved = JSON.parse(localStorage.getItem(RECENT_KEY) ?? "null");
@@ -103,10 +110,25 @@ function recentSignals(): TrafficSignals | null {
 export function captureTrafficSignals(): TrafficSignals | null {
   if (typeof window === "undefined") return null;
   try {
+    // A page Chrome opened ahead while the address was being typed keeps its
+    // session storage only until it is shown: note the signals once it is
+    // (vande-1411 #038).
+    if ((document as Document & { prerendering?: boolean }).prerendering) {
+      document.addEventListener("prerenderingchange", () => captureTrafficSignals(), {
+        once: true,
+      });
+      return null;
+    }
     const saved = sessionStorage.getItem(SESSION_KEY);
-    if (saved) return JSON.parse(saved);
+    if (saved) {
+      // Still browsing: a tab opened from here later keeps the source too.
+      localStorage.setItem(RECENT_KEY, JSON.stringify({ signals: JSON.parse(saved), at: Date.now() }));
+      return JSON.parse(saved);
+    }
     const { signals, internal } = currentSignals();
-    const chosen = internal ? (recentSignals() ?? signals) : signals;
+    // Opened from one of our pages: the cookie only says "same-origin", which
+    // is not where the visit came from.
+    const chosen = internal ? (recentSignals() ?? withoutOwnFetchSite(signals)) : signals;
     sessionStorage.setItem(SESSION_KEY, JSON.stringify(chosen));
     localStorage.setItem(RECENT_KEY, JSON.stringify({ signals: chosen, at: Date.now() }));
     return chosen;
