@@ -90,7 +90,8 @@ export function InstallGuide({
       const open = () => {
         const toggle = document.getElementById("chat-bubble-toggle");
         if (toggle) {
-          if (toggle.getAttribute("aria-label") !== "Close chat") toggle.click();
+          // A click would only show the chat/Zalo choices (vande-2011 #022).
+          toggle.dispatchEvent(new Event("esim:open-web-chat"));
         } else if (tries++ < 20) timer = window.setTimeout(open, 150);
       };
       open();

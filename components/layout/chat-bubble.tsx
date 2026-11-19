@@ -13,7 +13,7 @@ import {
 import { useChatSocket, type ChatMessage, type ChatMessageQuote } from "@/lib/chat-socket";
 import { uploadToCloudinary, validateChatFile, type FileAttachment } from "@/lib/cloudinary";
 import { useAuth } from "@/lib/auth";
-import { MessageCircle, X, Send, Loader2, Paperclip, Image as ImageIcon, CornerUpLeft, MoreHorizontal, Maximize2, Minimize2 } from "lucide-react";
+import { MessageCircle, MessagesSquare, X, Send, Loader2, Paperclip, Image as ImageIcon, CornerUpLeft, MoreHorizontal, Maximize2, Minimize2 } from "lucide-react";
 import { chatDayLabel, chatTime, startsNewDay } from "@/lib/chat-days";
 import { EmojiPicker, ReactionBar, ReactionPicker } from "./chat-reactions";
 import { splitChatLinks } from "@/lib/chat-links";
@@ -170,7 +170,16 @@ export function ChatBubble() {
   // Browser title notification
   useTitleNotification(unreadCount, open);
 
+  // The launcher opens two choices: the chat here, and Zalo, which most
+  // Vietnamese customers prefer (vande-2011 #022).
+  const [choicesOpen, setChoicesOpen] = useState(false);
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  // The choices sit just above the launcher, wherever a page has moved it
+  // (the destination page's sticky bar lifts it).
+  const [choicesBottom, setChoicesBottom] = useState(88);
+
   const handleOpen = () => {
+    setChoicesOpen(false);
     if (!token) {
       openAuthModal();
       return;
@@ -180,34 +189,99 @@ export function ChatBubble() {
     markAsRead();
   };
 
+  // "Chat với chuyên viên" links elsewhere on the site open the web chat
+  // straight away, not the two choices.
+  const openRef = useRef(handleOpen);
+  openRef.current = handleOpen;
+  useEffect(() => {
+    const el = toggleRef.current;
+    if (!el) return;
+    const onOpen = () => openRef.current();
+    el.addEventListener(OPEN_WEB_CHAT_EVENT, onOpen);
+    return () => el.removeEventListener(OPEN_WEB_CHAT_EVENT, onOpen);
+  }, []);
+
+  const badge = (count: number, testId: string) =>
+    count > 0 ? (
+      <span
+        className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-sm font-medium text-white shadow-md"
+        data-testid={testId}
+      >
+        {count > 99 ? "99+" : count}
+      </span>
+    ) : null;
+
+  const corner = "fixed right-6 z-50 transition-[bottom] duration-300";
+
   return (
     <>
-      {/* Floating toggle button */}
+      {/* The two choices, stacked above the launcher. */}
+      {choicesOpen && !open && (
+        <div
+          className={`${corner} flex flex-col items-end gap-3`}
+          style={{ bottom: choicesBottom }}
+          data-testid="chat-choices"
+        >
+          <a
+            href={ZALO_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => setChoicesOpen(false)}
+            className="group flex items-center gap-2"
+            aria-label="Nhắn tin qua Zalo"
+            data-testid="chat-choice-zalo"
+          >
+            <span className="rounded-full bg-white px-3 py-1 text-sm font-medium text-gray-800 shadow-md">
+              Zalo
+            </span>
+            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#0068ff] text-white shadow-lg transition-transform group-hover:scale-105">
+              <ZaloMark />
+            </span>
+          </a>
+          <button
+            type="button"
+            onClick={handleOpen}
+            className="group flex items-center gap-2"
+            aria-label="Chat với esim.vn"
+            data-testid="chat-choice-web"
+          >
+            <span className="rounded-full bg-white px-3 py-1 text-sm font-medium text-gray-800 shadow-md">
+              Chat trên web
+            </span>
+            <span className="relative flex h-12 w-12 items-center justify-center rounded-full bg-[#5353ff] text-white shadow-lg transition-transform group-hover:scale-105">
+              <MessageCircle className="h-6 w-6" />
+              {badge(unreadCount, "chat-choice-web-unread")}
+            </span>
+          </button>
+        </div>
+      )}
+
+      {/* Floating launcher */}
       <button
         onClick={() => {
           if (open) {
             setOpen(false);
           } else {
-            handleOpen();
+            const top = toggleRef.current?.getBoundingClientRect().top;
+            if (top !== undefined) setChoicesBottom(window.innerHeight - top + 12);
+            setChoicesOpen((v) => !v);
           }
         }}
         // On a phone the open chat fills the screen and has its own close
         // button; the floating one would only sit over the send box (#070).
-        className={`fixed bottom-[calc(1.5rem+var(--buy-bar-h,0px))] right-6 z-50 h-14 w-14 transition-[bottom] duration-300 items-center justify-center rounded-full bg-[#1a1a1a] text-white shadow-lg transition-transform hover:scale-105 active:scale-95 ${open ? "hidden sm:flex" : "flex"}`}
-        aria-label={open ? "Close chat" : "Open support chat"}
+        className={`${corner} bottom-[calc(1.5rem+var(--buy-bar-h,0px))] h-14 w-14 items-center justify-center rounded-full bg-[#1a1a1a] text-white shadow-lg transition-transform hover:scale-105 active:scale-95 ${open ? "hidden sm:flex" : "flex"}`}
+        aria-label={open || choicesOpen ? "Close chat" : "Open support chat"}
+        aria-expanded={choicesOpen}
         id="chat-bubble-toggle"
+        ref={toggleRef}
       >
-        {open ? (
+        {open || choicesOpen ? (
           <X className="h-6 w-6" />
         ) : (
           <>
-            <MessageCircle className="h-6 w-6" />
-            {/* Unread badge */}
-            {unreadCount > 0 && (
-              <span className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-sm font-medium text-white shadow-md">
-                {unreadCount > 99 ? "99+" : unreadCount}
-              </span>
-            )}
+            <MessagesSquare className="h-6 w-6" />
+            {/* New messages from the team, waiting to be seen. */}
+            {badge(unreadCount, "chat-unread")}
           </>
         )}
       </button>
@@ -215,6 +289,37 @@ export function ChatBubble() {
       {/* Chat window */}
       {open && token && <ChatWindow onClose={() => setOpen(false)} />}
     </>
+  );
+}
+
+const ZALO_URL = "https://zalo.me/0976898989";
+
+/**
+ * Sent to #chat-bubble-toggle to open the web chat itself (vande-2011 #022):
+ * a click on the launcher now only shows the two choices.
+ */
+export const OPEN_WEB_CHAT_EVENT = "esim:open-web-chat";
+
+/** The word "Zalo" in a speech bubble, white on the Zalo blue. */
+function ZaloMark() {
+  return (
+    <svg viewBox="0 0 32 32" className="h-7 w-7" aria-hidden="true">
+      <path
+        d="M16 4C8.8 4 3 8.9 3 15c0 3.4 1.8 6.4 4.6 8.4L6.5 28l5-2.6c1.4.4 2.9.6 4.5.6 7.2 0 13-4.9 13-11S23.2 4 16 4z"
+        fill="#fff"
+      />
+      <text
+        x="16"
+        y="18.5"
+        textAnchor="middle"
+        fontSize="8.5"
+        fontWeight="700"
+        fontFamily="Arial, sans-serif"
+        fill="#0068ff"
+      >
+        Zalo
+      </text>
+    </svg>
   );
 }
 

@@ -45,7 +45,8 @@ const EN = {
 function openChatBubble() {
   if (typeof document === "undefined") return;
   const toggle = document.getElementById("chat-bubble-toggle") as HTMLButtonElement | null;
-  toggle?.click();
+  // A click would only show the chat/Zalo choices (vande-2011 #022).
+  toggle?.dispatchEvent(new Event("esim:open-web-chat"));
 }
 
 

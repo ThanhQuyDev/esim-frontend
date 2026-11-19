@@ -87,6 +87,11 @@ export function useChatSocket() {
       (data: { chatRoomId: number; messages: ChatMessage[] }) => {
         // Server returns DESC (newest first), reverse for chronological display
         setMessages(data.messages.slice().reverse());
+        // Replies that came while the customer was away still wait on the
+        // launcher's badge (vande-2011 #022); it only counted live ones.
+        setUnreadCount(
+          data.messages.filter((m) => !m.isRead && m.senderId !== user?.id).length
+        );
       }
     );
 
