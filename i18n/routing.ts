@@ -54,6 +54,9 @@ export const routing = defineRouting({
     },
 
     // What is eSIM
+    // The sitemap for people (vande-2011 #015): /sitemap, /en/sitemap.
+    '/sitemap': '/sitemap',
+
     '/what-is-esim': {
       vi: '/esim-la-gi',
       en: '/what-is-esim',

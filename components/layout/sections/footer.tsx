@@ -170,6 +170,14 @@ export async function FooterSection({
                   {policy.navLabel[lang ?? "vi"]}
                 </Link>
               ))}
+              {/* After "Chính sách bảo mật" (vande-2011 #015). */}
+              <a
+                className="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus hover:underline inline-block text-text-tertiary"
+                href={lang === "en" ? "/en/sitemap" : "/sitemap"}
+                data-testid="footer-sitemap"
+              >
+                {lang === "en" ? "Sitemap" : "Sơ đồ trang web"}
+              </a>
             </span>
           </p>
         </div>
