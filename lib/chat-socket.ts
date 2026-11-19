@@ -40,9 +40,42 @@ export interface ChatMessage {
 
 export type { FileAttachment } from "@/lib/cloudinary";
 
+// ===== Visitors (vande-2011 #023) =====
+
+/**
+ * A visitor without an account chats under a key the server signed; it is kept
+ * here so the conversation is still theirs on the next visit. When they sign
+ * in, the server moves the conversation to the account and this is dropped.
+ */
+const GUEST_TOKEN_KEY = "esim_chat_guest";
+/** The server shows a visitor, and a visitor's messages, as user -1. */
+export const GUEST_USER_ID = -1;
+
+function readGuestToken(): string | null {
+  try {
+    return localStorage.getItem(GUEST_TOKEN_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function writeGuestToken(value: string | null) {
+  try {
+    if (value) localStorage.setItem(GUEST_TOKEN_KEY, value);
+    else localStorage.removeItem(GUEST_TOKEN_KEY);
+  } catch {
+    // Private mode: the visitor gets a new conversation next time.
+  }
+}
+
 // ===== Hook =====
 
-export function useChatSocket() {
+/**
+ * `asGuest`: a visitor without an account opened the chat window, so start
+ * (or resume) their conversation. Without it a visitor connects only if they
+ * already have one, for the launcher's unread badge.
+ */
+export function useChatSocket({ asGuest = false }: { asGuest?: boolean } = {}) {
   const { token, user } = useAuth();
   const socketRef = useRef<Socket | null>(null);
   const [connected, setConnected] = useState(false);
@@ -51,12 +84,35 @@ export function useChatSocket() {
   const [error, setError] = useState<string | null>(null);
   const [unreadCount, setUnreadCount] = useState(0);
 
+  const guest = !token;
+  const myId = token ? (user?.id ?? null) : GUEST_USER_ID;
+  const myIdRef = useRef(myId);
+  myIdRef.current = myId;
+
+  // A refusal (too fast, a link…) shows for a moment, then goes.
+  useEffect(() => {
+    if (!error) return;
+    const t = window.setTimeout(() => setError(null), 6000);
+    return () => window.clearTimeout(t);
+  }, [error]);
+
   // Connect socket when token is available
   useEffect(() => {
-    if (!token) return;
+    const guestToken = readGuestToken();
+    let auth: Record<string, unknown>;
+    if (token) {
+      // An earlier visitor conversation joins the account (#023).
+      auth = guestToken ? { token, guest: guestToken } : { token };
+    } else if (guestToken) {
+      auth = { guest: guestToken };
+    } else if (asGuest) {
+      auth = { asGuest: true };
+    } else {
+      return;
+    }
 
     const socket = io(`${API_BASE_URL}/chat`, {
-      auth: { token },
+      auth,
       transports: ["websocket", "polling"],
       reconnection: true,
       reconnectionAttempts: 5,
@@ -68,19 +124,27 @@ export function useChatSocket() {
     socket.on("connect", () => {
       setConnected(true);
       setError(null);
-      // User auto-joins their own room
-      socket.emit("joinRoom", {});
+      // User auto-joins their own room; a visitor's is made only once they
+      // open the chat window.
+      socket.emit("joinRoom", token ? {} : { create: asGuest });
     });
 
     socket.on("disconnect", () => {
       setConnected(false);
     });
 
-    socket.on("joinedRoom", (data: { roomId: number; userId: number }) => {
+    socket.on(
+      "joinedRoom",
+      (data: { roomId: number | null; userId: number; guestToken?: string }) => {
+      if (data.guestToken) writeGuestToken(data.guestToken);
+      if (!data.roomId) return;
       setRoomId(data.roomId);
       // Load message history
       socket.emit("getMessages", { chatRoomId: data.roomId, limit: 50 });
     });
+
+    // The visitor conversation is now the account's (#023).
+    socket.on("guestAdopted", () => writeGuestToken(null));
 
     socket.on(
       "messages",
@@ -90,7 +154,7 @@ export function useChatSocket() {
         // Replies that came while the customer was away still wait on the
         // launcher's badge (vande-2011 #022); it only counted live ones.
         setUnreadCount(
-          data.messages.filter((m) => !m.isRead && m.senderId !== user?.id).length
+          data.messages.filter((m) => !m.isRead && m.senderId !== myIdRef.current).length
         );
       }
     );
@@ -98,7 +162,7 @@ export function useChatSocket() {
     socket.on("newMessage", (msg: ChatMessage) => {
       setMessages((prev) => [...prev, msg]);
       // Increment unread if message is from admin (not from current user)
-      if (msg.senderId !== user?.id) {
+      if (msg.senderId !== myIdRef.current) {
         setUnreadCount((prev) => prev + 1);
       }
     });
@@ -124,7 +188,7 @@ export function useChatSocket() {
       setRoomId(null);
       setMessages([]);
     };
-  }, [token]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [token, asGuest]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const sendMessage = useCallback(
     (text: string, attachment?: FileAttachment, replyToId?: number | null) => {
@@ -186,6 +250,8 @@ export function useChatSocket() {
     markAsRead,
     react,
     unreadCount,
-    userId: user?.id ?? null,
+    userId: myId,
+    /** Chatting without an account (#023): text only. */
+    guest,
   };
 }

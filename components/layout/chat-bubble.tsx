@@ -163,7 +163,6 @@ function useTitleNotification(unreadCount: number, chatOpen: boolean) {
 // ===== Chat Bubble — fixed bottom-right =====
 
 export function ChatBubble() {
-  const { user, token, openAuthModal } = useAuth();
   const [open, setOpen] = useState(false);
   const { unreadCount, markAsRead } = useChatSocket();
 
@@ -180,10 +179,7 @@ export function ChatBubble() {
 
   const handleOpen = () => {
     setChoicesOpen(false);
-    if (!token) {
-      openAuthModal();
-      return;
-    }
+    // No account needed any more: a visitor chats too (vande-2011 #023).
     setOpen(true);
     // Mark messages as read when opening chat
     markAsRead();
@@ -287,7 +283,7 @@ export function ChatBubble() {
       </button>
 
       {/* Chat window */}
-      {open && token && <ChatWindow onClose={() => setOpen(false)} />}
+      {open && <ChatWindow onClose={() => setOpen(false)} />}
     </>
   );
 }
@@ -326,7 +322,9 @@ function ZaloMark() {
 // ===== Chat Window =====
 
 function ChatWindow({ onClose }: { onClose: () => void }) {
-  const { connected, messages, sendMessage, error, userId, markAsRead, react } = useChatSocket();
+  const { connected, messages, sendMessage, error, userId, markAsRead, react, guest } =
+    useChatSocket({ asGuest: true });
+  const { openAuthModal } = useAuth();
   const [input, setInput] = useState("");
   const [uploading, setUploading] = useState(false);
   /** Message being quoted, cleared once the reply is sent (#073). */
@@ -596,6 +594,19 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
       )}
 
       {/* Input area */}
+      {/* A visitor chats as a guest (vande-2011 #023). */}
+      {guest && (
+        <div
+          className="border-t border-gray-100 bg-white px-3 pt-2 text-[12px] leading-4 text-gray-500"
+          data-testid="chat-guest-note"
+        >
+          Bạn đang chat với tư cách khách.{" "}
+          <button type="button" onClick={openAuthModal} className="font-medium text-[#5353ff] hover:underline">
+            Đăng nhập
+          </button>{" "}
+          để gửi ảnh và giữ lịch sử trò chuyện.
+        </div>
+      )}
       <form
         onSubmit={handleSubmit}
         onKeyDown={(e) => {
@@ -607,7 +618,9 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
         }}
         className="flex items-center gap-2 border-t border-gray-200 bg-white px-3 py-2"
       >
-        {/* File attachment button */}
+        {/* File attachment button: needs an account, so a visitor has no
+            upload path at all (vande-2011 #023). */}
+        {!guest && (
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
@@ -621,6 +634,7 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
             <Paperclip className="h-4 w-4" />
           )}
         </button>
+        )}
         <input
           ref={fileInputRef}
           type="file"

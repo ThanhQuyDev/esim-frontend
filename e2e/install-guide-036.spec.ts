@@ -47,8 +47,8 @@ test.describe("eSIM setup guide fixes (vande #036)", () => {
     const url = page.url();
     await expect(page.locator("#chat-bubble-toggle")).toBeAttached({ timeout: 30000 });
     await chat.click();
-    // A guest is asked to sign in first, as with the chat bubble itself.
-    await expect(page.getByText("Đăng nhập / Đăng ký")).toBeVisible();
+    // A guest chats without signing in (vande-2011 #023).
+    await expect(page.getByTestId("chat-input")).toBeVisible();
     expect(page.url()).toBe(url);
   });
 });
