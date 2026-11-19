@@ -43,7 +43,7 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
   const [promoApplied, setPromoApplied] = useState<{ type: "coupon" | "referral"; code: string; discountVnd: number } | null>(null);
   const { data: usdToVndRate = 25_500 } = useExchangeRate();
   const { isApiCart, apiCartItems, getLocalCartData, updateItem, removeItem, isLoading: cartLoading } = useCart();
-  const { user, openAuthModal, token } = useAuth();
+  const { user, openAuthModal, token, authModalOpen } = useAuth();
   const { data: referralProfile } = useReferralProfile();
   const { data: wallet } = useWalletMe();
   const { mutateAsync: validateReferral } = useValidateReferral();
@@ -51,12 +51,33 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
   const autoValidatedReferralRef = useRef<string | null>(null);
   const wt = walletTranslations[lang as "en" | "vi"];
 
+  // What was ticked before signing in, by plan and days (vande-2011 #002 →
+  // #007): the guest cart's line keys are not the server cart's, so the
+  // selection used to point at nothing and the cart read "0 sản phẩm".
+  const guestSelectionRef = useRef<{ planId?: number; days?: number }[] | null>(null);
+
   // Sync cart items from API or localStorage
   // On mount: clear any stale coupon from previous checkout session
   useEffect(() => {
     if (isApiCart) {
       setCart({ items: apiCartItems, appliedCoupon: null });
-      setSelectedIds((prev) => prev.size === 0 ? new Set(apiCartItems.map((i) => i.id)) : prev);
+      setSelectedIds((prev) => {
+        const known = apiCartItems.filter((i) => prev.has(i.id));
+        if (prev.size > 0 && known.length > 0) return prev;
+        // Just signed in: tick the server lines matching what was ticked as
+        // a guest; nothing matched (or nothing ticked) → tick everything.
+        const wanted = guestSelectionRef.current;
+        if (wanted && wanted.length > 0) {
+          const matched = apiCartItems.filter((i) =>
+            wanted.some(
+              (w) =>
+                w.planId === i.planId && (w.days ?? null) === (i.durationDays ?? null)
+            )
+          );
+          if (matched.length > 0) return new Set(matched.map((i) => i.id));
+        }
+        return new Set(apiCartItems.map((i) => i.id));
+      });
     } else {
       const c = getLocalCartData();
       // Clear stale coupon — user must re-apply each session
@@ -341,22 +362,39 @@ export function CartPageContent({ dict, lang }: CartPageContentProps) {
     window.location.href = localizedHref(lang, "checkout");
   };
 
+  // Remember the guest's ticked lines for after sign-in (vande-2011 #007).
+  useEffect(() => {
+    if (isApiCart) return;
+    guestSelectionRef.current = cart.items
+      .filter((i) => selectedIds.has(i.id))
+      .map((i) => ({ planId: i.planId ?? Number(i.id), days: i.durationDays }));
+  }, [isApiCart, cart.items, selectedIds]);
+
   // After login completes, if checkout was pending, proceed to checkout.
   // We no longer re-read `cart.items` here because the API cart may still
   // be refetching (and will be empty for a brief moment). The selected
   // items were already persisted to localStorage before the auth modal
   // opened, so the checkout page will have everything it needs.
+  //
+  // Only once the sign-in window is closed (vande-2011 #007): signing up goes
+  // on after the code (the password is saved, then "Hoàn tất"), and the user
+  // object changed meanwhile, which cancelled the timer below after the flag
+  // was already cleared — the new customer stayed on the cart for good.
+  const signedIn = !!user;
   useEffect(() => {
-    if (user && pendingCheckoutRef.current) {
-      pendingCheckoutRef.current = false;
-      // Brief delay so the auth modal close animation finishes and the
-      // auth state settles before navigating.
-      const timer = setTimeout(() => {
-        window.location.href = localizedHref(lang, "checkout");
-      }, 800);
-      return () => clearTimeout(timer);
-    }
-  }, [user, lang]);
+    if (!signedIn || authModalOpen || !pendingCheckoutRef.current) return;
+    pendingCheckoutRef.current = false;
+    // Brief delay so the auth modal close animation finishes and the server
+    // cart has the guest's lines before the checkout page reads them.
+    const timer = setTimeout(() => {
+      window.location.href = localizedHref(lang, "checkout");
+    }, 800);
+    return () => {
+      clearTimeout(timer);
+      // Cancelled before it went: keep it pending for the next render.
+      pendingCheckoutRef.current = true;
+    };
+  }, [signedIn, authModalOpen, lang]);
 
   const toggleSelect = (id: string) => {
     setSelectedIds((prev) => {
