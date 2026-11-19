@@ -215,6 +215,8 @@ export interface Region {
   childCount?: number;
   /** In a list: plans on sale now (vande-1411 #031). */
   planCount?: number;
+  /** Every plan of it is an add-on (or top-up) pack (vande-2011 #019). */
+  packKind?: "addon" | "topup" | null;
   /** Ticked "Làm khu vực cha" (vande-0411 #073). */
   isParent?: boolean;
   isActive: boolean;

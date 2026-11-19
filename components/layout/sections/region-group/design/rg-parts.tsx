@@ -389,6 +389,12 @@ export function ScopesModal({
                       ))}
                       {dests.length > slots && <span className="cv-more">+{dests.length - slots}</span>}
                     </span>
+                    {/* Flags | countries and name (vande-2011 #019). */}
+                    <span
+                      aria-hidden="true"
+                      data-testid="cv-sep"
+                      style={{ alignSelf: "stretch", width: 1, margin: "0.25rem 0.75rem 0.25rem 0", background: "#e5e7eb", flexShrink: 0 }}
+                    />
                     <span className="cv-t">
                       <span className="cv-h">
                         <b>{count(p, i)}{" "}{tx("nước")}</b>
@@ -396,6 +402,9 @@ export function ScopesModal({
                       </span>
                       <span className="cv-s">
                         {(p.lang === "vi" ? m.titleVi || m.title : m.title || m.titleVi) || m.name}
+                        {/* Billion's add-on pack has the plain pack's name ("Asia
+                            19"); say which one it is (vande-2011 #019). */}
+                        {m.packKind === "addon" && " - addon"}
                       </span>
                       <span className="cv-m">{note}</span>
                     </span>

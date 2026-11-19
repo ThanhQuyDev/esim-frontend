@@ -176,6 +176,8 @@ async function withCountryLists(
         ...full,
         fromPrice: full.fromPrice ?? member.fromPrice,
         destinationCount: full.destinationCount ?? member.destinationCount,
+        // Add-on or top-up pack, known only to the list entry (vande-2011 #019).
+        packKind: full.packKind ?? member.packKind ?? null,
       });
       if (known && member.id === known.id) return keep(known);
       const full = await getRegionBySlug(
