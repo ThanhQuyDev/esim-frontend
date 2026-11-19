@@ -87,6 +87,8 @@ export function EsimLookupContent({
           >
             {dict.form.label}
           </label>
+          {/* On a phone the box and the button stack; `flex-1` there squeezed
+              the box to 22px tall (vande-2011 #017), so it grows only in a row. */}
           <div className="flex gap-2 max-sm:flex-col">
             <input
               id="lookup-iccid"
@@ -96,7 +98,7 @@ export function EsimLookupContent({
               placeholder={dict.form.placeholder}
               value={iccid}
               onChange={(e) => setIccid(e.target.value)}
-              className="flex-1 h-[50px] rounded-[30px] border border-[#e5e7eb] px-5 text-base outline-none focus:border-[#9ca3af]"
+              className="h-[50px] min-h-[50px] w-full shrink-0 rounded-[30px] border border-[#e5e7eb] bg-white px-5 text-base outline-none focus:border-[#9ca3af] sm:w-auto sm:flex-1"
               data-testid="lookup-iccid-input"
             />
             <button
