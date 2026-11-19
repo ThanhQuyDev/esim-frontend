@@ -1,23 +1,12 @@
 "use client";
 
+import { formatDate } from "./blog-detail-helpers";
 import Link from "next/link";
 import Image from "next/image";
 import { BookOpen } from "lucide-react";
 import type { Blog } from "@/lib/api";
 import { authorHref } from "./blog-detail-helpers";
 
-function formatDate(dateStr: string | null): string {
-  if (!dateStr) return "";
-  try {
-    return new Date(dateStr).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  } catch {
-    return "";
-  }
-}
 
 export function categorySlug(cat: string): string {
   return cat
@@ -72,7 +61,7 @@ export function BlogMeta({
       {date && (
         <div>
           <time dateTime={date} className="flex gap-2 items-center text-secondary">
-            <p className="body-xs">{formatDate(date)}</p>
+            <p className="body-xs">{formatDate(date, lang)}</p>
           </time>
         </div>
       )}

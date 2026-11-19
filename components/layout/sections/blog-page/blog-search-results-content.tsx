@@ -1,5 +1,6 @@
 "use client";
 
+import { formatDate, formatTimeRead } from "./blog-detail-helpers";
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -22,18 +23,6 @@ interface SearchResponse {
   total?: number;
 }
 
-function formatDate(dateStr: string | null): string {
-  if (!dateStr) return "";
-  try {
-    return new Date(dateStr).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  } catch {
-    return "";
-  }
-}
 
 function categorySlug(cat: string): string {
   return cat
@@ -66,7 +55,7 @@ function BlogMeta({ date, timeRead, lang }: { date: string | null; timeRead: str
       {date && (
         <div>
           <time dateTime={date} className="flex gap-2 items-center text-secondary">
-            <p className="body-xs">{formatDate(date)}</p>
+            <p className="body-xs">{formatDate(date, lang)}</p>
           </time>
         </div>
       )}
@@ -74,7 +63,7 @@ function BlogMeta({ date, timeRead, lang }: { date: string | null; timeRead: str
         <div>
           <div className="flex gap-2 items-center text-secondary">
             <BookOpen size={16} />
-            <p className="body-xs">{timeRead} {lang === "vi" ? "phút" : "min"}</p>
+            <p className="body-xs">{formatTimeRead(timeRead, lang)}</p>
           </div>
         </div>
       )}

@@ -1,17 +1,28 @@
 import { getFooters, pickLocalizedTitle, type Blog, type Plan } from "@/lib/api";
 import type { Locale } from "@/lib/i18n-config";
 
-export function formatDate(dateStr: string | null): string {
+/**
+ * A post's date in the reader's language (vande-2011 #016): "20/11/2026" on a
+ * Vietnamese page, "Nov 20, 2026" in English. Vietnamese pages printed the
+ * English form, Vietnam time either way.
+ */
+export function formatDate(dateStr: string | null | undefined, lang: string = "vi"): string {
   if (!dateStr) return "";
-  try {
-    return new Date(dateStr).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  } catch {
-    return "";
-  }
+  const date = new Date(dateStr);
+  if (Number.isNaN(date.getTime())) return "";
+  return lang === "en"
+    ? date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        timeZone: "Asia/Ho_Chi_Minh",
+      })
+    : date.toLocaleDateString("vi-VN", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        timeZone: "Asia/Ho_Chi_Minh",
+      });
 }
 
 export function categorySlug(cat: string): string {
@@ -63,10 +74,20 @@ export function authorHref(
   return `${prefix}/blog/author/${encodeURIComponent(slug)}`;
 }
 
-export function formatTimeRead(timeRead: number | string | null): string {
-  if (timeRead === null || timeRead === undefined) return "";
-  if (typeof timeRead === "number") return `${timeRead} min read`;
-  return timeRead;
+/**
+ * "5 phút đọc" / "5 min read" (vande-2011 #016). A number of minutes, or a
+ * text the CMS kept ("5 min read", "5 phút"): its number is read out and
+ * written in the page's language.
+ */
+export function formatTimeRead(
+  timeRead: number | string | null | undefined,
+  lang: string = "vi"
+): string {
+  if (timeRead === null || timeRead === undefined || timeRead === "") return "";
+  const minutes =
+    typeof timeRead === "number" ? timeRead : Number(String(timeRead).match(/\d+/)?.[0]);
+  if (!Number.isFinite(minutes)) return String(timeRead);
+  return lang === "en" ? `${minutes} min read` : `${minutes} phút đọc`;
 }
 
 export function formatDataMb(mb: number): string {

@@ -1,21 +1,10 @@
+import { formatDate, formatTimeRead } from "./blog-detail-helpers";
 import Link from "next/link";
 import Image from "next/image";
 import { BookOpen } from "lucide-react";
 import type { Blog } from "@/lib/api";
 import { blogDetailHref, categorySlug } from "./blog-detail-helpers";
 
-function formatDate(dateStr: string | null): string {
-  if (!dateStr) return "";
-  try {
-    return new Date(dateStr).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  } catch {
-    return "";
-  }
-}
 
 interface BlogRelatedPostsProps {
   posts: Blog[];
@@ -76,13 +65,13 @@ export function BlogRelatedPosts({ posts, lang }: BlogRelatedPostsProps) {
                       dateTime={post.updatedAt}
                       className="flex gap-2 items-center text-secondary"
                     >
-                      <p className="body-xs">{formatDate(post.updatedAt)}</p>
+                      <p className="body-xs">{formatDate(post.updatedAt, lang)}</p>
                     </time>
                   )}
                   {post.timeRead != null && (
                     <div className="flex gap-2 items-center text-secondary">
                       <BookOpen size={16} />
-                      <p className="body-xs">{post.timeRead} min read</p>
+                      <p className="body-xs">{formatTimeRead(post.timeRead, lang)}</p>
                     </div>
                   )}
                 </div>

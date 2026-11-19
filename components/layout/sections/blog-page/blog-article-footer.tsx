@@ -50,7 +50,7 @@ function RelatedArticle({ article, lang }: { article: Blog; lang: string }) {
                     className="flex gap-2 items-center text-secondary"
                   >
                     <p className="body-xs scroll-mt-20 xl:scroll-mt-24">
-                      {formatDate(article.publishedAt || article.createdAt)}
+                      {formatDate(article.publishedAt || article.createdAt, lang)}
                     </p>
                   </time>
                 </div>
@@ -58,7 +58,7 @@ function RelatedArticle({ article, lang }: { article: Blog; lang: string }) {
                   <div>
                     <div className="flex gap-2 items-center text-secondary">
                       <BookOpen size={16} />
-                      <p className="body-xs scroll-mt-20 xl:scroll-mt-24">{formatTimeRead(article.timeRead)}</p>
+                      <p className="body-xs scroll-mt-20 xl:scroll-mt-24">{formatTimeRead(article.timeRead, lang)}</p>
                     </div>
                   </div>
                 )}

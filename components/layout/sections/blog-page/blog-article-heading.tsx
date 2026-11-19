@@ -83,14 +83,14 @@ export function BlogArticleHeading({ blog, lang, socialLinks = [] }: { blog: Blo
                     <div>
                       <time dateTime={publishedDate} className="flex gap-2 items-center text-secondary">
                         <Calendar size={24} />
-                        <p className="body-sm scroll-mt-20 xl:scroll-mt-24">{formatDate(publishedDate)}</p>
+                        <p className="body-sm scroll-mt-20 xl:scroll-mt-24">{formatDate(publishedDate, lang)}</p>
                       </time>
                     </div>
                     {blog.timeRead != null && (
                       <div>
                         <div className="flex gap-2 items-center text-secondary">
                           <BookOpen size={24} />
-                          <p className="body-sm scroll-mt-20 xl:scroll-mt-24">{formatTimeRead(blog.timeRead)}</p>
+                          <p className="body-sm scroll-mt-20 xl:scroll-mt-24">{formatTimeRead(blog.timeRead, lang)}</p>
                         </div>
                       </div>
                     )}
