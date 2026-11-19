@@ -282,7 +282,7 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
       return;
     }
     box.style.height = "auto";
-    box.style.height = `${Math.min(Math.max(box.scrollHeight, 64), 120)}px`;
+    box.style.height = `${Math.min(Math.max(box.scrollHeight, 40), 120)}px`;
   }, [input]);
 
   // Auto-scroll to bottom on new messages
@@ -500,7 +500,7 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
             setReplyTo(null);
           }
         }}
-        className="flex items-end gap-2 border-t border-gray-200 bg-white px-3 py-2"
+        className="flex items-center gap-2 border-t border-gray-200 bg-white px-3 py-2"
       >
         {/* File attachment button */}
         <button
@@ -516,20 +516,6 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
             <Paperclip className="h-4 w-4" />
           )}
         </button>
-        {/* Emoji into the message, where the cursor is (vande-1411 #037). */}
-        <EmojiPicker
-          disabled={!connected}
-          onPick={(emoji) => {
-            const box = inputRef.current;
-            const start = box?.selectionStart ?? input.length;
-            const end = box?.selectionEnd ?? input.length;
-            setInput(input.slice(0, start) + emoji + input.slice(end));
-            requestAnimationFrame(() => {
-              box?.focus({ preventScroll: true });
-              box?.setSelectionRange(start + emoji.length, start + emoji.length);
-            });
-          }}
-        />
         <input
           ref={fileInputRef}
           type="file"
@@ -539,39 +525,66 @@ function ChatWindow({ onClose }: { onClose: () => void }) {
           aria-hidden="true"
         />
 
-        {/* A textarea, so a message can span lines (v3 #006). 16px text on
-            phones: iOS zooms into anything smaller and stays zoomed. */}
-        <textarea
-          ref={inputRef}
-          rows={1}
-          value={input}
-          onChange={(e) => {
-            setInput(e.target.value);
-            // Grow with the text (up to max-h) so a line started with
-            // Shift+Enter is actually visible while typing (#005, round 4).
-            const el = e.currentTarget;
-            el.style.height = "auto";
-            el.style.height = `${Math.max(el.scrollHeight, 64)}px`;
-          }}
-          onKeyDown={(e) => {
-            // Never send mid-composition: Vietnamese IMEs (Telex/VNI) use Enter
-            // to commit the word being typed.
-            if (e.key === "Enter" && !e.shiftKey && enterSends && !e.nativeEvent.isComposing) {
-              e.preventDefault();
-              e.currentTarget.form?.requestSubmit();
-            }
-          }}
-          enterKeyHint={enterSends ? "send" : "enter"}
-          placeholder={enterSends ? "Nhập tin nhắn… (Shift+Enter để xuống dòng)" : "Nhập tin nhắn…"}
-          // Two lines high from the start, so the whole hint "Nhập tin nhắn…
-          // (Shift+Enter để xuống dòng)" shows (vande-1411 #036). It never
-          // shrinks below that, so the first key does not jolt it (vande #046);
-          // typing still grows it via the inline style.
-          className="h-16 max-h-[120px] min-h-16 flex-1 resize-none overflow-y-auto rounded-2xl border border-gray-200 bg-gray-50 px-4 py-2 text-base leading-6 outline-none transition-colors focus:border-[#1a1a1a] focus:bg-white sm:text-sm"
-          disabled={!connected}
-          aria-label="Chat message input"
-          data-testid="chat-input"
-        />
+        {/* The box (vande-2011 #020): one line high until a second line is
+            typed, the emoji button inside it on the left, a focus border in
+            the brand blue like the CMS, and the Shift+Enter hint in small
+            type on the same line instead of a second line with a scrollbar.
+            16px text on phones: iOS zooms into anything smaller. */}
+        <div className="relative min-w-0 flex-1">
+          <div className="absolute bottom-0 left-0.5 top-0 z-10 flex items-center">
+            <EmojiPicker
+              large
+              disabled={!connected}
+              onPick={(emoji) => {
+                const box = inputRef.current;
+                const start = box?.selectionStart ?? input.length;
+                const end = box?.selectionEnd ?? input.length;
+                setInput(input.slice(0, start) + emoji + input.slice(end));
+                requestAnimationFrame(() => {
+                  box?.focus({ preventScroll: true });
+                  box?.setSelectionRange(start + emoji.length, start + emoji.length);
+                });
+              }}
+            />
+          </div>
+          <textarea
+            ref={inputRef}
+            rows={1}
+            value={input}
+            onChange={(e) => {
+              setInput(e.target.value);
+              // Grow with the text (up to max-h) so a line started with
+              // Shift+Enter is actually visible while typing (#005, round 4).
+              const el = e.currentTarget;
+              el.style.height = "auto";
+              el.style.height = `${Math.max(el.scrollHeight, 40)}px`;
+            }}
+            onKeyDown={(e) => {
+              // Never send mid-composition: Vietnamese IMEs (Telex/VNI) use Enter
+              // to commit the word being typed.
+              if (e.key === "Enter" && !e.shiftKey && enterSends && !e.nativeEvent.isComposing) {
+                e.preventDefault();
+                e.currentTarget.form?.requestSubmit();
+              }
+            }}
+            enterKeyHint={enterSends ? "send" : "enter"}
+            placeholder={enterSends ? "" : "Nhập tin nhắn…"}
+            className="block h-10 max-h-[120px] min-h-10 w-full resize-none overflow-y-auto rounded-2xl border-2 border-gray-200 bg-gray-50 py-[6px] pl-10 pr-2 text-base leading-6 outline-none transition-colors focus:border-[#5353ff] focus:bg-white sm:text-sm"
+            disabled={!connected}
+            aria-label="Chat message input"
+            data-testid="chat-input"
+          />
+          {enterSends && !input && (
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-y-0 left-10 right-1 flex items-center gap-0.5 overflow-hidden whitespace-nowrap text-gray-400"
+              data-testid="chat-hint"
+            >
+              <span className="shrink-0 text-base sm:text-[13px]">Nhập tin nhắn…</span>
+              <span className="truncate text-[10px] tracking-tight">· Shift+Enter: xuống dòng</span>
+            </span>
+          )}
+        </div>
         <button
           type="submit"
           // Tapping send must not take the focus from the box: on a phone that
@@ -697,7 +710,7 @@ function MessageBubble({
           hasMedia && !hasTextContent
             ? "p-0 bg-transparent"
             : isOwn
-              ? "px-3.5 py-2 bg-[#5353ff] text-white rounded-br-md"
+              ? "px-3.5 py-2 bg-[#eef0ff] text-gray-900 border border-[#5353ff]/25 rounded-br-md"
               : "px-3.5 py-2 bg-white text-gray-800 border border-gray-200 rounded-bl-md"
         }`}
       >
@@ -709,18 +722,18 @@ function MessageBubble({
             data-testid={`chat-quote-${message.id}`}
             className={`mb-1.5 block w-full border-l-2 pl-2 text-left ${
               hasMedia && !hasTextContent ? "px-3.5 pt-2" : ""
-            } ${isOwn ? "border-white/60" : "border-[#5353ff]"}`}
+            } border-[#5353ff]`}
             title="Xem tin nhắn gốc"
           >
             <span
               className={`block truncate text-[12px] font-medium ${
-                isOwn ? "text-white/85" : "text-gray-600"
+                "text-gray-600"
               }`}
             >
               {quoteAuthorName(message.replyTo.senderId, viewerId)}
             </span>
             <span
-              className={`block truncate text-[12px] ${isOwn ? "text-white/70" : "text-gray-500"}`}
+              className="block truncate text-[12px] text-gray-500"
             >
               {quoteSummary(message.replyTo)}
             </span>
@@ -784,7 +797,7 @@ function MessageBubble({
         )}
         <p
           className={`mt-1 text-[12px] ${
-            isOwn ? "text-gray-300" : "text-gray-400"
+            "text-gray-400"
           } text-right ${hasImage && !hasTextContent ? "px-1" : ""}`}
         >
           {time}
@@ -794,7 +807,7 @@ function MessageBubble({
           reactions={message.reactions}
           viewerId={viewerId}
           onReact={onReact}
-          tone={isOwn && !(hasMedia && !hasTextContent) ? "dark" : "light"}
+          tone="light"
         />
       </div>
 
