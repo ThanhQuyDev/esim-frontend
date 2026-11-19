@@ -44,11 +44,48 @@ export function resolveLangSwitchPath(pathname: string): string {
  * - current `vi` public path `/thailand` + target `en` → `/en/thailand`
  * - current `en` public path `/en/thailand` + target `vi` → `/thailand`
  */
+/**
+ * The page's own address in another language, from its
+ * `<link rel="alternate" hreflang>` (vande-2011 #014). A destination's English
+ * slug is its own (esim-thai-lan ↔ thailand-esim): swapping only the locale
+ * prefix landed on /en/esim-thai-lan, and the address bar kept a slug that
+ * was not the page's until a reload. Same-site paths only; null when absent.
+ */
+export function alternatePathFromDocument(
+  targetLocale: string,
+  doc: Pick<Document, "querySelectorAll"> | undefined = typeof document ===
+  "undefined"
+    ? undefined
+    : document,
+  origin: string = typeof window === "undefined" ? "" : window.location.origin
+): string | null {
+  if (!doc) return null;
+  const links = Array.from(
+    doc.querySelectorAll<HTMLLinkElement>('link[rel="alternate"][hreflang]')
+  );
+  const link = links.find(
+    (l) => (l.getAttribute("hreflang") || "").toLowerCase() === targetLocale
+  );
+  const href = link?.getAttribute("href");
+  if (!href) return null;
+  try {
+    // Only the path is kept, so another host is never followed.
+    const url = new URL(href, origin || "http://localhost");
+    return `${url.pathname}${url.search}`;
+  } catch {
+    return null;
+  }
+}
+
 export function resolveDynamicLangSwitchPath(
   currentPublicPathname: string,
   currentLocale: string,
   targetLocale: string
 ): string {
+  // The page says where its other language lives (vande-2011 #014).
+  const alternate = alternatePathFromDocument(targetLocale);
+  if (alternate) return alternate;
+
   const currentPrefix = `/${currentLocale}`;
   let pathname = currentPublicPathname || "/";
 
