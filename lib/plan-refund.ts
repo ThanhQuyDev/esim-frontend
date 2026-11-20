@@ -33,12 +33,21 @@ function isMicroEsimLocalPackage(plan: Pick<Plan, "provider" | "name">): boolean
 }
 
 export function refundRule(
-  plan: Pick<Plan, "provider" | "name" | "isLocalInventory"> | null | undefined,
+  plan:
+    | (Pick<Plan, "provider" | "name" | "isLocalInventory"> & { isRefundable?: boolean })
+    | null
+    | undefined,
 ): RefundRule {
   // An unknown supplier gets the cautious answer rather than the generous one:
   // wrongly promising a refund is a promise made to a paying customer, while
   // wrongly withholding one is corrected by support.
   if (!plan) return "not-supported";
+
+  // The API decides (supplier, overrides, local packages) and no longer says
+  // which supplier a plan is from (vande-2011 #041).
+  if (typeof plan.isRefundable === "boolean") {
+    return plan.isRefundable ? "fast-if-unactivated" : "not-supported";
+  }
 
   // Domestic stock (Viettel and the local carriers) is bought in up front.
   if (plan.isLocalInventory) return "not-supported";

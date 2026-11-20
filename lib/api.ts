@@ -261,6 +261,14 @@ export interface Plan {
   fupSpeed?: string;
   isCheapest: boolean;
   isAbleMultidate?: boolean;
+  /**
+   * A day pass's price for 1–365 days, in thousands of đồng, worked out by the
+   * API (vande-2011 #041): the cost and margin it was computed from are no
+   * longer sent to the browser.
+   */
+  multidayK?: number[] | null;
+  /** The API's refund rule for this plan (supplier, overrides, local stock). */
+  isRefundable?: boolean;
   discount?: number;
   isActive: boolean;
   createdAt: string;

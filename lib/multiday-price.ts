@@ -9,9 +9,10 @@
  *
  *     price(days) = tier( per-day cost × days ), rounded to 1 000 đ
  *
- * The tiers come from `/api/v1/plans/multiday-pricing`, loaded once by
- * {@link useMultidayTiers}. Until they arrive — and for anything that is not a
- * day pass — the price stays per-day × days.
+ * The API sends each day pass's price for 1–365 days with the plan
+ * (`multidayK`, vande-2011 #041) — the cost and margin tiers it used to be
+ * worked out from here are no longer public. Without it, or for anything that
+ * is not a day pass, the price stays per-day × days.
  */
 import type { Plan } from "./api";
 
@@ -22,28 +23,15 @@ export interface MarginTier {
   fixedAmountVnd?: number | null;
 }
 
-let TIERS: MarginTier[] | null = null;
-
-export function setMultidayTiers(tiers: MarginTier[] | null | undefined) {
-  TIERS = tiers && tiers.length ? tiers : null;
-}
-
-function retailVndForCost(costVnd: number, tiers: MarginTier[]): number {
-  let retail = costVnd;
-  for (const tier of tiers) {
-    if (costVnd >= Number(tier.minVnd) && costVnd <= Number(tier.maxVnd)) {
-      const fixed = Number(tier.fixedAmountVnd) || 0;
-      retail = fixed > 0 ? costVnd + fixed : costVnd * (1 + Number(tier.percentage) / 100);
-      break;
-    }
-  }
-  return Math.round(retail / 1000) * 1000;
-}
+/**
+ * Kept so older callers compile; the tiers are no longer public (vande-2011
+ * #041) and nothing is computed from them here.
+ */
+export function setMultidayTiers(_tiers: MarginTier[] | null | undefined) {}
 
 type PricedPlan = Pick<Plan, "isAbleMultidate" | "vndPrice"> & {
-  vndCostPrice?: number | string | null;
-  /** The real cost (dollars × rate), not the rounded figure (vande-0411 #001). */
-  vndCostExact?: number | string | null;
+  /** Price for 1–365 days in thousands of đồng, from the API (vande-2011 #041). */
+  multidayK?: number[] | null;
 };
 
 /** Đồng for `days` of a plan, before any plan discount. */
@@ -51,9 +39,12 @@ export function multidayVnd(plan: PricedPlan, days: number): number {
   const perDay = Number(plan.vndPrice) || 0;
   const n = plan.isAbleMultidate ? Math.max(1, Math.round(days || 1)) : 1;
   if (n === 1) return perDay;
-  const cost = Number(plan.vndCostExact) || Number(plan.vndCostPrice) || 0;
-  if (!TIERS || !(cost > 0)) return perDay * n;
-  return retailVndForCost(cost * n, TIERS);
+  const table = plan.multidayK;
+  if (table?.length) {
+    const k = Number(table[Math.min(n, table.length) - 1]);
+    if (k > 0) return k * 1000;
+  }
+  return perDay * n;
 }
 
 /**
