@@ -1558,6 +1558,13 @@ export interface MyEsim {
   provider: string | null;
   /** Phone number assigned to this eSIM (null if not applicable). */
   phoneNumber?: string | null;
+  /**
+   * Decided by the API, which no longer names an international supplier here
+   * (vande-2011 #042): show the top-up button, and whether to ask the recharge
+   * list first (Billion).
+   */
+  canTopUp?: boolean;
+  topupAsksPackages?: boolean;
   /** Plan info attached by the backend (`GET /esims/my/list` includes `plan`). */
   plan?: MyEsimPlan | null;
   /**
@@ -1774,7 +1781,8 @@ export type TopupProvider =
   | "MICRO_ESIM";
 
 export interface TopupPackage {
-  provider: TopupProvider;
+  /** Not sent to customers (vande-2011 #042). */
+  provider?: TopupProvider | null;
   packageId: string;
   name: string;
   dataAmountBytes: number;
@@ -1797,14 +1805,16 @@ export interface TopupPackage {
 export interface TopupListResponse {
   success: true;
   iccid: string;
-  provider: TopupProvider;
+  /** Not sent to customers (vande-2011 #042). */
+  provider?: TopupProvider | null;
   packages: TopupPackage[];
 }
 
 export interface TopupCheckoutPayload {
   iccid: string;
   packageId: string;
-  provider: TopupProvider;
+  /** Optional: the API works it out from the eSIM (vande-2011 #042). */
+  provider?: TopupProvider | null;
   /** Days for a day pass (vande-0411 #022). */
   periodNum?: number;
   /** EXU_WALLET settles from the eXu balance with no gateway step (#028). */

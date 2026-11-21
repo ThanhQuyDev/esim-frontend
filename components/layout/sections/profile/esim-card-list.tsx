@@ -409,32 +409,19 @@ export function DataUsageSection({ esimId, lang }: { esimId: number; lang: strin
 
 type EsimTab = "info" | "dataUsage";
 
-/**
- * Providers the backend can actually recharge (#029). MicroEsim's API has no
- * recharge endpoint and Viettel / local inventory has no provider API at all, so
- * offering them a button would only lead to an empty or refused topup.
- */
-const TOPUP_PROVIDERS = new Set(["airalo", "esimaccess", "gadgetkorea", "billion"]);
-
 /** Order states in which the eSIM is gone for good — nothing left to top up. */
 const TOPUP_BLOCKED_STATUSES = new Set(["refunded", "expired", "cancelled", "failed"]);
 
 /**
  * Whether to offer the Top Up button on this eSIM (#029).
  *
- * The button was commented out while `plan.topUp` was unpopulated. It now is
- * for Airalo, eSIM Access and Gadget Korea, and there it decides — a plan the
- * provider marks non-rechargeable gets no button. Billion's catalogue import
- * never sets the flag: whether a Billion eSIM takes a topup is known only from
- * its own recharge products, so the card asks for them first
- * (doitac-1410 #064) and shows the button only when there are some.
+ * The API decides (vande-2011 #042) — it knows the supplier, which the page is
+ * no longer told. Billion's answer also needs its recharge list
+ * (`topupAsksPackages`, doitac-1410 #064).
  */
-export function canTopUpEsim(esim: Pick<MyEsim, "provider" | "status" | "plan">): boolean {
-  const provider = (esim.provider ?? "").toLowerCase();
-  if (!TOPUP_PROVIDERS.has(provider)) return false;
+export function canTopUpEsim(esim: Pick<MyEsim, "canTopUp" | "status">): boolean {
   if (TOPUP_BLOCKED_STATUSES.has((esim.status ?? "").toLowerCase())) return false;
-  if (provider === "billion") return true;
-  return esim.plan?.topUp === true;
+  return esim.canTopUp === true;
 }
 
 function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" | "vi" }) {
@@ -553,7 +540,7 @@ function EsimCard({ esim, t, lang }: { esim: MyEsim; t: ProfileDict; lang: "en" 
   ];
 
   // Billion: the button only when this eSIM has recharge products (#064).
-  const isBillion = (esim.provider ?? "").toLowerCase() === "billion";
+  const isBillion = esim.topupAsksPackages === true;
   const { data: billionTopups } = useTopupPackages(
     esim.iccid ?? null,
     isBillion && canTopUpEsim(esim)

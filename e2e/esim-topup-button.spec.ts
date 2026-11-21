@@ -58,7 +58,28 @@ async function stubApi(page: Page) {
   );
 }
 
+/**
+ * The card as `/esims/my/list` sends it to a customer (vande-2011 #042): the
+ * API decides the top-up offer from the supplier, then leaves an international
+ * supplier's name out. Mirrors `customer-topup-flags.ts` in the backend.
+ */
 function esim(overrides: Record<string, unknown> = {}) {
+  const raw = rawEsim(overrides);
+  const supplier = String(raw.provider ?? "").toLowerCase();
+  const plan = raw.plan as { topUp?: boolean } | null;
+  const live = !["refunded", "expired", "cancelled", "failed"].includes(String(raw.status));
+  const rechargeable = ["airalo", "esimaccess", "gadgetkorea", "billion"].includes(supplier) && live;
+  return {
+    ...raw,
+    provider: ["airalo", "esimaccess", "gadgetkorea", "billion", "microesim"].includes(supplier)
+      ? null
+      : raw.provider,
+    canTopUp: rechargeable && (supplier === "billion" || plan?.topUp === true),
+    topupAsksPackages: rechargeable && supplier === "billion",
+  };
+}
+
+function rawEsim(overrides: Record<string, unknown> = {}): Record<string, unknown> {
   return {
     id: 1,
     orderItemId: 1,

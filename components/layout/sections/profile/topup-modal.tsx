@@ -40,8 +40,9 @@ interface TopupModalProps {
 }
 
 // The supplier-name map is gone (#029): naming our wholesaler to the customer is
-// a commercial leak, and nothing on this screen needs it. `provider` is still
-// sent to the API — it just never reaches the page.
+// a commercial leak, and nothing on this screen needs it. Since vande-2011 #042
+// the API does not send it either: the checkout works it out from the eSIM, so
+// `provider` below is normally undefined and left out of the payload.
 
 function formatVnd(amount: number): string {
   return new Intl.NumberFormat("vi-VN").format(amount) + " đ";
@@ -199,7 +200,7 @@ export function TopupModal({ esim, open, mode, onClose, t, lang }: TopupModalPro
    */
   const handleBankTransfer = async () => {
     setErrorMessage(null);
-    if (!selectedPackage || !provider) {
+    if (!selectedPackage) {
       setErrorMessage(t.topupSelectPackage);
       return;
     }
@@ -240,7 +241,7 @@ export function TopupModal({ esim, open, mode, onClose, t, lang }: TopupModalPro
 
   const handleConfirm = async () => {
     setErrorMessage(null);
-    if (!selectedPackage || !provider) {
+    if (!selectedPackage) {
       setErrorMessage(t.topupSelectPackage);
       return;
     }
@@ -288,7 +289,7 @@ export function TopupModal({ esim, open, mode, onClose, t, lang }: TopupModalPro
    */
   const handleWalletPay = async () => {
     setErrorMessage(null);
-    if (!selectedPackage || !provider) {
+    if (!selectedPackage) {
       setErrorMessage(t.topupSelectPackage);
       return;
     }
