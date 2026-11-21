@@ -23,6 +23,9 @@ import { getCarrierMeta } from '@/components/layout/sections/local-esim/carrier-
 import { buildProductSchema, hasProductSchema } from '@/lib/product-schema';
 import { getUsdVndRate } from '@/lib/exchange-rate';
 import { StructuredData } from '@/components/structured-data';
+import { resolveGraphPage } from '@/lib/schema-graph/page-kind';
+import { productPageGraph } from '@/lib/schema-graph/product-page';
+import { jsonLdText } from '@/lib/schema-graph/product';
 
 /**
  * Normalize a path for exact comparison: strip query/hash, collapse duplicate
@@ -158,6 +161,19 @@ export async function PageStructuredData({ locale }: { locale: string }) {
     cmsBlock = fallbackSeo?.structuredData ?? null;
   }
 
+  // ── A country or region page: one @graph (vande-2011 #046) ─────────
+  // Organization, ItemPage, Product with an Offer per plan, breadcrumb and
+  // FAQ in one block, as in Drive row 54. A CMS block pasted for the page
+  // before is left out when it declares the same things again (two Products,
+  // a second FAQ, ratings the spec forbids).
+  const graphPage = await resolveGraphPage(locale, normalizedPath);
+  const graph = graphPage
+    ? await productPageGraph(graphPage, locale, normalizedPath).catch(() => null)
+    : null;
+  if (graph && cmsBlock && /"@type"\s*:\s*"(Product|ItemPage|FAQPage|BreadcrumbList|AggregateRating|Review)"/.test(cmsBlock)) {
+    cmsBlock = null;
+  }
+
   // ── Site-level markup that was missing entirely (#076) ──────────────
   // Homepage: who the site is and what it sells. Product pages: that the page is
   // about one item. Blog posts: the article and who wrote it.
@@ -169,7 +185,7 @@ export async function PageStructuredData({ locale }: { locale: string }) {
     ? [buildWebSiteSchema(locale)]
     : [];
 
-  if (entity) {
+  if (entity && !graph) {
     siteSchemas.push(
       buildItemPageSchema({
         path: normalizedPath,
@@ -208,7 +224,7 @@ export async function PageStructuredData({ locale }: { locale: string }) {
   // Skipped when the CMS block already declares a Product: two Products on one
   // page make Google pick between them arbitrarily.
   const productSchema =
-    entity && !hasProductSchema(cmsBlock)
+    entity && !graph && !hasProductSchema(cmsBlock)
       ? buildProductSchema({
           name:
             locale === 'vi' ? `eSIM ${entity.name}` : `${entity.name} eSIM`,
@@ -220,13 +236,19 @@ export async function PageStructuredData({ locale }: { locale: string }) {
         })
       : null;
 
-  if (!cmsBlock && !productSchema && siteSchemas.length === 0) return null;
+  if (!cmsBlock && !productSchema && !graph && siteSchemas.length === 0) return null;
 
   return (
     <>
       {/* Variables are handed to StructuredData rather than applied here, so
           they reach JSON-LD only — a pasted gtag snippet must be left
           byte-for-byte, template literals included. */}
+      {graph && (
+        <script
+          type='application/ld+json'
+          dangerouslySetInnerHTML={{ __html: jsonLdText(graph) }}
+        />
+      )}
       {cmsBlock && <StructuredData data={cmsBlock} vars={vars} />}
       {productSchema && (
         <script
