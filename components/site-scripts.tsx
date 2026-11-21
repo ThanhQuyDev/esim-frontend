@@ -33,6 +33,37 @@ export async function SiteScripts({
 
   if (forPlacement.length === 0) return null;
 
+  // <head>: every verbatim snippet behind ONE marker, after everything else
+  // (vande-2011 #044). React hydrates <head> tag by tag and pairs an inline
+  // <script> from a snippet with the next marker it expects, so with two or
+  // more snippets (production has three) every page failed to hydrate and
+  // re-rendered on the client — and /blog/search never recovered (React
+  // #329). One marker, last in <head>, leaves React nothing to mis-pair: what
+  // follows it in <head> is ignored by hydration.
+  if (placement === 'head') {
+    const verbatim = forPlacement
+      .map((script) => verbatimSnippet(script.content))
+      .filter((snippet): snippet is string => Boolean(snippet));
+    return (
+      <>
+        {forPlacement
+          .filter((script) => !verbatimSnippet(script.content))
+          .map((script) => (
+            <StructuredData key={script.id} data={script.content} />
+          ))}
+        {verbatim.length > 0 && (
+          <script
+            data-site-scripts='head'
+            suppressHydrationWarning
+            dangerouslySetInnerHTML={{
+              __html: verbatimScriptHtml(verbatim.join('\n'), 'head')
+            }}
+          />
+        )}
+      </>
+    );
+  }
+
   return (
     <>
       {forPlacement.map((script) => {
