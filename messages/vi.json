@@ -1828,6 +1828,9 @@
     "referFriend": "Giới thiệu bạn bè",
     "termsOfService": "Điều khoản dịch vụ",
     "legal": "Pháp lý",
+    "distributionPartners": "Đối tác phân phối",
+    "apiPartners": "Đối tác tích hợp API",
+    "partnerRegister": "Đăng ký đối tác",
     "destinations": "Điểm đến"
   },
   "cart": {

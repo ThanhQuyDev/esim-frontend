@@ -2,8 +2,8 @@ import { SITE_BASE_URL } from "./hreflang";
 import { SITE_NAME } from "./seo";
 
 /**
- * Site-level schema.org markup that was missing (#076): `WebSite` and `Service`
- * on the homepage, and `ItemPage` on the product pages.
+ * Site-level schema.org markup that was missing (#076): `WebSite` on the homepage
+ * (its `Service` is now written by hand in the CMS, vande-2011 #046), and `ItemPage` on the product pages.
  *
  * Only facts the site can stand behind go in. Schema is a statement to search
  * engines about what this page is, and a field that overstates — a search box the
@@ -22,6 +22,7 @@ type Json = Record<string, unknown>;
  * eSIM into a list of articles.
  */
 export function buildWebSiteSchema(lang: string): Json {
+  const vi = lang === "vi";
   const url = lang === "vi" ? `${SITE_BASE_URL}/` : `${SITE_BASE_URL}/${lang}`;
 
   return {
@@ -29,33 +30,13 @@ export function buildWebSiteSchema(lang: string): Json {
     "@type": "WebSite",
     "@id": `${SITE_BASE_URL}/#website`,
     name: SITE_NAME,
+    // Wording from the SEO team's schema document (vande-2011 #046).
+    description: vi
+      ? "esim.vn là website chính thức để tìm kiếm điểm đến, so sánh và mua gói eSIM du lịch quốc tế, kích hoạt trong 15 giây qua link ngay sau khi thanh toán."
+      : "esim.vn is the official website to find your destination, compare and buy international travel eSIM plans, activated in 15 seconds via a link right after payment.",
     url,
     inLanguage: lang === "vi" ? "vi-VN" : "en",
     publisher: { "@id": `${SITE_BASE_URL}/#organization` },
-  };
-}
-
-/**
- * `Service` describes what is actually sold, which `Product` on a destination
- * page does not: each of those is one data package, not the business.
- *
- * `areaServed` is left off rather than listed: coverage is per package and runs to
- * two hundred-odd countries, so any short list here would be wrong.
- */
-export function buildServiceSchema(lang: string): Json {
-  const vi = lang === "vi";
-
-  return {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    "@id": `${SITE_BASE_URL}/#service`,
-    name: vi ? "eSIM du lịch quốc tế và eSIM nội địa" : "Travel and domestic eSIM",
-    serviceType: vi ? "Cung cấp eSIM dữ liệu" : "eSIM data service",
-    description: vi
-      ? "Mua eSIM dữ liệu cho hơn 200 quốc gia và eSIM nội địa Việt Nam, nhận mã QR qua email ngay sau khi thanh toán."
-      : "Buy data eSIMs for 200+ countries and domestic Vietnamese eSIMs, with the QR code delivered by email as soon as payment clears.",
-    provider: { "@id": `${SITE_BASE_URL}/#organization` },
-    url: vi ? `${SITE_BASE_URL}/` : `${SITE_BASE_URL}/${lang}`,
   };
 }
 

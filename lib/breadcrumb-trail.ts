@@ -61,6 +61,11 @@ const ROUTE_LABELS: Record<string, { key: string; parent?: string }> = {
   "/refer-a-friend": { key: "referFriend" },
   "/terms-of-service": { key: "termsOfService" },
   "/legal": { key: "legal" },
+  // Named as the pages name themselves, with their marks (vande-2011 #046,
+  // schema doc rows 11–13); they used to be spelt out from the slug.
+  "/distribution-partners": { key: "distributionPartners" },
+  "/api-partners": { key: "apiPartners" },
+  "/affiliate/register": { key: "partnerRegister" },
 };
 
 /** Public path of a route key in a locale, e.g. "/help-center" → "/ho-tro". */

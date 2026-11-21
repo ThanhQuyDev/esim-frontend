@@ -1,7 +1,6 @@
 import { test, expect } from "@playwright/test";
 import {
   buildItemPageSchema,
-  buildServiceSchema,
   buildWebSiteSchema,
 } from "../lib/site-schema";
 import { buildArticleSchema } from "../lib/article-schema";
@@ -57,31 +56,14 @@ test.describe("WebSite schema", () => {
     expect(schema).not.toHaveProperty("potentialAction");
   });
 
+  test("carries the description from the schema document (vande-2011 #046)", () => {
+    expect(String(buildWebSiteSchema("vi").description)).toMatch(/^esim\.vn là website chính thức/);
+    expect(String(buildWebSiteSchema("en").description)).toMatch(/^esim\.vn is the official website/);
+  });
+
   test("points at the right origin per language", () => {
     expect(buildWebSiteSchema("en").url).toMatch(/\/en$/);
     expect(buildWebSiteSchema("vi").url).toMatch(/\/$/);
-  });
-});
-
-test.describe("Service schema", () => {
-  test("describes the business, which Product does not", () => {
-    // Each Product on a destination page is one data package, not the service.
-    const schema = buildServiceSchema("vi") as Record<string, unknown>;
-
-    expect(schema["@type"]).toBe("Service");
-    expect(schema.provider).toEqual({
-      "@id": "https://esim.vn/#organization",
-    });
-  });
-
-  test("does not list a coverage area it cannot stand behind", () => {
-    // Coverage is per package across 200-odd countries; any short list is wrong.
-    expect(buildServiceSchema("vi")).not.toHaveProperty("areaServed");
-  });
-
-  test("is translated", () => {
-    expect(String(buildServiceSchema("en").name)).toContain("eSIM");
-    expect(String(buildServiceSchema("vi").name)).toContain("nội địa");
   });
 });
 

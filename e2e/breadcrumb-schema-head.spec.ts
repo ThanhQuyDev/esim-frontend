@@ -90,6 +90,19 @@ test.describe("Trail resolution", () => {
     ]);
   });
 
+  test("names the partner pages with their marks (vande-2011 #046)", async () => {
+    for (const [path, lang, dict, want] of [
+      ["/doi-tac-phan-phoi", "vi", DICT_VI, "Đối tác phân phối"],
+      ["/doi-tac-tich-hop-api", "vi", DICT_VI, "Đối tác tích hợp API"],
+      ["/dang-ky-doi-tac", "vi", DICT_VI, "Đăng ký đối tác"],
+      ["/en/api-partners", "en", DICT_EN, "API partners"],
+      ["/en/partner-register", "en", DICT_EN, "Partner registration"],
+    ] as const) {
+      const trail = await resolveBreadcrumbTrail(path, lang, dict);
+      expect(trail.map((t) => t.label)).toEqual([want]);
+    }
+  });
+
   test("falls back to a readable slug rather than inventing a name", async () => {
     expect(readableSlug("chinh-sach-hoan-tien")).toBe("Chinh sach hoan tien");
     expect(readableSlug("wintel")).toBe("Wintel");

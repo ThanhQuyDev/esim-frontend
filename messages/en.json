@@ -1828,6 +1828,9 @@
     "referFriend": "Refer a friend",
     "termsOfService": "Terms of Service",
     "legal": "Legal",
+    "distributionPartners": "Distribution partners",
+    "apiPartners": "API partners",
+    "partnerRegister": "Partner registration",
     "destinations": "Destinations"
   },
   "cart": {

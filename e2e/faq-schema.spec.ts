@@ -89,21 +89,25 @@ test.describe("FAQPage schema", () => {
     expect(buildFaqSchema([faq("1", "", "")])).toBeNull();
   });
 
-  test("publishes @id and inLanguage for the page, like the reference schema (#021)", () => {
+  test("publishes @id, url, inLanguage and mainEntityOfPage like the schema document (#021, vande-2011 #046)", () => {
     const schema = buildFaqSchema(
       [faq("1", "What is a travel eSIM?", "<p>A travel eSIM is a type of eSIM.</p>")],
       undefined,
       { url: "/esim-han-quoc", lang: "vi" },
     )!;
 
-    expect(schema["@id"]).toBe(`${SITE_BASE_URL}/esim-han-quoc#faq`);
+    expect(schema["@id"]).toBe(`${SITE_BASE_URL}/esim-han-quoc#faqpage`);
+    expect(schema.url).toBe(`${SITE_BASE_URL}/esim-han-quoc`);
+    expect(schema.mainEntityOfPage).toEqual({ "@id": `${SITE_BASE_URL}/esim-han-quoc#webpage` });
     expect(schema.inLanguage).toBe("vi");
     // Same key order as the sample the SEO team sent.
     expect(Object.keys(schema)).toEqual([
       "@context",
       "@type",
       "@id",
+      "url",
       "inLanguage",
+      "mainEntityOfPage",
       "mainEntity",
     ]);
   });
@@ -114,9 +118,9 @@ test.describe("FAQPage schema", () => {
       lang: "en",
     })!;
 
-    expect(schema["@id"]).toBe(`${SITE_BASE_URL}/en/esim-china#faq`);
+    expect(schema["@id"]).toBe(`${SITE_BASE_URL}/en/esim-china#faqpage`);
     expect(schema.inLanguage).toBe("en");
-    expect(faqSchemaId("/")).toBe(`${SITE_BASE_URL}/#faq`);
+    expect(faqSchemaId("/")).toBe(`${SITE_BASE_URL}/#faqpage`);
   });
 
   test("removes <p> tags from the answer text (#021)", () => {

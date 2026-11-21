@@ -13,7 +13,6 @@ import {
 } from '@/lib/api';
 import {
   buildItemPageSchema,
-  buildServiceSchema,
   buildWebSiteSchema
 } from '@/lib/site-schema';
 import { buildArticleSchema } from '@/lib/article-schema';
@@ -164,8 +163,10 @@ export async function PageStructuredData({ locale }: { locale: string }) {
   // about one item. Blog posts: the article and who wrote it.
   const isHomepage = normalizedPath === (localePrefix || '/');
 
+  // No generated `Service` any more: the SEO team writes its own in the CMS
+  // (vande-2011 #046).
   const siteSchemas: Record<string, unknown>[] = isHomepage
-    ? [buildWebSiteSchema(locale), buildServiceSchema(locale)]
+    ? [buildWebSiteSchema(locale)]
     : [];
 
   if (entity) {
