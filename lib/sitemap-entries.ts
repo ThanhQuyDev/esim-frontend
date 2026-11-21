@@ -63,6 +63,7 @@ export const STATIC_ROUTE_SEO: Record<string, [ChangeFrequency, number]> = {
   "/api-partners": ["monthly", 0.6],
   "/affiliate/register": ["monthly", 0.5],
   "/terms-of-service": ["yearly", 0.3],
+  "/legal": ["yearly", 0.3],
 };
 
 /** changefreq / priority for the catalogue groups (reference file). */
@@ -104,6 +105,8 @@ export const STATIC_ROUTES = [
   "/api-partners",
   "/affiliate/register",
   "/terms-of-service",
+  // The legal index (vande-2011 #043).
+  "/legal",
 ] as const;
 
 /**

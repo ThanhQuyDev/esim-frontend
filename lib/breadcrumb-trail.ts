@@ -12,6 +12,7 @@ import {
 import { categorySlug } from "@/components/layout/sections/blog-page/blog-detail-helpers";
 import { fromUrlSlug } from "@/components/layout/sections/help-center/category-config";
 import type { BreadcrumbSchemaItem } from "./breadcrumb-schema";
+import { findPolicyBySlug } from "@/components/layout/sections/legal/policies";
 
 /**
  * Trail for the current URL, resolved server-side (#052).
@@ -59,6 +60,7 @@ const ROUTE_LABELS: Record<string, { key: string; parent?: string }> = {
   "/kyc-guide": { key: "kycGuide" },
   "/refer-a-friend": { key: "referFriend" },
   "/terms-of-service": { key: "termsOfService" },
+  "/legal": { key: "legal" },
 };
 
 /** Public path of a route key in a locale, e.g. "/help-center" → "/ho-tro". */
@@ -228,11 +230,22 @@ export async function resolveBreadcrumbTrail(
   }
 
   // ── Legal pages ───────────────────────────────────────────────────
+  // The index has a page now, and a policy is named as its page names it —
+  // "Chính sách hoàn tiền", not "Chinh sach hoan tien" (vande-2011 #043).
   if (segments[0] === "phap-ly" || segments[0] === "legal") {
+    const root = {
+      label: label(dict, "legal", "Legal"),
+      href: localizedRoutePath("/legal", lang),
+    };
+    if (!segments[1]) return [{ label: root.label }];
+    const policy = findPolicyBySlug(
+      decodeURIComponent(segments[1]),
+      lang as Locale,
+    );
     return [
-      { label: label(dict, "legal", "Legal") },
-      { label: readableSlug(segments[1] ?? "") },
-    ].filter((item) => item.label);
+      root,
+      { label: policy?.navLabel[lang as Locale] ?? readableSlug(segments[1]) },
+    ];
   }
 
   // ── A bare slug: country or region detail page ────────────────────

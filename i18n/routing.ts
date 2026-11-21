@@ -206,7 +206,12 @@ export const routing = defineRouting({
       en: '/confirm-new-email',
     },
 
-    // Legal policies (refund, delivery, terms, privacy)
+    // Legal policies (refund, delivery, terms, privacy) and their index page
+    // (vande-2011 #043: /phap-ly was a 404).
+    '/legal': {
+      vi: '/phap-ly',
+      en: '/legal',
+    },
     '/legal/[slug]': {
       vi: '/phap-ly/[slug]',
       en: '/legal/[slug]',

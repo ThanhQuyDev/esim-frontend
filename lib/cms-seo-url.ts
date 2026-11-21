@@ -30,6 +30,7 @@ const STATIC_SEO_ROUTES: StaticPathname[] = [
   "/install-guide",
   "/refer-a-friend",
   "/terms-of-service",
+  "/legal",
   "/blog/search",
   "/help-center/categories",
   "/help-center/search",

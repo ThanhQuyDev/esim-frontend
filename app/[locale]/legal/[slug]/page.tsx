@@ -53,7 +53,10 @@ export default async function LegalPolicyPage({
     <main role="main">
       <Breadcrumb
         items={[
-          { label: dict.breadcrumb.legal },
+          {
+            label: dict.breadcrumb.legal,
+            href: locale === "en" ? "/en/legal" : "/phap-ly",
+          },
           { label: policy.navLabel[locale] },
         ]}
         lang={locale}

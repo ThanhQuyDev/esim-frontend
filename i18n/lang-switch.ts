@@ -25,7 +25,7 @@ export const DYNAMIC_ROUTE_FALLBACKS: Record<string, string> = {
   '/blog/[slug]/[parent]': '/blog',
   '/help-center/[slug]': '/help-center',
   '/help-center/[slug]/[parent]': '/help-center',
-  '/legal/[slug]': '/',
+  '/legal/[slug]': '/legal',
 };
 
 /**
@@ -142,8 +142,8 @@ export function resolveLegalLangSwitchPath(
   );
 
   if (!pair) {
-    // Unknown slug — go to a safe locale-appropriate landing.
-    return targetLocale === routing.defaultLocale ? "/" : `/${targetLocale}`;
+    // Unknown slug, or the index itself — the legal index (vande-2011 #043).
+    return targetLocale === routing.defaultLocale ? "/phap-ly" : `/${targetLocale}/legal`;
   }
 
   return targetLocale === "en"

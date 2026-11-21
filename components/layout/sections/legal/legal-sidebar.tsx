@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Locale } from "@/lib/i18n-config";
-import { LEGAL_POLICIES, getPolicyHref } from "./index";
+import { LEGAL_POLICIES, getPolicyHref } from "./policies";
 
 export function LegalSidebar({
   activeSlug,
