@@ -81,11 +81,13 @@ test.describe("Trail resolution", () => {
     expect(trail[1].href).toBe("/ho-tro/thanh-toan");
   });
 
-  test("labels a legal page", async () => {
+  test("labels a legal page by its own name, under the legal index (vande-2011 #043)", async () => {
     expect(
-      (await resolveBreadcrumbTrail("/phap-ly/chinh-sach-hoan-tien", "vi", DICT_VI))
-        .map((t) => t.label),
-    ).toEqual([vi.breadcrumb.legal, "Chinh sach hoan tien"]);
+      await resolveBreadcrumbTrail("/phap-ly/chinh-sach-hoan-tien", "vi", DICT_VI),
+    ).toEqual([
+      { label: vi.breadcrumb.legal, href: "/phap-ly" },
+      { label: "Chính sách hoàn tiền & đổi trả" },
+    ]);
   });
 
   test("falls back to a readable slug rather than inventing a name", async () => {
