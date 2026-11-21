@@ -25,6 +25,7 @@ import { getUsdVndRate } from '@/lib/exchange-rate';
 import { StructuredData } from '@/components/structured-data';
 import { resolveGraphPage } from '@/lib/schema-graph/page-kind';
 import { productPageGraph } from '@/lib/schema-graph/product-page';
+import { staticPageGraph } from '@/lib/schema-graph/static-page';
 import { jsonLdText } from '@/lib/schema-graph/product';
 
 /**
@@ -167,9 +168,11 @@ export async function PageStructuredData({ locale }: { locale: string }) {
   // before is left out when it declares the same things again (two Products,
   // a second FAQ, ratings the spec forbids).
   const graphPage = await resolveGraphPage(locale, normalizedPath);
-  const graph = graphPage
-    ? await productPageGraph(graphPage, locale, normalizedPath).catch(() => null)
-    : null;
+  const graph = !graphPage
+    ? null
+    : graphPage.kind === 'static'
+      ? await staticPageGraph(graphPage.key, locale, normalizedPath).catch(() => null)
+      : await productPageGraph(graphPage, locale, normalizedPath).catch(() => null);
   if (graph && cmsBlock && /"@type"\s*:\s*"(Product|ItemPage|FAQPage|BreadcrumbList|AggregateRating|Review)"/.test(cmsBlock)) {
     cmsBlock = null;
   }

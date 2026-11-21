@@ -1,0 +1,3074 @@
+{
+ "shared": {
+  "vi": {
+   "Organization": {
+    "@type": "Organization",
+    "@id": "https://esim.vn/#organization",
+    "name": "esim.vn",
+    "legalName": "Công Ty TNHH Viễn Thông ESIM",
+    "url": "https://esim.vn/",
+    "logo": {
+     "@type": "ImageObject",
+     "@id": "https://esim.vn/#logo",
+     "url": "https://esim.vn/logo.svg",
+     "contentUrl": "https://esim.vn/logo.svg",
+     "caption": "esim.vn"
+    },
+    "image": {
+     "@id": "https://esim.vn/#logo"
+    },
+    "description": "esim.vn (Công Ty TNHH Viễn Thông ESIM) là nhà cung cấp eSIM du lịch quốc tế tại Việt Nam, thành lập năm 2023, phục vụ du khách với các gói dữ liệu phủ sóng hơn 200 quốc gia và khu vực.",
+    "foundingDate": "2023",
+    "telephone": "+84976898989",
+    "address": {
+     "@type": "PostalAddress",
+     "streetAddress": "331/21 Vườn Lài",
+     "addressLocality": "Phường Phú Thọ Hoà",
+     "addressRegion": "Thành phố Hồ Chí Minh",
+     "postalCode": "72012",
+     "addressCountry": "VN"
+    },
+    "contactPoint": [
+     {
+      "@type": "ContactPoint",
+      "contactType": "customer service",
+      "telephone": "+84976898989",
+      "areaServed": "VN",
+      "availableLanguage": [
+       "vi",
+       "en"
+      ]
+     }
+    ],
+    "sameAs": [
+     "https://www.facebook.com/eSIMvn.Official",
+     "https://www.youtube.com/@esimvn"
+    ],
+    "slogan": "Chỉ cần chạm, kết nối và đi.",
+    "knowsAbout": [
+     "eSIM",
+     "Kết nối di động khi du lịch",
+     "Dữ liệu di động quốc tế"
+    ]
+   },
+   "WebSite": {
+    "@type": "WebSite",
+    "@id": "https://esim.vn/#website",
+    "url": "https://esim.vn/",
+    "name": "esim.vn",
+    "description": "esim.vn là website chính thức để tìm kiếm điểm đến, so sánh và mua gói eSIM du lịch quốc tế, kích hoạt trong 15 giây qua link ngay sau khi thanh toán.",
+    "inLanguage": "vi",
+    "publisher": {
+     "@id": "https://esim.vn/#organization"
+    }
+   }
+  },
+  "en": {
+   "Organization": {
+    "@type": "Organization",
+    "@id": "https://esim.vn/#organization",
+    "name": "esim.vn",
+    "legalName": "Công Ty TNHH Viễn Thông ESIM",
+    "url": "https://esim.vn/",
+    "logo": {
+     "@type": "ImageObject",
+     "@id": "https://esim.vn/#logo",
+     "url": "https://esim.vn/logo.svg",
+     "contentUrl": "https://esim.vn/logo.svg",
+     "caption": "esim.vn"
+    },
+    "image": {
+     "@id": "https://esim.vn/#logo"
+    },
+    "description": "esim.vn (Công Ty TNHH Viễn Thông ESIM) is a Vietnam-based international travel eSIM provider, founded in 2023, offering data plans covering 200+ countries and territories.",
+    "foundingDate": "2023",
+    "telephone": "+84976898989",
+    "address": {
+     "@type": "PostalAddress",
+     "streetAddress": "331/21 Vườn Lài",
+     "addressLocality": "Phường Phú Thọ Hoà",
+     "addressRegion": "Thành phố Hồ Chí Minh",
+     "postalCode": "72012",
+     "addressCountry": "VN"
+    },
+    "contactPoint": [
+     {
+      "@type": "ContactPoint",
+      "contactType": "customer service",
+      "telephone": "+84976898989",
+      "areaServed": "VN",
+      "availableLanguage": [
+       "vi",
+       "en"
+      ]
+     }
+    ],
+    "sameAs": [
+     "https://www.facebook.com/eSIMvn.Official",
+     "https://www.youtube.com/@esimvn"
+    ],
+    "slogan": "Just tap, connect, and go.",
+    "knowsAbout": [
+     "eSIM",
+     "Travel connectivity",
+     "International mobile data"
+    ]
+   },
+   "WebSite": {
+    "@type": "WebSite",
+    "@id": "https://esim.vn/en#website",
+    "url": "https://esim.vn/en",
+    "name": "esim.vn",
+    "description": "esim.vn is the official website for searching destinations, comparing, and buying international travel eSIM plans, activated in 15 seconds via a link right after checkout.",
+    "inLanguage": "en",
+    "publisher": {
+     "@id": "https://esim.vn/#organization"
+    }
+   }
+  }
+ },
+ "pages": {
+  "/data-calculator": {
+   "vi": [
+    {
+     "@type": "WebPage",
+     "@id": "https://esim.vn/cong-cu-tinh-data#webpage",
+     "url": "https://esim.vn/cong-cu-tinh-data",
+     "name": "Công cụ tính dữ liệu | Tìm hiểu bạn dùng bao nhiêu dữ liệu | esim.vn",
+     "description": "Bạn đang thắc mắc mình dùng bao nhiêu dữ liệu? Sử dụng công cụ tính dữ liệu internet để ước tính mức sử dụng cho duyệt web, xem phim và gọi video.",
+     "inLanguage": "vi",
+     "isPartOf": {
+      "@id": "https://esim.vn/#website"
+     },
+     "breadcrumb": {
+      "@id": "https://esim.vn/cong-cu-tinh-data#breadcrumb"
+     },
+     "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://esim.vn/og/esimvn-og-vi.png",
+      "contentUrl": "https://esim.vn/og/esimvn-og-vi.png"
+     },
+     "mainEntity": {
+      "@id": "https://esim.vn/cong-cu-tinh-data#app"
+     },
+     "about": {
+      "@id": "https://esim.vn/cong-cu-tinh-data#term-mobile-data"
+     }
+    },
+    {
+     "@type": "WebApplication",
+     "@id": "https://esim.vn/cong-cu-tinh-data#app",
+     "name": "Công cụ tính dữ liệu sử dụng",
+     "url": "https://esim.vn/cong-cu-tinh-data",
+     "description": "Công cụ miễn phí ước tính lượng dữ liệu di động bạn cần cho chuyến đi dựa trên thời gian dùng mạng xã hội, xem video, nghe nhạc, bản đồ, duyệt web, nhắn tin, gọi video và cập nhật ứng dụng, sau đó gợi ý gói eSIM phù hợp.",
+     "applicationCategory": "UtilitiesApplication",
+     "operatingSystem": "Any",
+     "browserRequirements": "Requires JavaScript",
+     "inLanguage": "vi",
+     "isAccessibleForFree": true,
+     "featureList": [
+      "Ước tính dữ liệu sử dụng theo giờ cho từng hoạt động",
+      "Hồ sơ có sẵn: Duyệt web thông thường, Làm việc từ xa, Tùy chỉnh",
+      "Gợi ý gói cước phù hợp theo điểm đến"
+     ],
+     "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "VND"
+     },
+     "publisher": {
+      "@id": "https://esim.vn/#organization"
+     }
+    },
+    {
+     "@type": "DefinedTerm",
+     "@id": "https://esim.vn/cong-cu-tinh-data#term-mobile-data",
+     "name": "Dữ liệu di động",
+     "description": "Dữ liệu di động là lượng internet bạn sử dụng khi không kết nối Wi-Fi."
+    },
+    {
+     "@type": "FAQPage",
+     "@id": "https://esim.vn/cong-cu-tinh-data#faq",
+     "url": "https://esim.vn/cong-cu-tinh-data",
+     "inLanguage": "vi",
+     "isPartOf": {
+      "@id": "https://esim.vn/cong-cu-tinh-data#webpage"
+     },
+     "mainEntity": [
+      {
+       "@type": "Question",
+       "name": "Giới hạn tốc độ dữ liệu là gì và ảnh hưởng thế nào?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Giới hạn tốc độ xảy ra khi nhà mạng cố ý giảm tốc độ internet của bạn. Thường xảy ra sau khi bạn đã dùng hết dữ liệu tốc độ cao. Kết quả là duyệt web chậm hơn, tải ảnh lâu hơn và gọi video bị giật. Bạn có thể tránh bằng cách chọn gói có nhiều dữ liệu tốc độ cao hơn."
+       }
+      },
+      {
+       "@type": "Question",
+       "name": "Tôi cần bao nhiêu dữ liệu di động?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Lượng dữ liệu cần phụ thuộc vào thói quen sử dụng — người dùng nhẹ chỉ kiểm tra email và bản đồ có thể cần 1-2 GB cho một tuần, trong khi người xem phim nhiều có thể cần 10 GB trở lên. Hãy dùng công cụ tính dữ liệu để có ước tính cá nhân."
+       }
+      },
+      {
+       "@type": "Question",
+       "name": "Người bình thường dùng bao nhiêu GB dữ liệu mỗi tháng?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Trung bình mỗi người dùng 5-15 GB dữ liệu di động hàng tháng, nhưng con số này rất khác nhau. Xem phim HD dùng gấp ba lần so với chất lượng tiêu chuẩn, và sao lưu ảnh tự động có thể tiêu tốn dữ liệu mà bạn không nhận ra."
+       }
+      },
+      {
+       "@type": "Question",
+       "name": "Mất bao nhiêu giờ để dùng hết 1 GB dữ liệu?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Các hoạt động cơ bản như duyệt web và nhắn tin dùng ít dữ liệu — bạn có thể thực hiện hàng chục giờ cho mỗi GB. Xem video trực tuyến, 1 GB thường đủ cho khoảng 2-4 giờ ở chất lượng tiêu chuẩn. Nghe nhạc tiết kiệm hơn — bạn có thể nghe khoảng 20-25 giờ từ 1 GB."
+       }
+      },
+      {
+       "@type": "Question",
+       "name": "Hoạt động nào tiêu tốn nhiều dữ liệu nhất?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Xem video trực tuyến là thủ phạm lớn nhất — video HD có thể tiêu tốn 3 GB mỗi giờ. Nghe nhạc dùng khoảng 150 MB mỗi giờ. Lướt mạng xã hội tiêu tốn khoảng 100-200 MB mỗi giờ. Cập nhật ứng dụng tự động và sao lưu ảnh có thể tiêu tốn hàng GB trong vài phút."
+       }
+      },
+      {
+       "@type": "Question",
+       "name": "Duyệt web có dùng nhiều dữ liệu hơn mạng xã hội không?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Trong hầu hết trường hợp, duyệt web dùng ít dữ liệu hơn lướt mạng xã hội. Các trang web đơn giản với chủ yếu là văn bản khá nhẹ nhàng với dữ liệu. Ứng dụng mạng xã hội chứa đầy video tự phát, ảnh độ phân giải cao và cập nhật thường xuyên."
+       }
+      }
+     ]
+    }
+   ],
+   "en": [
+    {
+     "@type": "WebPage",
+     "@id": "https://esim.vn/en/data-usage-calculator#webpage",
+     "url": "https://esim.vn/en/data-usage-calculator",
+     "name": "Data Usage Calculator | Find Out How Much Data You Use | esim.vn",
+     "description": "Wondering how much data you use? Use our internet data calculator to estimate your usage for browsing, streaming, and video calls.",
+     "inLanguage": "en",
+     "isPartOf": {
+      "@id": "https://esim.vn/en#website"
+     },
+     "breadcrumb": {
+      "@id": "https://esim.vn/en/data-usage-calculator#breadcrumb"
+     },
+     "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://esim.vn/og/esimvn-og-en.png",
+      "contentUrl": "https://esim.vn/og/esimvn-og-en.png"
+     },
+     "mainEntity": {
+      "@id": "https://esim.vn/en/data-usage-calculator#app"
+     },
+     "about": {
+      "@id": "https://esim.vn/en/data-usage-calculator#term-mobile-data"
+     }
+    },
+    {
+     "@type": "WebApplication",
+     "@id": "https://esim.vn/en/data-usage-calculator#app",
+     "name": "Data usage calculator",
+     "url": "https://esim.vn/en/data-usage-calculator",
+     "description": "A free tool that estimates the mobile data you need for a trip from the time you spend on social media, video, music, maps, web browsing, messaging, video calls and app updates, then suggests a suitable eSIM plan.",
+     "applicationCategory": "UtilitiesApplication",
+     "operatingSystem": "Any",
+     "browserRequirements": "Requires JavaScript",
+     "inLanguage": "en",
+     "isAccessibleForFree": true,
+     "featureList": [
+      "Estimate data usage by hours spent on each activity",
+      "Preset profiles: Casual browser, Remote worker, Personalized",
+      "Plan suggestions for your destination"
+     ],
+     "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+     },
+     "publisher": {
+      "@id": "https://esim.vn/#organization"
+     }
+    },
+    {
+     "@type": "DefinedTerm",
+     "@id": "https://esim.vn/en/data-usage-calculator#term-mobile-data",
+     "name": "Mobile data",
+     "description": "Mobile data is the amount of internet you use when you are not connected to Wi-Fi."
+    },
+    {
+     "@type": "FAQPage",
+     "@id": "https://esim.vn/en/data-usage-calculator#faq",
+     "url": "https://esim.vn/en/data-usage-calculator",
+     "inLanguage": "en",
+     "isPartOf": {
+      "@id": "https://esim.vn/en/data-usage-calculator#webpage"
+     },
+     "mainEntity": [
+      {
+       "@type": "Question",
+       "name": "What is data throttling and how does it affect my experience?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Data throttling happens when your internet speed is intentionally slowed by your carrier or ISP. It often kicks in after you've used up your high-speed data allowance. The result is slower web browsing, longer photo load times, and choppy video calls. You can avoid the slowdown by picking a plan with more high-speed data."
+       }
+      },
+      {
+       "@type": "Question",
+       "name": "How much mobile data do I need?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "How much mobile data you need depends on your usage habits — light users who only check emails and maps might need 1-2 GB for a week, while heavy streamers and photo uploaders may need 10 GB or more. Use our data usage calculator to get a personalized estimate."
+       }
+      },
+      {
+       "@type": "Question",
+       "name": "How many GB of mobile data does the average person use per month?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The average person uses 5-15 GB of mobile data monthly, but it varies widely. Streaming in HD uses three times more data than standard quality, and automatic photo backups can drain data without you noticing."
+       }
+      },
+      {
+       "@type": "Question",
+       "name": "How many hours does it take to use 1 GB of data?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Basic activities like web browsing and messaging use less data — you can perform these for dozens of hours per GB. For video streaming, 1 GB is usually enough for about 2-4 hours in standard definition. Music streaming is much kinder — you can get around 20-25 hours from 1 GB."
+       }
+      },
+      {
+       "@type": "Question",
+       "name": "What activities consume the most data?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Video streaming is the biggest offender — HD video can burn through 3 GB per hour. Music streaming uses around 150 MB per hour. Social media scrolling eats up roughly 100-200 MB per hour. Automatic app updates and cloud photo backups can demolish gigabytes in minutes."
+       }
+      },
+      {
+       "@type": "Question",
+       "name": "Does browsing the internet use more data than using social media apps?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In most cases, browsing the web uses less data than scrolling through social media apps. Simple websites with mostly text are gentle on your data. Social media apps are packed with auto-play videos, high-resolution photos, and frequent updates."
+       }
+      }
+     ]
+    }
+   ]
+  },
+  "/esim-supported-devices": {
+   "vi": [
+    {
+     "@type": "CollectionPage",
+     "@id": "https://esim.vn/thiet-bi-ho-tro-esim#webpage",
+     "url": "https://esim.vn/thiet-bi-ho-tro-esim",
+     "name": "Danh sách thiết bị hỗ trợ eSIM (iPhone, Samsung, Google...) | esim.vn",
+     "description": "Kiểm tra điện thoại của bạn có hỗ trợ eSIM không. Danh sách thiết bị iPhone, Samsung, Google, Xiaomi, Oppo... hỗ trợ eSIM — máy cần được mở khóa nhà mạng.",
+     "inLanguage": "vi",
+     "isPartOf": {
+      "@id": "https://esim.vn/#website"
+     },
+     "breadcrumb": {
+      "@id": "https://esim.vn/thiet-bi-ho-tro-esim#breadcrumb"
+     },
+     "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://esim.vn/og/esimvn-og-vi.png",
+      "contentUrl": "https://esim.vn/og/esimvn-og-vi.png"
+     },
+     "mainEntity": {
+      "@id": "https://esim.vn/thiet-bi-ho-tro-esim#brands"
+     },
+     "about": {
+      "@id": "https://esim.vn/thiet-bi-ho-tro-esim#term-esim"
+     }
+    },
+    {
+     "@type": "DefinedTerm",
+     "@id": "https://esim.vn/thiet-bi-ho-tro-esim#term-esim",
+     "name": "eSIM",
+     "alternateName": "embedded SIM",
+     "description": "eSIM là SIM kỹ thuật số (mô-đun nhận dạng thuê bao nhúng) tích hợp sẵn trong thiết bị, hoạt động như thẻ SIM vật lý nhưng không cần lắp thẻ.",
+     "sameAs": "https://vi.wikipedia.org/wiki/ESIM"
+    },
+    {
+     "@type": "ItemList",
+     "@id": "https://esim.vn/thiet-bi-ho-tro-esim#brands",
+     "name": "Hãng thiết bị hỗ trợ eSIM",
+     "numberOfItems": 23,
+     "itemListOrder": "https://schema.org/ItemListOrderAscending",
+     "itemListElement": [
+      {
+       "@type": "ListItem",
+       "position": 1,
+       "item": {
+        "@type": "Brand",
+        "name": "Asus"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 2,
+       "item": {
+        "@type": "Brand",
+        "name": "Fairphone"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 3,
+       "item": {
+        "@type": "Brand",
+        "name": "Google"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 4,
+       "item": {
+        "@type": "Brand",
+        "name": "Hammer"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 5,
+       "item": {
+        "@type": "Brand",
+        "name": "Honor"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 6,
+       "item": {
+        "@type": "Brand",
+        "name": "Huawei"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 7,
+       "item": {
+        "@type": "Brand",
+        "name": "iPhone"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 8,
+       "item": {
+        "@type": "Brand",
+        "name": "Motorola"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 9,
+       "item": {
+        "@type": "Brand",
+        "name": "Nokia"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 10,
+       "item": {
+        "@type": "Brand",
+        "name": "Nuu"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 11,
+       "item": {
+        "@type": "Brand",
+        "name": "OnePlus"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 12,
+       "item": {
+        "@type": "Brand",
+        "name": "Oppo"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 13,
+       "item": {
+        "@type": "Brand",
+        "name": "Rakuten"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 14,
+       "item": {
+        "@type": "Brand",
+        "name": "Realme"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 15,
+       "item": {
+        "@type": "Brand",
+        "name": "Samsung"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 16,
+       "item": {
+        "@type": "Brand",
+        "name": "Sharp"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 17,
+       "item": {
+        "@type": "Brand",
+        "name": "Sony"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 18,
+       "item": {
+        "@type": "Brand",
+        "name": "Surface"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 19,
+       "item": {
+        "@type": "Brand",
+        "name": "T-Mobile"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 20,
+       "item": {
+        "@type": "Brand",
+        "name": "TCL"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 21,
+       "item": {
+        "@type": "Brand",
+        "name": "Vivo"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 22,
+       "item": {
+        "@type": "Brand",
+        "name": "Xiaomi"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 23,
+       "item": {
+        "@type": "Brand",
+        "name": "ZTE"
+       }
+      }
+     ]
+    }
+   ],
+   "en": [
+    {
+     "@type": "CollectionPage",
+     "@id": "https://esim.vn/en/esim-supported-devices#webpage",
+     "url": "https://esim.vn/en/esim-supported-devices",
+     "name": "eSIM-Compatible Devices: iPhone, Samsung, Google & More | esim.vn",
+     "description": "Check whether your phone supports eSIM. See supported iPhone, Samsung, Google, Xiaomi, Oppo and other devices — your device must be carrier-unlocked.",
+     "inLanguage": "en",
+     "isPartOf": {
+      "@id": "https://esim.vn/en#website"
+     },
+     "breadcrumb": {
+      "@id": "https://esim.vn/en/esim-supported-devices#breadcrumb"
+     },
+     "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://esim.vn/og/esimvn-og-en.png",
+      "contentUrl": "https://esim.vn/og/esimvn-og-en.png"
+     },
+     "mainEntity": {
+      "@id": "https://esim.vn/en/esim-supported-devices#brands"
+     },
+     "about": {
+      "@id": "https://esim.vn/en/esim-supported-devices#term-esim"
+     }
+    },
+    {
+     "@type": "DefinedTerm",
+     "@id": "https://esim.vn/en/esim-supported-devices#term-esim",
+     "name": "eSIM",
+     "alternateName": "embedded SIM (embedded subscriber identity module)",
+     "description": "An eSIM is a digital SIM (embedded subscriber identity module) built into the device. It works like a physical SIM card without having to insert one.",
+     "sameAs": "https://en.wikipedia.org/wiki/ESIM"
+    },
+    {
+     "@type": "ItemList",
+     "@id": "https://esim.vn/en/esim-supported-devices#brands",
+     "name": "Device brands that support eSIM",
+     "numberOfItems": 23,
+     "itemListOrder": "https://schema.org/ItemListOrderAscending",
+     "itemListElement": [
+      {
+       "@type": "ListItem",
+       "position": 1,
+       "item": {
+        "@type": "Brand",
+        "name": "Asus"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 2,
+       "item": {
+        "@type": "Brand",
+        "name": "Fairphone"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 3,
+       "item": {
+        "@type": "Brand",
+        "name": "Google"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 4,
+       "item": {
+        "@type": "Brand",
+        "name": "Hammer"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 5,
+       "item": {
+        "@type": "Brand",
+        "name": "Honor"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 6,
+       "item": {
+        "@type": "Brand",
+        "name": "Huawei"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 7,
+       "item": {
+        "@type": "Brand",
+        "name": "iPhone"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 8,
+       "item": {
+        "@type": "Brand",
+        "name": "Motorola"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 9,
+       "item": {
+        "@type": "Brand",
+        "name": "Nokia"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 10,
+       "item": {
+        "@type": "Brand",
+        "name": "Nuu"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 11,
+       "item": {
+        "@type": "Brand",
+        "name": "OnePlus"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 12,
+       "item": {
+        "@type": "Brand",
+        "name": "Oppo"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 13,
+       "item": {
+        "@type": "Brand",
+        "name": "Rakuten"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 14,
+       "item": {
+        "@type": "Brand",
+        "name": "Realme"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 15,
+       "item": {
+        "@type": "Brand",
+        "name": "Samsung"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 16,
+       "item": {
+        "@type": "Brand",
+        "name": "Sharp"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 17,
+       "item": {
+        "@type": "Brand",
+        "name": "Sony"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 18,
+       "item": {
+        "@type": "Brand",
+        "name": "Surface"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 19,
+       "item": {
+        "@type": "Brand",
+        "name": "T-Mobile"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 20,
+       "item": {
+        "@type": "Brand",
+        "name": "TCL"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 21,
+       "item": {
+        "@type": "Brand",
+        "name": "Vivo"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 22,
+       "item": {
+        "@type": "Brand",
+        "name": "Xiaomi"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 23,
+       "item": {
+        "@type": "Brand",
+        "name": "ZTE"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  "/check-esim": {
+   "vi": [
+    {
+     "@type": "WebPage",
+     "@id": "https://esim.vn/tra-cuu-esim#webpage",
+     "url": "https://esim.vn/tra-cuu-esim",
+     "name": "Tra cứu eSIM | esim.vn",
+     "description": "Nhập ICCID để kiểm tra dung lượng còn lại, ngày hết hạn và ưu đãi của eSIM — không cần đăng nhập.",
+     "inLanguage": "vi",
+     "isPartOf": {
+      "@id": "https://esim.vn/#website"
+     },
+     "breadcrumb": {
+      "@id": "https://esim.vn/tra-cuu-esim#breadcrumb"
+     },
+     "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://esim.vn/og/esimvn-og-vi.png",
+      "contentUrl": "https://esim.vn/og/esimvn-og-vi.png"
+     },
+     "mainEntity": {
+      "@id": "https://esim.vn/tra-cuu-esim#app"
+     }
+    },
+    {
+     "@type": "WebApplication",
+     "@id": "https://esim.vn/tra-cuu-esim#app",
+     "name": "Tra cứu eSIM",
+     "url": "https://esim.vn/tra-cuu-esim",
+     "description": "Nhập mã ICCID (18–22 chữ số, có trong email gửi kèm eSIM) để xem dung lượng còn lại và ngày hết hạn của eSIM, không cần đăng nhập.",
+     "applicationCategory": "UtilitiesApplication",
+     "operatingSystem": "Any",
+     "browserRequirements": "Requires JavaScript",
+     "inLanguage": "vi",
+     "isAccessibleForFree": true,
+     "featureList": [
+      "Xem dung lượng còn lại theo ICCID",
+      "Xem ngày hết hạn của eSIM",
+      "Không cần đăng nhập"
+     ],
+     "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "VND"
+     },
+     "publisher": {
+      "@id": "https://esim.vn/#organization"
+     }
+    }
+   ],
+   "en": [
+    {
+     "@type": "WebPage",
+     "@id": "https://esim.vn/en/check-esim#webpage",
+     "url": "https://esim.vn/en/check-esim",
+     "name": "Check eSIM | esim.vn",
+     "description": "Enter your ICCID to see remaining data, expiry date and allowances on your eSIM — no sign-in needed.",
+     "inLanguage": "en",
+     "isPartOf": {
+      "@id": "https://esim.vn/en#website"
+     },
+     "breadcrumb": {
+      "@id": "https://esim.vn/en/check-esim#breadcrumb"
+     },
+     "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://esim.vn/og/esimvn-og-en.png",
+      "contentUrl": "https://esim.vn/og/esimvn-og-en.png"
+     },
+     "mainEntity": {
+      "@id": "https://esim.vn/en/check-esim#app"
+     }
+    },
+    {
+     "@type": "WebApplication",
+     "@id": "https://esim.vn/en/check-esim#app",
+     "name": "Check eSIM",
+     "url": "https://esim.vn/en/check-esim",
+     "description": "Enter your ICCID (18–22 digits, found in the email sent with your eSIM) to see the remaining data and expiry date of your eSIM, no sign-in needed.",
+     "applicationCategory": "UtilitiesApplication",
+     "operatingSystem": "Any",
+     "browserRequirements": "Requires JavaScript",
+     "inLanguage": "en",
+     "isAccessibleForFree": true,
+     "featureList": [
+      "See remaining data by ICCID",
+      "See your eSIM expiry date",
+      "No sign-in needed"
+     ],
+     "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+     },
+     "publisher": {
+      "@id": "https://esim.vn/#organization"
+     }
+    }
+   ]
+  },
+  "/what-is-esim": {
+   "vi": [
+    {
+     "@type": "WebPage",
+     "@id": "https://esim.vn/esim-la-gi#webpage",
+     "url": "https://esim.vn/esim-la-gi",
+     "name": "eSIM: Nó là gì và hoạt động như thế nào? | esim.vn",
+     "description": "eSIM là SIM kỹ thuật số được tích hợp sẵn trong hầu hết điện thoại, hoạt động như thẻ SIM vật lý, nhưng không cần lắp bất cứ thứ gì vào thiết bị. eSIM mang lại nhiều lợi ích, như giúp bạn tránh phí chuyển vùng và dễ dàng chuyển đổi giữa các nhà mạng.",
+     "inLanguage": "vi",
+     "isPartOf": {
+      "@id": "https://esim.vn/#website"
+     },
+     "breadcrumb": {
+      "@id": "https://esim.vn/esim-la-gi#breadcrumb"
+     },
+     "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://esim.vn/og/esimvn-og-vi.png",
+      "contentUrl": "https://esim.vn/og/esimvn-og-vi.png"
+     },
+     "mainEntity": {
+      "@id": "https://esim.vn/esim-la-gi#article"
+     },
+     "about": {
+      "@id": "https://esim.vn/esim-la-gi#term-esim"
+     }
+    },
+    {
+     "@type": "DefinedTerm",
+     "@id": "https://esim.vn/esim-la-gi#term-esim",
+     "name": "eSIM",
+     "alternateName": "embedded SIM",
+     "description": "eSIM là SIM kỹ thuật số (mô-đun nhận dạng thuê bao nhúng) tích hợp sẵn trong thiết bị, hoạt động như thẻ SIM vật lý nhưng không cần lắp thẻ.",
+     "sameAs": "https://vi.wikipedia.org/wiki/ESIM"
+    },
+    {
+     "@type": "Article",
+     "@id": "https://esim.vn/esim-la-gi#article",
+     "headline": "eSIM: Nó là gì và hoạt động như thế nào?",
+     "description": "eSIM là SIM kỹ thuật số được tích hợp sẵn trong hầu hết điện thoại, hoạt động như thẻ SIM vật lý, nhưng không cần lắp bất cứ thứ gì vào thiết bị. eSIM mang lại nhiều lợi ích, như giúp bạn tránh phí chuyển vùng và dễ dàng chuyển đổi giữa các nhà mạng.",
+     "inLanguage": "vi",
+     "mainEntityOfPage": {
+      "@id": "https://esim.vn/esim-la-gi#webpage"
+     },
+     "about": {
+      "@id": "https://esim.vn/esim-la-gi#term-esim"
+     },
+     "author": {
+      "@id": "https://esim.vn/#organization"
+     },
+     "publisher": {
+      "@id": "https://esim.vn/#organization"
+     },
+     "image": {
+      "@type": "ImageObject",
+      "url": "https://esim.vn/og/esimvn-og-vi.png",
+      "contentUrl": "https://esim.vn/og/esimvn-og-vi.png"
+     },
+     "articleSection": [
+      "eSIM là gì?",
+      "eSIM hoạt động như thế nào?",
+      "Cách thiết lập eSIM",
+      "Ưu điểm của eSIM",
+      "Sự khác biệt giữa eSIM và SIM vật lý"
+     ],
+     "hasPart": [
+      {
+       "@id": "https://esim.vn/esim-la-gi#howto-app"
+      },
+      {
+       "@id": "https://esim.vn/esim-la-gi#howto-manual"
+      }
+     ]
+    },
+    {
+     "@type": "HowTo",
+     "@id": "https://esim.vn/esim-la-gi#howto-app",
+     "name": "Thiết lập eSIM trên iPhone với ứng dụng esim.vn",
+     "inLanguage": "vi",
+     "step": [
+      {
+       "@type": "HowToStep",
+       "position": 1,
+       "name": "Chọn gói dữ liệu eSIM cho chuyến đi",
+       "text": "Chọn quốc gia bạn sẽ đến và chọn một gói."
+      },
+      {
+       "@type": "HowToStep",
+       "position": 2,
+       "name": "Tải ứng dụng esim.vn",
+       "text": "Tải ứng dụng, nhấn \"Cài đặt eSIM\" và làm theo các bước trên màn hình."
+      },
+      {
+       "@type": "HowToStep",
+       "position": 3,
+       "name": "Gói của bạn sẽ tự động kích hoạt",
+       "text": "Sẵn sàng cho chuyến đi — gói của bạn sẽ kích hoạt khi bạn đến nơi."
+      }
+     ]
+    },
+    {
+     "@type": "HowTo",
+     "@id": "https://esim.vn/esim-la-gi#howto-manual",
+     "name": "Thiết lập eSIM thủ công trên iPhone",
+     "inLanguage": "vi",
+     "step": [
+      {
+       "@type": "HowToStep",
+       "position": 1,
+       "name": "Vào Cài đặt",
+       "text": "Vào \"Cài đặt\"."
+      },
+      {
+       "@type": "HowToStep",
+       "position": 2,
+       "name": "Chọn Dữ liệu di động",
+       "text": "Nhấn \"Dữ liệu di động\" hoặc \"Dữ liệu mạng\"."
+      },
+      {
+       "@type": "HowToStep",
+       "position": 3,
+       "name": "Thêm gói di động",
+       "text": "Nhấn \"Thêm gói di động\"."
+      },
+      {
+       "@type": "HowToStep",
+       "position": 4,
+       "name": "Nhập thông tin thủ công",
+       "text": "Chạm \"Nhập thông tin thủ công\" ở cuối màn hình iPhone."
+      },
+      {
+       "@type": "HowToStep",
+       "position": 5,
+       "name": "Dán thông tin eSIM",
+       "text": "Dán thông tin eSIM được nhà cung cấp chia sẻ."
+      }
+     ]
+    }
+   ],
+   "en": [
+    {
+     "@type": "WebPage",
+     "@id": "https://esim.vn/en/what-is-esim#webpage",
+     "url": "https://esim.vn/en/what-is-esim",
+     "name": "eSIM: What is it, and how does it work? | esim.vn",
+     "description": "An eSIM is a digital SIM that's built into most modern phones. It works like a physical SIM card, but without having to insert anything into your device. eSIMs offer tons of benefits, such as helping you avoid roaming fees and making it easy to switch between providers.",
+     "inLanguage": "en",
+     "isPartOf": {
+      "@id": "https://esim.vn/en#website"
+     },
+     "breadcrumb": {
+      "@id": "https://esim.vn/en/what-is-esim#breadcrumb"
+     },
+     "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://esim.vn/og/esimvn-og-en.png",
+      "contentUrl": "https://esim.vn/og/esimvn-og-en.png"
+     },
+     "mainEntity": {
+      "@id": "https://esim.vn/en/what-is-esim#article"
+     },
+     "about": {
+      "@id": "https://esim.vn/en/what-is-esim#term-esim"
+     }
+    },
+    {
+     "@type": "DefinedTerm",
+     "@id": "https://esim.vn/en/what-is-esim#term-esim",
+     "name": "eSIM",
+     "alternateName": "embedded SIM (embedded subscriber identity module)",
+     "description": "An eSIM is a digital SIM (embedded subscriber identity module) built into the device. It works like a physical SIM card without having to insert one.",
+     "sameAs": "https://en.wikipedia.org/wiki/ESIM"
+    },
+    {
+     "@type": "Article",
+     "@id": "https://esim.vn/en/what-is-esim#article",
+     "headline": "eSIM: What is it, and how does it work?",
+     "description": "An eSIM is a digital SIM that's built into most modern phones. It works like a physical SIM card, but without having to insert anything into your device. eSIMs offer tons of benefits, such as helping you avoid roaming fees and making it easy to switch between providers.",
+     "inLanguage": "en",
+     "mainEntityOfPage": {
+      "@id": "https://esim.vn/en/what-is-esim#webpage"
+     },
+     "about": {
+      "@id": "https://esim.vn/en/what-is-esim#term-esim"
+     },
+     "author": {
+      "@id": "https://esim.vn/#organization"
+     },
+     "publisher": {
+      "@id": "https://esim.vn/#organization"
+     },
+     "image": {
+      "@type": "ImageObject",
+      "url": "https://esim.vn/og/esimvn-og-en.png",
+      "contentUrl": "https://esim.vn/og/esimvn-og-en.png"
+     },
+     "articleSection": [
+      "What is an eSIM?",
+      "How does an eSIM work?",
+      "How to set up an eSIM",
+      "eSIM advantages",
+      "What is the difference between an eSIM and a physical SIM?"
+     ],
+     "hasPart": [
+      {
+       "@id": "https://esim.vn/en/what-is-esim#howto-app"
+      },
+      {
+       "@id": "https://esim.vn/en/what-is-esim#howto-manual"
+      }
+     ]
+    },
+    {
+     "@type": "HowTo",
+     "@id": "https://esim.vn/en/what-is-esim#howto-app",
+     "name": "Set up an eSIM on your iPhone with the esim.vn app",
+     "inLanguage": "en",
+     "step": [
+      {
+       "@type": "HowToStep",
+       "position": 1,
+       "name": "Pick an eSIM data plan for your trip",
+       "text": "Select the country you're heading to and choose a plan."
+      },
+      {
+       "@type": "HowToStep",
+       "position": 2,
+       "name": "Download the esim.vn app",
+       "text": "Get the app, tap \"Install eSIM,\" and follow the steps on the screen."
+      },
+      {
+       "@type": "HowToStep",
+       "position": 3,
+       "name": "Your plan will automatically activate",
+       "text": "Get ready for your trip — your plan will activate when you arrive."
+      }
+     ]
+    },
+    {
+     "@type": "HowTo",
+     "@id": "https://esim.vn/en/what-is-esim#howto-manual",
+     "name": "Set up an eSIM manually on your iPhone",
+     "inLanguage": "en",
+     "step": [
+      {
+       "@type": "HowToStep",
+       "position": 1,
+       "name": "Go to Settings",
+       "text": "Go to \"Settings\"."
+      },
+      {
+       "@type": "HowToStep",
+       "position": 2,
+       "name": "Open Cellular data",
+       "text": "Tap \"Cellular data\" or \"Mobile data\"."
+      },
+      {
+       "@type": "HowToStep",
+       "position": 3,
+       "name": "Add a cellular plan",
+       "text": "Tap \"Add cellular plan\"."
+      },
+      {
+       "@type": "HowToStep",
+       "position": 4,
+       "name": "Enter information manually",
+       "text": "Touch \"Enter information manually\" at the bottom of your iPhone screen."
+      },
+      {
+       "@type": "HowToStep",
+       "position": 5,
+       "name": "Paste the eSIM information",
+       "text": "Paste the eSIM information shared by your provider."
+      }
+     ]
+    }
+   ]
+  },
+  "/about-us": {
+   "vi": [
+    {
+     "@type": "AboutPage",
+     "@id": "https://esim.vn/gioi-thieu#webpage",
+     "url": "https://esim.vn/gioi-thieu",
+     "name": "Giới thiệu về esim.vn",
+     "description": "esim.vn mang đến cho bạn công cụ để khám phá thế giới theo cách hiện đại. Chúng tôi đang xây dựng tương lai nơi kết nối dễ dàng, tức thì và hoàn toàn số hóa. Không nhựa. Không biên giới. Chỉ cần chạm, kết nối và đi.",
+     "inLanguage": "vi",
+     "isPartOf": {
+      "@id": "https://esim.vn/#website"
+     },
+     "breadcrumb": {
+      "@id": "https://esim.vn/gioi-thieu#breadcrumb"
+     },
+     "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://esim.vn/og/esimvn-og-vi.png",
+      "contentUrl": "https://esim.vn/og/esimvn-og-vi.png"
+     },
+     "mainEntity": {
+      "@id": "https://esim.vn/#organization"
+     },
+     "about": {
+      "@id": "https://esim.vn/#organization"
+     },
+     "mentions": [
+      {
+       "@id": "https://esim.vn/blog/author/duc-tho#person"
+      },
+      {
+       "@id": "https://esim.vn/blog/author/lai-ha#person"
+      }
+     ]
+    },
+    {
+     "@type": "Person",
+     "@id": "https://esim.vn/blog/author/duc-tho#person",
+     "name": "Duc Tho",
+     "jobTitle": "Quản lý cấp cao toàn cầu",
+     "url": "https://esim.vn/blog/author/duc-tho",
+     "worksFor": {
+      "@id": "https://esim.vn/#organization"
+     },
+     "alternateName": "Đức Thọ"
+    },
+    {
+     "@type": "Person",
+     "@id": "https://esim.vn/blog/author/lai-ha#person",
+     "name": "Lai Ha",
+     "jobTitle": "CEO",
+     "url": "https://esim.vn/blog/author/lai-ha",
+     "worksFor": {
+      "@id": "https://esim.vn/#organization"
+     },
+     "alternateName": "Lại Hà"
+    }
+   ],
+   "en": [
+    {
+     "@type": "AboutPage",
+     "@id": "https://esim.vn/en/about-us#webpage",
+     "url": "https://esim.vn/en/about-us",
+     "name": "About esim.vn",
+     "description": "esim.vn gives you the tools to explore the world in a modern way. We're building a future where connectivity is effortless, instant, and entirely digital. No plastic. No borders. Just tap, connect, and go.",
+     "inLanguage": "en",
+     "isPartOf": {
+      "@id": "https://esim.vn/en#website"
+     },
+     "breadcrumb": {
+      "@id": "https://esim.vn/en/about-us#breadcrumb"
+     },
+     "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://esim.vn/og/esimvn-og-en.png",
+      "contentUrl": "https://esim.vn/og/esimvn-og-en.png"
+     },
+     "mainEntity": {
+      "@id": "https://esim.vn/#organization"
+     },
+     "about": {
+      "@id": "https://esim.vn/#organization"
+     },
+     "mentions": [
+      {
+       "@id": "https://esim.vn/en/blog/author/duc-tho#person"
+      },
+      {
+       "@id": "https://esim.vn/en/blog/author/lai-ha#person"
+      }
+     ]
+    },
+    {
+     "@type": "Person",
+     "@id": "https://esim.vn/en/blog/author/duc-tho#person",
+     "name": "Duc Tho",
+     "jobTitle": "Senior Global Director",
+     "url": "https://esim.vn/en/blog/author/duc-tho",
+     "worksFor": {
+      "@id": "https://esim.vn/#organization"
+     }
+    },
+    {
+     "@type": "Person",
+     "@id": "https://esim.vn/en/blog/author/lai-ha#person",
+     "name": "Lai Ha",
+     "jobTitle": "CEO",
+     "url": "https://esim.vn/en/blog/author/lai-ha",
+     "worksFor": {
+      "@id": "https://esim.vn/#organization"
+     }
+    }
+   ]
+  },
+  "/review": {
+   "vi": [
+    {
+     "@type": "WebPage",
+     "@id": "https://esim.vn/danh-gia#webpage",
+     "url": "https://esim.vn/danh-gia",
+     "name": "Đánh giá esim.vn — Có nên mua eSIM du lịch không?",
+     "description": "Xem lý do nên mua eSIM esim.vn: gói cước phải chăng, nạp thêm eSIM, một eSIM cho nhiều quốc gia, hỗ trợ chat 24/7 và đánh giá từ du khách.",
+     "inLanguage": "vi",
+     "isPartOf": {
+      "@id": "https://esim.vn/#website"
+     },
+     "breadcrumb": {
+      "@id": "https://esim.vn/danh-gia#breadcrumb"
+     },
+     "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://esim.vn/og/esimvn-og-vi.png",
+      "contentUrl": "https://esim.vn/og/esimvn-og-vi.png"
+     },
+     "about": {
+      "@id": "https://esim.vn/#service"
+     },
+     "mainEntity": {
+      "@id": "https://esim.vn/danh-gia#reasons"
+     }
+    },
+    {
+     "@type": "Service",
+     "@id": "https://esim.vn/#service",
+     "name": "eSIM du lịch quốc tế",
+     "serviceType": "eSIM du lịch quốc tế",
+     "provider": {
+      "@id": "https://esim.vn/#organization"
+     },
+     "areaServed": "Worldwide"
+    },
+    {
+     "@type": "ItemList",
+     "@id": "https://esim.vn/danh-gia#reasons",
+     "name": "Lý do nên mua eSIM esim.vn",
+     "numberOfItems": 4,
+     "itemListElement": [
+      {
+       "@type": "ListItem",
+       "position": 1,
+       "name": "Gói cước phải chăng"
+      },
+      {
+       "@type": "ListItem",
+       "position": 2,
+       "name": "Nạp thêm eSIM"
+      },
+      {
+       "@type": "ListItem",
+       "position": 3,
+       "name": "Một eSIM cho tất cả quốc gia"
+      },
+      {
+       "@type": "ListItem",
+       "position": 4,
+       "name": "Hỗ trợ chat 24/7"
+      }
+     ]
+    }
+   ],
+   "en": [
+    {
+     "@type": "WebPage",
+     "@id": "https://esim.vn/en/review#webpage",
+     "url": "https://esim.vn/en/review",
+     "name": "esim.vn Review — Should You Get a Travel eSIM?",
+     "description": "See why travelers choose esim.vn: affordable plans, eSIM top-ups, one eSIM for many countries, 24/7 chat support and traveler reviews.",
+     "inLanguage": "en",
+     "isPartOf": {
+      "@id": "https://esim.vn/en#website"
+     },
+     "breadcrumb": {
+      "@id": "https://esim.vn/en/review#breadcrumb"
+     },
+     "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://esim.vn/og/esimvn-og-en.png",
+      "contentUrl": "https://esim.vn/og/esimvn-og-en.png"
+     },
+     "about": {
+      "@id": "https://esim.vn/en#service"
+     },
+     "mainEntity": {
+      "@id": "https://esim.vn/en/review#reasons"
+     }
+    },
+    {
+     "@type": "Service",
+     "@id": "https://esim.vn/en#service",
+     "name": "International travel eSIM",
+     "serviceType": "International travel eSIM",
+     "provider": {
+      "@id": "https://esim.vn/#organization"
+     },
+     "areaServed": "Worldwide"
+    },
+    {
+     "@type": "ItemList",
+     "@id": "https://esim.vn/en/review#reasons",
+     "name": "Reasons to buy an esim.vn eSIM",
+     "numberOfItems": 4,
+     "itemListElement": [
+      {
+       "@type": "ListItem",
+       "position": 1,
+       "name": "Affordable plans"
+      },
+      {
+       "@type": "ListItem",
+       "position": 2,
+       "name": "eSIM top-ups"
+      },
+      {
+       "@type": "ListItem",
+       "position": 3,
+       "name": "One eSIM for all countries"
+      },
+      {
+       "@type": "ListItem",
+       "position": 4,
+       "name": "24/7 chat support"
+      }
+     ]
+    }
+   ]
+  },
+  "/press-area": {
+   "vi": [
+    {
+     "@type": "WebPage",
+     "@id": "https://esim.vn/khu-vuc-bao-chi#webpage",
+     "url": "https://esim.vn/khu-vuc-bao-chi",
+     "name": "Khu vực báo chí esim.vn — Nghiên cứu, diễn giả & tài nguyên thương hiệu",
+     "description": "Tin tức, báo cáo nghiên cứu du lịch, danh sách diễn giả và tài nguyên thương hiệu (logo) của esim.vn dành cho báo chí. Liên hệ truyền thông qua email.",
+     "inLanguage": "vi",
+     "isPartOf": {
+      "@id": "https://esim.vn/#website"
+     },
+     "breadcrumb": {
+      "@id": "https://esim.vn/khu-vuc-bao-chi#breadcrumb"
+     },
+     "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://esim.vn/og/esimvn-og-vi.png",
+      "contentUrl": "https://esim.vn/og/esimvn-og-vi.png"
+     },
+     "about": {
+      "@id": "https://esim.vn/#organization"
+     },
+     "mentions": [
+      {
+       "@id": "https://esim.vn/khu-vuc-bao-chi#research"
+      },
+      {
+       "@id": "https://esim.vn/blog/author/duc-tho#person"
+      },
+      {
+       "@id": "https://esim.vn/blog/author/lai-ha#person"
+      }
+     ]
+    },
+    {
+     "@type": "ItemList",
+     "@id": "https://esim.vn/khu-vuc-bao-chi#research",
+     "name": "Trung tâm nghiên cứu esim.vn",
+     "numberOfItems": 5,
+     "itemListElement": [
+      {
+       "@type": "ListItem",
+       "position": 1,
+       "item": {
+        "@type": "CreativeWork",
+        "name": "ESIM.VN Internet Connectivity Index 2025",
+        "publisher": {
+         "@id": "https://esim.vn/#organization"
+        }
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 2,
+       "item": {
+        "@type": "CreativeWork",
+        "name": "What's the recipe for the perfect vacation in 2025?",
+        "publisher": {
+         "@id": "https://esim.vn/#organization"
+        }
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 3,
+       "item": {
+        "@type": "CreativeWork",
+        "name": "Still using public Wi-Fi while traveling? You're not alone",
+        "publisher": {
+         "@id": "https://esim.vn/#organization"
+        }
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 4,
+       "item": {
+        "@type": "CreativeWork",
+        "name": "The most annoying tourist behaviors",
+        "publisher": {
+         "@id": "https://esim.vn/#organization"
+        }
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 5,
+       "item": {
+        "@type": "CreativeWork",
+        "name": "How many hours do Americans spend online on vacation?",
+        "publisher": {
+         "@id": "https://esim.vn/#organization"
+        }
+       }
+      }
+     ]
+    },
+    {
+     "@type": "Person",
+     "@id": "https://esim.vn/blog/author/duc-tho#person",
+     "name": "Duc Tho",
+     "jobTitle": "Senior Global Director",
+     "url": "https://esim.vn/blog/author/duc-tho",
+     "worksFor": {
+      "@id": "https://esim.vn/#organization"
+     },
+     "alternateName": "Đức Thọ"
+    },
+    {
+     "@type": "Person",
+     "@id": "https://esim.vn/blog/author/lai-ha#person",
+     "name": "Lai Ha",
+     "jobTitle": "CEO",
+     "url": "https://esim.vn/blog/author/lai-ha",
+     "worksFor": {
+      "@id": "https://esim.vn/#organization"
+     },
+     "alternateName": "Lại Hà"
+    }
+   ],
+   "en": [
+    {
+     "@type": "WebPage",
+     "@id": "https://esim.vn/en/press-area#webpage",
+     "url": "https://esim.vn/en/press-area",
+     "name": "esim.vn Press Area — Research, Speakers & Brand Assets",
+     "description": "News, travel research reports, speakers and brand assets (logos) from esim.vn for the press. Contact us by email for press inquiries.",
+     "inLanguage": "en",
+     "isPartOf": {
+      "@id": "https://esim.vn/en#website"
+     },
+     "breadcrumb": {
+      "@id": "https://esim.vn/en/press-area#breadcrumb"
+     },
+     "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://esim.vn/og/esimvn-og-en.png",
+      "contentUrl": "https://esim.vn/og/esimvn-og-en.png"
+     },
+     "about": {
+      "@id": "https://esim.vn/#organization"
+     },
+     "mentions": [
+      {
+       "@id": "https://esim.vn/en/press-area#research"
+      },
+      {
+       "@id": "https://esim.vn/en/blog/author/duc-tho#person"
+      },
+      {
+       "@id": "https://esim.vn/en/blog/author/lai-ha#person"
+      }
+     ]
+    },
+    {
+     "@type": "ItemList",
+     "@id": "https://esim.vn/en/press-area#research",
+     "name": "esim.vn research hub",
+     "numberOfItems": 5,
+     "itemListElement": [
+      {
+       "@type": "ListItem",
+       "position": 1,
+       "item": {
+        "@type": "CreativeWork",
+        "name": "ESIM.VN Internet Connectivity Index 2025",
+        "publisher": {
+         "@id": "https://esim.vn/#organization"
+        }
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 2,
+       "item": {
+        "@type": "CreativeWork",
+        "name": "What's the recipe for the perfect vacation in 2025?",
+        "publisher": {
+         "@id": "https://esim.vn/#organization"
+        }
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 3,
+       "item": {
+        "@type": "CreativeWork",
+        "name": "Still using public Wi-Fi while traveling? You're not alone",
+        "publisher": {
+         "@id": "https://esim.vn/#organization"
+        }
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 4,
+       "item": {
+        "@type": "CreativeWork",
+        "name": "The most annoying tourist behaviors",
+        "publisher": {
+         "@id": "https://esim.vn/#organization"
+        }
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 5,
+       "item": {
+        "@type": "CreativeWork",
+        "name": "How many hours do Americans spend online on vacation?",
+        "publisher": {
+         "@id": "https://esim.vn/#organization"
+        }
+       }
+      }
+     ]
+    },
+    {
+     "@type": "Person",
+     "@id": "https://esim.vn/en/blog/author/duc-tho#person",
+     "name": "Duc Tho",
+     "jobTitle": "Senior Global Director",
+     "url": "https://esim.vn/en/blog/author/duc-tho",
+     "worksFor": {
+      "@id": "https://esim.vn/#organization"
+     }
+    },
+    {
+     "@type": "Person",
+     "@id": "https://esim.vn/en/blog/author/lai-ha#person",
+     "name": "Lai Ha",
+     "jobTitle": "CEO",
+     "url": "https://esim.vn/en/blog/author/lai-ha",
+     "worksFor": {
+      "@id": "https://esim.vn/#organization"
+     }
+    }
+   ]
+  },
+  "/refer-a-friend": {
+   "vi": [
+    {
+     "@type": "WebPage",
+     "@id": "https://esim.vn/gioi-thieu-ban-be#webpage",
+     "url": "https://esim.vn/gioi-thieu-ban-be",
+     "name": "Giới thiệu bạn bè — esim.vn",
+     "description": "Chia sẻ mã giới thiệu esim.vn và nhận thưởng eXU theo hạng thành viên.",
+     "inLanguage": "vi",
+     "isPartOf": {
+      "@id": "https://esim.vn/#website"
+     },
+     "breadcrumb": {
+      "@id": "https://esim.vn/gioi-thieu-ban-be#breadcrumb"
+     },
+     "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://esim.vn/og/esimvn-og-vi.png",
+      "contentUrl": "https://esim.vn/og/esimvn-og-vi.png"
+     },
+     "mainEntity": {
+      "@id": "https://esim.vn/gioi-thieu-ban-be#referral-program"
+     },
+     "about": {
+      "@id": "https://esim.vn/gioi-thieu-ban-be#referral-program"
+     }
+    },
+    {
+     "@type": "Service",
+     "@id": "https://esim.vn/gioi-thieu-ban-be#referral-program",
+     "name": "Chương trình giới thiệu bạn bè esim.vn",
+     "serviceType": "Chương trình giới thiệu",
+     "provider": {
+      "@id": "https://esim.vn/#organization"
+     },
+     "description": "Chia sẻ mã giới thiệu esim.vn: bạn bè được giảm giá cho đơn eSIM đầu tiên, còn bạn nhận thưởng điểm eXU theo hạng thành viên sau khi đơn được thanh toán thành công.",
+     "additionalProperty": [
+      {
+       "@type": "PropertyValue",
+       "name": "Du khách",
+       "value": 10000,
+       "unitText": "điểm eXU mỗi lượt giới thiệu"
+      },
+      {
+       "@type": "PropertyValue",
+       "name": "Du khách bạc",
+       "value": 12000,
+       "unitText": "điểm eXU mỗi lượt giới thiệu"
+      },
+      {
+       "@type": "PropertyValue",
+       "name": "Du khách vàng",
+       "value": 15000,
+       "unitText": "điểm eXU mỗi lượt giới thiệu"
+      },
+      {
+       "@type": "PropertyValue",
+       "name": "Du khách bạch kim",
+       "value": 20000,
+       "unitText": "điểm eXU mỗi lượt giới thiệu"
+      }
+     ]
+    }
+   ],
+   "en": [
+    {
+     "@type": "WebPage",
+     "@id": "https://esim.vn/en/refer-a-friend#webpage",
+     "url": "https://esim.vn/en/refer-a-friend",
+     "name": "Refer a friend — esim.vn",
+     "description": "Share your esim.vn referral code and earn eXU based on your membership tier.",
+     "inLanguage": "en",
+     "isPartOf": {
+      "@id": "https://esim.vn/en#website"
+     },
+     "breadcrumb": {
+      "@id": "https://esim.vn/en/refer-a-friend#breadcrumb"
+     },
+     "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://esim.vn/og/esimvn-og-en.png",
+      "contentUrl": "https://esim.vn/og/esimvn-og-en.png"
+     },
+     "mainEntity": {
+      "@id": "https://esim.vn/en/refer-a-friend#referral-program"
+     },
+     "about": {
+      "@id": "https://esim.vn/en/refer-a-friend#referral-program"
+     }
+    },
+    {
+     "@type": "Service",
+     "@id": "https://esim.vn/en/refer-a-friend#referral-program",
+     "name": "esim.vn refer-a-friend programme",
+     "serviceType": "Referral programme",
+     "provider": {
+      "@id": "https://esim.vn/#organization"
+     },
+     "description": "Share your esim.vn referral code: your friend gets a discount on their first eSIM order, and you earn eXU points based on your membership tier once the order is paid successfully.",
+     "additionalProperty": [
+      {
+       "@type": "PropertyValue",
+       "name": "Traveler",
+       "value": 10000,
+       "unitText": "eXU points per referral"
+      },
+      {
+       "@type": "PropertyValue",
+       "name": "Silver Traveler",
+       "value": 12000,
+       "unitText": "eXU points per referral"
+      },
+      {
+       "@type": "PropertyValue",
+       "name": "Gold Traveler",
+       "value": 15000,
+       "unitText": "eXU points per referral"
+      },
+      {
+       "@type": "PropertyValue",
+       "name": "Platinum Traveler",
+       "value": 20000,
+       "unitText": "eXU points per referral"
+      }
+     ]
+    }
+   ]
+  },
+  "/coupon": {
+   "vi": [
+    {
+     "@type": "WebPage",
+     "@id": "https://esim.vn/ma-giam-gia#webpage",
+     "url": "https://esim.vn/ma-giam-gia",
+     "name": "Mã giảm giá esim.vn — Cách nhập mã khi thanh toán",
+     "description": "Sao chép mã giảm giá esim.vn và áp dụng khi thanh toán trên web hoặc ứng dụng để tiết kiệm cho gói eSIM du lịch. Xem hướng dẫn nhập mã từng bước.",
+     "inLanguage": "vi",
+     "isPartOf": {
+      "@id": "https://esim.vn/#website"
+     },
+     "breadcrumb": {
+      "@id": "https://esim.vn/ma-giam-gia#breadcrumb"
+     },
+     "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://esim.vn/og/esimvn-og-vi.png",
+      "contentUrl": "https://esim.vn/og/esimvn-og-vi.png"
+     },
+     "about": {
+      "@id": "https://esim.vn/#service"
+     },
+     "mainEntity": {
+      "@id": "https://esim.vn/ma-giam-gia#howto-coupon"
+     }
+    },
+    {
+     "@type": "Service",
+     "@id": "https://esim.vn/#service",
+     "name": "eSIM du lịch quốc tế",
+     "serviceType": "eSIM du lịch quốc tế",
+     "provider": {
+      "@id": "https://esim.vn/#organization"
+     },
+     "areaServed": "Worldwide"
+    },
+    {
+     "@type": "HowTo",
+     "@id": "https://esim.vn/ma-giam-gia#howto-coupon",
+     "name": "Cách sử dụng mã giảm giá esim.vn",
+     "inLanguage": "vi",
+     "step": [
+      {
+       "@type": "HowToStep",
+       "position": 1,
+       "name": "Chọn gói và nhấn \"Đi đến thanh toán.\"",
+       "text": "Chọn gói và nhấn \"Đi đến thanh toán.\""
+      },
+      {
+       "@type": "HowToStep",
+       "position": 2,
+       "name": "Nhấn nút \"Có mã giảm giá?\"",
+       "text": "Nhấn nút \"Có mã giảm giá?\""
+      },
+      {
+       "@type": "HowToStep",
+       "position": 3,
+       "name": "Nhập mã giảm giá và nhấn \"Áp dụng.\"",
+       "text": "Nhập mã giảm giá và nhấn \"Áp dụng.\""
+      }
+     ]
+    }
+   ],
+   "en": [
+    {
+     "@type": "WebPage",
+     "@id": "https://esim.vn/en/coupon#webpage",
+     "url": "https://esim.vn/en/coupon",
+     "name": "esim.vn Coupon Codes — How to Apply at Checkout",
+     "description": "Copy an esim.vn coupon code and apply it at checkout on the web or in the app to save on your travel eSIM plan. See the step-by-step guide.",
+     "inLanguage": "en",
+     "isPartOf": {
+      "@id": "https://esim.vn/en#website"
+     },
+     "breadcrumb": {
+      "@id": "https://esim.vn/en/coupon#breadcrumb"
+     },
+     "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://esim.vn/og/esimvn-og-en.png",
+      "contentUrl": "https://esim.vn/og/esimvn-og-en.png"
+     },
+     "about": {
+      "@id": "https://esim.vn/en#service"
+     },
+     "mainEntity": {
+      "@id": "https://esim.vn/en/coupon#howto-coupon"
+     }
+    },
+    {
+     "@type": "Service",
+     "@id": "https://esim.vn/en#service",
+     "name": "International travel eSIM",
+     "serviceType": "International travel eSIM",
+     "provider": {
+      "@id": "https://esim.vn/#organization"
+     },
+     "areaServed": "Worldwide"
+    },
+    {
+     "@type": "HowTo",
+     "@id": "https://esim.vn/en/coupon#howto-coupon",
+     "name": "How to use the esim.vn coupon code",
+     "inLanguage": "en",
+     "step": [
+      {
+       "@type": "HowToStep",
+       "position": 1,
+       "name": "Choose a plan and click on \"Go to checkout.\"",
+       "text": "Choose a plan and click on \"Go to checkout.\""
+      },
+      {
+       "@type": "HowToStep",
+       "position": 2,
+       "name": "Click the \"Got a coupon?\" button.",
+       "text": "Click the \"Got a coupon?\" button."
+      },
+      {
+       "@type": "HowToStep",
+       "position": 3,
+       "name": "Enter the coupon code and click \"Apply.\"",
+       "text": "Enter the coupon code and click \"Apply.\""
+      }
+     ]
+    }
+   ]
+  },
+  "/affiliate": {
+   "vi": [
+    {
+     "@type": "WebPage",
+     "@id": "https://esim.vn/affiliate#webpage",
+     "url": "https://esim.vn/affiliate",
+     "name": "Chương trình Affiliate esim.vn — Nhận hoa hồng mỗi đơn eSIM",
+     "description": "Giới thiệu eSIM du lịch esim.vn tới người theo dõi của bạn và nhận hoa hồng trên mỗi đơn hàng hợp lệ. Đăng ký miễn phí, có link riêng, theo dõi đơn và hoa hồng theo thời gian thực.",
+     "inLanguage": "vi",
+     "isPartOf": {
+      "@id": "https://esim.vn/#website"
+     },
+     "breadcrumb": {
+      "@id": "https://esim.vn/affiliate#breadcrumb"
+     },
+     "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://esim.vn/og/esimvn-og-vi.png",
+      "contentUrl": "https://esim.vn/og/esimvn-og-vi.png"
+     },
+     "mainEntity": {
+      "@id": "https://esim.vn/affiliate#service"
+     },
+     "about": {
+      "@id": "https://esim.vn/affiliate#service"
+     }
+    },
+    {
+     "@type": "Service",
+     "@id": "https://esim.vn/affiliate#service",
+     "name": "Chương trình Affiliate esim.vn",
+     "serviceType": "Chương trình tiếp thị liên kết",
+     "provider": {
+      "@id": "https://esim.vn/#organization"
+     },
+     "description": "Giới thiệu eSIM du lịch esim.vn tới người theo dõi của bạn và nhận hoa hồng trên mỗi đơn hàng hợp lệ. Đăng ký miễn phí, có link riêng, theo dõi đơn và hoa hồng theo thời gian thực.",
+     "audience": {
+      "@type": "Audience",
+      "audienceType": "Người làm nội dung du lịch, KOL/KOC, chủ cộng đồng và chủ website"
+     },
+     "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "VND",
+      "description": "Tham gia miễn phí"
+     },
+     "additionalProperty": [
+      {
+       "@type": "PropertyValue",
+       "name": "Phí tham gia",
+       "value": 0,
+       "unitText": "VND"
+      },
+      {
+       "@type": "PropertyValue",
+       "name": "Thời gian ghi nhận đơn sau lần bấm link gần nhất",
+       "value": 30,
+       "unitText": "ngày",
+       "unitCode": "DAY"
+      },
+      {
+       "@type": "PropertyValue",
+       "name": "Thời gian duyệt hồ sơ",
+       "value": "1-3 ngày làm việc"
+      }
+     ],
+     "potentialAction": {
+      "@type": "RegisterAction",
+      "name": "Đăng ký làm đối tác Affiliate",
+      "target": {
+       "@type": "EntryPoint",
+       "urlTemplate": "https://esim.vn/dang-ky-doi-tac",
+       "actionPlatform": "https://schema.org/DesktopWebPlatform"
+      }
+     }
+    },
+    {
+     "@type": "FAQPage",
+     "@id": "https://esim.vn/affiliate#faq",
+     "url": "https://esim.vn/affiliate",
+     "inLanguage": "vi",
+     "isPartOf": {
+      "@id": "https://esim.vn/affiliate#webpage"
+     },
+     "mainEntity": [
+      {
+       "@type": "Question",
+       "name": "Tham gia có mất phí không?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Không. Đăng ký và sử dụng chương trình hoàn toàn miễn phí, không có phí duy trì và không yêu cầu doanh số tối thiểu."
+       }
+      },
+      {
+       "@type": "Question",
+       "name": "Bao lâu thì biết hồ sơ được duyệt hay không?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Chúng tôi thường phản hồi trong 1-3 ngày làm việc. Dù được duyệt hay bị từ chối, bạn đều nhận được email thông báo kết quả — nếu bị từ chối, email sẽ nêu lý do để bạn bổ sung và nộp lại."
+       }
+      },
+      {
+       "@type": "Question",
+       "name": "Đơn hàng như thế nào thì được tính hoa hồng?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Đơn được đặt trong vòng 30 ngày kể từ lần gần nhất khách bấm vào link giới thiệu của bạn, hoặc khách nhập mã giới thiệu của bạn khi thanh toán. Khách quay lại website trực tiếp trong 30 ngày đó vẫn được tính cho bạn."
+       }
+      },
+      {
+       "@type": "Question",
+       "name": "Tôi có thể tự bấm link của mình để mua không?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Không. Đơn tự đặt qua link của chính mình không được tính hoa hồng — hệ thống có kiểm tra để phát hiện các trường hợp này."
+       }
+      },
+      {
+       "@type": "Question",
+       "name": "Khi nào tôi nhận được tiền?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Hoa hồng của mỗi đơn ở trạng thái chờ đối soát cho tới khi đơn hoàn tất. Sau khi được ghi có vào ví đối tác, bạn có thể tạo yêu cầu rút tiền về tài khoản ngân hàng của mình."
+       }
+      },
+      {
+       "@type": "Question",
+       "name": "Nếu khách hoàn tiền thì sao?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Đơn bị huỷ hoặc hoàn tiền toàn bộ sẽ bị trừ lại phần hoa hồng tương ứng, kể cả khi đã ghi có trước đó."
+       }
+      }
+     ]
+    }
+   ],
+   "en": [
+    {
+     "@type": "WebPage",
+     "@id": "https://esim.vn/en/affiliate#webpage",
+     "url": "https://esim.vn/en/affiliate",
+     "name": "esim.vn Affiliate Programme — Earn on every eSIM order",
+     "description": "Recommend esim.vn travel eSIMs to your audience and earn a commission on every valid order. Free to join, your own referral links, and orders and commission you can follow in real time.",
+     "inLanguage": "en",
+     "isPartOf": {
+      "@id": "https://esim.vn/en#website"
+     },
+     "breadcrumb": {
+      "@id": "https://esim.vn/en/affiliate#breadcrumb"
+     },
+     "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://esim.vn/og/esimvn-og-en.png",
+      "contentUrl": "https://esim.vn/og/esimvn-og-en.png"
+     },
+     "mainEntity": {
+      "@id": "https://esim.vn/en/affiliate#service"
+     },
+     "about": {
+      "@id": "https://esim.vn/en/affiliate#service"
+     }
+    },
+    {
+     "@type": "Service",
+     "@id": "https://esim.vn/en/affiliate#service",
+     "name": "esim.vn Affiliate Programme",
+     "serviceType": "Affiliate marketing programme",
+     "provider": {
+      "@id": "https://esim.vn/#organization"
+     },
+     "description": "Recommend esim.vn travel eSIMs to your audience and earn a commission on every valid order. Free to join, your own referral links, and orders and commission you can follow in real time.",
+     "audience": {
+      "@type": "Audience",
+      "audienceType": "Travel content creators, KOL/KOC, community owners and website owners"
+     },
+     "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD",
+      "description": "Free to join"
+     },
+     "additionalProperty": [
+      {
+       "@type": "PropertyValue",
+       "name": "Joining fee",
+       "value": 0,
+       "unitText": "USD"
+      },
+      {
+       "@type": "PropertyValue",
+       "name": "Order attribution window after the latest click",
+       "value": 30,
+       "unitText": "days",
+       "unitCode": "DAY"
+      },
+      {
+       "@type": "PropertyValue",
+       "name": "Application review time",
+       "value": "1-3 working days"
+      }
+     ],
+     "potentialAction": {
+      "@type": "RegisterAction",
+      "name": "Apply to join the affiliate programme",
+      "target": {
+       "@type": "EntryPoint",
+       "urlTemplate": "https://esim.vn/en/partner-register",
+       "actionPlatform": "https://schema.org/DesktopWebPlatform"
+      }
+     }
+    },
+    {
+     "@type": "FAQPage",
+     "@id": "https://esim.vn/en/affiliate#faq",
+     "url": "https://esim.vn/en/affiliate",
+     "inLanguage": "en",
+     "isPartOf": {
+      "@id": "https://esim.vn/en/affiliate#webpage"
+     },
+     "mainEntity": [
+      {
+       "@type": "Question",
+       "name": "Does it cost anything to join?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Joining and using the programme is free, with no maintenance fee and no minimum sales requirement."
+       }
+      },
+      {
+       "@type": "Question",
+       "name": "How long until I know whether I am approved?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We usually reply within 1-3 working days. Either way you get an email with the outcome — a rejection says why, so you can fix it and apply again."
+       }
+      },
+      {
+       "@type": "Question",
+       "name": "Which orders earn me a commission?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Orders placed within 30 days of your visitor's most recent click on your link, or where the buyer entered your referral code at checkout. Someone who comes back to the site directly within those 30 days still counts as yours."
+       }
+      },
+      {
+       "@type": "Question",
+       "name": "Can I use my own link to buy?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Orders you place through your own link do not earn commission — we check for this."
+       }
+      },
+      {
+       "@type": "Question",
+       "name": "When do I get paid?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Each order's commission stays pending until the order is complete. Once it is credited to your partner wallet, you can request a withdrawal to your bank account."
+       }
+      },
+      {
+       "@type": "Question",
+       "name": "What happens if a customer gets a refund?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A cancelled or fully refunded order has its commission reversed, including when it had already been credited."
+       }
+      }
+     ]
+    }
+   ]
+  },
+  "/distribution-partners": {
+   "vi": [
+    {
+     "@type": "WebPage",
+     "@id": "https://esim.vn/doi-tac-phan-phoi#webpage",
+     "url": "https://esim.vn/doi-tac-phan-phoi",
+     "name": "Đối tác phân phối eSIM esim.vn — Giá đại lý, bán eSIM dưới thương hiệu của bạn",
+     "description": "Trở thành đối tác phân phối eSIM du lịch esim.vn: nhập eSIM theo giá đại lý, gửi mã QR cho khách mang logo của bạn, quản lý đơn và eSIM trong cổng đối tác.",
+     "inLanguage": "vi",
+     "isPartOf": {
+      "@id": "https://esim.vn/#website"
+     },
+     "breadcrumb": {
+      "@id": "https://esim.vn/doi-tac-phan-phoi#breadcrumb"
+     },
+     "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://esim.vn/og/esimvn-og-vi.png",
+      "contentUrl": "https://esim.vn/og/esimvn-og-vi.png"
+     },
+     "mainEntity": {
+      "@id": "https://esim.vn/doi-tac-phan-phoi#service"
+     },
+     "about": {
+      "@id": "https://esim.vn/doi-tac-phan-phoi#service"
+     }
+    },
+    {
+     "@type": "Service",
+     "@id": "https://esim.vn/doi-tac-phan-phoi#service",
+     "name": "Đối tác phân phối eSIM esim.vn",
+     "serviceType": "Phân phối eSIM giá đại lý",
+     "provider": {
+      "@id": "https://esim.vn/#organization"
+     },
+     "description": "Trở thành đối tác phân phối eSIM du lịch esim.vn: nhập eSIM theo giá đại lý, gửi mã QR cho khách mang logo của bạn, quản lý đơn và eSIM trong cổng đối tác.",
+     "audience": {
+      "@type": "Audience",
+      "audienceType": "Đại lý, công ty du lịch, doanh nghiệp và cá nhân bán lại eSIM"
+     },
+     "additionalProperty": [
+      {
+       "@type": "PropertyValue",
+       "name": "Tư cách đăng ký",
+       "value": "Cá nhân hoặc Doanh nghiệp"
+      },
+      {
+       "@type": "PropertyValue",
+       "name": "Phí duy trì số dư",
+       "value": 0,
+       "unitText": "VND"
+      }
+     ],
+     "potentialAction": {
+      "@type": "RegisterAction",
+      "name": "Đăng ký đối tác phân phối",
+      "target": {
+       "@type": "EntryPoint",
+       "urlTemplate": "https://esim.vn/dang-ky-doi-tac?loai=distribution",
+       "actionPlatform": "https://schema.org/DesktopWebPlatform"
+      }
+     }
+    },
+    {
+     "@type": "FAQPage",
+     "@id": "https://esim.vn/doi-tac-phan-phoi#faq",
+     "url": "https://esim.vn/doi-tac-phan-phoi",
+     "inLanguage": "vi",
+     "isPartOf": {
+      "@id": "https://esim.vn/doi-tac-phan-phoi#webpage"
+     },
+     "mainEntity": [
+      {
+       "@type": "Question",
+       "name": "Cá nhân có đăng ký làm đối tác phân phối được không?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Được. Bạn chọn tư cách Cá nhân hoặc Doanh nghiệp khi đăng ký; doanh nghiệp cần thêm tên công ty và mã số thuế."
+       }
+      },
+      {
+       "@type": "Question",
+       "name": "Tôi cần nạp ký quỹ bao nhiêu?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Mức nạp tối thiểu do chương trình quy định và hiện rõ trong cổng đối tác khi bạn nạp. Số dư chỉ dùng để mua eSIM, không mất phí duy trì."
+       }
+      },
+      {
+       "@type": "Question",
+       "name": "Giá đại lý được tính thế nào?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Mỗi hạng đối tác có mức giá đại lý riêng. Giá bạn trả cho từng gói hiện ngay trong trang Sản phẩm & bảng giá của cổng đối tác."
+       }
+      },
+      {
+       "@type": "Question",
+       "name": "Khách nhận eSIM bằng cách nào?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Khi đặt mua, bạn nhập email của khách: hệ thống gửi mã QR kèm hướng dẫn cài đặt tới khách, mang logo thương hiệu bạn đã cấu hình."
+       }
+      },
+      {
+       "@type": "Question",
+       "name": "Nếu eSIM không dùng được thì sao?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Bạn báo lỗi eSIM đó trong cổng đối tác. esim.vn kiểm tra với nhà cung cấp và hoàn tiền vào ví ký quỹ nếu lỗi không do người dùng."
+       }
+      },
+      {
+       "@type": "Question",
+       "name": "Tôi có thể vừa phân phối vừa làm tiếp thị liên kết không?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Có. Đối tác phân phối có thể được esim.vn cấp thêm quyền affiliate để dùng link, mã giới thiệu và nhận hoa hồng."
+       }
+      }
+     ]
+    }
+   ],
+   "en": [
+    {
+     "@type": "WebPage",
+     "@id": "https://esim.vn/en/distribution-partners#webpage",
+     "url": "https://esim.vn/en/distribution-partners",
+     "name": "esim.vn eSIM distribution partners — Reseller prices, your own brand",
+     "description": "Become an esim.vn eSIM distribution partner: buy travel eSIMs at reseller prices, send QR codes to customers under your logo, and manage orders and eSIMs in the partner portal.",
+     "inLanguage": "en",
+     "isPartOf": {
+      "@id": "https://esim.vn/en#website"
+     },
+     "breadcrumb": {
+      "@id": "https://esim.vn/en/distribution-partners#breadcrumb"
+     },
+     "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://esim.vn/og/esimvn-og-en.png",
+      "contentUrl": "https://esim.vn/og/esimvn-og-en.png"
+     },
+     "mainEntity": {
+      "@id": "https://esim.vn/en/distribution-partners#service"
+     },
+     "about": {
+      "@id": "https://esim.vn/en/distribution-partners#service"
+     }
+    },
+    {
+     "@type": "Service",
+     "@id": "https://esim.vn/en/distribution-partners#service",
+     "name": "esim.vn eSIM distribution partner programme",
+     "serviceType": "Reseller eSIM distribution",
+     "provider": {
+      "@id": "https://esim.vn/#organization"
+     },
+     "description": "Become an esim.vn eSIM distribution partner: buy travel eSIMs at reseller prices, send QR codes to customers under your logo, and manage orders and eSIMs in the partner portal.",
+     "audience": {
+      "@type": "Audience",
+      "audienceType": "Resellers, travel agencies, companies and individuals reselling eSIMs"
+     },
+     "additionalProperty": [
+      {
+       "@type": "PropertyValue",
+       "name": "Applicant type",
+       "value": "Individual or Company"
+      },
+      {
+       "@type": "PropertyValue",
+       "name": "Balance maintenance fee",
+       "value": 0,
+       "unitText": "USD"
+      }
+     ],
+     "potentialAction": {
+      "@type": "RegisterAction",
+      "name": "Apply as a distribution partner",
+      "target": {
+       "@type": "EntryPoint",
+       "urlTemplate": "https://esim.vn/en/partner-register?loai=distribution",
+       "actionPlatform": "https://schema.org/DesktopWebPlatform"
+      }
+     }
+    },
+    {
+     "@type": "FAQPage",
+     "@id": "https://esim.vn/en/distribution-partners#faq",
+     "url": "https://esim.vn/en/distribution-partners",
+     "inLanguage": "en",
+     "isPartOf": {
+      "@id": "https://esim.vn/en/distribution-partners#webpage"
+     },
+     "mainEntity": [
+      {
+       "@type": "Question",
+       "name": "Can an individual become a distribution partner?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Choose Individual or Company when you apply; companies also give their name and tax code."
+       }
+      },
+      {
+       "@type": "Question",
+       "name": "How much do I need to deposit?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The minimum top-up is set by the programme and shown in the partner portal when you top up. The balance is only used to buy eSIMs and has no maintenance fee."
+       }
+      },
+      {
+       "@type": "Question",
+       "name": "How are reseller prices set?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Each partner tier has its own reseller prices. The price you pay for each plan is shown on the Products & prices page of the partner portal."
+       }
+      },
+      {
+       "@type": "Question",
+       "name": "How does my customer receive the eSIM?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You enter the customer's email when buying: they receive the QR code and setup instructions under your configured brand."
+       }
+      },
+      {
+       "@type": "Question",
+       "name": "What if an eSIM doesn't work?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Report it in the partner portal. esim.vn checks with the provider and refunds your deposit if the fault is not the user's."
+       }
+      },
+      {
+       "@type": "Question",
+       "name": "Can I distribute and do affiliate marketing too?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. esim.vn can grant a distribution partner affiliate access to use referral links and codes and earn commission."
+       }
+      }
+     ]
+    }
+   ]
+  },
+  "/api-partners": {
+   "vi": [
+    {
+     "@type": "WebPage",
+     "@id": "https://esim.vn/doi-tac-tich-hop-api#webpage",
+     "url": "https://esim.vn/doi-tac-tich-hop-api",
+     "name": "Đối tác tích hợp API eSIM esim.vn — Đưa eSIM vào website và ứng dụng của bạn",
+     "description": "Tích hợp kho gói eSIM, đặt hàng và quản lý eSIM của esim.vn vào website, ứng dụng hay hệ thống của bạn qua API. Đăng ký để được trao đổi tài liệu API và môi trường thử nghiệm.",
+     "inLanguage": "vi",
+     "isPartOf": {
+      "@id": "https://esim.vn/#website"
+     },
+     "breadcrumb": {
+      "@id": "https://esim.vn/doi-tac-tich-hop-api#breadcrumb"
+     },
+     "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://esim.vn/og/esimvn-og-vi.png",
+      "contentUrl": "https://esim.vn/og/esimvn-og-vi.png"
+     },
+     "mainEntity": {
+      "@id": "https://esim.vn/doi-tac-tich-hop-api#service"
+     },
+     "about": {
+      "@id": "https://esim.vn/doi-tac-tich-hop-api#service"
+     }
+    },
+    {
+     "@type": "Service",
+     "@id": "https://esim.vn/doi-tac-tich-hop-api#service",
+     "name": "Đối tác tích hợp API eSIM esim.vn",
+     "serviceType": "Tích hợp API bán eSIM",
+     "provider": {
+      "@id": "https://esim.vn/#organization"
+     },
+     "description": "Tích hợp kho gói eSIM, đặt hàng và quản lý eSIM của esim.vn vào website, ứng dụng hay hệ thống của bạn qua API. Đăng ký để được trao đổi tài liệu API và môi trường thử nghiệm.",
+     "audience": {
+      "@type": "Audience",
+      "audienceType": "Nền tảng du lịch, ứng dụng, sàn thương mại điện tử và đơn vị công nghệ"
+     },
+     "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "VND",
+      "description": "Đăng ký hợp tác miễn phí"
+     },
+     "additionalProperty": [
+      {
+       "@type": "PropertyValue",
+       "name": "Số điểm đến có gói eSIM",
+       "value": "200+"
+      },
+      {
+       "@type": "PropertyValue",
+       "name": "Thời gian xét duyệt hồ sơ",
+       "value": "1-3 ngày làm việc"
+      },
+      {
+       "@type": "PropertyValue",
+       "name": "Môi trường thử nghiệm",
+       "value": "Có"
+      }
+     ],
+     "potentialAction": {
+      "@type": "RegisterAction",
+      "name": "Đăng ký đối tác API",
+      "target": {
+       "@type": "EntryPoint",
+       "urlTemplate": "https://esim.vn/dang-ky-doi-tac?loai=api",
+       "actionPlatform": "https://schema.org/DesktopWebPlatform"
+      }
+     }
+    },
+    {
+     "@type": "FAQPage",
+     "@id": "https://esim.vn/doi-tac-tich-hop-api#faq",
+     "url": "https://esim.vn/doi-tac-tich-hop-api",
+     "inLanguage": "vi",
+     "isPartOf": {
+      "@id": "https://esim.vn/doi-tac-tich-hop-api#webpage"
+     },
+     "mainEntity": [
+      {
+       "@type": "Question",
+       "name": "Khi nào tôi nhận được tài liệu API?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sau khi hồ sơ được duyệt, đội ngũ esim.vn liên hệ qua email đầu mối kỹ thuật để gửi tài liệu và thông tin môi trường thử nghiệm."
+       }
+      },
+      {
+       "@type": "Question",
+       "name": "Có môi trường thử nghiệm không?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Có. Bạn thử luồng đặt hàng trên môi trường thử nghiệm trước khi chạy thật."
+       }
+      },
+      {
+       "@type": "Question",
+       "name": "Chi phí tích hợp là bao nhiêu?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Đăng ký hợp tác miễn phí. Chính sách giá cho đối tác tích hợp được trao đổi cụ thể sau khi hồ sơ được duyệt."
+       }
+      },
+      {
+       "@type": "Question",
+       "name": "Cần chuẩn bị gì trước khi đăng ký?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Thông tin doanh nghiệp, website hoặc ứng dụng sẽ tích hợp, sản lượng ước tính và email của người phụ trách kỹ thuật."
+       }
+      }
+     ]
+    }
+   ],
+   "en": [
+    {
+     "@type": "WebPage",
+     "@id": "https://esim.vn/en/api-partners#webpage",
+     "url": "https://esim.vn/en/api-partners",
+     "name": "esim.vn eSIM API partners — Put eSIMs in your website and app",
+     "description": "Integrate esim.vn's eSIM catalogue, ordering and eSIM management into your website, app or system via API. Apply to receive the API documentation and a test environment.",
+     "inLanguage": "en",
+     "isPartOf": {
+      "@id": "https://esim.vn/en#website"
+     },
+     "breadcrumb": {
+      "@id": "https://esim.vn/en/api-partners#breadcrumb"
+     },
+     "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://esim.vn/og/esimvn-og-en.png",
+      "contentUrl": "https://esim.vn/og/esimvn-og-en.png"
+     },
+     "mainEntity": {
+      "@id": "https://esim.vn/en/api-partners#service"
+     },
+     "about": {
+      "@id": "https://esim.vn/en/api-partners#service"
+     }
+    },
+    {
+     "@type": "Service",
+     "@id": "https://esim.vn/en/api-partners#service",
+     "name": "esim.vn eSIM API integration partner programme",
+     "serviceType": "eSIM API integration",
+     "provider": {
+      "@id": "https://esim.vn/#organization"
+     },
+     "description": "Integrate esim.vn's eSIM catalogue, ordering and eSIM management into your website, app or system via API. Apply to receive the API documentation and a test environment.",
+     "audience": {
+      "@type": "Audience",
+      "audienceType": "Travel platforms, apps, e-commerce marketplaces and technology companies"
+     },
+     "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD",
+      "description": "Applying is free"
+     },
+     "additionalProperty": [
+      {
+       "@type": "PropertyValue",
+       "name": "Destinations with eSIM plans",
+       "value": "200+"
+      },
+      {
+       "@type": "PropertyValue",
+       "name": "Application review time",
+       "value": "1-3 working days"
+      },
+      {
+       "@type": "PropertyValue",
+       "name": "Test environment",
+       "value": "Yes"
+      }
+     ],
+     "potentialAction": {
+      "@type": "RegisterAction",
+      "name": "Apply as an API partner",
+      "target": {
+       "@type": "EntryPoint",
+       "urlTemplate": "https://esim.vn/en/partner-register?loai=api",
+       "actionPlatform": "https://schema.org/DesktopWebPlatform"
+      }
+     }
+    },
+    {
+     "@type": "FAQPage",
+     "@id": "https://esim.vn/en/api-partners#faq",
+     "url": "https://esim.vn/en/api-partners",
+     "inLanguage": "en",
+     "isPartOf": {
+      "@id": "https://esim.vn/en/api-partners#webpage"
+     },
+     "mainEntity": [
+      {
+       "@type": "Question",
+       "name": "When do I get the API documentation?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Once your application is approved, the esim.vn team contacts your technical email with the documentation and test environment details."
+       }
+      },
+      {
+       "@type": "Question",
+       "name": "Is there a test environment?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. You test the order flow in a test environment before going live."
+       }
+      },
+      {
+       "@type": "Question",
+       "name": "What does integration cost?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Applying is free. Pricing for integration partners is discussed once your application is approved."
+       }
+      },
+      {
+       "@type": "Question",
+       "name": "What should I prepare before applying?",
+       "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Your company details, the website or app to integrate, estimated volume and your technical lead's email."
+       }
+      }
+     ]
+    }
+   ]
+  },
+  "/affiliate/register": {
+   "vi": [
+    {
+     "@type": "WebPage",
+     "@id": "https://esim.vn/dang-ky-doi-tac#webpage",
+     "url": "https://esim.vn/dang-ky-doi-tac",
+     "name": "Đăng ký làm đối tác esim.vn — Affiliate, phân phối, tích hợp API",
+     "description": "Đăng ký làm đối tác esim.vn: chọn đối tác tiếp thị, phân phối hoặc tích hợp API. Điền hồ sơ, đội ngũ esim.vn duyệt và gửi kết quả qua email.",
+     "inLanguage": "vi",
+     "isPartOf": {
+      "@id": "https://esim.vn/#website"
+     },
+     "breadcrumb": {
+      "@id": "https://esim.vn/dang-ky-doi-tac#breadcrumb"
+     },
+     "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://esim.vn/og/esimvn-og-vi.png",
+      "contentUrl": "https://esim.vn/og/esimvn-og-vi.png"
+     },
+     "mainEntity": {
+      "@id": "https://esim.vn/dang-ky-doi-tac#partner-types"
+     },
+     "potentialAction": {
+      "@type": "RegisterAction",
+      "name": "Đăng ký làm đối tác esim.vn",
+      "target": {
+       "@type": "EntryPoint",
+       "urlTemplate": "https://esim.vn/dang-ky-doi-tac",
+       "actionPlatform": "https://schema.org/DesktopWebPlatform"
+      }
+     }
+    },
+    {
+     "@type": "ItemList",
+     "@id": "https://esim.vn/dang-ky-doi-tac#partner-types",
+     "name": "Các loại đối tác esim.vn",
+     "numberOfItems": 3,
+     "itemListElement": [
+      {
+       "@type": "ListItem",
+       "position": 1,
+       "item": {
+        "@type": "Service",
+        "@id": "https://esim.vn/affiliate#service",
+        "name": "Đối tác tiếp thị (Affiliate)",
+        "url": "https://esim.vn/affiliate"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 2,
+       "item": {
+        "@type": "Service",
+        "@id": "https://esim.vn/doi-tac-phan-phoi#service",
+        "name": "Đối tác phân phối",
+        "url": "https://esim.vn/doi-tac-phan-phoi"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 3,
+       "item": {
+        "@type": "Service",
+        "@id": "https://esim.vn/doi-tac-tich-hop-api#service",
+        "name": "Đối tác tích hợp API",
+        "url": "https://esim.vn/doi-tac-tich-hop-api"
+       }
+      }
+     ]
+    }
+   ],
+   "en": [
+    {
+     "@type": "WebPage",
+     "@id": "https://esim.vn/en/partner-register#webpage",
+     "url": "https://esim.vn/en/partner-register",
+     "name": "Become an esim.vn Partner — Affiliate, Distribution, API",
+     "description": "Apply to become an esim.vn partner: marketing, distribution or API integration. Fill in the form — we review each application and email you the result.",
+     "inLanguage": "en",
+     "isPartOf": {
+      "@id": "https://esim.vn/en#website"
+     },
+     "breadcrumb": {
+      "@id": "https://esim.vn/en/partner-register#breadcrumb"
+     },
+     "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://esim.vn/og/esimvn-og-en.png",
+      "contentUrl": "https://esim.vn/og/esimvn-og-en.png"
+     },
+     "mainEntity": {
+      "@id": "https://esim.vn/en/partner-register#partner-types"
+     },
+     "potentialAction": {
+      "@type": "RegisterAction",
+      "name": "Apply to become an esim.vn partner",
+      "target": {
+       "@type": "EntryPoint",
+       "urlTemplate": "https://esim.vn/en/partner-register",
+       "actionPlatform": "https://schema.org/DesktopWebPlatform"
+      }
+     }
+    },
+    {
+     "@type": "ItemList",
+     "@id": "https://esim.vn/en/partner-register#partner-types",
+     "name": "esim.vn partner types",
+     "numberOfItems": 3,
+     "itemListElement": [
+      {
+       "@type": "ListItem",
+       "position": 1,
+       "item": {
+        "@type": "Service",
+        "@id": "https://esim.vn/en/affiliate#service",
+        "name": "Marketing partner (Affiliate)",
+        "url": "https://esim.vn/en/affiliate"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 2,
+       "item": {
+        "@type": "Service",
+        "@id": "https://esim.vn/en/distribution-partners#service",
+        "name": "Distribution partner",
+        "url": "https://esim.vn/en/distribution-partners"
+       }
+      },
+      {
+       "@type": "ListItem",
+       "position": 3,
+       "item": {
+        "@type": "Service",
+        "@id": "https://esim.vn/en/api-partners#service",
+        "name": "API integration partner",
+        "url": "https://esim.vn/en/api-partners"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  "legal:chinh-sach-hoan-tien": {
+   "vi": [
+    {
+     "@type": "WebPage",
+     "@id": "https://esim.vn/phap-ly/chinh-sach-hoan-tien#webpage",
+     "url": "https://esim.vn/phap-ly/chinh-sach-hoan-tien",
+     "name": "Chính sách hoàn tiền và đổi trả eSIM — esim.vn",
+     "description": "Chính sách hoàn tiền và đổi trả eSIM tại esim.vn: quy định chung, các trường hợp chấp nhận đổi trả, điều kiện đổi trả, thời gian thông báo eSIM lỗi, chi phí đổi trả và quy định hoàn tiền.",
+     "inLanguage": "vi",
+     "isPartOf": {
+      "@id": "https://esim.vn/#website"
+     },
+     "breadcrumb": {
+      "@id": "https://esim.vn/phap-ly/chinh-sach-hoan-tien#breadcrumb"
+     },
+     "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://esim.vn/og/esimvn-og-vi.png",
+      "contentUrl": "https://esim.vn/og/esimvn-og-vi.png"
+     },
+     "dateModified": "2024-03-30T00:15:00+07:00",
+     "publisher": {
+      "@id": "https://esim.vn/#organization"
+     },
+     "about": {
+      "@id": "https://esim.vn/#organization"
+     }
+    }
+   ],
+   "en": [
+    {
+     "@type": "WebPage",
+     "@id": "https://esim.vn/en/legal/refund-policy#webpage",
+     "url": "https://esim.vn/en/legal/refund-policy",
+     "name": "eSIM Refund and Return Policy — esim.vn",
+     "description": "esim.vn eSIM refund and return policy: general provisions, accepted return cases, return conditions, time limit to report a faulty eSIM, return costs and refund rules.",
+     "inLanguage": "en",
+     "isPartOf": {
+      "@id": "https://esim.vn/en#website"
+     },
+     "breadcrumb": {
+      "@id": "https://esim.vn/en/legal/refund-policy#breadcrumb"
+     },
+     "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://esim.vn/og/esimvn-og-en.png",
+      "contentUrl": "https://esim.vn/og/esimvn-og-en.png"
+     },
+     "dateModified": "2024-03-30T00:15:00+07:00",
+     "publisher": {
+      "@id": "https://esim.vn/#organization"
+     },
+     "about": {
+      "@id": "https://esim.vn/#organization"
+     }
+    }
+   ]
+  },
+  "legal:chinh-sach-giao-hang": {
+   "vi": [
+    {
+     "@type": "WebPage",
+     "@id": "https://esim.vn/phap-ly/chinh-sach-giao-hang#webpage",
+     "url": "https://esim.vn/phap-ly/chinh-sach-giao-hang",
+     "name": "Chính sách giao hàng — esim.vn",
+     "description": "Chính sách giao hàng của esim.vn: với eSIM nhà mạng nước ngoài, khách đặt hàng và thanh toán sẽ nhận mã QR eSIM qua email trong vòng 5 phút để kích hoạt và sử dụng.",
+     "inLanguage": "vi",
+     "isPartOf": {
+      "@id": "https://esim.vn/#website"
+     },
+     "breadcrumb": {
+      "@id": "https://esim.vn/phap-ly/chinh-sach-giao-hang#breadcrumb"
+     },
+     "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://esim.vn/og/esimvn-og-vi.png",
+      "contentUrl": "https://esim.vn/og/esimvn-og-vi.png"
+     },
+     "dateModified": "2024-03-30T00:07:00+07:00",
+     "publisher": {
+      "@id": "https://esim.vn/#organization"
+     },
+     "about": {
+      "@id": "https://esim.vn/#organization"
+     }
+    }
+   ],
+   "en": [
+    {
+     "@type": "WebPage",
+     "@id": "https://esim.vn/en/legal/delivery-policy#webpage",
+     "url": "https://esim.vn/en/legal/delivery-policy",
+     "name": "Delivery Policy — esim.vn",
+     "description": "esim.vn delivery policy: for eSIMs of overseas carriers, customers receive the eSIM QR code by email within 5 minutes of ordering and paying, to activate and use.",
+     "inLanguage": "en",
+     "isPartOf": {
+      "@id": "https://esim.vn/en#website"
+     },
+     "breadcrumb": {
+      "@id": "https://esim.vn/en/legal/delivery-policy#breadcrumb"
+     },
+     "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://esim.vn/og/esimvn-og-en.png",
+      "contentUrl": "https://esim.vn/og/esimvn-og-en.png"
+     },
+     "dateModified": "2024-03-30T00:07:00+07:00",
+     "publisher": {
+      "@id": "https://esim.vn/#organization"
+     },
+     "about": {
+      "@id": "https://esim.vn/#organization"
+     }
+    }
+   ]
+  },
+  "legal:dieu-khoan-dieu-kien": {
+   "vi": [
+    {
+     "@type": "WebPage",
+     "@id": "https://esim.vn/phap-ly/dieu-khoan-dieu-kien#webpage",
+     "url": "https://esim.vn/phap-ly/dieu-khoan-dieu-kien",
+     "name": "Điều khoản và Điều kiện — esim.vn",
+     "description": "Điều khoản và điều kiện sử dụng website esim.vn của Công Ty TNHH Viễn Thông ESIM: đặt hàng, thanh toán, mã giảm giá, đổi trả, tích điểm eXU, bảo mật, khiếu nại và giới hạn trách nhiệm.",
+     "inLanguage": "vi",
+     "isPartOf": {
+      "@id": "https://esim.vn/#website"
+     },
+     "breadcrumb": {
+      "@id": "https://esim.vn/phap-ly/dieu-khoan-dieu-kien#breadcrumb"
+     },
+     "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://esim.vn/og/esimvn-og-vi.png",
+      "contentUrl": "https://esim.vn/og/esimvn-og-vi.png"
+     },
+     "dateModified": "2026-09-16T09:00:00+07:00",
+     "publisher": {
+      "@id": "https://esim.vn/#organization"
+     },
+     "about": {
+      "@id": "https://esim.vn/#organization"
+     }
+    }
+   ],
+   "en": [
+    {
+     "@type": "WebPage",
+     "@id": "https://esim.vn/en/legal/terms-of-service#webpage",
+     "url": "https://esim.vn/en/legal/terms-of-service",
+     "name": "Terms & Conditions — esim.vn",
+     "description": "Terms and conditions for using esim.vn, operated by Công Ty TNHH Viễn Thông ESIM: ordering, payment, discount codes, returns, eXU points, privacy, complaints and limits of liability.",
+     "inLanguage": "en",
+     "isPartOf": {
+      "@id": "https://esim.vn/en#website"
+     },
+     "breadcrumb": {
+      "@id": "https://esim.vn/en/legal/terms-of-service#breadcrumb"
+     },
+     "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://esim.vn/og/esimvn-og-en.png",
+      "contentUrl": "https://esim.vn/og/esimvn-og-en.png"
+     },
+     "dateModified": "2026-09-16T09:00:00+07:00",
+     "publisher": {
+      "@id": "https://esim.vn/#organization"
+     },
+     "about": {
+      "@id": "https://esim.vn/#organization"
+     }
+    }
+   ]
+  },
+  "legal:chinh-sach-bao-mat": {
+   "vi": [
+    {
+     "@type": "WebPage",
+     "@id": "https://esim.vn/phap-ly/chinh-sach-bao-mat#webpage",
+     "url": "https://esim.vn/phap-ly/chinh-sach-bao-mat",
+     "name": "Chính Sách Bảo Mật Thông Tin — esim.vn",
+     "description": "Chính sách bảo mật thông tin của esim.vn: mục đích và phạm vi thu thập, phạm vi sử dụng, thời gian lưu trữ, công cụ để người dùng chỉnh sửa dữ liệu và cam kết bảo mật thông tin khách hàng.",
+     "inLanguage": "vi",
+     "isPartOf": {
+      "@id": "https://esim.vn/#website"
+     },
+     "breadcrumb": {
+      "@id": "https://esim.vn/phap-ly/chinh-sach-bao-mat#breadcrumb"
+     },
+     "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://esim.vn/og/esimvn-og-vi.png",
+      "contentUrl": "https://esim.vn/og/esimvn-og-vi.png"
+     },
+     "dateModified": "2023-11-17T21:28:00+07:00",
+     "publisher": {
+      "@id": "https://esim.vn/#organization"
+     },
+     "about": {
+      "@id": "https://esim.vn/#organization"
+     }
+    }
+   ],
+   "en": [
+    {
+     "@type": "WebPage",
+     "@id": "https://esim.vn/en/legal/privacy-policy#webpage",
+     "url": "https://esim.vn/en/legal/privacy-policy",
+     "name": "Information Privacy Policy — esim.vn",
+     "description": "esim.vn information privacy policy: purpose and scope of data collection, use of data, retention period, tools for users to edit their data and our commitment to protecting customer information.",
+     "inLanguage": "en",
+     "isPartOf": {
+      "@id": "https://esim.vn/en#website"
+     },
+     "breadcrumb": {
+      "@id": "https://esim.vn/en/legal/privacy-policy#breadcrumb"
+     },
+     "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://esim.vn/og/esimvn-og-en.png",
+      "contentUrl": "https://esim.vn/og/esimvn-og-en.png"
+     },
+     "dateModified": "2023-11-17T21:28:00+07:00",
+     "publisher": {
+      "@id": "https://esim.vn/#organization"
+     },
+     "about": {
+      "@id": "https://esim.vn/#organization"
+     }
+    }
+   ]
+  }
+ }
+}

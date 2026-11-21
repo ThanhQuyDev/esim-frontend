@@ -61,7 +61,7 @@ function pagePath(slug: string, locale: string): string {
  * plans, FAQs, SEO title and description the page itself renders.
  */
 export async function productPageGraph(
-  page: GraphPageKind,
+  page: Extract<GraphPageKind, { kind: "destination" | "region" }>,
   locale: string,
   path: string
 ): Promise<Record<string, unknown> | null> {
