@@ -295,6 +295,9 @@ export async function generateMetadata({
     languages: {
       vi: localizedPath(viSlug, "vi"),
       en: localizedPath(enSlug, "en"),
+      // The Vietnamese page for anyone else (vande-2011 #045: missing on 530
+      // destination and region pages).
+      "x-default": localizedPath(viSlug, "vi"),
     },
   };
 

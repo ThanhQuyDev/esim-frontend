@@ -97,7 +97,8 @@ export const STATIC_ROUTES = [
   "/press-area",
   "/help-center",
   "/esim-supported-devices",
-  "/kyc-guide",
+  // "/kyc-guide" is noindex: a noindex page in the sitemap contradicts itself
+  // (vande-2011 #045, sitemap spec 13.2 #1).
   "/refer-a-friend",
   // Affiliate programme: pages people are meant to find by searching (#095).
   "/affiliate",
@@ -127,6 +128,12 @@ export interface SitemapSources {
    * language (`/phap-ly/chinh-sach-hoan-tien`, `/en/legal/refund-policy`).
    */
   legalPolicies?: { urlSlug: { vi: string; en: string } }[] | null;
+  /**
+   * Blog category and author pages with enough articles to be worth indexing
+   * (vande-2011 #045, sitemap spec 13.6). Vietnamese only: their English
+   * counterparts are empty, so they carry no hreflang.
+   */
+  blogHubs?: { path: string; lastModified?: string | null }[] | null;
 }
 
 export interface BuildSitemapOptions {
@@ -150,7 +157,9 @@ export function localePrefix(locale: SitemapLocale): string {
 }
 
 function absolute(baseUrl: string, path: string): string {
-  const normalized = path.startsWith("/") ? path : `/${path}`;
+  // One slash between segments: an empty dynamic segment used to publish
+  // `/blog//slug` and `/ho-tro//slug` (86 URLs, vande-2011 #045).
+  const normalized = (path.startsWith("/") ? path : `/${path}`).replace(/\/{2,}/g, "/");
   return `${baseUrl.replace(/\/$/, "")}${normalized === "/" ? "" : normalized}` || baseUrl;
 }
 
@@ -301,6 +310,15 @@ export function buildSitemap(
     );
   }
 
+  for (const hub of sources.blogHubs ?? []) {
+    if (!hub?.path) continue;
+    push(
+      entryFor(baseUrl, (locale) => (locale === "vi" ? hub.path : null), hub.lastModified),
+      "blog",
+      GROUP_SEO.blog
+    );
+  }
+
   // The legal pages were published but never listed (#048).
   for (const policy of sources.legalPolicies ?? []) {
     push(
@@ -396,4 +414,42 @@ export function renderSitemapXml(entries: SitemapEntry[]): string {
 
   lines.push("</urlset>", "");
   return lines.join("\n");
+}
+
+/** Fewest published articles a blog category or author page needs (spec 13.6). */
+export const BLOG_HUB_MIN_POSTS = 5;
+
+/**
+ * Category, sub-category and author pages of the Vietnamese blog that have at
+ * least {@link BLOG_HUB_MIN_POSTS} articles, newest article date as lastmod
+ * (vande-2011 #045). A thin hub page hurts more than it helps.
+ */
+export function blogHubs(
+  blogs: Blog[] | null | undefined,
+  slugify: (name: string) => string
+): { path: string; lastModified: string | null; count: number }[] {
+  const hubs = new Map<string, { count: number; latest: string | null }>();
+  const add = (path: string, date: string | null) => {
+    const hub = hubs.get(path) ?? { count: 0, latest: null };
+    hub.count += 1;
+    if (date && (!hub.latest || date > hub.latest)) hub.latest = date;
+    hubs.set(path, hub);
+  };
+  for (const blog of blogs ?? []) {
+    if (blog?.isPublished === false || !blog?.slug) continue;
+    if ((blog.language ?? "vi") !== "vi") continue;
+    const date = (blog.updatedAt ?? blog.publishedAt ?? null) as string | null;
+    const cat = blog.category ? slugify(blog.category) : "";
+    if (cat) {
+      add(`/blog/${cat}`, date);
+      const parent = blog.parent ? slugify(blog.parent) : "";
+      if (parent) add(`/blog/${cat}/${parent}`, date);
+    }
+    const author = blog.authorSlug?.trim();
+    if (author) add(`/blog/author/${author}`, date);
+  }
+  return Array.from(hubs.entries())
+    .filter(([, hub]) => hub.count >= BLOG_HUB_MIN_POSTS)
+    .map(([path, hub]) => ({ path, lastModified: hub.latest, count: hub.count }))
+    .sort((a, b) => a.path.localeCompare(b.path));
 }

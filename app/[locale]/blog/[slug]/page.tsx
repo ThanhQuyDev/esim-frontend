@@ -1,3 +1,4 @@
+import { canonicalOnly } from "@/lib/hreflang";
 import { BlogDetailContent } from "@/components/layout/sections/blog-page";
 import { FooterSection } from "@/components/layout/sections/footer";
 import { BlogCategoryNav } from "@/components/layout/sections/blog-page";
@@ -21,10 +22,17 @@ export async function generateMetadata({
   const slug = decodeURIComponent(params.slug);
   const dict = await getDictionary(locale as Locale);
   const seoUrl = locale === "vi" ? `/blog/${slug}` : `/${locale}/blog/${slug}`;
-  return getSeoMetadata(seoUrl, {
+  const metadata = await getSeoMetadata(seoUrl, {
     title: dict.metadata.title,
     description: dict.metadata.description,
   });
+  // A category listing has no translation to point at (vande-2011 #045); a
+  // post keeps the site-wide hreflang.
+  const categories = await getBlogCategories(locale as Locale).catch(() => []);
+  if (categories.some((c) => categorySlug(c) === slug)) {
+    return { ...metadata, alternates: canonicalOnly(seoUrl) };
+  }
+  return metadata;
 }
 
 export default async function BlogSlugPage({

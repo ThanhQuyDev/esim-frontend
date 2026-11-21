@@ -14,13 +14,34 @@ const MOVED: Record<string, string> = {
   '/affiliate/dang-ky': '/dang-ky-doi-tac',
   '/vi/affiliate/dang-ky': '/dang-ky-doi-tac',
   '/en/affiliate/register': '/en/partner-register',
+  // Internal links that answered 404 (vande-2011 #045, sitemap spec 13.5):
+  // most sit in CMS content, so the old address is sent where it meant to go.
+  '/en/esim-china': '/en/china-esim',
+  '/en/destination': '/en/destinations',
+  '/destination': '/diem-den',
+  '/vi/destination': '/diem-den',
+  '/chinh-sach-hoan-tien': '/phap-ly/chinh-sach-hoan-tien',
+  '/chinh-sach-giao-hang': '/phap-ly/chinh-sach-giao-hang',
+  '/huong-dan-thanh-toan': '/ho-tro/goi-cuoc-thanh-toan/thanh-toan',
+  '/huong-dan-mua-hang': '/ho-tro/goi-cuoc-thanh-toan',
+  '/en/blog/ket-noi-di-dong': '/en/blog/mobile-connectivity',
+  '/blog/mobile-connectivity': '/blog/ket-noi-di-dong',
 };
+
+/** English legal slugs reached without /en (spec 13.5: /legal/privacy-policy). */
+const LEGAL_EN_SLUGS = new Set(['refund-policy', 'delivery-policy', 'terms-of-service', 'privacy-policy']);
 
 export default function middleware(request: NextRequest) {
   const moved = MOVED[request.nextUrl.pathname.replace(/\/$/, '')];
   if (moved) {
     const url = request.nextUrl.clone();
     url.pathname = moved;
+    return NextResponse.redirect(url, 308);
+  }
+  const legalEn = request.nextUrl.pathname.match(/^\/legal\/([^/]+)\/?$/);
+  if (legalEn && LEGAL_EN_SLUGS.has(legalEn[1])) {
+    const url = request.nextUrl.clone();
+    url.pathname = `/en/legal/${legalEn[1]}`;
     return NextResponse.redirect(url, 308);
   }
 

@@ -102,7 +102,7 @@ export function TermsOfServiceVi() {
                 - Khi muốn hủy đơn đặt hàng (nếu có) thì Quý khách phải thực hiện
                 theo quy định tại{" "}
                 <strong>
-                  <a className="underline" href="https://esim.vn/chinh-sach-hoan-tien">
+                  <a className="underline" href="/phap-ly/chinh-sach-hoan-tien">
                     Chính sách đổi trả
                   </a>
                 </strong>{" "}
@@ -111,7 +111,7 @@ export function TermsOfServiceVi() {
                 quyền hủy Đơn đặt hàng của Khách hàng trong một số trường hợp,
                 được quy định tại{" "}
                 <strong>
-                  <a className="underline" href="https://esim.vn/chinh-sach-giao-hang">
+                  <a className="underline" href="/phap-ly/chinh-sach-giao-hang">
                     Chính sách giao hàng
                   </a>
                 </strong>
@@ -172,7 +172,7 @@ export function TermsOfServiceVi() {
                 <br />
                 - Khách hàng thanh toán giá trị của Đơn đặt hàng theo quy định tại{" "}
                 <strong>
-                  <a className="underline" href="https://esim.vn/huong-dan-thanh-toan">
+                  <a className="underline" href="/ho-tro/goi-cuoc-thanh-toan/thanh-toan">
                     Hướng dẫn thanh toán
                   </a>
                 </strong>
@@ -266,7 +266,7 @@ export function TermsOfServiceVi() {
                 <br />
                 Việc đổi, trả sản phẩm được thực hiện theo quy định tại{" "}
                 <strong>
-                  <a className="underline" href="https://esim.vn/chinh-sach-hoan-tien">
+                  <a className="underline" href="/phap-ly/chinh-sach-hoan-tien">
                     Chính sách đổi trả
                   </a>
                 </strong>{" "}
@@ -330,7 +330,7 @@ export function TermsOfServiceVi() {
                 giá trị gia tăng trên esim data (VAS), Khách hàng tham khảo các
                 quy định tại{" "}
                 <strong>
-                  <a className="underline" href="https://esim.vn/huong-dan-mua-hang">
+                  <a className="underline" href="/ho-tro/goi-cuoc-thanh-toan">
                     Hướng dẫn mua hàng
                   </a>
                 </strong>{" "}

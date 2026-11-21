@@ -18,7 +18,7 @@ const TERMS_OF_SERVICE_EN_HTML = `<div>
                         <div class="inline-flex flex-col gap-1"><a
                                 class="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus body-sm-medium my-[6px] border-l-lg text-primary pl-3"
                                 data-ga-slug="CONSUMER TERMS OF SERVICE" target="_self" data-next-link="true"
-                                href="/legal/terms-of-service/">CONSUMER TERMS OF SERVICE</a><a
+                                href="/en/legal/terms-of-service">CONSUMER TERMS OF SERVICE</a><a
                                 class="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus body-sm-medium text-secondary my-[6px] pl-3.5"
                                 data-ga-slug="BUSINESS TERMS OF SERVICE" target="_self" data-next-link="true"
                                 href="/legal/b2b-terms-of-service/">BUSINESS TERMS OF SERVICE</a><a
@@ -215,7 +215,7 @@ const TERMS_OF_SERVICE_EN_HTML = `<div>
                                                                 process your personal data, please read our <a
                                                                     class="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus underline"
                                                                     data-ga-slug="Privacy Policy" data-next-link="true"
-                                                                    href="https://esim.vn/legal/privacy-policy/">Privacy
+                                                                    href="/en/legal/privacy-policy">Privacy
                                                                     Policy</a>.</p>
                                                         </li>
                                                     </ol>
@@ -477,7 +477,7 @@ const TERMS_OF_SERVICE_EN_HTML = `<div>
                                                                         <a class="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus underline"
                                                                             data-ga-slug="Privacy Policy"
                                                                             data-next-link="true"
-                                                                            href="https://esim.vn/legal/privacy-policy/">Privacy
+                                                                            href="/en/legal/privacy-policy">Privacy
                                                                             Policy</a>.</p>
                                                                 </li>
                                                             </ol>
@@ -1499,7 +1499,7 @@ const TERMS_OF_SERVICE_EN_HTML = `<div>
                                                                             class="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus underline"
                                                                             data-ga-slug="Privacy Policy"
                                                                             data-next-link="true"
-                                                                            href="https://esim.vn/legal/privacy-policy/">Privacy
+                                                                            href="/en/legal/privacy-policy">Privacy
                                                                             Policy</a>.</p>
                                                                 </li>
                                                                 <li class="w-full mb-6 [&amp;::before]:font-bold">
@@ -2552,7 +2552,7 @@ const TERMS_OF_SERVICE_EN_HTML = `<div>
                                                                 data, please refer to our <a
                                                                     class="align-bottom transition-colors ease-out focus-visible:outline-hidden focus-visible:shadow-focus underline"
                                                                     data-ga-slug="Privacy Policy" data-next-link="true"
-                                                                    href="https://esim.vn/legal/privacy-policy/">Privacy
+                                                                    href="/en/legal/privacy-policy">Privacy
                                                                     Policy</a>.</p>
                                                         </li>
                                                         <li class="w-full mb-6 [&amp;::before]:font-bold">

@@ -1,3 +1,4 @@
+import { canonicalOnly } from "@/lib/hreflang";
 import { FooterSection } from "@/components/layout/sections/footer";
 import { BlogCategoryNav } from "@/components/layout/sections/blog-page";
 import { getDictionary } from "@/lib/dictionaries";
@@ -21,8 +22,11 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const locale = await getLocale();
   const dict = await getDictionary(locale as Locale);
+  const path = `/blog/${params.slug}/${params.parent}`;
   return {
     title: `${dict.metadata.title} - ${decodeURIComponent(params.slug)} - ${decodeURIComponent(params.parent)}`,
+    // Category listings: no translation to point at (vande-2011 #045).
+    alternates: canonicalOnly(locale === "vi" ? path : `/${locale}${path}`),
   };
 }
 

@@ -1,3 +1,4 @@
+import { canonicalOnly } from "@/lib/hreflang";
 import { BlogCard, BlogCategoryNav } from "@/components/layout/sections/blog-page";
 import { FooterSection } from "@/components/layout/sections/footer";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
@@ -19,9 +20,14 @@ export async function generateMetadata({
   ]);
   if (!author) return {};
   const { name, description } = localizedAuthor(author, locale);
+  const slug = decodeURIComponent(params.authorSlug);
   return {
     title: name,
     description: description ?? `Articles by ${name}`,
+    // Author pages exist in Vietnamese only (vande-2011 #045).
+    alternates: canonicalOnly(
+      locale === "vi" ? `/blog/author/${slug}` : `/${locale}/blog/author/${slug}`
+    ),
   };
 }
 

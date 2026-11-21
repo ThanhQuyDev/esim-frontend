@@ -10,10 +10,14 @@ import type { Locale } from "@/lib/i18n-config";
 export async function generateMetadata() {
   const locale = (await getLocale()) as Locale;
   const dict = await getDictionary(locale);
-  return getSeoMetadata(getCmsSeoUrlForPage("/cart", locale), {
+  const metadata = await getSeoMetadata(getCmsSeoUrlForPage("/cart", locale), {
     title: dict.metadata.title,
     description: dict.metadata.description,
   });
+  // A cart is per visitor: never in search results (vande-2011 #045, spec
+  // 13.3). Noindex first; robots.txt blocks /gio-hang only once Google has
+  // seen this, or the page could stay indexed unread.
+  return { ...metadata, robots: { index: false, follow: true } };
 }
 
 export default async function CartPage() {

@@ -84,7 +84,9 @@ const TRACKING_NOTICE = {
 function TrackingNotice({ onClose }: { onClose: () => void }) {
   const locale = useLocale() === "en" ? "en" : "vi";
   const copy = TRACKING_NOTICE[locale];
-  const policyHref = `${locale === "en" ? "/en" : ""}/legal/privacy-policy`;
+  // The privacy policy's real address in each language (vande-2011 #045:
+  // /legal/privacy-policy is a 404 on the Vietnamese site).
+  const policyHref = locale === "en" ? "/en/legal/privacy-policy" : "/phap-ly/chinh-sach-bao-mat";
 
   return (
     <div

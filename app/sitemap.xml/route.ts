@@ -6,7 +6,8 @@ import {
   getRegions,
   fetchHelpCenterArticles,
 } from "@/lib/api";
-import { buildSitemap, renderSitemapXml, type SitemapSources } from "@/lib/sitemap-entries";
+import { blogHubs, buildSitemap, renderSitemapXml, type SitemapSources } from "@/lib/sitemap-entries";
+import { categorySlug } from "@/components/layout/sections/blog-page/blog-detail-helpers";
 import { LEGAL_POLICIES } from "@/components/layout/sections/legal";
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://esim.vn";
@@ -52,6 +53,7 @@ export async function GET(): Promise<Response> {
     helpArticles,
     carriers,
     legalPolicies: LEGAL_POLICIES,
+    blogHubs: blogHubs(blogs, categorySlug),
   };
 
   const entries = buildSitemap(sources, {

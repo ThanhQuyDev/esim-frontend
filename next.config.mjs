@@ -15,6 +15,15 @@ const nextConfig = {
   async rewrites() {
     return [{ source: "/go/:code", destination: "/api/go/:code" }];
   },
+  // The HTML sitemap lives at /sitemap and /en/sitemap; the .html addresses
+  // answered with the home page, a duplicate (vande-2011 #045, spec 10.3).
+  async redirects() {
+    return [
+      { source: "/sitemap.html", destination: "/sitemap", permanent: true },
+      { source: "/en/sitemap.html", destination: "/en/sitemap", permanent: true },
+      { source: "/sitemap-en.html", destination: "/en/sitemap", permanent: true },
+    ];
+  },
   // The handler sets these itself (lib/partner-link TRACKING_LINK_HEADERS);
   // repeated here so that even an answer it never wrote — an error page, a
   // platform redirect — is not cached publicly or indexed (doitac-3010 #021).
