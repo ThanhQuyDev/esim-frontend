@@ -270,6 +270,10 @@ export function useRegionPurchase(
   // No voucher for this plan: its own discount is what shows (vande-0411 #064).
   const was = !voucher && listTotal > total ? listTotal : 0;
   const wasOffPercent = was ? Math.round(((was - total) / was) * 100) : 0;
+  // With a voucher the head shows the voucher price, and the plan's own
+  // struck-out price goes beside it (vande-2011 #012).
+  const strike = voucher && listTotal > total ? listTotal : 0;
+  const strikeOffPercent = strike ? Math.round(((strike - total) / strike) * 100) : 0;
 
   // ── identity verification ──
   const kycCodes = codes.filter((c) => KYC_CODES.includes(c));
@@ -373,6 +377,8 @@ export function useRegionPurchase(
     listTotal,
     was,
     wasOffPercent,
+    strike,
+    strikeOffPercent,
     voucher,
     voucherMax: Number(voucherCoupon?.maxDiscountAmount ?? 0) || null,
     net,

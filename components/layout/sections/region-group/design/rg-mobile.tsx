@@ -231,6 +231,17 @@ export function RgMobile({ p, label, lang, breadcrumb }: Props) {
                   <Ic name="ic-chev-right" w={12} />
                 </span>
               </button>
+              {p.strike > 0 && (
+                  // One block, so the badge never wraps away from its price.
+                  <span style={{ display: "inline-flex", alignItems: "baseline", gap: "inherit", whiteSpace: "nowrap" }}>
+                    <s className="price-old" id="priceOld">
+                      {vnd(p.strike)}
+                    </s>
+                    <span className="price-off" id="priceOff">
+                      -{p.strikeOffPercent}%
+                    </span>
+                  </span>
+                )}
             </div>
           )}{" "}
           <div className="daily-row">
