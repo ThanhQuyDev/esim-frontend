@@ -2,6 +2,7 @@ import { cache } from "react";
 import { getDestinationBySlug, getRegionBySlug } from "@/lib/api";
 import { routing } from "@/i18n/routing";
 import { staticSchemaKey } from "./static-page";
+import { resolveContentPage, type ContentPage } from "./content-pages";
 
 /**
  * Which pages carry their whole schema as one JSON-LD @graph (vande-2011
@@ -12,7 +13,8 @@ import { staticSchemaKey } from "./static-page";
 export type GraphPageKind =
   | { kind: "destination"; slug: string }
   | { kind: "region"; slug: string }
-  | { kind: "static"; key: string };
+  | { kind: "static"; key: string }
+  | { kind: "content"; page: ContentPage };
 
 export const resolveGraphPage = cache(async function resolveGraphPage(
   locale: string,
@@ -20,6 +22,8 @@ export const resolveGraphPage = cache(async function resolveGraphPage(
 ): Promise<GraphPageKind | null> {
   const staticKey = staticSchemaKey(locale, path);
   if (staticKey) return { kind: "static", key: staticKey };
+  const content = await resolveContentPage(locale, path);
+  if (content) return { kind: "content", page: content };
 
   const prefix = locale === routing.defaultLocale ? "" : `/${locale}`;
   const rest = prefix && path.startsWith(prefix) ? path.slice(prefix.length) || "/" : path;

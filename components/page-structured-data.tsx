@@ -26,6 +26,7 @@ import { StructuredData } from '@/components/structured-data';
 import { resolveGraphPage } from '@/lib/schema-graph/page-kind';
 import { productPageGraph } from '@/lib/schema-graph/product-page';
 import { staticPageGraph } from '@/lib/schema-graph/static-page';
+import { contentPageGraph } from '@/lib/schema-graph/content-pages';
 import { jsonLdText } from '@/lib/schema-graph/product';
 
 /**
@@ -172,7 +173,9 @@ export async function PageStructuredData({ locale }: { locale: string }) {
     ? null
     : graphPage.kind === 'static'
       ? await staticPageGraph(graphPage.key, locale, normalizedPath).catch(() => null)
-      : await productPageGraph(graphPage, locale, normalizedPath).catch(() => null);
+      : graphPage.kind === 'content'
+        ? await contentPageGraph(graphPage.page, locale, normalizedPath).catch(() => null)
+        : await productPageGraph(graphPage, locale, normalizedPath).catch(() => null);
   if (graph && cmsBlock && /"@type"\s*:\s*"(Product|ItemPage|FAQPage|BreadcrumbList|AggregateRating|Review)"/.test(cmsBlock)) {
     cmsBlock = null;
   }
@@ -202,7 +205,7 @@ export async function PageStructuredData({ locale }: { locale: string }) {
   // A `/blog/<slug>` path is a post only when there is a post under that slug —
   // the same route also serves category listings, which are not articles.
   const blogSlug = blogSlugFromPath(pathWithoutLocale);
-  const blog = blogSlug ? await getBlogBySlug(blogSlug, locale) : null;
+  const blog = blogSlug && !graph ? await getBlogBySlug(blogSlug, locale) : null;
   if (blog) {
     siteSchemas.push(
       buildArticleSchema({ blog, path: normalizedPath, lang: locale })
@@ -210,7 +213,7 @@ export async function PageStructuredData({ locale }: { locale: string }) {
   }
 
   // An author page: who the author is, and what they wrote (#050, test round 4).
-  const authorSlug = authorSlugFromPath(pathWithoutLocale);
+  const authorSlug = graph ? null : authorSlugFromPath(pathWithoutLocale);
   if (authorSlug) {
     const author = await getBlogAuthor(authorSlug).catch(() => null);
     if (author) {
