@@ -902,7 +902,7 @@ export function AppFilter({ p, mobile }: { p: RegionPurchase; mobile?: boolean }
   }, [hint]);
   if (!p.showFilter) return null;
   const count = appFilterCount(p.all, p.tripDays, p.tab);
-  const of = <b data-testid="app-filter-count">{`${count.ok}/${count.of} eSIM`}</b>;
+  const of = <b data-testid="app-filter-count">{tx("{0}/{1} gói", count.ok, count.of)}</b>;
   return (
     <button
       className={`af${hint ? " is-hint" : ""}${ping ? " is-ping" : ""}`}
@@ -915,29 +915,13 @@ export function AppFilter({ p, mobile }: { p: RegionPurchase; mobile?: boolean }
       onClick={() => p.toggleAppFilter(!p.appFilter)}
       onAnimationEnd={() => setPing(false)}
     >
-      {!mobile && (
-        <span className="af-ic">
-          <Ic name="ic-unlock" w={18} />
-        </span>
-      )}
+      {/* v46/v40: no icon, the three apps in the title (spec B7.6). */}
       <span className="af-t">
-        <span className="af-h" id="afH">{tx("Lọc eSIM dùng được")}{" "}
-          <span className="af-apps">
-            <span className="af-app">TikTok</span>
-            <span className="sr-only">, </span>
-            <span className="af-app">ChatGPT</span>
-            <span className="sr-only">{" "}{tx("và")}{" "}</span>
-            <span className="af-app">Claude</span>
-          </span>
-        </span>
+        <span className="af-h" id="afH">{tx("Chỉ hiện gói dùng được TikTok, ChatGPT, Claude")}</span>
         <span className="af-s" id="afSub">
-          {p.country ? (
-            <span className="af-s1">{tx("Trung Quốc chặn các ứng dụng này — bật để chỉ xem")}{" "}{of}{" "}{tx("vẫn dùng được")}</span>
-          ) : (
-          <span className="af-s1">{tx("Đi Trung Quốc? Bật để xem")}{" "}{of}{" "}{tx("vẫn dùng được")}</span>
-          )}
-          <span className="af-s2">{tx("Đã lọc")}{" "}{of}{tx(". Tắt lọc để xem tất cả")}</span>
-          <span className="af-s3">{tx("Đến Trung Quốc: bật để xem")}{" "}{of}{" "}{tx("vẫn dùng được")}</span>
+          <span className="af-s1">{of}{" "}{tx("vẫn dùng được ở Trung Quốc.")}</span>
+          <span className="af-s2">{tx("Đang hiện")}{" "}{of}{tx(". Tắt để xem tất cả.")}</span>
+          {!p.country && <span className="af-s3">{tx("Đến Trung Quốc: bật để xem")}{" "}{of}{" "}{tx("vẫn dùng được.")}</span>}
         </span>
       </span>
       <span className="af-sw" aria-hidden="true" />
@@ -1027,37 +1011,36 @@ export function PlanNote({ p, mobile }: { p: RegionPurchase; mobile?: boolean })
     );
   } else {
     text = (
-      <>{tx("Tổng")}{" "}{b(p.tier?.gb ?? gbLabel(Number(p.plan.dataMb)))}{" "}{tx("tốc độ cao, dùng")}{" "}{b(tx("{0} ngày", p.plan.durationDays))}. {canBuyMoreData(p.plan) ? tx("Hết data: có thể nạp thêm.") : tx("Hết data: không thể nạp thêm.")}</>
+      <>{tx("Tổng")}{" "}{b(p.tier?.gb ?? gbLabel(Number(p.plan.dataMb)))}{" "}{tx("tốc độ cao, dùng")}{" "}{b(tx("{0} ngày", p.plan.durationDays))}. {canBuyMoreData(p.plan) ? tx("Hết data: nạp thêm.") : tx("Hết data: không thể nạp thêm.")}</>
     );
   }
   const apps = p.apps;
   return (
     <>
       <div className="plan-sum" id="planSum" aria-live="polite" aria-label={tx("Gói đang chọn")}>
-        {!mobile && <span className="ps-l">{tx("Gói đang chọn")}</span>}
+        {mobile ? <Ic name="ic-signal" w={16} /> : <span className="ps-l">{tx("Gói đang chọn")}</span>}
         <span id="planSumT">{text}</span>
       </div>
+      {/* The apps line inside the same grey box, icon hung left (spec B7.7, v41+). */}
       {apps !== "unknown" && (
-        <div className="plan-note" id="planNote">
+        <div className="plan-note" id="planNote" aria-live="polite">
           <p className="pn-r">
-            <Ic name={apps === "all" ? "ic-check-circle" : "ic-no"} w={15} />
-            <span>
-              {apps === "notiktok" ? (
-                <>{tx("Hỗ trợ sử dụng ChatGPT, Gemini, Claude…")}{" "}<b className="pn-no">{tx("Không dùng được TikTok.")}</b></>
-              ) : apps === "none" ? (
-                <>{tx("Hỗ trợ sử dụng Google, Gemini, Claude…")}{" "}<b className="pn-no">{tx("Không dùng được TikTok, ChatGPT.")}</b></>
-              ) : p.china ? (
-                <><b>{tx("Không cần VPN")}</b>{tx(": dùng được Facebook, Google Maps, TikTok, ChatGPT…")}</>
-              ) : (
-                tx("Hỗ trợ sử dụng TikTok, ChatGPT, Gemini, Claude…")
-              )}
-              {p.showFilter && apps !== "all" && (
-                <button className="pn-go" type="button" id="pnGo" onClick={() => p.toggleAppFilter(true)}>
-                  <span className="pn-go-t">{tx("Lọc eSIM dùng được")}</span>
-                  <Ic name="ic-chev-right" w={12} />
-                </button>
-              )}
+            <span data-a={apps}>
+              <Ic name={apps === "all" ? "ic-check-circle" : "ic-info"} w={16} />
+              {apps === "notiktok"
+                ? tx("Không dùng được TikTok.")
+                : apps === "none"
+                  ? tx("Không dùng được TikTok, ChatGPT, Claude.")
+                  : p.china
+                    ? tx("Dùng được Facebook, Google Maps, TikTok, ChatGPT, Claude mà không cần VPN.")
+                    : tx("Dùng được TikTok, ChatGPT, Claude.")}
             </span>
+            {p.showFilter && apps !== "all" && (
+              <button className="pn-go" type="button" id="pnGo" onClick={() => p.toggleAppFilter(true)}>
+                {tx("Lọc gói dùng được")}
+                <Ic name="ic-chev-right" w={12} />
+              </button>
+            )}
           </p>
         </div>
       )}
@@ -1801,46 +1784,45 @@ export function EkycModal({ p, open, onClose, lang }: { p: RegionPurchase; open:
   return (
     <Overlay id="ekycOv" open={open} onClose={onClose} top>
       <div className="modal modal--kyc" role="dialog" aria-labelledby="ekycTitle" aria-modal="true">
-        <div className="modal-hd modal-hd--danger">
+        {/* v46/v40 (spec B9.4): title and close only; neutral colours. */}
+        <div className="modal-hd modal-hd--kyc">
           <div className="modal-top">
-            <span className="modal-badge">
-              <Ic name="ic-passport" w={14} />{tx("Hướng dẫn xác thực danh tính")}</span>
+            <div className="modal-title modal-title--sm" id="ekycTitle">{tx("Xác thực danh tính (eKYC)")}</div>
             <button className="btn-close" type="button" aria-label={tx("Đóng")} data-close="">
               <Ic name="ic-x" w={24} />
             </button>
           </div>
-          <div className="modal-title" id="ekycTitle">{tx("Xác thực danh tính để dùng eSIM")}</div>
-          <ul className="modal-sub">
-            <li>
-              <Ic name="ic-check-circle" w={15} />
-              <span>{tx("Theo quy định tại một số điểm đến, bạn cần xác minh danh tính để kích hoạt eSIM.")}</span>
-            </li>
-            <li>
-              <Ic name="ic-check-circle" w={15} />
-              <span>{tx("eSIM phải được cài đặt trên thiết bị trước khi đăng ký tại điểm đến được chỉ định.")}</span>
-            </li>
-          </ul>
-          <div className="modal-stats">
-            <div className="modal-stat">
-              <b>3–5&apos;</b>
-              <span>{tx("Thời gian hoàn tất")}</span>
-            </div>
-            <div className="modal-stat">
-              <b>100%</b>
-              <span>{tx("An toàn & bảo mật")}</span>
-            </div>
-            <div className="modal-stat">
-              <b>24/7</b>
-              <span>{tx("Hỗ trợ trực tuyến")}</span>
-            </div>
-          </div>
         </div>
-        <div className="modal-body">
-          <div className="notice">
-            📌 <strong>{tx("Lưu ý:")}</strong>{" "}{tx("Bạn")}{" "}<strong>{tx("không cần xác thực")}</strong>{" "}{tx("nếu không dùng eSIM tại các điểm đến dưới đây. Thủ tục chỉ mất")}{" "}
-            <strong>{tx("3–5 phút")}</strong>.
-          </div>
+        <div className="modal-body kyc-body">
+          <div className="section-lbl">{tx("Cách xác thực")}</div>
+          <p className="kyc-lead">{tx("Một số điểm đến yêu cầu xác minh danh tính để kích hoạt eSIM. Thủ tục gồm 3 bước:")}</p>
+          <ol className="kyc-steps">
+            <li>
+              <span>{tx("Mua eSIM và nhận mã QR qua email.")}</span>
+            </li>
+            <li>
+              <span>{tx("Quét mã QR để cài eSIM vào điện thoại")}{" "}<b>{tx("trước")}</b>.</span>
+            </li>
+            <li>
+              <span>{tx("Xác thực danh tính bằng hộ chiếu trên trang web của nhà mạng,")}{" "}<b>{tx("bất cứ lúc nào")}</b>{" "}{tx("sau khi nhận eSIM, không cần chờ tới điểm đến.")}</span>
+            </li>
+          </ol>
+          <p className="kyc-lead">{tx("eSIM chỉ dùng được sau khi xác thực xong.")}</p>
+          <ul className="kyc-facts" aria-label={tx("Thông tin nhanh")}>
+            {[
+              ["ic-clock", "3–5 phút", "để hoàn tất"],
+              ["ic-check-circle", "Miễn phí", "không thu thêm"],
+              ["ic-headset", "Hỗ trợ 24/7", "qua chat, email"],
+            ].map(([ic, b, t]) => (
+              <li key={ic}>
+                <Ic name={ic} w={16} />
+                <b>{tx(b)}</b>
+                <span>{tx(t)}</span>
+              </li>
+            ))}
+          </ul>
           <div className="section-lbl">{tx("Điểm đến bắt buộc xác thực")}</div>
+          <p className="kyc-skip">{tx("Không dùng eSIM tại các điểm đến này thì không cần xác thực.")}</p>
           <div className="opt-grid">
             {Object.entries(KYC_LINKS).map(([code, k]) => (
               <a
@@ -1895,12 +1877,52 @@ export function EkycModal({ p, open, onClose, lang }: { p: RegionPurchase; open:
         </div>
         <div className="modal-ft">
           <button className="btn btn-block btn-danger btn-lg" type="button" data-close="">
-            <Ic name="ic-check-circle" w={18} />{tx("Đã hiểu, tiếp tục mua eSIM")}</button>
-          <p className="modal-note">
-            <Ic name="ic-chat" w={14} />{tx("Cần hỗ trợ? Liên hệ qua Chat hoặc email hotro@esim.com.vn")}</p>
+            <Ic name="ic-check-badge" w={16} />{tx("Đã hiểu, tiếp tục mua eSIM")}</button>
         </div>
       </div>
     </Overlay>
   );
 }
 
+
+/**
+ * The toast after the app filter hid the plan being viewed (spec B7.6, v45):
+ * "Đang hiện gói [new] (gói [old] không dùng được TikTok)". The new plan is
+ * picked a render later, so the old one is held until it changes. Shows for
+ * 2.6 s, as the design's `ESIM.toast`.
+ */
+export function FilterToast({ p }: { p: RegionPurchase }) {
+  const tx = useT();
+  const line = planText(p, p.lang);
+  const pending = useRef<{ line: string; apps: string } | null>(null);
+  const was = useRef({ on: p.appFilter, line, apps: p.apps as string });
+  const [msg, setMsg] = useState<{ text: string; n: number } | null>(null);
+  useEffect(() => {
+    const prev = was.current;
+    if (p.appFilter && !prev.on && p.filterByUser && (prev.apps === "notiktok" || prev.apps === "none")) {
+      pending.current = { line: prev.line, apps: prev.apps };
+    }
+    if (!p.appFilter) pending.current = null;
+    const hold = pending.current;
+    if (hold && line && line !== hold.line) {
+      setMsg({
+        text: tx("Đang hiện gói {0} (gói {1} không dùng được {2})", line, hold.line, hold.apps === "notiktok" ? "TikTok" : "TikTok, ChatGPT, Claude"),
+        n: Date.now(),
+      });
+      pending.current = null;
+    }
+    was.current = { on: p.appFilter, line, apps: p.apps as string };
+  }, [p.appFilter, p.filterByUser, line, p.apps, tx]);
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    if (!msg) return;
+    setShow(true);
+    const t = window.setTimeout(() => setShow(false), 2600);
+    return () => window.clearTimeout(t);
+  }, [msg]);
+  return (
+    <div className={`toast${show ? " show" : ""}`} role="status" aria-live="polite">
+      {msg?.text}
+    </div>
+  );
+}

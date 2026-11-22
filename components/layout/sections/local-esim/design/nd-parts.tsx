@@ -945,7 +945,7 @@ export function DeviceCheck({
           </button>
         </p>{" "}
         <p>{tx("Thấy mã")}{" "}<b>EID</b>{" "}{tx("là máy hỗ trợ eSIM; không thấy là không hỗ trợ.")}</p>{" "}
-        <p className="dc-how-n">{tx("Lưu ý: chỉ tính EID, không tính IMEI hay MEID.")}</p>{" "}
+        <p className="dc-how-n">{tx("Lưu ý: chỉ tính EID (32 chữ số), không tính IMEI hay MEID.")}</p>{" "}
       </div>{" "}
       <p className="dc-lbl" id="dcPick">{tx("Hoặc chọn kiểu máy của bạn để kiểm tra:")}</p>{" "}
       <div className="dc-sels">

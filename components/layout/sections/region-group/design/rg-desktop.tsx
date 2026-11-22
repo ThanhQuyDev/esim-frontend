@@ -9,8 +9,9 @@ import { tr, useT } from "../../local-esim/design/design-i18n";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { getCloudinaryTransformedUrl } from "@/lib/image-utils";
 import { Ic } from "../../local-esim/design/nd-icons";
-import { DeviceCheck, DeviceModal, Qty, StockAlert, VoucherBreakdown, type Brand } from "../../local-esim/design/nd-parts";
+import { DeviceModal, Qty, StockAlert, VoucherBreakdown, type Brand } from "../../local-esim/design/nd-parts";
 import { useVnd } from "../../local-esim/design/nd-state";
+import { DevNote, DeviceAnswer, DeviceCheckTabs, useQrHandoff } from "../../local-esim/design/device-check-tabs";
 import { perDay } from "./rg-model";
 import { ownOrParent, type RegionPurchase } from "./rg-state";
 import {
@@ -22,6 +23,7 @@ import {
   DeliveryRows,
   DestPicker,
   DestRes,
+  FilterToast,
   EkycModal,
   FeatureRows,
   PlanPanes,
@@ -88,6 +90,11 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
   const [dsbShow, setDsbShow] = useState(false);
   useVoucherArrow(vpop);
   const [flash, setFlash] = useState(0);
+  // The QR hand-off of the device check (vande-2011 #032, spec B9.8).
+  const qr = useQrHandoff(true);
+  useEffect(() => {
+    if (qr.result) setFlash((f) => f + 1);
+  }, [qr.result]);
 
   const priceAnchor = useRef<HTMLDivElement>(null);
   const ctaRow = useRef<HTMLDivElement>(null);
@@ -390,8 +397,10 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
               </div>
               <h2 className="dc-title" id="dcTitle">{tx("Kiểm tra thiết bị hỗ trợ eSIM")}</h2>
             </div>{" "}
-            <DeviceCheck
+            <DeviceCheckTabs
               lang={lang}
+              pageName={esimName(label, lang as Locale)}
+              qr={qr}
               onAll={(b) => {
                 setDevBrand(b);
                 setDevOpen(true);
@@ -477,12 +486,7 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
               </div>
             ))}
           </div>{" "}
-          <p className="dev-note dev-note--lined">
-            <Ic name="ic-info" w={14} />
-            <span>{tx("Vui lòng kiểm tra thiết bị có hỗ trợ eSIM trước khi thanh toán.")}</span>
-            <button className="dev-go" type="button" onClick={goDeviceCheck}>{tx("Kiểm tra ngay")}<Ic name="ic-chev-right" w={13} />
-            </button>
-          </p>
+          <DevNote qr={qr} onGo={goDeviceCheck} />
         </div>
       </main>{" "}
       <CountriesModal p={p} open={ctr} onClose={() => setCtr(false)} />
@@ -500,6 +504,8 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
           }, 50);
         }}
       />
+      <DeviceAnswer lang={lang} />
+      <FilterToast p={p} />
       <EkycModal p={p} open={ekyc} onClose={() => setEkyc(false)} lang={lang} />
       <CalendarModal p={p} open={cal} onClose={() => setCal(false)} />
       <DeviceModal open={devOpen} onClose={() => setDevOpen(false)} lang={lang} initialBrand={devBrand} />

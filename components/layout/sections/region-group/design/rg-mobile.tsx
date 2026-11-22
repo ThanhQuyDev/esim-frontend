@@ -10,6 +10,8 @@ import { getCloudinaryTransformedUrl } from "@/lib/image-utils";
 import { Ic } from "../../local-esim/design/nd-icons";
 import { AccItem, DeviceCheck, DeviceModal, Overlay, Qty, StockAlert, VoucherRows, type Brand } from "../../local-esim/design/nd-parts";
 import { useVnd } from "../../local-esim/design/nd-state";
+import { DeviceNow } from "../../local-esim/design/device-check-tabs";
+import { ClampDesc, SpecModal } from "../../local-esim/design/m-shared";
 import { perDay } from "./rg-model";
 import { ownOrParent, type RegionPurchase } from "./rg-state";
 import { countryCarriers, coverageLine } from "./rg-desktop";
@@ -24,6 +26,7 @@ import {
   DestTrigger,
   EkycModal,
   FeatureRows,
+  FilterToast,
   PickerSheet,
   PlanPanes,
   SegTabs,
@@ -61,6 +64,7 @@ export function RgMobile({ p, label, lang, breadcrumb }: Props) {
   const [vch, setVch] = useState(false);
   const [devOpen, setDevOpen] = useState(false);
   const [devBrand, setDevBrand] = useState<Brand | "">("");
+  const [spec, setSpec] = useState(false);
 
   const n = p.n;
   const line = planText(p, p.lang);
@@ -167,12 +171,11 @@ export function RgMobile({ p, label, lang, breadcrumb }: Props) {
           <div className="m-hero-in">
             <div className="m-rate" role="img" aria-label={tx("Đánh giá 4,7 trên 5 từ hơn 97.000 lượt trên Trustpilot")}>
               <b>4.7</b>
-              <Ic name="ic-star" w={13} />{tx("hơn 97k đánh giá")}<span className="m-rate-tp">
+              <Ic name="ic-star" w={13} />{tx("97.400+ đánh giá")}<span className="m-rate-tp">
                 <Ic name="ic-star" w={11} />
                 Trustpilot
               </span>
             </div>{" "}
-            <div className="m-hero-tag">{tx("eSIM du lịch hàng đầu tại")}{" "}{label}</div>{" "}
             <div className="m-hero-t">
               <PageMark p={p} />
               {!hasMark(p) && (
@@ -182,13 +185,14 @@ export function RgMobile({ p, label, lang, breadcrumb }: Props) {
               )}
               <h1>{esimName(label, lang as Locale)}</h1>
               {!p.country && (
-              <button className="pill pill--sm pill--cnt pill--link pill--solid" type="button" id="vBadge" aria-haspopup="dialog" onClick={() => setCtr(true)}>
+              <button className="pill pill--sm pill--cnt pill--link pill--neutral" type="button" id="vBadge" aria-haspopup="dialog" onClick={() => setCtr(true)}>
                 {n}{" "}{tx("quốc gia")}</button>
               )}
             </div>
           </div>
         </div>{" "}
         <div className="m-sec m-sheet">
+          <ClampDesc>
           {p.description ? (
             // Written by the admin for this destination or region (vande-0411 #067).
             <p className="m-desc" data-testid="product-description">{p.description}</p>
@@ -199,14 +203,15 @@ export function RgMobile({ p, label, lang, breadcrumb }: Props) {
               {p.china && (
                 <>
                   <b>{tx("Không cần VPN")}</b>
-                  {tx(": dùng được ngay Facebook, Zalo, Google Maps, YouTube — có gói dùng cả TikTok, ChatGPT.")}{" "}
+                  {tx(": dùng được ngay Facebook, Zalo, Google Maps, YouTube — có gói dùng cả TikTok, ChatGPT, Claude.")}{" "}
                 </>
               )}
               {tx("Nhận mã QR qua email ngay sau khi mua.")}
             </p>
           ) : (
           <p className="m-desc">{tx("eSIM du lịch")}{" "}{label}{" "}{tx("dùng được tại")}{" "}<span id="vSub">{coverageLine(p)}</span>. <b>{tx("Một eSIM cho cả chuyến đi nhiều nước")}</b>{tx(", mạng 4G/5G tốc độ cao. Nhận mã QR qua email ngay sau khi mua.")}</p>
-          )}{" "}
+          )}
+          </ClampDesc>{" "}
           {p.was > 0 ? (
             <div className="price-row price-row--nv">
               <span className="price-now" id="priceNet">
@@ -262,6 +267,8 @@ export function RgMobile({ p, label, lang, breadcrumb }: Props) {
               {plan ? (p.country ? tx("Gói: {0}", line) : tx("Gói: {0} nước · {1}", n, line)) + (p.quantity > 1 ? ` · ${p.quantity} eSIM` : "") : ""}
             </span>
           </div>
+          {/* The phone in hand, under the price (spec B9.8, v40). */}
+          <DeviceNow lang={lang} onGo={goDeviceCheck} />
         </div>{" "}
         {p.members.length > 1 && (
           <section className="m-step" aria-labelledby="stepV">
@@ -335,39 +342,8 @@ export function RgMobile({ p, label, lang, breadcrumb }: Props) {
             <div className="ti">
               <Ic name="ic-refund" w={14} />{tx("Hoàn tiền 100%")}</div>
           </div>{" "}
-          <p className="dev-note dev-note--lined">
-            <Ic name="ic-info" w={14} />
-            <span>{tx("Vui lòng kiểm tra thiết bị có hỗ trợ eSIM trước khi thanh toán.")}</span>
-            <button className="dev-go" type="button" data-devgo="" onClick={goDeviceCheck}>{tx("Kiểm tra ngay")}<Ic name="ic-chev-right" w={13} />
-            </button>
-          </p>
         </section>{" "}
         <section className="m-acc" aria-label={tx("Thông tin chi tiết")}>
-          <AccItem
-            heading
-            defaultOpen
-            q={
-              <>
-                <Ic name="ic-gear" w={16} />
-                <span>{tx("Tính năng eSIM")}</span>
-                <Ic name="ic-chev-down" w={16} />
-              </>
-            }
-          >
-            <FeatureRows p={p} onEkyc={() => setEkyc(true)} onCountries={() => setCtr(true)} />
-          </AccItem>{" "}
-          <AccItem
-            heading
-            q={
-              <>
-                <Ic name="ic-box" w={16} />
-                <span>{tx("Giao hàng & Kích hoạt")}</span>
-                <Ic name="ic-chev-down" w={16} />
-              </>
-            }
-          >
-            <DeliveryRows plan={plan} />
-          </AccItem>{" "}
           <AccItem
             heading
             openSignal={devGo}
@@ -401,10 +377,17 @@ export function RgMobile({ p, label, lang, breadcrumb }: Props) {
       >
         <div className="m-buy-info">
           <div className="m-buy-plan">
-            <span id="mPlan">{p.need ? tx("Chưa chọn số ngày") : p.country ? line : tx("{0} nước · {1}", n, line)}</span>
-            <span className="m-buy-qty" id="mQty" hidden={p.quantity < 2}>
-              {p.quantity} eSIM
+            <span className="m-buy-pn">
+              <span id="mPlan">{p.need ? tx("Chưa chọn số ngày") : p.country ? line : tx("{0} nước · {1}", n, line)}</span>
+              <span className="m-buy-qty" id="mQty" hidden={p.quantity < 2}>
+                {p.quantity} eSIM
+              </span>
             </span>
+            {/* "Chi tiết gói" (spec A9 / B8.4): the plan's features in a popup. */}
+            <button className="m-buy-det" type="button" aria-haspopup="dialog" onClick={() => setSpec(true)}>
+              <Ic name="ic-info" w={14} />
+              <span className="m-det-t">{tx("Chi tiết gói")}</span>
+            </button>
           </div>
           {p.was > 0 ? (
             // Nothing to open without a voucher: the price and what it was.
@@ -448,6 +431,16 @@ export function RgMobile({ p, label, lang, breadcrumb }: Props) {
       <CalendarModal p={p} open={cal} onClose={() => setCal(false)} />
       <PickerSheet p={p} open={pick} onClose={() => setPick(false)} />
       <DeviceModal open={devOpen} onClose={() => setDevOpen(false)} lang={lang} initialBrand={devBrand} />
+      <SpecModal open={spec} onClose={() => setSpec(false)} title={tx("Chi tiết {0}", esimName(label, lang as Locale))} planLine={plan ? tx("Gói: {0}", p.country ? line : tx("{0} nước · {1}", n, line)) : ""}>
+        {(t) =>
+          t === 0 ? (
+            <FeatureRows p={p} onEkyc={() => setEkyc(true)} onCountries={() => setCtr(true)} />
+          ) : (
+            <DeliveryRows plan={plan} />
+          )
+        }
+      </SpecModal>
+      <FilterToast p={p} />
       <Overlay id="vchOv" open={vch} onClose={() => setVch(false)}>
         <div className="modal modal--vch" role="dialog" aria-labelledby="vpT" aria-modal="true">
           <div className="modal-hd">

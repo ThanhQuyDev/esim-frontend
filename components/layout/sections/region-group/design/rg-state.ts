@@ -169,6 +169,11 @@ export function useRegionPurchase(
   const china = isChinaProductPage(country ? { destination: country } : { region: member });
   const showFilter = china && hasTiktokPlans(all);
   const [appFilter, setAppFilter] = useState(false);
+  // `?ung-dung=tiktok-chatgpt` opens with the filter on, and no toast (spec B7.6).
+  const [filterByUser, setFilterByUser] = useState(false);
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("ung-dung") === "tiktok-chatgpt") setAppFilter(true);
+  }, []);
   const plans = appFilter && showFilter ? filterTiktokPlans(all) : all;
 
   const allTiers = useMemo(() => buildTiers(plans.dataPlans), [plans.dataPlans]);
@@ -218,7 +223,18 @@ export function useRegionPurchase(
   // the tab with it.
   useEffect(() => {
     if (isLoading || valid(sel)) return;
-    const next = defaultSelection(tiers, daily, unl, combo, tab);
+    // The filter hid it: the first plan left in the same group first (spec
+    // B7.6 / B15.6), else the default.
+    const same: Selection | null =
+      sel?.kind === "fixed" && tiers[0]
+        ? { kind: "fixed", key: tiers[0].key }
+        : sel && sel.kind !== "fixed"
+          ? (() => {
+              const o = (sel.kind === "combo" ? combo : sel.kind === "daily" ? daily : unl).find((x) => x.kind === sel.kind);
+              return o ? { kind: o.kind, key: o.key } : null;
+            })()
+          : null;
+    const next = (appFilter && same) || defaultSelection(tiers, daily, unl, combo, tab);
     setSel(next);
     if (next?.kind === "combo") setTab("combo");
     else if (next) setTab("data");
@@ -252,6 +268,15 @@ export function useRegionPurchase(
   };
   const toggleAppFilter = (on: boolean) => {
     setAppFilter(on);
+    setFilterByUser(true);
+    try {
+      const url = new URL(window.location.href);
+      if (on) url.searchParams.set("ung-dung", "tiktok-chatgpt");
+      else url.searchParams.delete("ung-dung");
+      window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash);
+    } catch {
+      /* the address stays as it was */
+    }
     // The selection is re-checked against the filtered lineup by the effect.
   };
 
@@ -340,6 +365,7 @@ export function useRegionPurchase(
     plans,
     showFilter,
     appFilter,
+    filterByUser,
     toggleAppFilter,
     /** What is shown for the trip length chosen (vande #089). */
     tiers,
