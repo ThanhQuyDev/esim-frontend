@@ -538,4 +538,12 @@ export const DESIGN_EN: Record<string, string> = {
   "Chi tiết {0}": "{0} details",
   "Lưu ý: chỉ tính EID (32 chữ số), không tính IMEI hay MEID.": "Note: only the EID (32 digits) counts, not the IMEI or MEID.",
   "qua chat, email": "via chat or email",
+  // vande-2011 #032 Viettel block (Vietnam v51)
+  "eSIM du lịch chính hãng": "Official travel eSIM",
+  "Chọn nhanh": "Quick pick",
+  "Gói Viettel có thời hạn {0} ngày.": "Viettel plans last {0} days.",
+  "Đi {0} ngày?": "Staying {0} days?",
+  "Gói Viettel {0} ngày chỉ {1}": "The {0}-day Viettel plan is only {1}",
+  ", rẻ hơn gói đang chọn {0}.": ", {0} less than the selected plan.",
+  "Chọn gói {0} ngày": "Choose the {0}-day plan",
 };

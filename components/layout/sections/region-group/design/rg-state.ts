@@ -22,6 +22,7 @@ import {
   buildDaily,
   buildTiers,
   buildUnlimited,
+  gbLabel,
   planForDays,
   priceOf,
   tripCombo,
@@ -197,7 +198,23 @@ export function useRegionPurchase(
   };
 
   const tiers = useMemo(() => tripTiers(allTiers, days), [allTiers, days]);
-  const daily = useMemo(() => tripOpts(allDaily, days), [allDaily, days]);
+  // Vietnam: our own Viettel travel eSIMs (vande-2011 #032, spec A4), sold
+  // only for their own lengths. On those days their chip takes the place of
+  // the other "5 GB/ngày" one.
+  const viettel = useMemo(
+    () => [...(all.localEsim ?? [])].sort((a, b) => a.durationDays - b.durationDays),
+    [all.localEsim],
+  );
+  const daily = useMemo(() => {
+    const base = tripOpts(allDaily, days);
+    const vt = viettel.find((v) => v.durationDays === days);
+    if (!vt) return base;
+    const mb = Number(vt.dataMb);
+    const opt: Opt = { key: "vt5", kind: "daily", plans: [vt], gb: gbLabel(mb), throttle: "", bySpeed: false, viettel: true };
+    return [...base.filter((o) => Number(o.plans[0].dataMb) !== mb), opt].sort(
+      (a, b) => Number(a.plans[0].dataMb) - Number(b.plans[0].dataMb),
+    );
+  }, [allDaily, days, viettel]);
   const unl = useMemo(() => tripOpts(allUnl, days), [allUnl, days]);
   const combo = useMemo(() => tripCombo(allCombo, days), [allCombo, days]);
 
@@ -234,7 +251,13 @@ export function useRegionPurchase(
               return o ? { kind: o.kind, key: o.key } : null;
             })()
           : null;
-    const next = (appFilter && same) || defaultSelection(tiers, daily, unl, combo, tab);
+    // Off the Viettel lengths, its chip gives way to the other "5 GB/ngày" (spec A4).
+    const vtMb = sel?.key === "vt5" ? Number(viettel[0]?.dataMb ?? 0) : 0;
+    const vtNext = vtMb ? daily.find((o) => Number(o.plans[0].dataMb) === vtMb) : undefined;
+    // Vietnam opens on the Viettel plan, as its design does (spec A4).
+    const vtFirst = !sel && daily.some((o) => o.key === "vt5") ? ({ kind: "daily", key: "vt5" } as Selection) : null;
+    const next =
+      vtFirst || (vtNext ? { kind: vtNext.kind, key: vtNext.key } : null) || (appFilter && same) || defaultSelection(tiers, daily, unl, combo, tab);
     setSel(next);
     if (next?.kind === "combo") setTab("combo");
     else if (next) setTab("data");
@@ -394,6 +417,13 @@ export function useRegionPurchase(
     allowed,
     perDayKind,
     isFixed,
+    viettel,
+    /** A Viettel card: its days, and its chip (spec A4). */
+    pickViettel: (d: number) => {
+      setDays(d);
+      setSel({ kind: "daily", key: "vt5" });
+      setTab("data");
+    },
     quantity,
     setQty,
     atMax,

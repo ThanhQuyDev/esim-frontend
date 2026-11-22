@@ -48,6 +48,8 @@ export interface Opt {
   throttle: string;
   /** Plans of the group are matched by speed rather than by data size. */
   bySpeed: boolean;
+  /** Our own Viettel travel eSIM, the "5 GB/ngày Viettel" chip (vande-2011 #032, spec A4). */
+  viettel?: boolean;
 }
 
 /** "7 GB", "1,5 GB", "500 MB" — the design writes decimals with a comma. */

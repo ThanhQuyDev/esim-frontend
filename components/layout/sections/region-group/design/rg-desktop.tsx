@@ -24,6 +24,7 @@ import {
   DestPicker,
   DestRes,
   FilterToast,
+  ViettelBlock,
   EkycModal,
   FeatureRows,
   PlanPanes,
@@ -432,6 +433,8 @@ export function RgDesktop({ p, label, lang, breadcrumb }: Props) {
               </div>
             </section>
           )}{" "}
+          {/* Vietnam: our own Viettel eSIMs, a shortcut above step 1 (vande-2011 #032). */}
+          <ViettelBlock p={p} />{" "}
           {/* "Chọn số ngày trước" (vande #089): the trip, then its plans. */}
           <section aria-labelledby="step1" className="block">
             <h2 className="sec-lbl" id="step1">

@@ -492,10 +492,10 @@ export default async function UnifiedSlugPage({
     });
 
     // The country design (vande #032) — the region page's design with the
-    // country as its one pack. Vietnam keeps the old layout for now: its page
-    // also sells our own Viettel stock in a block of its own (vande #015),
-    // which the design has no place for.
-    const useCountryDesign = (destination.countryCode || "").toUpperCase() !== "VN";
+    // country as its one pack. Vietnam too since vande-2011 #032: its v51
+    // design draws our own Viettel stock as the "eSIM du lịch chính hãng"
+    // block (spec A4).
+    const useCountryDesign = true;
 
     return (
       <main role="main">

@@ -1115,7 +1115,8 @@ export function PlanPanes({
         tabIndex={selected ? 0 : -1}
         onClick={() => p.selectOpt(o)}
       >
-        {label} <Pbi b={badgeFor(plan) ?? badgeFor(o.plans.find((x) => badgeFor(x)))} />
+        {label}{" "}
+        {o.viettel ? <span className="vt-badge">Viettel</span> : <Pbi b={badgeFor(plan) ?? badgeFor(o.plans.find((x) => badgeFor(x)))} />}
         <KycIcon show={kycHere && o.plans.some((x) => x.isKyc)} />
       </span>
     );
@@ -1924,5 +1925,164 @@ export function FilterToast({ p }: { p: RegionPurchase }) {
     <div className={`toast${show ? " show" : ""}`} role="status" aria-live="polite">
       {msg?.text}
     </div>
+  );
+}
+
+/** The Viettel logo, shield and 5G bars of the Vietnam design (v51), as symbols. */
+const VT_SPRITE = "<symbol id=vtLogo viewBox=\"1 8 798 153\"><g transform=\"translate(57.1133,706.904)\"><path d=\"M128.5-665.4h-13.3c-5.3,0-9.6,4.3-9.6,9.6v98.3c0,5.3,4.3,9.6,9.6,9.6h13.3c5.3,0,9.6-4.3,9.6-9.6v-98.3C138-661.2,133.8-665.4,128.5-665.4\"/></g><g transform=\"translate(51.0322,706.904)\"><path d=\"M86.9-665.4c-8.4,0-15.4,5-18.8,12.2l-35.2,74.9c-0.8,1.8-2.5,4.6-3.9,4.6c-1.4,0-3.1-2.9-3.9-4.6l-35.5-74.9c-3.4-7.2-10.4-12.2-18.8-12.2h-20.5L6.2-557.2c5.5,10.7,16.9,10.4,22.7,10.4c8,0,17.4-0.4,22.4-10.4l55.9-108.3H86.9z\"/></g><g transform=\"translate(129.813,709.2)\"><path d=\"M626.1-685.7c0-5.3-4.3-9.6-9.6-9.6h-13.3c-5.3,0-9.6,4.3-9.6,9.6v97.1c0,14.8,5.3,23.5,14.7,29.7c9.1,6,19.7,8.6,39.3,8.6h10.7c5.3,0,9.5-4.3,9.5-9.6v-10.4h-8c-5.8,0-18-0.2-25.2-5.1c-9.4-6.2-8.6-17.3-8.6-25.3V-685.7z\"/></g><g transform=\"translate(103.37,694.481)\"><path d=\"M445.1-555.6c-5.8,0-18-0.2-25.2-5.1c-9.4-6.2-8.6-17.3-8.6-25.3v-47.2h31.4c5.3,0,9.6-4.3,9.6-9.6V-653h-41v-18c0-5.3-4.3-9.6-9.6-9.6h-13.3c-5.3,0-9.6,4.3-9.6,9.6v18h-67.6v-18c0-5.3-4.3-9.6-9.6-9.6h-13.3c-5.3,0-9.6,4.3-9.6,9.6v18h-20.2v10.4c0,5.3,4.3,9.6,9.6,9.6h10.6v59.1c0,14.8,5.3,23.5,14.7,29.7c9.1,6,19.7,8.6,39.3,8.6h10.7c5.3,0,9.5-4.3,9.5-9.6v-10.4h-8c-5.8,0-18-0.2-25.2-5.1c-9.4-6.2-8.6-17.3-8.6-25.3v-47.2h67.6v59.1c0,14.8,5.3,23.5,14.7,29.7c9.1,6,19.6,8.6,39.3,8.6h10.6c5.3,0,9.6-4.3,9.6-9.6v-10.4H445.1z\"/></g><g transform=\"translate(74.4307,701.739)\"><path d=\"M247-619.8c0,3.1-0.8,6.9-7.2,6.9h-46.1c-11.7,0-21.2,5.3-21.2,12v-12c0.3-7.8,0-14.2,6.7-20.2c8.8-8,22.1-7.8,30.7-7.8c9.1,0,19.6,0.4,27.7,5.3C242.3-632.6,247-627.1,247-619.8 M275.8-552.4v-10.4h-71.7c-11.9,0-25.5-1.3-29.6-13.9c-1.1-3.6-1.9-11.1-1.9-16.2h85.3c5.8,0,11.4-0.9,15.8-4.4c6.1-4.8,6.9-11.7,6.9-17.7c0-14.8-3.6-29.4-20.8-38.1c-13.5-6.9-31.3-7.5-48.4-7.5c-13.8,0-38.8,0-54.8,11.1c-16.1,11.1-17.5,27.3-17.5,49.2c0,15.5,0.8,31.7,10.5,42.7c12.2,13.7,29.9,14.9,44.8,14.9h71.9C271.5-542.9,275.8-547.2,275.8-552.4\"/></g><g transform=\"translate(119.077,701.739)\"><path d=\"M552.6-619.8c0,3.1-0.8,6.9-7.2,6.9h-46.1c-11.7,0-21.2,5.3-21.2,12v-12c0.3-7.8,0-14.2,6.6-20.2c8.8-8,22.2-7.8,30.7-7.8c9.2,0,19.7,0.4,27.7,5.3C547.9-632.6,552.6-627.1,552.6-619.8 M581.4-552.4v-10.4h-71.7c-11.9,0-25.5-1.3-29.6-13.9c-1.1-3.6-1.9-11.1-1.9-16.2h85.3c5.8,0,11.4-0.9,15.8-4.4c6.1-4.8,6.9-11.7,6.9-17.7c0-14.8-3.6-29.4-20.8-38.1c-13.6-6.9-31.3-7.5-48.5-7.5c-13.8,0-38.8,0-54.8,11.1c-16,11.1-17.4,27.3-17.4,49.2c0,15.5,0.8,31.7,10.5,42.7c12.2,13.7,29.9,14.9,44.9,14.9h71.9C577.1-542.9,581.4-547.2,581.4-552.4\"/></g><g transform=\"translate(57.1133,711.092)\"><path d=\"M128.5-702.5h-13.3c-5.3,0-9.6,4.3-9.6,9.5v2.6v20.7h0.1c0.9-5.4,7.1-11.1,16.1-11.1h6.6c5.3,0,9.6-4.3,9.6-9.6v-2.6C138-698.2,133.8-702.5,128.5-702.5\"/></g></symbol><symbol id=vtOk viewBox=\"0 0 24 24\" fill=none stroke=currentColor stroke-width=2.5 stroke-linecap=round stroke-linejoin=round><path d=\"M12 3l7.5 3v5.5c0 4.7-3.1 8-7.5 9.5-4.4-1.5-7.5-4.8-7.5-9.5V6z\"/><path d=\"m8.8 12.2 2.2 2.2 4.2-4.4\"/></symbol><symbol id=vtSig viewBox=\"0 0 12 12\" fill=currentColor><rect height=5 rx=1 width=2.6 y=7 /><rect height=8 rx=1 width=2.6 x=4.7 y=4 /><rect height=12 rx=1 width=2.6 x=9.4 /></symbol>";
+
+/** "Đi 10 ngày? Gói Viettel 15 ngày chỉ …" — the sentence under the cards (spec A4). */
+function viettelHint(p: RegionPurchase, tx: (k: string, ...a: unknown[]) => string, vnd: (n: number) => string) {
+  const lens = p.viettel.map((v) => v.durationDays);
+  const days = p.days;
+  if (!lens.length || lens.includes(days)) return null;
+  const info = tx("Gói Viettel có thời hạn {0} ngày.", lensText(lens, tx));
+  if (days > lens[lens.length - 1]) return { text: <span className="vt-hint-t">{info}</span>, go: 0 };
+  const longer = p.viettel.find((v) => v.durationDays >= days)!;
+  const vtTotal = priceOf(longer, longer.durationDays).price * p.quantity;
+  // Compared before voucher, and never with a plan that also calls (spec A4).
+  const save = p.sel?.kind !== "combo" ? p.total - vtTotal : 0;
+  const near = save > 0 ? longer : p.viettel.reduce((a, b) => (Math.abs(b.durationDays - days) < Math.abs(a.durationDays - days) ? b : a));
+  return {
+    text:
+      save > 0 ? (
+        <span>
+          {tx("Đi {0} ngày?", days)} <b>{tx("Gói Viettel {0} ngày chỉ {1}", longer.durationDays, vnd(vtTotal))}</b>
+          {tx(", rẻ hơn gói đang chọn {0}.", vnd(save))}
+        </span>
+      ) : (
+        <span>{info}</span>
+      ),
+    go: near.durationDays,
+  };
+}
+
+/** "7, 15 hoặc 30". */
+function lensText(lens: number[], tx: (k: string) => string): string {
+  return lens.length > 1 ? `${lens.slice(0, -1).join(", ")} ${tx("hoặc")} ${lens[lens.length - 1]}` : String(lens[0] ?? "");
+}
+
+/**
+ * "eSIM du lịch chính hãng" (vande-2011 #032, spec A4): our own Viettel eSIMs
+ * as a shortcut above step 1. A card sets the trip to its days and picks its
+ * chip; on other days a line says when Viettel is cheaper, or which lengths
+ * it comes in. The line keeps one height while the plans change.
+ */
+export function ViettelBlock({ p, mobile }: { p: RegionPurchase; mobile?: boolean }) {
+  const tx = useT();
+  const vnd = useVnd();
+  const probe = useRef<HTMLDivElement>(null);
+  const box = useRef<HTMLElement>(null);
+  const [minH, setMinH] = useState(0);
+  const hint = p.viettel.length ? viettelHint(p, tx, vnd) : null;
+  const lens = p.viettel.map((v) => v.durationDays);
+  // The taller of the two sentences, with the longest amounts, sets the height;
+  // measured again when the width changes.
+  useEffect(() => {
+    const el = probe.current;
+    const sec = box.current;
+    if (!el || !sec) return;
+    const fit = () => {
+      let h = 0;
+      el.querySelectorAll<HTMLElement>(".vt-hint").forEach((x) => (h = Math.max(h, x.offsetHeight)));
+      setMinH(h);
+    };
+    fit();
+    const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(fit) : null;
+    ro?.observe(sec);
+    return () => ro?.disconnect();
+  }, [p.viettel.length]);
+  if (!p.viettel.length) return null;
+  const onVt = p.sel?.key === "vt5";
+  const tagged = [...p.viettel].reverse().find((v) => ((v.tags ?? []) as string[]).includes("best-seller"));
+  const longest = p.viettel[p.viettel.length - 1];
+  const big = vnd(9_999_000);
+  return (
+    <section className={`${mobile ? "m-step" : "block"} vt-sec`} id="vtSec" aria-labelledby="vtH" ref={box}>
+      <svg width={0} height={0} style={{ position: "absolute" }} aria-hidden="true" focusable="false" dangerouslySetInnerHTML={{ __html: VT_SPRITE }} />
+      <h2 className="sec-lbl vt-h" id="vtH">
+        <span className="vt-hi" aria-hidden="true">
+          <svg className="ic" width={20} height={20}>
+            <use href="#vtOk" />
+          </svg>
+        </span>
+        <span>{tx("eSIM du lịch chính hãng")}</span> <span className="vt-quick">{tx("Chọn nhanh")}</span>
+      </h2>
+      <div
+        className="vt-grid"
+        id="vtGrid"
+        role="radiogroup"
+        aria-labelledby="vtH"
+        onKeyDown={(e) => {
+          const step = ({ ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 } as Record<string, number>)[e.key];
+          if (!step) return;
+          e.preventDefault();
+          const i = Math.max(0, lens.indexOf(p.days));
+          const next = p.viettel[(i + step + lens.length) % lens.length];
+          p.pickViettel(next.durationDays);
+          requestAnimationFrame(() => document.querySelector<HTMLElement>(`.vt-pick[data-days="${next.durationDays}"]`)?.focus());
+        }}
+      >
+        {p.viettel.map((v, i) => {
+          const on = onVt && v.durationDays === p.days;
+          return (
+            <button
+              key={v.id}
+              type="button"
+              className="vt-pick"
+              role="radio"
+              aria-checked={on}
+              tabIndex={on || (!onVt && i === 0) ? 0 : -1}
+              data-days={v.durationDays}
+              onClick={() => p.pickViettel(v.durationDays)}
+            >
+              <span className="vt-r" aria-hidden="true" />
+              <span className="vt-t">{tx("{0}/ngày", gbLabel(Number(v.dataMb)))}</span>
+              <span className="vt-d">{tx("{0} ngày", v.durationDays)}</span>
+              <span className="vt-g">
+                <svg className="ic" width={11} height={11} aria-hidden="true">
+                  <use href="#vtSig" />
+                </svg>
+                {/5g/i.test(String(v.speed ?? "")) ? "5G" : "4G"}
+              </span>
+              <span className="vt-p">{vnd(priceOf(v, v.durationDays).price)}</span>
+              <svg className="vt-lg" role="img" aria-label="Viettel">
+                <use href="#vtLogo" />
+              </svg>
+              {tagged?.id === v.id && <span className="vt-tag">{tx("Bán chạy")}</span>}
+            </button>
+          );
+        })}
+      </div>
+      <p className="vt-hint" id="vtHint" role="status" hidden={!hint} style={minH ? { minHeight: minH } : undefined}>
+        {hint?.text}
+        {hint?.go ? (
+          <>
+            {" "}
+            <button type="button" className="vt-hint-go" onClick={() => p.pickViettel(hint.go)}>
+              {tx("Chọn gói {0} ngày", hint.go)}
+            </button>
+          </>
+        ) : null}
+      </p>
+      {/* Measures the two sentences at this width, as the design does. */}
+      <div ref={probe} aria-hidden="true" style={{ position: "relative", height: 0, overflow: "hidden", visibility: "hidden", pointerEvents: "none" }}>
+        <p className="vt-hint">
+          <span>
+            {tx("Đi {0} ngày?", 29)} <b>{tx("Gói Viettel {0} ngày chỉ {1}", longest.durationDays, big)}</b>
+            {tx(", rẻ hơn gói đang chọn {0}.", big)}
+          </span>{" "}
+          <button type="button" className="vt-hint-go" tabIndex={-1}>
+            {tx("Chọn gói {0} ngày", longest.durationDays)}
+          </button>
+        </p>
+        <p className="vt-hint">
+          <span>{tx("Gói Viettel có thời hạn {0} ngày.", lensText(lens, tx))}</span>{" "}
+          <button type="button" className="vt-hint-go" tabIndex={-1}>
+            {tx("Chọn gói {0} ngày", longest.durationDays)}
+          </button>
+        </p>
+      </div>
+    </section>
   );
 }

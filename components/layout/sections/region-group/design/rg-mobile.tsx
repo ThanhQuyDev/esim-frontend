@@ -27,6 +27,7 @@ import {
   EkycModal,
   FeatureRows,
   FilterToast,
+  ViettelBlock,
   PickerSheet,
   PlanPanes,
   SegTabs,
@@ -294,6 +295,7 @@ export function RgMobile({ p, label, lang, breadcrumb }: Props) {
             </div>
           </section>
         )}{" "}
+        <ViettelBlock p={p} mobile />{" "}
         {/* "Chọn số ngày trước" (vande #089): trip, plans, quantity. */}
         <section className="m-step" aria-labelledby="step1">
           <h2 className="sec-lbl" id="step1">
