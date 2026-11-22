@@ -76,7 +76,15 @@ function groupedPlans() {
   };
 }
 
+/** No public voucher: the price under test is the plan's own (a live voucher made it race). */
+async function noVouchers(page: Page) {
+  await page.route(`${API_BASE}/api/v1/coupons**`, (route) =>
+    route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ data: [], hasNextPage: false }) }),
+  );
+}
+
 async function mockLocalApi(page: Page, carrier = "wintel") {
+  await noVouchers(page);
   await page.route(`${API_BASE}/api/v1/plans/local-carriers`, async (route) => {
     await route.fulfill({
       status: 200,
@@ -422,6 +430,7 @@ test.describe("Domestic template perks and cycles (#066)", () => {
   }
 
   async function mockOffers(page: Page) {
+    await noVouchers(page);
     await page.route(`${API_BASE}/api/v1/plans/local-carriers`, async (route) => {
       await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(carriers()) });
     });
@@ -452,16 +461,17 @@ test.describe("Domestic template perks and cycles (#066)", () => {
     await expect(win).toContainText("7 GB/ngày");
     await expect(win).toContainText("30 phút ngoại mạng");
     await expect(win).toContainText("300 phút nội mạng");
-    await expect(win).toContainText("Miễn phí gói 30 ngày đầu");
+    // v65+: the first cycle is said once, under the cycle chips (vande-2011 #032, spec D3.1).
+    await expect(d.locator("#cycHint")).toContainText("Giá eSIM đã gồm cước 30 ngày đầu");
 
     const vnsky = d.getByTestId("local-plan-503");
     await expect(vnsky).toContainText("10 phút trong nước");
     await expect(vnsky).toContainText("Miễn phí data mạng xã hội");
     await expect(vnsky).toContainText("Từ chu kỳ thứ 2: 4 GB/ngày");
-    await expect(vnsky.locator(".tech")).toHaveText("5G");
+    await expect(vnsky.locator(".ndp-g")).toHaveText("5G");
 
-    // Only two cards: the 12-month variant lives in the cycle picker.
-    await expect(d.locator(".plan-btn")).toHaveCount(2);
+    // Only two cards: the 12-month variant lives in the cycle chips.
+    await expect(d.locator(".ndp")).toHaveCount(2);
     await expect(d.locator("#specFee")).toHaveText("119.000₫/30 ngày");
   });
 
@@ -471,12 +481,12 @@ test.describe("Domestic template perks and cycles (#066)", () => {
     const d = page.locator(".ndd");
 
     await expect(d.locator("#priceNet")).toContainText("219.000");
-    await d.locator("#cycBtn").click();
-    await d.locator('.dopt[data-m="360"]').click();
+    // v70: four chips in place of the drop-down (vande-2011 #032, spec D5.2).
+    await d.locator('#cycChips [data-m="360"]').click();
 
-    await expect(d.locator("#cycV")).toHaveText("360 ngày");
+    await expect(d.locator('#cycChips [data-m="360"]')).toHaveAttribute("aria-checked", "true");
     await expect(d.locator("#priceNet")).toContainText("1.500.000");
-    await expect(d.getByTestId("local-plan-502")).toContainText("Miễn phí gói 360 ngày đầu");
+    await expect(d.locator("#cycHint")).toContainText("360 ngày");
     await expect(d.locator("#specFee")).toHaveText("1.428.000₫/360 ngày");
   });
 });

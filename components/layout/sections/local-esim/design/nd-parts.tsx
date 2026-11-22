@@ -1183,17 +1183,33 @@ export function CrossCard({
   // No price until its eSIMs are imported (vande-1411 #025).
   const parts = fromVnd > 0 ? [tx("Từ {0}", vnd(fromVnd))] : [];
   if (meta.network) parts.push(tx("Hạ tầng {0}", meta.network));
-  if (showPrefix && meta.phonePrefix) parts.push(tx("Đầu số {0}", meta.phonePrefix));
+  // v62/v47: price and network only, no prefix (spec D8).
+  void showPrefix;
+  const name = meta.label;
   return (
     <a href={href} className="cross-card">
-      <span className="cross-logo" style={{ background: meta.logoBg }}>
-        {meta.label}
+      <span className="cross-logo cross-op" style={{ "--op": meta.logoBg } as React.CSSProperties}>
+        <svg viewBox="0 0 36 36" aria-hidden="true" focusable="false">
+          <text
+            x="18"
+            y="21.5"
+            textAnchor="middle"
+            textLength={Math.min(28, 4 + name.length * 4)}
+            lengthAdjust="spacingAndGlyphs"
+            fill="#fff"
+            fontSize="10"
+            fontWeight="700"
+          >
+            {name}
+          </text>
+        </svg>
       </span>
       <div className="cross-txt">
         <h3 className="cross-title">{esimName(meta.label, lang as "vi" | "en")}</h3>
         <span className="cross-price">{parts.join(" · ")}</span>
       </div>
-      <Ic name="ic-chev-right" w={18} cls="ic cross-arrow" />
+      {/* The design's arrow carries only class "ic" (its markup drops cross-arrow), so no -90° turn. */}
+      <Ic name="ic-chev-right" w={18} cls="ic" />
     </a>
   );
 }

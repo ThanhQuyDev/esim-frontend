@@ -10,22 +10,18 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import type { LocalCarrier } from "@/lib/api";
 import { carrierName, getCarrierMeta, carrierInitial, type CarrierMeta } from "../carrier-meta";
 import { Ic } from "./nd-icons";
-import { planLabel, phonePrefixLabel, techOf, variantFor } from "./nd-model";
+import { dataTitle, dayLabel, techOf, variantFor } from "./nd-model";
 import { useVnd, type DomesticPurchase } from "./nd-state";
 import {
   AccItem,
   CrossCard,
-  CycleMenu,
   DeliveryRows,
   DeviceCheck,
   DeviceModal,
-  EkycModal,
   FeatureRows,
   Overlay,
-  PlanCard,
   Qty,
   StockAlert,
-  Tip,
   VoucherRows,
   planCycleLine,
   radioKeys,
@@ -33,6 +29,9 @@ import {
   VnFlag,
   type DomesticCountry,
 } from "./nd-parts";
+import { DeviceNow } from "./device-check-tabs";
+import { ClampDesc, SpecModal } from "./m-shared";
+import { CycleChips, NdEkycNote, NdKycModal, NdpCard } from "./nd-v70";
 
 const HERO =
   "https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop";
@@ -65,14 +64,13 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb, 
   const [devOpen, setDevOpen] = useState(false);
   const [devBrand, setDevBrand] = useState<Brand | "">("");
   const [vch, setVch] = useState(false);
+  const [spec, setSpec] = useState(false);
 
   // The local destination's icon when set, else the brand colour (vande-1411 #025).
   const logoStyle: CSSProperties = meta.iconUrl
     ? { backgroundImage: `url(${meta.iconUrl})`, backgroundSize: "cover", backgroundPosition: "center" }
     : { background: meta.logoBg };
-  const prefix = phonePrefixLabel(meta, plan, lang);
   const line = planCycleLine(plan, p.days, lang);
-  const tag = [meta.network ? tx("Dùng hạ tầng {0}", meta.network) : null, prefix].filter(Boolean).join(" – ");
 
   // "Xem thêm N gói 5G": on a page that sells both, 5G cards fold away until
   // asked for — the chosen one always stays in view (design's #moreBtn).
@@ -117,13 +115,26 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb, 
     });
   }, [p.net, p.quantity, p.days, p.plan?.id]);
 
+  // "Không đúng máy của bạn?" (spec B9.8): open the device check, bring it into view, flash it.
+  const [devGo, setDevGo] = useState(0);
+  const goDeviceCheck = () => setDevGo((n) => n + 1);
+  useEffect(() => {
+    if (!devGo) return;
+    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    const t = window.setTimeout(
+      () => document.getElementById("dcCard")?.scrollIntoView({ block: "center", behavior: reduce ? "auto" : "smooth" }),
+      60,
+    );
+    return () => window.clearTimeout(t);
+  }, [devGo]);
+
   const pickFromKeys = (el: HTMLElement) => {
     const g = [...p.highSpeed, ...p.unlimited].find((x) => x.variants.some((v) => `p${v.providerPlanId}` === el.id));
     if (g) p.selectGroup(g);
   };
 
   return (
-    <div className="ndm m nd tidy">
+    <div className="ndm nd dv4 m tidy tv">
       <main className="m-app">
         {" "}
         <nav aria-label="Breadcrumb" className="bc">
@@ -164,28 +175,28 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb, 
           </picture>{" "}
           <div className="m-hero-in">
             {" "}
-            <div className="m-rate" role="img" aria-label={tx("Đánh giá 4,8 trên 5 từ hơn 12.000 lượt trên Trustpilot")}>
-              <b>4.8</b>
-              <Ic name="ic-star" w={13} />{tx("hơn 12k đánh giá")}<span className="m-rate-tp">
+            <div className="m-rate" role="img" aria-label={tx("Đánh giá 4,7 trên 5 từ hơn 97.000 lượt trên Trustpilot")}>
+              <b>4.7</b>
+              <Ic name="ic-star" w={13} />{tx("97.400+ đánh giá")}<span className="m-rate-tp">
                 <Ic name="ic-star" w={11} />
                 Trustpilot
               </span>
             </div>{" "}
-            {tag && <div className="m-hero-tag">{tag}</div>}{" "}
             <div className="m-hero-t">
               <span className="nd-logo pic-flag" aria-hidden="true" style={logoStyle}>
                 {meta.iconUrl ? null : carrierInitial(meta)}
               </span>
               <h1>{esimName(meta.label, lang as Locale)}</h1>
-              <VnFlag url={country?.flagUrl} w={24} h={18} />
             </div>{" "}
           </div>{" "}
         </div>{" "}
         <div className="m-sec m-sheet">
           {" "}
           {/* The local destination's description P1 (vande-1411 #025). */}
+          <ClampDesc>
           {intro ? <p className="m-desc" data-testid="product-description">{intro}</p> : <p className="m-desc">
-            {esimName(meta.label, lang as Locale)}{" "}{tx("— nhà mạng nội địa")}{meta.network ? tx(" trên hạ tầng {0}", meta.network) : ""}{tx(", sóng 4G/5G toàn quốc.")}{meta.phonePrefix ? tx(" Có số thuê bao đầu {0},", meta.phonePrefix) : tx(" Có số thuê bao,")}{" "}{tx("tất cả gói đều dùng được Data + Gọi + SMS, gia hạn theo chu kỳ hàng tháng.")}</p>}{" "}
+            {esimName(meta.label, lang as Locale)}{" "}{tx("— nhà mạng nội địa")}{meta.network ? tx(" trên hạ tầng {0}", meta.network) : ""}{tx(", sóng 4G/5G toàn quốc.")}{meta.phonePrefix ? tx(" Có số thuê bao đầu {0},", meta.phonePrefix) : tx(" Có số thuê bao,")}{" "}{tx("tất cả gói đều dùng được Data + Gọi + SMS, gia hạn theo chu kỳ hàng tháng.")}</p>}
+          </ClampDesc>{" "}
           <div className="price-row price-row--vch" id="priceAnchor">
             <button className="pv" type="button" id="vchTag" aria-haspopup="dialog" onClick={() => setVch(true)}>
               <span className="price-now" id="priceNet">
@@ -200,9 +211,12 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb, 
           </div>{" "}
           <div className="daily-row">
             <span className="daily-detail" id="dOSDetail">
-              {plan ? tx("Gói: {0} · {1} ngày", planLabel(plan, lang), p.days) : ""}
+              {plan
+                ? `${tx("Gói: {0}", `${plan.providerPlanId} · ${dataTitle(plan, lang)} · ${dayLabel(p.days, lang)}`)}${p.quantity > 1 ? ` · ${p.quantity} eSIM` : ""}`
+                : ""}
             </span>
-          </div>{" "}
+          </div>
+          <DeviceNow lang={lang} onGo={goDeviceCheck} />
         </div>{" "}
         <section className="m-step" aria-labelledby="step1">
           {" "}
@@ -212,27 +226,28 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb, 
             </span>
             <span className="sr-only">. </span>
             <span>{tx("Chọn gói cước")}</span>
-            <Tip text={tx("Tất cả eSIM đều có chức năng sử dụng Data + Gọi + SMS")} w={16} extra="tip--h" />
           </h2>{" "}
           <div id="plans" role="radiogroup" aria-labelledby="step1" ref={plansRef} onKeyDown={(e) => radioKeys(e, pickFromKeys)}>
             {p.highSpeed.length > 0 && (
-              <div className="pg" role="group" aria-labelledby="pg1">
+              <div className="pg pg--scroll" role="group" aria-labelledby="pg1">
                 {" "}
                 <div className="pg-hd">
-                  <Ic name="ic-bolt" w={14} />
+                  <Ic name="ic-zap" w={14} />
                   <h3 className="pg-title" id="pg1">{tx("Gói Data tốc độ cao")}</h3>
+                  <span className="pg-line" aria-hidden="true" />
+                  <span className="pg-count">{p.highSpeed.length}{" "}{tx("gói")}</span>
                 </div>{" "}
-                <div className="plan-list">
+                <div className="ndp-grid">
                   {p.highSpeed.map((g) => {
                     const extra = foldable && is5g(g);
                     return (
-                      <PlanCard
+                      <NdpCard
                         key={g.key}
                         group={g}
                         days={p.days}
+                        carrier={meta.label}
                         selected={p.group?.key === g.key}
                         onSelect={() => p.selectGroup(g)}
-                        mobile
                         extra={extra}
                         hidden={extra && !more && p.group?.key !== g.key}
                       />
@@ -249,83 +264,69 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb, 
                     onClick={() => setMore(!more)}
                   >
                     <span id="moreTxt">{more ? tx("Thu gọn gói 5G") : tx("Xem thêm {0} gói 5G", folded)}</span>
-                    <Ic name="ic-chev-down" w={14} />
+                    <Ic name="ic-chev-down" w={16} />
                   </button>
                 )}
               </div>
             )}
             {p.unlimited.length > 0 && (
-              <div className="pg" role="group" aria-labelledby="pg2">
+              <div className="pg pg--scroll" role="group" aria-labelledby="pg2">
                 {" "}
                 <div className="pg-hd">
                   <Ic name="ic-infinity" w={14} />
                   <h3 className="pg-title" id="pg2">{tx("Gói Data không giới hạn")}</h3>
+                  <span className="pg-line" aria-hidden="true" />
+                  <span className="pg-count">{p.unlimited.length}{" "}{tx("gói")}</span>
                 </div>{" "}
-                <div className="plan-list">
+                <div className="ndp-grid">
                   {p.unlimited.map((g) => (
-                    <PlanCard key={g.key} group={g} days={p.days} selected={p.group?.key === g.key} onSelect={() => p.selectGroup(g)} mobile />
+                    <NdpCard key={g.key} group={g} days={p.days} carrier={meta.label} selected={p.group?.key === g.key} onSelect={() => p.selectGroup(g)} />
                   ))}
                 </div>{" "}
               </div>
             )}
           </div>{" "}
+          {p.groups.length > 0 && <NdEkycNote onOpen={() => setEkyc(true)} mobile />}
+        </section>{" "}
+        <section className="m-step" aria-labelledby="stepC">
+          <h2 className="sec-lbl" id="stepC">
+            <span className="sec-num">
+              <span className="sr-only">{tx("Bước")}{" "}</span>2
+            </span>
+            <span className="sr-only">. </span>
+            <span>{tx("Chọn chu kỳ sử dụng")}</span>
+          </h2>
+          <CycleChips p={p} />
         </section>{" "}
         <section className="m-step" aria-labelledby="step2">
           {" "}
           <h2 className="sec-lbl" id="step2">
             <span className="sec-num">
-              <span className="sr-only">{tx("Bước")}{" "}</span>2
+              <span className="sr-only">{tx("Bước")}{" "}</span>3
             </span>
             <span className="sr-only">. </span>
-            <span>{tx("Tùy chọn của bạn")}</span>
+            <span>{tx("Số lượng eSIM")}</span>
           </h2>{" "}
-          <div className="m-row">
-            <span className="m-row-l" id="cycLbl">{tx("Chu kỳ sử dụng")}</span>
-            <CycleMenu p={p} labelId="cycLbl" />
+          <div className="m-qty">
+            <div className="m-row">
+              <span className="m-row-l" id="qtyLbl">{tx("Mỗi eSIM dùng cho 1 máy")}</span>
+              <Qty p={p} labelId="qtyLbl" />
+            </div>
+            <StockAlert p={p} />
           </div>{" "}
-          <div className="m-row">
-            <span className="m-row-l" id="qtyLbl">{tx("Số lượng eSIM")}</span>
-            <Qty p={p} labelId="qtyLbl" />
-          </div>{" "}
-          <StockAlert p={p} />{" "}
           <div className="trust">
             <div className="ti">
               <Ic name="ic-shield" w={14} />{tx("Thanh toán an toàn")}</div>
             <div className="ti">
               <Ic name="ic-headset" w={14} />{tx("Hỗ trợ 24/7")}</div>
             <div className="ti">
-              <Ic name="ic-refund" w={14} />{tx("Hoàn tiền 100%")}</div>
+              <Ic name="ic-mailfast" w={14} />{tx("Nhận eSIM ngay")}</div>
           </div>{" "}
         </section>{" "}
         <section className="m-acc" aria-label={tx("Thông tin chi tiết")}>
-          {" "}
           <AccItem
             heading
-            defaultOpen
-            q={
-              <>
-                <Ic name="ic-gear" w={16} />
-                <span>{tx("Tính năng eSIM")}</span>
-                <Ic name="ic-chev-down" w={16} />
-              </>
-            }
-          >
-            <FeatureRows meta={meta} plan={plan} onEkyc={() => setEkyc(true)} ekycTitle={tx("eSIM này cần xác thực thuê bao")} />
-          </AccItem>{" "}
-          <AccItem
-            heading
-            q={
-              <>
-                <Ic name="ic-box" w={16} />
-                <span>{tx("Giao hàng & Kích hoạt")}</span>
-                <Ic name="ic-chev-down" w={16} />
-              </>
-            }
-          >
-            <DeliveryRows plan={plan} />
-          </AccItem>{" "}
-          <AccItem
-            heading
+            openSignal={devGo}
             q={
               <>
                 <Ic name="ic-device" w={16} />
@@ -334,7 +335,7 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb, 
               </>
             }
           >
-            <section className="dc dc--sel" aria-label={tx("Kiểm tra thiết bị hỗ trợ eSIM")} id="dcCard">
+            <section className={`dc dc--sel${devGo ? " is-flash" : ""}`} aria-label={tx("Kiểm tra thiết bị hỗ trợ eSIM")} id="dcCard" key={`dc${devGo}`}>
               {" "}
               <DeviceCheck
                 lang={lang}
@@ -354,7 +355,7 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb, 
             <p className="cross-lead">{tx("Mỗi nhà mạng có hạ tầng sóng, đầu số và bảng giá riêng — chọn gói phù hợp nhất với nhu cầu data và gọi của bạn.")}</p>{" "}
             <div className="m-cross-list">
               {otherCarriers.map((c) => (
-                <CrossCard key={c.provider} href={crossHref(c.provider)} meta={{ ...getCarrierMeta(c.provider), label: carrierName(c.provider, lang, c.destination) }} fromVnd={c.fromVndPrice} showPrefix />
+                <CrossCard key={c.provider} href={crossHref(c.provider)} meta={{ ...getCarrierMeta(c.provider), label: carrierName(c.provider, lang, c.destination) }} fromVnd={c.fromVndPrice} />
               ))}
             </div>{" "}
           </section>
@@ -370,10 +371,16 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb, 
         {" "}
         <div className="m-buy-info">
           <div className="m-buy-plan">
-            <span id="mPlan">{line}</span>
-            <span className="m-buy-qty" id="mQty" hidden={p.quantity < 2}>
-              {p.quantity} eSIM
+            <span className="m-buy-pn">
+              <span id="mPlan">{line}</span>
+              <span className="m-buy-qty" id="mQty" hidden={p.quantity < 2}>
+                {p.quantity} eSIM
+              </span>
             </span>
+            <button className="m-buy-det" type="button" aria-haspopup="dialog" onClick={() => setSpec(true)}>
+              <Ic name="ic-info" w={14} />
+              <span className="m-det-t">{tx("Chi tiết gói")}</span>
+            </button>
           </div>
           <button className="m-buy-price" type="button" aria-haspopup="dialog" onClick={() => setVch(true)}>
             <Ic name="ic-ticket" w={14} />
@@ -394,7 +401,16 @@ export function NdMobile({ p, meta, lang, otherCarriers, crossHref, breadcrumb, 
         </button>{" "}
         <button className="btn btn-primary m-buy-cta" type="button" id="buyBtn" disabled={!plan} onClick={p.buyNow}>{tx("Mua ngay")}</button>{" "}
       </div>{" "}
-      <EkycModal open={ekyc} onClose={() => setEkyc(false)} carrierLabel={meta.label} />
+      <NdKycModal open={ekyc} onClose={() => setEkyc(false)} />
+      <SpecModal open={spec} onClose={() => setSpec(false)} title={tx("Chi tiết {0}", esimName(meta.label, lang as Locale))} planLine={plan ? tx("Gói: {0}", line) : ""}>
+        {(t) =>
+          t === 0 ? (
+            <FeatureRows meta={meta} plan={plan} onEkyc={() => setEkyc(true)} ekycTitle={tx("eSIM {0} cần xác thực thuê bao (eKYC)", meta.label)} />
+          ) : (
+            <DeliveryRows plan={plan} />
+          )
+        }
+      </SpecModal>
       <DeviceModal open={devOpen} onClose={() => setDevOpen(false)} lang={lang} initialBrand={devBrand} />
       <Overlay id="vchOv" open={vch} onClose={() => setVch(false)}>
         <div className="modal modal--vch" role="dialog" aria-labelledby="vpT" aria-modal="true">
